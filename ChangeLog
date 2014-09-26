@@ -1,0 +1,100 @@
+
+v1.4.1(2014-02-04)
+---------------------------
+* rename attribute: UserEntity#user -> UserEntity#username
+* add support API: GET /_api/database/user (getDatabases)
+* modify API: createDatabase(db) -> createDatabase(db, users...)
+* add debug property: enableCURLLogger
+* add Annotation @DocumentKey and support user define document key.
+* Bug fixed: raise error if _key is not number.
+* document API support _key.
+* Fixed OraacleJDK build error.(#11)
+
+v1.4.0(2013-11-26)
+---------------------------
+* support database (for 1.4 feature)
+* stop the API of edge, edges in version 1.4.0
+* stop the API of kvs(/_api/key) in version 1.4.0(because server does not support yet.)
+* add support API: /_api/database/*
+* add configure: defaultDatabase
+* add support API: /_admin/statistics (getStatistics) 
+* add support API: /_admin/statistics-description (statisticsDescription)
+* add support API: /_api/endpoint/*
+* add support API: /_api/collection/{collection-name}/checksum (getCollectionChecksum)
+* add support API: /_api/example/first
+* add support API: /_api/example/last
+* add support API: /_api/replication/inventory (getReplicationInventory)
+* add support API: /_api/replication/dump (getReplicationDump)
+* add support API: /_api/replication/server-id (getReplicationServerId)
+* add support API: /_api/replication/logger-start (startReplicationLogger)
+* add support API: /_api/replication/logger-stop (stopReplicationLogger)
+* add support API: GET /_api/replication/logger-state (getReplicationLoggerState)
+* add support API: GET /_api/replication/logger-config (getReplicationLoggerConfig)
+* add support API: PUT /_api/replication/logger-config (setReplicationLoggerConfig)
+* add support API: GET /_api/replication/applier-config (getReplicationApplierConfig)
+* add support API: PUT /_api/replication/applier-config (setReplicationApplierConfig)
+* add support API: PUT /_api/replication/applier-start (startReplicationApplier)
+* add support API: PUT /_api/replication/applier-stop (stopReplicationApplier)
+* add support API: GET /_api/replication/applier-state (getReplicationApplierState)
+* add support API: POST /_admin/execute (executeScript)
+* add support API: POST /_api/graph (createGraph)
+* add support API: GET /_api/graph (getGraphs)
+* add support API: GET /_api/graph/{graph-name} (getGraph)
+* add support API: DELETE /_api/graph/{graph-name} (deleteGraph)
+* add support API: POST /_api/graph/{graph-name}/vertex (createVertex)
+* add support API: GET /_api/graph/{graph-name}/vertex/{document-key} (getVertex)
+* add support API: DELETE /_api/graph/{graph-name}/vertex/{document-key} (deleteVertex)
+* add support API: PUT /_api/graph/{graph-name}/vertex/{document-key} (replaceVertex)
+* add support API: PATCH /_api/graph/{graph-name}/vertex/{document-key} (updateVertex)
+* add support API: POST /_api/graph/{graph-name}/vertices (getVertices)
+* add support API: POST /_api/graph/{graph-name}/vertices/{vertex-key} (getVertices)
+* add support API: POST /_api/graph/{graph-name}/edge (createEdge)
+* add support API: GET /_api/graph/{graph-name}/edge/{edge-key} (getEdge)
+* add support API: DELETE /_api/graph/{graph-name}/edge/{edge-key} (deleteEdge)
+* add support API: PUT /_api/graph/{graph-name}/edge/{edge-key} (replaceEdge)
+* add support API: POST /_api/graph/{graph-name}/edges (getEdges)
+* add support API: POST /_api/graph/{graph-name}/edges/{vertex-key} (getEdges)
+* add attribute: CollectionEntity#checksum
+* add attribute: CollectionEntity#doCompact
+* add attribute: CollectionEntity#keyOptions
+* add attribute: CollectionEntity.Figures#(compactorsCount,compactorsFileSize,shapefilesCount,shapefilesFileSize,shapesCount,attributesCount)
+* add doCompact to argument of createCollection 
+* remove attribute: CollectionEntity#createOptions
+* getDocuments was changed to return document-handle
+* rename method: updateDocument -> replaceDocument
+* rename method: partialUpdateDocument -> updateDocument
+* changed the version API endpoint. (/_admin/version -> /_api/version)
+* changed into createOptions to keyOptions of collection API
+* fixed ArangoUnixTime bug.
+* remove: getServerStatus
+* remove: getConnectionStatistics
+* gson library upgrade to 2.2.4
+* refactoring deserialize of parameterized entity class.
+
+v1.2.2(2013-07-10)
+---------------------------
+
+* add support API: /_api/explain
+* add support API: /_api/collection/collection-name/revision
+* add support API: /_api/index of fulltext
+* add support API: /_api/simple/fulltext
+* add support API: /_admin/modules/flush
+* add support API: /_admin/routing/reload
+* add support API: User Management
+* add support: Basic Authentication
+* /_api/simple/all and /_api/simple/by-example returns DocumentEntity
+* add support import API
+
+v1.2.1(2013-07-02)
+------------------
+
+* Add support: load configure from property-file in classpath.
+* Add configure: timeout, connectionTimeout, retryCount.
+* Remove configure: autoUnknownCollections.
+* Change google-gson scope in pom.xml
+* Change logback-classic in pom.xml
+* Remove README.JA
+
+v1.2.0(2013-06-30)
+------------------
+* Initial Release.
