@@ -424,7 +424,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(indexes.getIdentifiers().size(), is(2));
 		assertThat(indexes.getIdentifiers().get(id1).getType(), is(IndexType.PRIMARY));
 		assertThat(indexes.getIdentifiers().get(id1).getFields().size(), is(1));
-		assertThat(indexes.getIdentifiers().get(id1).getFields().get(0), is("_id"));
+		assertThat(indexes.getIdentifiers().get(id1).getFields().get(0), is("_key"));
 		assertThat(indexes.getIdentifiers().get(id2).getType(), is(IndexType.HASH));
 		assertThat(indexes.getIdentifiers().get(id2).getFields().size(), is(2));
 		assertThat(indexes.getIdentifiers().get(id2).getFields().get(0), is("name"));

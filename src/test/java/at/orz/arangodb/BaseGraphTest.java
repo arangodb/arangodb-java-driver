@@ -17,11 +17,13 @@
 package at.orz.arangodb;
 
 import org.junit.Before;
+import org.junit.Ignore;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- *
+ * 
  */
+@Ignore
 public class BaseGraphTest extends BaseTest {
 
 	public BaseGraphTest(ArangoConfigure configure, ArangoDriver driver) {
@@ -31,20 +33,12 @@ public class BaseGraphTest extends BaseTest {
 	@Before
 	public void _before() throws ArangoException {
 
-		String deleteAllCollectionAndGraphCode = 
-				"var db = require(\"internal\").db; " +
-				"var Graph = require('org/arangodb/graph').Graph;\n" +
-				"Graph.getAll().forEach(function(g){\n" +
-				"  new Graph(g._key).drop();\n" +
-				"});\n" +
-				"db._collections().forEach(function(col){\n" +
-				"  var name = col.name();\n" +
-				"  if (name.indexOf('_') != 0) col.drop();\n" +
-				"});\n"
-				;
+		String deleteAllCollectionAndGraphCode = "var db = require(\"internal\").db; "
+				+ "var Graph = require('org/arangodb/graph').Graph;\n" + "Graph.getAll().forEach(function(g){\n"
+				+ "  new Graph(g._key).drop();\n" + "});\n" + "db._collections().forEach(function(col){\n"
+				+ "  var name = col.name();\n" + "  if (name.indexOf('_') != 0) col.drop();\n" + "});\n";
 		driver.executeScript(deleteAllCollectionAndGraphCode);
 
 	}
-
 
 }

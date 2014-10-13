@@ -23,13 +23,14 @@ import at.orz.arangodb.ArangoException;
 import at.orz.arangodb.entity.DefaultEntity;
 import at.orz.arangodb.entity.EntityFactory;
 import at.orz.arangodb.entity.UserEntity;
+import at.orz.arangodb.entity.UsersEntity;
 import at.orz.arangodb.http.HttpResponseEntity;
 import at.orz.arangodb.util.MapBuilder;
 import at.orz.arangodb.util.StringUtils;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- *
+ * 
  */
 public class InternalUsersDriverImpl extends BaseArangoDriverImpl {
 
@@ -37,76 +38,69 @@ public class InternalUsersDriverImpl extends BaseArangoDriverImpl {
 		super(configure);
 	}
 
-	public DefaultEntity createUser(String database, String username, String passwd, Boolean active, Map<String, Object> extra) throws ArangoException {
-		
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(baseUrl, database, "/_api/user"), 
-				null, 
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("username", username)
-						.put("passwd", passwd)
-						.put("active", active)
-						.put("extra", extra)
-						.get())
-				);
-		
+	public DefaultEntity createUser(String database, String username, String passwd, Boolean active,
+			Map<String, Object> extra) throws ArangoException {
+
+		HttpResponseEntity res = httpManager.doPost(
+				createEndpointUrl(baseUrl, database, "/_api/user"),
+				null,
+				EntityFactory.toJsonString(new MapBuilder().put("username", username).put("passwd", passwd)
+						.put("active", active).put("extra", extra).get()));
+
 		return createEntity(res, DefaultEntity.class);
-		
+
 	}
-	
+
 	public DefaultEntity deleteUser(String database, String username) throws ArangoException {
-		
+
 		HttpResponseEntity res = httpManager.doDelete(
-				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)), 
-				null);
-		
+				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)), null);
+
 		return createEntity(res, DefaultEntity.class);
-		
+
 	}
-	
+
 	public UserEntity getUser(String database, String username) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doGet(
-				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)), 
-				null);
-		
+				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)), null);
+
 		return createEntity(res, UserEntity.class);
-		
+
 	}
-	
-	public DefaultEntity replaceUser(String database, String username, String passwd, Boolean active, Map<String, Object> extra) throws ArangoException {
-		
+
+	public UsersEntity getUsers(String database) throws ArangoException {
+
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, database, "/_api/user"), null);
+
+		return createEntity(res, UsersEntity.class);
+
+	}
+
+	public DefaultEntity replaceUser(String database, String username, String passwd, Boolean active,
+			Map<String, Object> extra) throws ArangoException {
+
 		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)), 
-				null, 
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("passwd", passwd)
-						.put("active", active)
-						.put("extra", extra)
-						.get())
-				);
-		
+				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)),
+				null,
+				EntityFactory.toJsonString(new MapBuilder().put("passwd", passwd).put("active", active)
+						.put("extra", extra).get()));
+
 		return createEntity(res, DefaultEntity.class);
-		
+
 	}
 
-	public DefaultEntity updateUser(String database, String username, String passwd, Boolean active, Map<String, Object> extra) throws ArangoException {
-		
+	public DefaultEntity updateUser(String database, String username, String passwd, Boolean active,
+			Map<String, Object> extra) throws ArangoException {
+
 		HttpResponseEntity res = httpManager.doPatch(
-				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)), 
-				null, 
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("passwd", passwd)
-						.put("active", active)
-						.put("extra", extra)
-						.get())
-				);
-		
+				createEndpointUrl(baseUrl, database, "/_api/user", StringUtils.encodeUrl(username)),
+				null,
+				EntityFactory.toJsonString(new MapBuilder().put("passwd", passwd).put("active", active)
+						.put("extra", extra).get()));
+
 		return createEntity(res, DefaultEntity.class);
-		
+
 	}
 
-	
 }
