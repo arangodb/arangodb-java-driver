@@ -53,11 +53,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>
+                    <!--<finalName>
                         arangodb-java-driver-${version}-standalone
-                    </finalName>
-                    <attach>false</attach>
-                    <appendAssemblyId>false</appendAssemblyId>
+                    </finalName>-->
+                    <!--<attach>false</attach>-->
+                    <appendAssemblyId>true</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
@@ -163,6 +163,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit-dep</artifactId>
 			<version>4.10</version>
+            <scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<artifactId>hamcrest-core</artifactId>
