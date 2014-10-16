@@ -50,8 +50,9 @@ public class ArangoDriverCursorTest extends BaseTest {
 		
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.getBindVars().size(), is(2));
-		assertThat(entity.getBindVars().get(0), is("name"));
-		assertThat(entity.getBindVars().get(1), is("age"));
+		assertFalse(entity.getBindVars().indexOf("name") == -1);
+    assertFalse(entity.getBindVars().indexOf("age") == -1);
+
 		
 	}
 
