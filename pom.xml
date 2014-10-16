@@ -53,11 +53,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <!--<finalName>
+                    <finalName>
                         arangodb-java-driver-${version}-standalone
-                    </finalName>-->
-                    <!--<attach>false</attach>-->
-                    <appendAssemblyId>true</appendAssemblyId>
+                    </finalName>
+                    <attach>false</attach>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
