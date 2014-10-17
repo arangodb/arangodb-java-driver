@@ -5,11 +5,15 @@ Support version: ArangoDB-2.2.x
 
 # Required
 
+* [ArangoDB](https://github.com/triAGENS/ArangoDB)
 * Java 5 later
+
 
 # Basics
 
 ## Maven
+
+To add the driver to your project with maven, add the following code to your pom.xml: 
 
 ```XML
 <repositories>
@@ -33,6 +37,19 @@ Central Repository in preparation. Please wait.
 
 ## Driver Setup
 
+Setup with default configuration:
+
+``` Java
+  // Initialize configure
+  ArangoConfigure configure = new ArangoConfigure();
+  configure.init();
+
+  // Create Driver (this instance is thread-safe)
+  ArangoDriver arangoDriver = new ArangoDriver(configure);
+  
+```
+
+
 The driver is configured with some default values (wich match the dafault of ArangoDB):
 
 <table>
@@ -52,17 +69,6 @@ The driver is configured with some default values (wich match the dafault of Ara
 <tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
 </table>
 
-Setup with default configuration:
-
-``` Java
-  // Initialize configure
-  ArangoConfigure configure = new ArangoConfigure();
-  configure.init();
-
-  // Create Driver (this instance is thread-safe)
-  ArangoDriver client = new ArangoDriver(configure);
-  
-```
 
 To customize the configuration the parameters can be changed in the code...
 
@@ -74,7 +80,7 @@ To customize the configuration the parameters can be changed in the code...
   configure.init();
 
   // Create Driver (this instance is thread-safe)
-  ArangoDriver client = new ArangoDriver(configure);
+  ArangoDriver arangoDriver = new ArangoDriver(configure);
   
 ```
 ... or with a properties file (arangodb.properties)
@@ -86,9 +92,65 @@ To customize the configuration the parameters can be changed in the code...
   configure.init();
 
   // Create Driver (this instance is thread-safe)
-  ArangoDriver client = new ArangoDriver(configure);
+  ArangoDriver arangoDriver = new ArangoDriver(configure);
   
 ```
+
+# Basic database operations
+## create database
+``` Java
+  // create database 
+  arangoDriver.createDatabase("myDatabase");
+  // and set as default
+  arangoDriver.setDefaultDatabase("myDatabase");
+  
+```
+
+## drop database
+``` Java
+  // drop database 
+  arangoDriver.deleteDatabase("myDatabase");
+  
+```
+
+# Basic collection operations
+## create collection
+``` Java
+  // create collection
+  CollectionEntity myArangoCollection = ArangoCollectionarangoDriver.createCollection("myCollection");
+  
+```
+
+## delete collection by name
+``` Java
+  // delete database 
+  arangoDriver.deleteCollection("myCollection");
+  
+```
+
+## delete collection by id
+``` Java
+  // delete database 
+  arangoDriver.deleteCollection(myArangoCollection.getId());
+  
+```
+
+# Basic document operations
+## create document
+``` Java
+  // create document 
+  MyObject myObject = new MyObject();
+  DocumentEntity<MyObject> myDocument = arangoDriver.createDocument("myCollection", myObject);
+  
+```
+
+## delete document
+``` Java
+  // delete document 
+  arangoDriver.deleteDocument(myDocument.getDocumentHandle());
+  
+```
+
 
 # JavaDoc
 
