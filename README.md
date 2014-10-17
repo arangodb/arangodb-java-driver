@@ -1,13 +1,15 @@
 
-This library ia a Java driver for ArangoDB.
+This library is a Java driver for ArangoDB.
 
-Support version: ArangoDB-1.4.x
+Support version: ArangoDB-2.2.x
 
 # Required
 
 * Java 5 later
 
-# Maven
+# Basics
+
+## Maven
 
 ```XML
 <repositories>
@@ -28,6 +30,65 @@ Support version: ArangoDB-1.4.x
 ```
 
 Central Repository in preparation. Please wait.
+
+## Driver Setup
+
+The driver is configured with some default values (wich match the dafault of ArangoDB):
+
+<table>
+<tr><th>property-key</th><th>description</th><th>default value</th></tr>
+<tr><th>host</th><td>ArangoDB host</td><td>127.0.0.1</td></tr>
+<tr><th>port</th><td>ArangoDB port</td><td>8159</td></tr>
+<tr><th>maxPerConnection</th><td>Max http connection per host.</td><td>20</td></tr>
+<tr><th>maxTotalConnection</th><td>Max http connection per configure.</td><td>20</td></tr>
+<tr><th>user</th><td>Basic Authentication User</td><td></td></tr>
+<tr><th>password</th><td>Basic Authentication Password</td><td></td></tr>
+<tr><th>proxy.host</th><td>proxy host</td><td></td></tr>
+<tr><th>proxy.port</th><td>proxy port</td><td></td></tr>
+<tr><th>connectionTimeout</th><td>socket connect timeout(millisecond)</td><td>-1</td></tr>
+<tr><th>timeout</th><td>socket read timeout(millisecond)</td><td>-1</td></tr>
+<tr><th>retryCount</th><td>http retry count</td><td>3</td></tr>
+<tr><th>defaultDatabase</th><td>default database</td><td></td></tr>
+<tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
+</table>
+
+Setup with default configuration:
+
+``` Java
+  // Initialize configure
+  ArangoConfigure configure = new ArangoConfigure();
+  configure.init();
+
+  // Create Driver (this instance is thread-safe)
+  ArangoDriver client = new ArangoDriver(configure);
+  
+```
+
+To customize the configuration the parameters can be changed in the code...
+
+``` Java
+  // Initialize configure
+  ArangoConfigure configure = new ArangoConfigure();
+  configure.setHost("0.0.0.0");
+  configure.setPort(8888);
+  configure.init();
+
+  // Create Driver (this instance is thread-safe)
+  ArangoDriver client = new ArangoDriver(configure);
+  
+```
+... or with a properties file (arangodb.properties)
+
+``` Java
+  // Initialize configure
+  ArangoConfigure configure = new ArangoConfigure();
+  configure.loadProperties();
+  configure.init();
+
+  // Create Driver (this instance is thread-safe)
+  ArangoDriver client = new ArangoDriver(configure);
+  
+```
 
 # JavaDoc
 
