@@ -181,13 +181,6 @@ public class MyObject {
 }  
 ```
 
-When creating a document, the attributes of the object will be stored as key-value pair
-E.g. in the next example the object will be stored as
-``` properties
-"name" : "Homer"
-"age" : "38"
-```
-  
 ## create document
 ``` Java
   // create document 
@@ -195,6 +188,14 @@ E.g. in the next example the object will be stored as
   DocumentEntity<MyObject> myDocument = arangoDriver.createDocument("myCollection", myObject);
   
 ```
+
+When creating a document, the attributes of the object will be stored as key-value pair
+E.g. in the previous example the object was stored as follows:
+``` properties
+"name" : "Homer"
+"age" : "38"
+```
+  
 
 ## delete document
 ``` Java
