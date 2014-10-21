@@ -181,7 +181,13 @@ public class MyObject {
 }  
 ```
 
-
+When creating a document, the attributes of the object will be stored as key-value pair
+E.g. in the next example the object will be stored as
+``` properties
+"name" : "Homer"
+"age" : "38"
+```
+  
 ## create document
 ``` Java
   // create document 
@@ -231,7 +237,7 @@ instead of using a for statement you can also use an iterator:
 ``` Java
 	while (rs.hasNext()) {
 		MyObject obj = rs.next();
-		System.out.println(obj);
+		System.out.println(obj.getName());
 	}
 	rs.close();
 ```
@@ -243,6 +249,20 @@ If you are using [authentication] (http://docs.arangodb.org/ConfigureArango/Auth
 ``` Java
 	//username, password, active, extras
 	arangoDriver.createUser("myUser", "myPassword", true, null);
+```
+
+##list users
+``` Java
+	List<UserEntity> users = arangoDriver.getUsers();
+	for(UserEntity user : users) {
+		System.out.println(user.getName())
+	}
+```
+
+
+##DELETE user
+``` Java
+	arangoDriver.createUser("myUser");
 ```
 
 
