@@ -5,7 +5,7 @@ Support version: ArangoDB-2.2.x
 
 # Required
 
-* [ArangoDB](https://github.com/triAGENS/ArangoDB)
+* [ArangoDB](https://github.com/triAGENS/ArangoDB) Version 2.2.x
 * Java 5 later
 
 
@@ -13,27 +13,28 @@ Support version: ArangoDB-2.2.x
 
 ## Maven
 
-To add the driver to your project with maven, add the following code to your pom.xml: 
+To add the driver to your project with maven, add the following code to your pom.xml:
 
 ```XML
 <repositories>
-  <repository>
-    <id>at.orz</id>
-    <name>tamtam180 Repository</name>
-    <url>http://maven.orz.at/</url>
-  </repository>
+    <repository>
+        <id>arangodb-java-driver</id>
+        <name>maven repository on GitHub</name>
+		<url>https://raw.github.com/triAGENS/arangodb-java-driver/mvn-repo</url>
+        <layout>default</layout>
+    </repository>
 </repositories>
+```
 
+```XML
 <dependencies>
   <dependency>
     <groupId>at.orz</groupId>
-    <artifactId>arangodb-java-driver</artifactId>
-    <version>[1.4,1.5)</version>
+    <artifactId>arangodb-java-driver-2.0-standalone</artifactId>
+    <version>2.0</version>
   </dependency>
 </dependencies>
 ```
-
-Central Repository in preparation. Please wait.
 
 ## Driver Setup
 
@@ -50,12 +51,12 @@ Setup with default configuration:
 ```
 
 
-The driver is configured with some default values (wich match the dafault of ArangoDB):
+The driver is configured with some default values:
 
 <table>
 <tr><th>property-key</th><th>description</th><th>default value</th></tr>
 <tr><th>host</th><td>ArangoDB host</td><td>127.0.0.1</td></tr>
-<tr><th>port</th><td>ArangoDB port</td><td>8159</td></tr>
+<tr><th>port</th><td>ArangoDB port</td><td>8529</td></tr>
 <tr><th>maxPerConnection</th><td>Max http connection per host.</td><td>20</td></tr>
 <tr><th>maxTotalConnection</th><td>Max http connection per configure.</td><td>20</td></tr>
 <tr><th>user</th><td>Basic Authentication User</td><td></td></tr>
@@ -75,7 +76,7 @@ To customize the configuration the parameters can be changed in the code...
 ``` Java
   // Initialize configure
   ArangoConfigure configure = new ArangoConfigure();
-  configure.setHost("0.0.0.0");
+  configure.setHost("192.168.182.50");
   configure.setPort(8888);
   configure.init();
 
@@ -95,6 +96,17 @@ To customize the configuration the parameters can be changed in the code...
   ArangoDriver arangoDriver = new ArangoDriver(configure);
   
 ```
+
+Example for arangodb.properties:
+``` Java
+port=8888
+host=192.168.182.50
+user=root
+password=
+enableCURLLogger=true
+
+```
+
 
 # Basic database operations
 ## create database
@@ -147,10 +159,33 @@ This ArangoDB driver is thread-safe. Unfortunately the ArangoDriver#setDefaultDa
 ```
 
 # Basic document operations
+
+For the next examples we use a small object:
+
+``` Java
+public class MyObject {
+
+    private String name;
+    private int age;
+
+    public MyObject(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    /*
+    *  + getter and setter
+    */
+   
+
+}  
+```
+
+
 ## create document
 ``` Java
   // create document 
-  MyObject myObject = new MyObject();
+  MyObject myObject = new MyObject("Homer", 38);
   DocumentEntity<MyObject> myDocument = arangoDriver.createDocument("myCollection", myObject);
   
 ```
@@ -202,6 +237,13 @@ instead of using a for statement you can also use an iterator:
 ```
 
 #User Management
+If you are using [authentication] (http://docs.arangodb.org/ConfigureArango/Authentication.html) you can manage users with the driver.
+
+##add user
+``` Java
+	//username, password, active, extras
+	arangoDriver.createUser("myUser", "myPassword", true, null);
+```
 
 
 #Graphs
