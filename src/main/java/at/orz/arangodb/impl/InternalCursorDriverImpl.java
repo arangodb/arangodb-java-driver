@@ -54,27 +54,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl {
 		}
 		
 	}
-	
-	public ExplainEntity explainQuery(String database, String query, Map<String, Object> bindVars) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPost(
-				createEndpointUrl(baseUrl, database, "/_api/explain"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("query", query)
-						.put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars)
-						.get())
-				);
-		try {
-			ExplainEntity entity = createEntity(res, ExplainEntity.class);
-			return entity;
-		} catch (ArangoException e) {
-			throw e;
-		}
-
-	}
-	
 	// ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
 	// ※ここでは単純にコールするだけ
 	

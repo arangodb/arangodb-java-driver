@@ -37,7 +37,6 @@ import at.orz.arangodb.entity.DocumentEntity;
 import at.orz.arangodb.entity.DocumentResultEntity;
 import at.orz.arangodb.entity.EdgeEntity;
 import at.orz.arangodb.entity.Endpoint;
-import at.orz.arangodb.entity.ExplainEntity;
 import at.orz.arangodb.entity.FilterCondition;
 import at.orz.arangodb.entity.GraphEntity;
 import at.orz.arangodb.entity.GraphsEntity;
@@ -493,10 +492,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		return cursorDriver.validateQuery(getDefaultDatabase(), query);
 	}
 	
-	public ExplainEntity explainQuery(String query, Map<String, Object> bindVars) throws ArangoException {
-		return cursorDriver.explainQuery(getDefaultDatabase(), query, bindVars);
-	}
-	
+
 	public <T> CursorEntity<T> executeQuery(
 			String query, Map<String, Object> bindVars,
 			Class<T> clazz,
@@ -680,10 +676,6 @@ public class ArangoDriver extends BaseArangoDriver {
 		return adminDriver.getTime();
 	}
 	
-	public DefaultEntity flushModules() throws ArangoException {
-		return adminDriver.flushModules();
-	}
-
 	public DefaultEntity reloadRouting() throws ArangoException {
 		return adminDriver.reloadRouting();
 	}
@@ -950,7 +942,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return
 	 * @throws ArangoException
 	 * @since 1.4.0
-	 * @see http://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList
+	 * @see http://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList2
 	 */
 	public StringsResultEntity getDatabases() throws ArangoException {
 		return getDatabases(false);
