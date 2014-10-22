@@ -18,14 +18,8 @@ package at.orz.arangodb.entity;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import at.orz.arangodb.entity.CollectionEntity.Figures;
 import at.orz.arangodb.entity.ReplicationApplierState.LastError;
@@ -444,7 +438,29 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class CursorEntityDeserializer implements JsonDeserializer<CursorEntity<?>> {
+
+  public static class AqlfunctionsEntityDeserializer implements JsonDeserializer<AqlFunctionsEntity> {
+
+    public AqlFunctionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+
+      if (json.isJsonNull()) {
+        return null;
+      }
+
+      JsonArray obj = json.getAsJsonArray();
+      Iterator<JsonElement> iterator = obj.iterator();
+      Map<String, String> functions = new HashMap<String, String>();
+      while(iterator.hasNext()) {
+        JsonElement e  = iterator.next();
+        JsonObject o = e.getAsJsonObject();
+        functions.put(o.get("name").getAsString(), o.get("code").getAsString());
+      }
+      return new AqlFunctionsEntity(functions);
+    }
+  }
+
+  public static class CursorEntityDeserializer implements JsonDeserializer<CursorEntity<?>> {
 		private Type bindVarsType = new TypeToken<List<String>>() {
 		}.getType();
 

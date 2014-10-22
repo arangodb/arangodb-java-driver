@@ -195,7 +195,7 @@ public abstract class BaseArangoDriver {
 	}
 
 	protected <T extends BaseEntity> T createEntity(HttpResponseEntity res, Class<T> clazz) throws ArangoException {
-		return createEntity(res, clazz, null, true);
+    return createEntity(res, clazz, null, true);
 	}
 
 	protected <T extends BaseEntity> T createEntity(HttpResponseEntity res, Class<? extends BaseEntity> clazz, Class<?>... pclazz) throws ArangoException {
