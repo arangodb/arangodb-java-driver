@@ -16,6 +16,8 @@
 
 package at.orz.arangodb.entity;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 
@@ -32,8 +34,10 @@ public class GraphEntity extends BaseEntity implements DocumentHolder {
 	@SerializedName("_key")
 	String documentKey;
 
-	String edges;
-	String vertices;
+	List<String> orphanCollections;
+	List<EdgeDefinitionEntity> edgeDefinitions;
+	String name;
+	
 
 	public long getDocumentRevision() {
 		return documentRevision;
@@ -44,12 +48,6 @@ public class GraphEntity extends BaseEntity implements DocumentHolder {
 	public String getDocumentKey() {
 		return documentKey;
 	}
-	public String getEdges() {
-		return edges;
-	}
-	public String getVertices() {
-		return vertices;
-	}
 	public void setDocumentRevision(long documentRevision) {
 		this.documentRevision = documentRevision;
 	}
@@ -59,11 +57,26 @@ public class GraphEntity extends BaseEntity implements DocumentHolder {
 	public void setDocumentKey(String documentKey) {
 		this.documentKey = documentKey;
 	}
-	public void setEdges(String edges) {
-		this.edges = edges;
+	
+	public List<EdgeDefinitionEntity> getEdgeDefinitions() {
+		return edgeDefinitions;
 	}
-	public void setVertices(String vertices) {
-		this.vertices = vertices;
+	public void setEdgeDefinitions(List<EdgeDefinitionEntity> edgeDefinitions) {
+		this.edgeDefinitions = edgeDefinitions;
 	}
+	public List<String> getOrphanCollections() {
+		return orphanCollections;
+	}
+	public void setOrphanCollections(List<String> orphanCollections) {
+		this.orphanCollections = orphanCollections;
+	}
+	public void setName(String name) {
+	    this.name = name;
+	}
+	public String getName() {
+	    return name;
+	}
+	
+	
 	
 }

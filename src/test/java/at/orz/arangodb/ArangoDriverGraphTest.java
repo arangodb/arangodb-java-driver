@@ -21,13 +21,19 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
+import javax.swing.GrayFilter;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import at.orz.arangodb.entity.DeletedEntity;
+import at.orz.arangodb.entity.EdgeDefinitionEntity;
+import at.orz.arangodb.entity.EdgeDefinitionsEntity;
 import at.orz.arangodb.entity.GraphEntity;
 import at.orz.arangodb.entity.GraphsEntity;
 
@@ -35,28 +41,103 @@ import at.orz.arangodb.entity.GraphsEntity;
  * @author tamtam180 - kirscheless at gmail.com
  * 
  */
-@Ignore
 public class ArangoDriverGraphTest extends BaseGraphTest {
 
 	public ArangoDriverGraphTest(ArangoConfigure configure, ArangoDriver driver) {
 		super(configure, driver);
 	}
+	
+	@Test
+	@Ignore
+	public void test_get_graphs() throws ArangoException {
+		GraphsEntity graphs = driver.getGraphs();
+		assertThat(graphs.getGraphs().size(), is(0));
+		driver.createGraph("UnitTestGraph1", true);
+		driver.createGraph("UnitTestGraph2", true);
+		driver.createGraph("UnitTestGraph3", true);
+		graphs = driver.getGraphs();
+		assertThat(graphs.getGraphs().size(), is(3));
+	}
+	
+	
 
 	@Test
+	@Ignore
 	public void test_create_graph() throws ArangoException {
+		
+		String graphName = "unitTestGraph";
+		
+		List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+		List<String> orphanCollections = new ArrayList<String>();
 
 		// create
-		GraphEntity entity1 = driver.createGraph("g1", "vcol1", "ecol1", true);
+		GraphEntity entity1 = driver.createGraph(graphName, edgeDefinitions, orphanCollections, true);
+			
 		assertThat(entity1.getCode(), is(201));
 		assertThat(entity1.getDocumentRevision(), is(not(0L)));
-		assertThat(entity1.getDocumentHandle(), is("_graphs/g1"));
-		assertThat(entity1.getDocumentKey(), is("g1"));
-		assertThat(entity1.getVertices(), is("vcol1"));
-		assertThat(entity1.getEdges(), is("ecol1"));
+		assertThat(entity1.getDocumentHandle(), is("_graphs/" + graphName));
+		assertThat(entity1.getDocumentKey(), is(graphName));
+		assertThat(entity1.getOrphanCollections(), is(orphanCollections));
 
 	}
 
 	@Test
+	public void test_create_graph2() throws ArangoException {
+		
+		String graphName = "unitTestGraph";
+		
+		List<EdgeDefinitionEntity> edgeDefinitions = this.createEdgeDefinitions(2);
+
+		List<String> orphanCollections = this.createOrphanCollections(2);
+
+		// create
+		GraphEntity graph = driver.createGraph(graphName, edgeDefinitions, orphanCollections, true);
+		assertThat(graph.getCode(), is(201));
+		assertThat(graph.getDocumentRevision(), is(not(0L)));
+		assertThat(graph.getDocumentHandle(), is("_graphs/" + graphName));
+		assertThat(graph.getName(), is(graphName));
+		assertThat(graph.getOrphanCollections(), is(orphanCollections));
+	}
+	
+	@Test
+	@Ignore
+	public void test_get_graph() throws ArangoException {
+	    String graphName = "UnitTestGraph";
+	    driver.createGraph(graphName, this.createEdgeDefinitions(2), this.createOrphanCollections(2), true);
+	    GraphEntity graph = driver.getGraph(graphName);
+        assertThat(graph.getOrphanCollections().size(), is(2));
+        assertThat(graph.getName(), is(graphName));
+        assertThat(graph.getEdgeDefinitions().size(), is(2));
+        assertThat(graph.getEdgeDefinitions().get(0).getCollection().startsWith("edge"), is(true));
+
+	}
+	
+	
+/*
+	@Test
+	public void test_drop_Graph() throws ArangoException {
+		String graphName = "unitTestGraph";
+		
+		// create
+		GraphEntity entity1 = driver.createGraph(
+				graphName,
+				new ArrayList<EdgeDefinitionEntity>(),
+				new ArrayList<String>(),
+				true
+				);
+			
+		assertThat(entity1.getCode(), is(201));
+		assertThat(entity1.getDocumentRevision(), is(not(0L)));
+		assertThat(entity1.getDocumentHandle(), is("_graphs/" + graphName));
+		
+	}
+	
+	
+	
+	
+	
+	@Test
+	@Ignore
 	public void test_create_graph_202() throws ArangoException {
 
 		// in 1.4.0 manual
@@ -68,12 +149,13 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		assertThat(entity.getDocumentRevision(), is(not(0L)));
 		assertThat(entity.getDocumentHandle(), is("_graphs/g1"));
 		assertThat(entity.getDocumentKey(), is("g1"));
-		assertThat(entity.getVertices(), is("vcol1"));
-		assertThat(entity.getEdges(), is("ecol1"));
+//		assertThat(entity.getVertices(), is("vcol1"));
+//		assertThat(entity.getEdges(), is("ecol1"));
 
 	}
 
 	@Test
+	@Ignore
 	public void test_create_graph_dup() throws ArangoException {
 
 		GraphEntity entity = driver.createGraph("g1", "vcol1", "ecol1", true);
@@ -81,8 +163,8 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		assertThat(entity.getDocumentRevision(), is(not(0L)));
 		assertThat(entity.getDocumentHandle(), is("_graphs/g1"));
 		assertThat(entity.getDocumentKey(), is("g1"));
-		assertThat(entity.getVertices(), is("vcol1"));
-		assertThat(entity.getEdges(), is("ecol1"));
+//		assertThat(entity.getVertices(), is("vcol1"));
+//		assertThat(entity.getEdges(), is("ecol1"));
 
 		try {
 			driver.createGraph("g1", "vcol1", "ecol1", false);
@@ -98,6 +180,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 	// TODO: errorNum: 1902 : "found graph but has different <name>"
 
 	@Test
+	@Ignore
 	public void get_graphs() throws ArangoException {
 
 		driver.createGraph("g1", "v1", "e1", null);
@@ -119,35 +202,36 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		assertThat(g.getDocumentRevision(), is(not(0L)));
 		assertThat(g.getDocumentHandle(), is("_graphs/g1"));
 		assertThat(g.getDocumentKey(), is("g1"));
-		assertThat(g.getVertices(), is("v1"));
-		assertThat(g.getEdges(), is("e1"));
+//		assertThat(g.getVertices(), is("v1"));
+//		assertThat(g.getEdges(), is("e1"));
 
 		g = graphs.getGraphs().get(1);
 		assertThat(g.getDocumentRevision(), is(not(0L)));
 		assertThat(g.getDocumentHandle(), is("_graphs/g2"));
 		assertThat(g.getDocumentKey(), is("g2"));
-		assertThat(g.getVertices(), is("v2"));
-		assertThat(g.getEdges(), is("e2"));
+//		assertThat(g.getVertices(), is("v2"));
+//		assertThat(g.getEdges(), is("e2"));
 
 		g = graphs.getGraphs().get(2);
 		assertThat(g.getDocumentRevision(), is(not(0L)));
 		assertThat(g.getDocumentHandle(), is("_graphs/g3"));
 		assertThat(g.getDocumentKey(), is("g3"));
-		assertThat(g.getVertices(), is("v3"));
-		assertThat(g.getEdges(), is("e3"));
+//		assertThat(g.getVertices(), is("v3"));
+//		assertThat(g.getEdges(), is("e3"));
 
 	}
 
 	@Test
-	public void test_get_graph() throws ArangoException {
+	@Ignore
+	public void test_get_graphOLD() throws ArangoException {
 
 		driver.createGraph("g1", "v1", "e1", null);
 		GraphEntity g1 = driver.getGraph("g1");
 		assertThat(g1.getDocumentRevision(), is(not(0L)));
 		assertThat(g1.getDocumentHandle(), is("_graphs/g1"));
 		assertThat(g1.getDocumentKey(), is("g1"));
-		assertThat(g1.getVertices(), is("v1"));
-		assertThat(g1.getEdges(), is("e1"));
+//		assertThat(g1.getVertices(), is("v1"));
+//		assertThat(g1.getEdges(), is("e1"));
 
 	}
 
@@ -184,8 +268,8 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		assertThat(g1.getDocumentRevision(), is(not(0L)));
 		assertThat(g1.getDocumentHandle(), is("_graphs/g1"));
 		assertThat(g1.getDocumentKey(), is("g1"));
-		assertThat(g1.getVertices(), is("v1"));
-		assertThat(g1.getEdges(), is("e1"));
+//		assertThat(g1.getVertices(), is("v1"));
+//		assertThat(g1.getEdges(), is("e1"));
 
 	}
 
@@ -199,8 +283,8 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		assertThat(g1.getDocumentRevision(), is(not(0L)));
 		assertThat(g1.getDocumentHandle(), is("_graphs/g1"));
 		assertThat(g1.getDocumentKey(), is("g1"));
-		assertThat(g1.getVertices(), is("v1"));
-		assertThat(g1.getEdges(), is("e1"));
+//		assertThat(g1.getVertices(), is("v1"));
+//		assertThat(g1.getEdges(), is("e1"));
 
 	}
 
@@ -272,5 +356,33 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		}
 
 	}
+	*/
+    private List<EdgeDefinitionEntity> createEdgeDefinitions(int count) {
+        List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>(); 
+        for (int i = 1; i<=count; i++) {
+            EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+            edgeDefinition.setCollection("edge" + i);
+            List<String> from = new ArrayList<String>();
+            from.add("from" + i + "-1");
+            from.add("from" + i + "-2");
+            from.add("from" + i + "-3");
+            edgeDefinition.setFrom(from);
+            List<String> to = new ArrayList<String>();
+            to.add("to" + i + "-1");
+            to.add("to" + i + "-2");
+            to.add("to" + i + "-3");
+            edgeDefinition.setTo(to);
+            edgeDefinitions.add(edgeDefinition);
+        }
+        return edgeDefinitions;
+    }
+
+    private List<String> createOrphanCollections(int count) {
+        List<String> orphanCollections = new ArrayList<String>(); 
+        for (int i = 1; i<=count; i++) {
+            orphanCollections.add("orphan" + i);
+        }
+        return orphanCollections;
+    }
 
 }

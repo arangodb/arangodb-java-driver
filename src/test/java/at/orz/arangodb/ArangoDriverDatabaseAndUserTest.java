@@ -90,7 +90,7 @@ public class ArangoDriverDatabaseAndUserTest {
 		// user1 can access
 		configure.setUser("user1");
 		configure.setPassword("pass1");
-   	StringsResultEntity res2 = driver.getDatabases(true);
+		StringsResultEntity res2 = driver.getDatabases(true);
 		assertThat(res2.getResult(), is(Arrays.asList("_system", "db-1")));
 		
 		// user2 cannot access

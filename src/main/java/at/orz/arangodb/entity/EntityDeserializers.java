@@ -1503,12 +1503,42 @@ public class EntityDeserializers {
 			JsonObject graph = obj.has("graph") ? obj.getAsJsonObject("graph") : obj;
 			deserializeDocumentParameter(graph, entity);
 
-			if (graph.has("edges")) {
-				entity.edges = graph.getAsJsonPrimitive("edges").getAsString();
+			if (graph.has("name")) {
+			    entity.name = graph.get("name").getAsString();
+			}
+			
+			if (graph.has("orphanCollections")) {
+                JsonArray orphanCollections = graph.getAsJsonArray("orphanCollections");
+                entity.orphanCollections = new ArrayList<String>();
+                if (!orphanCollections.equals(null)) {
+                    entity.orphanCollections = new ArrayList<String>(orphanCollections.size());
+                    for (int i = 0, imax = orphanCollections.size(); i < imax; i++) {
+                        String orphanCollection = orphanCollections.get(i).getAsString();
+
+                        entity.orphanCollections.add(orphanCollection);
+                    }
+                }
 			}
 
-			if (graph.has("vertices")) {
-				entity.vertices = graph.getAsJsonPrimitive("vertices").getAsString();
+			if (graph.has("edgeDefinitions")) {
+                JsonArray edgeDefinitions = graph.getAsJsonArray("edgeDefinitions");
+                entity.edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+                if (!edgeDefinitions.equals(null)) {
+                    for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
+                        EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
+                        JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
+                        if (edgeDefinition.has("collection")) {
+                            edgeDefinitionEntity.setCollection(edgeDefinition.get("collection").getAsString());
+                        }
+                        if (edgeDefinition.has("from")) {
+                            edgeDefinitionEntity.setFrom(new ArrayList<String>());
+                        }
+                        if (edgeDefinition.has("to")) {
+                            edgeDefinitionEntity.setTo(new ArrayList<String>());
+                        }
+                        entity.edgeDefinitions.add(edgeDefinitionEntity);
+                    }
+                }
 			}
 
 			return entity;
@@ -1538,7 +1568,7 @@ public class EntityDeserializers {
 
 		}
 	}
-
+	
 	public static class DeleteEntityDeserializer implements JsonDeserializer<DeletedEntity> {
 		public DeletedEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
