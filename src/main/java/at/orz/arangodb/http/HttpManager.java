@@ -287,7 +287,7 @@ public class HttpManager {
 		} else if (configure.getUser() != null && configure.getPassword() != null) {
 			credentials = new UsernamePasswordCredentials(configure.getUser(), configure.getPassword());
 		}
-		if (credentials != null) {
+    if (credentials != null) {
 			request.addHeader(BasicScheme.authenticate(credentials, "US-ASCII", false));
 		}
 
@@ -295,8 +295,7 @@ public class HttpManager {
 		if (configure.isEnableCURLLogger()) {
 			CURLLogger.log(url, requestEntity, userAgent, credentials);
 		}
-
-		HttpResponse response = null;
+    HttpResponse response = null;
 		try {
 
 			response = client.execute(request);

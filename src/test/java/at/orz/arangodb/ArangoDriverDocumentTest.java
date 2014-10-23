@@ -445,9 +445,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	public void test_delete() throws ArangoException {
 		
 		DocumentEntity<String> doc = driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3));
+    DocumentEntity a = driver.deleteDocument(doc.getDocumentHandle());
 
-		driver.deleteDocument(doc.getDocumentHandle());
-		
 	}
 
 	@Test

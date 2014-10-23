@@ -74,6 +74,9 @@ public class ArangoDriverDatabaseAndUserTest {
 		assertThat(entity.getResult(), is(true));
 		
 		// change default db
+    try {
+      driver.createUser("user1", "pass1", true, null);
+    } catch (ArangoException e) {}
 		driver.setDefaultDatabase(database);
 
 		// root user cannot access
@@ -87,8 +90,8 @@ public class ArangoDriverDatabaseAndUserTest {
 		// user1 can access
 		configure.setUser("user1");
 		configure.setPassword("pass1");
-	    StringsResultEntity res2 = driver.getDatabases(true);
-		//assertThat(res2.getResult(), is(Arrays.asList("_system", "db-1")));
+		StringsResultEntity res2 = driver.getDatabases(true);
+		assertThat(res2.getResult(), is(Arrays.asList("_system", "db-1")));
 		
 		// user2 cannot access
 		configure.setUser("user2");
@@ -103,7 +106,6 @@ public class ArangoDriverDatabaseAndUserTest {
 		StringsResultEntity res3 = driver.getDatabases("user1", "pass1");
 		assertThat(res3.getResult(), is(Arrays.asList("_system", "db-1")));
 
-		
 	}
 	
 	

@@ -18,18 +18,10 @@ package at.orz.arangodb.entity;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import at.orz.arangodb.entity.CollectionEntity.Figures;
-import at.orz.arangodb.entity.ExplainEntity.ExpressionEntity;
-import at.orz.arangodb.entity.ExplainEntity.PlanEntity;
 import at.orz.arangodb.entity.ReplicationApplierState.LastError;
 import at.orz.arangodb.entity.ReplicationApplierState.Progress;
 import at.orz.arangodb.entity.ReplicationInventoryEntity.Collection;
@@ -446,7 +438,29 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class CursorEntityDeserializer implements JsonDeserializer<CursorEntity<?>> {
+
+  public static class AqlfunctionsEntityDeserializer implements JsonDeserializer<AqlFunctionsEntity> {
+
+    public AqlFunctionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+
+      if (json.isJsonNull()) {
+        return null;
+      }
+
+      JsonArray obj = json.getAsJsonArray();
+      Iterator<JsonElement> iterator = obj.iterator();
+      Map<String, String> functions = new HashMap<String, String>();
+      while(iterator.hasNext()) {
+        JsonElement e  = iterator.next();
+        JsonObject o = e.getAsJsonObject();
+        functions.put(o.get("name").getAsString(), o.get("code").getAsString());
+      }
+      return new AqlFunctionsEntity(functions);
+    }
+  }
+
+  public static class CursorEntityDeserializer implements JsonDeserializer<CursorEntity<?>> {
 		private Type bindVarsType = new TypeToken<List<String>>() {
 		}.getType();
 
@@ -865,64 +879,6 @@ public class EntityDeserializers {
 
 	}
 
-	public static class ExplainEntityDeserializer implements JsonDeserializer<ExplainEntity> {
-
-		public ExplainEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
-
-			if (json.isJsonNull()) {
-				return null;
-			}
-
-			JsonObject obj = json.getAsJsonObject();
-			ExplainEntity entity = deserializeBaseParameter(obj, new ExplainEntity());
-
-			if (obj.has("plan")) {
-				JsonArray array = obj.getAsJsonArray("plan");
-				ArrayList<PlanEntity> planList = new ArrayList<ExplainEntity.PlanEntity>(array.size());
-				for (int i = 0; i < array.size(); i++) {
-					PlanEntity plan = new PlanEntity();
-					JsonObject planObj = array.get(i).getAsJsonObject();
-					if (planObj.has("id")) {
-						plan.id = planObj.getAsJsonPrimitive("id").getAsLong();
-					}
-					if (planObj.has("loopLevel")) {
-						plan.loopLevel = planObj.getAsJsonPrimitive("loopLevel").getAsInt();
-					}
-					if (planObj.has("type")) {
-						plan.type = planObj.getAsJsonPrimitive("type").getAsString();
-					}
-					if (planObj.has("resultVariable")) {
-						plan.resultVariable = planObj.getAsJsonPrimitive("resultVariable").getAsString();
-					}
-					if (planObj.has("offset")) {
-						plan.offset = planObj.getAsJsonPrimitive("offset").getAsLong();
-					}
-					if (planObj.has("count")) {
-						plan.count = planObj.getAsJsonPrimitive("count").getAsLong();
-					}
-					if (planObj.has("expression")) {
-						plan.expression = new ExpressionEntity();
-						JsonObject expObj = planObj.getAsJsonObject("expression");
-						if (expObj.has("type")) {
-							plan.expression.type = expObj.getAsJsonPrimitive("type").getAsString();
-						}
-						if (expObj.has("value")) {
-							plan.expression.value = expObj.getAsJsonPrimitive("value").getAsString();
-						}
-						if (expObj.has("extra")) {
-							plan.expression.extra = context.deserialize(expObj.getAsJsonObject("extra"), Map.class);
-						}
-					}
-					planList.add(plan);
-				}
-				entity.plan = planList;
-			}
-
-			return entity;
-		}
-
-	}
 
 	public static class UserEntityDeserializer implements JsonDeserializer<UserEntity> {
 

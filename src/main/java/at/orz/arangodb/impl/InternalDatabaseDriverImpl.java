@@ -45,12 +45,11 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl {
 	}
 	
 	public StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password) throws ArangoException {
-
-		HttpResponseEntity res = httpManager.doGet(
+    HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, null, "/_api/database", currentUserAccessableOnly ? "user" : null),
 				null, null, username, password
 				);
-		return createEntity(res, StringsResultEntity.class);
+    return createEntity(res, StringsResultEntity.class);
 
 	}
 	

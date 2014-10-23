@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -106,12 +107,10 @@ public class ArangoDriverAdminTest extends BaseTest {
 
 		// debug
 		Gson gson = new Gson();
-		System.out.println(gson.toJson(stat));
-		System.out.println(gson.toJson(stat.getSystem()));
-		System.out.println(gson.toJson(stat.getClient()));
-		System.out.println(gson.toJson(stat.getServer()));
-
-		// TODO: assert null
+    assertNotNull(gson.toJson(stat));
+    assertNotNull(gson.toJson(stat.getSystem()));
+    assertNotNull(gson.toJson(stat.getClient()));
+    assertNotNull(gson.toJson(stat.getServer()));
 
 	}
 
@@ -122,21 +121,9 @@ public class ArangoDriverAdminTest extends BaseTest {
 
 		// debug
 		Gson gson = new Gson();
-		System.out.println(gson.toJson(desc));
-		System.out.println(gson.toJson(desc.getGroups()));
-		System.out.println(gson.toJson(desc.getFigures()));
-
-		// TODO: assert null
-
-	}
-
-	@Test
-	public void test_flush_modules() throws ArangoException {
-
-		DefaultEntity entity = driver.flushModules();
-		assertThat(entity.getStatusCode(), is(200));
-		assertThat(entity.isError(), is(false));
-
+		assertNotNull(gson.toJson(desc));
+    assertNotNull(gson.toJson(desc.getGroups()));
+    assertNotNull(gson.toJson(desc.getFigures()));
 	}
 
 	@Test

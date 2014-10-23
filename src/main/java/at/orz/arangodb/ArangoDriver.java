@@ -39,7 +39,6 @@ import at.orz.arangodb.entity.EdgeDefinitionEntity;
 import at.orz.arangodb.entity.EdgeDefinitionsEntity;
 import at.orz.arangodb.entity.EdgeEntity;
 import at.orz.arangodb.entity.Endpoint;
-import at.orz.arangodb.entity.ExplainEntity;
 import at.orz.arangodb.entity.FilterCondition;
 import at.orz.arangodb.entity.GraphEntity;
 import at.orz.arangodb.entity.GraphsEntity;
@@ -61,9 +60,12 @@ import at.orz.arangodb.entity.StatisticsDescriptionEntity;
 import at.orz.arangodb.entity.StatisticsEntity;
 import at.orz.arangodb.entity.StringsResultEntity;
 import at.orz.arangodb.entity.UserEntity;
+import at.orz.arangodb.entity.*;
 import at.orz.arangodb.http.HttpManager;
+import at.orz.arangodb.http.HttpResponseEntity;
 import at.orz.arangodb.impl.ImplFactory;
 import at.orz.arangodb.impl.InternalAdminDriverImpl;
+import at.orz.arangodb.impl.InternalAqlFunctionsDriverImpl;
 import at.orz.arangodb.impl.InternalCollectionDriverImpl;
 import at.orz.arangodb.impl.InternalCursorDriverImpl;
 import at.orz.arangodb.impl.InternalDatabaseDriverImpl;
@@ -76,6 +78,7 @@ import at.orz.arangodb.impl.InternalReplicationDriverImpl;
 import at.orz.arangodb.impl.InternalSimpleDriverImpl;
 import at.orz.arangodb.impl.InternalUsersDriverImpl;
 import at.orz.arangodb.util.DumpHandler;
+import at.orz.arangodb.util.MapBuilder;
 import at.orz.arangodb.util.ResultSetUtils;
 
 /**
@@ -103,6 +106,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	private InternalIndexDriverImpl indexDriver;
 	//private InternalEdgeDriverImpl edgeDriver;
 	private InternalAdminDriverImpl adminDriver;
+  private InternalAqlFunctionsDriverImpl aqlFunctionsDriver;
 	private InternalSimpleDriverImpl simpleDriver;
 	private InternalUsersDriverImpl usersDriver;
 	private InternalImportDriverImpl importDriver;
@@ -135,6 +139,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		this.indexDriver = ImplFactory.createIndexDriver(configure);
 		//this.edgeDriver = ImplFactory.createEdgeDriver(configure);
 		this.adminDriver = ImplFactory.createAdminDriver(configure);
+    this.aqlFunctionsDriver = ImplFactory.createAqlFunctionsDriver(configure);
 		this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver);
 		this.usersDriver = ImplFactory.createUsersDriver(configure);
 		this.importDriver = ImplFactory.createImportDriver(configure);
@@ -495,10 +500,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		return cursorDriver.validateQuery(getDefaultDatabase(), query);
 	}
 	
-	public ExplainEntity explainQuery(String query, Map<String, Object> bindVars) throws ArangoException {
-		return cursorDriver.explainQuery(getDefaultDatabase(), query, bindVars);
-	}
-	
+
 	public <T> CursorEntity<T> executeQuery(
 			String query, Map<String, Object> bindVars,
 			Class<T> clazz,
@@ -682,10 +684,6 @@ public class ArangoDriver extends BaseArangoDriver {
 		return adminDriver.getTime();
 	}
 	
-	public DefaultEntity flushModules() throws ArangoException {
-		return adminDriver.flushModules();
-	}
-
 	public DefaultEntity reloadRouting() throws ArangoException {
 		return adminDriver.reloadRouting();
 	}
@@ -952,7 +950,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return
 	 * @throws ArangoException
 	 * @since 1.4.0
-	 * @see http://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList
+	 * @see http://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList2
 	 */
 	public StringsResultEntity getDatabases() throws ArangoException {
 		return getDatabases(false);
@@ -2070,6 +2068,18 @@ public class ArangoDriver extends BaseArangoDriver {
 		return graphDriver.getEdgesWithResultSet(getDefaultDatabase(), graphName, vertexKey, clazz, batchSize, limit, count, edgeDirection, edgeLabels, edgeProperties);
 	}
 
+
+  public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
+    return aqlFunctionsDriver.createAqlFunction(name, code);
+  }
+
+  public  AqlFunctionsEntity getAqlFunctions(String namespace) throws ArangoException {
+    return aqlFunctionsDriver.getAqlFunctions(namespace);
+  }
+
+  public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
+    return aqlFunctionsDriver.deleteAqlFunction(name, isNameSpace);
+  }
 	
 	// ---------------------------------------- start of xxx ----------------------------------------
 

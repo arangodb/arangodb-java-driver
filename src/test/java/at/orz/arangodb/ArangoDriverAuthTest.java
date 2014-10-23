@@ -42,10 +42,10 @@ public class ArangoDriverAuthTest {
 		
 		ArangoDriver driver = new ArangoDriver(configure);
 		try {
-			driver.getTime();
-			fail();
+      driver.getTime();
+      fail();
 		} catch (ArangoException e) {
-			assertThat(e.isUnauthorized(), is(true));
+      assertThat(e.isUnauthorized(), is(true));
 			assertThat(e.getEntity().getStatusCode(), is(401));
 			assertThat(e.getMessage(), containsString("Unauthorized"));
 		}
