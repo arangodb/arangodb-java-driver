@@ -34,14 +34,20 @@ import at.orz.arangodb.util.IOUtils;
  */
 public class ArangoConfigure {
 
+	
 	private static Logger logger = LoggerFactory.getLogger(ArangoConfigure.class);
 
+	/** default host of ArangoDB */
 	private static final String DEFAULT_HOST = "127.0.0.1";
+	/** default port of ArangoDB */
 	private static final int DEFAULT_PORT = 8529;
 
+	/** default  */
 	private static final int DEFAULT_MAX_PER_CONNECTION = 20; // 2;
+	/** default maximum conections */
 	private static final int DEFAULT_MAX_CONNECTION = 20;
 
+	/** default property file */
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 	/** server port */
@@ -356,6 +362,12 @@ public class ArangoConfigure {
 		return defaultDatabase;
 	}
 
+	/**
+	 * Set the default database for the driver
+	 * TODO: _system has to be a valid parameter
+	 *  
+	 * @param defaultDatabase
+	 */
 	public void setDefaultDatabase(String defaultDatabase) {
 		this.defaultDatabase = defaultDatabase;
 	}

@@ -54,14 +54,15 @@ public class BaseTest {
 	@Parameters()
 	public static Collection<Object[]> getParameterizedDrivers() {
 
+		String database = "unitTestDatabase";
 		ArangoConfigure configure = new ArangoConfigure();
 		configure.init();
 		ArangoDriver driver = new ArangoDriver(configure);
-		ArangoDriver driverMDB = new ArangoDriver(configure, "mydb");
+		ArangoDriver driverMDB = new ArangoDriver(configure, database);
 
 		// create mydb
 		try {
-			driver.createDatabase("mydb");
+			driver.createDatabase(database);
 		} catch (ArangoException e) {
 		}
 

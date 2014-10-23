@@ -35,6 +35,8 @@ import at.orz.arangodb.entity.DeletedEntity;
 import at.orz.arangodb.entity.Direction;
 import at.orz.arangodb.entity.DocumentEntity;
 import at.orz.arangodb.entity.DocumentResultEntity;
+import at.orz.arangodb.entity.EdgeDefinitionEntity;
+import at.orz.arangodb.entity.EdgeDefinitionsEntity;
 import at.orz.arangodb.entity.EdgeEntity;
 import at.orz.arangodb.entity.Endpoint;
 import at.orz.arangodb.entity.ExplainEntity;
@@ -1278,45 +1280,67 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return
 	 * @throws ArangoException
 	 * @since 1.4.0
+	 * @deprecated
 	 */
 	public GraphEntity createGraph(
-			String documentKey, String vertices, String edges,
-			Boolean waitForSync) throws ArangoException {
+			String documentKey, 
+			String vertices, 
+			String edges,
+			Boolean waitForSync
+			) throws ArangoException {
 		return graphDriver.createGraph(getDefaultDatabase(), documentKey, vertices, edges, waitForSync);
+	}
+
+	/**
+	 * creates a graph
+	 * 
+	 * @param graphName
+	 * @param edgeDefinitions
+	 * @param orphanCollections
+	 * @param waitForSync
+	 * @return GraphEntity
+	 * @throws ArangoException
+	 */
+	public GraphEntity createGraph(
+			String graphName, 
+			List<EdgeDefinitionEntity> edgeDefinitions, 
+			List<String> orphanCollections,
+			Boolean waitForSync
+			) throws ArangoException {
+		return graphDriver.createGraph(getDefaultDatabase(), graphName, edgeDefinitions, orphanCollections, waitForSync);
+	}
+
+	/**
+	 * creates an empty graph
+	 * 
+	 * @param graphName
+	 * @param waitForSync
+	 * @return GraphEntity
+	 * @throws ArangoException
+	 */
+	public GraphEntity createGraph(String graphName, Boolean waitForSync) throws ArangoException {
+		return graphDriver.createGraph(getDefaultDatabase(), graphName, waitForSync);
 	}
 	
 	/**
+	 * list all Graphs of the default database
 	 * 
-	 * @return
+	 * @return GraphsEntity
 	 * @throws ArangoException
-	 * @since 1.4.0
 	 */
 	public GraphsEntity getGraphs() throws ArangoException {
 		return graphDriver.getGraphs(getDefaultDatabase());
 	}
 	
 	/**
+	 * get graph object by name
 	 * 
-	 * @param name
-	 * @return
+	 * @param graphName
+	 * @return GraphEntity
 	 * @throws ArangoException
-	 * @since 1.4.0
 	 */
-	public GraphEntity getGraph(String name) throws ArangoException {
-		return graphDriver.getGraph(getDefaultDatabase(), name, null, null);
-	}
-
-	/**
-	 * 
-	 * @param name
-	 * @param IfNoneMatchRevision
-	 * @param ifMatchRevision
-	 * @return
-	 * @throws ArangoException
-	 * @since 1.4.0
-	 */
-	public GraphEntity getGraph(String name, Long IfNoneMatchRevision, Long ifMatchRevision) throws ArangoException {
-		return graphDriver.getGraph(getDefaultDatabase(), name, IfNoneMatchRevision, ifMatchRevision);
+	public GraphEntity getGraph(String graphName) throws ArangoException {
+		return graphDriver.getGraph(getDefaultDatabase(), graphName);
 	}
 
 	/**
