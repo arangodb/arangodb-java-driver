@@ -167,6 +167,9 @@ public abstract class BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	protected <T extends BaseEntity> T createEntity(HttpResponseEntity res, Class<? extends BaseEntity> clazz, Class<?>[] pclazz, boolean validate) throws ArangoException {
+    if (res == null) {
+      return null;
+    }
 		try {
 			EntityDeserializers.setParameterized(pclazz);
 			
@@ -176,7 +179,7 @@ public abstract class BaseArangoDriver {
 				entity = ReflectionUtils.newInstance(c);
 			}
 			setStatusCode(res, entity);
-			if (validate) {
+      if (validate) {
 				validate(res, entity);
 			}
 			return entity;
@@ -186,7 +189,7 @@ public abstract class BaseArangoDriver {
 	}
 
 	protected <T> T createEntity(String str, Class<T> clazz, Class<?>... pclazz) throws ArangoException {
-		try {
+    try {
 			EntityDeserializers.setParameterized(pclazz);
 			return EntityFactory.createEntity(str, clazz);
 		} finally {
@@ -214,8 +217,8 @@ public abstract class BaseArangoDriver {
 	protected void validate(HttpResponseEntity res, BaseEntity entity) throws ArangoException {
 		
 		if (entity != null) {
-			if (entity.isError()) {
-				throw new ArangoException(entity);
+      if (entity.isError()) {
+        throw new ArangoException(entity);
 			}
 		}
 		
@@ -246,12 +249,12 @@ public abstract class BaseArangoDriver {
 	}
 	
 	protected <T> T createEntityImpl(HttpResponseEntity res, Class<?> type) throws ArangoException {
-		if (res.isJsonResponse()) {
+    if (res.isJsonResponse()) {
 			T entity = EntityFactory.createEntity(res.getText(), type);
 			return entity;
 		}
 		if (res.isDumpResponse() && StreamEntity.class.isAssignableFrom(type)) {
-			return (T) new StreamEntity(res.getStream());
+    	return (T) new StreamEntity(res.getStream());
 		}
 		return null;
 		//throw new IllegalStateException("unknown response content-type:" + res.getContentType());

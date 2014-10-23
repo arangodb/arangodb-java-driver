@@ -25,7 +25,6 @@ import at.orz.arangodb.CursorResultSet;
 import at.orz.arangodb.entity.CursorEntity;
 import at.orz.arangodb.entity.DefaultEntity;
 import at.orz.arangodb.entity.EntityFactory;
-import at.orz.arangodb.entity.ExplainEntity;
 import at.orz.arangodb.http.HttpResponseEntity;
 import at.orz.arangodb.util.MapBuilder;
 

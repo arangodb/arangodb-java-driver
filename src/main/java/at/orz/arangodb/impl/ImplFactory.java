@@ -47,6 +47,9 @@ public class ImplFactory {
   public static InternalAqlFunctionsDriverImpl createAqlFunctionsDriver(ArangoConfigure configure) {
     return new InternalAqlFunctionsDriverImpl(configure);
   }
+  public static InternalBatchDriverImpl createBatchDriver(ArangoConfigure configure) {
+    return new InternalBatchDriverImpl(configure);
+  }
 	public static InternalUsersDriverImpl createUsersDriver(ArangoConfigure configure) {
 		return new InternalUsersDriverImpl(configure);
 	}

@@ -16,29 +16,17 @@
 
 package at.orz.arangodb;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import at.orz.arangodb.entity.*;
+import at.orz.arangodb.http.BatchHttpManager;
+import at.orz.arangodb.http.BatchPart;
 import at.orz.arangodb.http.HttpManager;
-import at.orz.arangodb.http.HttpResponseEntity;
-import at.orz.arangodb.impl.ImplFactory;
-import at.orz.arangodb.impl.InternalAdminDriverImpl;
-import at.orz.arangodb.impl.InternalAqlFunctionsDriverImpl;
-import at.orz.arangodb.impl.InternalCollectionDriverImpl;
-import at.orz.arangodb.impl.InternalCursorDriverImpl;
-import at.orz.arangodb.impl.InternalDatabaseDriverImpl;
-import at.orz.arangodb.impl.InternalDocumentDriverImpl;
-import at.orz.arangodb.impl.InternalEndpointDriverImpl;
-import at.orz.arangodb.impl.InternalGraphDriverImpl;
-import at.orz.arangodb.impl.InternalImportDriverImpl;
-import at.orz.arangodb.impl.InternalIndexDriverImpl;
-import at.orz.arangodb.impl.InternalReplicationDriverImpl;
-import at.orz.arangodb.impl.InternalSimpleDriverImpl;
-import at.orz.arangodb.impl.InternalUsersDriverImpl;
+import at.orz.arangodb.impl.*;
 import at.orz.arangodb.util.DumpHandler;
-import at.orz.arangodb.util.MapBuilder;
 import at.orz.arangodb.util.ResultSetUtils;
 
 /**
@@ -60,6 +48,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	private String baseUrl;
 	
 	private InternalCursorDriverImpl cursorDriver;
+  private InternalBatchDriverImpl batchDriver;
 	private InternalCollectionDriverImpl collectionDriver;
 	private InternalDocumentDriverImpl documentDriver;
 	//private InternalKVSDriverImpl kvsDriver;
@@ -93,6 +82,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		this.baseUrl = configure.getBaseUrl();
 		
 		this.cursorDriver = ImplFactory.createCursorDriver(configure);
+    this.batchDriver = ImplFactory.createBatchDriver(configure);
 		this.collectionDriver = ImplFactory.createCollectionDriver(configure);
 		this.documentDriver = ImplFactory.createDocumentDriver(configure);
 		//this.kvsDriver = ImplFactory.createKVSDriver(configure);
@@ -111,6 +101,49 @@ public class ArangoDriver extends BaseArangoDriver {
 		this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver);
 		
 	}
+
+  public void startBatchMode() {
+    if (this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
+      return;
+    }
+    this.httpManager = new BatchHttpManager(this.configure);
+    this.spreadManager(this.httpManager, false);
+  }
+
+  private void spreadManager(HttpManager manager, boolean resetBaseurl) {
+    this.cursorDriver.setBatchMode(manager, resetBaseurl);
+    this.batchDriver.setBatchMode(manager, resetBaseurl);
+    this.collectionDriver.setBatchMode(manager, resetBaseurl);
+    this.documentDriver.setBatchMode(manager, resetBaseurl);
+    this.indexDriver.setBatchMode(manager, resetBaseurl);
+    this.adminDriver.setBatchMode(manager, resetBaseurl);
+    this.aqlFunctionsDriver.setBatchMode(manager, resetBaseurl);
+    this.simpleDriver.setBatchMode(manager, resetBaseurl);
+    this.usersDriver.setBatchMode(manager, resetBaseurl);
+    this.importDriver.setBatchMode(manager, resetBaseurl);
+    this.databaseDriver.setBatchMode(manager, resetBaseurl);
+    this.endpointDriver.setBatchMode(manager, resetBaseurl);
+    this.replicationDriver.setBatchMode(manager, resetBaseurl);
+    this.graphDriver.setBatchMode(manager, resetBaseurl);
+  }
+
+  public BatchResponseListEntity executeBatch() throws ArangoException {
+    if (!this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
+      return null;
+    }
+    List<BatchPart> callStack =  ((BatchHttpManager) this.httpManager).getCallStack();
+    this.httpManager = configure.getHttpManager();
+    this.spreadManager(this.httpManager, true);
+    return this.batchDriver.executeBatch(callStack);
+  }
+
+  public void cancelBatchMode() {
+    if (!this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
+      return;
+    }
+    this.httpManager = configure.getHttpManager();
+    this.spreadManager(this.httpManager, true);
+  }
 	
 	public String getDefaultDatabase() {
 		return database;

@@ -29,8 +29,17 @@ class BaseArangoDriverImpl extends BaseArangoDriver {
 	protected ArangoConfigure configure;
 	protected HttpManager httpManager;
 	protected String baseUrl;
-	
-	BaseArangoDriverImpl(ArangoConfigure configure) {
+
+  public void setBatchMode(HttpManager httpManager, boolean resetBaseUrl) {
+    this.httpManager = httpManager;
+    if (resetBaseUrl) {
+      this.baseUrl = configure.getBaseUrl();
+    } else {
+      this.baseUrl = "";
+    }
+  }
+
+  BaseArangoDriverImpl(ArangoConfigure configure) {
 		this.configure = configure;
 		this.httpManager = configure.getHttpManager();
 		this.baseUrl = configure.getBaseUrl();

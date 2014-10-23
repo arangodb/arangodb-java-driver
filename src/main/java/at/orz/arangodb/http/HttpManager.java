@@ -188,6 +188,11 @@ public class HttpManager {
 		return doPostPutPatch(RequestType.POST, url, null, params, null, entity);
 	}
 
+  public HttpResponseEntity doPostWithHeaders(String url, Map<String, Object> params, HttpEntity entity,
+                                              Map<String, Object> headers, String body) throws ArangoException {
+    return doPostPutPatch(RequestType.POST, url, headers, params, body, entity);
+  }
+
 	public HttpResponseEntity doPut(String url, Map<String, Object> headers, Map<String, Object> params, String bodyText)
 			throws ArangoException {
 		return doPostPutPatch(RequestType.PUT, url, headers, params, bodyText, null);
@@ -275,8 +280,8 @@ public class HttpManager {
 
 		// optinal-headers
 		if (requestEntity.headers != null) {
-			for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
-				request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
+      for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
+      	request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
 			}
 		}
 
@@ -297,8 +302,7 @@ public class HttpManager {
 		}
     HttpResponse response = null;
 		try {
-
-			response = client.execute(request);
+      response = client.execute(request);
 			if (response == null) {
 				return null;
 			}
@@ -352,7 +356,7 @@ public class HttpManager {
 
 	}
 
-	private static String buildUrl(HttpRequestEntity requestEntity) {
+	public static String buildUrl(HttpRequestEntity requestEntity) {
 		if (requestEntity.parameters != null && !requestEntity.parameters.isEmpty()) {
 			String paramString = URLEncodedUtils.format(toList(requestEntity.parameters), "utf-8");
 			if (requestEntity.url.contains("?")) {
@@ -374,13 +378,13 @@ public class HttpManager {
 		return paramList;
 	}
 
-	private static void configureBodyParams(HttpRequestEntity requestEntity, HttpEntityEnclosingRequestBase request) {
+  public static void configureBodyParams(HttpRequestEntity requestEntity, HttpEntityEnclosingRequestBase request) {
 
 		if (requestEntity.entity != null) {
 			request.setEntity(requestEntity.entity);
 		} else if (requestEntity.bodyText != null) {
 			request.setEntity(new StringEntity(requestEntity.bodyText, APPLICATION_JSON_UTF8));
-		}
+    }
 
 	}
 
