@@ -16,12 +16,15 @@ public class BatchPart {
   private String returnType;
   private String id;
 
-  public BatchPart(String method, String url, String body, Map<String, Object> headers, String returnType) {
+  public BatchPart(
+    String method, String url, String body, Map<String, Object> headers, String returnType, int id
+  ) {
     this.method = method;
     this.url = url;
     this.body = body;
     this.headers = headers;
     this.returnType = returnType;
+    this.id = "request" + id;
   }
 
 

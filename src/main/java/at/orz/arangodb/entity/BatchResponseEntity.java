@@ -26,12 +26,28 @@ public class BatchResponseEntity extends BaseEntity {
 
   BaseEntity resultEntity;
 
-  public BaseEntity getResultEntity() {
-    return resultEntity;
+  public String id;
+
+  public BatchResponseEntity(String id) {
+    this.id = id;
+  }
+
+  public <T extends BaseEntity> T getResultEntity() {
+
+    return (T) resultEntity;
   }
 
   public void setResultEntity(BaseEntity entity) {
     this.resultEntity = entity;
+  }
+
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   @Override

@@ -98,7 +98,8 @@
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
+                <configuration>
+                    <forkMode>never</forkMode>
 					<includes>
 						<include>at/orz/arangodb/ArangoTestSuite.java</include>
 					</includes>

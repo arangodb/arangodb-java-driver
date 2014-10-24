@@ -42,28 +42,27 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
   public static String newline = System.getProperty("line.separator");
 
+  public String delimiter = "dlmtrMLTPRT";
+
 	public BatchResponseListEntity executeBatch(List<BatchPart> callStack) throws ArangoException {
 
 
-    int i = 0;
     String body = "";
 
     Map<String, String> resolver = new HashMap<String, String>();
 
     for (BatchPart bp : callStack) {
-      body += "--DELIMITER" + newline;
+      body += "--" + delimiter + newline;
       body += "Content-Type: application/x-arango-batchpart" + newline;
-      body += "Content-Id: reqId" + i + newline + newline;
+      body += "Content-Id: " + bp.getId() + newline + newline;
       body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline + newline;
       body += bp.getBody() + newline + newline;
-      bp.setId("reqId" + i);
       resolver.put(bp.getId(), bp.getReturnType());
-      i++;
     }
-    body += "--DELIMITER--";
+    body += "--" + delimiter + "--";
 
     Map<String, Object> headers = new HashMap<String, Object>();
-    headers.put("Content-Type", "multipart/form-data; boundary=DELIMITER");
+    headers.put("Content-Type", "multipart/form-data; boundary=" + delimiter);
 
     HttpResponseEntity res = httpManager.doPostWithHeaders(
       createEndpointUrl(baseUrl, this.configure.getDefaultDatabase(), "/_api/batch"),
@@ -79,15 +78,15 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
     Boolean fetchText = false;
     res.setText("");
     List<BatchResponseEntity> batchResponseEntityList = new ArrayList<BatchResponseEntity>();
-    BatchResponseEntity batchResponseEntity  = new BatchResponseEntity();
+    BatchResponseEntity batchResponseEntity  = new BatchResponseEntity(null);
     for (String line : data.split(newline)) {
       line.trim();
       if (line.indexOf("Content-Id") != -1) {
         if (currentId != null) {
           batchResponseEntityList.add(batchResponseEntity);
-          batchResponseEntity  = new BatchResponseEntity();
         }
         currentId = line.split(" ")[1].trim();
+        batchResponseEntity  = new BatchResponseEntity(currentId);
         continue;
       }
       if (line.indexOf("Content-Length") != -1) {
@@ -95,10 +94,9 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
         fetchText = true;
         continue;
       }
-      if (line.indexOf("--DELIMITER") != -1 && resolver.get(currentId) != null) {
+      if (line.indexOf("--" + delimiter) != -1 && resolver.get(currentId) != null) {
         fetchText = false;
         try {
-          resolver.get(currentId);
           if (resolver.get(currentId).indexOf("at.orz.arangodb.entity.CursorEntity") != -1) {
             batchResponseEntity.setResultEntity(
               createEntity(
@@ -130,6 +128,9 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
       if (fetchText == true && !line.equals(newline)) {
         res.setText(res.getText() + line);
       }
+    }
+    if (batchResponseEntity.getResultEntity() != null) {
+      batchResponseEntityList.add(batchResponseEntity);
     }
     BatchResponseListEntity batchResponseListEntity = new BatchResponseListEntity();
     batchResponseListEntity.setBatchResponseEntities(batchResponseEntityList);

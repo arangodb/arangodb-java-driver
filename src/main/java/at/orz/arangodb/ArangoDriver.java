@@ -142,9 +142,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		
 	}
 
-  public void startBatchMode() {
+  public void startBatchMode() throws ArangoException {
     if (this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
-      return;
+      throw new ArangoException("BatchMode is already active.");
     }
     this.httpManager = new BatchHttpManager(this.configure);
     this.spreadManager(this.httpManager, false);
@@ -169,7 +169,7 @@ public class ArangoDriver extends BaseArangoDriver {
 
   public BatchResponseListEntity executeBatch() throws ArangoException {
     if (!this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
-      return null;
+      throw new ArangoException("BatchMode is not active.");
     }
     List<BatchPart> callStack =  ((BatchHttpManager) this.httpManager).getCallStack();
     this.httpManager = configure.getHttpManager();
@@ -177,9 +177,9 @@ public class ArangoDriver extends BaseArangoDriver {
     return this.batchDriver.executeBatch(callStack);
   }
 
-  public void cancelBatchMode() {
+  public void cancelBatchMode() throws ArangoException {
     if (!this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
-      return;
+      throw new ArangoException("BatchMode is not active.");
     }
     this.httpManager = configure.getHttpManager();
     this.spreadManager(this.httpManager, true);
