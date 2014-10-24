@@ -30,6 +30,7 @@ public class HttpResponseEntity {
 	String text;
 	InputStream stream;
 	long etag = -1;
+  String requestId;
 	Map<String, String> headers;
 	
 	String contentType;
@@ -57,6 +58,10 @@ public class HttpResponseEntity {
 	public boolean isTextResponse() {
 		return (contentType != null && contentType.startsWith("text/plain"));
 	}
+
+  public boolean isBatchRepsonse() {
+    return (requestId != null);
+  }
 	
 	public int getStatusCode() {
 		return statusCode;
@@ -100,5 +105,12 @@ public class HttpResponseEntity {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
-	
+
+  public String getRequestId() {
+    return requestId;
+  }
+
+  public void setRequestId(String requestId) {
+    this.requestId = requestId;
+  }
 }

@@ -16,9 +16,7 @@
 
 package at.orz.arangodb;
 
-import at.orz.arangodb.entity.AqlFunctionsEntity;
-import at.orz.arangodb.entity.DefaultEntity;
-import at.orz.arangodb.entity.DocumentEntity;
+import at.orz.arangodb.entity.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -45,6 +44,13 @@ public class ArangoDriverBatchTest extends BaseTest {
 
 	@Before
 	public void before() throws ArangoException {
+    for (String col: new String[]{"blub"}) {
+      try {
+        driver.deleteCollection(col);
+      } catch (ArangoException e) {
+        System.out.println(driver.getDefaultDatabase() + e);
+      }
+    }
     logger.debug("----------");
   }
 
@@ -54,45 +60,85 @@ public class ArangoDriverBatchTest extends BaseTest {
 	}
 
 	@Test
-	public void test_BatchMode() throws ArangoException {
+	public void test_StartCancelExecuteBatchMode() throws ArangoException {
 
     driver.startBatchMode();
+    String msg = "";
+    try {
+      driver.startBatchMode();
+    } catch (ArangoException e) {
+      msg = e.getErrorMessage();
+    }
+    assertThat(msg , is("BatchMode is already active."));
+
+    driver.cancelBatchMode();
+    msg = "";
+    try {
+      driver.cancelBatchMode();
+    } catch (ArangoException e) {
+      msg = e.getErrorMessage();
+    }
+    assertThat(msg , is("BatchMode is not active."));
+
+    msg = "";
+    try {
+      driver.executeBatch();
+    } catch (ArangoException e) {
+      msg = e.getErrorMessage();
+    }
+    assertThat(msg , is("BatchMode is not active."));
+
+
+  }
+
+
+
+  @Test
+  public void test_execBatchMode() throws ArangoException {
+
     driver.startBatchMode();
-    DefaultEntity res = driver.createAqlFunction(
+
+    BaseEntity res = driver.createAqlFunction(
       "someNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"
     );
-    assertNull(res);
+
+    assertThat(res.getStatusCode(), is(206));
+    assertThat(res.getRequestId() , is("request1"));
+
     res = driver.createAqlFunction(
       "someNamespace::testC&&&&&&&&&&de", "function (celsius) { return celsius * 2.8 + 32; }"
     );
-    assertNull(res);
-    res = driver.createAqlFunction(
-      "anotherNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
-    assertNull(res);
-    res = driver.createAqlFunction(
-      "anotherNamespace::testCode2", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
-    for (int i = 0; i < 100; i++) {
+
+    assertThat(res.getStatusCode(), is(206));
+    assertThat(res.getRequestId(), is("request2"));
+
+    res = driver.getAqlFunctions(null);
+    assertThat(res.getStatusCode(), is(206));
+    assertThat(res.getRequestId(), is("request3"));
+
+    for (int i = 0; i < 10; i++) {
       TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-      driver.createDocument("blub", value, true, false);
+      res = driver.createDocument("blub", value, true, false);
+
+      assertThat(res.getStatusCode(), is(206));
+      assertThat(res.getRequestId(), is("request" + (4 + i)));
     }
 
-    driver.executeSimpleRangeWithDocument("_users", "an attrib", "a", "b", false, 1, 1, DocumentEntity.class);
+    List<String> r = driver.getDocuments("blub");
 
-    assertNull(res);
-    AqlFunctionsEntity r = driver.getAqlFunctions(null);
-    assertNull(r);
-    r = driver.getAqlFunctions("someNamespace");
-    res = driver.deleteAqlFunction("someNamespace::testCode", false);
-    assertNull(res);
-    res = driver.deleteAqlFunction("anotherNamespace", true);
-    assertNull(res);
-    AqlFunctionsEntity c = driver.getAqlFunctions("someNamespace");
-    assertNull(c);
-    //driver.executeBatch();
-    driver.executeBatch();
+    BatchResponseListEntity result = driver.executeBatch();
+    DefaultEntity created =  result.getResponseFromRequestId("request1");
+    assertThat(created.getStatusCode() , is(200));
+    AqlFunctionsEntity functions =  result.getResponseFromRequestId("request3");
+    assertThat(functions.getStatusCode() , is(200));
+    assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]) , is("someNamespace::testCode"));
+    for (int i = 0; i < 10; i++) {
+      DocumentEntity<TestComplexEntity01>  resultComplex =  result.getResponseFromRequestId("request" + (4+i));
+      assertThat(resultComplex.getStatusCode() , is(200));
+    }
+
   }
 
 }
+
 

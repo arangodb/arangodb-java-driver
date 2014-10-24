@@ -38,6 +38,8 @@ public abstract class BaseEntity implements Serializable {
 	int statusCode;
 	@Exclude(deserialize=false)
 	long etag;
+  @Exclude(deserialize=false)
+  String requestId;
 	
 	public boolean isNotModified() {
 		return statusCode == 304; //HttpStatus.SC_NOT_MODIFIED;
@@ -48,6 +50,10 @@ public abstract class BaseEntity implements Serializable {
 	public boolean isNotFound() {
 		return statusCode == 404;
 	}
+
+  public boolean isBatchResponseEntity() {
+    return statusCode == 206;
+  }
 
 	public boolean isError() {
 		return error;
@@ -96,5 +102,13 @@ public abstract class BaseEntity implements Serializable {
 	public void setStatusCode(int statusCode) {
 		this.statusCode = statusCode;
 	}
-	
+
+
+  public String getRequestId() {
+    return requestId;
+  }
+
+  public void setRequestId(String requestId) {
+    this.requestId = requestId;
+  }
 }

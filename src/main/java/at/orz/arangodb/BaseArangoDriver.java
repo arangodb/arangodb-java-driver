@@ -21,12 +21,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import at.orz.arangodb.entity.BaseEntity;
-import at.orz.arangodb.entity.EntityDeserializers;
-import at.orz.arangodb.entity.EntityFactory;
-import at.orz.arangodb.entity.KeyValueEntity;
-import at.orz.arangodb.entity.ReplicationDumpHeader;
-import at.orz.arangodb.entity.StreamEntity;
+import at.orz.arangodb.entity.*;
 import at.orz.arangodb.entity.marker.MissingInstanceCreater;
 import at.orz.arangodb.http.HttpResponseEntity;
 import at.orz.arangodb.util.DateUtils;
@@ -176,8 +171,15 @@ public abstract class BaseArangoDriver {
 			T entity = createEntityImpl(res, clazz);
 			if (entity == null) {
 				Class<?> c = MissingInstanceCreater.getMissingClass(clazz);
+        System.out.println(c.getSimpleName());
 				entity = ReflectionUtils.newInstance(c);
-			}
+			} else if (res.isBatchRepsonse()) {
+        try {
+          entity = (T) clazz.newInstance();
+        } catch (Exception e) {
+          throw new ArangoException(e);
+        }
+      }
 			setStatusCode(res, entity);
       if (validate) {
 				validate(res, entity);
@@ -211,6 +213,9 @@ public abstract class BaseArangoDriver {
 				entity.setEtag(res.getEtag());
 			}
 			entity.setStatusCode(res.getStatusCode());
+      if (res.getRequestId() != null) {
+        entity.setRequestId(res.getRequestId());
+      }
 		}
 	}
 	
