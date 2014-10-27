@@ -24,12 +24,12 @@ import java.util.Map;
 import at.orz.arangodb.ArangoConfigure;
 import at.orz.arangodb.ArangoException;
 import at.orz.arangodb.CursorResultSet;
+import at.orz.arangodb.InternalCursorDriver;
 import at.orz.arangodb.entity.CursorEntity;
 import at.orz.arangodb.entity.DeletedEntity;
 import at.orz.arangodb.entity.Direction;
 import at.orz.arangodb.entity.DocumentEntity;
 import at.orz.arangodb.entity.EdgeDefinitionEntity;
-import at.orz.arangodb.entity.EdgeDefinitionsEntity;
 import at.orz.arangodb.entity.EdgeEntity;
 import at.orz.arangodb.entity.EntityFactory;
 import at.orz.arangodb.entity.FilterCondition;
@@ -47,10 +47,10 @@ import com.google.gson.JsonObject;
  * @author tamtam180 - kirscheless at gmail.com
  * @since 1.4.0
  */
-public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
+public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements at.orz.arangodb.InternalGraphDriver {
 
 	InternalGraphDriverImpl(ArangoConfigure configure,
-			InternalCursorDriverImpl cursorDriver) {
+			InternalCursorDriver cursorDriver) {
 		super(configure, cursorDriver);
 	}
 
@@ -70,7 +70,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 	 * @return
 	 * @throws ArangoException
 	 */
-	public GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException {
+	@Override
+  public GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException {
 		HttpResponseEntity response = httpManager.doPost(
 				createEndpointUrl(baseUrl, databaseName, "/_api/gharial"),
 				new MapBuilder().put("waitForSync", waitForSync).get(),
@@ -81,13 +82,14 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 		return createEntity(response, GraphEntity.class);
 	}
 	
-	public GraphEntity createGraph(
-	    String databaseName,
-		String graphName,
-		List<EdgeDefinitionEntity> edgeDefinitions,
-		List<String> orphanCollections,
-		Boolean waitForSync
-	) throws ArangoException {
+	@Override
+  public GraphEntity createGraph(
+    String databaseName,
+    String graphName,
+    List<EdgeDefinitionEntity> edgeDefinitions,
+    List<String> orphanCollections,
+    Boolean waitForSync
+  ) throws ArangoException {
 		
 		HttpResponseEntity response = httpManager.doPost(
 				createEndpointUrl(baseUrl, databaseName, "/_api/gharial"),
@@ -102,13 +104,14 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 	}
 	
 
-	public GraphEntity createGraph(
-			String databaseName,
-			String documentKey,
-			String vertices,
-			String edges,
-			Boolean waitForSync
-	) throws ArangoException {
+	@Override
+  public GraphEntity createGraph(
+    String databaseName,
+    String documentKey,
+    String vertices,
+    String edges,
+    Boolean waitForSync
+  ) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doPost(
 				createEndpointUrl(baseUrl, databaseName, "/_api/graph"),
@@ -127,7 +130,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 	 * @return
 	 * @throws ArangoException
 	 */
-	public GraphsEntity getGraphs(String databaseName) throws ArangoException {
+	@Override
+  public GraphsEntity getGraphs(String databaseName) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl,
@@ -146,7 +150,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 	 * @return GraphEntity
 	 * @throws ArangoException
 	 */
-	public GraphEntity getGraph(String databaseName, String graphName) throws ArangoException {
+	@Override
+  public GraphEntity getGraph(String databaseName, String graphName) throws ArangoException {
 	    validateCollectionName(graphName); //??
 	    HttpResponseEntity res = httpManager.doGet(
         createEndpointUrl(
@@ -162,8 +167,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public DeletedEntity deleteGraph(String database, String name,
-			Long ifMatchRevision) throws ArangoException {
+	@Override
+  public DeletedEntity deleteGraph(String database, String name,
+                                   Long ifMatchRevision) throws ArangoException {
 
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doDelete(
@@ -176,8 +182,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> DocumentEntity<T> createVertex(String database,
-			String graphName, Object vertex, Boolean waitForSync)
+	@Override
+  public <T> DocumentEntity<T> createVertex(String database,
+                                            String graphName, Object vertex, Boolean waitForSync)
 			throws ArangoException {
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPost(
@@ -188,9 +195,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 		return createEntity(res, VertexEntity.class, vertex.getClass());
 	}
 
-	public <T> DocumentEntity<T> getVertex(String database, String graphName,
-			String key, Class<?> clazz, Long rev, Long ifNoneMatchRevision,
-			Long ifMatchRevision) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> getVertex(String database, String graphName,
+                                         String key, Class<?> clazz, Long rev, Long ifNoneMatchRevision,
+                                         Long ifMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doGet(
@@ -206,8 +214,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public DeletedEntity deleteVertex(String database, String graphName,
-			String key, Boolean waitForSync, Long rev, Long ifMatchRevision)
+	@Override
+  public DeletedEntity deleteVertex(String database, String graphName,
+                                    String key, Boolean waitForSync, Long rev, Long ifMatchRevision)
 			throws ArangoException {
 
 		validateCollectionName(graphName);
@@ -223,9 +232,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> DocumentEntity<T> replaceVertex(String database,
-			String graphName, String key, Object vertex, Boolean waitForSync,
-			Long rev, Long ifMatchRevision) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> replaceVertex(String database,
+                                             String graphName, String key, Object vertex, Boolean waitForSync,
+                                             Long rev, Long ifMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPut(
@@ -241,9 +251,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> DocumentEntity<T> updateVertex(String database,
-			String graphName, String key, Object vertex, Boolean keepNull,
-			Boolean waitForSync, Long rev, Long ifMatchRevision)
+	@Override
+  public <T> DocumentEntity<T> updateVertex(String database,
+                                            String graphName, String key, Object vertex, Boolean keepNull,
+                                            Boolean waitForSync, Long rev, Long ifMatchRevision)
 			throws ArangoException {
 
 		validateCollectionName(graphName);
@@ -261,11 +272,12 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> CursorEntity<DocumentEntity<T>> getVertices(String database,
-			String graphName, String vertexKey, Class<?> clazz,
-			Integer batchSize, Integer limit, Boolean count,
-			Direction direction, Collection<String> labels,
-			FilterCondition... properties) throws ArangoException {
+	@Override
+  public <T> CursorEntity<DocumentEntity<T>> getVertices(String database,
+                                                         String graphName, String vertexKey, Class<?> clazz,
+                                                         Integer batchSize, Integer limit, Boolean count,
+                                                         Direction direction, Collection<String> labels,
+                                                         FilterCondition... properties) throws ArangoException {
 
 		validateCollectionName(graphName);
 		Map<String, Object> filter = new MapBuilder()
@@ -286,11 +298,12 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> CursorResultSet<DocumentEntity<T>> getVerticesWithResultSet(
-			String database, String graphName, String vertexKey,
-			Class<?> clazz, Integer batchSize, Integer limit, Boolean count,
-			Direction direction, Collection<String> labels,
-			FilterCondition... properties) throws ArangoException {
+	@Override
+  public <T> CursorResultSet<DocumentEntity<T>> getVerticesWithResultSet(
+    String database, String graphName, String vertexKey,
+    Class<?> clazz, Integer batchSize, Integer limit, Boolean count,
+    Direction direction, Collection<String> labels,
+    FilterCondition... properties) throws ArangoException {
 
 		CursorEntity<DocumentEntity<T>> entity = getVertices(database,
 				graphName, vertexKey, clazz, batchSize, limit, count,
@@ -300,9 +313,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 		return rs;
 	}
 
-	public <T> EdgeEntity<T> createEdge(String database, String graphName,
-			String key, String fromHandle, String toHandle, Object value,
-			String label, Boolean waitForSync) throws ArangoException {
+	@Override
+  public <T> EdgeEntity<T> createEdge(String database, String graphName,
+                                      String key, String fromHandle, String toHandle, Object value,
+                                      String label, Boolean waitForSync) throws ArangoException {
 
 		JsonObject obj;
 		if (value == null) {
@@ -333,9 +347,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> EdgeEntity<T> getEdge(String database, String graphName,
-			String key, Class<?> clazz, Long rev, Long ifNoneMatchRevision,
-			Long ifMatchRevision) throws ArangoException {
+	@Override
+  public <T> EdgeEntity<T> getEdge(String database, String graphName,
+                                   String key, Class<?> clazz, Long rev, Long ifNoneMatchRevision,
+                                   Long ifMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doGet(
@@ -351,8 +366,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public DeletedEntity deleteEdge(String database, String graphName,
-			String key, Boolean waitForSync, Long rev, Long ifMatchRevision)
+	@Override
+  public DeletedEntity deleteEdge(String database, String graphName,
+                                  String key, Boolean waitForSync, Long rev, Long ifMatchRevision)
 			throws ArangoException {
 
 		validateCollectionName(graphName);
@@ -368,9 +384,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> EdgeEntity<T> replaceEdge(String database, String graphName,
-			String key, Object value, Boolean waitForSync, Long rev,
-			Long ifMatchRevision) throws ArangoException {
+	@Override
+  public <T> EdgeEntity<T> replaceEdge(String database, String graphName,
+                                       String key, Object value, Boolean waitForSync, Long rev,
+                                       Long ifMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPut(
@@ -387,11 +404,12 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> CursorEntity<EdgeEntity<T>> getEdges(String database,
-			String graphName, String vertexKey, Class<?> clazz,
-			Integer batchSize, Integer limit, Boolean count,
-			Direction direction, Collection<String> labels,
-			FilterCondition... properties) throws ArangoException {
+	@Override
+  public <T> CursorEntity<EdgeEntity<T>> getEdges(String database,
+                                                  String graphName, String vertexKey, Class<?> clazz,
+                                                  Integer batchSize, Integer limit, Boolean count,
+                                                  Direction direction, Collection<String> labels,
+                                                  FilterCondition... properties) throws ArangoException {
 
 		validateCollectionName(graphName);
 
@@ -412,11 +430,12 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl {
 
 	}
 
-	public <T> CursorResultSet<EdgeEntity<T>> getEdgesWithResultSet(
-			String database, String graphName, String vertexKey,
-			Class<?> clazz, Integer batchSize, Integer limit, Boolean count,
-			Direction direction, Collection<String> labels,
-			FilterCondition... properties) throws ArangoException {
+	@Override
+  public <T> CursorResultSet<EdgeEntity<T>> getEdgesWithResultSet(
+    String database, String graphName, String vertexKey,
+    Class<?> clazz, Integer batchSize, Integer limit, Boolean count,
+    Direction direction, Collection<String> labels,
+    FilterCondition... properties) throws ArangoException {
 
 		CursorEntity<EdgeEntity<T>> entity = getEdges(database, graphName,
 				vertexKey, clazz, batchSize, limit, count, direction, labels,

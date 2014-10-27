@@ -13,17 +13,17 @@ public class BatchPart {
   private String url;
   private String body;
   private Map<String, Object> headers;
-  private String returnType;
+  private InvocationObject invocationObject;
   private String id;
 
   public BatchPart(
-    String method, String url, String body, Map<String, Object> headers, String returnType, int id
+    String method, String url, String body, Map<String, Object> headers, InvocationObject invocationObject, int id
   ) {
     this.method = method;
     this.url = url;
     this.body = body;
     this.headers = headers;
-    this.returnType = returnType;
+    this.invocationObject = invocationObject;
     this.id = "request" + id;
   }
 
@@ -41,12 +41,12 @@ public class BatchPart {
       '}';
   }
 
-  public String getReturnType() {
-    return returnType;
+  public InvocationObject getInvocationObject() {
+    return this.invocationObject;
   }
 
-  public void setReturnType(String returnType) {
-    this.returnType = returnType;
+  public void setInvocationObject(InvocationObject invocationObject) {
+    this.invocationObject = invocationObject;
   }
 
   public void setBody(String body) {

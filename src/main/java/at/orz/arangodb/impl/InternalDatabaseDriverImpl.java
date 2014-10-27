@@ -31,20 +31,22 @@ import at.orz.arangodb.http.HttpResponseEntity;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl {
+public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalDatabaseDriver {
 
 	InternalDatabaseDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 
-	public DatabaseEntity getCurrentDatabase() throws ArangoException {
+	@Override
+  public DatabaseEntity getCurrentDatabase() throws ArangoException {
 		
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, null, "/_api/database/current"));
 		return createEntity(res, DatabaseEntity.class);
 		
 	}
 	
-	public StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password) throws ArangoException {
+	@Override
+  public StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password) throws ArangoException {
     HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, null, "/_api/database", currentUserAccessableOnly ? "user" : null),
 				null, null, username, password
@@ -53,7 +55,8 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl {
 
 	}
 	
-	public BooleanResultEntity createDatabase(String database, UserEntity...users) throws ArangoException {
+	@Override
+  public BooleanResultEntity createDatabase(String database, UserEntity... users) throws ArangoException {
 
 		validateDatabaseName(database, false);
 		
@@ -73,7 +76,8 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 
-	public BooleanResultEntity deleteDatabase(String database) throws ArangoException {
+	@Override
+  public BooleanResultEntity deleteDatabase(String database) throws ArangoException {
 
 		validateDatabaseName(database, false);
 		

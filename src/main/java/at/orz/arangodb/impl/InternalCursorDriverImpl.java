@@ -32,13 +32,14 @@ import at.orz.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalCursorDriverImpl extends BaseArangoDriverImpl {
+public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalCursorDriver {
 
 	InternalCursorDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 	
-	public CursorEntity<?> validateQuery(String database, String query) throws ArangoException {
+	@Override
+  public CursorEntity<?> validateQuery(String database, String query) throws ArangoException {
 		
 		HttpResponseEntity res = httpManager.doPost(
 				createEndpointUrl(baseUrl, database, "/_api/query"), 
@@ -57,11 +58,12 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl {
 	// ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
 	// ※ここでは単純にコールするだけ
 	
-	public <T> CursorEntity<T> executeQuery(
-			String database,
-			String query, Map<String, Object> bindVars,
-			Class<T> clazz,
-			Boolean calcCount, Integer batchSize) throws ArangoException {
+	@Override
+  public <T> CursorEntity<T> executeQuery(
+    String database,
+    String query, Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount, Integer batchSize) throws ArangoException {
 		
 		HttpResponseEntity res = httpManager.doPost(
 				createEndpointUrl(baseUrl, database, "/_api/cursor"), 
@@ -85,7 +87,8 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?> ...clazz) throws ArangoException {
+	@Override
+  public <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException {
 		
 		HttpResponseEntity res = httpManager.doPut(
 				createEndpointUrl(baseUrl, database, "/_api/cursor", cursorId), 
@@ -104,7 +107,8 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public DefaultEntity finishQuery(String database, long cursorId) throws ArangoException {
+	@Override
+  public DefaultEntity finishQuery(String database, long cursorId) throws ArangoException {
 		HttpResponseEntity res = httpManager.doDelete(
 				createEndpointUrl(baseUrl, database, "/_api/cursor/", cursorId), 
 				null
@@ -123,11 +127,12 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl {
 		}
 	}
 	
-	public <T> CursorResultSet<T> executeQueryWithResultSet(
-			String database,
-			String query, Map<String, Object> bindVars,
-			Class<T> clazz,
-			Boolean calcCount, Integer batchSize) throws ArangoException {
+	@Override
+  public <T> CursorResultSet<T> executeQueryWithResultSet(
+    String database,
+    String query, Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount, Integer batchSize) throws ArangoException {
 		
 		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize);
 		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);

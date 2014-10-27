@@ -17,29 +17,13 @@ public class BatchHttpManager extends HttpManager {
 
   private List<BatchPart> callStack = new ArrayList<BatchPart>();
 
+  private InvocationObject currentObject;
+
   public BatchHttpManager(ArangoConfigure configure) {
     super(configure);
   }
 
   public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
-    String driver = "at.orz.arangodb.ArangoDriver";
-    String returnType = null;
-    Method[] m = null;
-    m = ArangoDriver.class.getDeclaredMethods();
-    for (int i = 0; i < 10 ; i++) {
-      String stackElement = Thread.currentThread().getStackTrace()[i].toString();
-      if (stackElement.indexOf(driver) == 0) {
-        String methodName = stackElement.replaceFirst(driver, "");
-        methodName = methodName.substring(1, methodName.indexOf("("));
-        for (Method x : m) {
-          if (x.getName().equals(methodName)) {
-            returnType = x.getGenericReturnType().getTypeName();
-          }
-        }
-        break;
-      }
-    }
-    returnType = returnType.split("<")[0];
     int id = callStack.size() + 1;
     callStack.add(
       new BatchPart(
@@ -47,10 +31,11 @@ public class BatchHttpManager extends HttpManager {
         buildUrl(requestEntity),
         requestEntity.bodyText,
         requestEntity.headers,
-        returnType,
+        this.getCurrentObject(),
         id
       )
     );
+    this.setCurrentObject(null);
     HttpResponseEntity responseEntity = new HttpResponseEntity();
 
     // http status
@@ -64,4 +49,12 @@ public class BatchHttpManager extends HttpManager {
     return callStack;
   }
 
+
+  public InvocationObject getCurrentObject() {
+    return currentObject;
+  }
+
+  public void setCurrentObject(InvocationObject currentObject) {
+    this.currentObject = currentObject;
+  }
 }

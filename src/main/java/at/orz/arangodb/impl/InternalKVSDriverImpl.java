@@ -31,16 +31,17 @@ import at.orz.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalKVSDriverImpl extends BaseArangoDriverImpl {
+public class InternalKVSDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalKVSDriver {
 
 	InternalKVSDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 
-	public KeyValueEntity createKeyValue(
-			String database,
-			String collectionName, String key, Object value, 
-			Map<String, Object> attributes, Date expiredDate) throws ArangoException {
+	@Override
+  public KeyValueEntity createKeyValue(
+    String database,
+    String collectionName, String key, Object value,
+    Map<String, Object> attributes, Date expiredDate) throws ArangoException {
 		
 		// TODO Sanitize Key
 		
@@ -69,12 +70,13 @@ public class InternalKVSDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public KeyValueEntity updateKeyValue(
-			String database,
-			String collectionName, String key, Object value, 
-			Map<String, Object> attributes, Date expiredDate,
-			boolean create
-			) throws ArangoException {
+	@Override
+  public KeyValueEntity updateKeyValue(
+    String database,
+    String collectionName, String key, Object value,
+    Map<String, Object> attributes, Date expiredDate,
+    boolean create
+  ) throws ArangoException {
 
 		// TODO Sanitize Key
 		

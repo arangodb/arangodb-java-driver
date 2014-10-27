@@ -17,6 +17,7 @@
 package at.orz.arangodb.entity;
 
 import at.orz.arangodb.ArangoException;
+import at.orz.arangodb.http.HttpManager;
 
 import java.util.List;
 import java.util.Map;
@@ -34,27 +35,17 @@ public class BatchResponseListEntity extends BaseEntity {
   }
 
 
-  @Override
-  public String toString() {
-    String rs =  "BatchResponseListEntity: \n\r";
-    for (BatchResponseEntity b : batchResponseEntities) {
-      rs += b.toString();
-      rs += "\n\r";
-    }
-    return rs;
-  }
-
   public void setBatchResponseEntities(List<BatchResponseEntity> batchResponseEntities) {
     this.batchResponseEntities = batchResponseEntities;
   }
 
-  public <T extends BaseEntity> T getResponseFromRequestId(String requestId) throws ArangoException {
-    for (BatchResponseEntity br : getBatchResponseEntities()) {
-      if (br.getId().equals(requestId)) {
-        return  br.getResultEntity();
+  public BatchResponseEntity getResponseFromRequestId(String requestId) throws ArangoException {
+    for (BatchResponseEntity bpe : this.batchResponseEntities) {
+      if (bpe.getRequestId().equals(requestId)) {
+        return bpe;
       }
     }
-    throw new ArangoException("RequestId not found in response.");
+    throw new ArangoException("RequestId not found in batch.");
 
   }
 

@@ -29,13 +29,14 @@ import at.orz.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  * @see http://www.arangodb.org/manuals/current/HttpImport.html
  */
-public class InternalImportDriverImpl extends BaseArangoDriverImpl {
+public class InternalImportDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalImportDriver {
 
 	InternalImportDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 	
-	public ImportResultEntity importDocuments(String database, String collection, Boolean createCollection, Collection<?> values) throws ArangoException {
+	@Override
+  public ImportResultEntity importDocuments(String database, String collection, Boolean createCollection, Collection<?> values) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doPost(
 				createEndpointUrl(baseUrl, database, "/_api/import"), 
@@ -56,7 +57,8 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl {
 //	}
 	
 	
-	public ImportResultEntity importDocumentsByHeaderValues(String database, String collection, Boolean createCollection, Collection<? extends Collection<?>> headerValues) throws ArangoException {
+	@Override
+  public ImportResultEntity importDocumentsByHeaderValues(String database, String collection, Boolean createCollection, Collection<? extends Collection<?>> headerValues) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doPost(
 				createEndpointUrl(baseUrl, database,  "/_api/import"), 

@@ -76,6 +76,8 @@ public class HttpManager {
 
 	private ArangoConfigure configure;
 
+  private HttpResponseEntity preDefinedResponse;
+
 	public HttpManager(ArangoConfigure configure) {
 		this.configure = configure;
 	}
@@ -231,7 +233,7 @@ public class HttpManager {
 	 */
 	public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
 
-		String url = buildUrl(requestEntity);
+    String url = buildUrl(requestEntity);
 
 		if (logger.isDebugEnabled()) {
 			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
@@ -301,13 +303,16 @@ public class HttpManager {
 			CURLLogger.log(url, requestEntity, userAgent, credentials);
 		}
     HttpResponse response = null;
-		try {
+    if (preDefinedResponse != null) {
+      return preDefinedResponse;
+    }
+    try {
       response = client.execute(request);
-			if (response == null) {
-				return null;
-			}
+      if (response == null) {
+        return null;
+      }
 
-			HttpResponseEntity responseEntity = new HttpResponseEntity();
+      HttpResponseEntity responseEntity = new HttpResponseEntity();
 
 			// http status
 			StatusLine status = response.getStatusLine();
@@ -420,4 +425,14 @@ public class HttpManager {
 		return client;
 	}
 
+  public InvocationObject getCurrentObject() {
+    return null;
+  }
+
+  public void setCurrentObject(InvocationObject currentObject) {
+  }
+
+  public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {
+    this.preDefinedResponse = preDefinedResponse;
+  }
 }

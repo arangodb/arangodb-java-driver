@@ -16,7 +16,9 @@
 
 package at.orz.arangodb;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +67,7 @@ import at.orz.arangodb.entity.*;
 import at.orz.arangodb.http.BatchHttpManager;
 import at.orz.arangodb.http.BatchPart;
 import at.orz.arangodb.http.HttpManager;
+import at.orz.arangodb.http.InvocationHandlerImpl;
 import at.orz.arangodb.impl.*;
 import at.orz.arangodb.util.DumpHandler;
 import at.orz.arangodb.util.ResultSetUtils;
@@ -87,22 +90,22 @@ public class ArangoDriver extends BaseArangoDriver {
 	private HttpManager httpManager;
 	private String baseUrl;
 	
-	private InternalCursorDriverImpl cursorDriver;
+	private InternalCursorDriver cursorDriver;
   private InternalBatchDriverImpl batchDriver;
-	private InternalCollectionDriverImpl collectionDriver;
-	private InternalDocumentDriverImpl documentDriver;
+	private InternalCollectionDriver collectionDriver;
+	private InternalDocumentDriver documentDriver;
 	//private InternalKVSDriverImpl kvsDriver;
-	private InternalIndexDriverImpl indexDriver;
+	private InternalIndexDriver indexDriver;
 	//private InternalEdgeDriverImpl edgeDriver;
-	private InternalAdminDriverImpl adminDriver;
-  private InternalAqlFunctionsDriverImpl aqlFunctionsDriver;
-	private InternalSimpleDriverImpl simpleDriver;
-	private InternalUsersDriverImpl usersDriver;
-	private InternalImportDriverImpl importDriver;
-	private InternalDatabaseDriverImpl databaseDriver;
-	private InternalEndpointDriverImpl endpointDriver;
-	private InternalReplicationDriverImpl replicationDriver;
-	private InternalGraphDriverImpl graphDriver;
+	private InternalAdminDriver adminDriver;
+  private InternalAqlFunctionsDriver aqlFunctionsDriver;
+	private InternalSimpleDriver simpleDriver;
+	private InternalUsersDriver usersDriver;
+	private InternalImportDriver importDriver;
+	private InternalDatabaseDriver databaseDriver;
+	private InternalEndpointDriver endpointDriver;
+	private InternalReplicationDriver replicationDriver;
+	private InternalGraphDriver graphDriver;
 	
 	private String database;
 	
@@ -147,34 +150,102 @@ public class ArangoDriver extends BaseArangoDriver {
       throw new ArangoException("BatchMode is already active.");
     }
     this.httpManager = new BatchHttpManager(this.configure);
-    this.spreadManager(this.httpManager, false);
+    this.activateProxys();
   }
 
-  private void spreadManager(HttpManager manager, boolean resetBaseurl) {
-    this.cursorDriver.setBatchMode(manager, resetBaseurl);
-    this.batchDriver.setBatchMode(manager, resetBaseurl);
-    this.collectionDriver.setBatchMode(manager, resetBaseurl);
-    this.documentDriver.setBatchMode(manager, resetBaseurl);
-    this.indexDriver.setBatchMode(manager, resetBaseurl);
-    this.adminDriver.setBatchMode(manager, resetBaseurl);
-    this.aqlFunctionsDriver.setBatchMode(manager, resetBaseurl);
-    this.simpleDriver.setBatchMode(manager, resetBaseurl);
-    this.usersDriver.setBatchMode(manager, resetBaseurl);
-    this.importDriver.setBatchMode(manager, resetBaseurl);
-    this.databaseDriver.setBatchMode(manager, resetBaseurl);
-    this.endpointDriver.setBatchMode(manager, resetBaseurl);
-    this.replicationDriver.setBatchMode(manager, resetBaseurl);
-    this.graphDriver.setBatchMode(manager, resetBaseurl);
+  private void activateProxys() {
+    this.cursorDriver.setBatchMode(this.httpManager, false);
+    this.cursorDriver = (InternalCursorDriver) Proxy.newProxyInstance(InternalCursorDriver.class.getClassLoader(),
+      new Class<?>[]{InternalCursorDriver.class},
+      new InvocationHandlerImpl(this.cursorDriver));
+
+    this.collectionDriver.setBatchMode(this.httpManager, false);
+    this.collectionDriver = (InternalCollectionDriver) Proxy.newProxyInstance(InternalCollectionDriver.class.getClassLoader(),
+      new Class<?>[]{InternalCollectionDriver.class},
+      new InvocationHandlerImpl(this.collectionDriver));
+
+    this.documentDriver.setBatchMode(this.httpManager, false);
+    this.documentDriver = (InternalDocumentDriver) Proxy.newProxyInstance(InternalDocumentDriver.class.getClassLoader(),
+      new Class<?>[]{InternalDocumentDriver.class},
+      new InvocationHandlerImpl(this.documentDriver));
+
+    this.indexDriver.setBatchMode(this.httpManager, false);
+    this.indexDriver = (InternalIndexDriver) Proxy.newProxyInstance(InternalIndexDriver.class.getClassLoader(),
+      new Class<?>[]{InternalIndexDriver.class},
+      new InvocationHandlerImpl(this.indexDriver));
+
+    this.adminDriver.setBatchMode(this.httpManager, false);
+    this.adminDriver = (InternalAdminDriver) Proxy.newProxyInstance(InternalAdminDriver.class.getClassLoader(),
+      new Class<?>[]{InternalAdminDriver.class},
+      new InvocationHandlerImpl(this.adminDriver));
+
+    this.aqlFunctionsDriver.setBatchMode(this.httpManager, false);
+    this.aqlFunctionsDriver = (InternalAqlFunctionsDriver) Proxy.newProxyInstance(InternalAqlFunctionsDriver.class.getClassLoader(),
+      new Class<?>[]{InternalAqlFunctionsDriver.class},
+      new InvocationHandlerImpl(this.aqlFunctionsDriver));
+
+    this.simpleDriver.setBatchMode(this.httpManager, false);
+    this.simpleDriver = (InternalSimpleDriver) Proxy.newProxyInstance(InternalSimpleDriver.class.getClassLoader(),
+      new Class<?>[]{InternalSimpleDriver.class},
+      new InvocationHandlerImpl(this.simpleDriver));
+
+    this.usersDriver.setBatchMode(this.httpManager, false);
+    this.usersDriver = (InternalUsersDriver) Proxy.newProxyInstance(InternalUsersDriver.class.getClassLoader(),
+      new Class<?>[]{InternalUsersDriver.class},
+      new InvocationHandlerImpl(this.usersDriver));
+
+    this.importDriver.setBatchMode(this.httpManager, false);
+    this.importDriver = (InternalImportDriver) Proxy.newProxyInstance(InternalImportDriver.class.getClassLoader(),
+      new Class<?>[]{InternalImportDriver.class},
+      new InvocationHandlerImpl(this.importDriver));
+
+    this.databaseDriver.setBatchMode(this.httpManager, false);
+    this.databaseDriver = (InternalDatabaseDriver) Proxy.newProxyInstance(InternalDatabaseDriver.class.getClassLoader(),
+      new Class<?>[]{InternalDatabaseDriver.class},
+      new InvocationHandlerImpl(this.databaseDriver));
+
+    this.endpointDriver.setBatchMode(this.httpManager, false);
+    this.endpointDriver = (InternalEndpointDriver) Proxy.newProxyInstance(InternalEndpointDriver.class.getClassLoader(),
+      new Class<?>[]{InternalEndpointDriver.class},
+      new InvocationHandlerImpl(this.endpointDriver));
+
+    this.replicationDriver.setBatchMode(this.httpManager, false);
+    this.replicationDriver = (InternalReplicationDriver) Proxy.newProxyInstance(InternalReplicationDriver.class.getClassLoader(),
+      new Class<?>[]{InternalReplicationDriver.class},
+      new InvocationHandlerImpl(this.replicationDriver));
+
+    this.graphDriver.setBatchMode(this.httpManager, false);
+    this.graphDriver = (InternalGraphDriver) Proxy.newProxyInstance(InternalGraphDriver.class.getClassLoader(),
+      new Class<?>[]{InternalGraphDriver.class},
+      new InvocationHandlerImpl(this.graphDriver));
+
   }
 
-  public BatchResponseListEntity executeBatch() throws ArangoException {
+  public DefaultEntity executeBatch() throws ArangoException {
     if (!this.httpManager.getClass().getSimpleName().equals("BatchHttpManager")) {
       throw new ArangoException("BatchMode is not active.");
     }
     List<BatchPart> callStack =  ((BatchHttpManager) this.httpManager).getCallStack();
-    this.httpManager = configure.getHttpManager();
-    this.spreadManager(this.httpManager, true);
-    return this.batchDriver.executeBatch(callStack);
+    this.cancelBatchMode();
+    DefaultEntity result =  this.batchDriver.executeBatch(callStack);
+    return result;
+  }
+
+  public <T> T getBatchResponseByRequestId(String requestId) throws ArangoException {
+    BatchResponseEntity batchResponseEntity =
+      this.batchDriver.getBatchResponseListEntity().getResponseFromRequestId(requestId);
+    try {
+      batchResponseEntity.getInvocationObject().getArangoDriver().setHttpManager(this.httpManager);
+      batchResponseEntity.getInvocationObject().getArangoDriver().getHttpManager().setPreDefinedResponse(
+        batchResponseEntity.getHttpResponseEntity()
+      );
+      return (T) batchResponseEntity.getInvocationObject().getMethod().invoke(
+        batchResponseEntity.getInvocationObject().getArangoDriver(),
+        batchResponseEntity.getInvocationObject().getArgs()
+      );
+    } catch (Exception e) {
+      throw new ArangoException(e);
+    }
   }
 
   public void cancelBatchMode() throws ArangoException {
@@ -182,7 +253,24 @@ public class ArangoDriver extends BaseArangoDriver {
       throw new ArangoException("BatchMode is not active.");
     }
     this.httpManager = configure.getHttpManager();
-    this.spreadManager(this.httpManager, true);
+    this.cursorDriver = ImplFactory.createCursorDriver(configure);
+    this.batchDriver = ImplFactory.createBatchDriver(configure);
+    this.collectionDriver = ImplFactory.createCollectionDriver(configure);
+    this.documentDriver = ImplFactory.createDocumentDriver(configure);
+    //this.kvsDriver = ImplFactory.createKVSDriver(configure);
+    this.indexDriver = ImplFactory.createIndexDriver(configure);
+    //this.edgeDriver = ImplFactory.createEdgeDriver(configure);
+    this.adminDriver = ImplFactory.createAdminDriver(configure);
+    this.aqlFunctionsDriver = ImplFactory.createAqlFunctionsDriver(configure);
+    this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver);
+    this.usersDriver = ImplFactory.createUsersDriver(configure);
+    this.importDriver = ImplFactory.createImportDriver(configure);
+    this.databaseDriver = ImplFactory.createDatabaseDriver(configure);
+
+    this.endpointDriver = ImplFactory.createEndpointDriver(configure);
+    this.replicationDriver = ImplFactory.createReplicationDriver(configure);
+
+    this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver);
   }
 	
 	public String getDefaultDatabase() {

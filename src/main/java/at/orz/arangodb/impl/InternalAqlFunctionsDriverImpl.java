@@ -35,14 +35,15 @@ import java.util.Map;
  * @author Florian Bartels - f.bartels@triagens.de
  *
  */
-public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl {
+public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalAqlFunctionsDriver {
 
 
 	InternalAqlFunctionsDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 
-	public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
+	@Override
+  public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
 		HttpResponseEntity res = httpManager.doPost(
       createEndpointUrl(baseUrl, configure.getDefaultDatabase(), "/_api/aqlfunction"),
       null,
@@ -54,7 +55,8 @@ public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl {
 		return createEntity(res, DefaultEntity.class, null, false);
 	}
 	
-	public AqlFunctionsEntity  getAqlFunctions(String namespace) throws ArangoException {
+	@Override
+  public AqlFunctionsEntity  getAqlFunctions(String namespace) throws ArangoException {
 
     String appendix = "";
     if (namespace != null) {
@@ -67,6 +69,7 @@ public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 
+  @Override
   public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
 
     HttpResponseEntity res = httpManager.doDelete(

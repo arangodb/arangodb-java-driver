@@ -17,6 +17,8 @@
 package at.orz.arangodb.impl;
 
 import at.orz.arangodb.ArangoConfigure;
+import at.orz.arangodb.InternalCursorDriver;
+import at.orz.arangodb.InternalKVSDriver;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -32,10 +34,10 @@ public class ImplFactory {
 	public static InternalDocumentDriverImpl createDocumentDriver(ArangoConfigure configure) {
 		return new InternalDocumentDriverImpl(configure);
 	}
-	public static InternalKVSDriverImpl createKVSDriver(ArangoConfigure configure) {
+	public static InternalKVSDriver createKVSDriver(ArangoConfigure configure) {
 		return new InternalKVSDriverImpl(configure);
 	}
-	public static InternalSimpleDriverImpl createSimpleDriver(ArangoConfigure configure, InternalCursorDriverImpl cursorDriver) {
+	public static InternalSimpleDriverImpl createSimpleDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
 		return new InternalSimpleDriverImpl(configure, cursorDriver);
 	}
 	public static InternalIndexDriverImpl createIndexDriver(ArangoConfigure configure) {
@@ -65,7 +67,7 @@ public class ImplFactory {
 	public static InternalReplicationDriverImpl createReplicationDriver(ArangoConfigure configure) {
 		return new InternalReplicationDriverImpl(configure);
 	}
-	public static InternalGraphDriverImpl createGraphDriver(ArangoConfigure configure, InternalCursorDriverImpl cursorDriver) {
+	public static InternalGraphDriverImpl createGraphDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
 		return new InternalGraphDriverImpl(configure, cursorDriver);
 	}
 }

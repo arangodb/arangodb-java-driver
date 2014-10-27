@@ -24,7 +24,7 @@ import at.orz.arangodb.http.HttpManager;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-class BaseArangoDriverImpl extends BaseArangoDriver {
+class BaseArangoDriverImpl extends BaseArangoDriver implements BaseDriverInterface {
 	
 	protected ArangoConfigure configure;
 	protected HttpManager httpManager;
@@ -44,5 +44,13 @@ class BaseArangoDriverImpl extends BaseArangoDriver {
 		this.httpManager = configure.getHttpManager();
 		this.baseUrl = configure.getBaseUrl();
 	}
-	
+
+  public HttpManager getHttpManager() {
+    return this.httpManager;
+  }
+
+  public void setHttpManager(HttpManager httpManager) {
+    this.httpManager = httpManager;
+  }
+
 }

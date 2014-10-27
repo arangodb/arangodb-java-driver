@@ -17,6 +17,7 @@
 package at.orz.arangodb.impl;
 
 import at.orz.arangodb.ArangoConfigure;
+import at.orz.arangodb.InternalCursorDriver;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -24,9 +25,9 @@ import at.orz.arangodb.ArangoConfigure;
  */
 class BaseArangoDriverWithCursorImpl extends BaseArangoDriverImpl {
 	
-	protected InternalCursorDriverImpl cursorDriver;
+	protected InternalCursorDriver cursorDriver;
 	
-	BaseArangoDriverWithCursorImpl(ArangoConfigure configure, InternalCursorDriverImpl cursorDriver) {
+	BaseArangoDriverWithCursorImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
 		super(configure);
 		this.cursorDriver = cursorDriver;
 	}

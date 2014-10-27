@@ -34,13 +34,14 @@ import at.orz.arangodb.util.StringUtils;
  * @author tamtam180 - kirscheless at gmail.com
  * @since 1.4
  */
-public class InternalEndpointDriverImpl extends BaseArangoDriverImpl {
+public class InternalEndpointDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalEndpointDriver {
 
 	InternalEndpointDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 	
-	public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {
+	@Override
+  public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {
 		
 		// TODO: validate endpoint
 		
@@ -65,7 +66,8 @@ public class InternalEndpointDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public List<Endpoint> getEndpoints() throws ArangoException {
+	@Override
+  public List<Endpoint> getEndpoints() throws ArangoException {
 
 		Type type = new TypeToken<List<Endpoint>>(){}.getType();
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, null, "/_api/endpoint"));
@@ -75,7 +77,8 @@ public class InternalEndpointDriverImpl extends BaseArangoDriverImpl {
 
 	}
 
-	public BooleanResultEntity deleteEndpoint(String endpoint) throws ArangoException {
+	@Override
+  public BooleanResultEntity deleteEndpoint(String endpoint) throws ArangoException {
 		
 		// TODO: validate endpoint
 		

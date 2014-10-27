@@ -37,7 +37,7 @@ import at.orz.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
+public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalDocumentDriver {
 
 	InternalDocumentDriverImpl(ArangoConfigure configure) {
 		super(configure);
@@ -73,15 +73,18 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 
-	public <T> DocumentEntity<T> createDocument(String database, String collectionName, String documentKey, Object value, Boolean createCollection, Boolean waitForSync) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> createDocument(String database, String collectionName, String documentKey, Object value, Boolean createCollection, Boolean waitForSync) throws ArangoException {
 		return _createDocument(database, collectionName, documentKey, value, createCollection, waitForSync, false);
 	}
 
-	public <T> DocumentEntity<T> createDocumentRaw(String database, String collectionName, String documentKey, String rawJsonString, Boolean createCollection, Boolean waitForSync) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> createDocumentRaw(String database, String collectionName, String documentKey, String rawJsonString, Boolean createCollection, Boolean waitForSync) throws ArangoException {
 		return _createDocument(database, collectionName, documentKey, rawJsonString, createCollection, waitForSync, true);
 	}
 
-	public <T> DocumentEntity<T> replaceDocument(String database, String documentHandle, Object value, Long rev, Policy policy, Boolean waitForSync) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> replaceDocument(String database, String documentHandle, Object value, Long rev, Policy policy, Boolean waitForSync) throws ArangoException {
 		
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doPut(
@@ -97,7 +100,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 
-	public <T> DocumentEntity<T> updateDocument(String database, String documentHandle, Object value, Long rev, Policy policy, Boolean waitForSync, Boolean keepNull) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> updateDocument(String database, String documentHandle, Object value, Long rev, Policy policy, Boolean waitForSync, Boolean keepNull) throws ArangoException {
 		
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doPatch(
@@ -116,7 +120,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
 	}
 
 	private static final String API_DOCUMENT_PREFIX = "/_api/document/";
-	public List<String> getDocuments(String database, String collectionName, boolean handleConvert) throws ArangoException {
+	@Override
+  public List<String> getDocuments(String database, String collectionName, boolean handleConvert) throws ArangoException {
 		
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, database, "/_api/document"), 
@@ -138,7 +143,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
 		return documents;
 	}
 	
-	public long checkDocument(String database, String documentHandle) throws ArangoException {
+	@Override
+  public long checkDocument(String database, String documentHandle) throws ArangoException {
 		
 		// TODO: rev, policy
 		
@@ -153,7 +159,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 
-	public <T> DocumentEntity<T> getDocument(String database, String documentHandle, Class<?> clazz, Long ifNoneMatchRevision, Long ifMatchRevision) throws ArangoException {
+	@Override
+  public <T> DocumentEntity<T> getDocument(String database, String documentHandle, Class<?> clazz, Long ifNoneMatchRevision, Long ifMatchRevision) throws ArangoException {
 		
 		// TODO IfMatch, If-None-Match http-header
 		
@@ -173,7 +180,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl {
 
 	}
 
-	public DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev, Policy policy) throws ArangoException {
+	@Override
+  public DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev, Policy policy) throws ArangoException {
 		
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doDelete(

@@ -16,6 +16,9 @@
 
 package at.orz.arangodb.entity;
 
+import at.orz.arangodb.http.HttpResponseEntity;
+import at.orz.arangodb.http.InvocationObject;
+
 import java.io.Serializable;
 
 /**
@@ -24,36 +27,32 @@ import java.io.Serializable;
  */
 public class BatchResponseEntity extends BaseEntity {
 
-  BaseEntity resultEntity;
+  InvocationObject invocationObject;
 
-  public String id;
+  public HttpResponseEntity httpResponseEntity;
 
-  public BatchResponseEntity(String id) {
-    this.id = id;
+  public BatchResponseEntity(InvocationObject invocationObject) {
+    this.invocationObject = invocationObject;
+    this.httpResponseEntity = new HttpResponseEntity();
   }
 
-  public <T extends BaseEntity> T getResultEntity() {
+  public InvocationObject getInvocationObject() {
 
-    return (T) resultEntity;
+    return  invocationObject;
   }
 
-  public void setResultEntity(BaseEntity entity) {
-    this.resultEntity = entity;
+  public void setInvocationObject(InvocationObject invocationObject) {
+    this.invocationObject = invocationObject;
   }
 
 
-  public String getId() {
-    return id;
+  public HttpResponseEntity getHttpResponseEntity() {
+    return httpResponseEntity;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setHttpResponseEntity(HttpResponseEntity httpResponseEntity) {
+    this.httpResponseEntity = httpResponseEntity;
   }
 
-  @Override
-  public String toString() {
-    return "BatchResponseEntity{" +
-      "resultEntity=" + (resultEntity == null ? null  : resultEntity.getClass().getName()) +
-      '}';
-  }
+
 }

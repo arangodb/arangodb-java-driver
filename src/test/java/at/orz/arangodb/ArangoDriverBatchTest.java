@@ -126,15 +126,15 @@ public class ArangoDriverBatchTest extends BaseTest {
 
     List<String> r = driver.getDocuments("blub");
 
-    BatchResponseListEntity result = driver.executeBatch();
-    DefaultEntity created =  result.getResponseFromRequestId("request1");
+    DefaultEntity result = driver.executeBatch();
+    DefaultEntity created = driver.getBatchResponseByRequestId("request1");
     assertThat(created.getStatusCode() , is(200));
-    AqlFunctionsEntity functions =  result.getResponseFromRequestId("request3");
+    AqlFunctionsEntity functions =  driver.getBatchResponseByRequestId("request3");
     assertThat(functions.getStatusCode() , is(200));
     assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]) , is("someNamespace::testCode"));
     for (int i = 0; i < 10; i++) {
-      DocumentEntity<TestComplexEntity01>  resultComplex =  result.getResponseFromRequestId("request" + (4+i));
-      assertThat(resultComplex.getStatusCode() , is(200));
+      DocumentEntity<TestComplexEntity01>  resultComplex =  driver.getBatchResponseByRequestId("request" + (4+1));
+      assertThat(resultComplex.getStatusCode() , is(202));
     }
 
   }

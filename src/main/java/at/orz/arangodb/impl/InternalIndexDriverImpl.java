@@ -31,13 +31,14 @@ import at.orz.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl {
+public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl implements at.orz.arangodb.InternalIndexDriver {
 	
 	InternalIndexDriverImpl(ArangoConfigure configure) {
 		super(configure, null);
 	}
 
-	public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException {
+	@Override
+  public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException {
 		
 		if (type == IndexType.PRIMARY) {
 			throw new IllegalArgumentException("cannot create primary index.");
@@ -68,7 +69,8 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl {
 		
 	}
 
-	public IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException {
+	@Override
+  public IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException {
 		
 		validateCollectionName(collectionName);
 		HttpResponseEntity res = httpManager.doPost(
@@ -91,7 +93,8 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl {
 		
 	}
 	
-	public IndexEntity createFulltextIndex(String database, String collectionName, Integer minLength, String... fields) throws ArangoException {
+	@Override
+  public IndexEntity createFulltextIndex(String database, String collectionName, Integer minLength, String... fields) throws ArangoException {
 
 		validateCollectionName(collectionName);
 		HttpResponseEntity res = httpManager.doPost(
@@ -113,7 +116,8 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl {
 		
 	}
 	
-	public IndexEntity deleteIndex(String database, String indexHandle) throws ArangoException {
+	@Override
+  public IndexEntity deleteIndex(String database, String indexHandle) throws ArangoException {
 		
 		validateDocumentHandle(indexHandle); // 書式同じなので
 		HttpResponseEntity res = httpManager.doDelete(
@@ -129,7 +133,8 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl {
 		
 	}
 
-	public IndexEntity getIndex(String database, String indexHandle) throws ArangoException {
+	@Override
+  public IndexEntity getIndex(String database, String indexHandle) throws ArangoException {
 		
 		validateDocumentHandle(indexHandle);
 		HttpResponseEntity res = httpManager.doGet(
@@ -144,7 +149,8 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl {
 		
 	}
 
-	public IndexesEntity getIndexes(String database, String collectionName) throws ArangoException {
+	@Override
+  public IndexesEntity getIndexes(String database, String collectionName) throws ArangoException {
 		
 		validateCollectionName(collectionName);
 		HttpResponseEntity res = httpManager.doGet(

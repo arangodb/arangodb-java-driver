@@ -30,23 +30,24 @@ import at.orz.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
+public class InternalCollectionDriverImpl extends BaseArangoDriverImpl implements at.orz.arangodb.InternalCollectionDriver {
 
 	InternalCollectionDriverImpl(ArangoConfigure configure) {
 		super(configure);
 	}
 
-	public CollectionEntity createCollection(
-			String database,
-			String name, 
-			Boolean waitForSync, 
-			Boolean doCompact,
-			Integer journalSize, 
-			Boolean isSystem, 
-			Boolean isVolatile,
-			CollectionType type,
-			CollectionKeyOption keyOptions
-			) throws ArangoException {
+	@Override
+  public CollectionEntity createCollection(
+    String database,
+    String name,
+    Boolean waitForSync,
+    Boolean doCompact,
+    Integer journalSize,
+    Boolean isSystem,
+    Boolean isVolatile,
+    CollectionType type,
+    CollectionKeyOption keyOptions
+  ) throws ArangoException {
 		
 		HttpResponseEntity res = httpManager.doPost(
 				createEndpointUrl(baseUrl, database, "/_api/collection"),
@@ -67,7 +68,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public CollectionEntity getCollection(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity getCollection(String database, String name) throws ArangoException {
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, database, "/_api/collection", name),
@@ -79,7 +81,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		}
 	}
 	
-	public CollectionEntity getCollectionRevision(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity getCollectionRevision(String database, String name) throws ArangoException {
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, database, "/_api/collection", name, "/revision"),
@@ -91,7 +94,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		}
 	}
 	
-	public CollectionEntity getCollectionProperties(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity getCollectionProperties(String database, String name) throws ArangoException {
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, database, "/_api/collection", name, "/properties"),
@@ -103,7 +107,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		}
 	}
 	
-	public CollectionEntity getCollectionCount(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity getCollectionCount(String database, String name) throws ArangoException {
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, database, "/_api/collection", name, "/count"),
@@ -116,7 +121,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 
 	}
 	
-	public CollectionEntity getCollectionFigures(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity getCollectionFigures(String database, String name) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doGet(
@@ -131,7 +137,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 
 	}
 
-	public CollectionEntity getCollectionChecksum(String database, String name, Boolean withRevisions, Boolean withData) throws ArangoException {
+	@Override
+  public CollectionEntity getCollectionChecksum(String database, String name, Boolean withRevisions, Boolean withData) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doGet(
@@ -146,7 +153,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 	}
 
 
-	public CollectionsEntity getCollections(String database, Boolean excludeSystem) throws ArangoException {
+	@Override
+  public CollectionsEntity getCollections(String database, Boolean excludeSystem) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doGet(
 				createEndpointUrl(baseUrl, database, "/_api/collection"),
@@ -159,7 +167,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 	}
 
 
-	public CollectionEntity loadCollection(String database, String name, Boolean count) throws ArangoException {
+	@Override
+  public CollectionEntity loadCollection(String database, String name, Boolean count) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doPut(
@@ -173,7 +182,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public CollectionEntity unloadCollection(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity unloadCollection(String database, String name) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doPut(
@@ -189,7 +199,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public CollectionEntity truncateCollection(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity truncateCollection(String database, String name) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doPut(
@@ -204,7 +215,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public CollectionEntity setCollectionProperties(String database, String name, Boolean newWaitForSync, Long journalSize) throws ArangoException {
+	@Override
+  public CollectionEntity setCollectionProperties(String database, String name, Boolean newWaitForSync, Long journalSize) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doPut(
@@ -222,7 +234,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public CollectionEntity renameCollection(String database, String name, String newName) throws ArangoException {
+	@Override
+  public CollectionEntity renameCollection(String database, String name, String newName) throws ArangoException {
 		
 		validateCollectionName(newName);
 		HttpResponseEntity res = httpManager.doPut(
@@ -241,7 +254,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl {
 		
 	}
 	
-	public CollectionEntity deleteCollection(String database, String name) throws ArangoException {
+	@Override
+  public CollectionEntity deleteCollection(String database, String name) throws ArangoException {
 		
 		validateCollectionName(name);
 		HttpResponseEntity res = httpManager.doDelete(

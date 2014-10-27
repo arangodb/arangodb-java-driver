@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import at.orz.arangodb.entity.CursorEntity;
-import at.orz.arangodb.impl.InternalCursorDriverImpl;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -29,14 +28,14 @@ import at.orz.arangodb.impl.InternalCursorDriverImpl;
 public class CursorResultSet<T> implements Iterable<T> {
 
 	private String database;
-	private transient InternalCursorDriverImpl cursorDriver;
+	private transient InternalCursorDriver cursorDriver;
 	private transient Class<?>[] clazz;
 	private transient CursorEntity<T> entity;
 	private transient int pos;
 	private int totalCount;
 	private transient Iterator<T> itr;
 	
-	public CursorResultSet(String database, InternalCursorDriverImpl cursorDriver, CursorEntity<T> entity, Class<?> ...clazz) {
+	public CursorResultSet(String database, InternalCursorDriver cursorDriver, CursorEntity<T> entity, Class<?> ...clazz) {
 		this.database = database;
 		this.cursorDriver = cursorDriver;
 		this.clazz = clazz;
