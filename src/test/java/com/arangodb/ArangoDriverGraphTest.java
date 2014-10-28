@@ -433,6 +433,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
         String graphName = "UnitTestGraph";
         driver.createGraph(graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
         GraphEntity blub = driver.graphDeleteEdgeDefinition(graphName, "edge-1", true);
+        blub = blub;
         assertThat(driver.graphGetEdgeCollections(graphName).contains("edge-1"), is(false));
         assertThat(driver.graphGetEdgeCollections(graphName).contains("edge-2"), is(true));
         try {

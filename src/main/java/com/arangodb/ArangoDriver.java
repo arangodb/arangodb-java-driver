@@ -2120,9 +2120,9 @@ public class ArangoDriver extends BaseArangoDriver {
      * @param edgeCollectionName
      * @return
      */
-    public GraphEntity graphDeleteEdgeDefinition(String graphName, String edgeCollectionName, Boolean dropCollections)
+    public GraphEntity graphDeleteEdgeDefinition(String graphName, String edgeCollectionName, Boolean dropCollection)
             throws ArangoException {
-        return graphDriver.deleteEdgeDefinition(getDefaultDatabase(), graphName, edgeCollectionName, dropCollections);
+        return graphDriver.deleteEdgeDefinition(getDefaultDatabase(), graphName, edgeCollectionName, dropCollection);
     }
 
     // *****************************************************************************

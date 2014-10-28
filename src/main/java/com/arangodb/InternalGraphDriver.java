@@ -59,7 +59,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
         String edgeName,
         EdgeDefinitionEntity edgeDefinition) throws ArangoException;
 
-    GraphEntity deleteEdgeDefinition(String databaseName, String graphName, String edgeName, Boolean dropCollections)
+    GraphEntity deleteEdgeDefinition(String databaseName, String graphName, String edgeName, Boolean dropCollection)
             throws ArangoException;
 
     // ***********************************

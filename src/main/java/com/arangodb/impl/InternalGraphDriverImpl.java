@@ -47,8 +47,7 @@ import com.google.gson.JsonObject;
  * @author tamtam180 - kirscheless at gmail.com
  * @since 1.4.0
  */
-public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements
-        com.arangodb.InternalGraphDriver {
+public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalGraphDriver {
 
     InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
         super(configure, cursorDriver);
@@ -370,7 +369,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         String databaseName,
         String graphName,
         String edgeName,
-        Boolean dropCollections) throws ArangoException {
+        Boolean dropCollection) throws ArangoException {
         validateCollectionName(graphName);
         validateCollectionName(edgeName);
 
@@ -382,7 +381,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
                 StringUtils.encodeUrl(graphName),
                 "/edge",
                 StringUtils.encodeUrl(edgeName)),
-            new MapBuilder().put("dropCollections", dropCollections).get());
+            new MapBuilder().put("dropCollection", dropCollection).get());
         if (!res.isJsonResponse()) {
             throw new ArangoException("unknown error");
         }
