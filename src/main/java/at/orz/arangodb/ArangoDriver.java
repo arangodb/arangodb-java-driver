@@ -1578,7 +1578,7 @@ public class ArangoDriver extends BaseArangoDriver {
      * @return
      * @throws ArangoException
      * @since 1.4.0
-     * @see http
+     * @see http 
      *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList2
      */
     public StringsResultEntity getDatabases() throws ArangoException {
@@ -1591,7 +1591,7 @@ public class ArangoDriver extends BaseArangoDriver {
      * @return
      * @throws ArangoException
      * @since 1.4.1
-     * @see http
+     * @see http 
      *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList
      */
     public StringsResultEntity getDatabases(boolean currentUserAccessableOnly) throws ArangoException {
@@ -1617,7 +1617,7 @@ public class ArangoDriver extends BaseArangoDriver {
      * @return
      * @throws ArangoException
      * @since 1.4.0
-     * @see http
+     * @see http 
      *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseCreate
      */
     public BooleanResultEntity createDatabase(String database, UserEntity... users) throws ArangoException {
@@ -1630,7 +1630,7 @@ public class ArangoDriver extends BaseArangoDriver {
      * @return
      * @throws ArangoException
      * @since 1.4.0
-     * @see http
+     * @see http 
      *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseDelete
      */
     public BooleanResultEntity deleteDatabase(String database) throws ArangoException {
@@ -2008,27 +2008,124 @@ public class ArangoDriver extends BaseArangoDriver {
     }
 
     /**
+     * Delete a graph by its name. The collections of the graph will not be
+     * deleted.
      * 
-     * @param name
-     * @return
+     * @param graphName
      * @throws ArangoException
-     * @since 1.4.0
      */
-    public DeletedEntity deleteGraph(String name) throws ArangoException {
-        return graphDriver.deleteGraph(getDefaultDatabase(), name, null);
+    public void deleteGraph(String graphName) throws ArangoException {
+        graphDriver.deleteGraph(getDefaultDatabase(), graphName, false);
     }
 
     /**
+     * Delete a graph by its name. If dropCollections is true, all collections
+     * of the graph will be deleted, if they are not used in another graph.
      * 
-     * @param name
-     * @param ifMatchRevision
-     * @return
+     * @param graphName
+     * @param dropCollections
      * @throws ArangoException
-     * @since 1.4.0
      */
-    public DeletedEntity deleteGraph(String name, Long ifMatchRevision) throws ArangoException {
-        return graphDriver.deleteGraph(getDefaultDatabase(), name, ifMatchRevision);
+    public void deleteGraph(String graphName, Boolean dropCollections) throws ArangoException {
+        graphDriver.deleteGraph(getDefaultDatabase(), graphName, dropCollections);
     }
+
+    /**
+     * Returns a list of all vertex collection of a graph that are defined in
+     * the graphs edgeDefinitions (in "from", "to", and "orphanCollections")
+     * 
+     * @param graphName
+     * @return List<String>
+     * @throws ArangoException
+     */
+    public List<String> graphGetVertexCollections(String graphName) throws ArangoException {
+        return graphDriver.getVertexCollections(getDefaultDatabase(), graphName);
+    }
+
+    /**
+     * Removes a vertex collection from the graph and optionally deletes the
+     * collection, if it is not used in any other graph.
+     * 
+     * @param graphName
+     * @param collectionName
+     * @param dropCollection
+     * @throws ArangoException
+     */
+    public DeletedEntity graphDeleteVertexCollection(String graphName, String collectionName, Boolean dropCollection)
+            throws ArangoException {
+        return graphDriver.deleteVertexCollection(getDefaultDatabase(), graphName, collectionName, dropCollection);
+    }
+
+    /**
+     * Creates a vertex collection
+     * 
+     * @param graphName
+     * @param collectionName
+     * @return GraphEntity
+     * @throws ArangoException
+     */
+    public GraphEntity graphCreateVertexCollection(String graphName, String collectionName) throws ArangoException {
+        return graphDriver.createVertexCollection(getDefaultDatabase(), graphName, collectionName);
+    }
+
+    /**
+     * Returns a list of all edge collection of a graph that are defined in the
+     * graphs edgeDefinitions
+     * 
+     * @param graphName
+     * @return List<String>
+     * @throws ArangoException
+     */
+    public List<String> graphGetEdgeCollections(String graphName) throws ArangoException {
+        return graphDriver.getEdgeCollections(getDefaultDatabase(), graphName);
+    }
+
+    /**
+     * Adds a new edge definition to an existing graph
+     * 
+     * @param graphName
+     * @param edgeDefinition
+     * @return GraphEntity
+     * @throws ArangoException
+     */
+    public GraphEntity graphCreateEdgeDefinition(String graphName, EdgeDefinitionEntity edgeDefinition)
+            throws ArangoException {
+        return graphDriver.createNewEdgeDefinition(getDefaultDatabase(), graphName, edgeDefinition);
+    }
+
+    /**
+     * Replaces an existing edge definition to an existing graph. This will also
+     * change the edge definitions of all other graphs using this definition as
+     * well.
+     * 
+     * @param graphName
+     * @param edgeCollectionName
+     * @param edgeDefinition
+     * @return GraphEntity
+     * @throws ArangoException
+     */
+    public GraphEntity graphReplaceEdgeDefinition(
+        String graphName,
+        String edgeCollectionName,
+        EdgeDefinitionEntity edgeDefinition) throws ArangoException {
+        return graphDriver.replaceEdgeDefinition(getDefaultDatabase(), graphName, edgeCollectionName, edgeDefinition);
+    }
+
+    /**
+     * Removes an existing edge definition from this graph. All data stored in
+     * the collections is dropped as well as long as it is not used in other
+     * graphs.
+     * 
+     * @param graphName
+     * @param edgeCollectionName
+     * @return
+     */
+    public GraphEntity graphDeleteEdgeDefinition(String graphName, String edgeCollectionName, Boolean dropCollections)
+            throws ArangoException {
+        return graphDriver.deleteEdgeDefinition(getDefaultDatabase(), graphName, edgeCollectionName, dropCollections);
+    }
+
+    // *****************************************************************************
 
     /**
      * 
