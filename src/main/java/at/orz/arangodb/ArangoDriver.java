@@ -239,7 +239,7 @@ public class ArangoDriver extends BaseArangoDriver {
         }
         List<BatchPart> callStack = ((BatchHttpManager) this.httpManager).getCallStack();
         this.cancelBatchMode();
-        DefaultEntity result = this.batchDriver.executeBatch(callStack);
+        DefaultEntity result = this.batchDriver.executeBatch(callStack, this.getDefaultDatabase());
         return result;
     }
 

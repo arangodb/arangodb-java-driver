@@ -32,12 +32,6 @@ public class InvocationHandlerImpl  implements InvocationHandler {
         throw new IllegalStateException(String.valueOf(method));
       }
     }
-    System.out.println("THIS IS THE INBVOCASTIONHGANDFLER");
-    System.out.println(method.toGenericString());
-    System.out.println(method.getDeclaringClass());
-    for (Object o : args) {
-      System.out.println(o);
-    }
     testImpl.getHttpManager().setCurrentObject(
       new InvocationObject(method, testImpl, args)
     );
