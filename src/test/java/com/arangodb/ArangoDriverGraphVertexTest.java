@@ -94,6 +94,28 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 
   }
 
+  @Test
+  public void test_get_vertex() throws ArangoException {
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    DocumentEntity<TestComplexEntity01> vertex = driver.graphCreateVertex(
+      this.graphName,
+      "from1-1",
+      new TestComplexEntity01("Homer", "Simpson", 38),
+      true);
+    try {
+      vertex = driver.graphGetVertex(
+        graphName,
+        collectionName,
+        vertex.getDocumentKey(),
+        TestComplexEntity01.class,
+        null,
+        vertex.getDocumentRevision(),
+        null);
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), greaterThan(300));
+    }
+
+  }
   /*
    * // TODO: create with _key // TODO: create with _key and duplication error
    * 
