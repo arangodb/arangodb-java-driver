@@ -24,6 +24,7 @@ import com.arangodb.entity.ArangoVersion;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.StatisticsDescriptionEntity;
 import com.arangodb.entity.StatisticsEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -36,9 +37,9 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 
 	// MEMO: ADMINはdatabase関係ない
 
-	InternalAdminDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+	InternalAdminDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
+  }
 
 	@Override
   public AdminLogEntity getServerLog(

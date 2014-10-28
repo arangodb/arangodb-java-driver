@@ -7,7 +7,6 @@ import com.arangodb.http.HttpManager;
  */
 public interface BaseDriverInterface {
 
-  public void setBatchMode(HttpManager httpManager, boolean resetBaseUrl);
 
   public HttpManager getHttpManager();
 

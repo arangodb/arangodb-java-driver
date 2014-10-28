@@ -24,6 +24,7 @@ import com.arangodb.ArangoException;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.Endpoint;
 import com.arangodb.entity.EntityFactory;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.StringUtils;
@@ -35,9 +36,9 @@ import com.google.gson.reflect.TypeToken;
  */
 public class InternalEndpointDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalEndpointDriver {
 
-	InternalEndpointDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+	InternalEndpointDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
+  }
 	
 	@Override
   public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {

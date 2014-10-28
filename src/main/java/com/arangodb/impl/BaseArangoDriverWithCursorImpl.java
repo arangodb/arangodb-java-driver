@@ -18,6 +18,7 @@ package com.arangodb.impl;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.InternalCursorDriver;
+import com.arangodb.http.HttpManager;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -27,8 +28,8 @@ class BaseArangoDriverWithCursorImpl extends BaseArangoDriverImpl {
 	
 	protected InternalCursorDriver cursorDriver;
 	
-	BaseArangoDriverWithCursorImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
-		super(configure);
+	BaseArangoDriverWithCursorImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+		super(configure , httpManager);
 		this.cursorDriver = cursorDriver;
 	}
 	

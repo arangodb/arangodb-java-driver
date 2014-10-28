@@ -22,6 +22,7 @@ import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.ImportResultEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -31,9 +32,9 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalImportDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalImportDriver {
 
-	InternalImportDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+	InternalImportDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
+  }
 	
 	@Override
   public ImportResultEntity importDocuments(String database, String collection, Boolean createCollection, Collection<?> values) throws ArangoException {
@@ -47,16 +48,6 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 		
 	}
 
-//	public void importDocuments(String collection, Boolean createCollection, Iterator<?> itr) throws ArangoException {
-//
-//		HttpResponseEntity res = httpManager.doPost(
-//				baseUrl + "/_api/import", 
-//				new MapBuilder().put("collection", collection).put("createCollection", createCollection).put("type", "documents").get(), 
-//				EntityFactory.toJsonSequenceEntity(itr));
-//		
-//	}
-	
-	
 	@Override
   public ImportResultEntity importDocumentsByHeaderValues(String database, String collection, Boolean createCollection, Collection<? extends Collection<?>> headerValues) throws ArangoException {
 

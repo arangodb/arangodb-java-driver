@@ -37,6 +37,7 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphGetCollectionsResultEntity;
 import com.arangodb.entity.GraphsEntity;
 import com.arangodb.entity.marker.VertexEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.StringUtils;
@@ -50,8 +51,8 @@ import com.google.gson.JsonObject;
 public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements
         com.arangodb.InternalGraphDriver {
 
-    InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
-        super(configure, cursorDriver);
+    InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+      super(configure , cursorDriver,  httpManager);
     }
 
     private String toLower(Enum<?> e) {

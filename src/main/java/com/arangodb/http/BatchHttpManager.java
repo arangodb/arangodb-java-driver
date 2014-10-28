@@ -19,8 +19,14 @@ public class BatchHttpManager extends HttpManager {
         super(configure);
     }
 
+    public boolean batchModeActive = false;
+
     @Override
     public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
+        if (!this.isBatchModeActive()) {
+          return super.execute(requestEntity);
+        }
+
         int id = callStack.size() + 1;
         callStack.add(new BatchPart(requestEntity.type.toString(), buildUrl(requestEntity), requestEntity.bodyText,
                 requestEntity.headers, this.getCurrentObject(), id));
@@ -46,5 +52,13 @@ public class BatchHttpManager extends HttpManager {
     @Override
     public void setCurrentObject(InvocationObject currentObject) {
         this.currentObject = currentObject;
+    }
+
+    public boolean isBatchModeActive() {
+      return batchModeActive;
+    }
+
+    public void setBatchModeActive(boolean batchModeActive) {
+      this.batchModeActive = batchModeActive;
     }
 }

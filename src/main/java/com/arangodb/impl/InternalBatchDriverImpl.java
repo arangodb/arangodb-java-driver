@@ -20,6 +20,7 @@ import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.*;
 import com.arangodb.http.BatchPart;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationObject;
 import com.arangodb.util.JsonUtils;
@@ -40,9 +41,9 @@ import java.util.*;
 public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 
-	InternalBatchDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+	InternalBatchDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
+  }
 
   public static String newline = System.getProperty("line.separator");
 

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.arangodb.http.BatchHttpManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class ArangoConfigure {
 
 	boolean staleConnectionCheck = false;
 
-	HttpManager httpManager;
+  BatchHttpManager httpManager;
 
 	public ArangoConfigure() {
 		init(DEFAULT_PROPERTY_FILE);
@@ -207,7 +208,7 @@ public class ArangoConfigure {
 	}
 
 	public void init() {
-		this.httpManager = new HttpManager(this);
+		this.httpManager = new BatchHttpManager(this);
 		this.httpManager.init();
 	}
 
@@ -334,11 +335,11 @@ public class ArangoConfigure {
 		this.retryCount = retryCount;
 	}
 
-	public HttpManager getHttpManager() {
+	public BatchHttpManager getHttpManager() {
 		return httpManager;
 	}
 
-	public void setHttpManager(HttpManager httpManager) {
+	public void setHttpManager(BatchHttpManager httpManager) {
 		this.httpManager = httpManager;
 	}
 

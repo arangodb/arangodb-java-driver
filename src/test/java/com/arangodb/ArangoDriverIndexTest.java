@@ -74,7 +74,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		}
 
 		// 1は作る
-		col1 = driver.createCollection(collectionName, true, null, null, null, null, null);
+		col1 = driver.createCollection(collectionName);
 
 		logger.debug("--");
 
@@ -89,7 +89,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 	public void test_create_index() throws ArangoException {
 
 		{
-			IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, false, "a");
+			IndexEntity entity = driver.createGeoIndex(collectionName, false, "a");
 
 			assertThat(entity, is(notNullValue()));
 			assertThat(entity.getCode(), is(201));
@@ -159,7 +159,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_hash_index() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, false, "a", "b", "c", "d", "e", "f",
+		IndexEntity entity = driver.createHashIndex(collectionName, false, "a", "b", "c", "d", "e", "f",
 				"g");
 
 		assertThat(entity, is(notNullValue()));
@@ -204,7 +204,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_skiplist_index() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.SKIPLIST, false, "a", "b", "c", "d", "e",
+		IndexEntity entity = driver.createSkipListIndex(collectionName, false, "a", "b", "c", "d", "e",
 				"f", "g");
 
 		assertThat(entity, is(notNullValue()));

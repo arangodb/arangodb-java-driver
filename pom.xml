@@ -101,7 +101,7 @@
                 <configuration>
                     <forkMode>never</forkMode>
 					<includes>
-						<include>at/orz/arangodb/ArangoTestSuite.java</include>
+						<include>com/arangodb/ArangoTestSuite.java</include>
 					</includes>
 				</configuration>
 			</plugin>

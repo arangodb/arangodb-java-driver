@@ -36,6 +36,7 @@ import com.arangodb.entity.ReplicationLoggerStateEntity;
 import com.arangodb.entity.ReplicationSyncEntity;
 import com.arangodb.entity.RestrictType;
 import com.arangodb.entity.StreamEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.DumpHandler;
 import com.arangodb.util.IOUtils;
@@ -47,9 +48,9 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalReplicationDriver {
 
-	InternalReplicationDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+	InternalReplicationDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
+  }
 	
 	@Override
   public ReplicationInventoryEntity getReplicationInventory(String database, Boolean includeSystem) throws ArangoException {

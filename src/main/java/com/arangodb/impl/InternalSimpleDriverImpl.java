@@ -28,6 +28,7 @@ import com.arangodb.entity.DocumentResultEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.ScalarExampleEntity;
 import com.arangodb.entity.SimpleByResultEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -38,9 +39,9 @@ import com.arangodb.util.MapBuilder;
 public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalSimpleDriver {
 
 	InternalSimpleDriverImpl(ArangoConfigure configure,
-			InternalCursorDriver cursorDriver) {
-		super(configure, cursorDriver);
-	}
+			InternalCursorDriver cursorDriver, HttpManager httpManager) {
+    super(configure , cursorDriver, httpManager);
+  }
 
 	// ----- all --------------------
 
