@@ -16,9 +16,14 @@
 
 package com.arangodb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+
+import com.arangodb.entity.EdgeDefinitionEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -50,4 +55,33 @@ public class BaseGraphTest extends BaseTest {
                 + "  graph._drop(g, true)\n" + "});";
         driver.executeScript(deleteAllGraphsAndTheirCollections);
     }
+
+    protected List<EdgeDefinitionEntity> createEdgeDefinitions(int count, int offset) {
+        List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+        for (int i = 1 + offset; i <= count + offset; i++) {
+            EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+            edgeDefinition.setCollection("edge-" + i);
+            List<String> from = new ArrayList<String>();
+            from.add("from" + i + "-1");
+            from.add("from" + i + "-2");
+            from.add("from" + i + "-3");
+            edgeDefinition.setFrom(from);
+            List<String> to = new ArrayList<String>();
+            to.add("to" + i + "-1");
+            to.add("to" + i + "-2");
+            to.add("to" + i + "-3");
+            edgeDefinition.setTo(to);
+            edgeDefinitions.add(edgeDefinition);
+        }
+        return edgeDefinitions;
+    }
+
+    protected List<String> createOrphanCollections(int count) {
+        List<String> orphanCollections = new ArrayList<String>();
+        for (int i = 1; i <= count; i++) {
+            orphanCollections.add("orphan" + i);
+        }
+        return orphanCollections;
+    }
+
 }

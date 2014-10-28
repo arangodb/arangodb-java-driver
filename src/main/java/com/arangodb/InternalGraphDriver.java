@@ -62,6 +62,13 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     GraphEntity deleteEdgeDefinition(String databaseName, String graphName, String edgeName, Boolean dropCollection)
             throws ArangoException;
 
+    <T> DocumentEntity<T> createVertex(
+        String database,
+        String graphName,
+        String collectionName,
+        Object vertex,
+        Boolean waitForSync) throws ArangoException;
+
     // ***********************************
 
     <T> DocumentEntity<T> createVertex(String database, String graphName, Object vertex, Boolean waitForSync)

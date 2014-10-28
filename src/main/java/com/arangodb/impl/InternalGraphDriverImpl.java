@@ -391,16 +391,47 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         return result;
     }
 
+    @Override
+    public <T> DocumentEntity<T> createVertex(
+        String database,
+        String graphName,
+        String collectionName,
+        Object vertex,
+        Boolean waitForSync) throws ArangoException {
+
+        validateCollectionName(graphName);
+        HttpResponseEntity res = httpManager.doPost(
+            createEndpointUrl(
+                baseUrl,
+                database,
+                "/_api/gharial",
+                StringUtils.encodeUrl(graphName),
+                "vertex",
+                StringUtils.encodeUrl(collectionName)),
+            new MapBuilder().put("waitForSync", waitForSync).get(),
+            EntityFactory.toJsonString(vertex));
+
+        if (!res.isJsonResponse()) {
+            throw new ArangoException("unknown error");
+        }
+        return createEntity(res, VertexEntity.class, vertex.getClass());
+    }
+
     // ****************************************************************************
 
     @Override
     public <T> DocumentEntity<T> createVertex(String database, String graphName, Object vertex, Boolean waitForSync)
             throws ArangoException {
+
         validateCollectionName(graphName);
         HttpResponseEntity res = httpManager.doPost(
             createEndpointUrl(baseUrl, database, "/_api/graph", StringUtils.encodeUrl(graphName), "vertex"),
             new MapBuilder().put("waitForSync", waitForSync).get(),
             EntityFactory.toJsonString(vertex));
+
+        if (!res.isJsonResponse()) {
+            throw new ArangoException("unknown error");
+        }
         return createEntity(res, VertexEntity.class, vertex.getClass());
     }
 

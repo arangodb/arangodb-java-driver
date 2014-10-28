@@ -2125,6 +2125,24 @@ public class ArangoDriver extends BaseArangoDriver {
         return graphDriver.deleteEdgeDefinition(getDefaultDatabase(), graphName, edgeCollectionName, dropCollection);
     }
 
+    /**
+     * Stores a new vertex with the information contained within the document
+     * into the given collection.
+     * 
+     * @param graphName
+     * @param vertex
+     * @param waitForSync
+     * @return
+     * @throws ArangoException
+     */
+    public <T> DocumentEntity<T> graphCreateVertex(
+        String graphName,
+        String collectionName,
+        Object vertex,
+        Boolean waitForSync) throws ArangoException {
+        return graphDriver.createVertex(getDefaultDatabase(), graphName, collectionName, vertex, waitForSync);
+    }
+
     // *****************************************************************************
 
     /**
