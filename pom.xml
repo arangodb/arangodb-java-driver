@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>at.orz</groupId>
+	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
 	<version>2.0</version>
 	<inceptionYear>2012</inceptionYear>
@@ -24,7 +24,7 @@
 		<developer>
 			<id>tamtam180</id>
 			<name>tamtam180</name>
-			<url>http://mt.orz.at/</url>
+			<url>http://www.arangodb.com/</url>
 		</developer>
 	</developers>
 	
