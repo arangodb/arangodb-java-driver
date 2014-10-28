@@ -20,7 +20,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -47,7 +49,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
     DocumentEntity<TestComplexEntity01> vertex = driver.graphCreateVertex(
       this.graphName,
       "from1-1",
-      new TestComplexEntity01("xxx", "yyy", 10),
+      new TestComplexEntity01("Homer", "Simpson", 38),
       true);
     assertThat(vertex.getDocumentHandle(), is(notNullValue()));
     assertThat(vertex.getDocumentRevision(), is(not(0L)));
@@ -56,11 +58,42 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
     DocumentEntity<TestComplexEntity01> document = driver.getDocument(
       vertex.getDocumentHandle(),
       TestComplexEntity01.class);
-    assertThat(document.getEntity().getUser(), is("xxx"));
-    assertThat(document.getEntity().getDesc(), is("yyy"));
-    assertThat(document.getEntity().getAge(), is(10));
+    assertThat(document.getEntity().getUser(), is("Homer"));
+    assertThat(document.getEntity().getDesc(), is("Simpson"));
+    assertThat(document.getEntity().getAge(), is(38));
 
   }
+
+  @Test
+  public void test_create_vertex_error_graph() throws ArangoException {
+
+    try {
+      driver.graphCreateVertex("foo", "bar", new TestComplexEntity01("Homer", "Simpson", 38), true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), greaterThan(300));
+    }
+
+  }
+
+  @Test
+  public void test_create_vertex_error_collection() throws ArangoException {
+
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+
+    try {
+      DocumentEntity<TestComplexEntity01> vertex = driver.graphCreateVertex(
+        this.graphName,
+        "foo",
+        new TestComplexEntity01("Homer", "Simpson", 38),
+        true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), greaterThan(300));
+    }
+
+  }
+
   /*
    * // TODO: create with _key // TODO: create with _key and duplication error
    * 
