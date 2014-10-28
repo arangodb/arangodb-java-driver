@@ -27,9 +27,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.GraphEntity;
@@ -59,7 +56,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
     @Test
     public void test_create_graph() throws ArangoException {
 
-        String graphName = "unitTestGraph";
+        String graphName = "UnitTestGraph";
 
         List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
         List<String> orphanCollections = new ArrayList<String>();
@@ -78,7 +75,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
     @Test
     public void test_create_graph2() throws ArangoException {
 
-        String graphName = "unitTestGraph";
+        String graphName = "UnitTestGraph";
 
         List<EdgeDefinitionEntity> edgeDefinitions = this.createEdgeDefinitions(2, 0);
 

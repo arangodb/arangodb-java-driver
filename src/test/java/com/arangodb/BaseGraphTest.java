@@ -20,10 +20,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
-
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * 
@@ -31,29 +27,27 @@ import com.arangodb.ArangoException;
 @Ignore
 public class BaseGraphTest extends BaseTest {
 
-	public BaseGraphTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+    public BaseGraphTest(ArangoConfigure configure, ArangoDriver driver) {
+        super(configure, driver);
+    }
 
-	@Before
-	public void _before() throws ArangoException {
-		String deleteAllGrpahsAndTheirCollections = 
-				"var db = require('internal').db;\n"
-				+ "var graph = require('org/arangodb/general-graph');\n"
-				+ "graph._list().forEach(function(g){\n"
-				+ "  graph._drop(g, true)\n"
-				+ "});";
-		driver.executeScript(deleteAllGrpahsAndTheirCollections);
-	}
-	
-	@After
-	public void after() throws ArangoException {
-		String deleteAllGraphsAndTheirCollections = 
-				"var db = require('internal').db;\n"
-				+ "var graph = require('org/arangodb/general-graph');\n"
-				+ "graph._list().forEach(function(g){\n"
-				+ "  graph._drop(g, true)\n"
-				+ "});";
-		driver.executeScript(deleteAllGraphsAndTheirCollections);
-	}
+    @Before
+    public void _before() throws ArangoException {
+        String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+                + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
+                + "  graph._drop(g, true)\n" + "});";
+        driver.executeScript(deleteAllGraphsAndTheirCollections);
+        String deleteAllCollections = "var db = require('internal').db;\n"
+                + "var cols = db._collections().filter(function(c) { return c.name()[0] !== \"_\" });\n"
+                + "cols.forEach(function(col){db._drop(col.name())});";
+        driver.executeScript(deleteAllCollections);
+    }
+
+    @After
+    public void after() throws ArangoException {
+        String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+                + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
+                + "  graph._drop(g, true)\n" + "});";
+        driver.executeScript(deleteAllGraphsAndTheirCollections);
+    }
 }
