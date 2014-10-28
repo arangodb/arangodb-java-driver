@@ -25,10 +25,10 @@ import com.arangodb.http.HttpManager;
  *
  */
 class BaseArangoDriverImpl extends BaseArangoDriver implements BaseDriverInterface {
-	
-	protected ArangoConfigure configure;
-	protected HttpManager httpManager;
-	protected String baseUrl;
+  
+  protected ArangoConfigure configure;
+  protected HttpManager httpManager;
+  protected String baseUrl;
 
   public void setBatchMode(HttpManager httpManager, boolean resetBaseUrl) {
     this.httpManager = httpManager;
@@ -40,10 +40,10 @@ class BaseArangoDriverImpl extends BaseArangoDriver implements BaseDriverInterfa
   }
 
   BaseArangoDriverImpl(ArangoConfigure configure) {
-		this.configure = configure;
-		this.httpManager = configure.getHttpManager();
-		this.baseUrl = configure.getBaseUrl();
-	}
+    this.configure = configure;
+    this.httpManager = configure.getHttpManager();
+    this.baseUrl = configure.getBaseUrl();
+  }
 
   public HttpManager getHttpManager() {
     return this.httpManager;

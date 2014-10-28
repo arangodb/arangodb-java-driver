@@ -41,70 +41,70 @@ import com.arangodb.ArangoException;
  */
 public class ArangoConfigureTest {
 
-	@Test
-	public void load_from_property_file() {
+  @Test
+  public void load_from_property_file() {
 
-		// validate file in classpath.
-		assertThat(getClass().getResource("/arangodb.properties"), is(notNullValue()));
+    // validate file in classpath.
+    assertThat(getClass().getResource("/arangodb.properties"), is(notNullValue()));
 
-		ArangoConfigure configure = new ArangoConfigure();
-		assertThat(configure.getPort(), is(8529));
-		assertThat(configure.getHost(), is(notNullValue()));
-		assertThat(configure.getDefaultDatabase(), is(nullValue()));
+    ArangoConfigure configure = new ArangoConfigure();
+    assertThat(configure.getPort(), is(8529));
+    assertThat(configure.getHost(), is(notNullValue()));
+    assertThat(configure.getDefaultDatabase(), is(nullValue()));
 
-	}
+  }
 
-	@Test
-	public void load_from_proerty_file2() {
+  @Test
+  public void load_from_proerty_file2() {
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.loadProperties("/arangodb-test.properties");
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.loadProperties("/arangodb-test.properties");
 
-		assertThat(configure.getRetryCount(), is(10));
-		assertThat(configure.getDefaultDatabase(), is("mydb2"));
+    assertThat(configure.getRetryCount(), is(10));
+    assertThat(configure.getDefaultDatabase(), is("mydb2"));
 
-	}
+  }
 
-	@Ignore
-	@Test
-	public void connect_timeout() throws ArangoException {
+  @Ignore
+  @Test
+  public void connect_timeout() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setConnectionTimeout(1); // 1ms
-		configure.init();
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setConnectionTimeout(1); // 1ms
+    configure.init();
 
-		ArangoDriver driver = new ArangoDriver(configure);
+    ArangoDriver driver = new ArangoDriver(configure);
 
-		try {
-			driver.getVersion();
-			fail("did no timeout");
-		} catch (ArangoException e) {
-			assertThat(e.getCause(), instanceOf(ConnectTimeoutException.class));
-		}
+    try {
+      driver.getVersion();
+      fail("did no timeout");
+    } catch (ArangoException e) {
+      assertThat(e.getCause(), instanceOf(ConnectTimeoutException.class));
+    }
 
-		configure.shutdown();
+    configure.shutdown();
 
-	}
+  }
 
-	@Test
-	public void so_connect_timeout() throws ArangoException {
+  @Test
+  public void so_connect_timeout() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setConnectionTimeout(5000);
-		configure.setTimeout(1); // 1ms
-		configure.init();
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setConnectionTimeout(5000);
+    configure.setTimeout(1); // 1ms
+    configure.init();
 
-		ArangoDriver driver = new ArangoDriver(configure);
+    ArangoDriver driver = new ArangoDriver(configure);
 
-		try {
-			driver.getCollections();
-			fail("did no timeout");
-		} catch (ArangoException e) {
-			assertThat(e.getCause(), instanceOf(SocketTimeoutException.class));
-		}
+    try {
+      driver.getCollections();
+      fail("did no timeout");
+    } catch (ArangoException e) {
+      assertThat(e.getCause(), instanceOf(SocketTimeoutException.class));
+    }
 
-		configure.shutdown();
+    configure.shutdown();
 
-	}
+  }
 
 }

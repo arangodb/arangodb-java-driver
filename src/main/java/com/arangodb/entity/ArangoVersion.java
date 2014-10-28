@@ -23,21 +23,21 @@ package com.arangodb.entity;
  *
  */
 public class ArangoVersion extends BaseEntity {
-	
-	String server;
-	String version;
-	
-	public String getServer() {
-		return server;
-	}
-	public String getVersion() {
-		return version;
-	}
-	public void setServer(String server) {
-		this.server = server;
-	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	
+  
+  String server;
+  String version;
+  
+  public String getServer() {
+    return server;
+  }
+  public String getVersion() {
+    return version;
+  }
+  public void setServer(String server) {
+    this.server = server;
+  }
+  public void setVersion(String version) {
+    this.version = version;
+  }
+  
 }

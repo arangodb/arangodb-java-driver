@@ -24,12 +24,12 @@ import com.arangodb.InternalCursorDriver;
  *
  */
 class BaseArangoDriverWithCursorImpl extends BaseArangoDriverImpl {
-	
-	protected InternalCursorDriver cursorDriver;
-	
-	BaseArangoDriverWithCursorImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
-		super(configure);
-		this.cursorDriver = cursorDriver;
-	}
-	
+  
+  protected InternalCursorDriver cursorDriver;
+  
+  BaseArangoDriverWithCursorImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
+    super(configure);
+    this.cursorDriver = cursorDriver;
+  }
+  
 }

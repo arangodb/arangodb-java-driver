@@ -24,34 +24,34 @@ import java.io.Serializable;
  */
 public class ReplicationDumpHeader implements Serializable {
 
-	Long lasttick;
-	Boolean checkmore;
-	Long lastincluded;
-	Boolean active;
-	
-	public Long getLasttick() {
-		return lasttick;
-	}
-	public Boolean getCheckmore() {
-		return checkmore;
-	}
-	public Long getLastincluded() {
-		return lastincluded;
-	}
-	public Boolean getActive() {
-		return active;
-	}
-	public void setLasttick(Long lasttick) {
-		this.lasttick = lasttick;
-	}
-	public void setCheckmore(Boolean checkmore) {
-		this.checkmore = checkmore;
-	}
-	public void setLastincluded(Long lastincluded) {
-		this.lastincluded = lastincluded;
-	}
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-	
+  Long lasttick;
+  Boolean checkmore;
+  Long lastincluded;
+  Boolean active;
+  
+  public Long getLasttick() {
+    return lasttick;
+  }
+  public Boolean getCheckmore() {
+    return checkmore;
+  }
+  public Long getLastincluded() {
+    return lastincluded;
+  }
+  public Boolean getActive() {
+    return active;
+  }
+  public void setLasttick(Long lasttick) {
+    this.lasttick = lasttick;
+  }
+  public void setCheckmore(Boolean checkmore) {
+    this.checkmore = checkmore;
+  }
+  public void setLastincluded(Long lastincluded) {
+    this.lastincluded = lastincluded;
+  }
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
+  
 }

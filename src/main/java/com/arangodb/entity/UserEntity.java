@@ -26,46 +26,46 @@ import com.google.gson.annotations.SerializedName;
  */
 public class UserEntity extends BaseEntity {
 
-	@SerializedName("username")
-	String username;
-	@SerializedName("passwd")
-	String password;
-	Boolean active;
-	Map<String, Object> extra;
-	
-	public UserEntity() {
-	}
-	public UserEntity(String username, String password, Boolean active, Map<String, Object> extra) {
-		this.username = username;
-		this.password = password;
-		this.active = active;
-		this.extra = extra;
-	}
+  @SerializedName("username")
+  String username;
+  @SerializedName("passwd")
+  String password;
+  Boolean active;
+  Map<String, Object> extra;
+  
+  public UserEntity() {
+  }
+  public UserEntity(String username, String password, Boolean active, Map<String, Object> extra) {
+    this.username = username;
+    this.password = password;
+    this.active = active;
+    this.extra = extra;
+  }
 
 
-	public String getUsername() {
-		return username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public Boolean isActive() {
-		return active;
-	}
-	public Map<String, Object> getExtra() {
-		return extra;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-	public void setExtra(Map<String, Object> extra) {
-		this.extra = extra;
-	}
-	
+  public String getUsername() {
+    return username;
+  }
+  public String getPassword() {
+    return password;
+  }
+  public Boolean isActive() {
+    return active;
+  }
+  public Map<String, Object> getExtra() {
+    return extra;
+  }
+  public void setUsername(String username) {
+    this.username = username;
+  }
+  public void setPassword(String password) {
+    this.password = password;
+  }
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
+  public void setExtra(Map<String, Object> extra) {
+    this.extra = extra;
+  }
+  
 }

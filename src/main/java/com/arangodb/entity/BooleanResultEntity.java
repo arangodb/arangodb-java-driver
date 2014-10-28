@@ -22,14 +22,14 @@ package com.arangodb.entity;
  */
 public class BooleanResultEntity extends BaseEntity {
 
-	Boolean result;
+  Boolean result;
 
-	public Boolean getResult() {
-		return result;
-	}
+  public Boolean getResult() {
+    return result;
+  }
 
-	public void setResult(Boolean result) {
-		this.result = result;
-	}
-	
+  public void setResult(Boolean result) {
+    this.result = result;
+  }
+  
 }

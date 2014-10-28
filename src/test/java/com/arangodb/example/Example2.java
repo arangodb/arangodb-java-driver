@@ -31,71 +31,71 @@ import com.arangodb.entity.DocumentEntity;
  *
  */
 //public class Example2 {
-//	
-//	public static class TestEdgeAttribute {
-//		public String a;
-//		public int b;
-//		public TestEdgeAttribute(){}
-//		public TestEdgeAttribute(String a, int b) {
-//			this.a = a;
-//			this.b = b;
-//		}
-//	}
-//	public static class TestVertex {
-//		public String name;
-//	}
-//	
-//	public static void main(String[] args) {
+//  
+//  public static class TestEdgeAttribute {
+//    public String a;
+//    public int b;
+//    public TestEdgeAttribute(){}
+//    public TestEdgeAttribute(String a, int b) {
+//      this.a = a;
+//      this.b = b;
+//    }
+//  }
+//  public static class TestVertex {
+//    public String name;
+//  }
+//  
+//  public static void main(String[] args) {
 //
-//		// Initialize configure
-//		ArangoConfigure configure = new ArangoConfigure();
-//		configure.init();
-//		
-//		// Create Driver (this instance is thread-safe)
-//		ArangoDriver driver = new ArangoDriver(configure);
-//		
-//		final String collectionName = "example";
-//		try {
-//			
-//			// Create Collection for Graph
-//			driver.createCollection(collectionName, false, null, null, null, null, CollectionType.EDGE);
-//			
-//			// CreateVertex
-//			ArrayList<DocumentEntity<TestVertex>> docs = new ArrayList<DocumentEntity<TestVertex>>();
-//			for (int i = 0; i < 10; i++) {
-//				TestVertex value = new TestVertex();
-//				value.name = "vvv" + i;
-//				DocumentEntity<TestVertex> doc = driver.createDocument(collectionName, value, true, false);
-//				docs.add(doc);
-//			}
-//			
-//			// 0 -> 1
-//			// 0 -> 2
-//			// 2 -> 3
-//			
-//			EdgeEntity<TestEdgeAttribute> edge1 = driver.createEdge(
-//					collectionName, docs.get(0).getDocumentHandle(), docs.get(1).getDocumentHandle(), 
-//					new TestEdgeAttribute("edge1", 100));
+//    // Initialize configure
+//    ArangoConfigure configure = new ArangoConfigure();
+//    configure.init();
+//    
+//    // Create Driver (this instance is thread-safe)
+//    ArangoDriver driver = new ArangoDriver(configure);
+//    
+//    final String collectionName = "example";
+//    try {
+//      
+//      // Create Collection for Graph
+//      driver.createCollection(collectionName, false, null, null, null, null, CollectionType.EDGE);
+//      
+//      // CreateVertex
+//      ArrayList<DocumentEntity<TestVertex>> docs = new ArrayList<DocumentEntity<TestVertex>>();
+//      for (int i = 0; i < 10; i++) {
+//        TestVertex value = new TestVertex();
+//        value.name = "vvv" + i;
+//        DocumentEntity<TestVertex> doc = driver.createDocument(collectionName, value, true, false);
+//        docs.add(doc);
+//      }
+//      
+//      // 0 -> 1
+//      // 0 -> 2
+//      // 2 -> 3
+//      
+//      EdgeEntity<TestEdgeAttribute> edge1 = driver.createEdge(
+//          collectionName, docs.get(0).getDocumentHandle(), docs.get(1).getDocumentHandle(), 
+//          new TestEdgeAttribute("edge1", 100));
 //
-//			EdgeEntity<TestEdgeAttribute> edge2 = driver.createEdge(
-//					collectionName, docs.get(0).getDocumentHandle(), docs.get(2).getDocumentHandle(), 
-//					new TestEdgeAttribute("edge2", 200));
+//      EdgeEntity<TestEdgeAttribute> edge2 = driver.createEdge(
+//          collectionName, docs.get(0).getDocumentHandle(), docs.get(2).getDocumentHandle(), 
+//          new TestEdgeAttribute("edge2", 200));
 //
-//			EdgeEntity<TestEdgeAttribute> edge3 = driver.createEdge(
-//					collectionName, docs.get(2).getDocumentHandle(), docs.get(3).getDocumentHandle(), 
-//					new TestEdgeAttribute("edge3", 300));
-//			
-//			EdgesEntity<TestEdgeAttribute> edges = driver.getEdges(collectionName, docs.get(0).getDocumentHandle(), Direction.ANY, TestEdgeAttribute.class);
-//			System.out.println(edges.size());
-//			System.out.println(edges.get(0).getAttributes().a);
-//			System.out.println(edges.get(1).getAttributes().a);
-//			
-//		} catch (ArangoException e) {
-//			e.printStackTrace();
-//		} finally {
-//			configure.shutdown();
-//		}
-//		
-//	}
+//      EdgeEntity<TestEdgeAttribute> edge3 = driver.createEdge(
+//          collectionName, docs.get(2).getDocumentHandle(), docs.get(3).getDocumentHandle(), 
+//          new TestEdgeAttribute("edge3", 300));
+//      
+//      EdgesEntity<TestEdgeAttribute> edges = driver.getEdges(collectionName, docs.get(0).getDocumentHandle(), Direction.ANY, TestEdgeAttribute.class);
+//      System.out.println(edges.size());
+//      System.out.println(edges.get(0).getAttributes().a);
+//      System.out.println(edges.get(1).getAttributes().a);
+//      
+//    } catch (ArangoException e) {
+//      e.printStackTrace();
+//    } finally {
+//      configure.shutdown();
+//    }
+//    
+//  }
 //
 //}

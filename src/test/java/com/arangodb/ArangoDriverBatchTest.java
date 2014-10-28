@@ -39,15 +39,15 @@ import static org.junit.Assert.*;
  */
 public class ArangoDriverBatchTest extends BaseTest {
 
-	public ArangoDriverBatchTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+  public ArangoDriverBatchTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-	private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
+  private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
 
 
-	@Before
-	public void before() throws ArangoException {
+  @Before
+  public void before() throws ArangoException {
     for (String col: new String[]{"blub"}) {
       try {
         driver.deleteCollection(col);
@@ -57,13 +57,13 @@ public class ArangoDriverBatchTest extends BaseTest {
     logger.debug("----------");
   }
 
-	@After
-	public void after() {
-		logger.debug("----------");
-	}
+  @After
+  public void after() {
+    logger.debug("----------");
+  }
 
-	@Test
-	public void test_StartCancelExecuteBatchMode() throws ArangoException {
+  @Test
+  public void test_StartCancelExecuteBatchMode() throws ArangoException {
 
     driver.startBatchMode();
     String msg = "";

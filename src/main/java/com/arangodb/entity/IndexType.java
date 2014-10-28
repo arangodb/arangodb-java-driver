@@ -22,16 +22,16 @@ package com.arangodb.entity;
  * @see http://www.arangodb.org/manuals/current/HttpIndex.html#HttpIndexIntro
  */
 public enum IndexType {
-	/** Primary Index */
-	PRIMARY,
-	/** Cap Index */
-	CAP,
-	/** Geo Index */
-	GEO,
-	/** Hash Index */
-	HASH,
-	/** Skiplist Index */
-	SKIPLIST,
-	/** Fulltext Inex */
-	FULLTEXT
+  /** Primary Index */
+  PRIMARY,
+  /** Cap Index */
+  CAP,
+  /** Geo Index */
+  GEO,
+  /** Hash Index */
+  HASH,
+  /** Skiplist Index */
+  SKIPLIST,
+  /** Fulltext Inex */
+  FULLTEXT
 }

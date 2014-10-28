@@ -33,64 +33,64 @@ import com.arangodb.http.HttpResponseEntity;
  */
 public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalDatabaseDriver {
 
-	InternalDatabaseDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+  InternalDatabaseDriverImpl(ArangoConfigure configure) {
+    super(configure);
+  }
 
-	@Override
+  @Override
   public DatabaseEntity getCurrentDatabase() throws ArangoException {
-		
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, null, "/_api/database/current"));
-		return createEntity(res, DatabaseEntity.class);
-		
-	}
-	
-	@Override
+    
+    HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, null, "/_api/database/current"));
+    return createEntity(res, DatabaseEntity.class);
+    
+  }
+  
+  @Override
   public StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password) throws ArangoException {
     HttpResponseEntity res = httpManager.doGet(
-				createEndpointUrl(baseUrl, null, "/_api/database", currentUserAccessableOnly ? "user" : null),
-				null, null, username, password
-				);
+        createEndpointUrl(baseUrl, null, "/_api/database", currentUserAccessableOnly ? "user" : null),
+        null, null, username, password
+        );
     return createEntity(res, StringsResultEntity.class);
 
-	}
-	
-	@Override
+  }
+  
+  @Override
   public BooleanResultEntity createDatabase(String database, UserEntity... users) throws ArangoException {
 
-		validateDatabaseName(database, false);
-		
-		TreeMap<String, Object> body = new TreeMap<String, Object>();
-		body.put("name", database);
-		if (users != null && users.length > 0) {
-			body.put("users", users);
-		}
-		
-		HttpResponseEntity res = httpManager.doPost(
-				createEndpointUrl(baseUrl, null, "/_api/database"),
-				null, 
-				EntityFactory.toJsonString(body)
-				);
-		
-		return createEntity(res, BooleanResultEntity.class);
-		
-	}
+    validateDatabaseName(database, false);
+    
+    TreeMap<String, Object> body = new TreeMap<String, Object>();
+    body.put("name", database);
+    if (users != null && users.length > 0) {
+      body.put("users", users);
+    }
+    
+    HttpResponseEntity res = httpManager.doPost(
+        createEndpointUrl(baseUrl, null, "/_api/database"),
+        null, 
+        EntityFactory.toJsonString(body)
+        );
+    
+    return createEntity(res, BooleanResultEntity.class);
+    
+  }
 
-	@Override
+  @Override
   public BooleanResultEntity deleteDatabase(String database) throws ArangoException {
 
-		validateDatabaseName(database, false);
-		
-		TreeMap<String, Object> body = new TreeMap<String, Object>();
-		body.put("name", database);
-		
-		HttpResponseEntity res = httpManager.doDelete(
-				createEndpointUrl(baseUrl, null, "/_api/database", database),
-				null
-				);
-		
-		return createEntity(res, BooleanResultEntity.class);
-		
-	}
+    validateDatabaseName(database, false);
+    
+    TreeMap<String, Object> body = new TreeMap<String, Object>();
+    body.put("name", database);
+    
+    HttpResponseEntity res = httpManager.doDelete(
+        createEndpointUrl(baseUrl, null, "/_api/database", database),
+        null
+        );
+    
+    return createEntity(res, BooleanResultEntity.class);
+    
+  }
 
 }

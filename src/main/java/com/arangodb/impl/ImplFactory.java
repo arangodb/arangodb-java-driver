@@ -25,49 +25,49 @@ import com.arangodb.InternalKVSDriver;
  *
  */
 public class ImplFactory {
-	public static InternalCursorDriverImpl createCursorDriver(ArangoConfigure configure) {
-		return new InternalCursorDriverImpl(configure);
-	}
-	public static InternalCollectionDriverImpl createCollectionDriver(ArangoConfigure configure) {
-		return new InternalCollectionDriverImpl(configure);
-	}
-	public static InternalDocumentDriverImpl createDocumentDriver(ArangoConfigure configure) {
-		return new InternalDocumentDriverImpl(configure);
-	}
-	public static InternalKVSDriver createKVSDriver(ArangoConfigure configure) {
-		return new InternalKVSDriverImpl(configure);
-	}
-	public static InternalSimpleDriverImpl createSimpleDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
-		return new InternalSimpleDriverImpl(configure, cursorDriver);
-	}
-	public static InternalIndexDriverImpl createIndexDriver(ArangoConfigure configure) {
-		return new InternalIndexDriverImpl(configure);
-	}
-	public static InternalAdminDriverImpl createAdminDriver(ArangoConfigure configure) {
-		return new InternalAdminDriverImpl(configure);
-	}
+  public static InternalCursorDriverImpl createCursorDriver(ArangoConfigure configure) {
+    return new InternalCursorDriverImpl(configure);
+  }
+  public static InternalCollectionDriverImpl createCollectionDriver(ArangoConfigure configure) {
+    return new InternalCollectionDriverImpl(configure);
+  }
+  public static InternalDocumentDriverImpl createDocumentDriver(ArangoConfigure configure) {
+    return new InternalDocumentDriverImpl(configure);
+  }
+  public static InternalKVSDriver createKVSDriver(ArangoConfigure configure) {
+    return new InternalKVSDriverImpl(configure);
+  }
+  public static InternalSimpleDriverImpl createSimpleDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
+    return new InternalSimpleDriverImpl(configure, cursorDriver);
+  }
+  public static InternalIndexDriverImpl createIndexDriver(ArangoConfigure configure) {
+    return new InternalIndexDriverImpl(configure);
+  }
+  public static InternalAdminDriverImpl createAdminDriver(ArangoConfigure configure) {
+    return new InternalAdminDriverImpl(configure);
+  }
   public static InternalAqlFunctionsDriverImpl createAqlFunctionsDriver(ArangoConfigure configure) {
     return new InternalAqlFunctionsDriverImpl(configure);
   }
   public static InternalBatchDriverImpl createBatchDriver(ArangoConfigure configure) {
     return new InternalBatchDriverImpl(configure);
   }
-	public static InternalUsersDriverImpl createUsersDriver(ArangoConfigure configure) {
-		return new InternalUsersDriverImpl(configure);
-	}
-	public static InternalImportDriverImpl createImportDriver(ArangoConfigure configure) {
-		return new InternalImportDriverImpl(configure);
-	}
-	public static InternalDatabaseDriverImpl createDatabaseDriver(ArangoConfigure configure) {
-		return new InternalDatabaseDriverImpl(configure);
-	}
-	public static InternalEndpointDriverImpl createEndpointDriver(ArangoConfigure configure) {
-		return new InternalEndpointDriverImpl(configure);
-	}
-	public static InternalReplicationDriverImpl createReplicationDriver(ArangoConfigure configure) {
-		return new InternalReplicationDriverImpl(configure);
-	}
-	public static InternalGraphDriverImpl createGraphDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
-		return new InternalGraphDriverImpl(configure, cursorDriver);
-	}
+  public static InternalUsersDriverImpl createUsersDriver(ArangoConfigure configure) {
+    return new InternalUsersDriverImpl(configure);
+  }
+  public static InternalImportDriverImpl createImportDriver(ArangoConfigure configure) {
+    return new InternalImportDriverImpl(configure);
+  }
+  public static InternalDatabaseDriverImpl createDatabaseDriver(ArangoConfigure configure) {
+    return new InternalDatabaseDriverImpl(configure);
+  }
+  public static InternalEndpointDriverImpl createEndpointDriver(ArangoConfigure configure) {
+    return new InternalEndpointDriverImpl(configure);
+  }
+  public static InternalReplicationDriverImpl createReplicationDriver(ArangoConfigure configure) {
+    return new InternalReplicationDriverImpl(configure);
+  }
+  public static InternalGraphDriverImpl createGraphDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver) {
+    return new InternalGraphDriverImpl(configure, cursorDriver);
+  }
 }

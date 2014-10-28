@@ -40,9 +40,9 @@ import java.util.*;
 public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 
-	InternalBatchDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+  InternalBatchDriverImpl(ArangoConfigure configure) {
+    super(configure);
+  }
 
   public static String newline = System.getProperty("line.separator");
 
@@ -50,7 +50,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
   private BatchResponseListEntity batchResponseListEntity;
 
-	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
+  public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
 
 
     String body = "";
@@ -140,7 +140,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
     batchResponseListEntity.setBatchResponseEntities(batchResponseEntityList);
     this.batchResponseListEntity = batchResponseListEntity;
     return createEntity(res, DefaultEntity.class, null, false);
-	}
+  }
 
   public BatchResponseListEntity getBatchResponseListEntity() {
     return batchResponseListEntity;

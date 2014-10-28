@@ -29,20 +29,20 @@ import com.google.gson.stream.JsonWriter;
  */
 public class CollectionStatusTypeAdapter extends TypeAdapter<CollectionStatus> {
 
-	@Override
-	public void write(JsonWriter out, CollectionStatus value) throws IOException {
-		out.value(value.status());
-	}
+  @Override
+  public void write(JsonWriter out, CollectionStatus value) throws IOException {
+    out.value(value.status());
+  }
 
-	@Override
-	public CollectionStatus read(JsonReader in) throws IOException {
-		if (in.peek() == JsonToken.NULL) {
-			in.nextNull();
-			return null;
-		}
-		
-		CollectionStatus ret = CollectionStatus.valueOf(in.nextInt());
-		return ret;
-	}
+  @Override
+  public CollectionStatus read(JsonReader in) throws IOException {
+    if (in.peek() == JsonToken.NULL) {
+      in.nextNull();
+      return null;
+    }
+    
+    CollectionStatus ret = CollectionStatus.valueOf(in.nextInt());
+    return ret;
+  }
 
 }

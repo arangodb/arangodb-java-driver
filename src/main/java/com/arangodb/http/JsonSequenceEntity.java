@@ -33,51 +33,51 @@ import com.google.gson.Gson;
  *
  */
 public class JsonSequenceEntity extends AbstractHttpEntity {
-	
-	private Iterator<?> it;
-	private Gson gson;
+  
+  private Iterator<?> it;
+  private Gson gson;
 
-	public JsonSequenceEntity(Iterator<?> it, Gson gson) {
-		this.it = it;
-		this.gson = gson;
-		setChunked(true);
-		setContentType("binary/octet-stream");
-	}
-	
-	public boolean isRepeatable() {
-		return false;
-	}
+  public JsonSequenceEntity(Iterator<?> it, Gson gson) {
+    this.it = it;
+    this.gson = gson;
+    setChunked(true);
+    setContentType("binary/octet-stream");
+  }
+  
+  public boolean isRepeatable() {
+    return false;
+  }
 
-	public long getContentLength() {
-		return -1;
-	}
+  public long getContentLength() {
+    return -1;
+  }
 
-	public InputStream getContent() throws IOException, IllegalStateException {
-		throw new IllegalStateException("cannot support this method.");
-	}
+  public InputStream getContent() throws IOException, IllegalStateException {
+    throw new IllegalStateException("cannot support this method.");
+  }
 
-	public boolean isStreaming() {
-		return true;
-	}
+  public boolean isStreaming() {
+    return true;
+  }
 
-	public void writeTo(OutputStream outstream) throws IOException {
-		
-		if (outstream == null) {
-			throw new IllegalArgumentException("Output stream may not be null");
-		}
-		
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new OutputStreamWriter(outstream, "UTF-8"));
-			while (it.hasNext()) {
-				Object value = it.next();
-				gson.toJson(value, writer);
-				writer.newLine();
-			}
-			writer.flush();
-		} finally {
-		}
-		
-	}
+  public void writeTo(OutputStream outstream) throws IOException {
+    
+    if (outstream == null) {
+      throw new IllegalArgumentException("Output stream may not be null");
+    }
+    
+    BufferedWriter writer = null;
+    try {
+      writer = new BufferedWriter(new OutputStreamWriter(outstream, "UTF-8"));
+      while (it.hasNext()) {
+        Object value = it.next();
+        gson.toJson(value, writer);
+        writer.newLine();
+      }
+      writer.flush();
+    } finally {
+    }
+    
+  }
 
 }

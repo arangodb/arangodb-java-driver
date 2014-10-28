@@ -27,16 +27,16 @@ import com.arangodb.entity.DocumentEntity;
  */
 public class MissingInstanceCreater {
 
-	private static HashMap<Class<?>, Class<? extends BaseEntity>> mapping = new HashMap<Class<?>, Class<? extends BaseEntity>>();
-	static {
-		mapping.put(VertexEntity.class, DocumentEntity.class);
-	}
-	public static <T extends BaseEntity> Class<?> getMissingClass(Class<T> clazz) {
-		Class<T> c = (Class<T>) mapping.get(clazz);
-		if (c == null) {
-			c = clazz;
-		}
-		return c;
-	}
-	
+  private static HashMap<Class<?>, Class<? extends BaseEntity>> mapping = new HashMap<Class<?>, Class<? extends BaseEntity>>();
+  static {
+    mapping.put(VertexEntity.class, DocumentEntity.class);
+  }
+  public static <T extends BaseEntity> Class<?> getMissingClass(Class<T> clazz) {
+    Class<T> c = (Class<T>) mapping.get(clazz);
+    if (c == null) {
+      c = clazz;
+    }
+    return c;
+  }
+  
 }

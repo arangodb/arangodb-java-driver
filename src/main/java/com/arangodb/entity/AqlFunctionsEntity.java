@@ -24,8 +24,8 @@ import java.util.Map;
  *
  */
 public class AqlFunctionsEntity extends BaseEntity {
-	
-	Map<String, String> aqlFunctions;
+  
+  Map<String, String> aqlFunctions;
 
   public AqlFunctionsEntity () {
   }
@@ -34,12 +34,12 @@ public class AqlFunctionsEntity extends BaseEntity {
     this.aqlFunctions = aqlfunctions;
   }
 
-	public Map<String, String> getAqlFunctions() {
-		return aqlFunctions;
-	}
+  public Map<String, String> getAqlFunctions() {
+    return aqlFunctions;
+  }
 
   public int size() {
     return this.aqlFunctions.size();
   }
-	
+  
 }

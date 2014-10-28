@@ -28,53 +28,53 @@ import java.util.NoSuchElementException;
  */
 public class CollectionUtils {
 
-	public static class EmptyIterator<E> implements Iterator<E> {
-		public boolean hasNext() {
-			return false;
-		}
-		public E next() {
-			throw new NoSuchElementException();
-		}
-		public void remove() {
-			throw new IllegalStateException();
-		}
-	}
-	
-	private static final EmptyIterator<Object> EMPTY_ITERATOR = new EmptyIterator<Object>();
-	
-	@SuppressWarnings("unchecked")
-	public static <T> Iterator<T> emptyIterator() {
-		return (Iterator<T>) EMPTY_ITERATOR;
-	}
-	
-	public static <T> Iterator<T> safetyIterator(Collection<T> collection) {
-		if (collection == null) {
-			return emptyIterator();
-		}
-		return collection.iterator();
-	}
-	
-	public static <T> List<T> safety(List<T> list) {
-		if (list == null) {
-			return new ArrayList<T>(0); // mutable list
-		}
-		return list;
-	}
-	
-	public static <T> String join(T[] array, String separator) {
-		if (array == null || array.length == 0) {
-			return "";
-		}
-		
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(array[0]);
-		
-		for (int i = 1; i < array.length; i++) {
-			buffer.append(separator);
-			buffer.append(array[i]);
-		}
-		
-		return buffer.toString();
-	}
-	
+  public static class EmptyIterator<E> implements Iterator<E> {
+    public boolean hasNext() {
+      return false;
+    }
+    public E next() {
+      throw new NoSuchElementException();
+    }
+    public void remove() {
+      throw new IllegalStateException();
+    }
+  }
+  
+  private static final EmptyIterator<Object> EMPTY_ITERATOR = new EmptyIterator<Object>();
+  
+  @SuppressWarnings("unchecked")
+  public static <T> Iterator<T> emptyIterator() {
+    return (Iterator<T>) EMPTY_ITERATOR;
+  }
+  
+  public static <T> Iterator<T> safetyIterator(Collection<T> collection) {
+    if (collection == null) {
+      return emptyIterator();
+    }
+    return collection.iterator();
+  }
+  
+  public static <T> List<T> safety(List<T> list) {
+    if (list == null) {
+      return new ArrayList<T>(0); // mutable list
+    }
+    return list;
+  }
+  
+  public static <T> String join(T[] array, String separator) {
+    if (array == null || array.length == 0) {
+      return "";
+    }
+    
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(array[0]);
+    
+    for (int i = 1; i < array.length; i++) {
+      buffer.append(separator);
+      buffer.append(array[i]);
+    }
+    
+    return buffer.toString();
+  }
+  
 }

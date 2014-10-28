@@ -26,17 +26,17 @@ import org.apache.http.HttpEntity;
  */
 public class HttpRequestEntity {
 
-	public static enum RequestType {
-		GET, POST, PUT, DELETE, HEAD, PATCH
-	}
+  public static enum RequestType {
+    GET, POST, PUT, DELETE, HEAD, PATCH
+  }
 
-	public Map<String, Object> headers;
-	public RequestType type;
-	public String url;
-	public Map<String, Object> parameters;
-	public String username;
-	public String password;
-	public String bodyText;
-	public HttpEntity entity;
+  public Map<String, Object> headers;
+  public RequestType type;
+  public String url;
+  public Map<String, Object> parameters;
+  public String username;
+  public String password;
+  public String bodyText;
+  public HttpEntity entity;
 
 }

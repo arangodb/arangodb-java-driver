@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Exclude {
 
-	public boolean serialize() default true;
-	public boolean deserialize() default true;
-	
+  public boolean serialize() default true;
+  public boolean deserialize() default true;
+  
 }

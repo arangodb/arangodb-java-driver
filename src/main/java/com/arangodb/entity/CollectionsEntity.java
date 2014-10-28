@@ -24,21 +24,21 @@ import java.util.Map;
  *
  */
 public class CollectionsEntity extends BaseEntity {
-	
-	List<CollectionEntity> collections;
-	Map<String, CollectionEntity> names;
-	
-	public List<CollectionEntity> getCollections() {
-		return collections;
-	}
-	public Map<String, CollectionEntity> getNames() {
-		return names;
-	}
-	public void setCollections(List<CollectionEntity> collections) {
-		this.collections = collections;
-	}
-	public void setNames(Map<String, CollectionEntity> names) {
-		this.names = names;
-	}
-	
+  
+  List<CollectionEntity> collections;
+  Map<String, CollectionEntity> names;
+  
+  public List<CollectionEntity> getCollections() {
+    return collections;
+  }
+  public Map<String, CollectionEntity> getNames() {
+    return names;
+  }
+  public void setCollections(List<CollectionEntity> collections) {
+    this.collections = collections;
+  }
+  public void setNames(Map<String, CollectionEntity> names) {
+    this.names = names;
+  }
+  
 }

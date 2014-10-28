@@ -21,7 +21,7 @@ package com.arangodb.entity;
  *
  */
 public enum Direction {
-	ANY,
-	IN,
-	OUT
+  ANY,
+  IN,
+  OUT
 }

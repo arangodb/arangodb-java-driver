@@ -35,41 +35,41 @@ import com.arangodb.util.TestUtils;
 @Deprecated
 public class ArangoDriverSimpleGeoTest extends BaseTest {
 
-	public ArangoDriverSimpleGeoTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+  public ArangoDriverSimpleGeoTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-	private String collectionName = "unit_test_simple_geo_test";
+  private String collectionName = "unit_test_simple_geo_test";
 
-	@Before
-	public void setup() throws ArangoException, IOException {
+  @Before
+  public void setup() throws ArangoException, IOException {
 
-		// index破棄のために一度削除する
-		try {
-			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {}
-		// Collectionを作る
-		try {
-			driver.createCollection(collectionName);
-		} catch (ArangoException e) {}
-		driver.truncateCollection(collectionName);
-		
-		// テストデータを作る
-		List<Station> stations = TestUtils.readStations();
-		for (Station station: stations) {
-			driver.createDocument(collectionName, station, null, null);
-		}
+    // index破棄のために一度削除する
+    try {
+      driver.deleteCollection(collectionName);
+    } catch (ArangoException e) {}
+    // Collectionを作る
+    try {
+      driver.createCollection(collectionName);
+    } catch (ArangoException e) {}
+    driver.truncateCollection(collectionName);
+    
+    // テストデータを作る
+    List<Station> stations = TestUtils.readStations();
+    for (Station station: stations) {
+      driver.createDocument(collectionName, station, null, null);
+    }
 
-	}
-	
-	@Test
-	public void test() throws ArangoException {
-		
-		// create geo index
-		driver.createIndex(collectionName, IndexType.GEO, false, "lat", "lot");
-		
-		// Tokyo Station: lat=35.681391, lon=139.766103
-		
-	}
-	
+  }
+  
+  @Test
+  public void test() throws ArangoException {
+    
+    // create geo index
+    driver.createIndex(collectionName, IndexType.GEO, false, "lat", "lot");
+    
+    // Tokyo Station: lat=35.681391, lon=139.766103
+    
+  }
+  
 }

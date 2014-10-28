@@ -24,8 +24,8 @@ import com.arangodb.entity.ReplicationDumpRecord;
  *
  */
 public interface DumpHandler<T> {
-	
-	public boolean head(ReplicationDumpHeader header);
-	public boolean handle(ReplicationDumpRecord<T> entity);
-	
+  
+  public boolean head(ReplicationDumpHeader header);
+  public boolean handle(ReplicationDumpRecord<T> entity);
+  
 }

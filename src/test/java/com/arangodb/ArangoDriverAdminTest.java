@@ -43,161 +43,161 @@ import com.google.gson.Gson;
  */
 public class ArangoDriverAdminTest extends BaseTest {
 
-	public ArangoDriverAdminTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+  public ArangoDriverAdminTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-	@Test
-	public void test_version() throws ArangoException {
+  @Test
+  public void test_version() throws ArangoException {
 
-		ArangoVersion version = driver.getVersion();
-		assertThat(version.getServer(), is("arango"));
-		assertThat(version.getVersion(), is("2.3.0-devel"));
+    ArangoVersion version = driver.getVersion();
+    assertThat(version.getServer(), is("arango"));
+    assertThat(version.getVersion(), is("2.3.0-devel"));
 
-	}
+  }
 
-	@Test
-	public void test_time() throws ArangoException {
+  @Test
+  public void test_time() throws ArangoException {
 
-		ArangoUnixTime time = driver.getTime();
-		assertThat(time.getSecond(), is(not(0)));
-		assertThat(time.getMicrosecond(), is(not(0)));
+    ArangoUnixTime time = driver.getTime();
+    assertThat(time.getSecond(), is(not(0)));
+    assertThat(time.getMicrosecond(), is(not(0)));
 
-		System.out.println("unixtime=" + time.getSecond());
-		System.out.println("unixtime_micros=" + time.getMicrosecond());
-		System.out.println("unixtime_millis=" + time.getTimeMillis());
+    System.out.println("unixtime=" + time.getSecond());
+    System.out.println("unixtime_micros=" + time.getMicrosecond());
+    System.out.println("unixtime_millis=" + time.getTimeMillis());
 
-	}
+  }
 
-	@Test
-	public void test_log_all() throws ArangoException {
+  @Test
+  public void test_log_all() throws ArangoException {
 
-		AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, null);
+    AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, null);
 
-		assertThat(entity, is(notNullValue()));
-		assertThat(entity.getTotalAmount(), is(not(0)));
-		assertThat(entity.getLogs().size(), is(entity.getTotalAmount()));
+    assertThat(entity, is(notNullValue()));
+    assertThat(entity.getTotalAmount(), is(not(0)));
+    assertThat(entity.getLogs().size(), is(entity.getTotalAmount()));
 
-		// debug
-		for (AdminLogEntity.LogEntry log : entity.getLogs()) {
-			System.out
-					.printf("%d\t%d\t%tF %<tT\t%s%n", log.getLid(), log.getLevel(), log.getTimestamp(), log.getText());
-		}
+    // debug
+    for (AdminLogEntity.LogEntry log : entity.getLogs()) {
+      System.out
+          .printf("%d\t%d\t%tF %<tT\t%s%n", log.getLid(), log.getLevel(), log.getTimestamp(), log.getText());
+    }
 
-	}
+  }
 
-	@Test
-	public void test_log_text() throws ArangoException {
+  @Test
+  public void test_log_text() throws ArangoException {
 
-		AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, "Fun");
+    AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, "Fun");
 
-		assertThat(entity, is(notNullValue()));
-		// debug
-		for (AdminLogEntity.LogEntry log : entity.getLogs()) {
-			System.out
-					.printf("%d\t%d\t%tF %<tT\t%s%n", log.getLid(), log.getLevel(), log.getTimestamp(), log.getText());
-		}
+    assertThat(entity, is(notNullValue()));
+    // debug
+    for (AdminLogEntity.LogEntry log : entity.getLogs()) {
+      System.out
+          .printf("%d\t%d\t%tF %<tT\t%s%n", log.getLid(), log.getLevel(), log.getTimestamp(), log.getText());
+    }
 
-	}
+  }
 
-	// TODO テスト増やす
+  // TODO テスト増やす
 
-	@Test
-	public void test_statistics() throws ArangoException {
+  @Test
+  public void test_statistics() throws ArangoException {
 
-		StatisticsEntity stat = driver.getStatistics();
+    StatisticsEntity stat = driver.getStatistics();
 
-		// debug
-		Gson gson = new Gson();
+    // debug
+    Gson gson = new Gson();
     assertNotNull(gson.toJson(stat));
     assertNotNull(gson.toJson(stat.getSystem()));
     assertNotNull(gson.toJson(stat.getClient()));
     assertNotNull(gson.toJson(stat.getServer()));
 
-	}
+  }
 
-	@Test
-	public void test_statistics_description() throws ArangoException {
+  @Test
+  public void test_statistics_description() throws ArangoException {
 
-		StatisticsDescriptionEntity desc = driver.getStatisticsDescription();
+    StatisticsDescriptionEntity desc = driver.getStatisticsDescription();
 
-		// debug
-		Gson gson = new Gson();
-		assertNotNull(gson.toJson(desc));
+    // debug
+    Gson gson = new Gson();
+    assertNotNull(gson.toJson(desc));
     assertNotNull(gson.toJson(desc.getGroups()));
     assertNotNull(gson.toJson(desc.getFigures()));
-	}
+  }
 
-	@Test
-	public void test_reload_routing() throws ArangoException {
+  @Test
+  public void test_reload_routing() throws ArangoException {
 
-		DefaultEntity entity = driver.reloadRouting();
-		assertThat(entity.getStatusCode(), is(200));
-		assertThat(entity.isError(), is(false));
+    DefaultEntity entity = driver.reloadRouting();
+    assertThat(entity.getStatusCode(), is(200));
+    assertThat(entity.isError(), is(false));
 
-	}
+  }
 
-	@Test
-	public void test_execute_do_nothing() throws ArangoException {
+  @Test
+  public void test_execute_do_nothing() throws ArangoException {
 
-		DefaultEntity entity = driver.executeScript("");
-		assertThat(entity.isError(), is(false));
-		assertThat(entity.getCode(), is(200));
-		assertThat(entity.getStatusCode(), is(200));
+    DefaultEntity entity = driver.executeScript("");
+    assertThat(entity.isError(), is(false));
+    assertThat(entity.getCode(), is(200));
+    assertThat(entity.getStatusCode(), is(200));
 
-	}
+  }
 
-	@Test
-	public void test_execute() throws ArangoException {
+  @Test
+  public void test_execute() throws ArangoException {
 
-		DefaultEntity entity = driver.executeScript("var db = require(\"internal\").db; cols = db._collections();\n"
-				+ "len = cols.length;\n");
-		assertThat(entity.isError(), is(false));
-		assertThat(entity.getCode(), is(200));
-		assertThat(entity.getStatusCode(), is(200));
+    DefaultEntity entity = driver.executeScript("var db = require(\"internal\").db; cols = db._collections();\n"
+        + "len = cols.length;\n");
+    assertThat(entity.isError(), is(false));
+    assertThat(entity.getCode(), is(200));
+    assertThat(entity.getStatusCode(), is(200));
 
-	}
+  }
 
-	@Test
-	public void test_execute_delete_collection() throws ArangoException {
+  @Test
+  public void test_execute_delete_collection() throws ArangoException {
 
-		DefaultEntity entity1 = driver.executeScript("var db = require(\"internal\").db; db._drop(\""
-				+ "col-execute-delete-test" + "\")");
-		assertThat(entity1.isError(), is(false));
-		assertThat(entity1.getCode(), is(200));
-		assertThat(entity1.getStatusCode(), is(200));
+    DefaultEntity entity1 = driver.executeScript("var db = require(\"internal\").db; db._drop(\""
+        + "col-execute-delete-test" + "\")");
+    assertThat(entity1.isError(), is(false));
+    assertThat(entity1.getCode(), is(200));
+    assertThat(entity1.getStatusCode(), is(200));
 
-		driver.createCollection("col-execute-delete-test");
-		driver.getCollection("col-execute-delete-test");
+    driver.createCollection("col-execute-delete-test");
+    driver.getCollection("col-execute-delete-test");
 
-		DefaultEntity entity2 = driver.executeScript("var db = require(\"internal\").db; db._drop(\""
-				+ "col-execute-delete-test" + "\")");
-		assertThat(entity2.isError(), is(false));
-		assertThat(entity2.getCode(), is(200));
-		assertThat(entity2.getStatusCode(), is(200));
+    DefaultEntity entity2 = driver.executeScript("var db = require(\"internal\").db; db._drop(\""
+        + "col-execute-delete-test" + "\")");
+    assertThat(entity2.isError(), is(false));
+    assertThat(entity2.getCode(), is(200));
+    assertThat(entity2.getStatusCode(), is(200));
 
-		try {
-			driver.getCollection("col-execute-delete-test");
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getCode(), is(404));
-			assertThat(e.getErrorNumber(), is(1203));
-		}
-	}
+    try {
+      driver.getCollection("col-execute-delete-test");
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), is(404));
+      assertThat(e.getErrorNumber(), is(1203));
+    }
+  }
 
-	@Test
-	public void test_execute_error() throws ArangoException {
-		try {
-			driver.executeScript("xxx");
-			fail();
-		} catch (ArangoException e) {
-			String t = "JavaScript exception in file 'undefined' at 1,14: ReferenceError: xxx is not defined\n"
-					+ "!(function() {xxx}());\n" + "!             ^\n"
-					+ "stacktrace: ReferenceError: xxx is not defined\n";
-			assertThat(e.getErrorMessage(), startsWith(t));
-			assertThat(e.getEntity().getStatusCode(), is(500));
-		}
+  @Test
+  public void test_execute_error() throws ArangoException {
+    try {
+      driver.executeScript("xxx");
+      fail();
+    } catch (ArangoException e) {
+      String t = "JavaScript exception in file 'undefined' at 1,14: ReferenceError: xxx is not defined\n"
+          + "!(function() {xxx}());\n" + "!             ^\n"
+          + "stacktrace: ReferenceError: xxx is not defined\n";
+      assertThat(e.getErrorMessage(), startsWith(t));
+      assertThat(e.getEntity().getStatusCode(), is(500));
+    }
 
-	}
+  }
 
 }

@@ -27,60 +27,60 @@ import java.util.Collection;
  */
 public class StringUtils {
 
-	public static String encodeUrl(String text) {
-		if (text != null) {
-			try {
-				return URLEncoder.encode(text, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-			}
-		}
-		return null;
-	}
-	
-	public static boolean isCurlyBracketStart(String text) {
-		
-		if (text == null || "".equals(text)) {
-			return false;
-		}
-		
-		int i = 0;
-		while (i < text.length() && Character.isWhitespace(text.charAt(i))) {
-			i++;
-		}
-		return i < text.length() && text.charAt(i) == '{';
-		
-	}
+  public static String encodeUrl(String text) {
+    if (text != null) {
+      try {
+        return URLEncoder.encode(text, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+      }
+    }
+    return null;
+  }
+  
+  public static boolean isCurlyBracketStart(String text) {
+    
+    if (text == null || "".equals(text)) {
+      return false;
+    }
+    
+    int i = 0;
+    while (i < text.length() && Character.isWhitespace(text.charAt(i))) {
+      i++;
+    }
+    return i < text.length() && text.charAt(i) == '{';
+    
+  }
 
-	public static String join(String... params) {
-		if (params == null) {
-			return null;
-		}
-		return join(false, Arrays.asList(params));
-	}
+  public static String join(String... params) {
+    if (params == null) {
+      return null;
+    }
+    return join(false, Arrays.asList(params));
+  }
 
-	public static String join(boolean endSlash, Collection<String> paths) {
-		if (paths == null || paths.isEmpty()) {
-			return null;
-		}
-		
-		boolean prevLastSlash = false;
-		StringBuilder buffer = new StringBuilder();
-		for (String param: paths) {
-			if (param == null) continue;
-			if (!prevLastSlash && !param.startsWith("/")) {
-				buffer.append('/');
-			}
-			if (prevLastSlash && param.startsWith("/")) {
-				buffer.append(param.substring(1));
-			} else {
-				buffer.append(param);
-			}
-			prevLastSlash = param.endsWith("/");
-		}
-		if (endSlash && !prevLastSlash) {
-			buffer.append('/');
-		}
-		return buffer.toString();
-	}
-	
+  public static String join(boolean endSlash, Collection<String> paths) {
+    if (paths == null || paths.isEmpty()) {
+      return null;
+    }
+    
+    boolean prevLastSlash = false;
+    StringBuilder buffer = new StringBuilder();
+    for (String param: paths) {
+      if (param == null) continue;
+      if (!prevLastSlash && !param.startsWith("/")) {
+        buffer.append('/');
+      }
+      if (prevLastSlash && param.startsWith("/")) {
+        buffer.append(param.substring(1));
+      } else {
+        buffer.append(param);
+      }
+      prevLastSlash = param.endsWith("/");
+    }
+    if (endSlash && !prevLastSlash) {
+      buffer.append('/');
+    }
+    return buffer.toString();
+  }
+  
 }

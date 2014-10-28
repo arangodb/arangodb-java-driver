@@ -22,5 +22,5 @@ package com.arangodb;
  * 
  */
 //public enum ArangoErrorCode {
-//	
+//  
 //}

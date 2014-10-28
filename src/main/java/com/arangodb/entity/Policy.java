@@ -21,6 +21,6 @@ package com.arangodb.entity;
  *
  */
 public enum Policy {
-	ERROR,
-	LAST
+  ERROR,
+  LAST
 }

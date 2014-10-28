@@ -25,41 +25,41 @@ import java.util.Map;
  */
 public class KeyValueEntity extends BaseEntity {
 
-	long id;
-	boolean saved;
-	
-	Date created;
-	Date expires;
-	Map<String, Object> attributes;
-	public long getId() {
-		return id;
-	}
-	public boolean isSaved() {
-		return saved;
-	}
-	public Date getCreated() {
-		return created;
-	}
-	public Date getExpires() {
-		return expires;
-	}
-	public Map<String, Object> getAttributes() {
-		return attributes;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public void setSaved(boolean saved) {
-		this.saved = saved;
-	}
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-	public void setExpires(Date expires) {
-		this.expires = expires;
-	}
-	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
-	}
+  long id;
+  boolean saved;
+  
+  Date created;
+  Date expires;
+  Map<String, Object> attributes;
+  public long getId() {
+    return id;
+  }
+  public boolean isSaved() {
+    return saved;
+  }
+  public Date getCreated() {
+    return created;
+  }
+  public Date getExpires() {
+    return expires;
+  }
+  public Map<String, Object> getAttributes() {
+    return attributes;
+  }
+  public void setId(long id) {
+    this.id = id;
+  }
+  public void setSaved(boolean saved) {
+    this.saved = saved;
+  }
+  public void setCreated(Date created) {
+    this.created = created;
+  }
+  public void setExpires(Date expires) {
+    this.expires = expires;
+  }
+  public void setAttributes(Map<String, Object> attributes) {
+    this.attributes = attributes;
+  }
 
 }

@@ -23,45 +23,45 @@ package com.arangodb.entity;
  *
  */
 public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
-	
-	long documentRevision;
-	String documentHandle;
-	String documentKey;
-	T entity;
-	
-	public DocumentEntity() {
-	}
+  
+  long documentRevision;
+  String documentHandle;
+  String documentKey;
+  T entity;
+  
+  public DocumentEntity() {
+  }
 
-	public long getDocumentRevision() {
-		return documentRevision;
-	}
+  public long getDocumentRevision() {
+    return documentRevision;
+  }
 
-	public String getDocumentHandle() {
-		return documentHandle;
-	}
+  public String getDocumentHandle() {
+    return documentHandle;
+  }
 
-	public T getEntity() {
-		return entity;
-	}
+  public T getEntity() {
+    return entity;
+  }
 
-	public void setDocumentRevision(long documentRevision) {
-		this.documentRevision = documentRevision;
-	}
+  public void setDocumentRevision(long documentRevision) {
+    this.documentRevision = documentRevision;
+  }
 
-	public void setDocumentHandle(String documentHandle) {
-		this.documentHandle = documentHandle;
-	}
+  public void setDocumentHandle(String documentHandle) {
+    this.documentHandle = documentHandle;
+  }
 
-	public void setEntity(T entity) {
-		this.entity = entity;
-	}
+  public void setEntity(T entity) {
+    this.entity = entity;
+  }
 
-	public String getDocumentKey() {
-		return documentKey;
-	}
+  public String getDocumentKey() {
+    return documentKey;
+  }
 
-	public void setDocumentKey(String documentKey) {
-		this.documentKey = documentKey;
-	}
-	
+  public void setDocumentKey(String documentKey) {
+    this.documentKey = documentKey;
+  }
+  
 }

@@ -35,59 +35,59 @@ import com.google.gson.reflect.TypeToken;
  */
 public class InternalEndpointDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalEndpointDriver {
 
-	InternalEndpointDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
-	
-	@Override
+  InternalEndpointDriverImpl(ArangoConfigure configure) {
+    super(configure);
+  }
+  
+  @Override
   public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {
-		
-		// TODO: validate endpoint
-		
-		// validate databases
-		if (databases != null) {
-			for (String db: databases) {
-				validateDatabaseName(db, false);
-			}
-		}
-		
-		HttpResponseEntity res = httpManager.doPost(
-				createEndpointUrl(baseUrl, null, "/_api/endpoint"), 
-				null, 
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("endpoint", endpoint)
-						.put("databases", databases)
-						.get()
-						));
-		
-		return createEntity(res, BooleanResultEntity.class);
-		
-	}
-	
-	@Override
+    
+    // TODO: validate endpoint
+    
+    // validate databases
+    if (databases != null) {
+      for (String db: databases) {
+        validateDatabaseName(db, false);
+      }
+    }
+    
+    HttpResponseEntity res = httpManager.doPost(
+        createEndpointUrl(baseUrl, null, "/_api/endpoint"), 
+        null, 
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("endpoint", endpoint)
+            .put("databases", databases)
+            .get()
+            ));
+    
+    return createEntity(res, BooleanResultEntity.class);
+    
+  }
+  
+  @Override
   public List<Endpoint> getEndpoints() throws ArangoException {
 
-		Type type = new TypeToken<List<Endpoint>>(){}.getType();
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, null, "/_api/endpoint"));
-		
-		// because it is not include common-attribute.
-		return EntityFactory.createEntity(res.getText(), type);
+    Type type = new TypeToken<List<Endpoint>>(){}.getType();
+    HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, null, "/_api/endpoint"));
+    
+    // because it is not include common-attribute.
+    return EntityFactory.createEntity(res.getText(), type);
 
-	}
+  }
 
-	@Override
+  @Override
   public BooleanResultEntity deleteEndpoint(String endpoint) throws ArangoException {
-		
-		// TODO: validate endpoint
-		
-		HttpResponseEntity res = httpManager.doDelete(
-				createEndpointUrl(baseUrl, null, "/_api/endpoint", StringUtils.encodeUrl(endpoint)),
-				null
-				);
-		
-		return createEntity(res, BooleanResultEntity.class);
-		
-	}
-	
+    
+    // TODO: validate endpoint
+    
+    HttpResponseEntity res = httpManager.doDelete(
+        createEndpointUrl(baseUrl, null, "/_api/endpoint", StringUtils.encodeUrl(endpoint)),
+        null
+        );
+    
+    return createEntity(res, BooleanResultEntity.class);
+    
+  }
+  
 }

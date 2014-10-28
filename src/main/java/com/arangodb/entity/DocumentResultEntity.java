@@ -24,28 +24,28 @@ import java.util.List;
  */
 public class DocumentResultEntity<T> extends BaseEntity {
 
-	List<DocumentEntity<T>> result;
-	
-	public DocumentEntity<T> getOne() {
-		if (result == null || result.isEmpty()) {
-			return null;
-		}
-		return result.get(0);
-	}
-	
-	public int size() {
-		if (result == null) {
-			return 0;
-		}
-		return result.size();
-	}
+  List<DocumentEntity<T>> result;
+  
+  public DocumentEntity<T> getOne() {
+    if (result == null || result.isEmpty()) {
+      return null;
+    }
+    return result.get(0);
+  }
+  
+  public int size() {
+    if (result == null) {
+      return 0;
+    }
+    return result.size();
+  }
 
-	public List<DocumentEntity<T>> getResult() {
-		return result;
-	}
+  public List<DocumentEntity<T>> getResult() {
+    return result;
+  }
 
-	public void setResult(List<DocumentEntity<T>> result) {
-		this.result = result;
-	}
-	
+  public void setResult(List<DocumentEntity<T>> result) {
+    this.result = result;
+  }
+  
 }

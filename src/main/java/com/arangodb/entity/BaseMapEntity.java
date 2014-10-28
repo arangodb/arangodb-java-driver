@@ -27,54 +27,54 @@ import java.util.TreeMap;
  */
 public abstract class BaseMapEntity<K, V> extends BaseEntity implements Map<K, V> {
 
-	private final TreeMap<K, V> innerMap = new TreeMap<K, V>();
+  private final TreeMap<K, V> innerMap = new TreeMap<K, V>();
 
-	public int size() {
-		return innerMap.size();
-	}
+  public int size() {
+    return innerMap.size();
+  }
 
-	public boolean isEmpty() {
-		return innerMap.isEmpty();
-	}
+  public boolean isEmpty() {
+    return innerMap.isEmpty();
+  }
 
-	public boolean containsKey(Object key) {
-		return innerMap.containsKey(key);
-	}
+  public boolean containsKey(Object key) {
+    return innerMap.containsKey(key);
+  }
 
-	public boolean containsValue(Object value) {
-		return innerMap.containsValue(value);
-	}
+  public boolean containsValue(Object value) {
+    return innerMap.containsValue(value);
+  }
 
-	public V get(Object key) {
-		return innerMap.get(key);
-	}
+  public V get(Object key) {
+    return innerMap.get(key);
+  }
 
-	public V put(K key, V value) {
-		return innerMap.put(key, value);
-	}
+  public V put(K key, V value) {
+    return innerMap.put(key, value);
+  }
 
-	public V remove(Object key) {
-		return innerMap.remove(key);
-	}
+  public V remove(Object key) {
+    return innerMap.remove(key);
+  }
 
-	public void putAll(Map<? extends K, ? extends V> t) {
-		innerMap.putAll(t);
-	}
+  public void putAll(Map<? extends K, ? extends V> t) {
+    innerMap.putAll(t);
+  }
 
-	public void clear() {
-		innerMap.clear();
-	}
+  public void clear() {
+    innerMap.clear();
+  }
 
-	public Set<K> keySet() {
-		return innerMap.keySet();
-	}
+  public Set<K> keySet() {
+    return innerMap.keySet();
+  }
 
-	public Collection<V> values() {
-		return innerMap.values();
-	}
+  public Collection<V> values() {
+    return innerMap.values();
+  }
 
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
-		return innerMap.entrySet();
-	}
-	
+  public Set<java.util.Map.Entry<K, V>> entrySet() {
+    return innerMap.entrySet();
+  }
+  
 }

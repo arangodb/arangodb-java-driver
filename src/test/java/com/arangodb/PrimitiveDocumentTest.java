@@ -36,168 +36,168 @@ import com.google.gson.Gson;
  */
 public class PrimitiveDocumentTest extends BaseTest {
 
-	public PrimitiveDocumentTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+  public PrimitiveDocumentTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-	@Test
-	public void test_string() throws ArangoException {
+  @Test
+  public void test_string() throws ArangoException {
 
-		String value = "AAA";
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
-	}
+    String value = "AAA";
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
+  }
 
-	@Test
-	public void test_string_quote() throws ArangoException {
+  @Test
+  public void test_string_quote() throws ArangoException {
 
-		String value = "AA\"A";
+    String value = "AA\"A";
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
-	}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
+  }
 
-	@Test
-	public void test_string_multibyte1() throws ArangoException {
+  @Test
+  public void test_string_multibyte1() throws ArangoException {
 
-		String value = "AA☆A";
+    String value = "AA☆A";
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
-	}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
+  }
 
-	@Test
-	public void test_string_multibyte2() throws ArangoException {
+  @Test
+  public void test_string_multibyte2() throws ArangoException {
 
-		TestComplexEntity01 value = new TestComplexEntity01("寿司", "", 10);
-		System.out.println(new Gson().toJson(value));
+    TestComplexEntity01 value = new TestComplexEntity01("寿司", "", 10);
+    System.out.println(new Gson().toJson(value));
 
-		DocumentEntity<?> res = driver.createDocument("unit_test_primitive", value, true, true);
-		String documentHandle = res.getDocumentHandle();
+    DocumentEntity<?> res = driver.createDocument("unit_test_primitive", value, true, true);
+    String documentHandle = res.getDocumentHandle();
 
-		DocumentEntity<TestComplexEntity01> doc = driver.getDocument(documentHandle, TestComplexEntity01.class);
-		System.out.println(doc.getEntity().getUser());
-		System.out.println(doc.getEntity().getDesc());
-		System.out.println(doc.getEntity().getAge());
-	}
+    DocumentEntity<TestComplexEntity01> doc = driver.getDocument(documentHandle, TestComplexEntity01.class);
+    System.out.println(doc.getEntity().getUser());
+    System.out.println(doc.getEntity().getDesc());
+    System.out.println(doc.getEntity().getAge());
+  }
 
-	@Test
-	public void test_string_escape() throws ArangoException {
+  @Test
+  public void test_string_escape() throws ArangoException {
 
-		String value = "\\\\";
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
-	}
+    String value = "\\\\";
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
+  }
 
-	@Test
-	public void test_string_spchar() throws ArangoException {
+  @Test
+  public void test_string_spchar() throws ArangoException {
 
-		String value = "AA\t\nA;/@*:='&%$#!~\\";
+    String value = "AA\t\nA;/@*:='&%$#!~\\";
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
-	}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
+  }
 
-	@Test
-	public void test_null() throws ArangoException {
+  @Test
+  public void test_null() throws ArangoException {
 
-		String value = null;
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
-	}
+    String value = null;
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
+  }
 
-	@Test
-	public void test_boolean_true() throws ArangoException {
+  @Test
+  public void test_boolean_true() throws ArangoException {
 
-		boolean value = true;
+    boolean value = true;
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
 
-	}
+  }
 
-	@Test
-	public void test_boolean_false() throws ArangoException {
+  @Test
+  public void test_boolean_false() throws ArangoException {
 
-		boolean value = false;
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
+    boolean value = false;
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
 
-	}
+  }
 
-	@Test
-	public void test_number_int() throws ArangoException {
+  @Test
+  public void test_number_int() throws ArangoException {
 
-		int value = 1000000;
+    int value = 1000000;
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
 
-	}
+  }
 
-	@Test
-	public void test_number_long() throws ArangoException {
+  @Test
+  public void test_number_long() throws ArangoException {
 
-		long value = Long.MAX_VALUE;
+    long value = Long.MAX_VALUE;
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
 
-	}
+  }
 
-	@Test
-	@Ignore
-	public void test_number_double() throws ArangoException {
+  @Test
+  @Ignore
+  public void test_number_double() throws ArangoException {
 
-		double value = Double.MAX_VALUE;
+    double value = Double.MAX_VALUE;
 
-		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
-			fail();
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-		}
+    try {
+      driver.createDocument("unit_test_primitive", value, true, true);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+    }
 
-	}
+  }
 
 }

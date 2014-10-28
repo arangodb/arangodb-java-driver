@@ -24,43 +24,43 @@ import java.io.Serializable;
  */
 public class CollectionKeyOption implements Serializable {
 
-	String type;
-	boolean allowUserKeys;
-	long increment;
-	long offset;
-	
-	public static CollectionKeyOption createIncrementOption(boolean allowUserKeys, long increment, long offset) {
-		CollectionKeyOption option = new CollectionKeyOption();
-		option.setType("autoincrement");
-		option.setAllowUserKeys(allowUserKeys);
-		option.setIncrement(increment);
-		option.setOffset(offset);
-		return option;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	public boolean isAllowUserKeys() {
-		return allowUserKeys;
-	}
-	public long getIncrement() {
-		return increment;
-	}
-	public long getOffset() {
-		return offset;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public void setAllowUserKeys(boolean allowUserKeys) {
-		this.allowUserKeys = allowUserKeys;
-	}
-	public void setIncrement(long increment) {
-		this.increment = increment;
-	}
-	public void setOffset(long offset) {
-		this.offset = offset;
-	}
-	
+  String type;
+  boolean allowUserKeys;
+  long increment;
+  long offset;
+  
+  public static CollectionKeyOption createIncrementOption(boolean allowUserKeys, long increment, long offset) {
+    CollectionKeyOption option = new CollectionKeyOption();
+    option.setType("autoincrement");
+    option.setAllowUserKeys(allowUserKeys);
+    option.setIncrement(increment);
+    option.setOffset(offset);
+    return option;
+  }
+  
+  public String getType() {
+    return type;
+  }
+  public boolean isAllowUserKeys() {
+    return allowUserKeys;
+  }
+  public long getIncrement() {
+    return increment;
+  }
+  public long getOffset() {
+    return offset;
+  }
+  public void setType(String type) {
+    this.type = type;
+  }
+  public void setAllowUserKeys(boolean allowUserKeys) {
+    this.allowUserKeys = allowUserKeys;
+  }
+  public void setIncrement(long increment) {
+    this.increment = increment;
+  }
+  public void setOffset(long offset) {
+    this.offset = offset;
+  }
+  
 }

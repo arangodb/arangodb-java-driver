@@ -22,14 +22,14 @@ package com.arangodb.entity;
  */
 public class DeletedEntity extends DefaultEntity {
 
-	Boolean deleted;
+  Boolean deleted;
 
-	public Boolean getDeleted() {
-		return deleted;
-	}
+  public Boolean getDeleted() {
+    return deleted;
+  }
 
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-	
+  public void setDeleted(Boolean deleted) {
+    this.deleted = deleted;
+  }
+  
 }

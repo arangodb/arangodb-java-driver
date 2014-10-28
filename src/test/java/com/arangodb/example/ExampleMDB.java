@@ -32,65 +32,65 @@ import com.arangodb.util.MapBuilder;
  */
 public class ExampleMDB {
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		// Initialize configure
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.init();
-		
-		// Create Driver (this instance is thread-safe)
-		// If you use a multi database, you need create each instance.
-		ArangoDriver driverA = new ArangoDriver(configure); // db = _system (configure#defaultDatabase)
-		ArangoDriver driverB = new ArangoDriver(configure, "mydb2");
-		
-		try {
-			
-			try {
-				driverA.deleteCollection("example1");
-			} catch (Exception e) {}
-			try {
-				driverB.deleteDatabase("mydb2");
-			} catch (Exception e) {}
-			try {
-				driverB.deleteCollection("example2");
-			} catch (Exception e) {}
-			
-			// Create Collection at db(_system)
-			driverA.createCollection("example1", false, null, null, null, null, CollectionType.DOCUMENT);
-			driverA.createDocument("example1", 
-					new MapBuilder().put("attr1", "value1").put("attr2", "value2").get(), 
-					false, false);
+    // Initialize configure
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.init();
+    
+    // Create Driver (this instance is thread-safe)
+    // If you use a multi database, you need create each instance.
+    ArangoDriver driverA = new ArangoDriver(configure); // db = _system (configure#defaultDatabase)
+    ArangoDriver driverB = new ArangoDriver(configure, "mydb2");
+    
+    try {
+      
+      try {
+        driverA.deleteCollection("example1");
+      } catch (Exception e) {}
+      try {
+        driverB.deleteDatabase("mydb2");
+      } catch (Exception e) {}
+      try {
+        driverB.deleteCollection("example2");
+      } catch (Exception e) {}
+      
+      // Create Collection at db(_system)
+      driverA.createCollection("example1", false, null, null, null, null, CollectionType.DOCUMENT);
+      driverA.createDocument("example1", 
+          new MapBuilder().put("attr1", "value1").put("attr2", "value2").get(), 
+          false, false);
 
-			// Create Database mydb2
-			driverB.createDatabase("mydb2");
-			
-			// Create Collection at db(mydb2)
-			driverB.createCollection("example2", false, null, null, null, null, CollectionType.DOCUMENT);
-			driverB.createDocument("example2", 
-					new MapBuilder().put("attr1-B", "value1").put("attr2-B", "value2").get(), 
-					false, false);
-			
-			// print all database names.
-			System.out.println(driverA.getDatabases());
-			// -> _system, mydb2
+      // Create Database mydb2
+      driverB.createDatabase("mydb2");
+      
+      // Create Collection at db(mydb2)
+      driverB.createCollection("example2", false, null, null, null, null, CollectionType.DOCUMENT);
+      driverB.createDocument("example2", 
+          new MapBuilder().put("attr1-B", "value1").put("attr2-B", "value2").get(), 
+          false, false);
+      
+      // print all database names.
+      System.out.println(driverA.getDatabases());
+      // -> _system, mydb2
 
-			// get all document-handle, and print get & print document. (_system DB)
-			for (String documentHandle: driverA.getDocuments("example1", true)) {
-				DocumentEntity<Map<String, Object>> doc = driverA.getDocument(documentHandle, Map.class);
-				System.out.println(doc.getEntity());
-			}
+      // get all document-handle, and print get & print document. (_system DB)
+      for (String documentHandle: driverA.getDocuments("example1", true)) {
+        DocumentEntity<Map<String, Object>> doc = driverA.getDocument(documentHandle, Map.class);
+        System.out.println(doc.getEntity());
+      }
 
-			for (String documentHandle: driverB.getDocuments("example2", true)) {
-				DocumentEntity<Map<String, Object>> doc = driverB.getDocument(documentHandle, Map.class);
-				System.out.println(doc.getEntity());
-			}
+      for (String documentHandle: driverB.getDocuments("example2", true)) {
+        DocumentEntity<Map<String, Object>> doc = driverB.getDocument(documentHandle, Map.class);
+        System.out.println(doc.getEntity());
+      }
 
-		} catch (ArangoException e) {
-			e.printStackTrace();
-		} finally {
-			configure.shutdown();
-		}
+    } catch (ArangoException e) {
+      e.printStackTrace();
+    } finally {
+      configure.shutdown();
+    }
 
-	}
+  }
 
 }

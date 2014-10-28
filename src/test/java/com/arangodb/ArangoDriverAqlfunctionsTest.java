@@ -40,15 +40,15 @@ import static org.junit.Assert.*;
  */
 public class ArangoDriverAqlfunctionsTest extends BaseTest {
 
-	public ArangoDriverAqlfunctionsTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+  public ArangoDriverAqlfunctionsTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-	private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
+  private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
 
 
-	@Before
-	public void before() throws ArangoException {
+  @Before
+  public void before() throws ArangoException {
     AqlFunctionsEntity res = driver.getAqlFunctions(null);
     Iterator<String> it = res.getAqlFunctions().keySet().iterator();
     while(it.hasNext()) {
@@ -56,13 +56,13 @@ public class ArangoDriverAqlfunctionsTest extends BaseTest {
     }
   }
 
-	@After
-	public void after() {
-		logger.debug("----------");
-	}
+  @After
+  public void after() {
+    logger.debug("----------");
+  }
 
-	@Test
-	public void test_AqlFunctions() throws ArangoException {
+  @Test
+  public void test_AqlFunctions() throws ArangoException {
 
     DefaultEntity res = driver.createAqlFunction(
       "someNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"
@@ -70,7 +70,7 @@ public class ArangoDriverAqlfunctionsTest extends BaseTest {
     assertThat(res.getCode(), is(201));
     assertThat(res.getErrorMessage(), is((String) null));
 
-	  res = driver.createAqlFunction(
+    res = driver.createAqlFunction(
       "someNamespace::testC&&&&&&&&&&de", "function (celsius) { return celsius * 2.8 + 32; }"
     );
     assertThat(res.getCode(), is(400));

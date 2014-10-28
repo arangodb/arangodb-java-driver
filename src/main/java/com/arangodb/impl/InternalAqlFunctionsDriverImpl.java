@@ -38,13 +38,13 @@ import java.util.Map;
 public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalAqlFunctionsDriver {
 
 
-	InternalAqlFunctionsDriverImpl(ArangoConfigure configure) {
-		super(configure);
-	}
+  InternalAqlFunctionsDriverImpl(ArangoConfigure configure) {
+    super(configure);
+  }
 
-	@Override
+  @Override
   public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
-		HttpResponseEntity res = httpManager.doPost(
+    HttpResponseEntity res = httpManager.doPost(
       createEndpointUrl(baseUrl, configure.getDefaultDatabase(), "/_api/aqlfunction"),
       null,
       EntityFactory.toJsonString(new MapBuilder()
@@ -52,22 +52,22 @@ public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl impleme
         .put("code", code)
         .get())
     );
-		return createEntity(res, DefaultEntity.class, null, false);
-	}
-	
-	@Override
+    return createEntity(res, DefaultEntity.class, null, false);
+  }
+  
+  @Override
   public AqlFunctionsEntity  getAqlFunctions(String namespace) throws ArangoException {
 
     String appendix = "";
     if (namespace != null) {
       appendix = "?namespace=" + namespace;
     }
-		HttpResponseEntity res = httpManager.doGet(
+    HttpResponseEntity res = httpManager.doGet(
       createEndpointUrl(baseUrl, null, "/_api/aqlfunction" + appendix)
     );
     return createEntity(res, AqlFunctionsEntity.class);
-		
-	}
+    
+  }
 
   @Override
   public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
@@ -82,5 +82,5 @@ public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl impleme
     return createEntity(res, DefaultEntity.class);
 
   }
-	
+  
 }

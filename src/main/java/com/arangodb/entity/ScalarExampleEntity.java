@@ -23,15 +23,15 @@ package com.arangodb.entity;
  */
 public class ScalarExampleEntity<T> extends BaseEntity {
 
-	//transient JsonElement _documentJson;
-	DocumentEntity<T> document;
+  //transient JsonElement _documentJson;
+  DocumentEntity<T> document;
 
-	public DocumentEntity<T> getDocument() {
-		return document;
-	}
+  public DocumentEntity<T> getDocument() {
+    return document;
+  }
 
-	public void setDocument(DocumentEntity<T> document) {
-		this.document = document;
-	}
-	
+  public void setDocument(DocumentEntity<T> document) {
+    this.document = document;
+  }
+  
 }

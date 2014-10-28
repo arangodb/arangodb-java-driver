@@ -22,27 +22,27 @@ package com.arangodb.entity;
  */
 public class EdgeEntity<T> extends DocumentEntity<T> {
 
-	String fromVertexHandle;
-	String toVertexHandle;
-	String edgeLabel;
-	
-	public String getFromVertexHandle() {
-		return fromVertexHandle;
-	}
-	public String getToVertexHandle() {
-		return toVertexHandle;
-	}
-	public String getEdgeLabel() {
-		return edgeLabel;
-	}
-	public void setFromVertexHandle(String fromVertexHandle) {
-		this.fromVertexHandle = fromVertexHandle;
-	}
-	public void setToVertexHandle(String toVertexHandle) {
-		this.toVertexHandle = toVertexHandle;
-	}
-	public void setEdgeLabel(String edgeLabel) {
-		this.edgeLabel = edgeLabel;
-	}
-	
+  String fromVertexHandle;
+  String toVertexHandle;
+  String edgeLabel;
+  
+  public String getFromVertexHandle() {
+    return fromVertexHandle;
+  }
+  public String getToVertexHandle() {
+    return toVertexHandle;
+  }
+  public String getEdgeLabel() {
+    return edgeLabel;
+  }
+  public void setFromVertexHandle(String fromVertexHandle) {
+    this.fromVertexHandle = fromVertexHandle;
+  }
+  public void setToVertexHandle(String toVertexHandle) {
+    this.toVertexHandle = toVertexHandle;
+  }
+  public void setEdgeLabel(String edgeLabel) {
+    this.edgeLabel = edgeLabel;
+  }
+  
 }
