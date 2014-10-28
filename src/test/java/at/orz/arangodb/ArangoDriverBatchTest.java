@@ -48,7 +48,6 @@ public class ArangoDriverBatchTest extends BaseTest {
       try {
         driver.deleteCollection(col);
       } catch (ArangoException e) {
-        System.out.println(driver.getDefaultDatabase() + e);
       }
     }
     logger.debug("----------");
@@ -133,9 +132,12 @@ public class ArangoDriverBatchTest extends BaseTest {
     assertThat(functions.getStatusCode() , is(200));
     assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]) , is("someNamespace::testCode"));
     for (int i = 0; i < 10; i++) {
-      DocumentEntity<TestComplexEntity01>  resultComplex =  driver.getBatchResponseByRequestId("request" + (4+1));
+      DocumentEntity<TestComplexEntity01>  resultComplex =  driver.getBatchResponseByRequestId("request" + (4+i));
       assertThat(resultComplex.getStatusCode() , is(202));
     }
+
+    List<String> documents =  driver.getBatchResponseByRequestId("request14");
+    assertThat(documents.size(), is(10));
 
   }
 

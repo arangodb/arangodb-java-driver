@@ -50,7 +50,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
   private BatchResponseListEntity batchResponseListEntity;
 
-	public DefaultEntity executeBatch(List<BatchPart> callStack) throws ArangoException {
+	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
 
 
     String body = "";
@@ -71,7 +71,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
     headers.put("Content-Type", "multipart/form-data; boundary=" + delimiter);
 
     HttpResponseEntity res = httpManager.doPostWithHeaders(
-      createEndpointUrl(baseUrl, this.configure.getDefaultDatabase(), "/_api/batch"),
+      createEndpointUrl(baseUrl, defaultDataBase, "/_api/batch"),
       null,
       null,
       headers,

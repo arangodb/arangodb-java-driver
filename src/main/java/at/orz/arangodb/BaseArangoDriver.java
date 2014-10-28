@@ -171,8 +171,7 @@ public abstract class BaseArangoDriver {
 			T entity = createEntityImpl(res, clazz);
 			if (entity == null) {
 				Class<?> c = MissingInstanceCreater.getMissingClass(clazz);
-        System.out.println(c.getSimpleName());
-				entity = ReflectionUtils.newInstance(c);
+       	entity = ReflectionUtils.newInstance(c);
 			} else if (res.isBatchRepsonse()) {
         try {
           entity = (T) clazz.newInstance();
