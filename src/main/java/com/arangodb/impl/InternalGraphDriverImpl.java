@@ -416,7 +416,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
   @Override
   public <T> DocumentEntity<T> getVertex(
-    String database,
+    String databaseName,
     String graphName,
     String collectionName,
     String key,
@@ -429,11 +429,12 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     HttpResponseEntity res = httpManager.doGet(
       createEndpointUrl(
         baseUrl,
-        database,
+        StringUtils.encodeUrl(databaseName),
         "/_api/gharial",
         StringUtils.encodeUrl(graphName),
         "vertex",
-        StringUtils.encodeUrl(collectionName)),
+        StringUtils.encodeUrl(collectionName),
+        StringUtils.encodeUrl(key)),
       new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
       new MapBuilder().put("rev", rev).get());
 

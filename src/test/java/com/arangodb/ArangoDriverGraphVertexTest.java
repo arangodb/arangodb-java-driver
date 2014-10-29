@@ -21,11 +21,13 @@ import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import com.arangodb.entity.DeletedEntity;
 import com.arangodb.entity.DocumentEntity;
 
 /**
@@ -116,6 +118,218 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
     }
 
   }
+
+  // ***********************
+  // *** Delete Vertex Tests
+  // ***********************
+
+  @Test
+  public void test_delete_vertex() throws ArangoException {
+
+    // create graph
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    // create collection
+    driver.graphCreateVertexCollection(this.graphName, this.collectionName);
+    // create vertex
+    DocumentEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(
+      this.graphName,
+      this.collectionName,
+      new TestComplexEntity01("Homer", "Simpson", 38),
+      true);
+
+    // check exists vertex
+    DocumentEntity<TestComplexEntity01> vertex = driver.graphGetVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      TestComplexEntity01.class);
+    assertThat(vertex.getCode(), is(200));
+
+    // delete
+    DeletedEntity deleted = driver.graphDeleteVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      true,
+      null,
+      null);
+    assertThat(deleted.getCode(), is(200));
+    assertThat(deleted.getDeleted(), is(true));
+
+  }
+
+  @Test
+  public void test_delete_vertex_graph_not_found() throws ArangoException {
+
+    try {
+      driver.graphDeleteVertex("foo", "bar", "foobar", true, null, null);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), is(404));
+      assertThat(e.getErrorNumber(), is(1901));
+      assertThat(e.getErrorMessage(), startsWith("no graph named"));
+    }
+
+  }
+
+  @Test
+  public void test_delete_vertex_not_found() throws ArangoException {
+
+    // create graph
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    driver.graphCreateVertexCollection(this.graphName, this.collectionName);
+
+    try {
+      driver.graphDeleteVertex(this.graphName, this.collectionName, "foo", true, null, null);
+      fail();
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), is(404));
+      assertThat(e.getErrorNumber(), is(1903));
+      assertThat(e.getErrorMessage(), startsWith("no vertex found for"));
+    }
+
+  }
+
+  @Test
+  public void test_delete_vertex_rev_eq() throws ArangoException {
+
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    driver.graphCreateVertexCollection(this.graphName, this.collectionName);
+    DocumentEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(
+      this.graphName,
+      this.collectionName,
+      new TestComplexEntity01("Hoemr", "Simpson", 38),
+      null);
+    DocumentEntity<TestComplexEntity01> vertex = driver.graphGetVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      TestComplexEntity01.class,
+      null,
+      null,
+      null);
+    assertThat(vertex.getCode(), is(200));
+
+    // delete
+    DeletedEntity deleted = driver.graphDeleteVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      null,
+      v1.getDocumentRevision(),
+      null);
+    assertThat(deleted.getCode(), is(202));
+    assertThat(deleted.getDeleted(), is(true));
+
+  }
+
+  @Test
+  public void test_delete_vertex_rev_ng() throws ArangoException {
+
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    driver.graphCreateVertexCollection(this.graphName, this.collectionName);
+    DocumentEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(
+      this.graphName,
+      this.collectionName,
+      new TestComplexEntity01("Homer", "Simspin", 38),
+      null);
+    DocumentEntity<TestComplexEntity01> vertex = driver.graphGetVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      TestComplexEntity01.class,
+      null,
+      null,
+      null);
+    assertThat(vertex.getCode(), is(200));
+
+    // delete
+    try {
+      driver.graphDeleteVertex(
+        this.graphName,
+        this.collectionName,
+        v1.getDocumentKey(),
+        null,
+        v1.getDocumentRevision() + 1,
+        null);
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), is(412));
+      assertThat(e.getErrorNumber(), is(1903));
+      assertThat(e.getErrorMessage(), is("wrong revision"));
+    }
+
+  }
+
+  @Test
+  public void test_delete_vertex_match_eq() throws ArangoException {
+
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    driver.graphCreateVertexCollection(this.graphName, this.collectionName);
+    DocumentEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(
+      this.graphName,
+      this.collectionName,
+      new TestComplexEntity01("Homer", "Simpson", 38),
+      null);
+    DocumentEntity<TestComplexEntity01> vertex = driver.graphGetVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      TestComplexEntity01.class,
+      null,
+      null,
+      null);
+    assertThat(vertex.getCode(), is(200));
+
+    // delete
+    DeletedEntity deleted = driver.graphDeleteVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      null,
+      null,
+      v1.getDocumentRevision());
+    assertThat(deleted.getCode(), is(202));
+    assertThat(deleted.getRemoved(), is(true));
+
+  }
+
+  @Test
+  public void test_delete_vertex_match_ng() throws ArangoException {
+
+    driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
+    driver.graphCreateVertexCollection(this.graphName, this.collectionName);
+    DocumentEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(
+      this.graphName,
+      this.collectionName,
+      new TestComplexEntity01("Homer", "Simpson", 38),
+      null);
+    DocumentEntity<TestComplexEntity01> vertex = driver.graphGetVertex(
+      this.graphName,
+      this.collectionName,
+      v1.getDocumentKey(),
+      TestComplexEntity01.class,
+      null,
+      null,
+      null);
+    assertThat(vertex.getCode(), is(200));
+
+    // delete
+    try {
+      driver.graphDeleteVertex(
+        this.graphName,
+        this.collectionName,
+        v1.getDocumentKey(),
+        null,
+        null,
+        v1.getDocumentRevision() + 1);
+    } catch (ArangoException e) {
+      assertThat(e.getCode(), is(412));
+      assertThat(e.getErrorNumber(), is(1903));
+      assertThat(e.getErrorMessage(), is("wrong revision"));
+    }
+
+  }
+
   /*
    * // TODO: create with _key // TODO: create with _key and duplication error
    * 
