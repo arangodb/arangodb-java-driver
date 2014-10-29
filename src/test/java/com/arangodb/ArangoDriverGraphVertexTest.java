@@ -21,7 +21,6 @@ import static org.hamcrest.CoreMatchers.isA;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -166,8 +165,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1901));
-      assertThat(e.getErrorMessage(), startsWith("no graph named"));
+      assertThat(e.getErrorNumber(), is(1924));
     }
 
   }
@@ -181,11 +179,8 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 
     try {
       driver.graphDeleteVertex(this.graphName, this.collectionName, "foo", true, null, null);
-      fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1903));
-      assertThat(e.getErrorMessage(), startsWith("no vertex found for"));
     }
 
   }
@@ -289,7 +284,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       null,
       v1.getDocumentRevision());
     assertThat(deleted.getCode(), is(202));
-    assertThat(deleted.getRemoved(), is(true));
+    assertThat(deleted.getDeleted(), is(true));
 
   }
 
