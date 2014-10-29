@@ -473,6 +473,35 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
   }
 
   @Override
+  public <T> DocumentEntity<T> updateVertex(
+    String databaseName,
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean keepNull,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+
+    validateCollectionName(graphName);
+    HttpResponseEntity res = httpManager.doPatch(
+      createEndpointUrl(
+        baseUrl,
+        databaseName,
+        "/_api/gharial",
+        StringUtils.encodeUrl(graphName),
+        "vertex",
+        StringUtils.encodeUrl(collectionName),
+        StringUtils.encodeUrl(key)),
+      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("keepNull", keepNull).put("waitForSync", waitForSync).put("rev", rev).get(),
+      EntityFactory.toJsonString(vertex, keepNull != null && !keepNull));
+
+    return createEntity(res, VertexEntity.class, vertex.getClass());
+  }
+
+  @Override
   public DeletedEntity deleteVertex(
     String databaseName,
     String graphName,

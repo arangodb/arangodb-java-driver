@@ -1978,6 +1978,45 @@ public class ArangoDriver extends BaseArangoDriver {
       ifMatchRevision);
   }
 
+  public <T> DocumentEntity<T> graphUpdateVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean keepNull) throws ArangoException {
+    return graphDriver.updateVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      vertex,
+      keepNull,
+      null,
+      null,
+      null);
+  }
+
+  public <T> DocumentEntity<T> graphUpdateVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean keepNull,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.updateVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      vertex,
+      keepNull,
+      waitForSync,
+      rev,
+      ifMatchRevision);
+  }
+
   // *****************************************************************************
 
   /**
