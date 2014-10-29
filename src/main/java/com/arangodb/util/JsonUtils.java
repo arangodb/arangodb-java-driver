@@ -25,39 +25,39 @@ import com.google.gson.JsonPrimitive;
  *
  */
 public class JsonUtils {
-	
-	public static int[] toArray(JsonArray array) {
-		int len = array.size();
-		int[] iarray = new int[len];
-		for (int i = 0; i < len; i++) {
-			iarray[i] = array.get(i).getAsInt();
-		}
-		return iarray;
-	}
-	
-	public static double[] toDoubleArray(JsonArray array) {
-		int len = array.size();
-		double[] darray = new double[len];
-		for (int i = 0; i < len; i++) {
-			darray[i] = toDouble(array.get(i));
-		}
-		return darray;
-	}
-	
-	public static double toDouble(JsonElement elem) {
-		if (elem != null && !elem.isJsonNull()) {
-			JsonPrimitive primitive = elem.getAsJsonPrimitive();
-			if (primitive.isNumber()) {
-				return primitive.getAsDouble();
-			} else if (primitive.isString()) {
-				if ("INF".equals(primitive.getAsString())) {
-					return Double.POSITIVE_INFINITY;
-				} else if ("NaN".equals(primitive.getAsString())) {
-					return Double.NaN;
-				}
-			}
-		}
-		return Double.NaN;
-	}
-	
+  
+  public static int[] toArray(JsonArray array) {
+    int len = array.size();
+    int[] iarray = new int[len];
+    for (int i = 0; i < len; i++) {
+      iarray[i] = array.get(i).getAsInt();
+    }
+    return iarray;
+  }
+  
+  public static double[] toDoubleArray(JsonArray array) {
+    int len = array.size();
+    double[] darray = new double[len];
+    for (int i = 0; i < len; i++) {
+      darray[i] = toDouble(array.get(i));
+    }
+    return darray;
+  }
+  
+  public static double toDouble(JsonElement elem) {
+    if (elem != null && !elem.isJsonNull()) {
+      JsonPrimitive primitive = elem.getAsJsonPrimitive();
+      if (primitive.isNumber()) {
+        return primitive.getAsDouble();
+      } else if (primitive.isString()) {
+        if ("INF".equals(primitive.getAsString())) {
+          return Double.POSITIVE_INFINITY;
+        } else if ("NaN".equals(primitive.getAsString())) {
+          return Double.NaN;
+        }
+      }
+    }
+    return Double.NaN;
+  }
+  
 }

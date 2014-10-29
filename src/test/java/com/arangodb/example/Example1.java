@@ -29,53 +29,53 @@ import com.arangodb.CursorResultSet;
  *
  */
 public class Example1 {
-	
-	public static class ExampleEntity {
-		public String name;
-		public String gender;
-		public int age;
-	}
-	
-	public static void main(String[] args) {
+  
+  public static class ExampleEntity {
+    public String name;
+    public String gender;
+    public int age;
+  }
+  
+  public static void main(String[] args) {
 
-		// Initialize configure
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.init();
-		
-		// Create Driver (this instance is thread-safe)
-		ArangoDriver driver = new ArangoDriver(configure);
-		
-		try {
-			for (int i = 0; i < 1000; i++) {
-				ExampleEntity value = new ExampleEntity();
-				value.name = "TestUser" + i;
-				switch (i % 3) {
-				case 0: value.gender = "MAN"; break;
-				case 1: value.gender = "WOMAN"; break;
-				case 2: value.gender = "OTHER"; break;
-				}
-				value.age = (int) (Math.random() * 100) + 10;
-				driver.createDocument("example_collection1", value, true, null);
-			}
-			
-			HashMap<String, Object> bindVars = new HashMap<String, Object>();
-			bindVars.put("gender", "WOMAN");
-			
-			CursorResultSet<ExampleEntity> rs = driver.executeQueryWithResultSet(
-					"FOR t IN example_collection1 FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t", 
-					bindVars, ExampleEntity.class, true, 10);
-			
-			System.out.println(rs.getTotalCount());
-			for (ExampleEntity obj: rs) {
-				System.out.printf("  %15s(%5s): %d%n", obj.name, obj.gender, obj.age);
-			}
-			
-		} catch (ArangoException e) {
-			e.printStackTrace();
-		} finally {
-			configure.shutdown();
-		}
-		
-	}
+    // Initialize configure
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.init();
+    
+    // Create Driver (this instance is thread-safe)
+    ArangoDriver driver = new ArangoDriver(configure);
+    
+    try {
+      for (int i = 0; i < 1000; i++) {
+        ExampleEntity value = new ExampleEntity();
+        value.name = "TestUser" + i;
+        switch (i % 3) {
+        case 0: value.gender = "MAN"; break;
+        case 1: value.gender = "WOMAN"; break;
+        case 2: value.gender = "OTHER"; break;
+        }
+        value.age = (int) (Math.random() * 100) + 10;
+        driver.createDocument("example_collection1", value, true, null);
+      }
+      
+      HashMap<String, Object> bindVars = new HashMap<String, Object>();
+      bindVars.put("gender", "WOMAN");
+      
+      CursorResultSet<ExampleEntity> rs = driver.executeQueryWithResultSet(
+          "FOR t IN example_collection1 FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t", 
+          bindVars, ExampleEntity.class, true, 10);
+      
+      System.out.println(rs.getTotalCount());
+      for (ExampleEntity obj: rs) {
+        System.out.printf("  %15s(%5s): %d%n", obj.name, obj.gender, obj.age);
+      }
+      
+    } catch (ArangoException e) {
+      e.printStackTrace();
+    } finally {
+      configure.shutdown();
+    }
+    
+  }
 
 }

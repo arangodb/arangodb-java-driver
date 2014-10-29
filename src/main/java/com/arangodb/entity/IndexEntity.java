@@ -24,62 +24,62 @@ import java.util.List;
  */
 public class IndexEntity extends BaseEntity {
 
-	String id;
-	IndexType type;
-	List<String> fields;
-	boolean getJson;
-	boolean isNewlyCreated;
-	boolean unique;
-	int size;
-	int minLength;
-	
-	public String getId() {
-		return id;
-	}
-	public IndexType getType() {
-		return type;
-	}
-	public List<String> getFields() {
-		return fields;
-	}
-	public boolean isGetJson() {
-		return getJson;
-	}
-	public boolean isNewlyCreated() {
-		return isNewlyCreated;
-	}
-	public boolean isUnique() {
-		return unique;
-	}
-	public int getSize() {
-		return size;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setType(IndexType type) {
-		this.type = type;
-	}
-	public void setFields(List<String> fields) {
-		this.fields = fields;
-	}
-	public void setGetJson(boolean getJson) {
-		this.getJson = getJson;
-	}
-	public void setNewlyCreated(boolean isNewlyCreated) {
-		this.isNewlyCreated = isNewlyCreated;
-	}
-	public void setUnique(boolean unique) {
-		this.unique = unique;
-	}
-	public void setSize(int size) {
-		this.size = size;
-	}
-	public int getMinLength() {
-		return minLength;
-	}
-	public void setMinLength(int minLength) {
-		this.minLength = minLength;
-	}
-	
+  String id;
+  IndexType type;
+  List<String> fields;
+  boolean getJson;
+  boolean isNewlyCreated;
+  boolean unique;
+  int size;
+  int minLength;
+  
+  public String getId() {
+    return id;
+  }
+  public IndexType getType() {
+    return type;
+  }
+  public List<String> getFields() {
+    return fields;
+  }
+  public boolean isGetJson() {
+    return getJson;
+  }
+  public boolean isNewlyCreated() {
+    return isNewlyCreated;
+  }
+  public boolean isUnique() {
+    return unique;
+  }
+  public int getSize() {
+    return size;
+  }
+  public void setId(String id) {
+    this.id = id;
+  }
+  public void setType(IndexType type) {
+    this.type = type;
+  }
+  public void setFields(List<String> fields) {
+    this.fields = fields;
+  }
+  public void setGetJson(boolean getJson) {
+    this.getJson = getJson;
+  }
+  public void setNewlyCreated(boolean isNewlyCreated) {
+    this.isNewlyCreated = isNewlyCreated;
+  }
+  public void setUnique(boolean unique) {
+    this.unique = unique;
+  }
+  public void setSize(int size) {
+    this.size = size;
+  }
+  public int getMinLength() {
+    return minLength;
+  }
+  public void setMinLength(int minLength) {
+    this.minLength = minLength;
+  }
+  
 }

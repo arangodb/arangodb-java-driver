@@ -29,50 +29,50 @@ import com.arangodb.util.StringJoinTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	
-	// Utils Test
-	StringJoinTest.class,
+  
+  // Utils Test
+  StringJoinTest.class,
 
-	// Drivers Test
-	ArangoConfigureTest.class,
-	ArangoDriverAuthTest.class,
-	NegativeTest.class,
+  // Drivers Test
+  ArangoConfigureTest.class,
+  ArangoDriverAuthTest.class,
+  NegativeTest.class,
 
-	//PrimitiveDocumentTest.class,
-	
-	ArangoDriverDatabaseTest.class,
-	ArangoDriverDatabaseAndUserTest.class,
+  //PrimitiveDocumentTest.class,
+  
+  ArangoDriverDatabaseTest.class,
+  ArangoDriverDatabaseAndUserTest.class,
 
   ArangoDriverBatchTest.class,
-	ArangoDriverDocumentTest.class,
+  ArangoDriverDocumentTest.class,
   ArangoDriverAqlfunctionsTest.class,
-	ArangoDriverDocumentKeyTest.class,
-	ArangoDriverCollectionTest.class,
-	ArangoDriverCursorTest.class,
-	ArangoDriverCursorResultSetTest.class,
-	
-	ArangoDriverIndexTest.class,
-	ArangoDriverAdminTest.class,
-	ArangoDriverSimpleTest.class,
-	ArangoDriverImportTest.class,
-	//ArangoDriverSimpleGeoTest.class,
-	//ArangoDriverKeyValueTest.class,
-	ArangoDriverGraphTest.class,
-	ArangoDriverGraphVertexTest.class,
-	ArangoDriverGraphVertexReplaceTest.class,
-	ArangoDriverGraphVertexUpdateTest.class,
-	ArangoDriverGraphEdgeCreateTest.class,
-	ArangoDriverGraphEdgeGetTest.class,
-	ArangoDriverGraphEdgeDeleteTest.class,
-	ArangoDriverGraphEdgeReplaceTest.class,
-	ArangoDriverGraphVertices1Test.class,
-	ArangoDriverGraphVertices2Test.class,
-	ArangoDriverThreadSafeTest.class,
-	ArangoDriverReplicationTest.class,
-	ArangoDriverReplicationTestScenario1.class
-	
+  ArangoDriverDocumentKeyTest.class,
+  ArangoDriverCollectionTest.class,
+  ArangoDriverCursorTest.class,
+  ArangoDriverCursorResultSetTest.class,
+  
+  ArangoDriverIndexTest.class,
+  ArangoDriverAdminTest.class,
+  ArangoDriverSimpleTest.class,
+  ArangoDriverImportTest.class,
+  //ArangoDriverSimpleGeoTest.class,
+  //ArangoDriverKeyValueTest.class,
+  ArangoDriverGraphTest.class,
+  ArangoDriverGraphVertexTest.class,
+  ArangoDriverGraphVertexReplaceTest.class,
+  ArangoDriverGraphVertexUpdateTest.class,
+  ArangoDriverGraphEdgeCreateTest.class,
+  ArangoDriverGraphEdgeGetTest.class,
+  ArangoDriverGraphEdgeDeleteTest.class,
+  ArangoDriverGraphEdgeReplaceTest.class,
+  ArangoDriverGraphVertices1Test.class,
+  ArangoDriverGraphVertices2Test.class,
+  ArangoDriverThreadSafeTest.class,
+  ArangoDriverReplicationTest.class,
+  ArangoDriverReplicationTestScenario1.class
+  
 })
 public class ArangoTestSuite {
-	
-	
+  
+  
 }

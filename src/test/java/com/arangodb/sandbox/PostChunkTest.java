@@ -31,24 +31,24 @@ import org.apache.http.impl.client.DefaultHttpClient;
  */
 public class PostChunkTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
+  /**
+   * @param args
+   */
+  public static void main(String[] args) throws Exception {
 
-		HttpClient client = new DefaultHttpClient();
-		
-		HttpPost post = new HttpPost("http://arango-test-server:9999/_api/import?collection=test1&createCollection=true&type=documents");
-		//post.setEntity(new StringEntity("{\"xx\": \"123\"}{\"xx\": \"456\"}"));
-		InputStreamEntity entity = new InputStreamEntity(new ByteArrayInputStream("{\"xx\": \"123\"}{\"xx\": \"456\"}".getBytes()), 26);
-		entity.setChunked(true);
-		post.setEntity(entity);
-		
-		HttpResponse res = client.execute(post);
+    HttpClient client = new DefaultHttpClient();
+    
+    HttpPost post = new HttpPost("http://arango-test-server:9999/_api/import?collection=test1&createCollection=true&type=documents");
+    //post.setEntity(new StringEntity("{\"xx\": \"123\"}{\"xx\": \"456\"}"));
+    InputStreamEntity entity = new InputStreamEntity(new ByteArrayInputStream("{\"xx\": \"123\"}{\"xx\": \"456\"}".getBytes()), 26);
+    entity.setChunked(true);
+    post.setEntity(entity);
+    
+    HttpResponse res = client.execute(post);
 
-		System.out.println(res.getStatusLine());
-		
-		post.releaseConnection();
-	}
+    System.out.println(res.getStatusLine());
+    
+    post.releaseConnection();
+  }
 
 }

@@ -25,34 +25,34 @@ import java.util.Date;
  */
 public class ReplicationState implements Serializable {
 
-	boolean running;
-	long lastLogTick;
-	long totalEvents;
-	Date time;
+  boolean running;
+  long lastLogTick;
+  long totalEvents;
+  Date time;
 
-	public boolean isRunning() {
-		return running;
-	}
-	public long getLastLogTick() {
-		return lastLogTick;
-	}
-	public long getTotalEvents() {
-		return totalEvents;
-	}
-	public Date getTime() {
-		return time;
-	}
-	public void setRunning(boolean running) {
-		this.running = running;
-	}
-	public void setLastLogTick(long lastLogTick) {
-		this.lastLogTick = lastLogTick;
-	}
-	public void setTotalEvents(long totalEvents) {
-		this.totalEvents = totalEvents;
-	}
-	public void setTime(Date time) {
-		this.time = time;
-	}
+  public boolean isRunning() {
+    return running;
+  }
+  public long getLastLogTick() {
+    return lastLogTick;
+  }
+  public long getTotalEvents() {
+    return totalEvents;
+  }
+  public Date getTime() {
+    return time;
+  }
+  public void setRunning(boolean running) {
+    this.running = running;
+  }
+  public void setLastLogTick(long lastLogTick) {
+    this.lastLogTick = lastLogTick;
+  }
+  public void setTotalEvents(long totalEvents) {
+    this.totalEvents = totalEvents;
+  }
+  public void setTime(Date time) {
+    this.time = time;
+  }
 
 }

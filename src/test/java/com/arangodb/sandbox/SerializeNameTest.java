@@ -26,58 +26,58 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SerializeNameTest {
 
-	private static class Hoge {
-		public String S;
-		public Boolean B;
-		@SerializedName("ZZZ") public Integer I;
-	}
+  private static class Hoge {
+    public String S;
+    public Boolean B;
+    @SerializedName("ZZZ") public Integer I;
+  }
 
-	private static class Hoge2 {
-		public String S;
-		public Boolean B;
-		@DocumentKey public Integer I;
-	}
+  private static class Hoge2 {
+    public String S;
+    public Boolean B;
+    @DocumentKey public Integer I;
+  }
 
-	public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception {
 
-		do {
-			Hoge hoge = new Hoge();
-			hoge.S = "ABC";
-			hoge.B = true;
-			hoge.I = 123;
-			
-			String jsonText = EntityFactory.toJsonString(hoge);
-			System.out.println(jsonText);
-			// {"S":"ABC","B":true,"ZZZ":123}
-			
-			Hoge hoge2 = EntityFactory.createEntity(jsonText, Hoge.class);
-			System.out.println(hoge2.S);  // ABC
-			System.out.println(hoge2.B);  // true
-			System.out.println(hoge2.I);  // 123
-		} while (false);
-		
-		// ------------------------------------------------------------
-		System.out.println("----------------------------------------");
-		// ------------------------------------------------------------
+    do {
+      Hoge hoge = new Hoge();
+      hoge.S = "ABC";
+      hoge.B = true;
+      hoge.I = 123;
+      
+      String jsonText = EntityFactory.toJsonString(hoge);
+      System.out.println(jsonText);
+      // {"S":"ABC","B":true,"ZZZ":123}
+      
+      Hoge hoge2 = EntityFactory.createEntity(jsonText, Hoge.class);
+      System.out.println(hoge2.S);  // ABC
+      System.out.println(hoge2.B);  // true
+      System.out.println(hoge2.I);  // 123
+    } while (false);
+    
+    // ------------------------------------------------------------
+    System.out.println("----------------------------------------");
+    // ------------------------------------------------------------
 
-		do {
-			Hoge2 hoge = new Hoge2();
-			hoge.S = "ABC";
-			hoge.B = true;
-			hoge.I = 123;
-			
-			String jsonText = EntityFactory.toJsonString(hoge);
-			System.out.println(jsonText);
-			// {"S":"ABC","B":true,"ZZZ":123}
-			
-			Hoge2 hoge2 = EntityFactory.createEntity(jsonText, Hoge2.class);
-			System.out.println(hoge2.S);  // ABC
-			System.out.println(hoge2.B);  // true
-			System.out.println(hoge2.I);  // 123
-			
-		} while (false);
-		
-		
-	}
+    do {
+      Hoge2 hoge = new Hoge2();
+      hoge.S = "ABC";
+      hoge.B = true;
+      hoge.I = 123;
+      
+      String jsonText = EntityFactory.toJsonString(hoge);
+      System.out.println(jsonText);
+      // {"S":"ABC","B":true,"ZZZ":123}
+      
+      Hoge2 hoge2 = EntityFactory.createEntity(jsonText, Hoge2.class);
+      System.out.println(hoge2.S);  // ABC
+      System.out.println(hoge2.B);  // true
+      System.out.println(hoge2.I);  // 123
+      
+    } while (false);
+    
+    
+  }
 
 }

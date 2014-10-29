@@ -23,34 +23,34 @@ package com.arangodb.entity;
  */
 public class ReplicationLoggerConfigEntity extends BaseEntity {
 
-	boolean autoStart;
-	boolean logRemoteChanges;
-	long maxEvents;
-	long maxEventsSize;
+  boolean autoStart;
+  boolean logRemoteChanges;
+  long maxEvents;
+  long maxEventsSize;
 
-	public boolean isAutoStart() {
-		return autoStart;
-	}
-	public boolean isLogRemoteChanges() {
-		return logRemoteChanges;
-	}
-	public long getMaxEvents() {
-		return maxEvents;
-	}
-	public long getMaxEventsSize() {
-		return maxEventsSize;
-	}
-	public void setAutoStart(boolean autoStart) {
-		this.autoStart = autoStart;
-	}
-	public void setLogRemoteChanges(boolean logRemoteChanges) {
-		this.logRemoteChanges = logRemoteChanges;
-	}
-	public void setMaxEvents(long maxEvents) {
-		this.maxEvents = maxEvents;
-	}
-	public void setMaxEventsSize(long maxEventsSize) {
-		this.maxEventsSize = maxEventsSize;
-	}
-	
+  public boolean isAutoStart() {
+    return autoStart;
+  }
+  public boolean isLogRemoteChanges() {
+    return logRemoteChanges;
+  }
+  public long getMaxEvents() {
+    return maxEvents;
+  }
+  public long getMaxEventsSize() {
+    return maxEventsSize;
+  }
+  public void setAutoStart(boolean autoStart) {
+    this.autoStart = autoStart;
+  }
+  public void setLogRemoteChanges(boolean logRemoteChanges) {
+    this.logRemoteChanges = logRemoteChanges;
+  }
+  public void setMaxEvents(long maxEvents) {
+    this.maxEvents = maxEvents;
+  }
+  public void setMaxEventsSize(long maxEventsSize) {
+    this.maxEventsSize = maxEventsSize;
+  }
+  
 }

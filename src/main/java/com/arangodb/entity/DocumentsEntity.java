@@ -27,18 +27,18 @@ import com.arangodb.util.CollectionUtils;
  */
 public class DocumentsEntity extends BaseEntity implements Iterable<String> {
 
-	List<String> documents;
+  List<String> documents;
 
-	public Iterator<String> iterator() {
-		return CollectionUtils.safetyIterator(documents);
-	}
+  public Iterator<String> iterator() {
+    return CollectionUtils.safetyIterator(documents);
+  }
 
-	public List<String> getDocuments() {
-		return documents;
-	}
+  public List<String> getDocuments() {
+    return documents;
+  }
 
-	public void setDocuments(List<String> documents) {
-		this.documents = documents;
-	}
-	
+  public void setDocuments(List<String> documents) {
+    this.documents = documents;
+  }
+  
 }

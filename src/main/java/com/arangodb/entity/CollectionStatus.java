@@ -24,28 +24,28 @@ import java.util.TreeMap;
  *
  */
 public enum CollectionStatus {
-	
-	NEW_BORN_COLLECTION(1),
-	UNLOADED(2),
-	LOADED(3),
-	IN_THE_PROCESS_OF_BEING_UNLOADED(4),
-	DELETED(5)
-	;
-	
-	private static class Holder implements Serializable {
-		private static final long serialVersionUID = -7016368432042468015L;
-		private static TreeMap<Integer, CollectionStatus> lookupMap = new TreeMap<Integer, CollectionStatus>();
-	}
-	
-	private final int status;
-	private CollectionStatus(int status) {
-		this.status = status;
-		Holder.lookupMap.put(status, this);
-	}
-	public int status() {
-		return status;
-	}
-	public static CollectionStatus valueOf(int status) {
-		return Holder.lookupMap.get(status);
-	}
+  
+  NEW_BORN_COLLECTION(1),
+  UNLOADED(2),
+  LOADED(3),
+  IN_THE_PROCESS_OF_BEING_UNLOADED(4),
+  DELETED(5)
+  ;
+  
+  private static class Holder implements Serializable {
+    private static final long serialVersionUID = -7016368432042468015L;
+    private static TreeMap<Integer, CollectionStatus> lookupMap = new TreeMap<Integer, CollectionStatus>();
+  }
+  
+  private final int status;
+  private CollectionStatus(int status) {
+    this.status = status;
+    Holder.lookupMap.put(status, this);
+  }
+  public int status() {
+    return status;
+  }
+  public static CollectionStatus valueOf(int status) {
+    return Holder.lookupMap.get(status);
+  }
 }

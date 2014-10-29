@@ -25,21 +25,21 @@ import java.util.Map;
  */
 public class IndexesEntity extends BaseEntity {
 
-	List<IndexEntity> indexes;
-	Map<String, IndexEntity> identifiers;
-	
-	public List<IndexEntity> getIndexes() {
-		return indexes;
-	}
-	public Map<String, IndexEntity> getIdentifiers() {
-		return identifiers;
-	}
-	public void setIndexes(List<IndexEntity> indexes) {
-		this.indexes = indexes;
-	}
-	public void setIdentifiers(Map<String, IndexEntity> identifiers) {
-		this.identifiers = identifiers;
-	}
-	
-	
+  List<IndexEntity> indexes;
+  Map<String, IndexEntity> identifiers;
+  
+  public List<IndexEntity> getIndexes() {
+    return indexes;
+  }
+  public Map<String, IndexEntity> getIdentifiers() {
+    return identifiers;
+  }
+  public void setIndexes(List<IndexEntity> indexes) {
+    this.indexes = indexes;
+  }
+  public void setIdentifiers(Map<String, IndexEntity> identifiers) {
+    this.identifiers = identifiers;
+  }
+  
+  
 }

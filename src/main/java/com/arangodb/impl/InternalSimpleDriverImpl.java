@@ -38,109 +38,109 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalSimpleDriver {
 
-	InternalSimpleDriverImpl(ArangoConfigure configure,
-			InternalCursorDriver cursorDriver, HttpManager httpManager) {
-    super(configure , cursorDriver, httpManager);
+  InternalSimpleDriverImpl(ArangoConfigure configure,
+      InternalCursorDriver cursorDriver, HttpManager httpManager) {
+    super(configure , cursorDriver,  httpManager);
   }
 
-	// ----- all --------------------
+  // ----- all --------------------
 
-	private <T> CursorEntity<T> _executeSimpleAll(
-			String database,
-			String collectionName, int skip, int limit,
-			Class<?>... clazz) throws ArangoException {
+  private <T> CursorEntity<T> _executeSimpleAll(
+      String database,
+      String collectionName, int skip, int limit,
+      Class<?>... clazz) throws ArangoException {
 
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/all"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("skip", skip > 0 ? skip : null)
-						.put("limit", limit > 0 ? limit : null)
-						.get())
-				);
-		
-		return createEntity(res, CursorEntity.class, clazz);
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/all"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("skip", skip > 0 ? skip : null)
+            .put("limit", limit > 0 ? limit : null)
+            .get())
+        );
+    
+    return createEntity(res, CursorEntity.class, clazz);
 
-	}
-	
-	@Override
+  }
+  
+  @Override
   public <T> CursorEntity<T> executeSimpleAll(
     String database,
     String collectionName, int skip, int limit,
     Class<?> clazz) throws ArangoException {
-		
-		CursorEntity<T> entity = _executeSimpleAll(database, collectionName, skip, limit, clazz);
-		return entity;
-		//return EntityFactory.createResult(entity, clazz);
-	}
+    
+    CursorEntity<T> entity = _executeSimpleAll(database, collectionName, skip, limit, clazz);
+    return entity;
+    //return EntityFactory.createResult(entity, clazz);
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<T> executeSimpleAllWithResultSet(
     String database,
     String collectionName, int skip, int limit,
     Class<?> clazz) throws ArangoException {
-		
-		CursorEntity<T> entity = executeSimpleAll(database, collectionName, skip, limit, clazz);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<T> entity = executeSimpleAll(database, collectionName, skip, limit, clazz);
+    CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
+    return rs;
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorEntity<DocumentEntity<T>> executeSimpleAllWithDocument(
     String database,
     String collectionName, int skip, int limit,
     Class<?> clazz) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = _executeSimpleAll(database, collectionName, skip, limit, DocumentEntity.class, clazz);
-		//return EntityFactory.createDocumentResult(entity, clazz);
-		return entity;
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = _executeSimpleAll(database, collectionName, skip, limit, DocumentEntity.class, clazz);
+    //return EntityFactory.createDocumentResult(entity, clazz);
+    return entity;
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<DocumentEntity<T>> executeSimpleAllWithDocumentResultSet(
     String database,
     String collectionName, int skip, int limit,
     Class<?> clazz) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = executeSimpleAllWithDocument(database, collectionName, skip, limit, clazz);
-		CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = executeSimpleAllWithDocument(database, collectionName, skip, limit, clazz);
+    CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
+    return rs;
+    
+  }
 
 
-	// ----- example --------------------
+  // ----- example --------------------
 
-	private <T> CursorEntity<T> _executeSimpleByExample(
-			String database,
-			String collectionName,
-			Map<String, Object> example,
-			int skip, int limit,
-			Class<?>... clazz
-			) throws ArangoException {
+  private <T> CursorEntity<T> _executeSimpleByExample(
+      String database,
+      String collectionName,
+      Map<String, Object> example,
+      int skip, int limit,
+      Class<?>... clazz
+      ) throws ArangoException {
 
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/by-example"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("example", example)
-						.put("skip", skip > 0 ? skip : null)
-						.put("limit", limit > 0 ? limit : null)
-						.get())
-				);
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/by-example"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("example", example)
+            .put("skip", skip > 0 ? skip : null)
+            .put("limit", limit > 0 ? limit : null)
+            .get())
+        );
 
-		return createEntity(res, CursorEntity.class, clazz);
+    return createEntity(res, CursorEntity.class, clazz);
 
-	}
-	
-	@Override
+  }
+  
+  @Override
   public <T> CursorEntity<T> executeSimpleByExample(
     String database,
     String collectionName,
@@ -148,27 +148,27 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<T> entity = _executeSimpleByExample(database, collectionName, example, skip, limit, clazz);
-		return entity;
-		
-	}
+    
+    CursorEntity<T> entity = _executeSimpleByExample(database, collectionName, example, skip, limit, clazz);
+    return entity;
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<T> executeSimpleByExampleWithResultSet(
     String database,
     String collectionName, Map<String, Object> example,
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<T> entity = executeSimpleByExample(database, collectionName, example, skip, limit, clazz);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<T> entity = executeSimpleByExample(database, collectionName, example, skip, limit, clazz);
+    CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
+    return rs;
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorEntity<DocumentEntity<T>> executeSimpleByExampleWithDocument(
     String database,
     String collectionName,
@@ -176,111 +176,111 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = _executeSimpleByExample(database, collectionName, example, skip, limit, DocumentEntity.class, clazz);
-		return entity;
-		//return EntityFactory.createDocumentResult(entity, clazz);
-		
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = _executeSimpleByExample(database, collectionName, example, skip, limit, DocumentEntity.class, clazz);
+    return entity;
+    //return EntityFactory.createDocumentResult(entity, clazz);
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<DocumentEntity<T>> executeSimpleByExampleWithDocumentResultSet(
     String database,
     String collectionName, Map<String, Object> example,
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = executeSimpleByExampleWithDocument(database, collectionName, example, skip, limit, clazz);
-		CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = executeSimpleByExampleWithDocument(database, collectionName, example, skip, limit, clazz);
+    CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
+    return rs;
+    
+  }
 
-	// ----- first --------------------
+  // ----- first --------------------
 
-	@Override
+  @Override
   public <T> ScalarExampleEntity<T> executeSimpleFirstExample(
     String database,
     String collectionName,
     Map<String, Object> example,
     Class<?> clazz
   ) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/first-example"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("example", example)
-						.get())
-				);
-		
-		ScalarExampleEntity<T> entity = createEntity(res, ScalarExampleEntity.class, clazz);
-		return entity;
-		//return EntityFactory.createScalarExampleEntity(entity, clazz);
-		
-	}
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/first-example"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("example", example)
+            .get())
+        );
+    
+    ScalarExampleEntity<T> entity = createEntity(res, ScalarExampleEntity.class, clazz);
+    return entity;
+    //return EntityFactory.createScalarExampleEntity(entity, clazz);
+    
+  }
 
-	// ----- any --------------------
+  // ----- any --------------------
 
-	@Override
+  @Override
   public <T> ScalarExampleEntity<T> executeSimpleAny(
     String database,
     String collectionName,
     Class<?> clazz
   ) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/any"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.get())
-				);
-		
-		ScalarExampleEntity<T> entity = createEntity(res, ScalarExampleEntity.class, clazz);
-		return entity;
-		//return EntityFactory.createScalarExampleEntity(entity, clazz);
-		
-	}
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/any"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .get())
+        );
+    
+    ScalarExampleEntity<T> entity = createEntity(res, ScalarExampleEntity.class, clazz);
+    return entity;
+    //return EntityFactory.createScalarExampleEntity(entity, clazz);
+    
+  }
 
-	// ----- range --------------------
+  // ----- range --------------------
 
-	private <T> CursorEntity<T> _executeSimpleRange(
-			String database,
-			String collectionName,
-			String attribute,
-			Object left, Object right, Boolean closed,
-			int skip, int limit,
-			Class<?>... clazz
-			) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/range"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("attribute", attribute)
-						.put("left", left)
-						.put("right", right)
-						.put("closed", closed)
-						.put("skip", skip > 0 ? skip : null)
-						.put("limit", limit > 0 ? limit : null)
-						.get())
-				);
-		
-		return createEntity(res, CursorEntity.class, clazz);
-		
-	}
-	
-	@Override
+  private <T> CursorEntity<T> _executeSimpleRange(
+      String database,
+      String collectionName,
+      String attribute,
+      Object left, Object right, Boolean closed,
+      int skip, int limit,
+      Class<?>... clazz
+      ) throws ArangoException {
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/range"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("attribute", attribute)
+            .put("left", left)
+            .put("right", right)
+            .put("closed", closed)
+            .put("skip", skip > 0 ? skip : null)
+            .put("limit", limit > 0 ? limit : null)
+            .get())
+        );
+    
+    return createEntity(res, CursorEntity.class, clazz);
+    
+  }
+  
+  @Override
   public <T> CursorEntity<T> executeSimpleRange(
     String database,
     String collectionName,
@@ -289,14 +289,14 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<T> entity = _executeSimpleRange(database, collectionName, attribute, left, right, closed, skip, limit, clazz);
-		//return EntityFactory.createResult(entity, clazz);
-		return entity;
-		
-	}
+    
+    CursorEntity<T> entity = _executeSimpleRange(database, collectionName, attribute, left, right, closed, skip, limit, clazz);
+    //return EntityFactory.createResult(entity, clazz);
+    return entity;
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<T> executeSimpleRangeWithResultSet(
     String database,
     String collectionName,
@@ -305,14 +305,14 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<T> entity = executeSimpleRange(database, collectionName, attribute, left, right, closed, skip, limit, clazz);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<T> entity = executeSimpleRange(database, collectionName, attribute, left, right, closed, skip, limit, clazz);
+    CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
+    return rs;
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorEntity<DocumentEntity<T>> executeSimpleRangeWithDocument(
     String database,
     String collectionName,
@@ -321,13 +321,13 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = _executeSimpleRange(database, collectionName, attribute, left, right, closed, skip, limit, DocumentEntity.class, clazz);
-		return entity;
-		
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = _executeSimpleRange(database, collectionName, attribute, left, right, closed, skip, limit, DocumentEntity.class, clazz);
+    return entity;
+    
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<DocumentEntity<T>> executeSimpleRangeWithDocumentResultSet(
     String database,
     String collectionName,
@@ -336,44 +336,44 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     int skip, int limit,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = executeSimpleRangeWithDocument(database, collectionName, attribute, left, right, closed, skip, limit, clazz);
-		CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
-		return rs;
-		
-	}
-	
-	// ----- remove-by-example --------------------
+    
+    CursorEntity<DocumentEntity<T>> entity = executeSimpleRangeWithDocument(database, collectionName, attribute, left, right, closed, skip, limit, clazz);
+    CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
+    return rs;
+    
+  }
+  
+  // ----- remove-by-example --------------------
 
-	@Override
+  @Override
   public SimpleByResultEntity executeSimpleRemoveByExample(
     String database,
     String collectionName,
     Map<String, Object> example,
     Boolean waitForSync,
     Integer limit) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/remove-by-example"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("example", example)
-						.put("waitForSync", waitForSync)
-						.put("limit", limit != null && limit.intValue() > 0 ? limit : null)
-						.get())
-				);
-		
-		SimpleByResultEntity entity = createEntity(res, SimpleByResultEntity.class);
-		return entity;
-		
-	}
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/remove-by-example"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("example", example)
+            .put("waitForSync", waitForSync)
+            .put("limit", limit != null && limit.intValue() > 0 ? limit : null)
+            .get())
+        );
+    
+    SimpleByResultEntity entity = createEntity(res, SimpleByResultEntity.class);
+    return entity;
+    
+  }
 
-	// ----- replace-by-example --------------------
+  // ----- replace-by-example --------------------
 
-	@Override
+  @Override
   public SimpleByResultEntity executeSimpleReplaceByExample(
     String database,
     String collectionName,
@@ -381,29 +381,29 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     Map<String, Object> newValue,
     Boolean waitForSync,
     Integer limit) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/replace-by-example"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("example", example)
-						.put("newValue", newValue)
-						.put("waitForSync", waitForSync)
-						.put("limit", limit != null && limit.intValue() > 0 ? limit : null)
-						.get())
-				);
-		
-		SimpleByResultEntity entity = createEntity(res, SimpleByResultEntity.class);
-		return entity;
-		
-	}
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/replace-by-example"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("example", example)
+            .put("newValue", newValue)
+            .put("waitForSync", waitForSync)
+            .put("limit", limit != null && limit.intValue() > 0 ? limit : null)
+            .get())
+        );
+    
+    SimpleByResultEntity entity = createEntity(res, SimpleByResultEntity.class);
+    return entity;
+    
+  }
 
-	// ----- update-by-example --------------------
+  // ----- update-by-example --------------------
 
-	@Override
+  @Override
   public SimpleByResultEntity executeSimpleUpdateByExample(
     String database,
     String collectionName,
@@ -412,59 +412,59 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     Boolean keepNull,
     Boolean waitForSync,
     Integer limit) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/update-by-example"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("example", example)
-						.put("newValue", newValue)
-						.put("keepNull", keepNull)
-						.put("waitForSync", waitForSync)
-						.put("limit", limit != null && limit.intValue() > 0 ? limit : null)
-						.get(), 
-						keepNull != null && !keepNull
-						)
-				);
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/update-by-example"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("example", example)
+            .put("newValue", newValue)
+            .put("keepNull", keepNull)
+            .put("waitForSync", waitForSync)
+            .put("limit", limit != null && limit.intValue() > 0 ? limit : null)
+            .get(), 
+            keepNull != null && !keepNull
+            )
+        );
 
-		SimpleByResultEntity entity = createEntity(res, SimpleByResultEntity.class);
-		return entity;
-		
-	}
-	
-	// ----- Fulltext --------------------
+    SimpleByResultEntity entity = createEntity(res, SimpleByResultEntity.class);
+    return entity;
+    
+  }
+  
+  // ----- Fulltext --------------------
 
-	private <T> CursorEntity<T> _executeSimpleFulltext(
-			String database,
-			String collectionName,
-			String attribute, String query, 
-			int skip, int limit,
-			String index,
-			Class<?>... clazz
-			) throws ArangoException {
+  private <T> CursorEntity<T> _executeSimpleFulltext(
+      String database,
+      String collectionName,
+      String attribute, String query, 
+      int skip, int limit,
+      String index,
+      Class<?>... clazz
+      ) throws ArangoException {
 
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/fulltext"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("attribute", attribute)
-						.put("query", query)
-						.put("skip", skip > 0 ? skip : null)
-						.put("limit", limit > 0 ? limit : null)
-						.put("index", index)
-						.get())
-				);
-		
-		return createEntity(res, CursorEntity.class, clazz);
-	}
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/fulltext"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("attribute", attribute)
+            .put("query", query)
+            .put("skip", skip > 0 ? skip : null)
+            .put("limit", limit > 0 ? limit : null)
+            .put("index", index)
+            .get())
+        );
+    
+    return createEntity(res, CursorEntity.class, clazz);
+  }
 
-	@Override
+  @Override
   public <T> CursorEntity<T> executeSimpleFulltext(
     String database,
     String collectionName,
@@ -473,13 +473,13 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     String index,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<T> entity = _executeSimpleFulltext(database, collectionName, attribute, query, skip, limit, index, clazz);
-		//return EntityFactory.createResult(entity, clazz);
-		return entity;
-	}
+    
+    CursorEntity<T> entity = _executeSimpleFulltext(database, collectionName, attribute, query, skip, limit, index, clazz);
+    //return EntityFactory.createResult(entity, clazz);
+    return entity;
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<T> executeSimpleFulltextWithResultSet(
     String database,
     String collectionName,
@@ -488,15 +488,15 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     String index,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<T> entity = executeSimpleFulltext(database, collectionName, attribute, query, skip, limit, index, clazz);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<T> entity = executeSimpleFulltext(database, collectionName, attribute, query, skip, limit, index, clazz);
+    CursorResultSet<T> rs = new CursorResultSet<T>(database, cursorDriver, entity, clazz);
+    return rs;
+    
+  }
 
-	
-	@Override
+  
+  @Override
   public <T> CursorEntity<DocumentEntity<T>> executeSimpleFulltextWithDocument(
     String database,
     String collectionName,
@@ -505,13 +505,13 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     String index,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = _executeSimpleFulltext(database, collectionName, attribute, query, skip, limit, index, DocumentEntity.class, clazz);
-		//return EntityFactory.createDocumentResult(entity, clazz);
-		return entity;
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = _executeSimpleFulltext(database, collectionName, attribute, query, skip, limit, index, DocumentEntity.class, clazz);
+    //return EntityFactory.createDocumentResult(entity, clazz);
+    return entity;
+  }
 
-	@Override
+  @Override
   public <T> CursorResultSet<DocumentEntity<T>> executeSimpleFulltextWithDocumentResultSet(
     String database,
     String collectionName,
@@ -520,62 +520,62 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
     String index,
     Class<?> clazz
   ) throws ArangoException {
-		
-		CursorEntity<DocumentEntity<T>> entity = executeSimpleFulltextWithDocument(database, collectionName, attribute, query, skip, limit, index, clazz);
-		CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
-		return rs;
-		
-	}
+    
+    CursorEntity<DocumentEntity<T>> entity = executeSimpleFulltextWithDocument(database, collectionName, attribute, query, skip, limit, index, clazz);
+    CursorResultSet<DocumentEntity<T>> rs = new CursorResultSet<DocumentEntity<T>>(database, cursorDriver, entity, DocumentEntity.class, clazz);
+    return rs;
+    
+  }
 
-	// ----- // Fulltext --------------------
+  // ----- // Fulltext --------------------
 
 
-	// ----- first --------------------
+  // ----- first --------------------
 
-	@Override
+  @Override
   public <T> DocumentResultEntity<T> executeSimpleFirst(
     String database,
     String collectionName,
     Integer count,
     Class<?> clazz) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/first"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("count", count)
-						.get())
-				);
-		
-		return createEntity(res, DocumentResultEntity.class, clazz);
-		
-	}
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/first"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("count", count)
+            .get())
+        );
+    
+    return createEntity(res, DocumentResultEntity.class, clazz);
+    
+  }
 
-	// ----- last --------------------
+  // ----- last --------------------
 
-	@Override
+  @Override
   public <T> DocumentResultEntity<T> executeSimpleLast(
     String database,
     String collectionName,
     Integer count,
     Class<?> clazz) throws ArangoException {
-		
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-				createEndpointUrl(baseUrl, database, "/_api/simple/last"), 
-				null,
-				EntityFactory.toJsonString(
-						new MapBuilder()
-						.put("collection", collectionName)
-						.put("count", count)
-						.get())
-				);
-		
-		return createEntity(res, DocumentResultEntity.class, clazz);
-		
-	}
+    
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPut(
+        createEndpointUrl(baseUrl, database, "/_api/simple/last"), 
+        null,
+        EntityFactory.toJsonString(
+            new MapBuilder()
+            .put("collection", collectionName)
+            .put("count", count)
+            .get())
+        );
+    
+    return createEntity(res, DocumentResultEntity.class, clazz);
+    
+  }
 
 }

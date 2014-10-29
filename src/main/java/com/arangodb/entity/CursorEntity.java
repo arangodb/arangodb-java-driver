@@ -27,74 +27,74 @@ import com.arangodb.util.CollectionUtils;
  */
 public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 
-	boolean hasMore;
-	int count = -1;
-	long cursorId = -1;
-	List<String> bindVars;
-	List<? extends T> results;
-	
-	public Iterator<T> iterator() {
-		return (Iterator<T>) CollectionUtils.safetyIterator(results);
-	}
-	public int size() {
-		if (results == null) {
-			return 0;
-		}
-		return results.size();
-	}
-	public T get(int index) {
-		rangeCheck(index);
-		return results.get(index);
-	}
+  boolean hasMore;
+  int count = -1;
+  long cursorId = -1;
+  List<String> bindVars;
+  List<? extends T> results;
+  
+  public Iterator<T> iterator() {
+    return (Iterator<T>) CollectionUtils.safetyIterator(results);
+  }
+  public int size() {
+    if (results == null) {
+      return 0;
+    }
+    return results.size();
+  }
+  public T get(int index) {
+    rangeCheck(index);
+    return results.get(index);
+  }
 
-	private void rangeCheck(int index) {
-		int size = size();
-		if (index < 0 || index >= size) {
-			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-		}
-	}	
-	
-	public List<? extends T> getResults() {
-		return results;
-	}
+  private void rangeCheck(int index) {
+    int size = size();
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
+  }  
+  
+  public List<? extends T> getResults() {
+    return results;
+  }
 
-	public boolean isHasMore() {
-		return hasMore;
-	}
-	public boolean hasMore() {
-		return hasMore;
-	}
+  public boolean isHasMore() {
+    return hasMore;
+  }
+  public boolean hasMore() {
+    return hasMore;
+  }
 
-	public int getCount() {
-		return count;
-	}
+  public int getCount() {
+    return count;
+  }
 
-	public long getCursorId() {
-		return cursorId;
-	}
+  public long getCursorId() {
+    return cursorId;
+  }
 
-	public List<String> getBindVars() {
-		return bindVars;
-	}
+  public List<String> getBindVars() {
+    return bindVars;
+  }
 
-	public void setResults(List<T> results) {
-		this.results = results;
-	}
+  public void setResults(List<T> results) {
+    this.results = results;
+  }
 
-	public void setHasMore(boolean hasMore) {
-		this.hasMore = hasMore;
-	}
+  public void setHasMore(boolean hasMore) {
+    this.hasMore = hasMore;
+  }
 
-	public void setCount(int count) {
-		this.count = count;
-	}
+  public void setCount(int count) {
+    this.count = count;
+  }
 
-	public void setCursorId(long cursorId) {
-		this.cursorId = cursorId;
-	}
+  public void setCursorId(long cursorId) {
+    this.cursorId = cursorId;
+  }
 
-	public void setBindVars(List<String> bindVars) {
-		this.bindVars = bindVars;
-	}
-	
+  public void setBindVars(List<String> bindVars) {
+    this.bindVars = bindVars;
+  }
+  
 }

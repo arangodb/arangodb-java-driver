@@ -23,15 +23,15 @@ import com.arangodb.ArangoException;
  *
  */
 public class ReflectionUtils {
-	
-	public static <T> T newInstance(Class<?> clazz) throws ArangoException {
-		try {
-			return (T) clazz.newInstance();
-		} catch (InstantiationException e) {
-			throw new ArangoException(e);
-		} catch (IllegalAccessException e) {
-			throw new ArangoException(e);
-		}
-	}
-	
+  
+  public static <T> T newInstance(Class<?> clazz) throws ArangoException {
+    try {
+      return (T) clazz.newInstance();
+    } catch (InstantiationException e) {
+      throw new ArangoException(e);
+    } catch (IllegalAccessException e) {
+      throw new ArangoException(e);
+    }
+  }
+  
 }

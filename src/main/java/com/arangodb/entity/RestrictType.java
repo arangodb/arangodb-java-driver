@@ -21,6 +21,6 @@ package com.arangodb.entity;
  *
  */
 public enum RestrictType {
-	INCLUDE,
-	EXCLUDE
+  INCLUDE,
+  EXCLUDE
 }

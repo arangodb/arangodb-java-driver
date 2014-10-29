@@ -27,45 +27,45 @@ import com.arangodb.entity.ImportResultEntity;
  *
  */
 public class ArangoClient {
-	
-	public static final int DEFAULT_IMPORT_BUFFER_SIZE = 1000;
-	
-	protected ArangoDriver driver;
-	
-	public ArangoClient(ArangoConfigure configure) {
-		driver = new ArangoDriver(configure);
-	}
+  
+  public static final int DEFAULT_IMPORT_BUFFER_SIZE = 1000;
+  
+  protected ArangoDriver driver;
+  
+  public ArangoClient(ArangoConfigure configure) {
+    driver = new ArangoDriver(configure);
+  }
 
 
-	private void importDocumentsImpl(String collectionName, boolean createCollection, List<String> values, ImportResultEntity total) throws ArangoException {
-		ImportResultEntity result = driver.importDocuments(collectionName, createCollection, values);
-		total.setCreated(total.getCreated() + result.getCreated());
-		total.setErrors(total.getErrors() + result.getErrors());
-		total.setEmpty(total.getEmpty() + result.getEmpty());
-	}
-	
-	public ImportResultEntity importRawJsonDocuments(String collectionName, boolean createCollection, Iterator<String> itr, int bufferCount) throws ArangoException {
-		
-		if (bufferCount <= 0) {
-			bufferCount = DEFAULT_IMPORT_BUFFER_SIZE;
-		}
-		
-		ImportResultEntity total = new ImportResultEntity();
-		
-		ArrayList<String> buffers = new ArrayList<String>(bufferCount);
-		while (itr.hasNext()) {
-			buffers.add(itr.next());
-			if (buffers.size() % bufferCount == 0) {
-				importDocumentsImpl(collectionName, createCollection, buffers, total);				
-				buffers.clear();
-			}
-		}
-		if (!buffers.isEmpty()) {
-			importDocumentsImpl(collectionName, createCollection, buffers, total);				
-		}
-		
-		return total;
-		
-	}
-	
+  private void importDocumentsImpl(String collectionName, boolean createCollection, List<String> values, ImportResultEntity total) throws ArangoException {
+    ImportResultEntity result = driver.importDocuments(collectionName, createCollection, values);
+    total.setCreated(total.getCreated() + result.getCreated());
+    total.setErrors(total.getErrors() + result.getErrors());
+    total.setEmpty(total.getEmpty() + result.getEmpty());
+  }
+  
+  public ImportResultEntity importRawJsonDocuments(String collectionName, boolean createCollection, Iterator<String> itr, int bufferCount) throws ArangoException {
+    
+    if (bufferCount <= 0) {
+      bufferCount = DEFAULT_IMPORT_BUFFER_SIZE;
+    }
+    
+    ImportResultEntity total = new ImportResultEntity();
+    
+    ArrayList<String> buffers = new ArrayList<String>(bufferCount);
+    while (itr.hasNext()) {
+      buffers.add(itr.next());
+      if (buffers.size() % bufferCount == 0) {
+        importDocumentsImpl(collectionName, createCollection, buffers, total);        
+        buffers.clear();
+      }
+    }
+    if (!buffers.isEmpty()) {
+      importDocumentsImpl(collectionName, createCollection, buffers, total);        
+    }
+    
+    return total;
+    
+  }
+  
 }

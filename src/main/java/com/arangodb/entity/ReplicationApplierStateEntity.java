@@ -22,41 +22,41 @@ package com.arangodb.entity;
  */
 public class ReplicationApplierStateEntity extends BaseEntity {
 
-	ReplicationApplierState state;
-	String serverVersion;
-	String serverId;
-	String endpoint;
-	String database;
-	
-	public ReplicationApplierState getState() {
-		return state;
-	}
-	public String getServerVersion() {
-		return serverVersion;
-	}
-	public String getServerId() {
-		return serverId;
-	}
-	public String getEndpoint() {
-		return endpoint;
-	}
-	public String getDatabase() {
-		return database;
-	}
-	public void setState(ReplicationApplierState state) {
-		this.state = state;
-	}
-	public void setServerVersion(String serverVersion) {
-		this.serverVersion = serverVersion;
-	}
-	public void setServerId(String serverId) {
-		this.serverId = serverId;
-	}
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-	public void setDatabase(String database) {
-		this.database = database;
-	}
-	
+  ReplicationApplierState state;
+  String serverVersion;
+  String serverId;
+  String endpoint;
+  String database;
+  
+  public ReplicationApplierState getState() {
+    return state;
+  }
+  public String getServerVersion() {
+    return serverVersion;
+  }
+  public String getServerId() {
+    return serverId;
+  }
+  public String getEndpoint() {
+    return endpoint;
+  }
+  public String getDatabase() {
+    return database;
+  }
+  public void setState(ReplicationApplierState state) {
+    this.state = state;
+  }
+  public void setServerVersion(String serverVersion) {
+    this.serverVersion = serverVersion;
+  }
+  public void setServerId(String serverId) {
+    this.serverId = serverId;
+  }
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
+  }
+  public void setDatabase(String database) {
+    this.database = database;
+  }
+  
 }

@@ -41,7 +41,7 @@ import java.util.*;
 public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 
-	InternalBatchDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+  InternalBatchDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
     super(configure , httpManager);
   }
 
@@ -51,7 +51,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
   private BatchResponseListEntity batchResponseListEntity;
 
-	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
+  public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
 
 
     String body = "";
@@ -62,8 +62,9 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
       body += "--" + delimiter + newline;
       body += "Content-Type: application/x-arango-batchpart" + newline;
       body += "Content-Id: " + bp.getId() + newline + newline;
-      body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline + newline;
-      body += bp.getBody() + newline + newline;
+      body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline;
+      body += "Host: " + this.configure.getHost() + newline + newline;
+      body += bp.getBody() == null ? "" :  bp.getBody() + newline + newline;
       resolver.put(bp.getId(), bp.getInvocationObject());
     }
     body += "--" + delimiter + "--";
@@ -141,7 +142,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
     batchResponseListEntity.setBatchResponseEntities(batchResponseEntityList);
     this.batchResponseListEntity = batchResponseListEntity;
     return createEntity(res, DefaultEntity.class, null, false);
-	}
+  }
 
   public BatchResponseListEntity getBatchResponseListEntity() {
     return batchResponseListEntity;

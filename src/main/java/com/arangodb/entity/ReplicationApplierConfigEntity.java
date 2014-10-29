@@ -22,76 +22,76 @@ package com.arangodb.entity;
  */
 public class ReplicationApplierConfigEntity extends BaseEntity {
 
-	String endpoint;
-	String database;
-	String username;
-	String password;
-	Integer maxConnectRetries;
-	Integer connectTimeout;
-	Integer requestTimeout;
-	Integer chunkSize;
-	Boolean autoStart;
-	Boolean adaptivePolling;
-	
-	public String getEndpoint() {
-		return endpoint;
-	}
-	public String getDatabase() {
-		return database;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public Integer getMaxConnectRetries() {
-		return maxConnectRetries;
-	}
-	public Integer getConnectTimeout() {
-		return connectTimeout;
-	}
-	public Integer getRequestTimeout() {
-		return requestTimeout;
-	}
-	public Integer getChunkSize() {
-		return chunkSize;
-	}
-	public Boolean getAutoStart() {
-		return autoStart;
-	}
-	public Boolean getAdaptivePolling() {
-		return adaptivePolling;
-	}
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-	public void setDatabase(String database) {
-		this.database = database;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public void setMaxConnectRetries(Integer maxConnectRetries) {
-		this.maxConnectRetries = maxConnectRetries;
-	}
-	public void setConnectTimeout(Integer connectTimeout) {
-		this.connectTimeout = connectTimeout;
-	}
-	public void setRequestTimeout(Integer requestTimeout) {
-		this.requestTimeout = requestTimeout;
-	}
-	public void setChunkSize(Integer chunkSize) {
-		this.chunkSize = chunkSize;
-	}
-	public void setAutoStart(Boolean autoStart) {
-		this.autoStart = autoStart;
-	}
-	public void setAdaptivePolling(Boolean adaptivePolling) {
-		this.adaptivePolling = adaptivePolling;
-	}
-	
+  String endpoint;
+  String database;
+  String username;
+  String password;
+  Integer maxConnectRetries;
+  Integer connectTimeout;
+  Integer requestTimeout;
+  Integer chunkSize;
+  Boolean autoStart;
+  Boolean adaptivePolling;
+  
+  public String getEndpoint() {
+    return endpoint;
+  }
+  public String getDatabase() {
+    return database;
+  }
+  public String getUsername() {
+    return username;
+  }
+  public String getPassword() {
+    return password;
+  }
+  public Integer getMaxConnectRetries() {
+    return maxConnectRetries;
+  }
+  public Integer getConnectTimeout() {
+    return connectTimeout;
+  }
+  public Integer getRequestTimeout() {
+    return requestTimeout;
+  }
+  public Integer getChunkSize() {
+    return chunkSize;
+  }
+  public Boolean getAutoStart() {
+    return autoStart;
+  }
+  public Boolean getAdaptivePolling() {
+    return adaptivePolling;
+  }
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
+  }
+  public void setDatabase(String database) {
+    this.database = database;
+  }
+  public void setUsername(String username) {
+    this.username = username;
+  }
+  public void setPassword(String password) {
+    this.password = password;
+  }
+  public void setMaxConnectRetries(Integer maxConnectRetries) {
+    this.maxConnectRetries = maxConnectRetries;
+  }
+  public void setConnectTimeout(Integer connectTimeout) {
+    this.connectTimeout = connectTimeout;
+  }
+  public void setRequestTimeout(Integer requestTimeout) {
+    this.requestTimeout = requestTimeout;
+  }
+  public void setChunkSize(Integer chunkSize) {
+    this.chunkSize = chunkSize;
+  }
+  public void setAutoStart(Boolean autoStart) {
+    this.autoStart = autoStart;
+  }
+  public void setAdaptivePolling(Boolean adaptivePolling) {
+    this.adaptivePolling = adaptivePolling;
+  }
+  
 }

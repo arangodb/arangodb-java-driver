@@ -20,7 +20,7 @@ To add the driver to your project with maven, add the following code to your pom
     <repository>
         <id>arangodb-java-driver</id>
         <name>maven repository on GitHub</name>
-		<url>https://raw.github.com/triAGENS/arangodb-java-driver/mvn-repo</url>
+    <url>https://raw.github.com/triAGENS/arangodb-java-driver/mvn-repo</url>
         <layout>default</layout>
     </repository>
 </repositories>
@@ -122,10 +122,10 @@ enableCURLLogger=true
 This ArangoDB driver is thread-safe. Unfortunately the ArangoDriver#setDefaultDatabase() is not (yet). So its recommended to create a new driver instance, if you want to change the database.
 
 ``` Java
-	//Driver instance to database "_system" (default database)
-	ArangoDriver driverSystem = new ArangoDriver(configure);
-	//Driver instance to database "mydb2"
-	ArangoDriver driverMyDB = new ArangoDriver(configure, "mydb2");
+  //Driver instance to database "_system" (default database)
+  ArangoDriver driverSystem = new ArangoDriver(configure);
+  //Driver instance to database "mydb2"
+  ArangoDriver driverMyDB = new ArangoDriver(configure, "mydb2");
   
 ```
 
@@ -225,8 +225,8 @@ E.g. get all Simpsons aged 3 or older in ascending order:
     Map<String, Object> bindVars = new MapBuilder().put("age", 3).get();
     CursorResultSet<MyObject> rs = arangoDriver.executeQueryWithResultSet(
       query, bindVars, MyObject.class, true, 20
-  	);
-  	
+    );
+    
     for (MyObject obj: rs) {
       System.out.println(obj.getName());
     }
@@ -236,11 +236,11 @@ E.g. get all Simpsons aged 3 or older in ascending order:
 
 instead of using a for statement you can also use an iterator:
 ``` Java
-	while (rs.hasNext()) {
-		MyObject obj = rs.next();
-		System.out.println(obj.getName());
-	}
-	rs.close();
+  while (rs.hasNext()) {
+    MyObject obj = rs.next();
+    System.out.println(obj.getName());
+  }
+  rs.close();
 ```
 
 #User Management
@@ -248,22 +248,22 @@ If you are using [authentication] (http://docs.arangodb.org/ConfigureArango/Auth
 
 ##add user
 ``` Java
-	//username, password, active, extras
-	arangoDriver.createUser("myUser", "myPassword", true, null);
+  //username, password, active, extras
+  arangoDriver.createUser("myUser", "myPassword", true, null);
 ```
 
 ##list users
 ``` Java
-	List<UserEntity> users = arangoDriver.getUsers();
-	for(UserEntity user : users) {
-		System.out.println(user.getName())
-	}
+  List<UserEntity> users = arangoDriver.getUsers();
+  for(UserEntity user : users) {
+    System.out.println(user.getName())
+  }
 ```
 
 
 ##DELETE user
 ``` Java
-	arangoDriver.createUser("myUser");
+  arangoDriver.createUser("myUser");
 ```
 
 

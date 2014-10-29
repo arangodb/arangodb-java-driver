@@ -27,8 +27,8 @@ import com.arangodb.http.HttpManager;
  *
  */
 public class BatchResponseListEntity extends BaseEntity {
-	
-	List<BatchResponseEntity> batchResponseEntities;
+  
+  List<BatchResponseEntity> batchResponseEntities;
 
   public List<BatchResponseEntity> getBatchResponseEntities() {
     return batchResponseEntities;

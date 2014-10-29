@@ -22,34 +22,34 @@ package com.arangodb.entity;
  */
 public class DatabaseEntity extends BaseEntity {
 
-	String name;
-	String id;
-	String path;
-	boolean isSystem;
-	
-	public String getName() {
-		return name;
-	}
-	public String getId() {
-		return id;
-	}
-	public String getPath() {
-		return path;
-	}
-	public boolean isSystem() {
-		return isSystem;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public void setSystem(boolean isSystem) {
-		this.isSystem = isSystem;
-	}
-	
+  String name;
+  String id;
+  String path;
+  boolean isSystem;
+  
+  public String getName() {
+    return name;
+  }
+  public String getId() {
+    return id;
+  }
+  public String getPath() {
+    return path;
+  }
+  public boolean isSystem() {
+    return isSystem;
+  }
+  public void setName(String name) {
+    this.name = name;
+  }
+  public void setId(String id) {
+    this.id = id;
+  }
+  public void setPath(String path) {
+    this.path = path;
+  }
+  public void setSystem(boolean isSystem) {
+    this.isSystem = isSystem;
+  }
+  
 }

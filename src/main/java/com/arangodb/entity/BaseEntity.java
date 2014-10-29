@@ -25,83 +25,83 @@ import com.arangodb.annotations.Exclude;
  *
  */
 public abstract class BaseEntity implements Serializable {
-	
-	@Exclude(deserialize=false)
-	boolean error;
-	@Exclude(deserialize=false)
-	int code;
-	@Exclude(deserialize=false)
-	int errorNumber;
-	@Exclude(deserialize=false)
-	String errorMessage;
-	@Exclude(deserialize=false)
-	int statusCode;
-	@Exclude(deserialize=false)
-	long etag;
+  
+  @Exclude(deserialize=false)
+  boolean error;
+  @Exclude(deserialize=false)
+  int code;
+  @Exclude(deserialize=false)
+  int errorNumber;
+  @Exclude(deserialize=false)
+  String errorMessage;
+  @Exclude(deserialize=false)
+  int statusCode;
+  @Exclude(deserialize=false)
+  long etag;
   @Exclude(deserialize=false)
   String requestId;
-	
-	public boolean isNotModified() {
-		return statusCode == 304; //HttpStatus.SC_NOT_MODIFIED;
-	}
-	public boolean isUnauthorized() {
-		return statusCode == 401;
-	}
-	public boolean isNotFound() {
-		return statusCode == 404;
-	}
+  
+  public boolean isNotModified() {
+    return statusCode == 304; //HttpStatus.SC_NOT_MODIFIED;
+  }
+  public boolean isUnauthorized() {
+    return statusCode == 401;
+  }
+  public boolean isNotFound() {
+    return statusCode == 404;
+  }
 
   public boolean isBatchResponseEntity() {
     return statusCode == 206;
   }
 
-	public boolean isError() {
-		return error;
-	}
+  public boolean isError() {
+    return error;
+  }
 
-	public void setError(boolean error) {
-		this.error = error;
-	}
+  public void setError(boolean error) {
+    this.error = error;
+  }
 
-	public int getCode() {
-		return code;
-	}
+  public int getCode() {
+    return code;
+  }
 
-	public int getErrorNumber() {
-		return errorNumber;
-	}
+  public int getErrorNumber() {
+    return errorNumber;
+  }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 
-	public void setCode(int code) {
-		this.code = code;
-	}
+  public void setCode(int code) {
+    this.code = code;
+  }
 
-	public void setErrorNumber(int errorNumber) {
-		this.errorNumber = errorNumber;
-	}
+  public void setErrorNumber(int errorNumber) {
+    this.errorNumber = errorNumber;
+  }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+  public void setErrorMessage(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
 
-	public long getEtag() {
-		return etag;
-	}
+  public long getEtag() {
+    return etag;
+  }
 
-	public void setEtag(long etag) {
-		this.etag = etag;
-	}
+  public void setEtag(long etag) {
+    this.etag = etag;
+  }
 
-	public int getStatusCode() {
-		return statusCode;
-	}
+  public int getStatusCode() {
+    return statusCode;
+  }
 
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
+  public void setStatusCode(int statusCode) {
+    this.statusCode = statusCode;
+  }
 
 
   public String getRequestId() {

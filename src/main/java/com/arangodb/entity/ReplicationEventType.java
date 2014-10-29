@@ -25,42 +25,42 @@ import java.util.TreeMap;
  */
 public enum ReplicationEventType {
 
-	LOGGER_STOPPED(1000),
-	LOGGER_STARTED(1001),
-	
-	COLLECTION_CREATED(2000),
-	COLLECTION_DROPPED(2001),
-	COLLECTION_RENAMED(2002),
-	COLLECTION_PROP_CHANGED(2003),
-	
-	INDEX_CREATED(2100),
-	INDEX_DROPPED(2101),
-	
-	TRANSACTION_STARTED(2200),
-	TRANSACTION_COMMITED(2201),
-	
-	DOCUMENT_UPSERT(2300),
-	EDGE_UPSERT(2301),
-	DELETION(2302)
-	;
+  LOGGER_STOPPED(1000),
+  LOGGER_STARTED(1001),
+  
+  COLLECTION_CREATED(2000),
+  COLLECTION_DROPPED(2001),
+  COLLECTION_RENAMED(2002),
+  COLLECTION_PROP_CHANGED(2003),
+  
+  INDEX_CREATED(2100),
+  INDEX_DROPPED(2101),
+  
+  TRANSACTION_STARTED(2200),
+  TRANSACTION_COMMITED(2201),
+  
+  DOCUMENT_UPSERT(2300),
+  EDGE_UPSERT(2301),
+  DELETION(2302)
+  ;
 
-	private static TreeMap<Integer, ReplicationEventType> lookup = new TreeMap<Integer, ReplicationEventType>();
-	static {
-		for (ReplicationEventType type: ReplicationEventType.values()) {
-			lookup.put(type.getType(), type);
-		}
-	}
-	
-	private final int type;
-	private ReplicationEventType(int type) {
-		this.type = type;
-		// ここでMapに入れた方がスマートだが、初期化エラーが出る
-	}
-	public int getType() {
-		return type;
-	}
-	public static ReplicationEventType valueOf(int type) {
-		return lookup.get(type);
-	}
+  private static TreeMap<Integer, ReplicationEventType> lookup = new TreeMap<Integer, ReplicationEventType>();
+  static {
+    for (ReplicationEventType type: ReplicationEventType.values()) {
+      lookup.put(type.getType(), type);
+    }
+  }
+  
+  private final int type;
+  private ReplicationEventType(int type) {
+    this.type = type;
+    // ここでMapに入れた方がスマートだが、初期化エラーが出る
+  }
+  public int getType() {
+    return type;
+  }
+  public static ReplicationEventType valueOf(int type) {
+    return lookup.get(type);
+  }
 
 }

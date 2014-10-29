@@ -3,11 +3,11 @@ package com.arangodb.entity;
 import java.util.List;
 
 public class EdgeDefinitionsEntity {
-	List<EdgeDefinitionEntity> edgeDefinitions;
+  List<EdgeDefinitionEntity> edgeDefinitions;
 
-	public List<EdgeDefinitionEntity> getEdgeDefinitions() {
-		return edgeDefinitions;
-	}
+  public List<EdgeDefinitionEntity> getEdgeDefinitions() {
+    return edgeDefinitions;
+  }
 
     public void setEdgeDefinitions(List<EdgeDefinitionEntity> edgeDefinitions) {
         this.edgeDefinitions = edgeDefinitions;

@@ -32,24 +32,24 @@ import com.arangodb.Station;
  *
  */
 public class TestUtils {
-	
-	public static List<Station> readStations() throws IOException {
+  
+  public static List<Station> readStations() throws IOException {
 
-		ArrayList<Station> stations = new ArrayList<Station>(1000);
-		BufferedReader br = new BufferedReader(new InputStreamReader(TestUtils.class.getResourceAsStream("/test-data/jp-tokyo-station.tsv"), "utf-8"));
-		String line = null;
-		while ((line = br.readLine()) != null) {
-			line = line.trim();
-			if (line.length() == 0) {
-				continue;
-			}
-			Station station = new Station(line.split("\t", -1));
-			stations.add(station);
-		}
-		br.close();
-		
-		return stations;
-		
-	}
-	
+    ArrayList<Station> stations = new ArrayList<Station>(1000);
+    BufferedReader br = new BufferedReader(new InputStreamReader(TestUtils.class.getResourceAsStream("/test-data/jp-tokyo-station.tsv"), "utf-8"));
+    String line = null;
+    while ((line = br.readLine()) != null) {
+      line = line.trim();
+      if (line.length() == 0) {
+        continue;
+      }
+      Station station = new Station(line.split("  ", -1));
+      stations.add(station);
+    }
+    br.close();
+    
+    return stations;
+    
+  }
+  
 }

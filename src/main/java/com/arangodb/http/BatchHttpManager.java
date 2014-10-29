@@ -28,8 +28,13 @@ public class BatchHttpManager extends HttpManager {
         }
 
         int id = callStack.size() + 1;
-        callStack.add(new BatchPart(requestEntity.type.toString(), buildUrl(requestEntity), requestEntity.bodyText,
-                requestEntity.headers, this.getCurrentObject(), id));
+        callStack.add(
+          new BatchPart(
+            requestEntity.type.toString(), buildUrl(requestEntity).replaceAll(this.getConfiguration().getBaseUrl(), ""),
+            requestEntity.bodyText,
+            requestEntity.headers,
+            this.getCurrentObject(), id)
+        );
         this.setCurrentObject(null);
         HttpResponseEntity responseEntity = new HttpResponseEntity();
 

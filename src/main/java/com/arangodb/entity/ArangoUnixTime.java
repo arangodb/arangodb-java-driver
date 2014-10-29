@@ -22,31 +22,31 @@ package com.arangodb.entity;
  */
 public class ArangoUnixTime extends BaseEntity {
 
-	double time;
-	int second;
-	int microsecond;
-	
-	public long getTimeMillis() {
-		return 1000L * second + (microsecond/1000);
-	}
-	
-	public double getTime() {
-		return time;
-	}
-	public int getSecond() {
-		return second;
-	}
-	public int getMicrosecond() {
-		return microsecond;
-	}
-	public void setTime(double time) {
-		this.time = time;
-	}
-	public void setSecond(int second) {
-		this.second = second;
-	}
-	public void setMicrosecond(int microsecond) {
-		this.microsecond = microsecond;
-	}
-	
+  double time;
+  int second;
+  int microsecond;
+  
+  public long getTimeMillis() {
+    return 1000L * second + (microsecond/1000);
+  }
+  
+  public double getTime() {
+    return time;
+  }
+  public int getSecond() {
+    return second;
+  }
+  public int getMicrosecond() {
+    return microsecond;
+  }
+  public void setTime(double time) {
+    this.time = time;
+  }
+  public void setSecond(int second) {
+    this.second = second;
+  }
+  public void setMicrosecond(int microsecond) {
+    this.microsecond = microsecond;
+  }
+  
 }

@@ -26,49 +26,49 @@ import com.arangodb.http.HttpManager;
  *
  */
 public class ImplFactory {
-	public static InternalCursorDriverImpl createCursorDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalCursorDriverImpl(configure, httpManager);
-	}
-	public static InternalCollectionDriverImpl createCollectionDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalCollectionDriverImpl(configure, httpManager);
-	}
-	public static InternalDocumentDriverImpl createDocumentDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalDocumentDriverImpl(configure, httpManager);
-	}
-	public static InternalKVSDriver createKVSDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalKVSDriverImpl(configure, httpManager);
-	}
-	public static InternalSimpleDriverImpl createSimpleDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
-		return new InternalSimpleDriverImpl(configure, cursorDriver, httpManager);
-	}
-	public static InternalIndexDriverImpl createIndexDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalIndexDriverImpl(configure, httpManager);
-	}
-	public static InternalAdminDriverImpl createAdminDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalAdminDriverImpl(configure, httpManager);
-	}
+  public static InternalCursorDriverImpl createCursorDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalCursorDriverImpl(configure, httpManager);
+  }
+  public static InternalCollectionDriverImpl createCollectionDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalCollectionDriverImpl(configure, httpManager);
+  }
+  public static InternalDocumentDriverImpl createDocumentDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalDocumentDriverImpl(configure, httpManager);
+  }
+  public static InternalKVSDriver createKVSDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalKVSDriverImpl(configure, httpManager);
+  }
+  public static InternalSimpleDriverImpl createSimpleDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+    return new InternalSimpleDriverImpl(configure, cursorDriver, httpManager);
+  }
+  public static InternalIndexDriverImpl createIndexDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalIndexDriverImpl(configure, httpManager);
+  }
+  public static InternalAdminDriverImpl createAdminDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalAdminDriverImpl(configure, httpManager);
+  }
   public static InternalAqlFunctionsDriverImpl createAqlFunctionsDriver(ArangoConfigure configure, HttpManager httpManager) {
     return new InternalAqlFunctionsDriverImpl(configure, httpManager);
   }
   public static InternalBatchDriverImpl createBatchDriver(ArangoConfigure configure, HttpManager httpManager) {
     return new InternalBatchDriverImpl(configure, httpManager);
   }
-	public static InternalUsersDriverImpl createUsersDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalUsersDriverImpl(configure, httpManager);
-	}
-	public static InternalImportDriverImpl createImportDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalImportDriverImpl(configure, httpManager);
-	}
-	public static InternalDatabaseDriverImpl createDatabaseDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalDatabaseDriverImpl(configure, httpManager);
-	}
-	public static InternalEndpointDriverImpl createEndpointDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalEndpointDriverImpl(configure, httpManager);
-	}
-	public static InternalReplicationDriverImpl createReplicationDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalReplicationDriverImpl(configure, httpManager);
-	}
-	public static InternalGraphDriverImpl createGraphDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
-		return new InternalGraphDriverImpl(configure, cursorDriver, httpManager);
-	}
+  public static InternalUsersDriverImpl createUsersDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalUsersDriverImpl(configure, httpManager);
+  }
+  public static InternalImportDriverImpl createImportDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalImportDriverImpl(configure, httpManager);
+  }
+  public static InternalDatabaseDriverImpl createDatabaseDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalDatabaseDriverImpl(configure, httpManager);
+  }
+  public static InternalEndpointDriverImpl createEndpointDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalEndpointDriverImpl(configure, httpManager);
+  }
+  public static InternalReplicationDriverImpl createReplicationDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalReplicationDriverImpl(configure, httpManager);
+  }
+  public static InternalGraphDriverImpl createGraphDriver(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+    return new InternalGraphDriverImpl(configure, cursorDriver, httpManager);
+  }
 }

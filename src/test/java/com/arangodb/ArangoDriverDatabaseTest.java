@@ -17,6 +17,7 @@
 package com.arangodb;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -172,6 +173,7 @@ public class ArangoDriverDatabaseTest extends BaseTest {
         try {
             driver.deleteDatabase(database);
         } catch (ArangoException e) {
+          String a = "b";
         }
 
         try {
@@ -210,8 +212,14 @@ public class ArangoDriverDatabaseTest extends BaseTest {
         assertThat(entity.getCode(), is(200));
 
         Collections.sort(entity.getResult());
-        assertThat(entity.getResult(), is(Arrays.asList("_system", "db-1", "db-_-3", "db_2", "mydb", "mydb2",
-            "repl_scenario_test1", "unitTestDatabase")));
+      assertThat(entity.getResult().indexOf("_system"), not(-1));
+      assertThat(entity.getResult().indexOf("db-1"), not(-1));
+      assertThat(entity.getResult().indexOf("db_2"), not(-1));
+      assertThat(entity.getResult().indexOf("db-_-3"), not(-1));
+      assertThat(entity.getResult().indexOf("mydb"), not(-1));
+      assertThat(entity.getResult().indexOf("mydb2"), not(-1));
+      assertThat(entity.getResult().indexOf("repl_scenario_test1"), not(-1));
+      assertThat(entity.getResult().indexOf("unitTestDatabase"), not(-1));
 
     }
 

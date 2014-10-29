@@ -25,16 +25,16 @@ import com.arangodb.http.HttpManager;
  *
  */
 class BaseArangoDriverImpl extends BaseArangoDriver implements BaseDriverInterface {
-	
-	protected ArangoConfigure configure;
-	protected HttpManager httpManager;
-	protected String baseUrl;
+  
+  protected ArangoConfigure configure;
+  protected HttpManager httpManager;
+  protected String baseUrl;
 
   BaseArangoDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
-		this.configure = configure;
-		this.httpManager = httpManager;
-		this.baseUrl = configure.getBaseUrl();
-	}
+    this.configure = configure;
+    this.httpManager = httpManager;
+    this.baseUrl = configure.getBaseUrl();
+  }
 
   public HttpManager getHttpManager() {
     return this.httpManager;

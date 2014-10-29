@@ -24,87 +24,87 @@ import java.util.Map;
  *
  */
 public class HttpResponseEntity {
-	
-	int statusCode;
-	String statusPhrase;
-	String text;
-	InputStream stream;
-	long etag = -1;
+  
+  int statusCode;
+  String statusPhrase;
+  String text;
+  InputStream stream;
+  long etag = -1;
   String requestId;
-	Map<String, String> headers;
-	
-	String contentType;
+  Map<String, String> headers;
+  
+  String contentType;
 
-	/**
-	 * @return
-	 * @since 1.4.0
-	 */
-	public boolean isJsonResponse() {
-		return (contentType != null && contentType.startsWith("application/json"));
-	}
-	
-	/**
-	 * @return
-	 * @since 1.4.0
-	 */
-	public boolean isDumpResponse() {
-		return (contentType != null && contentType.startsWith("application/x-arango-dump"));
-	}
-	
-	/**
-	 * @return
-	 * @since 1.4.0
-	 */
-	public boolean isTextResponse() {
-		return (contentType != null && contentType.startsWith("text/plain"));
-	}
+  /**
+   * @return
+   * @since 1.4.0
+   */
+  public boolean isJsonResponse() {
+    return (contentType != null && contentType.startsWith("application/json"));
+  }
+  
+  /**
+   * @return
+   * @since 1.4.0
+   */
+  public boolean isDumpResponse() {
+    return (contentType != null && contentType.startsWith("application/x-arango-dump"));
+  }
+  
+  /**
+   * @return
+   * @since 1.4.0
+   */
+  public boolean isTextResponse() {
+    return (contentType != null && contentType.startsWith("text/plain"));
+  }
 
   public boolean isBatchRepsonse() {
     return (requestId != null);
   }
-	
-	public int getStatusCode() {
-		return statusCode;
-	}
-	public InputStream getStream() {
-		return stream;
-	}
-	public void setStream(InputStream stream) {
-		this.stream = stream;
-	}
-	public String getStatusPhrase() {
-		return statusPhrase;
-	}
-	public String getText() {
-		return text;
-	}
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
-	public void setStatusPhrase(String statusPhrase) {
-		this.statusPhrase = statusPhrase;
-	}
-	public void setText(String text) {
-		this.text = text;
-	}
-	public long getEtag() {
-		return etag;
-	}
-	public void setEtag(long etag) {
-		this.etag = etag;
-	}
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
-	public void setHeaders(Map<String, String> headers) {
-		this.headers = headers;
-	}
-	public String getContentType() {
-		return contentType;
-	}
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+  
+  public int getStatusCode() {
+    return statusCode;
+  }
+  public InputStream getStream() {
+    return stream;
+  }
+  public void setStream(InputStream stream) {
+    this.stream = stream;
+  }
+  public String getStatusPhrase() {
+    return statusPhrase;
+  }
+  public String getText() {
+    return text;
+  }
+  public void setStatusCode(int statusCode) {
+    this.statusCode = statusCode;
+  }
+  public void setStatusPhrase(String statusPhrase) {
+    this.statusPhrase = statusPhrase;
+  }
+  public void setText(String text) {
+    this.text = text;
+  }
+  public long getEtag() {
+    return etag;
+  }
+  public void setEtag(long etag) {
+    this.etag = etag;
+  }
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
+  public void setHeaders(Map<String, String> headers) {
+    this.headers = headers;
+  }
+  public String getContentType() {
+    return contentType;
+  }
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
 
   public String getRequestId() {
     return requestId;

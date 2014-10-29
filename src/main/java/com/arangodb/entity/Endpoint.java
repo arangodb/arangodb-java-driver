@@ -25,20 +25,20 @@ import java.util.List;
  */
 public class Endpoint implements Serializable {
 
-	String endpoint;
-	List<String> databases;
-	
-	public String getEndpoint() {
-		return endpoint;
-	}
-	public List<String> getDatabases() {
-		return databases;
-	}
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-	public void setDatabases(List<String> databases) {
-		this.databases = databases;
-	}
-	
+  String endpoint;
+  List<String> databases;
+  
+  public String getEndpoint() {
+    return endpoint;
+  }
+  public List<String> getDatabases() {
+    return databases;
+  }
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
+  }
+  public void setDatabases(List<String> databases) {
+    this.databases = databases;
+  }
+  
 }

@@ -40,56 +40,56 @@ import com.arangodb.util.MapBuilder;
 @Ignore
 public class ArangoDriverKeyValueTest extends BaseTest {
 
-	public ArangoDriverKeyValueTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+  public ArangoDriverKeyValueTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-//	private static Logger logger = LoggerFactory.getLogger(ArangoDriverKeyValueTest.class);
-//	
-//	final String collectionName = "unit_test_arango_001"; // 通常ケースで使うコレクション名
-//	final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
-//	
-//	@Before
-//	public void before() throws ArangoException {
-//		
-//		logger.debug("----------");
-//		
-//		// 事前に消しておく
-//		try {
-//			driver.deleteCollection(collectionName);
-//		} catch (ArangoException e) {}
-//		try {
-//			driver.deleteCollection(collectionName404);
-//		} catch (ArangoException e) {}
+//  private static Logger logger = LoggerFactory.getLogger(ArangoDriverKeyValueTest.class);
+//  
+//  final String collectionName = "unit_test_arango_001"; // 通常ケースで使うコレクション名
+//  final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
+//  
+//  @Before
+//  public void before() throws ArangoException {
+//    
+//    logger.debug("----------");
+//    
+//    // 事前に消しておく
+//    try {
+//      driver.deleteCollection(collectionName);
+//    } catch (ArangoException e) {}
+//    try {
+//      driver.deleteCollection(collectionName404);
+//    } catch (ArangoException e) {}
 //
-//		logger.debug("--");
-//		
-//	}
-//	
-//	@After
-//	public void after() {
-//		logger.debug("----------");
-//	}
-//	
-//	@Test
-//	public void test_createValue_no_collection() throws ArangoException {
-//		
-//		// TODO キーに"/"がある場合
-//		
-//		String key = "aaa";
-//		Object value = "12345";
-//		try {
-//			driver.createKeyValue(
-//					collectionName404, 
-//					key, value, new MapBuilder("opt1", "aa").get(), new Date(System.currentTimeMillis() + 1000L * 60));
-//		} catch (ArangoException e) {
-//			assertThat(e.getErrorNumber(), is(1203)); // FIXME MagicNumber
-//		}
-//	}
-//	
-//	@Test
-//	public void test_create_dup() {
-//		
-//	}
-	
+//    logger.debug("--");
+//    
+//  }
+//  
+//  @After
+//  public void after() {
+//    logger.debug("----------");
+//  }
+//  
+//  @Test
+//  public void test_createValue_no_collection() throws ArangoException {
+//    
+//    // TODO キーに"/"がある場合
+//    
+//    String key = "aaa";
+//    Object value = "12345";
+//    try {
+//      driver.createKeyValue(
+//          collectionName404, 
+//          key, value, new MapBuilder("opt1", "aa").get(), new Date(System.currentTimeMillis() + 1000L * 60));
+//    } catch (ArangoException e) {
+//      assertThat(e.getErrorNumber(), is(1203)); // FIXME MagicNumber
+//    }
+//  }
+//  
+//  @Test
+//  public void test_create_dup() {
+//    
+//  }
+  
 }

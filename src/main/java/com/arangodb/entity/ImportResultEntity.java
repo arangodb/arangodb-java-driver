@@ -22,27 +22,27 @@ package com.arangodb.entity;
  */
 public class ImportResultEntity extends BaseEntity {
 
-	int created;
-	int errors;
-	int empty;
-	
-	public int getCreated() {
-		return created;
-	}
-	public int getErrors() {
-		return errors;
-	}
-	public int getEmpty() {
-		return empty;
-	}
-	public void setCreated(int created) {
-		this.created = created;
-	}
-	public void setErrors(int errors) {
-		this.errors = errors;
-	}
-	public void setEmpty(int empty) {
-		this.empty = empty;
-	}
-	
+  int created;
+  int errors;
+  int empty;
+  
+  public int getCreated() {
+    return created;
+  }
+  public int getErrors() {
+    return errors;
+  }
+  public int getEmpty() {
+    return empty;
+  }
+  public void setCreated(int created) {
+    this.created = created;
+  }
+  public void setErrors(int errors) {
+    this.errors = errors;
+  }
+  public void setEmpty(int empty) {
+    this.empty = empty;
+  }
+  
 }

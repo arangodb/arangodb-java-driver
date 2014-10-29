@@ -24,14 +24,14 @@ import java.util.List;
  */
 public class GraphsEntity extends BaseEntity {
 
-	List<GraphEntity> graphs;
+  List<GraphEntity> graphs;
 
-	public List<GraphEntity> getGraphs() {
-		return graphs;
-	}
+  public List<GraphEntity> getGraphs() {
+    return graphs;
+  }
 
-	public void setGraphs(List<GraphEntity> graphs) {
-		this.graphs = graphs;
-	}
-	
+  public void setGraphs(List<GraphEntity> graphs) {
+    this.graphs = graphs;
+  }
+  
 }

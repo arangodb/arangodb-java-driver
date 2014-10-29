@@ -23,86 +23,86 @@ package com.arangodb;
  *
  */
 public class Station {
-	
-	private int companyCode;
-	private String company;
-	private int lineCode;
-	private String line;
-	private int stationCode;
-	private String station;
-	private String address;
-	private double lon;
-	private double lat;
-	
-	public Station() {
-		
-	}
-	
-	public Station(String[] items) {
-		this.companyCode = Integer.parseInt(items[0]);
-		this.company = items[1];
-		this.lineCode = Integer.parseInt(items[2]);
-		this.line = items[3];
-		this.stationCode = Integer.parseInt(items[4]);
-		this.station = items[5];
-		this.address = items[6];
-		this.lon = Double.parseDouble(items[7]);
-		this.lat = Double.parseDouble(items[8]);
-	}
-	
-	public int getCompanyCode() {
-		return companyCode;
-	}
-	public String getCompany() {
-		return company;
-	}
-	public int getLineCode() {
-		return lineCode;
-	}
-	public String getLine() {
-		return line;
-	}
-	public int getStationCode() {
-		return stationCode;
-	}
-	public String getStation() {
-		return station;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public double getLon() {
-		return lon;
-	}
-	public double getLat() {
-		return lat;
-	}
-	public void setCompanyCode(int companyCode) {
-		this.companyCode = companyCode;
-	}
-	public void setCompany(String company) {
-		this.company = company;
-	}
-	public void setLineCode(int lineCode) {
-		this.lineCode = lineCode;
-	}
-	public void setLine(String line) {
-		this.line = line;
-	}
-	public void setStationCode(int stationCode) {
-		this.stationCode = stationCode;
-	}
-	public void setStation(String station) {
-		this.station = station;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	public void setLon(double lon) {
-		this.lon = lon;
-	}
-	public void setLat(double lat) {
-		this.lat = lat;
-	}
-	
+  
+  private int companyCode;
+  private String company;
+  private int lineCode;
+  private String line;
+  private int stationCode;
+  private String station;
+  private String address;
+  private double lon;
+  private double lat;
+  
+  public Station() {
+    
+  }
+  
+  public Station(String[] items) {
+    this.companyCode = Integer.parseInt(items[0]);
+    this.company = items[1];
+    this.lineCode = Integer.parseInt(items[2]);
+    this.line = items[3];
+    this.stationCode = Integer.parseInt(items[4]);
+    this.station = items[5];
+    this.address = items[6];
+    this.lon = Double.parseDouble(items[7]);
+    this.lat = Double.parseDouble(items[8]);
+  }
+  
+  public int getCompanyCode() {
+    return companyCode;
+  }
+  public String getCompany() {
+    return company;
+  }
+  public int getLineCode() {
+    return lineCode;
+  }
+  public String getLine() {
+    return line;
+  }
+  public int getStationCode() {
+    return stationCode;
+  }
+  public String getStation() {
+    return station;
+  }
+  public String getAddress() {
+    return address;
+  }
+  public double getLon() {
+    return lon;
+  }
+  public double getLat() {
+    return lat;
+  }
+  public void setCompanyCode(int companyCode) {
+    this.companyCode = companyCode;
+  }
+  public void setCompany(String company) {
+    this.company = company;
+  }
+  public void setLineCode(int lineCode) {
+    this.lineCode = lineCode;
+  }
+  public void setLine(String line) {
+    this.line = line;
+  }
+  public void setStationCode(int stationCode) {
+    this.stationCode = stationCode;
+  }
+  public void setStation(String station) {
+    this.station = station;
+  }
+  public void setAddress(String address) {
+    this.address = address;
+  }
+  public void setLon(double lon) {
+    this.lon = lon;
+  }
+  public void setLat(double lat) {
+    this.lat = lat;
+  }
+  
 }

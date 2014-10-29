@@ -34,179 +34,179 @@ import com.arangodb.entity.ArangoUnixTime;
  *
  */
 public class ArangoDriverAuthTest {
-	
-	@Test
-	public void test_auth() throws ArangoException {
-		
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setUser(null);
-		configure.setPassword(null);
-		configure.init();
-		
-		ArangoDriver driver = new ArangoDriver(configure);
-		try {
+  
+  @Test
+  public void test_auth() throws ArangoException {
+    
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setUser(null);
+    configure.setPassword(null);
+    configure.init();
+    
+    ArangoDriver driver = new ArangoDriver(configure);
+    try {
       driver.getTime();
       fail();
-		} catch (ArangoException e) {
+    } catch (ArangoException e) {
       assertThat(e.isUnauthorized(), is(true));
-			assertThat(e.getEntity().getStatusCode(), is(401));
-			assertThat(e.getMessage(), containsString("Unauthorized"));
-		}
-		
-		configure.shutdown();
-	}
+      assertThat(e.getEntity().getStatusCode(), is(401));
+      assertThat(e.getMessage(), containsString("Unauthorized"));
+    }
+    
+    configure.shutdown();
+  }
 
-	@Test
-	public void test_auth_root() throws ArangoException {
-		
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setUser("root");
-		configure.setPassword("");
-		configure.init();
-		
-		ArangoDriver driver = new ArangoDriver(configure);
-		driver.getTime();
-		
-		configure.shutdown();
-	}
+  @Test
+  public void test_auth_root() throws ArangoException {
+    
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setUser("root");
+    configure.setPassword("");
+    configure.init();
+    
+    ArangoDriver driver = new ArangoDriver(configure);
+    driver.getTime();
+    
+    configure.shutdown();
+  }
 
-	@Test
-	public void test_auth_added_user() throws ArangoException {
-		
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setUser("root");
-		configure.setPassword("");
-		configure.init();
-		
-		ArangoDriver driver = new ArangoDriver(configure);
-		
-		// Create User
-		try {
-			driver.createUser("userA", "passA", true, null);
-		} catch (ArangoException e) {
-			driver.replaceUser("userA", "passA", true, null);
-		}
-		
-		configure.shutdown();
-		
-		configure = new ArangoConfigure();
-		configure.setUser("userA");
-		configure.setPassword("passA");
-		configure.init();
-		driver = new ArangoDriver(configure);
+  @Test
+  public void test_auth_added_user() throws ArangoException {
+    
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setUser("root");
+    configure.setPassword("");
+    configure.init();
+    
+    ArangoDriver driver = new ArangoDriver(configure);
+    
+    // Create User
+    try {
+      driver.createUser("userA", "passA", true, null);
+    } catch (ArangoException e) {
+      driver.replaceUser("userA", "passA", true, null);
+    }
+    
+    configure.shutdown();
+    
+    configure = new ArangoConfigure();
+    configure.setUser("userA");
+    configure.setPassword("passA");
+    configure.init();
+    driver = new ArangoDriver(configure);
 
-		ArangoUnixTime time = driver.getTime();
-		configure.shutdown();
-		
-	}
+    ArangoUnixTime time = driver.getTime();
+    configure.shutdown();
+    
+  }
 
-	@Test
-	public void test_auth_added_user_inactive() throws ArangoException {
-		
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setUser("root");
-		configure.setPassword("");
-		configure.init();
-		
-		ArangoDriver driver = new ArangoDriver(configure);
-		
-		// Create User
-		try {
-			driver.createUser("userB", "passB", false, null);
-		} catch (ArangoException e) {
-			driver.replaceUser("userB", "passB", false, null);
-		}
-		
-		configure.shutdown();
-		
-		configure = new ArangoConfigure();
-		configure.setUser("userB");
-		configure.setPassword("passB");
-		configure.init();
-		driver = new ArangoDriver(configure);
+  @Test
+  public void test_auth_added_user_inactive() throws ArangoException {
+    
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setUser("root");
+    configure.setPassword("");
+    configure.init();
+    
+    ArangoDriver driver = new ArangoDriver(configure);
+    
+    // Create User
+    try {
+      driver.createUser("userB", "passB", false, null);
+    } catch (ArangoException e) {
+      driver.replaceUser("userB", "passB", false, null);
+    }
+    
+    configure.shutdown();
+    
+    configure = new ArangoConfigure();
+    configure.setUser("userB");
+    configure.setPassword("passB");
+    configure.init();
+    driver = new ArangoDriver(configure);
 
-		// Memo: Failed version 1.2.3
-		try {
-			ArangoUnixTime time = driver.getTime();
-			fail("");
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(401));
-			assertThat(e.getMessage(), containsString("Unauthorized"));
-		}
-		configure.shutdown();
+    // Memo: Failed version 1.2.3
+    try {
+      ArangoUnixTime time = driver.getTime();
+      fail("");
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(401));
+      assertThat(e.getMessage(), containsString("Unauthorized"));
+    }
+    configure.shutdown();
 
-	}
+  }
 
-	@Test
-	public void test_auth_multibyte_username() throws ArangoException {
+  @Test
+  public void test_auth_multibyte_username() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setUser("root");
-		configure.setPassword("");
-		configure.init();
-		
-		ArangoDriver driver = new ArangoDriver(configure);
-		
-		// Create User
-		try {
-			driver.createUser("ゆーざーA", "pass", false, null);
-		} catch (ArangoException e) {
-			driver.replaceUser("ゆーざーA", "pass", false, null);
-		}
-		
-		configure.shutdown();
-		
-		configure = new ArangoConfigure();
-		configure.setUser("ゆーざーA");
-		configure.setPassword("pass");
-		configure.init();
-		driver = new ArangoDriver(configure);
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setUser("root");
+    configure.setPassword("");
+    configure.init();
+    
+    ArangoDriver driver = new ArangoDriver(configure);
+    
+    // Create User
+    try {
+      driver.createUser("ゆーざーA", "pass", false, null);
+    } catch (ArangoException e) {
+      driver.replaceUser("ゆーざーA", "pass", false, null);
+    }
+    
+    configure.shutdown();
+    
+    configure = new ArangoConfigure();
+    configure.setUser("ゆーざーA");
+    configure.setPassword("pass");
+    configure.init();
+    driver = new ArangoDriver(configure);
 
-		try {
-			ArangoUnixTime time = driver.getTime();
-			fail("");
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(401));
-			assertThat(e.getMessage(), containsString("Unauthorized"));
-		}
-		configure.shutdown();
+    try {
+      ArangoUnixTime time = driver.getTime();
+      fail("");
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(401));
+      assertThat(e.getMessage(), containsString("Unauthorized"));
+    }
+    configure.shutdown();
 
-	}
+  }
 
-	@Test
-	public void test_auth_multibyte_password() throws ArangoException {
+  @Test
+  public void test_auth_multibyte_password() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setUser("root");
-		configure.setPassword("");
-		configure.init();
-		
-		ArangoDriver driver = new ArangoDriver(configure);
-		
-		// Create User
-		try {
-			driver.createUser("user-A", "パスワード", false, null);
-		} catch (ArangoException e) {
-			driver.replaceUser("user-A", "パスワード", false, null);
-		}
-		
-		configure.shutdown();
-		
-		configure = new ArangoConfigure();
-		configure.setUser("user-A");
-		configure.setPassword("パスワード");
-		configure.init();
-		driver = new ArangoDriver(configure);
+    ArangoConfigure configure = new ArangoConfigure();
+    configure.setUser("root");
+    configure.setPassword("");
+    configure.init();
+    
+    ArangoDriver driver = new ArangoDriver(configure);
+    
+    // Create User
+    try {
+      driver.createUser("user-A", "パスワード", false, null);
+    } catch (ArangoException e) {
+      driver.replaceUser("user-A", "パスワード", false, null);
+    }
+    
+    configure.shutdown();
+    
+    configure = new ArangoConfigure();
+    configure.setUser("user-A");
+    configure.setPassword("パスワード");
+    configure.init();
+    driver = new ArangoDriver(configure);
 
-		try {
-			ArangoUnixTime time = driver.getTime();
-			fail("");
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(401));
-			assertThat(e.getMessage(), containsString("Unauthorized"));
-		}
-		configure.shutdown();
+    try {
+      ArangoUnixTime time = driver.getTime();
+      fail("");
+    } catch (ArangoException e) {
+      assertThat(e.getErrorNumber(), is(401));
+      assertThat(e.getMessage(), containsString("Unauthorized"));
+    }
+    configure.shutdown();
 
-	}
+  }
 
 }

@@ -26,51 +26,51 @@ import java.util.List;
  */
 public class AdminLogEntity extends BaseEntity {
 
-	int totalAmount;
-	List<LogEntry> logs;
-	
-	public int getTotalAmount() {
-		return totalAmount;
-	}
-	public List<LogEntry> getLogs() {
-		return logs;
-	}
-	public void setTotalAmount(int totalAmount) {
-		this.totalAmount = totalAmount;
-	}
-	public void setLogs(List<LogEntry> logs) {
-		this.logs = logs;
-	}
+  int totalAmount;
+  List<LogEntry> logs;
+  
+  public int getTotalAmount() {
+    return totalAmount;
+  }
+  public List<LogEntry> getLogs() {
+    return logs;
+  }
+  public void setTotalAmount(int totalAmount) {
+    this.totalAmount = totalAmount;
+  }
+  public void setLogs(List<LogEntry> logs) {
+    this.logs = logs;
+  }
 
-	public static class LogEntry implements Serializable {
-		int lid;
-		int level;
-		Date timestamp;
-		String text;
-		public int getLid() {
-			return lid;
-		}
-		public int getLevel() {
-			return level;
-		}
-		public Date getTimestamp() {
-			return timestamp;
-		}
-		public String getText() {
-			return text;
-		}
-		public void setLid(int lid) {
-			this.lid = lid;
-		}
-		public void setLevel(int level) {
-			this.level = level;
-		}
-		public void setTimestamp(Date timestamp) {
-			this.timestamp = timestamp;
-		}
-		public void setText(String text) {
-			this.text = text;
-		}
-	}
+  public static class LogEntry implements Serializable {
+    int lid;
+    int level;
+    Date timestamp;
+    String text;
+    public int getLid() {
+      return lid;
+    }
+    public int getLevel() {
+      return level;
+    }
+    public Date getTimestamp() {
+      return timestamp;
+    }
+    public String getText() {
+      return text;
+    }
+    public void setLid(int lid) {
+      this.lid = lid;
+    }
+    public void setLevel(int level) {
+      this.level = level;
+    }
+    public void setTimestamp(Date timestamp) {
+      this.timestamp = timestamp;
+    }
+    public void setText(String text) {
+      this.text = text;
+    }
+  }
 
 }
