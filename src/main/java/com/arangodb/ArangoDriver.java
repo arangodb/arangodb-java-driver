@@ -1954,6 +1954,30 @@ public class ArangoDriver extends BaseArangoDriver {
       ifMatchRevision);
   }
 
+  public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
+      throws ArangoException {
+    return graphDriver.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, null, null, null);
+  }
+
+  public <T> DocumentEntity<T> graphReplaceVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.replaceVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      vertex,
+      waitForSync,
+      rev,
+      ifMatchRevision);
+  }
+
   // *****************************************************************************
 
   /**

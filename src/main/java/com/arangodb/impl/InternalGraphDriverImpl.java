@@ -51,7 +51,7 @@ import com.google.gson.JsonObject;
 public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalGraphDriver {
 
   InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
-    super(configure , cursorDriver,  httpManager);
+    super(configure, cursorDriver, httpManager);
   }
 
   private String toLower(Enum<?> e) {
@@ -444,8 +444,37 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
   }
 
   @Override
+  public <T> DocumentEntity<T> replaceVertex(
+    String databaseName,
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+
+    validateCollectionName(graphName);
+    HttpResponseEntity res = httpManager.doPut(
+      createEndpointUrl(
+        baseUrl,
+        StringUtils.encodeUrl(databaseName),
+        "/_api/gharial",
+        StringUtils.encodeUrl(graphName),
+        "vertex",
+        StringUtils.encodeUrl(collectionName),
+        StringUtils.encodeUrl(key)),
+      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get(),
+      EntityFactory.toJsonString(vertex));
+
+    return createEntity(res, VertexEntity.class, vertex.getClass());
+
+  }
+
+  @Override
   public DeletedEntity deleteVertex(
-    String database,
+    String databaseName,
     String graphName,
     String collectionName,
     String key,
@@ -457,7 +486,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     HttpResponseEntity res = httpManager.doDelete(
       createEndpointUrl(
         baseUrl,
-        database,
+        StringUtils.encodeUrl(databaseName),
         "/_api/gharial",
         StringUtils.encodeUrl(graphName),
         "vertex",
