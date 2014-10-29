@@ -441,6 +441,32 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
   }
 
+  @Override
+  public DeletedEntity deleteVertex(
+    String database,
+    String graphName,
+    String collectionName,
+    String key,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+
+    validateCollectionName(graphName);
+    HttpResponseEntity res = httpManager.doDelete(
+      createEndpointUrl(
+        baseUrl,
+        database,
+        "/_api/gharial",
+        StringUtils.encodeUrl(graphName),
+        "vertex",
+        StringUtils.encodeUrl(collectionName),
+        StringUtils.encodeUrl(key)),
+      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get());
+
+    return createEntity(res, DeletedEntity.class);
+  }
+
   // ****************************************************************************
 
   @Override

@@ -2089,6 +2089,37 @@ public class ArangoDriver extends BaseArangoDriver {
     return graphDriver.createVertex(getDefaultDatabase(), graphName, collectionName, vertex, waitForSync);
   }
 
+  /**
+   * Gets a vertex with the given key if it is contained within your graph.
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param clazz
+   * @param rev
+   * @param ifNoneMatchRevision
+   * @param ifMatchRevision
+   * @return DocumentEntity<T>
+   * @throws ArangoException
+   */
+  public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<?> clazz)
+      throws ArangoException {
+    return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, null, null, null);
+  }
+
+  /**
+   * Gets a vertex with the given key if it is contained within your graph.
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param clazz
+   * @param rev
+   * @param ifNoneMatchRevision
+   * @param ifMatchRevision
+   * @return DocumentEntity<T>
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphGetVertex(
     String graphName,
     String collectionName,
@@ -2105,6 +2136,60 @@ public class ArangoDriver extends BaseArangoDriver {
       clazz,
       rev,
       ifNoneMatchRevision,
+      ifMatchRevision);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @return
+   * @throws ArangoException
+   */
+  public DeletedEntity graphDeleteVertex(String graphName, String collectionName, String key) throws ArangoException {
+    return graphDriver.deleteVertex(getDefaultDatabase(), graphName, collectionName, key, null, null, null);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param waitForSync
+   * @return
+   * @throws ArangoException
+   */
+  public DeletedEntity graphDeleteVertex(String graphName, String collectionName, String key, Boolean waitForSync)
+      throws ArangoException {
+    return graphDriver.deleteVertex(getDefaultDatabase(), graphName, collectionName, key, waitForSync, null, null);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
+  public DeletedEntity graphDeleteVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.deleteVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      waitForSync,
+      rev,
       ifMatchRevision);
   }
 

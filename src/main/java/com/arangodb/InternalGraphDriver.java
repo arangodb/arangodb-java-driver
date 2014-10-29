@@ -78,6 +78,15 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException;
 
+  DeletedEntity deleteVertex(
+    String database,
+    String graphName,
+    String collectionName,
+    String key,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException;
+
   // ***********************************
 
   <T> DocumentEntity<T> createVertex(String database, String graphName, Object vertex, Boolean waitForSync)
