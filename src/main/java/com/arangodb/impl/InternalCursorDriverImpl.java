@@ -25,6 +25,7 @@ import com.arangodb.CursorResultSet;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.EntityFactory;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -34,8 +35,8 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalCursorDriver {
 
-  InternalCursorDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalCursorDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
   
   @Override

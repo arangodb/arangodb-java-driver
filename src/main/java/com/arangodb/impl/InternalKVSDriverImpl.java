@@ -23,6 +23,7 @@ import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.KeyValueEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.DateUtils;
 import com.arangodb.util.MapBuilder;
@@ -33,8 +34,8 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalKVSDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalKVSDriver {
 
-  InternalKVSDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalKVSDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
 
   @Override

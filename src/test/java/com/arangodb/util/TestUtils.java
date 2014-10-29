@@ -43,7 +43,7 @@ public class TestUtils {
       if (line.length() == 0) {
         continue;
       }
-      Station station = new Station(line.split("\t", -1));
+      Station station = new Station(line.split("  ", -1));
       stations.add(station);
     }
     br.close();

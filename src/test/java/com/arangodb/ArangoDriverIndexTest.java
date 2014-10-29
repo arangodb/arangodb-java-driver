@@ -74,7 +74,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     }
 
     // 1は作る
-    col1 = driver.createCollection(collectionName, true, null, null, null, null, null);
+    col1 = driver.createCollection(collectionName);
 
     logger.debug("--");
 

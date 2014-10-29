@@ -25,6 +25,7 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.StringsResultEntity;
 import com.arangodb.entity.UserEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 
 /**
@@ -33,8 +34,8 @@ import com.arangodb.http.HttpResponseEntity;
  */
 public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalDatabaseDriver {
 
-  InternalDatabaseDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalDatabaseDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
 
   @Override

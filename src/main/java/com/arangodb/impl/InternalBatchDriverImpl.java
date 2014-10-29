@@ -20,6 +20,7 @@ import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.*;
 import com.arangodb.http.BatchPart;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationObject;
 import com.arangodb.util.JsonUtils;
@@ -40,8 +41,8 @@ import java.util.*;
 public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 
-  InternalBatchDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalBatchDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
 
   public static String newline = System.getProperty("line.separator");
@@ -61,8 +62,9 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
       body += "--" + delimiter + newline;
       body += "Content-Type: application/x-arango-batchpart" + newline;
       body += "Content-Id: " + bp.getId() + newline + newline;
-      body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline + newline;
-      body += bp.getBody() + newline + newline;
+      body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline;
+      body += "Host: " + this.configure.getHost() + newline + newline;
+      body += bp.getBody() == null ? "" :  bp.getBody() + newline + newline;
       resolver.put(bp.getId(), bp.getInvocationObject());
     }
     body += "--" + delimiter + "--";

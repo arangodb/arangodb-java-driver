@@ -78,8 +78,18 @@ public class HttpManager {
 
   private HttpResponseEntity preDefinedResponse;
 
+  private HttpMode httpMode = HttpMode.SYNC;
+
+  public static enum HttpMode {
+    SYNC, ASYNC, FIREANDFORGET
+  }
+
   public HttpManager(ArangoConfigure configure) {
     this.configure = configure;
+  }
+
+  public ArangoConfigure getConfiguration() {
+    return this.configure;
   }
 
   public void init() {
@@ -127,6 +137,14 @@ public class HttpManager {
       cm.shutdown();
     }
     configure = null;
+  }
+
+  public HttpMode getHttpMode() {
+    return httpMode;
+  }
+
+  public void setHttpMode(HttpMode httpMode) {
+    this.httpMode = httpMode;
   }
 
   public HttpResponseEntity doGet(String url) throws ArangoException {

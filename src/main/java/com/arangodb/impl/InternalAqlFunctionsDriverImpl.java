@@ -19,6 +19,7 @@ package com.arangodb.impl;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.*;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 import com.google.gson.Gson;
@@ -38,8 +39,8 @@ import java.util.Map;
 public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalAqlFunctionsDriver {
 
 
-  InternalAqlFunctionsDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalAqlFunctionsDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
 
   @Override

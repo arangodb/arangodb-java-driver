@@ -55,7 +55,7 @@ public class ArangoDriverThreadSafeTest {
     try {
       driver.deleteCollection(collectionName);
     } catch (ArangoException e) {}
-    CollectionEntity collection = driver.createCollection(collectionName, true, null, null, null, null, null);
+    CollectionEntity collection = driver.createCollection(collectionName);
     logger.info("collectionId={}", collection.getId());
     
     // コレクションの中身を削除する

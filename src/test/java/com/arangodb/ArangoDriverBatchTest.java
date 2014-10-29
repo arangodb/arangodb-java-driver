@@ -131,7 +131,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 
     DefaultEntity result = driver.executeBatch();
     DefaultEntity created = driver.getBatchResponseByRequestId("request1");
-    assertThat(created.getStatusCode() , is(200));
+    assertThat(created.getStatusCode() , is(201));
     AqlFunctionsEntity functions =  driver.getBatchResponseByRequestId("request3");
     assertThat(functions.getStatusCode() , is(200));
     assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]) , is("someNamespace::testCode"));

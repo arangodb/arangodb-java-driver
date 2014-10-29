@@ -24,6 +24,7 @@ import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.entity.UsersEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.StringUtils;
@@ -34,8 +35,8 @@ import com.arangodb.util.StringUtils;
  */
 public class InternalUsersDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalUsersDriver {
 
-  InternalUsersDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalUsersDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
 
   @Override

@@ -24,6 +24,7 @@ import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.IndexesEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -32,14 +33,14 @@ import com.arangodb.util.MapBuilder;
  *
  */
 public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalIndexDriver {
-  
-  InternalIndexDriverImpl(ArangoConfigure configure) {
-    super(configure, null);
+
+  InternalIndexDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , null,  httpManager);
   }
 
   @Override
   public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException {
-    
+
     if (type == IndexType.PRIMARY) {
       throw new IllegalArgumentException("cannot create primary index.");
     }

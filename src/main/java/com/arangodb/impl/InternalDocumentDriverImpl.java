@@ -27,6 +27,7 @@ import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentsEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.Policy;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.CollectionUtils;
 import com.arangodb.util.MapBuilder;
@@ -38,8 +39,8 @@ import com.google.gson.JsonElement;
  */
 public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalDocumentDriver {
 
-  InternalDocumentDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalDocumentDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
 
   private <T> DocumentEntity<T> _createDocument(String database, String collectionName, String documentKey, Object value, Boolean createCollection, Boolean waitForSync, boolean raw) throws ArangoException {
@@ -144,9 +145,6 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
   
   @Override
   public long checkDocument(String database, String documentHandle) throws ArangoException {
-    
-    // TODO: rev, policy
-    
     validateDocumentHandle(documentHandle);
     HttpResponseEntity res = httpManager.doHead(
         createEndpointUrl(baseUrl, database, "/_api/document", documentHandle),
@@ -160,23 +158,16 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 
   @Override
   public <T> DocumentEntity<T> getDocument(String database, String documentHandle, Class<?> clazz, Long ifNoneMatchRevision, Long ifMatchRevision) throws ArangoException {
-    
-    // TODO IfMatch, If-None-Match http-header
-    
     validateDocumentHandle(documentHandle);
     HttpResponseEntity res = httpManager.doGet(
         createEndpointUrl(baseUrl, database, "/_api/document", documentHandle),
         new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision).get(),
         null);
-    
-    // TODO Case of StatusCode=304
-    
     DocumentEntity<T> entity = createEntity(res, DocumentEntity.class, clazz);
     if (entity == null) {
       entity = new DocumentEntity<T>();
     }
     return entity;
-
   }
 
   @Override

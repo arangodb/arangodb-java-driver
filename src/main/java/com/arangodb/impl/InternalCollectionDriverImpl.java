@@ -18,11 +18,8 @@ package com.arangodb.impl;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionKeyOption;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.CollectionsEntity;
-import com.arangodb.entity.EntityFactory;
+import com.arangodb.entity.*;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -32,33 +29,39 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalCollectionDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalCollectionDriver {
 
-    InternalCollectionDriverImpl(ArangoConfigure configure) {
-        super(configure);
+    InternalCollectionDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+      super(configure , httpManager);
     }
 
-    @Override
-    public CollectionEntity createCollection(
-        String database,
-        String name,
-        Boolean waitForSync,
-        Boolean doCompact,
-        Integer journalSize,
-        Boolean isSystem,
-        Boolean isVolatile,
-        CollectionType type,
-        CollectionKeyOption keyOptions) throws ArangoException {
-
-        HttpResponseEntity res = httpManager.doPost(
-            createEndpointUrl(baseUrl, database, "/_api/collection"),
-            null,
-            EntityFactory.toJsonString(new MapBuilder().put("name", name).put("waitForSync", waitForSync)
-                    .put("doCompact", doCompact).put("journalSize", journalSize).put("isSystem", isSystem)
-                    .put("isVolatile", isVolatile).put("keyOptions", keyOptions)
-                    .put("type", type == null ? null : type.getType()).get()));
-
-        return createEntity(res, CollectionEntity.class);
-
+  @Override
+  public CollectionEntity createCollection(
+    String database,
+    String name,
+    CollectionOptions collectionOptions
+  ) throws ArangoException {
+    if (collectionOptions == null) {
+      collectionOptions = new CollectionOptions();
     }
+    HttpResponseEntity res = httpManager.doPost(
+      createEndpointUrl(baseUrl, database, "/_api/collection"),
+      null,
+      EntityFactory.toJsonString(new MapBuilder()
+        .put("name", name)
+        .put("waitForSync", collectionOptions.getWaitForSync())
+        .put("doCompact", collectionOptions.getDoCompact())
+        .put("journalSize", collectionOptions.getJournalSize())
+        .put("isSystem", collectionOptions.getIsSystem())
+        .put("isVolatile", collectionOptions.getIsVolatile())
+        .put("keyOptions", collectionOptions.getKeyOptions())
+        .put("numberOfShards", collectionOptions.getNumberOfShards())
+        .put("shardKeys", collectionOptions.getShardKeys())
+        .put("type", collectionOptions.getType() == null ? null : collectionOptions.getType().getType())
+        .get())
+    );
+
+    return createEntity(res, CollectionEntity.class);
+
+  }
 
     @Override
     public CollectionEntity getCollection(String database, String name) throws ArangoException {

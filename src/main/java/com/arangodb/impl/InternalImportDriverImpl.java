@@ -22,6 +22,7 @@ import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.ImportResultEntity;
+import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -31,8 +32,8 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalImportDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalImportDriver {
 
-  InternalImportDriverImpl(ArangoConfigure configure) {
-    super(configure);
+  InternalImportDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+    super(configure , httpManager);
   }
   
   @Override

@@ -1,5 +1,6 @@
 package com.arangodb;
 
+import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionType;
@@ -13,13 +14,7 @@ public interface InternalCollectionDriver  extends BaseDriverInterface {
   CollectionEntity createCollection(
     String database,
     String name,
-    Boolean waitForSync,
-    Boolean doCompact,
-    Integer journalSize,
-    Boolean isSystem,
-    Boolean isVolatile,
-    CollectionType type,
-    CollectionKeyOption keyOptions
+    CollectionOptions collectionOptions
   ) throws ArangoException;
 
   CollectionEntity getCollection(String database, String name) throws ArangoException;
