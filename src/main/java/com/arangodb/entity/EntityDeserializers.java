@@ -1679,9 +1679,6 @@ public class EntityDeserializers {
       if (edge.has("_to")) {
         entity.toVertexHandle = edge.getAsJsonPrimitive("_to").getAsString();
       }
-      if (edge.has("$label") && !edge.get("$label").isJsonNull()) {
-        entity.edgeLabel = edge.getAsJsonPrimitive("$label").getAsString();
-      }
 
       // 他のフィールドはリフレクションで。 (TODO: Annotationのサポートと上記パラメータを弾く)
       Class<?> clazz = getParameterized();

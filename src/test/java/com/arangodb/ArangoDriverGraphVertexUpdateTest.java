@@ -29,7 +29,7 @@ import com.arangodb.entity.DocumentEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- *
+ * @author gschwab
  */
 public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
 

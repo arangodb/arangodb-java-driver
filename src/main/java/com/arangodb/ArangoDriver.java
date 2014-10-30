@@ -1876,11 +1876,32 @@ public class ArangoDriver extends BaseArangoDriver {
     return graphDriver.createVertex(getDefaultDatabase(), graphName, collectionName, vertex, waitForSync);
   }
 
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param clazz
+   * @return
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<?> clazz)
       throws ArangoException {
     return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, null, null, null);
   }
 
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param clazz
+   * @param rev
+   * @param ifNoneMatchRevision
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphGetVertex(
     String graphName,
     String collectionName,
@@ -1954,11 +1975,32 @@ public class ArangoDriver extends BaseArangoDriver {
       ifMatchRevision);
   }
 
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param vertex
+   * @return
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
       throws ArangoException {
     return graphDriver.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, null, null, null);
   }
 
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param vertex
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphReplaceVertex(
     String graphName,
     String collectionName,
@@ -1978,6 +2020,16 @@ public class ArangoDriver extends BaseArangoDriver {
       ifMatchRevision);
   }
 
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param vertex
+   * @param keepNull
+   * @return
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphUpdateVertex(
     String graphName,
     String collectionName,
@@ -1996,6 +2048,19 @@ public class ArangoDriver extends BaseArangoDriver {
       null);
   }
 
+  /**
+   * 
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param vertex
+   * @param keepNull
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
   public <T> DocumentEntity<T> graphUpdateVertex(
     String graphName,
     String collectionName,
@@ -2017,178 +2082,210 @@ public class ArangoDriver extends BaseArangoDriver {
       ifMatchRevision);
   }
 
-  // *****************************************************************************
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param fromHandle
+   * @param toHandle
+   * @param value
+   * @param label
+   * @param waitForSync
+   * @return
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphCreateEdge(
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    String fromHandle,
+    String toHandle,
+    Object value,
+    Boolean waitForSync) throws ArangoException {
+    return graphDriver.createEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      key,
+      fromHandle,
+      toHandle,
+      value,
+      waitForSync);
+  }
 
   /**
    * 
    * @param graphName
-   * @param vertex
-   * @param waitForSync
+   * @param edgeCollectionName
+   * @param key
+   * @param fromHandle
+   * @param toHandle
    * @return
    * @throws ArangoException
-   * @since 1.4.0
    */
-  public <T> DocumentEntity<T> createVertex(String graphName, Object vertex, Boolean waitForSync)
-      throws ArangoException {
-    return graphDriver.createVertex(getDefaultDatabase(), graphName, vertex, waitForSync);
+  public <T> EdgeEntity<T> graphCreateEdge(
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    String fromHandle,
+    String toHandle) throws ArangoException {
+    return graphDriver.createEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      key,
+      fromHandle,
+      toHandle,
+      null,
+      null);
   }
 
   /**
-   *
+   * 
    * @param graphName
-   * @param key
-   * @param clazz
-   * @return
-   */
-  public <T> DocumentEntity<T> getVertex(String graphName, String key, Class<?> clazz) throws ArangoException {
-    return graphDriver.getVertex(getDefaultDatabase(), graphName, key, clazz, null, null, null);
-  }
-
-  /**
-   *
-   * @param graphName
+   * @param edgeCollectionName
    * @param key
    * @param clazz
    * @param rev
-   * @param IfNoneMatchRevision
-   * @param IfMatchRevision
+   * @param ifNoneMatchRevision
+   * @param ifMatchRevision
    * @return
    * @throws ArangoException
-   * @since 1.4.0
    */
-  public <T> DocumentEntity<T> getVertex(
+  public <T> EdgeEntity<T> graphGetEdge(
     String graphName,
+    String edgeCollectionName,
     String key,
     Class<?> clazz,
     Long rev,
-    Long IfNoneMatchRevision,
-    Long IfMatchRevision) throws ArangoException {
-    return graphDriver
-        .getVertex(getDefaultDatabase(), graphName, key, clazz, rev, IfNoneMatchRevision, IfMatchRevision);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public DeletedEntity deleteVertex(String graphName, String key) throws ArangoException {
-    return graphDriver.deleteVertex(getDefaultDatabase(), graphName, key, null, null, null);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @param waitForSync
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public DeletedEntity deleteVertex(String graphName, String key, Boolean waitForSync) throws ArangoException {
-    return graphDriver.deleteVertex(getDefaultDatabase(), graphName, key, waitForSync, null, null);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @param waitForSync
-   * @param rev
-   * @param ifMatchRevision
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public DeletedEntity deleteVertex(String graphName, String key, Boolean waitForSync, Long rev, Long ifMatchRevision)
-      throws ArangoException {
-    return graphDriver.deleteVertex(getDefaultDatabase(), graphName, key, waitForSync, rev, ifMatchRevision);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @param vertex
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public <T> DocumentEntity<T> replaceVertex(String graphName, String key, Object vertex) throws ArangoException {
-    return graphDriver.replaceVertex(getDefaultDatabase(), graphName, key, vertex, null, null, null);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @param vertex
-   * @param waitForSync
-   * @param rev
-   * @param ifMatchRevision
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public <T> DocumentEntity<T> replaceVertex(
-    String graphName,
-    String key,
-    Object vertex,
-    Boolean waitForSync,
-    Long rev,
+    Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException {
-    return graphDriver.replaceVertex(getDefaultDatabase(), graphName, key, vertex, waitForSync, rev, ifMatchRevision);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @param vertex
-   * @param keepNull
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public <T> DocumentEntity<T> updateVertex(String graphName, String key, Object vertex, Boolean keepNull)
-      throws ArangoException {
-    return graphDriver.updateVertex(getDefaultDatabase(), graphName, key, vertex, keepNull, null, null, null);
-  }
-
-  /**
-   *
-   * @param graphName
-   * @param key
-   * @param vertex
-   * @param keepNull
-   * @param waitForSync
-   * @param rev
-   * @param ifMatchRevision
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
-   */
-  public <T> DocumentEntity<T> updateVertex(
-    String graphName,
-    String key,
-    Object vertex,
-    Boolean keepNull,
-    Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
-    return graphDriver.updateVertex(
+    return graphDriver.getEdge(
       getDefaultDatabase(),
       graphName,
+      edgeCollectionName,
       key,
-      vertex,
-      keepNull,
+      clazz,
+      rev,
+      ifNoneMatchRevision,
+      ifMatchRevision);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param clazz
+   * @return
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphGetEdge(String graphName, String edgeCollectionName, String key, Class<?> clazz)
+      throws ArangoException {
+    return graphDriver.getEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, clazz, null, null, null);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @return
+   * @throws ArangoException
+   */
+  public DeletedEntity graphDeleteEdge(String graphName, String edgeCollectionName, String key) throws ArangoException {
+    return graphDriver.deleteEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, null, null, null);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param waitForSync
+   * @return
+   * @throws ArangoException
+   */
+  public DeletedEntity graphDeleteEdge(String graphName, String edgeCollectionName, String key, Boolean waitForSync)
+      throws ArangoException {
+    return graphDriver.deleteEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, waitForSync, null, null);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
+  public DeletedEntity graphDeleteEdge(
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.deleteEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      key,
       waitForSync,
       rev,
       ifMatchRevision);
   }
+
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param value
+   * @return
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphReplaceEdge(String graphName, String edgeCollectionName, String key, Object value)
+      throws ArangoException {
+    return graphDriver.replaceEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, value, null, null, null);
+  }
+
+  /**
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param value
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphReplaceEdge(
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    Object value,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.replaceEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      key,
+      value,
+      waitForSync,
+      rev,
+      ifMatchRevision);
+  }
+
+  // *****************************************************************************
 
   /**
    *
@@ -2408,6 +2505,10 @@ public class ArangoDriver extends BaseArangoDriver {
       properties);
   }
 
+  /***
+   * EDGE
+   */
+
   /**
    *
    * @param graphName
@@ -2421,17 +2522,18 @@ public class ArangoDriver extends BaseArangoDriver {
    * @throws ArangoException
    * @since 1.4.0
    */
-  public <T> EdgeEntity<T> createEdge(
-    String graphName,
-    String key,
-    String fromHandle,
-    String toHandle,
-    Object value,
-    String label,
-    Boolean waitForSync) throws ArangoException {
-    return graphDriver
-        .createEdge(getDefaultDatabase(), graphName, key, fromHandle, toHandle, value, label, waitForSync);
-  }
+  // public <T> EdgeEntity<T> createEdge(
+  // String graphName,
+  // String key,
+  // String fromHandle,
+  // String toHandle,
+  // Object value,
+  // String label,
+  // Boolean waitForSync) throws ArangoException {
+  // return graphDriver
+  // .createEdge(getDefaultDatabase(), graphName, key, fromHandle, toHandle,
+  // value, label, waitForSync);
+  // }
 
   /**
    *
@@ -2443,10 +2545,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * @throws ArangoException
    * @since 1.4.0
    */
-  public <T> EdgeEntity<T> createEdge(String graphName, String key, String fromHandle, String toHandle)
-      throws ArangoException {
-    return graphDriver.createEdge(getDefaultDatabase(), graphName, key, fromHandle, toHandle, null, null, null);
-  }
+  // public <T> EdgeEntity<T> createEdge(String graphName, String key, String
+  // fromHandle, String toHandle)
+  // throws ArangoException {
+  // return graphDriver.createEdge(getDefaultDatabase(), graphName, key,
+  // fromHandle, toHandle, null, null);
+  // }
 
   /**
    *
@@ -2459,10 +2563,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * @throws ArangoException
    * @since 1.4.0
    */
-  public <T> EdgeEntity<T> createEdge(String graphName, String key, String fromHandle, String toHandle, Object value)
-      throws ArangoException {
-    return graphDriver.createEdge(getDefaultDatabase(), graphName, key, fromHandle, toHandle, value, null, null);
-  }
+  // public <T> EdgeEntity<T> createEdge(String graphName, String key, String
+  // fromHandle, String toHandle, Object value)
+  // throws ArangoException {
+  // return graphDriver.createEdge(getDefaultDatabase(), graphName, key,
+  // fromHandle, toHandle, value, null, null);
+  // }
 
   /**
    *

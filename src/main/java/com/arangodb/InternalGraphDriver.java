@@ -108,46 +108,46 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
-  // ***********************************
-
-  <T> DocumentEntity<T> createVertex(String database, String graphName, Object vertex, Boolean waitForSync)
-      throws ArangoException;
-
-  <T> DocumentEntity<T> getVertex(
+  <T> EdgeEntity<T> createEdge(
     String database,
     String graphName,
+    String edgeCollectionName,
+    String key,
+    String fromHandle,
+    String toHandle,
+    Object value,
+    Boolean waitForSync) throws ArangoException;
+
+  <T> EdgeEntity<T> getEdge(
+    String database,
+    String graphName,
+    String edgeCollectionName,
     String key,
     Class<?> clazz,
     Long rev,
     Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException;
 
-  DeletedEntity deleteVertex(
+  DeletedEntity deleteEdge(
     String database,
     String graphName,
+    String edgeCollectionName,
     String key,
     Boolean waitForSync,
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
-  <T> DocumentEntity<T> replaceVertex(
+  <T> EdgeEntity<T> replaceEdge(
     String database,
     String graphName,
+    String edgeCollectionName,
     String key,
-    Object vertex,
+    Object value,
     Boolean waitForSync,
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
-  <T> DocumentEntity<T> updateVertex(
-    String database,
-    String graphName,
-    String key,
-    Object vertex,
-    Boolean keepNull,
-    Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
+  // ***********************************
 
   <T> CursorEntity<DocumentEntity<T>> getVertices(
     String database,
@@ -173,15 +173,15 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Collection<String> labels,
     FilterCondition... properties) throws ArangoException;
 
-  <T> EdgeEntity<T> createEdge(
-    String database,
-    String graphName,
-    String key,
-    String fromHandle,
-    String toHandle,
-    Object value,
-    String label,
-    Boolean waitForSync) throws ArangoException;
+  // <T> EdgeEntity<T> createEdge(
+  // String database,
+  // String graphName,
+  // String key,
+  // String fromHandle,
+  // String toHandle,
+  // Object value,
+  // String label,
+  // Boolean waitForSync) throws ArangoException;
 
   <T> EdgeEntity<T> getEdge(
     String database,

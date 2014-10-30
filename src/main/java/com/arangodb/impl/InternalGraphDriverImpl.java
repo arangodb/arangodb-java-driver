@@ -527,28 +527,57 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return createEntity(res, DeletedEntity.class);
   }
 
-  // ****************************************************************************
-
   @Override
-  public <T> DocumentEntity<T> createVertex(String database, String graphName, Object vertex, Boolean waitForSync)
-      throws ArangoException {
+  public <T> EdgeEntity<T> createEdge(
+    String database,
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    String fromHandle,
+    String toHandle,
+    Object value,
+    Boolean waitForSync) throws ArangoException {
+
+    JsonObject obj;
+    if (value == null) {
+      obj = new JsonObject();
+    } else {
+      JsonElement elem = EntityFactory.toJsonElement(value, false);
+      if (elem.isJsonObject()) {
+        obj = elem.getAsJsonObject();
+      } else {
+        throw new IllegalArgumentException("value need object type(not support array, primitive, etc..).");
+      }
+    }
+    obj.addProperty("_key", key);
+    obj.addProperty("_from", fromHandle);
+    obj.addProperty("_to", toHandle);
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doPost(
-      createEndpointUrl(baseUrl, database, "/_api/graph", StringUtils.encodeUrl(graphName), "vertex"),
+      createEndpointUrl(
+        baseUrl,
+        database,
+        "/_api/gharial",
+        StringUtils.encodeUrl(graphName),
+        "/edge",
+        StringUtils.encodeUrl(edgeCollectionName)),
       new MapBuilder().put("waitForSync", waitForSync).get(),
-      EntityFactory.toJsonString(vertex));
+      EntityFactory.toJsonString(obj));
 
-    if (!res.isJsonResponse()) {
-      throw new ArangoException("unknown error");
-    }
-    return createEntity(res, VertexEntity.class, vertex.getClass());
+    EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
+
+    entity.setFromVertexHandle(fromHandle);
+    entity.setToVertexHandle(toHandle);
+    return entity;
+
   }
 
   @Override
-  public <T> DocumentEntity<T> getVertex(
+  public <T> EdgeEntity<T> getEdge(
     String database,
     String graphName,
+    String edgeCollectionName,
     String key,
     Class<?> clazz,
     Long rev,
@@ -560,21 +589,23 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       createEndpointUrl(
         baseUrl,
         database,
-        "/_api/graph",
+        "/_api/gharial",
         StringUtils.encodeUrl(graphName),
-        "vertex",
+        "edge",
+        StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
       new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
       new MapBuilder().put("rev", rev).get());
 
-    return createEntity(res, VertexEntity.class, clazz);
+    return createEntity(res, EdgeEntity.class, clazz);
 
   }
 
   @Override
-  public DeletedEntity deleteVertex(
+  public DeletedEntity deleteEdge(
     String database,
     String graphName,
+    String edgeCollectionName,
     String key,
     Boolean waitForSync,
     Long rev,
@@ -585,9 +616,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       createEndpointUrl(
         baseUrl,
         database,
-        "/_api/graph",
+        "/_api/gharial",
         StringUtils.encodeUrl(graphName),
-        "vertex",
+        "edge",
+        StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
       new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
       new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get());
@@ -597,11 +629,12 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
   }
 
   @Override
-  public <T> DocumentEntity<T> replaceVertex(
+  public <T> EdgeEntity<T> replaceEdge(
     String database,
     String graphName,
+    String edgeCollectionName,
     String key,
-    Object vertex,
+    Object value,
     Boolean waitForSync,
     Long rev,
     Long ifMatchRevision) throws ArangoException {
@@ -611,45 +644,20 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       createEndpointUrl(
         baseUrl,
         database,
-        "/_api/graph",
+        "/_api/gharial",
         StringUtils.encodeUrl(graphName),
-        "vertex",
+        "/edge",
+        StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
       new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
       new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get(),
-      EntityFactory.toJsonString(vertex));
+      value == null ? null : EntityFactory.toJsonString(value));
 
-    return createEntity(res, VertexEntity.class, vertex.getClass());
-
-  }
-
-  @Override
-  public <T> DocumentEntity<T> updateVertex(
-    String database,
-    String graphName,
-    String key,
-    Object vertex,
-    Boolean keepNull,
-    Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
-
-    validateCollectionName(graphName);
-    HttpResponseEntity res = httpManager.doPatch(
-      createEndpointUrl(
-        baseUrl,
-        database,
-        "/_api/graph",
-        StringUtils.encodeUrl(graphName),
-        "vertex",
-        StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("keepNull", keepNull).put("waitForSync", waitForSync).put("rev", rev).get(),
-      EntityFactory.toJsonString(vertex, keepNull != null && !keepNull));
-
-    return createEntity(res, VertexEntity.class, vertex.getClass());
+    return createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
 
   }
+
+  // ****************************************************************************
 
   @Override
   public <T> CursorEntity<DocumentEntity<T>> getVertices(
@@ -713,42 +721,45 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return rs;
   }
 
-  @Override
-  public <T> EdgeEntity<T> createEdge(
-    String database,
-    String graphName,
-    String key,
-    String fromHandle,
-    String toHandle,
-    Object value,
-    String label,
-    Boolean waitForSync) throws ArangoException {
-
-    JsonObject obj;
-    if (value == null) {
-      obj = new JsonObject();
-    } else {
-      JsonElement elem = EntityFactory.toJsonElement(value, false);
-      if (elem.isJsonObject()) {
-        obj = elem.getAsJsonObject();
-      } else {
-        throw new IllegalArgumentException("value need object type(not support array, primitive, etc..).");
-      }
-    }
-    obj.addProperty("_key", key);
-    obj.addProperty("_from", fromHandle);
-    obj.addProperty("_to", toHandle);
-    obj.addProperty("$label", label);
-
-    validateCollectionName(graphName);
-    HttpResponseEntity res = httpManager.doPost(
-      createEndpointUrl(baseUrl, database, "/_api/graph", StringUtils.encodeUrl(graphName), "/edge"),
-      new MapBuilder().put("waitForSync", waitForSync).get(),
-      EntityFactory.toJsonString(obj));
-
-    return createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
-
-  }
+  // @Override
+  // public <T> EdgeEntity<T> createEdge(
+  // String database,
+  // String graphName,
+  // String key,
+  // String fromHandle,
+  // String toHandle,
+  // Object value,
+  // String label,
+  // Boolean waitForSync) throws ArangoException {
+  //
+  // JsonObject obj;
+  // if (value == null) {
+  // obj = new JsonObject();
+  // } else {
+  // JsonElement elem = EntityFactory.toJsonElement(value, false);
+  // if (elem.isJsonObject()) {
+  // obj = elem.getAsJsonObject();
+  // } else {
+  // throw new
+  // IllegalArgumentException("value need object type(not support array, primitive, etc..).");
+  // }
+  // }
+  // obj.addProperty("_key", key);
+  // obj.addProperty("_from", fromHandle);
+  // obj.addProperty("_to", toHandle);
+  // obj.addProperty("$label", label);
+  //
+  // validateCollectionName(graphName);
+  // HttpResponseEntity res = httpManager.doPost(
+  // createEndpointUrl(baseUrl, database, "/_api/graph",
+  // StringUtils.encodeUrl(graphName), "/edge"),
+  // new MapBuilder().put("waitForSync", waitForSync).get(),
+  // EntityFactory.toJsonString(obj));
+  //
+  // return createEntity(res, EdgeEntity.class, value == null ? null :
+  // value.getClass());
+  //
+  // }
 
   @Override
   public <T> EdgeEntity<T> getEdge(
