@@ -31,5 +31,5 @@ public class DeletedEntity extends DefaultEntity {
   public void setDeleted(Boolean deleted) {
     this.deleted = deleted;
   }
-  
+
 }

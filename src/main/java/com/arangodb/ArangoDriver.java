@@ -1961,6 +1961,11 @@ public class ArangoDriver extends BaseArangoDriver {
       collectionName, vertex, waitForSync);
   }
 
+  public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<?> clazz)
+    throws ArangoException {
+    return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, null, null, null);
+  }
+
   public <T> DocumentEntity<T> graphGetVertex(
     String graphName,
     String collectionName,
@@ -1990,6 +1995,7 @@ public class ArangoDriver extends BaseArangoDriver {
   public DeletedEntity graphDeleteVertex(String graphName, String collectionName, String key) throws ArangoException {
     return graphDriver.deleteVertex(getDefaultDatabase(), graphName, collectionName, key, null, null, null);
   }
+
 
   /**
    * @param graphName
@@ -2026,6 +2032,69 @@ public class ArangoDriver extends BaseArangoDriver {
       graphName,
       collectionName,
       key,
+      waitForSync,
+      rev,
+      ifMatchRevision);
+  }
+
+  public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
+    throws ArangoException {
+    return graphDriver.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, null, null, null);
+  }
+
+  public <T> DocumentEntity<T> graphReplaceVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.replaceVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      vertex,
+      waitForSync,
+      rev,
+      ifMatchRevision);
+  }
+
+  public <T> DocumentEntity<T> graphUpdateVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean keepNull) throws ArangoException {
+    return graphDriver.updateVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      vertex,
+      keepNull,
+      null,
+      null,
+      null);
+  }
+
+  public <T> DocumentEntity<T> graphUpdateVertex(
+    String graphName,
+    String collectionName,
+    String key,
+    Object vertex,
+    Boolean keepNull,
+    Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.updateVertex(
+      getDefaultDatabase(),
+      graphName,
+      collectionName,
+      key,
+      vertex,
+      keepNull,
       waitForSync,
       rev,
       ifMatchRevision);

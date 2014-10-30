@@ -32,56 +32,56 @@ import com.arangodb.entity.EdgeDefinitionEntity;
 @Ignore
 public class BaseGraphTest extends BaseTest {
 
-    public BaseGraphTest(ArangoConfigure configure, ArangoDriver driver) {
-        super(configure, driver);
-    }
+  public BaseGraphTest(ArangoConfigure configure, ArangoDriver driver) {
+    super(configure, driver);
+  }
 
-    @Before
-    public void _before() throws ArangoException {
-        String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
-                + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
-                + "  graph._drop(g, true)\n" + "});";
-        driver.executeScript(deleteAllGraphsAndTheirCollections);
-        String deleteAllCollections = "var db = require('internal').db;\n"
-                + "var cols = db._collections().filter(function(c) { return c.name()[0] !== \"_\" });\n"
-                + "cols.forEach(function(col){db._drop(col.name())});";
-        driver.executeScript(deleteAllCollections);
-    }
+  @Before
+  public void _before() throws ArangoException {
+    String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+        + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
+        + "  graph._drop(g, true)\n" + "});";
+    driver.executeScript(deleteAllGraphsAndTheirCollections);
+    String deleteAllCollections = "var db = require('internal').db;\n"
+        + "var cols = db._collections().filter(function(c) { return c.name()[0] !== \"_\" });\n"
+        + "cols.forEach(function(col){db._drop(col.name())});";
+    driver.executeScript(deleteAllCollections);
+  }
 
-    @After
-    public void after() throws ArangoException {
-        String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
-                + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
-                + "  graph._drop(g, true)\n" + "});";
-        driver.executeScript(deleteAllGraphsAndTheirCollections);
-    }
+  @After
+  public void after() throws ArangoException {
+    String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+        + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
+        + "  graph._drop(g, true)\n" + "});";
+    driver.executeScript(deleteAllGraphsAndTheirCollections);
+  }
 
-    protected List<EdgeDefinitionEntity> createEdgeDefinitions(int count, int offset) {
-        List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
-        for (int i = 1 + offset; i <= count + offset; i++) {
-            EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
-            edgeDefinition.setCollection("edge-" + i);
-            List<String> from = new ArrayList<String>();
-            from.add("from" + i + "-1");
-            from.add("from" + i + "-2");
-            from.add("from" + i + "-3");
-            edgeDefinition.setFrom(from);
-            List<String> to = new ArrayList<String>();
-            to.add("to" + i + "-1");
-            to.add("to" + i + "-2");
-            to.add("to" + i + "-3");
-            edgeDefinition.setTo(to);
-            edgeDefinitions.add(edgeDefinition);
-        }
-        return edgeDefinitions;
+  protected List<EdgeDefinitionEntity> createEdgeDefinitions(int count, int offset) {
+    List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+    for (int i = 1 + offset; i <= count + offset; i++) {
+      EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+      edgeDefinition.setCollection("edge-" + i);
+      List<String> from = new ArrayList<String>();
+      from.add("from" + i + "-1");
+      from.add("from" + i + "-2");
+      from.add("from" + i + "-3");
+      edgeDefinition.setFrom(from);
+      List<String> to = new ArrayList<String>();
+      to.add("to" + i + "-1");
+      to.add("to" + i + "-2");
+      to.add("to" + i + "-3");
+      edgeDefinition.setTo(to);
+      edgeDefinitions.add(edgeDefinition);
     }
+    return edgeDefinitions;
+  }
 
-    protected List<String> createOrphanCollections(int count) {
-        List<String> orphanCollections = new ArrayList<String>();
-        for (int i = 1; i <= count; i++) {
-            orphanCollections.add("orphan" + i);
-        }
-        return orphanCollections;
+  protected List<String> createOrphanCollections(int count) {
+    List<String> orphanCollections = new ArrayList<String>();
+    for (int i = 1; i <= count; i++) {
+      orphanCollections.add("orphan" + i);
     }
+    return orphanCollections;
+  }
 
 }
