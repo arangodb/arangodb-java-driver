@@ -54,6 +54,7 @@ public class EntityFactory {
       .registerTypeAdapter(DocumentEntity.class, new EntityDeserializers.DocumentEntityDeserializer())
       .registerTypeAdapter(DocumentsEntity.class, new EntityDeserializers.DocumentsEntityDeserializer())
       .registerTypeAdapter(AqlFunctionsEntity.class, new EntityDeserializers.AqlfunctionsEntityDeserializer())
+      .registerTypeAdapter(JobsEntity.class, new EntityDeserializers.JobsEntityDeserializer())
       .registerTypeAdapter(ArangoVersion.class, new EntityDeserializers.VersionDeserializer())
       .registerTypeAdapter(ArangoUnixTime.class, new EntityDeserializers.ArangoUnixTimeDeserializer())
       .registerTypeAdapter(DefaultEntity.class, new EntityDeserializers.DefaultEntityDeserializer())

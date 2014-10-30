@@ -35,6 +35,9 @@ public class ImplFactory {
   public static InternalDocumentDriverImpl createDocumentDriver(ArangoConfigure configure, HttpManager httpManager) {
     return new InternalDocumentDriverImpl(configure, httpManager);
   }
+  public static InternalJobsDriverImpl createJobsDriver(ArangoConfigure configure, HttpManager httpManager) {
+    return new InternalJobsDriverImpl(configure, httpManager);
+  }
   public static InternalKVSDriver createKVSDriver(ArangoConfigure configure, HttpManager httpManager) {
     return new InternalKVSDriverImpl(configure, httpManager);
   }
