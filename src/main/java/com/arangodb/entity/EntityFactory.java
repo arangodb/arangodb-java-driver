@@ -38,7 +38,6 @@ import com.google.gson.JsonElement;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- *
  */
 public class EntityFactory {
 
@@ -47,67 +46,61 @@ public class EntityFactory {
 
   private static GsonBuilder getBuilder() {
     return new GsonBuilder()
-        .addSerializationExclusionStrategy(new ExcludeExclusionStrategy(true))
-        .addDeserializationExclusionStrategy(new ExcludeExclusionStrategy(false))
-        .setFieldNamingStrategy(new ArangoFieldNamingStrategy())
-        .registerTypeAdapter(CollectionStatus.class, new CollectionStatusTypeAdapter())
-        .registerTypeAdapter(CollectionEntity.class, new EntityDeserializers.CollectionEntityDeserializer())
-        .registerTypeAdapter(DocumentEntity.class, new EntityDeserializers.DocumentEntityDeserializer())
-        .registerTypeAdapter(DocumentsEntity.class, new EntityDeserializers.DocumentsEntityDeserializer())
-        .registerTypeAdapter(AqlFunctionsEntity.class, new EntityDeserializers.AqlfunctionsEntityDeserializer())
-        .registerTypeAdapter(ArangoVersion.class, new EntityDeserializers.VersionDeserializer())
-        .registerTypeAdapter(ArangoUnixTime.class, new EntityDeserializers.ArangoUnixTimeDeserializer())
-        .registerTypeAdapter(DefaultEntity.class, new EntityDeserializers.DefaultEntityDeserializer())
-        .registerTypeAdapter(Figures.class, new EntityDeserializers.FiguresDeserializer())
-        .registerTypeAdapter(CursorEntity.class, new EntityDeserializers.CursorEntityDeserializer())
-        .registerTypeAdapter(IndexEntity.class, new EntityDeserializers.IndexEntityDeserializer())
-        .registerTypeAdapter(IndexesEntity.class, new EntityDeserializers.IndexesEntityDeserializer())
-        .registerTypeAdapter(ScalarExampleEntity.class, new EntityDeserializers.ScalarExampleEntityDeserializer())
-        .registerTypeAdapter(SimpleByResultEntity.class, new EntityDeserializers.SimpleByResultEntityDeserializer())
-        .registerTypeAdapter(AdminLogEntity.class, new EntityDeserializers.AdminLogEntryEntityDeserializer())
-        .registerTypeAdapter(StatisticsEntity.class, new EntityDeserializers.StatisticsEntityDeserializer())
-        .registerTypeAdapter(
-          StatisticsDescriptionEntity.class,
-          new EntityDeserializers.StatisticsDescriptionEntityDeserializer())
-        .registerTypeAdapter(UserEntity.class, new EntityDeserializers.UserEntityDeserializer())
-        .registerTypeAdapter(ImportResultEntity.class, new EntityDeserializers.ImportResultEntityDeserializer())
-        .registerTypeAdapter(DatabaseEntity.class, new EntityDeserializers.DatabaseEntityDeserializer())
-        .registerTypeAdapter(StringsResultEntity.class, new EntityDeserializers.StringsResultEntityDeserializer())
-        .registerTypeAdapter(BooleanResultEntity.class, new EntityDeserializers.BooleanResultEntityDeserializer())
-        .registerTypeAdapter(Endpoint.class, new EntityDeserializers.EndpointDeserializer())
-        .registerTypeAdapter(DocumentResultEntity.class, new EntityDeserializers.DocumentResultEntityDeserializer())
-        .registerTypeAdapter(
-          CollectionKeyOptionDeserializer.class,
-          new EntityDeserializers.CollectionKeyOptionDeserializer())
-        .registerTypeAdapter(
-          ReplicationInventoryEntity.class,
-          new EntityDeserializers.ReplicationInventoryEntityDeserializer())
-        .registerTypeAdapter(ReplicationDumpRecord.class, new EntityDeserializers.ReplicationDumpRecordDeserializer())
-        .registerTypeAdapter(ReplicationSyncEntity.class, new EntityDeserializers.ReplicationSyncEntityDeserializer())
-        .registerTypeAdapter(MapAsEntity.class, new EntityDeserializers.MapAsEntityDeserializer())
-        .registerTypeAdapter(
-          ReplicationLoggerConfigEntity.class,
-          new EntityDeserializers.ReplicationLoggerConfigEntityDeserializer())
-        .registerTypeAdapter(
-          ReplicationApplierConfigEntity.class,
-          new EntityDeserializers.ReplicationApplierConfigEntityDeserializer())
-        .registerTypeAdapter(
-          ReplicationApplierState.class,
-          new EntityDeserializers.ReplicationApplierStateDeserializer())
-        .registerTypeAdapter(
-          ReplicationApplierStateEntity.class,
-          new EntityDeserializers.ReplicationApplierStateEntityDeserializer())
-        .registerTypeAdapter(
-          ReplicationLoggerStateEntity.class,
-          new EntityDeserializers.ReplicationLoggerStateEntityDeserializer())
-        .registerTypeAdapter(
-          ReplicationLoggerStateEntity.Client.class,
-          new EntityDeserializers.ReplicationLoggerStateEntityClientDeserializer())
-        .registerTypeAdapter(GraphEntity.class, new EntityDeserializers.GraphEntityDeserializer())
-        .registerTypeAdapter(GraphsEntity.class, new EntityDeserializers.GraphsEntityDeserializer())
-        .registerTypeAdapter(DeletedEntity.class, new EntityDeserializers.DeleteEntityDeserializer())
-        .registerTypeAdapter(VertexEntity.class, new EntityDeserializers.VertexEntityDeserializer())
-        .registerTypeAdapter(EdgeEntity.class, new EntityDeserializers.EdgeEntityDeserializer());
+      .addSerializationExclusionStrategy(new ExcludeExclusionStrategy(true))
+      .addDeserializationExclusionStrategy(new ExcludeExclusionStrategy(false))
+      .setFieldNamingStrategy(new ArangoFieldNamingStrategy())
+      .registerTypeAdapter(CollectionStatus.class, new CollectionStatusTypeAdapter())
+      .registerTypeAdapter(CollectionEntity.class, new EntityDeserializers.CollectionEntityDeserializer())
+      .registerTypeAdapter(DocumentEntity.class, new EntityDeserializers.DocumentEntityDeserializer())
+      .registerTypeAdapter(DocumentsEntity.class, new EntityDeserializers.DocumentsEntityDeserializer())
+      .registerTypeAdapter(AqlFunctionsEntity.class, new EntityDeserializers.AqlfunctionsEntityDeserializer())
+      .registerTypeAdapter(JobsEntity.class, new EntityDeserializers.JobsEntityDeserializer())
+      .registerTypeAdapter(ArangoVersion.class, new EntityDeserializers.VersionDeserializer())
+      .registerTypeAdapter(ArangoUnixTime.class, new EntityDeserializers.ArangoUnixTimeDeserializer())
+      .registerTypeAdapter(DefaultEntity.class, new EntityDeserializers.DefaultEntityDeserializer())
+      .registerTypeAdapter(Figures.class, new EntityDeserializers.FiguresDeserializer())
+      .registerTypeAdapter(CursorEntity.class, new EntityDeserializers.CursorEntityDeserializer())
+      .registerTypeAdapter(IndexEntity.class, new EntityDeserializers.IndexEntityDeserializer())
+      .registerTypeAdapter(IndexesEntity.class, new EntityDeserializers.IndexesEntityDeserializer())
+      .registerTypeAdapter(ScalarExampleEntity.class, new EntityDeserializers.ScalarExampleEntityDeserializer())
+      .registerTypeAdapter(SimpleByResultEntity.class, new EntityDeserializers.SimpleByResultEntityDeserializer())
+      .registerTypeAdapter(AdminLogEntity.class, new EntityDeserializers.AdminLogEntryEntityDeserializer())
+      .registerTypeAdapter(StatisticsEntity.class, new EntityDeserializers.StatisticsEntityDeserializer())
+      .registerTypeAdapter(
+        StatisticsDescriptionEntity.class, new EntityDeserializers.StatisticsDescriptionEntityDeserializer())
+      .registerTypeAdapter(UserEntity.class, new EntityDeserializers.UserEntityDeserializer())
+      .registerTypeAdapter(ImportResultEntity.class, new EntityDeserializers.ImportResultEntityDeserializer())
+      .registerTypeAdapter(DatabaseEntity.class, new EntityDeserializers.DatabaseEntityDeserializer())
+      .registerTypeAdapter(StringsResultEntity.class, new EntityDeserializers.StringsResultEntityDeserializer())
+      .registerTypeAdapter(BooleanResultEntity.class, new EntityDeserializers.BooleanResultEntityDeserializer())
+      .registerTypeAdapter(Endpoint.class, new EntityDeserializers.EndpointDeserializer())
+      .registerTypeAdapter(DocumentResultEntity.class, new EntityDeserializers.DocumentResultEntityDeserializer())
+      .registerTypeAdapter(
+        CollectionKeyOptionDeserializer.class, new EntityDeserializers.CollectionKeyOptionDeserializer())
+      .registerTypeAdapter(
+        ReplicationInventoryEntity.class, new EntityDeserializers.ReplicationInventoryEntityDeserializer())
+      .registerTypeAdapter(ReplicationDumpRecord.class, new EntityDeserializers.ReplicationDumpRecordDeserializer())
+      .registerTypeAdapter(ReplicationSyncEntity.class, new EntityDeserializers.ReplicationSyncEntityDeserializer())
+      .registerTypeAdapter(MapAsEntity.class, new EntityDeserializers.MapAsEntityDeserializer())
+      .registerTypeAdapter(
+        ReplicationLoggerConfigEntity.class, new EntityDeserializers.ReplicationLoggerConfigEntityDeserializer())
+      .registerTypeAdapter(
+        ReplicationApplierConfigEntity.class, new EntityDeserializers.ReplicationApplierConfigEntityDeserializer())
+      .registerTypeAdapter(
+        ReplicationApplierState.class, new EntityDeserializers.ReplicationApplierStateDeserializer())
+      .registerTypeAdapter(
+        ReplicationApplierStateEntity.class, new EntityDeserializers.ReplicationApplierStateEntityDeserializer())
+      .registerTypeAdapter(
+        ReplicationLoggerStateEntity.class, new EntityDeserializers.ReplicationLoggerStateEntityDeserializer())
+      .registerTypeAdapter(
+        ReplicationLoggerStateEntity.Client.class,
+        new EntityDeserializers.ReplicationLoggerStateEntityClientDeserializer())
+      .registerTypeAdapter(GraphEntity.class, new EntityDeserializers.GraphEntityDeserializer())
+      .registerTypeAdapter(GraphsEntity.class, new EntityDeserializers.GraphsEntityDeserializer())
+      .registerTypeAdapter(DeletedEntity.class, new EntityDeserializers.DeleteEntityDeserializer())
+      .registerTypeAdapter(VertexEntity.class, new EntityDeserializers.VertexEntityDeserializer())
+      .registerTypeAdapter(EdgeEntity.class, new EntityDeserializers.EdgeEntityDeserializer())
+      ;
   }
 
   static {
@@ -142,7 +135,6 @@ public class EntityFactory {
   }
 
   /**
-   * 
    * @param obj
    * @param includeNullValue
    * @return
@@ -153,7 +145,6 @@ public class EntityFactory {
   }
 
   /**
-   * 
    * @author tamtam180 - kirscheless at gmail.com
    * @since 1.4.0
    */
@@ -164,7 +155,6 @@ public class EntityFactory {
       this.serialize = serialize;
     }
 
-    @Override
     public boolean shouldSkipField(FieldAttributes f) {
       Exclude annotation = f.getAnnotation(Exclude.class);
       if (annotation != null && (serialize ? annotation.serialize() : annotation.deserialize())) {
@@ -173,7 +163,6 @@ public class EntityFactory {
       return false;
     }
 
-    @Override
     public boolean shouldSkipClass(Class<?> clazz) {
       return false;
     }
@@ -182,7 +171,6 @@ public class EntityFactory {
   private static class ArangoFieldNamingStrategy implements FieldNamingStrategy {
     private static final String KEY = "_key";
 
-    @Override
     public String translateName(Field f) {
       DocumentKey key = f.getAnnotation(DocumentKey.class);
       if (key == null) {

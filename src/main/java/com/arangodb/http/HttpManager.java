@@ -17,11 +17,8 @@
 package com.arangodb.http;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -79,6 +76,10 @@ public class HttpManager {
   private HttpResponseEntity preDefinedResponse;
 
   private HttpMode httpMode = HttpMode.SYNC;
+
+  private List<String> jobIds = new ArrayList<String>();
+
+  private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
 
   public static enum HttpMode {
     SYNC, ASYNC, FIREANDFORGET
@@ -316,6 +317,11 @@ public class HttpManager {
       request.addHeader(BasicScheme.authenticate(credentials, "US-ASCII", false));
     }
 
+    if (this.getHttpMode().equals(HttpMode.ASYNC)) {
+      request.addHeader("x-arango-async", "store");
+    } else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
+      request.addHeader("x-arango-async", "true");
+    }
     // CURL/httpie Logger
     if (configure.isEnableCURLLogger()) {
       CURLLogger.log(url, requestEntity, userAgent, credentials);
@@ -367,6 +373,13 @@ public class HttpManager {
           responseEntity.text = IOUtils.toString(entity.getContent());
           logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
         }
+      }
+
+      if (this.getHttpMode().equals(HttpMode.ASYNC)) {
+        Map<String, String> map = responseEntity.getHeaders();
+        this.addJob(map.get("X-Arango-Async-Id"), this.getCurrentObject());
+      } else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
+        return null;
       }
 
       return responseEntity;
@@ -452,5 +465,28 @@ public class HttpManager {
 
   public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {
     this.preDefinedResponse = preDefinedResponse;
+  }
+
+  public List<String> getJobIds() {
+    return jobIds;
+  }
+
+  public Map<String, InvocationObject> getJobs() {
+    return jobs;
+  }
+
+  public void addJob(String jobId, InvocationObject invocationObject) {
+    jobIds.add(jobId);
+    jobs.put(jobId, invocationObject);
+  }
+
+  public String getLastJobId() {
+    return jobIds.size() == 0 ? null : jobIds.get(jobIds.size() -1);
+  }
+
+  public void resetJobs() {
+    this.jobIds = new ArrayList<String>();
+    this.jobs.clear();
+
   }
 }

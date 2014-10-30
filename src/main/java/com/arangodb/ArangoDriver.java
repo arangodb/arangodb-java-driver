@@ -47,6 +47,7 @@ import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.IndexesEntity;
+import com.arangodb.entity.JobsEntity;
 import com.arangodb.entity.Policy;
 import com.arangodb.entity.ReplicationApplierConfigEntity;
 import com.arangodb.entity.ReplicationApplierStateEntity;
@@ -140,7 +141,12 @@ public class ArangoDriver extends BaseArangoDriver {
       this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
       this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
       this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
+      this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
     } else {
+      this.jobsDriver = (InternalJobsDriver) Proxy.newProxyInstance(
+        InternalJobsDriver.class.getClassLoader(),
+        new Class<?>[] { InternalJobsDriver.class },
+        new InvocationHandlerImpl(this.jobsDriver));
       this.cursorDriver = (InternalCursorDriver) Proxy.newProxyInstance(
         InternalCursorDriver.class.getClassLoader(),
         new Class<?>[] { InternalCursorDriver.class },
@@ -212,6 +218,8 @@ public class ArangoDriver extends BaseArangoDriver {
     }
     HttpManager.HttpMode mode = fireAndForget ? HttpManager.HttpMode.FIREANDFORGET : HttpManager.HttpMode.ASYNC;
     this.httpManager.setHttpMode(mode);
+    this.createModuleDrivers(true);
+    this.httpManager.resetJobs();
   }
 
   public void stopAsyncMode() throws ArangoException {
@@ -219,6 +227,40 @@ public class ArangoDriver extends BaseArangoDriver {
       throw new ArangoException("Arango driver already set to synchronous mode.");
     }
     this.httpManager.setHttpMode(HttpManager.HttpMode.SYNC);
+    this.createModuleDrivers(false);
+  }
+
+  public String getLastJobId() {
+    return this.httpManager.getLastJobId();
+  }
+
+  public List<String> getJobIds() {
+    return this.httpManager.getJobIds();
+  }
+
+  public List<String> getJobs(JobsEntity.JobState jobState, int count) throws ArangoException {
+    return this.jobsDriver.getJobs(getDefaultDatabase(), jobState, count);
+  }
+
+  public List<String> getJobs(JobsEntity.JobState jobState) throws ArangoException {
+    return this.jobsDriver.getJobs(getDefaultDatabase(), jobState);
+  }
+
+  public void deleteAllJobs() throws ArangoException {
+    this.jobsDriver.deleteAllJobs(getDefaultDatabase());
+    this.httpManager.resetJobs();
+  }
+
+  public void deleteJobById(String JobId) throws ArangoException {
+    this.jobsDriver.deleteJobById(getDefaultDatabase(), JobId);
+  }
+
+  public void deleteExpiredJobs(int timeStamp) throws ArangoException {
+    this.jobsDriver.deleteExpiredJobs(getDefaultDatabase(), timeStamp);
+  }
+
+  public <T> T getJobResult(String jobId) throws ArangoException {
+    return this.jobsDriver.getJobResult(getDefaultDatabase(), jobId);
   }
 
   public DefaultEntity executeBatch() throws ArangoException {

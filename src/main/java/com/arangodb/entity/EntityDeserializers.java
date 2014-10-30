@@ -472,6 +472,27 @@ public class EntityDeserializers {
     }
   }
 
+
+  public static class JobsEntityDeserializer implements JsonDeserializer<JobsEntity> {
+
+    public JobsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+
+      if (json.isJsonNull()) {
+        return null;
+      }
+
+      JsonArray obj = json.getAsJsonArray();
+      Iterator<JsonElement> iterator = obj.iterator();
+      List<String> jobs = new ArrayList<String>();
+      while(iterator.hasNext()) {
+        JsonElement e  = iterator.next();
+        jobs.add(e.getAsString());
+      }
+      return new JobsEntity(jobs);
+    }
+  }
+
   public static class CursorEntityDeserializer implements JsonDeserializer<CursorEntity<?>> {
     private Type bindVarsType = new TypeToken<List<String>>() {
     }.getType();
