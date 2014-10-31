@@ -215,7 +215,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String database,
     String graphName,
     String collectionName,
-    Object vertex,
+    T vertex,
     Boolean waitForSync) throws ArangoException;
 
   <T> DocumentEntity<T> getVertex(

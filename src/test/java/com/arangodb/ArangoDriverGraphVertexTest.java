@@ -96,7 +96,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_get_vertex() throws ArangoException {
+  public void test_graphGetVertex() throws ArangoException {
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     DocumentEntity<TestComplexEntity01> vertex = driver.graphCreateVertex(
       this.graphName,
