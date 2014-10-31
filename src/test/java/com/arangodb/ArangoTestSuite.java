@@ -23,14 +23,16 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.arangodb.util.StringJoinTest;
 
 /**
- * 全ての単体テストを実行する。
+ * Starts all unit tests
+ * 
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  *
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-  
-  // Utils Test
+
+// Utils Test
   StringJoinTest.class,
 
   // Drivers Test
@@ -38,8 +40,8 @@ import com.arangodb.util.StringJoinTest;
   ArangoDriverAuthTest.class,
   NegativeTest.class,
 
-  //PrimitiveDocumentTest.class,
-  
+  // PrimitiveDocumentTest.class,
+
   ArangoDriverDatabaseTest.class,
   ArangoDriverDatabaseAndUserTest.class,
 
@@ -51,13 +53,13 @@ import com.arangodb.util.StringJoinTest;
   ArangoDriverCollectionTest.class,
   ArangoDriverCursorTest.class,
   ArangoDriverCursorResultSetTest.class,
-  
+
   ArangoDriverIndexTest.class,
   ArangoDriverAdminTest.class,
   ArangoDriverSimpleTest.class,
   ArangoDriverImportTest.class,
-  //ArangoDriverSimpleGeoTest.class,
-  //ArangoDriverKeyValueTest.class,
+  // ArangoDriverSimpleGeoTest.class,
+  // ArangoDriverKeyValueTest.class,
   ArangoDriverGraphTest.class,
   ArangoDriverGraphVertexTest.class,
   ArangoDriverGraphVertexReplaceTest.class,
@@ -71,9 +73,8 @@ import com.arangodb.util.StringJoinTest;
   ArangoDriverThreadSafeTest.class,
   ArangoDriverReplicationTest.class,
   ArangoDriverReplicationTestScenario1.class
-  
+
 })
 public class ArangoTestSuite {
-  
-  
+
 }
