@@ -1908,11 +1908,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
-  public <T> DocumentEntity<T> graphCreateVertex(
-    String graphName,
-    String collectionName,
-    Object vertex,
-    Boolean waitForSync) throws ArangoException {
+  public <T> DocumentEntity<T>
+      graphCreateVertex(String graphName, String collectionName, T vertex, Boolean waitForSync) throws ArangoException {
     return graphDriver.createVertex(getDefaultDatabase(), graphName, collectionName, vertex, waitForSync);
   }
 

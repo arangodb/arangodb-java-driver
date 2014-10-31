@@ -330,7 +330,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String database,
     String graphName,
     String collectionName,
-    Object vertex,
+    T vertex,
     Boolean waitForSync) throws ArangoException {
 
     validateCollectionName(graphName);
