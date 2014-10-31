@@ -26,6 +26,11 @@
 			<name>tamtam180</name>
 			<url>http://mt.orz.at/</url>
 		</developer>
+		<developer>
+			<id>a-brandt</id>
+			<name>a-brandt</name>
+			<url>https://www.arangodb.com/</url>
+		</developer>
 	</developers>
 	
 	<!-- For Deploy -->
