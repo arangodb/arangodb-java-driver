@@ -64,15 +64,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return e.name().toLowerCase(Locale.US);
   }
 
-  /**
-   * creates an empty graph
-   * 
-   * @param databaseName
-   * @param graphName
-   * @param waitForSync
-   * @return
-   * @throws ArangoException
-   */
   @Override
   public GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException {
     HttpResponseEntity response = httpManager.doPost(
@@ -98,31 +89,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return createEntity(response, GraphEntity.class);
   }
 
-  @Override
-  public GraphEntity createGraph(
-    String databaseName,
-    String documentKey,
-    String vertices,
-    String edges,
-    Boolean waitForSync) throws ArangoException {
-
-    HttpResponseEntity res = httpManager.doPost(
-      createEndpointUrl(baseUrl, databaseName, "/_api/graph"),
-      new MapBuilder().put("waitForSync", waitForSync).get(),
-      EntityFactory.toJsonString(new MapBuilder().put("_key", documentKey).put("vertices", vertices)
-          .put("edges", edges).get()));
-
-    return createEntity(res, GraphEntity.class);
-
-  }
-
-  /**
-   * Returns a GraphsEntity containing all graph as GraphEntity object.
-   * 
-   * @param databaseName
-   * @return GraphsEntity
-   * @throws ArangoException
-   */
   @Override
   public GraphsEntity getGraphs(String databaseName) throws ArangoException {
 
@@ -153,14 +119,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return graphList;
   }
 
-  /**
-   * get graph object
-   * 
-   * @param databaseName
-   * @param graphName
-   * @return GraphEntity
-   * @throws ArangoException
-   */
   @Override
   public GraphEntity getGraph(String databaseName, String graphName) throws ArangoException {
     validateCollectionName(graphName); // ??
@@ -173,15 +131,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
   }
 
-  /**
-   * Delete a graph by its name. If dropCollections is true, all collections of
-   * the graph will be deleted, if they are not used in another graph.
-   * 
-   * @param databaseName
-   * @param graphName
-   * @param dropCollections
-   * @throws ArangoException
-   */
   @Override
   public DeletedEntity deleteGraph(String databaseName, String graphName, Boolean dropCollections)
       throws ArangoException {
@@ -201,15 +150,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
   }
 
-  /**
-   * Returns a list of all vertex collection of a graph that are defined in the
-   * graphs edgeDefinitions (in "from", "to", and "orphanCollections")
-   * 
-   * @param databaseName
-   * @param graphName
-   * @return
-   * @throws ArangoException
-   */
   @Override
   public List<String> getVertexCollections(String databaseName, String graphName) throws ArangoException {
     validateCollectionName(graphName);
@@ -286,24 +226,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return result;
   }
 
-  /**
-   * Returns a list of all edge collection of a graph that are defined in the
-   * graphs edgeDefinitions
-   * 
-   * @param databaseName
-   * @param graphName
-   * @return
-   * @throws ArangoException
-   */
-  /**
-   * Returns a list of all vertex collection of a graph that are defined in the
-   * graphs edgeDefinitions (in "from", "to", and "orphanCollections")
-   * 
-   * @param databaseName
-   * @param graphName
-   * @return
-   * @throws ArangoException
-   */
   @Override
   public List<String> getEdgeCollections(String databaseName, String graphName) throws ArangoException {
     validateCollectionName(graphName);
@@ -323,19 +245,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return result.getCollections();
   }
 
-  /**
-   * Adds a new edge definition to an existing graph
-   * 
-   * @param databaseName
-   * @param graphName
-   * @param edgeDefinition
-   * @return GraphEntity
-   * @throws ArangoException
-   */
   @Override
-  public GraphEntity
-      createNewEdgeDefinition(String databaseName, String graphName, EdgeDefinitionEntity edgeDefinition)
-          throws ArangoException {
+  public GraphEntity createEdgeDefinition(String databaseName, String graphName, EdgeDefinitionEntity edgeDefinition)
+      throws ArangoException {
 
     validateCollectionName(graphName);
     validateCollectionName(edgeDefinition.getCollection());

@@ -1,3 +1,24 @@
+/**
+ * Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright holder is triAGENS GmbH, Cologne, Germany
+ *
+ * @author fbartels
+ * @author gschwab
+ * @author Copyright 2014, triAGENS GmbH, Cologne, Germany
+ */
+
 package com.arangodb;
 
 import java.util.Collection;
@@ -14,10 +35,17 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphsEntity;
 import com.arangodb.impl.BaseDriverInterface;
 
-/**
- * Created by fbartels on 10/27/14.
- */
 public interface InternalGraphDriver extends BaseDriverInterface {
+
+  /**
+   * Creates an empty graph.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param waitForSync
+   * @return GraphEntity
+   * @throws ArangoException
+   */
   GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException;
 
   /**
@@ -37,9 +65,6 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     List<EdgeDefinitionEntity> edgeDefinitions,
     List<String> orphanCollections,
     Boolean waitForSync) throws ArangoException;
-
-  GraphEntity createGraph(String databaseName, String documentKey, String vertices, String edges, Boolean waitForSync)
-      throws ArangoException;
 
   /**
    * Returns a GraphsEntity containing all graph as GraphEntity object.
@@ -82,31 +107,110 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    */
   DeletedEntity deleteGraph(String databaseName, String graphName, Boolean dropCollections) throws ArangoException;
 
+  /**
+   * Returns a list of names of all vertex collections of a graph, defined in
+   * the graphs edgeDefinitions (in "from", "to", and "orphanCollections")
+   *
+   * @param databaseName
+   * @param graphName
+   * @return List<String>
+   * @throws ArangoException
+   */
   List<String> getVertexCollections(String databaseName, String graphName) throws ArangoException;
 
+  /**
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param collectionName
+   * @return GraphEntity
+   * @throws ArangoException
+   */
+  GraphEntity createVertexCollection(String databaseName, String graphName, String collectionName)
+      throws ArangoException;
+
+  /**
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param collectionName
+   * @param dropCollection
+   * @return DeletedEntity
+   * @throws ArangoException
+   */
   DeletedEntity deleteVertexCollection(
     String databaseName,
     String graphName,
     String collectionName,
     Boolean dropCollection) throws ArangoException;
 
-  GraphEntity createVertexCollection(String databaseName, String graphName, String collectionName)
-      throws ArangoException;
-
+  /**
+   * Returns a list of names of all edge collections of a graph that are defined
+   * in the graphs edgeDefinitions
+   * 
+   * @param databaseName
+   * @param graphName
+   * @return List<String>
+   * @throws ArangoException
+   */
   List<String> getEdgeCollections(String databaseName, String graphName) throws ArangoException;
 
-  GraphEntity createNewEdgeDefinition(String databaseName, String graphName, EdgeDefinitionEntity edgeDefinition)
+  /**
+   * Adds a new edge definition to an existing graph.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param edgeDefinition
+   * @return GraphEntity
+   * @throws ArangoException
+   */
+  GraphEntity createEdgeDefinition(String databaseName, String graphName, EdgeDefinitionEntity edgeDefinition)
       throws ArangoException;
 
+  /**
+   * Replaces an existing edge definition to an existing graph. This will also
+   * change the edge definitions of all other graphs using this definition as
+   * well.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param edgeName
+   * @param edgeDefinition
+   * @return GraphEntity
+   * @throws ArangoException
+   */
   GraphEntity replaceEdgeDefinition(
     String databaseName,
     String graphName,
     String edgeName,
     EdgeDefinitionEntity edgeDefinition) throws ArangoException;
 
+  /**
+   * Removes an existing edge definition from this graph. All data stored in the
+   * collections is dropped as well as long as it is not used in other graphs.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param edgeName
+   * @param dropCollection
+   * @return GraphEntity
+   * @throws ArangoException
+   */
   GraphEntity deleteEdgeDefinition(String databaseName, String graphName, String edgeName, Boolean dropCollection)
       throws ArangoException;
 
+  /**
+   * Stores a new vertex with the information contained within the document into
+   * the given collection.
+   * 
+   * @param database
+   * @param graphName
+   * @param collectionName
+   * @param vertex
+   * @param waitForSync
+   * @return <T> DocumentEntity<T>
+   * @throws ArangoException
+   */
   <T> DocumentEntity<T> createVertex(
     String database,
     String graphName,

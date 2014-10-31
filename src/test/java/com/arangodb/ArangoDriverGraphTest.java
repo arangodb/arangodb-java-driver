@@ -48,7 +48,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_get_graphs() throws ArangoException {
+  public void test_getGraphs() throws ArangoException {
     GraphsEntity graphs = driver.getGraphs();
     assertThat(graphs.getGraphs().size(), is(0));
     driver.createGraph("UnitTestGraph1", true);
@@ -80,7 +80,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_create_graph() throws ArangoException {
+  public void test_createGraph() throws ArangoException {
 
     List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
     List<String> orphanCollections = new ArrayList<String>();
@@ -97,7 +97,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_create_graph2() throws ArangoException {
+  public void test_createGraph_2() throws ArangoException {
 
     List<EdgeDefinitionEntity> edgeDefinitions = this.createEdgeDefinitions(2, 0);
 
@@ -113,7 +113,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_get_graph() throws ArangoException {
+  public void test_getGraph() throws ArangoException {
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     GraphEntity graph = driver.getGraph(this.graphName);
     assertThat(graph.getOrphanCollections().size(), is(2));
@@ -124,7 +124,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_delete_graph_keep_Collections() throws ArangoException {
+  public void test_deleteGraph_keep_collections() throws ArangoException {
     GraphsEntity graphs = driver.getGraphs();
     assertThat(graphs.getGraphs().size(), is(0));
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
@@ -138,7 +138,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_delete_graph_delete_Collections() throws ArangoException {
+  public void test_deleteGraph_delete_collections() throws ArangoException {
     GraphsEntity graphs = driver.getGraphs();
     assertThat(graphs.getGraphs().size(), is(0));
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
@@ -152,7 +152,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_delete_graph_not_found() throws ArangoException {
+  public void test_deleteGraph_not_found() throws ArangoException {
     try {
       driver.deleteGraph("foo");
 
@@ -162,14 +162,14 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_get_vertex_Collections() throws ArangoException {
+  public void test_getVertexCollections() throws ArangoException {
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     List<String> collections = driver.graphGetVertexCollections(this.graphName);
     assertThat(collections.size(), is(14));
   }
 
   @Test
-  public void test_get_vertex_Collections_not_found() throws ArangoException {
+  public void test_getVertexCollections_not_found() throws ArangoException {
     try {
       driver.graphGetVertexCollections("foo");
       fail();
@@ -180,7 +180,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_create_new_vertex_collection() throws ArangoException {
+  public void test_createVertexCollection() throws ArangoException {
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     GraphEntity graph = driver.graphCreateVertexCollection(this.graphName, collectionName);
     assertThat(driver.graphGetVertexCollections(this.graphName).contains(collectionName), is(true));
@@ -188,7 +188,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_create_new_vertex_collection_error() throws ArangoException {
+  public void test_create_newVertexCollection_error() throws ArangoException {
     try {
       driver.graphCreateVertexCollection("foo", "UnitTestCollection");
     } catch (ArangoException e) {
@@ -197,7 +197,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_delete_vertex_collection_keep_collection() throws ArangoException {
+  public void test_deleteVertexCollection_keep_collection() throws ArangoException {
 
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     driver.graphCreateVertexCollection(this.graphName, collectionName);
@@ -209,7 +209,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_delete_vertex_collection_drop_collection() throws ArangoException {
+  public void test_deleteVertexCollection_drop_collection() throws ArangoException {
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     driver.graphCreateVertexCollection(this.graphName, collectionName);
     assertThat(driver.graphGetVertexCollections(this.graphName).contains(collectionName), is(true));
@@ -225,7 +225,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   }
 
   @Test
-  public void test_delete_vertex_collection_drop_collection_fail() throws ArangoException {
+  public void test_deleteVertexCollection_drop_collection_fail() throws ArangoException {
     String graphName1 = "UnitTestGraph1";
     String graphName2 = "UnitTestGraph2";
     driver.createGraph(graphName1, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);

@@ -1788,8 +1788,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param graphName
    * @throws ArangoException
    */
-  public void deleteGraph(String graphName) throws ArangoException {
-    graphDriver.deleteGraph(getDefaultDatabase(), graphName, false);
+  public DeletedEntity deleteGraph(String graphName) throws ArangoException {
+    return graphDriver.deleteGraph(getDefaultDatabase(), graphName, false);
   }
 
   /**
@@ -1864,7 +1864,7 @@ public class ArangoDriver extends BaseArangoDriver {
    */
   public GraphEntity graphCreateEdgeDefinition(String graphName, EdgeDefinitionEntity edgeDefinition)
       throws ArangoException {
-    return graphDriver.createNewEdgeDefinition(getDefaultDatabase(), graphName, edgeDefinition);
+    return graphDriver.createEdgeDefinition(getDefaultDatabase(), graphName, edgeDefinition);
   }
 
   /**
@@ -1905,7 +1905,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param graphName
    * @param vertex
    * @param waitForSync
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphCreateVertex(
@@ -1922,7 +1922,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param collectionName
    * @param key
    * @param clazz
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<?> clazz)
