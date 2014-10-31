@@ -20,6 +20,17 @@ import com.arangodb.impl.BaseDriverInterface;
 public interface InternalGraphDriver extends BaseDriverInterface {
   GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException;
 
+  /**
+   * Creates a graph.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param edgeDefinitions
+   * @param orphanCollections
+   * @param waitForSync
+   * @return GraphEntity
+   * @throws ArangoException
+   */
   GraphEntity createGraph(
     String databaseName,
     String graphName,
@@ -31,8 +42,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
       throws ArangoException;
 
   /**
-   * Creates a list of all available graphs of the default database
-   * databaseName.
+   * Returns a GraphsEntity containing all graph as GraphEntity object.
    * 
    * @param databaseName
    * @return GraphsEntity
@@ -40,8 +50,36 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    */
   GraphsEntity getGraphs(String databaseName) throws ArangoException;
 
+  /**
+   * Creates a list of the names of all available graphs.
+   * 
+   * @param databaseName
+   * @return List<String>
+   * @throws ArangoException
+   */
+  List<String> getGraphList(String databaseName) throws ArangoException;
+
+  /**
+   * Get graph object by name, including its edge definitions and vertex
+   * collections.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @return GraphEntity
+   * @throws ArangoException
+   */
   GraphEntity getGraph(String databaseName, String graphName) throws ArangoException;
 
+  /**
+   * Delete a graph by its name. If dropCollections is true, all collections of
+   * the graph will be dropped, if they are not used in another graph.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param dropCollections
+   * @return DeletedEntity
+   * @throws ArangoException
+   */
   DeletedEntity deleteGraph(String databaseName, String graphName, Boolean dropCollections) throws ArangoException;
 
   List<String> getVertexCollections(String databaseName, String graphName) throws ArangoException;

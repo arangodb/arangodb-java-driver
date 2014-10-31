@@ -6,7 +6,7 @@ Support version: ArangoDB-2.2.x
 # Required
 
 * [ArangoDB](https://github.com/triAGENS/ArangoDB) Version 2.2.x
-* Java 5 later
+* Java 1.6 later
 
 
 # Basics

@@ -19,6 +19,7 @@ package com.arangodb;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -34,6 +35,7 @@ import com.arangodb.entity.GraphsEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  * 
  */
 public class ArangoDriverGraphTest extends BaseGraphTest {
@@ -54,6 +56,27 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
     driver.createGraph("UnitTestGraph3", true);
     graphs = driver.getGraphs();
     assertThat(graphs.getGraphs().size(), is(3));
+    assertThat(graphs.getGraphs().get(0).getName(), startsWith("UnitTestGraph"));
+    assertThat(graphs.getGraphs().get(1).getName(), startsWith("UnitTestGraph"));
+    assertThat(graphs.getGraphs().get(2).getName(), startsWith("UnitTestGraph"));
+  }
+
+  @Test
+  public void test_getGraphList() throws ArangoException {
+    List<String> graphs = driver.getGraphList();
+    assertThat(graphs.size(), is(0));
+    String graphName1 = "UnitTestGraph1";
+    String graphName2 = "UnitTestGraph2";
+    String graphName3 = "UnitTestGraph3";
+    driver.createGraph(graphName1, true);
+    driver.createGraph(graphName2, true);
+    driver.createGraph(graphName3, true);
+    graphs = driver.getGraphList();
+    assertThat(graphs.size(), is(3));
+    assertThat(graphs.contains(graphName1), is(true));
+    assertThat(graphs.contains(graphName2), is(true));
+    assertThat(graphs.contains(graphName3), is(true));
+    assertThat(graphs.contains("foo"), is(false));
   }
 
   @Test

@@ -16,10 +16,13 @@
 
 package com.arangodb.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
@@ -114,19 +117,40 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
   }
 
   /**
-   * get all existing graphs of <database>
+   * Returns a GraphsEntity containing all graph as GraphEntity object.
    * 
    * @param databaseName
-   * @return
+   * @return GraphsEntity
    * @throws ArangoException
    */
   @Override
   public GraphsEntity getGraphs(String databaseName) throws ArangoException {
 
+    GraphsEntity graphsEntity = new GraphsEntity();
+    List<GraphEntity> graphEntities = new ArrayList<GraphEntity>();
+    List<String> graphList = this.getGraphList(databaseName);
+    if (CollectionUtils.isNotEmpty(graphList)) {
+      for (String graphName : graphList) {
+        graphEntities.add(this.getGraph(databaseName, graphName));
+      }
+    }
+    graphsEntity.setGraphs(graphEntities);
+    return graphsEntity;
+
+  }
+
+  @Override
+  public List<String> getGraphList(String databaseName) throws ArangoException {
     HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, databaseName, "/_api/gharial"));
-
-    return createEntity(res, GraphsEntity.class);
-
+    GraphsEntity graphsEntity = createEntity(res, GraphsEntity.class);
+    List<String> graphList = new ArrayList<String>();
+    List<GraphEntity> graphs = graphsEntity.getGraphs();
+    if (CollectionUtils.isNotEmpty(graphs)) {
+      for (GraphEntity graph : graphs) {
+        graphList.add(graph.getDocumentKey());
+      }
+    }
+    return graphList;
   }
 
   /**

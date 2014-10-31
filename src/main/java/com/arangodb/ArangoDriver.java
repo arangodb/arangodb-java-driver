@@ -1711,29 +1711,36 @@ public class ArangoDriver extends BaseArangoDriver {
     return replicationDriver.getReplicationApplierState(getDefaultDatabase());
   }
 
-  // ---------------------------------------- end of replication
-  // ----------------------------------------
-  // ---------------------------------------- start of graph
-  // ----------------------------------------
+  // *** end of replication ***
+
+  // ***************************************
+  // *** start of graph ********************
+  // ***************************************
 
   /**
-   * @param documentKey
-   * @param vertices
-   * @param edges
-   * @param waitForSync
-   * @return
+   * Returns a GraphsEntity containing all graph as GraphEntity object of the
+   * default database.
+   *
+   * @return GraphsEntity
    * @throws ArangoException
-   * @since 1.4.0
-   * @deprecated
    */
-  @Deprecated
-  public GraphEntity createGraph(String documentKey, String vertices, String edges, Boolean waitForSync)
-      throws ArangoException {
-    return graphDriver.createGraph(getDefaultDatabase(), documentKey, vertices, edges, waitForSync);
+  public GraphsEntity getGraphs() throws ArangoException {
+    return graphDriver.getGraphs(getDefaultDatabase());
   }
 
   /**
-   * creates a graph
+   * Creates a list of the names of all available graphs of the default
+   * database.
+   *
+   * @return List<String>
+   * @throws ArangoException
+   */
+  public List<String> getGraphList() throws ArangoException {
+    return graphDriver.getGraphList(getDefaultDatabase());
+  }
+
+  /**
+   * Creates a graph.
    * 
    * @param graphName
    * @param edgeDefinitions
@@ -1751,7 +1758,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * creates an empty graph
+   * Creates an empty graph.
    *
    * @param graphName
    * @param waitForSync
@@ -1763,17 +1770,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * Creates a list of all available graphs of the default database.
-   *
-   * @return GraphsEntity
-   * @throws ArangoException
-   */
-  public GraphsEntity getGraphs() throws ArangoException {
-    return graphDriver.getGraphs(getDefaultDatabase());
-  }
-
-  /**
-   * Get graph object by name
+   * Get graph object by name, including its edge definitions and vertex
+   * collections.
    *
    * @param graphName
    * @return GraphEntity
@@ -1785,7 +1783,7 @@ public class ArangoDriver extends BaseArangoDriver {
 
   /**
    * Delete a graph by its name. The collections of the graph will not be
-   * deleted.
+   * dropped.
    *
    * @param graphName
    * @throws ArangoException
@@ -1796,7 +1794,7 @@ public class ArangoDriver extends BaseArangoDriver {
 
   /**
    * Delete a graph by its name. If dropCollections is true, all collections of
-   * the graph will be deleted, if they are not used in another graph.
+   * the graph will be dropped, if they are not used in another graph.
    * 
    * @param graphName
    * @param dropCollections
