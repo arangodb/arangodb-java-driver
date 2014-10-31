@@ -30,6 +30,14 @@ public interface InternalGraphDriver extends BaseDriverInterface {
   GraphEntity createGraph(String databaseName, String documentKey, String vertices, String edges, Boolean waitForSync)
       throws ArangoException;
 
+  /**
+   * Creates a list of all available graphs of the default database
+   * databaseName.
+   * 
+   * @param databaseName
+   * @return GraphsEntity
+   * @throws ArangoException
+   */
   GraphsEntity getGraphs(String databaseName) throws ArangoException;
 
   GraphEntity getGraph(String databaseName, String graphName) throws ArangoException;

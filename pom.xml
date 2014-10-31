@@ -181,9 +181,9 @@
   </dependencies>
   
   <scm>
-    <url>https://github.com/tamtam180/arangodb-java-driver</url>
-    <connection>scm:git:git://github.com/tamtam180/arangodb-java-driver.git</connection>
-    <developerConnection>scm:git:git://github.com/tamtam180/arangodb-java-driver.git</developerConnection>
+    <url>https://github.com/arangodb/arangodb-java-driver</url>
+    <connection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</connection>
+    <developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</developerConnection>
   </scm>
 
 </project>

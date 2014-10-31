@@ -1763,7 +1763,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * list all Graphs of the default database
+   * Creates a list of all available graphs of the default database.
    *
    * @return GraphsEntity
    * @throws ArangoException
@@ -1773,7 +1773,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * get graph object by name
+   * Get graph object by name
    *
    * @param graphName
    * @return GraphEntity
