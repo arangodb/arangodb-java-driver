@@ -26,13 +26,13 @@ To add the driver to your project with maven, add the following code to your pom
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 2.0-SNAPSHOT), add the snapshot repository to your pom.xml:
+If you want to test with a snapshot version (e.g. 2.0-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
   <repository>
     <id>arangodb-snapshots</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    <url>https://oss.sonatype.org/content/groups/staging</url>
   </repository>
 </repositories>
 ```
