@@ -27,9 +27,19 @@
 			<url>http://mt.orz.at/</url>
 		</developer>
 		<developer>
+			<id>gschwab</id>
+			<name>gschwab</name>
+			<url>https://github.com/gschwab</url>
+		</developer>
+		<developer>
+			<id>scottashton</id>
+			<name>scottashton</name>
+			<url>https://github.com/scottashton</url>
+		</developer>
+		<developer>
 			<id>a-brandt</id>
 			<name>a-brandt</name>
-			<url>https://www.arangodb.com/</url>
+			<url>https://github.com/a-brandt</url>
 		</developer>
 	</developers>
 
@@ -237,4 +247,8 @@
 		<developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</developerConnection>
 	</scm>
 
+	<organization>
+		<name>ArangoDB GmbH</name>
+		<url>https://www.arangodb.com</url>
+	</organization>
 </project>

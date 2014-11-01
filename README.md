@@ -16,25 +16,27 @@ Support version: ArangoDB-2.2.x
 To add the driver to your project with maven, add the following code to your pom.xml:
 
 ```XML
+<dependencies>
+  <dependency>
+    <groupId>com.arangodb</groupId>
+    <artifactId>arangodb-java-driver</artifactId>
+    <version>[2.0,2.1]</version>
+  </dependency>
+	....
+</dependencies>
+```
+
+If you want to test with a snapshot version (e.g. 2.0-SNAPSHOT), add the snapshot repository to your pom.xml:
+
+```XML
 <repositories>
-    <repository>
-        <id>arangodb-java-driver</id>
-        <name>maven repository on GitHub</name>
-    <url>https://raw.github.com/triAGENS/arangodb-java-driver/mvn-repo</url>
-        <layout>default</layout>
-    </repository>
+  <repository>
+    <id>arangodb-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+  </repository>
 </repositories>
 ```
 
-```XML
-<dependencies>
-  <dependency>
-    <groupId>at.orz</groupId>
-    <artifactId>arangodb-java-driver-2.0-standalone</artifactId>
-    <version>2.0</version>
-  </dependency>
-</dependencies>
-```
 
 ## Driver Setup
 
