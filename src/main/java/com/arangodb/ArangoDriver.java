@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
  */
 
 package com.arangodb;
@@ -70,7 +71,11 @@ import com.arangodb.util.DumpHandler;
 import com.arangodb.util.ResultSetUtils;
 
 /**
+ * ArangoDB driver. Most of the functionality to use ArangoDB is provided via
+ * this class.
+ * 
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  */
 public class ArangoDriver extends BaseArangoDriver {
 
@@ -106,10 +111,21 @@ public class ArangoDriver extends BaseArangoDriver {
 
   private String database;
 
+  /**
+   * Constructor
+   * 
+   * @param configure
+   */
   public ArangoDriver(ArangoConfigure configure) {
     this(configure, null);
   }
 
+  /**
+   * Constructor
+   * 
+   * @param configure
+   * @param database
+   */
   public ArangoDriver(ArangoConfigure configure, String database) {
 
     this.database = configure.getDefaultDatabase();

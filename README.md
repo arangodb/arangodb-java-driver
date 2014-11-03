@@ -270,4 +270,81 @@ If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Auth
 
 
 #Graphs
-(not implemented yet)
+This driver supports the new [graph api](https://docs.arangodb.com/HttpGharial/README.html).
+
+Some of the basic graph operations are described in the following:
+
+##add graph
+A graph consists of vertices and edges (stored in collections). Which collections are used within a graph is defined via edge definitions. A graph can contain more than one edge definition, at least one is needed.
+
+``` Java
+  List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+  EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+  // define the edgeCollection to store the edges
+  edgeDefinition.setCollection("myEdgeCollection");
+  // define a set of collections where an edge is going out...
+  List<String> from = new ArrayList<String>();
+  // and add one or more collections
+  from.add("myCollection1");
+  from.add("myCollection2");
+  edgeDefinition.setFrom(from)
+   
+  // repeat this for the collections where an edge is going into  
+  List<String> to = new ArrayList<String>();
+  to.add("myCollection1");
+  to.add("myCollection3");
+  edgeDefinition.setTo(to);
+  
+  edgeDefinitions.add(edgeDefinition);
+  
+  // A graph can contain additional vertex collections, defined in the set of orphan collections
+  List<String> orphanCollections = new ArrayList<String>(); 
+  orphanCollections.add("myCollection4");
+  orphanCollections.add("myCollection5");
+  
+  // now it's possible to create a graph (the last parameter is the waitForSync option)
+  GraphEntity graph = arangoDriver.createGraph("myGraph", edgeDefinitions, orphanCollections, true);
+```
+
+##delete graph
+
+A graph can be deleted by its name
+
+``` Java
+  arangoDriver.deleteGraph("myGraph");
+```
+
+##add vertex
+
+Vertices are stored in the vertex collections defined above.
+
+``` Java
+  MyObject myObject1 = new MyObject("Homer", 38);
+  MyObject myObject2 = new MyObject("Marge", 36);
+  DocumentEntity<MyObject> vertexFrom = arangoDriver.graphCreateVertex(
+      "myGraph",
+      "collection1",
+      myObject1,
+      true); 
+  
+  DocumentEntity<MyObject> vertexTo = arangoDriver.graphCreateVertex(
+      "myGraph",
+      "collection3",
+      myObject2,
+      true); 
+```
+
+## add edge
+
+Now an edge can be created to set a relation between vertices
+
+``` Java
+    EdgeEntity<?> edge = arangoDriver.graphCreateEdge(
+      "myGraph",
+      "myEdgeCollection",
+      null,
+      vertexFrom.getDocumentHandle(),
+      vertexTo.getDocumentHandle(),
+      null,
+      null);
+``` 
