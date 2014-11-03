@@ -21,16 +21,12 @@
 
 package com.arangodb;
 
-import java.util.Collection;
 import java.util.List;
 
-import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DeletedEntity;
-import com.arangodb.entity.Direction;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
-import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphsEntity;
 import com.arangodb.impl.BaseDriverInterface;
@@ -438,90 +434,4 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Boolean keepNull,
     Long rev,
     Long ifMatchRevision) throws ArangoException;
-
-  // ***********************************
-
-  <T> CursorEntity<DocumentEntity<T>> getVertices(
-    String database,
-    String graphName,
-    String vertexKey,
-    Class<?> clazz,
-    Integer batchSize,
-    Integer limit,
-    Boolean count,
-    Direction direction,
-    Collection<String> labels,
-    FilterCondition... properties) throws ArangoException;
-
-  <T> CursorResultSet<DocumentEntity<T>> getVerticesWithResultSet(
-    String database,
-    String graphName,
-    String vertexKey,
-    Class<?> clazz,
-    Integer batchSize,
-    Integer limit,
-    Boolean count,
-    Direction direction,
-    Collection<String> labels,
-    FilterCondition... properties) throws ArangoException;
-
-  // <T> EdgeEntity<T> createEdge(
-  // String database,
-  // String graphName,
-  // String key,
-  // String fromHandle,
-  // String toHandle,
-  // Object value,
-  // String label,
-  // Boolean waitForSync) throws ArangoException;
-
-  <T> EdgeEntity<T> getEdge(
-    String database,
-    String graphName,
-    String key,
-    Class<?> clazz,
-    Long rev,
-    Long ifNoneMatchRevision,
-    Long ifMatchRevision) throws ArangoException;
-
-  DeletedEntity deleteEdge(
-    String database,
-    String graphName,
-    String key,
-    Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
-
-  <T> EdgeEntity<T> replaceEdge(
-    String database,
-    String graphName,
-    String key,
-    Object value,
-    Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
-
-  <T> CursorEntity<EdgeEntity<T>> getEdges(
-    String database,
-    String graphName,
-    String vertexKey,
-    Class<?> clazz,
-    Integer batchSize,
-    Integer limit,
-    Boolean count,
-    Direction direction,
-    Collection<String> labels,
-    FilterCondition... properties) throws ArangoException;
-
-  <T> CursorResultSet<EdgeEntity<T>> getEdgesWithResultSet(
-    String database,
-    String graphName,
-    String vertexKey,
-    Class<?> clazz,
-    Integer batchSize,
-    Integer limit,
-    Boolean count,
-    Direction direction,
-    Collection<String> labels,
-    FilterCondition... properties) throws ArangoException;
 }
