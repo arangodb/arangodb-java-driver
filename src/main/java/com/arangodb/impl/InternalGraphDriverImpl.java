@@ -593,6 +593,36 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
   }
 
+  @Override
+  public <T> EdgeEntity<T> updateEdge(
+    String database,
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    Object value,
+    Boolean waitForSync,
+    Boolean keepNull,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+
+    validateCollectionName(graphName);
+    HttpResponseEntity res = httpManager.doPatch(
+      createEndpointUrl(
+        baseUrl,
+        database,
+        "/_api/gharial",
+        StringUtils.encodeUrl(graphName),
+        "/edge",
+        StringUtils.encodeUrl(edgeCollectionName),
+        StringUtils.encodeUrl(key)),
+      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).put("keepNull", keepNull).put("rev", rev).get(),
+      value == null ? null : EntityFactory.toJsonString(value));
+
+    return createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
+
+  }
+
   // ****************************************************************************
 
   @Override

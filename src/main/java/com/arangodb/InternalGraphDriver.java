@@ -218,6 +218,20 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     T vertex,
     Boolean waitForSync) throws ArangoException;
 
+  /**
+   * Gets a vertex with the given key if it is contained within your graph.
+   * 
+   * @param database
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param clazz
+   * @param rev
+   * @param ifNoneMatchRevision
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
   <T> DocumentEntity<T> getVertex(
     String database,
     String graphName,
@@ -228,6 +242,21 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException;
 
+  /**
+   * Replaces a vertex with the given key by the content in the body. This will
+   * only run successfully if the vertex is contained within the graph.
+   * 
+   * @param database
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param vertex
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return <T> DocumentEntity<T>
+   * @throws ArangoException
+   */
   <T> DocumentEntity<T> replaceVertex(
     String database,
     String graphName,
@@ -238,6 +267,22 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
+  /**
+   * Updates a vertex with the given key by adding the content in the body. This
+   * will only run successfully if the vertex is contained within the graph.
+   * 
+   * @param databaseName
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param vertex
+   * @param keepNull
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return <T> DocumentEntity<T>
+   * @throws ArangoException
+   */
   <T> DocumentEntity<T> updateVertex(
     String databaseName,
     String graphName,
@@ -249,6 +294,20 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
+  /**
+   * Deletes a vertex with the given key, if it is contained within the graph.
+   * Furthermore all edges connected to this vertex will be deleted.
+   * 
+   * @param database
+   * @param graphName
+   * @param collectionName
+   * @param key
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return DeletedEntity
+   * @throws ArangoException
+   */
   DeletedEntity deleteVertex(
     String database,
     String graphName,
@@ -258,6 +317,20 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
+  /**
+   * 
+   * 
+   * @param database
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param fromHandle
+   * @param toHandle
+   * @param value
+   * @param waitForSync
+   * @return <T> EdgeEntity<T>
+   * @throws ArangoException
+   */
   <T> EdgeEntity<T> createEdge(
     String database,
     String graphName,
@@ -268,6 +341,20 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Object value,
     Boolean waitForSync) throws ArangoException;
 
+  /**
+   * Loads an edge with the given key if it is contained within your graph.
+   * 
+   * @param database
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param clazz
+   * @param rev
+   * @param ifNoneMatchRevision
+   * @param ifMatchRevision
+   * @return <T> EdgeEntity<T>
+   * @throws ArangoException
+   */
   <T> EdgeEntity<T> getEdge(
     String database,
     String graphName,
@@ -278,6 +365,19 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException;
 
+  /**
+   * Deletes an edge with the given id, if it is contained within the graph.
+   * 
+   * @param database
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return DeletedEntity
+   * @throws ArangoException
+   */
   DeletedEntity deleteEdge(
     String database,
     String graphName,
@@ -287,6 +387,21 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 
+  /**
+   * Replaces an edge with the given key by the content in the body. This will
+   * only run successfully if the edge is contained within the graph.
+   * 
+   * @param database
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param value
+   * @param waitForSync
+   * @param rev
+   * @param ifMatchRevision
+   * @return <T> EdgeEntity<T>
+   * @throws ArangoException
+   */
   <T> EdgeEntity<T> replaceEdge(
     String database,
     String graphName,
@@ -294,6 +409,33 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String key,
     Object value,
     Boolean waitForSync,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException;
+
+  /**
+   * Updates an edge with the given key by adding the content in the body. This
+   * will only run successfully if the edge is contained within the graph.
+   * 
+   * @param database
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param value
+   * @param waitForSync
+   * @param keepNull
+   * @param rev
+   * @param ifMatchRevision
+   * @return <T> EdgeEntity<T>
+   * @throws ArangoException
+   */
+  <T> EdgeEntity<T> updateEdge(
+    String database,
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    Object value,
+    Boolean waitForSync,
+    Boolean keepNull,
     Long rev,
     Long ifMatchRevision) throws ArangoException;
 

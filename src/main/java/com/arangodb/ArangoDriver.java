@@ -1912,6 +1912,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Gets a vertex with the given key if it is contained within your graph.
    * 
    * @param graphName
    * @param collectionName
@@ -1926,6 +1927,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Gets a vertex with the given key if it is contained within your graph.
    * 
    * @param graphName
    * @param collectionName
@@ -1934,7 +1936,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param rev
    * @param ifNoneMatchRevision
    * @param ifMatchRevision
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphGetVertex(
@@ -1957,11 +1959,13 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Deletes a vertex with the given key, if it is contained within the graph.
+   * Furthermore all edges connected to this vertex will be deleted.
    * 
    * @param graphName
    * @param collectionName
    * @param key
-   * @return
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertex(String graphName, String collectionName, String key) throws ArangoException {
@@ -1969,12 +1973,14 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Deletes a vertex with the given key, if it is contained within the graph.
+   * Furthermore all edges connected to this vertex will be deleted.
    * 
    * @param graphName
    * @param collectionName
    * @param key
    * @param waitForSync
-   * @return
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertex(String graphName, String collectionName, String key, Boolean waitForSync)
@@ -1983,6 +1989,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Deletes a vertex with the given key, if it is contained within the graph.
+   * Furthermore all edges connected to this vertex will be deleted.
    * 
    * @param graphName
    * @param collectionName
@@ -1990,7 +1998,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param waitForSync
    * @param rev
    * @param ifMatchRevision
-   * @return
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertex(
@@ -2011,12 +2019,14 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Replaces a vertex with the given key by the content in the body. This will
+   * only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
    * @param collectionName
    * @param key
    * @param vertex
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
@@ -2025,6 +2035,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Replaces a vertex with the given key by the content in the body. This will
+   * only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
    * @param collectionName
@@ -2033,7 +2045,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param waitForSync
    * @param rev
    * @param ifMatchRevision
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphReplaceVertex(
@@ -2056,13 +2068,15 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Updates a vertex with the given key by adding the content in the body. This
+   * will only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
    * @param collectionName
    * @param key
    * @param vertex
    * @param keepNull
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphUpdateVertex(
@@ -2084,6 +2098,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Updates a vertex with the given key by adding the content in the body. This
+   * will only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
    * @param collectionName
@@ -2093,7 +2109,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param waitForSync
    * @param rev
    * @param ifMatchRevision
-   * @return
+   * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphUpdateVertex(
@@ -2118,6 +2134,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Stores a new edge with the information contained within the body into the
+   * given collection.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2127,7 +2145,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param value
    * @param label
    * @param waitForSync
-   * @return
+   * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphCreateEdge(
@@ -2150,13 +2168,15 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Stores a new edge with the information contained within the body into the
+   * given collection.
    * 
    * @param graphName
    * @param edgeCollectionName
    * @param key
    * @param fromHandle
    * @param toHandle
-   * @return
+   * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphCreateEdge(
@@ -2177,6 +2197,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Loads an edge with the given key if it is contained within your graph.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2185,7 +2206,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param rev
    * @param ifNoneMatchRevision
    * @param ifMatchRevision
-   * @return
+   * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphGetEdge(
@@ -2208,12 +2229,13 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Loads an edge with the given key if it is contained within your graph.
    * 
    * @param graphName
    * @param edgeCollectionName
    * @param key
    * @param clazz
-   * @return
+   * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphGetEdge(String graphName, String edgeCollectionName, String key, Class<?> clazz)
@@ -2222,6 +2244,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Deletes an edge with the given id, if it is contained within the graph.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2234,6 +2257,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Deletes an edge with the given id, if it is contained within the graph.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2248,6 +2272,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Deletes an edge with the given id, if it is contained within the graph.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2276,6 +2301,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Replaces an edge with the given key by the content in the body. This will
+   * only run successfully if the edge is contained within the graph.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2290,6 +2317,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Replaces an edge with the given key by the content in the body. This will
+   * only run successfully if the edge is contained within the graph.
    * 
    * @param graphName
    * @param edgeCollectionName
@@ -2316,6 +2345,72 @@ public class ArangoDriver extends BaseArangoDriver {
       key,
       value,
       waitForSync,
+      rev,
+      ifMatchRevision);
+  }
+
+  /**
+   * Updates an edge with the given key by adding the content in the body. This
+   * will only run successfully if the edge is contained within the graph.
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param value
+   * @param keepNull
+   * @return
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphUpdateEdge(
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    Object value,
+    Boolean keepNull) throws ArangoException {
+    return graphDriver.updateEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      key,
+      value,
+      null,
+      keepNull,
+      null,
+      null);
+  }
+
+  /**
+   * Updates an edge with the given key by adding the content in the body. This
+   * will only run successfully if the edge is contained within the graph.
+   * 
+   * @param graphName
+   * @param edgeCollectionName
+   * @param key
+   * @param value
+   * @param waitForSync
+   * @param keepNull
+   * @param rev
+   * @param ifMatchRevision
+   * @return
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphUpdateEdge(
+    String graphName,
+    String edgeCollectionName,
+    String key,
+    Object value,
+    Boolean waitForSync,
+    Boolean keepNull,
+    Long rev,
+    Long ifMatchRevision) throws ArangoException {
+    return graphDriver.updateEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      key,
+      value,
+      waitForSync,
+      keepNull,
       rev,
       ifMatchRevision);
   }
