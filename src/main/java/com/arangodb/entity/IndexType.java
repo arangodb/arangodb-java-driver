@@ -19,7 +19,7 @@ package com.arangodb.entity;
 /**
  * Index Type.
  * @author tamtam180 - kirscheless at gmail.com
- * @see http://www.arangodb.org/manuals/current/HttpIndex.html#HttpIndexIntro
+ * @see http://www.arangodb.com/manuals/current/HttpIndex.html#HttpIndexIntro
  */
 public enum IndexType {
   /** Primary Index */

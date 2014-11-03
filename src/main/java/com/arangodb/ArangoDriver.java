@@ -1368,7 +1368,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * @return
    * @throws ArangoException
-   * @see http://www.arangodb.org/manuals/current/HttpDatabase.html#
+   * @see http://www.arangodb.com/manuals/current/HttpDatabase.html#
    *      HttpDatabaseCurrent
    * @since 1.4.0
    */
@@ -1380,7 +1380,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @return
    * @throws ArangoException
    * @see http 
-   *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList2
+   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseList2
    * @since 1.4.0
    */
   public StringsResultEntity getDatabases() throws ArangoException {
@@ -1392,7 +1392,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @return
    * @throws ArangoException
    * @see http 
-   *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseList
+   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseList
    * @since 1.4.1
    */
   public StringsResultEntity getDatabases(boolean currentUserAccessableOnly) throws ArangoException {
@@ -1416,7 +1416,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @return
    * @throws ArangoException
    * @see http 
-   *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseCreate
+   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseCreate
    * @since 1.4.0
    */
   public BooleanResultEntity createDatabase(String database, UserEntity... users) throws ArangoException {
@@ -1428,7 +1428,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @return
    * @throws ArangoException
    * @see http 
-   *      ://www.arangodb.org/manuals/current/HttpDatabase.html#HttpDatabaseDelete
+   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseDelete
    * @since 1.4.0
    */
   public BooleanResultEntity deleteDatabase(String database) throws ArangoException {

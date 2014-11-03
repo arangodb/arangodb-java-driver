@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * @see http://www.arangodb.org/manuals/current/HttpImport.html
+ * @see http://www.arangodb.com/manuals/current/HttpImport.html
  */
 public class InternalJobsDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalJobsDriver {
 

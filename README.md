@@ -246,7 +246,7 @@ instead of using a for statement you can also use an iterator:
 ```
 
 #User Management
-If you are using [authentication] (http://docs.arangodb.org/ConfigureArango/Authentication.html) you can manage users with the driver.
+If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Authentication.html) you can manage users with the driver.
 
 ##add user
 ``` Java

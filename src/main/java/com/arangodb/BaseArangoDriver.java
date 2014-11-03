@@ -86,7 +86,7 @@ public abstract class BaseArangoDriver {
    * @param allowNull
    * @throws ArangoException
    * @see http
-   *      ://www.arangodb.org/manuals/current/NamingConventions.html#DatabaseNames
+   *      ://www.arangodb.com/manuals/current/NamingConventions.html#DatabaseNames
    */
   protected void validateDatabaseName(String database, boolean allowNull) throws ArangoException {
     boolean valid = false;

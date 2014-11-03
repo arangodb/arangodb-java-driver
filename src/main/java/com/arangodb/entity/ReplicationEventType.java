@@ -21,7 +21,7 @@ import java.util.TreeMap;
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * @since 1.4.0
- * @see http://www.arangodb.org/manuals/current/RefManualReplication.html#RefManualReplicationEventTypes
+ * @see http://www.arangodb.com/manuals/current/RefManualReplication.html#RefManualReplicationEventTypes
  */
 public enum ReplicationEventType {
 
