@@ -117,12 +117,12 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
   public void test_get_edge_graph_not_found() throws ArangoException {
 
     try {
-      driver.getEdge("g1", "v1", null);
+      driver.graphGetEdge("foo", "bar", "v1", null);
       fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1901));
-      assertThat(e.getErrorMessage(), startsWith("no graph named"));
+      assertThat(e.getErrorNumber(), is(1924));
+      assertThat(e.getErrorMessage(), startsWith("graph not found"));
     }
 
   }

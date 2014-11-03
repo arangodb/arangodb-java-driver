@@ -126,10 +126,10 @@ public class ArangoDriverDocumentTest extends BaseTest {
    */
   @Test
   public void test_create_404() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "テスト☆ユーザー", 22);
+    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
     try {
       driver.createDocument(collectionName404, value, false, true);
-      fail("例外が発生しないといけないの");
+      fail("no exception was thrown");
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
       assertThat(e.getErrorNumber(), is(1203));
@@ -145,7 +145,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
   @Test
   public void test_create_404_insert() throws ArangoException {
 
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "テスト☆ユーザー", 22);
+    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
     // 存在しないコレクションに追加しようとする
     DocumentEntity<TestComplexEntity01> res = driver.createDocument(collectionName404, value, true, true);
     assertThat(res, is(notNullValue()));
@@ -161,7 +161,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
   @Test
   public void test_replace() throws ArangoException {
 
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "テスト☆ユーザー", 22);
+    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 
     // Create Document
     DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, true, false);
@@ -183,11 +183,11 @@ public class ArangoDriverDocumentTest extends BaseTest {
   @Test
   public void test_replace_404() throws ArangoException {
 
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "テスト☆ユーザー", 22);
+    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
     // 存在しないコレクションに追加しようとする
     try {
       driver.replaceDocument(collectionName404, 1, value, null, null, null);
-      fail("例外が発生しないといけないの");
+      fail("no exception was thrown");
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
       assertThat(e.getErrorNumber(), is(1203));
@@ -196,11 +196,11 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
   @Test
   public void test_replace_404_2() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "テスト☆ユーザー", 22);
+    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
     // 存在するコレクションだが、ドキュメントが存在しない
     try {
       driver.replaceDocument(collectionName, 1, value, null, null, null);
-      fail("例外が発生しないといけないの");
+      fail("no exception was thrown");
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
       assertThat(e.getErrorNumber(), is(1202));
@@ -209,7 +209,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
   @Test
   public void test_partial_update() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "テスト☆ユーザー", 22);
+    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 
     // Create Document
     DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, true, false);

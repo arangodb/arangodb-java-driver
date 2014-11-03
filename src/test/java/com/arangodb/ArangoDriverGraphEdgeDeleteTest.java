@@ -73,12 +73,12 @@ public class ArangoDriverGraphEdgeDeleteTest extends BaseGraphTest {
   @Test
   public void test_delete_edge_no_graph() throws ArangoException {
     try {
-      driver.deleteEdge("g1", "hoge");
+      driver.graphDeleteEdge("foo", "bar", null);
       fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1901));
-      assertThat(e.getErrorMessage(), startsWith("no graph named"));
+      assertThat(e.getErrorNumber(), is(1924));
+      assertThat(e.getErrorMessage(), startsWith("graph not found"));
     }
 
   }
