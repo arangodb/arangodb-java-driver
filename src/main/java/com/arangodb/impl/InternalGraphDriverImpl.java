@@ -17,18 +17,25 @@
 package com.arangodb.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.arangodb.ArangoConfigure;
+import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.InternalCursorDriver;
+import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DeletedEntity;
+import com.arangodb.entity.Direction;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EntityFactory;
+import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphGetCollectionsResultEntity;
 import com.arangodb.entity.GraphsEntity;
@@ -609,6 +616,45 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
   }
 
+  @Override
+  public <T> CursorEntity<EdgeEntity<T>> getEdges(
+    String database,
+    String graphName,
+    String vertexKey,
+    Class<?> clazz,
+    Integer batchSize,
+    Integer limit,
+    Boolean count,
+    Direction direction,
+    Collection<String> labels,
+    ArangoDriver driver,
+    FilterCondition... properties) throws ArangoException {
+
+    validateCollectionName(graphName);
+
+    String getEdges = "var db = require('internal').db;\n" + "var graph = require('org/arangodb/general-graph');\n"
+        + "var g = graph._graph('" + graphName + "');\n" + "g._edges();";
+    driver.executeScript(getEdges);
+
+    Map<String, Object> filter = new MapBuilder().put("direction", toLower(direction)).put("labels", labels)
+        .put("properties", properties).get();
+
+    HttpResponseEntity res = httpManager.doPost(
+      createEndpointUrl(
+        baseUrl,
+        database,
+        "/_api/graph",
+        StringUtils.encodeUrl(graphName),
+        "edges",
+        StringUtils.encodeUrl(vertexKey)),
+      null,
+      EntityFactory.toJsonString(new MapBuilder().put("batchSize", batchSize).put("limit", limit).put("count", count)
+          .put("filter", filter).get()));
+
+    return createEntity(res, CursorEntity.class, EdgeEntity.class, clazz);
+
+  }
+
   private String convertToString(EdgeDefinitionEntity edgeDefinition) {
     JsonObject rawEdgeDefinition = (JsonObject) EntityFactory.toJsonElement(
       new MapBuilder().put("edgeDefinition", edgeDefinition).get(),
@@ -617,4 +663,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     return edgeDefinitionJson.toString();
   }
 
+  private String toLower(Enum<?> e) {
+    if (e == null) {
+      return null;
+    }
+    return e.name().toLowerCase(Locale.US);
+  }
 }

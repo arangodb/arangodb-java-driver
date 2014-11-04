@@ -20,7 +20,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Test;
+
+import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.GraphEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -47,6 +51,18 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
     }
     return set;
   }
+
+  @Test
+  public void test_getEdges() throws ArangoException {
+
+    String graphName = "UnitTestGraph";
+
+    GraphEntity graph = this.createTestGraph();
+    CursorEntity<EdgeEntity<?>> blub = driver.graphGetEdges(graph.getName(), null);
+    blub = blub;
+
+  }
+
   //
   // @Test
   // public void test_get_edges() throws ArangoException {

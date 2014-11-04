@@ -68,6 +68,7 @@ import com.arangodb.http.InvocationHandlerImpl;
 import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
 import com.arangodb.util.DumpHandler;
+import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ResultSetUtils;
 
 /**
@@ -2448,6 +2449,20 @@ public class ArangoDriver extends BaseArangoDriver {
       keepNull,
       rev,
       ifMatchRevision);
+  }
+
+  // Some methods not using the graph api
+
+  public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz) throws ArangoException {
+
+    validateCollectionName(graphName);
+    String query = "return graph_edges(@graphName, null)";
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
+
+    CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
+
+    return result;
+
   }
 
   // ***************************************

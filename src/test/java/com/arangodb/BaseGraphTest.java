@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 
 import com.arangodb.entity.EdgeDefinitionEntity;
+import com.arangodb.entity.GraphEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -84,4 +85,26 @@ public class BaseGraphTest extends BaseTest {
     return orphanCollections;
   }
 
+  protected GraphEntity createTestGraph() throws ArangoException {
+    String createGraph = "var db = require('internal').db;\n"
+        + "var graphModule = require('org/arangodb/general-graph');\n"
+        + "graphModule._create('CountryGraph', [graphModule._relation('hasBorderWith', ['Country'], ['Country'])]);\n"
+        + "db.Country.save({'_key' : 'Germany'});\n" + "db.Country.save({'_key' : 'Austria'});\n"
+        + "db.Country.save({'_key' : 'Switzerland'});\n" + "db.Country.save({'_key' : 'Marocco'});\n"
+        + "db.Country.save({'_key' : 'Algeria'});\n" + "db.Country.save({'_key' : 'Tunesia'});\n"
+        + "db.Country.save({'_key' : 'Brasil'});\n" + "db.Country.save({'_key' : 'Argentina'});\n"
+        + "db.Country.save({'_key' : 'Uruguay'});\n" + "db.Country.save({'_key' : 'Australia'});\n"
+        + "db.hasBorderWith.save('Country/Germany', 'Country/Austria', {});\n"
+        + "db.hasBorderWith.save('Country/Germany', 'Country/Switzerland', {});\n"
+        + "db.hasBorderWith.save('Country/Switzerland', 'Country/Austria', {});\n"
+        + "db.hasBorderWith.save('Country/Marocco', 'Country/Algeria', {});\n"
+        + "db.hasBorderWith.save('Country/Algeria', 'Country/Tunesia', {});\n"
+        + "db.hasBorderWith.save('Country/Brasil', 'Country/Argentina', {});\n"
+        + "db.hasBorderWith.save('Country/Brasil', 'Country/Uruguay', {});\n"
+        + "db.hasBorderWith.save('Country/Argentina', 'Country/Uruguay', {});";
+
+    driver.executeScript(createGraph);
+
+    return driver.getGraph("CountryGraph");
+  }
 }

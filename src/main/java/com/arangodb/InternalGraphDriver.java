@@ -21,12 +21,16 @@
 
 package com.arangodb;
 
+import java.util.Collection;
 import java.util.List;
 
+import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DeletedEntity;
+import com.arangodb.entity.Direction;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphsEntity;
 import com.arangodb.impl.BaseDriverInterface;
@@ -434,4 +438,18 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Boolean keepNull,
     Long rev,
     Long ifMatchRevision) throws ArangoException;
+
+  <T> CursorEntity<EdgeEntity<T>> getEdges(
+    String database,
+    String graphName,
+    String vertexKey,
+    Class<?> clazz,
+    Integer batchSize,
+    Integer limit,
+    Boolean count,
+    Direction direction,
+    Collection<String> labels,
+    ArangoDriver driver,
+    FilterCondition... properties) throws ArangoException;
+
 }
