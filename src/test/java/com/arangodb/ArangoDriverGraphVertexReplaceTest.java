@@ -27,6 +27,7 @@ import com.arangodb.entity.DocumentEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  *
  */
 public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
