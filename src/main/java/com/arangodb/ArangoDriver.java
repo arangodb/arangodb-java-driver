@@ -2454,6 +2454,13 @@ public class ArangoDriver extends BaseArangoDriver {
 
   // Some methods not using the graph api
 
+  /**
+   * Returns all Edges of a graph, each edge as a PlainEdgeEntity.
+   * 
+   * @param graphName
+   * @return CursorEntity<PlainEdgeEntity>
+   * @throws ArangoException
+   */
   public CursorEntity<PlainEdgeEntity> graphGetEdges(String graphName) throws ArangoException {
 
     validateCollectionName(graphName);
@@ -2466,11 +2473,22 @@ public class ArangoDriver extends BaseArangoDriver {
 
   }
 
-  public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz) throws ArangoException {
+  /**
+   * Returns all Edges of a a given vertex.
+   * 
+   * @param graphName
+   * @param clazz
+   * @param vertexDocumentHandle
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz, String vertexDocumentHandle)
+      throws ArangoException {
 
     validateCollectionName(graphName);
-    String query = "for i in graph_edges(@graphName, null) return i";
-    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
+    String query = "for i in graph_edges(@graphName, @vertexDocumentHandle) return i";
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+        .put("vertexDocumentHandle", vertexDocumentHandle).get();
 
     CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
 

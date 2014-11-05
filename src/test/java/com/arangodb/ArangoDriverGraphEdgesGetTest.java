@@ -23,6 +23,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.PlainEdgeEntity;
 
@@ -52,60 +54,56 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 
   }
 
-  // @Test
-  // public void test_getEdges_Vertex() throws ArangoException {
-  // String graphName = "UnitTestGraph";
-  //
-  // GraphEntity graph = driver.createGraph(
-  // graphName,
-  // this.createEdgeDefinitions(1, 0),
-  // this.createOrphanCollections(0),
-  // true);
-  //
-  // DocumentEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(
-  // graphName,
-  // "from1-1",
-  // new TestComplexEntity01("Homer", "A Simpson", 38),
-  // true);
-  //
-  // DocumentEntity<TestComplexEntity01> vertex2 =
-  // driver.graphCreateVertex(graphName, "to1-1", new TestComplexEntity01(
-  // "Marge", "A Simpson", 36), true);
-  //
-  // DocumentEntity<TestComplexEntity01> vertex3 =
-  // driver.graphCreateVertex(graphName, "to1-1", new TestComplexEntity01(
-  // "Bart", "A Simpson", 10), true);
-  //
-  // EdgeEntity<?> edge1 = driver.graphCreateEdge(
-  // graphName,
-  // "edge-1",
-  // null,
-  // vertex1.getDocumentHandle(),
-  // vertex2.getDocumentHandle(),
-  // new TestComplexEntity02(1, 2, 3),
-  // null);
-  //
-  // EdgeEntity<?> edge2 = driver.graphCreateEdge(
-  // graphName,
-  // "edge-1",
-  // null,
-  // vertex1.getDocumentHandle(),
-  // vertex3.getDocumentHandle(),
-  // new TestComplexEntity02(4, 5, 6),
-  // null);
-  //
-  // CursorEntity<TestComplexEntity02> cursor = driver.graphGetEdges(
-  // graphName,
-  // TestComplexEntity02.class,
-  // vertex1.getDocumentHandle(),
-  // Direction.ANY);
-  // assertThat(cursor.getCount(), is(2));
-  //
-  // cursor = driver.graphGetEdges(graphName, TestComplexEntity02.class,
-  // vertex2.getDocumentHandle(), Direction.ANY);
-  // assertThat(cursor.getCount(), is(1));
-  //
-  // }
+  @Test
+  public void test_getEdges_Vertex() throws ArangoException {
+    String graphName = "UnitTestGraph";
+
+    GraphEntity graph = driver.createGraph(
+      graphName,
+      this.createEdgeDefinitions(1, 0),
+      this.createOrphanCollections(0),
+      true);
+
+    DocumentEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(
+      graphName,
+      "from1-1",
+      new TestComplexEntity01("Homer", "A Simpson", 38),
+      true);
+
+    DocumentEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(graphName, "to1-1", new TestComplexEntity01(
+        "Marge", "A Simpson", 36), true);
+
+    DocumentEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(graphName, "to1-1", new TestComplexEntity01(
+        "Bart", "A Simpson", 10), true);
+
+    EdgeEntity<?> edge1 = driver.graphCreateEdge(
+      graphName,
+      "edge-1",
+      null,
+      vertex1.getDocumentHandle(),
+      vertex2.getDocumentHandle(),
+      new TestComplexEntity02(1, 2, 3),
+      null);
+
+    EdgeEntity<?> edge2 = driver.graphCreateEdge(
+      graphName,
+      "edge-1",
+      null,
+      vertex1.getDocumentHandle(),
+      vertex3.getDocumentHandle(),
+      new TestComplexEntity02(4, 5, 6),
+      null);
+
+    CursorEntity<TestComplexEntity02> cursor = driver.graphGetEdges(
+      graphName,
+      TestComplexEntity02.class,
+      vertex1.getDocumentHandle());
+    assertThat(cursor.getCount(), is(2));
+
+    cursor = driver.graphGetEdges(graphName, TestComplexEntity02.class, vertex2.getDocumentHandle());
+    assertThat(cursor.getCount(), is(1));
+
+  }
   //
   // @Test
   // public void test_get_edges() throws ArangoException {
