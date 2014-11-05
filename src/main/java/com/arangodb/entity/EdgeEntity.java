@@ -16,13 +16,18 @@
 
 package com.arangodb.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  *
  */
 public class EdgeEntity<T> extends DocumentEntity<T> {
 
+  @SerializedName("_from")
   String fromVertexHandle;
+  @SerializedName("_to")
   String toVertexHandle;
 
   public String getFromVertexHandle() {

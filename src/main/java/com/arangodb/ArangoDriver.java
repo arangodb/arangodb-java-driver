@@ -47,6 +47,7 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.IndexesEntity;
 import com.arangodb.entity.JobsEntity;
+import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.Policy;
 import com.arangodb.entity.ReplicationApplierConfigEntity;
 import com.arangodb.entity.ReplicationApplierStateEntity;
@@ -2453,10 +2454,22 @@ public class ArangoDriver extends BaseArangoDriver {
 
   // Some methods not using the graph api
 
+  public CursorEntity<PlainEdgeEntity> graphGetEdges(String graphName) throws ArangoException {
+
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, null) return i";
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
+
+    CursorEntity<PlainEdgeEntity> result = this.executeQuery(query, bindVars, PlainEdgeEntity.class, true, 20);
+
+    return result;
+
+  }
+
   public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz) throws ArangoException {
 
     validateCollectionName(graphName);
-    String query = "return graph_edges(@graphName, null)";
+    String query = "for i in graph_edges(@graphName, null) return i";
     Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
 
     CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
@@ -2464,6 +2477,25 @@ public class ArangoDriver extends BaseArangoDriver {
     return result;
 
   }
+
+  // public <T> CursorEntity<EdgeEntity<T>> graphGetEdgesWithData(
+  // String graphName,
+  // Class<T> clazz,
+  // String vertexDocumentHandle,
+  // int i) throws ArangoException {
+  //
+  // validateCollectionName(graphName);
+  // String query =
+  // "for i in graph_edges(@graphName, @vertexDocumentHandle) return i";
+  // Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+  // .put("vertexDocumentHandle", vertexDocumentHandle).get();
+  //
+  // CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true,
+  // 20);
+  //
+  // return (CursorEntity<EdgeEntity<T>>) result;
+  //
+  // }
 
   // ***************************************
   // *** end of graph **********************
