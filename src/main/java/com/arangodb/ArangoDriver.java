@@ -61,6 +61,7 @@ import com.arangodb.entity.SimpleByResultEntity;
 import com.arangodb.entity.StatisticsDescriptionEntity;
 import com.arangodb.entity.StatisticsEntity;
 import com.arangodb.entity.StringsResultEntity;
+import com.arangodb.entity.TransactionEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
@@ -163,7 +164,7 @@ public class ArangoDriver extends BaseArangoDriver {
     } else {
       this.transactionDriver = (InternalTransactionDriver) Proxy.newProxyInstance(
         InternalTransactionDriver.class.getClassLoader(),
-        new Class<?>[]{InternalTransactionDriver.class},
+        new Class<?>[] { InternalTransactionDriver.class },
         new InvocationHandlerImpl(this.transactionDriver));
       this.jobsDriver = (InternalJobsDriver) Proxy.newProxyInstance(
         InternalJobsDriver.class.getClassLoader(),
@@ -2600,13 +2601,11 @@ public class ArangoDriver extends BaseArangoDriver {
     return aqlFunctionsDriver.deleteAqlFunction(name, isNameSpace);
   }
 
-  public TransactionEntity createTransaction (String action) {
+  public TransactionEntity createTransaction(String action) {
     return this.transactionDriver.createTransaction(action);
   };
 
-
-  public <T> T executeTransaction(TransactionEntity transactionEntity, Class<T> clazz)
-    throws ArangoException {
+  public <T> T executeTransaction(TransactionEntity transactionEntity, Class<T> clazz) throws ArangoException {
     return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity, clazz);
   }
 }
