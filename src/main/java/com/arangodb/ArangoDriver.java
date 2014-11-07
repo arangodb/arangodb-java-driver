@@ -109,6 +109,7 @@ public class ArangoDriver extends BaseArangoDriver {
   private InternalEndpointDriver endpointDriver;
   private InternalReplicationDriver replicationDriver;
   private InternalGraphDriver graphDriver;
+  private InternalTransactionDriver transactionDriver;
 
   private String database;
 
@@ -157,7 +158,12 @@ public class ArangoDriver extends BaseArangoDriver {
       this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
       this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
       this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
+      this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
     } else {
+      this.transactionDriver = (InternalTransactionDriver) Proxy.newProxyInstance(
+        InternalTransactionDriver.class.getClassLoader(),
+        new Class<?>[]{InternalTransactionDriver.class},
+        new InvocationHandlerImpl(this.transactionDriver));
       this.jobsDriver = (InternalJobsDriver) Proxy.newProxyInstance(
         InternalJobsDriver.class.getClassLoader(),
         new Class<?>[] { InternalJobsDriver.class },
@@ -2479,5 +2485,15 @@ public class ArangoDriver extends BaseArangoDriver {
 
   public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
     return aqlFunctionsDriver.deleteAqlFunction(name, isNameSpace);
+  }
+
+  public TransactionEntity createTransaction (String action) {
+    return this.transactionDriver.createTransaction(action);
+  };
+
+
+  public <T> T executeTransaction(TransactionEntity transactionEntity, Class<T> clazz)
+    throws ArangoException {
+    return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity, clazz);
   }
 }
