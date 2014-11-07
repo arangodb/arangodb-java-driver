@@ -47,6 +47,7 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.IndexesEntity;
 import com.arangodb.entity.JobsEntity;
+import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.Policy;
 import com.arangodb.entity.ReplicationApplierConfigEntity;
 import com.arangodb.entity.ReplicationApplierStateEntity;
@@ -2459,17 +2460,129 @@ public class ArangoDriver extends BaseArangoDriver {
 
   // Some methods not using the graph api
 
-  public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz) throws ArangoException {
+  /**
+   * Returns all Edges of a graph, each edge as a PlainEdgeEntity.
+   * 
+   * @param graphName
+   * @return CursorEntity<PlainEdgeEntity>
+   * @throws ArangoException
+   */
+  public CursorEntity<PlainEdgeEntity> graphGetEdges(String graphName) throws ArangoException {
 
     validateCollectionName(graphName);
-    String query = "return graph_edges(@graphName, null)";
+    String query = "for i in graph_edges(@graphName, null) return i";
     Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
+
+    CursorEntity<PlainEdgeEntity> result = this.executeQuery(query, bindVars, PlainEdgeEntity.class, true, 20);
+
+    return result;
+
+  }
+
+  /**
+   * Returns all Edges of a given vertex.
+   * 
+   * @param graphName
+   * @param clazz
+   * @param vertexDocumentHandle
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz, String vertexDocumentHandle)
+      throws ArangoException {
+
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexDocumentHandle) return i";
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+        .put("vertexDocumentHandle", vertexDocumentHandle).get();
 
     CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
 
     return result;
 
   }
+
+  /**
+   * Returns all Edges of vertices matching the example object (non-primitive
+   * set to null will not be used for comparing).
+   * 
+   * @param graphName
+   * @param clazzT
+   * @param vertexExample
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T, S> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazzT, S vertexExample)
+      throws ArangoException {
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+        .get();
+
+    CursorEntity<T> result = this.executeQuery(query, bindVars, clazzT, true, 20);
+
+    return result;
+  }
+
+  /**
+   * Returns all Edges of vertices matching the map.
+   * 
+   * @param graphName
+   * @param clazzT
+   * @param vertexExample
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T> CursorEntity<T> graphGetEdgesByExampleMap(
+    String graphName,
+    Class<T> clazzT,
+    Map<String, Object> vertexExample) throws ArangoException {
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+        .get();
+
+    CursorEntity<T> result = this.executeQuery(query, bindVars, clazzT, true, 20);
+
+    return result;
+  }
+
+  public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
+    String graphName,
+    Class<T> clazzT,
+    S vertexExample) throws ArangoException {
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+        .get();
+
+    // CursorEntity<EdgeEntity<T>> result = this.executeQuery(query, bindVars,
+    // clazzT, true, 20);
+
+    return null;
+  }
+
+  // public <T> CursorEntity<EdgeEntity<T>> graphGetEdgesWithData(
+  // String graphName,
+  // Class<T> clazz,
+  // String vertexDocumentHandle,
+  // int i) throws ArangoException {
+  //
+  // validateCollectionName(graphName);
+  // String query =
+  // "for i in graph_edges(@graphName, @vertexDocumentHandle) return i";
+  // Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+  // .put("vertexDocumentHandle", vertexDocumentHandle).get();
+  //
+  // CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true,
+  // 20);
+  //
+  // return (CursorEntity<EdgeEntity<T>>) result;
+  //
+  // }
 
   // ***************************************
   // *** end of graph **********************
