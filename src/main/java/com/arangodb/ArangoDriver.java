@@ -2474,7 +2474,7 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * Returns all Edges of a a given vertex.
+   * Returns all Edges of a given vertex.
    * 
    * @param graphName
    * @param clazz
@@ -2494,6 +2494,69 @@ public class ArangoDriver extends BaseArangoDriver {
 
     return result;
 
+  }
+
+  /**
+   * Returns all Edges of vertices matching the example object (non-primitive
+   * set to null will not be used for comparing).
+   * 
+   * @param graphName
+   * @param clazzT
+   * @param vertexExample
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T, S> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazzT, S vertexExample)
+      throws ArangoException {
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+        .get();
+
+    CursorEntity<T> result = this.executeQuery(query, bindVars, clazzT, true, 20);
+
+    return result;
+  }
+
+  /**
+   * Returns all Edges of vertices matching the map.
+   * 
+   * @param graphName
+   * @param clazzT
+   * @param vertexExample
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T> CursorEntity<T> graphGetEdgesByExampleMap(
+    String graphName,
+    Class<T> clazzT,
+    Map<String, Object> vertexExample) throws ArangoException {
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+        .get();
+
+    CursorEntity<T> result = this.executeQuery(query, bindVars, clazzT, true, 20);
+
+    return result;
+  }
+
+  public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
+    String graphName,
+    Class<T> clazzT,
+    S vertexExample) throws ArangoException {
+    validateCollectionName(graphName);
+    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+
+    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+        .get();
+
+    // CursorEntity<EdgeEntity<T>> result = this.executeQuery(query, bindVars,
+    // clazzT, true, 20);
+
+    return null;
   }
 
   // public <T> CursorEntity<EdgeEntity<T>> graphGetEdgesWithData(
