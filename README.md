@@ -1,67 +1,64 @@
 
-This library ia a Java driver for ArangoDB.
+This library is a Java driver for ArangoDB.
 
-Support version: ArangoDB-1.4.x
+Support version: ArangoDB-2.2.x
 
 # Required
 
-* Java 5 later
+* [ArangoDB](https://github.com/triAGENS/ArangoDB) Version 2.2.x
+* Java 1.6 later
 
-# Maven
+
+# Basics
+
+## Maven
+
+To add the driver to your project with maven, add the following code to your pom.xml:
+
+```XML
+<dependencies>
+  <dependency>
+    <groupId>com.arangodb</groupId>
+    <artifactId>arangodb-java-driver</artifactId>
+    <version>[2.0,2.1]</version>
+  </dependency>
+	....
+</dependencies>
+```
+
+If you want to test with a snapshot version (e.g. 2.0-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
   <repository>
-    <id>at.orz</id>
-    <name>tamtam180 Repository</name>
-    <url>http://maven.orz.at/</url>
+    <id>arangodb-snapshots</id>
+    <url>https://oss.sonatype.org/content/groups/staging</url>
   </repository>
 </repositories>
-
-<dependencies>
-  <dependency>
-    <groupId>at.orz</groupId>
-    <artifactId>arangodb-java-driver</artifactId>
-    <version>[1.4,1.5)</version>
-  </dependency>
-</dependencies>
 ```
 
-Central Repository in preparation. Please wait.
 
-# JavaDoc
+## Driver Setup
 
-Not Ready. Please wait.
+Setup with default configuration:
 
-# Library Structure
+``` Java
+  // Initialize configure
+  ArangoConfigure configure = new ArangoConfigure();
+  configure.init();
 
-This library has 4 layers.
+  // Create Driver (this instance is thread-safe)
+  ArangoDriver arangoDriver = new ArangoDriver(configure);
+  
+```
 
-* Low layer
-    * ArangoDriver
-    * Corresponding to 1:1 and Rest-API.
-    * All exception is raised other than normal processing.
-    * **Multithread-safety**
-* Middle layer **(Not yet implemented)**
-    * ArangoClient
-    * It is a wrapper class that easy to use ArangoDriver.
-    * For example, you can not be an error to delete the ones that do not exist in the delete command,
-    That it may not be an error to generate a duplicate Collection,
-    it is provide you with an easy to use interface for general use.
-* High layer **(Not yet implemented)**
-    * object-oriented programming layer.
-    * Each class is CRUD.
-* JDBC layer **(Not yet implemented)**
-    * AQL for JDBC driver
 
-# How to use.
-
-## ArangoConfigure (/arangodb.properties)
+The driver is configured with some default values:
 
 <table>
 <tr><th>property-key</th><th>description</th><th>default value</th></tr>
 <tr><th>host</th><td>ArangoDB host</td><td>127.0.0.1</td></tr>
-<tr><th>port</th><td>ArangoDB port</td><td>8159</td></tr>
+<tr><th>port</th><td>ArangoDB port</td><td>8529</td></tr>
 <tr><th>maxPerConnection</th><td>Max http connection per host.</td><td>20</td></tr>
 <tr><th>maxTotalConnection</th><td>Max http connection per configure.</td><td>20</td></tr>
 <tr><th>user</th><td>Basic Authentication User</td><td></td></tr>
@@ -75,173 +72,279 @@ This library has 4 layers.
 <tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
 </table>
 
-## Basic usage ArangoDriver
+
+To customize the configuration the parameters can be changed in the code...
 
 ``` Java
   // Initialize configure
   ArangoConfigure configure = new ArangoConfigure();
-  configure.setHost("127.0.0.1");
-  configure.setPort(8159);
+  configure.setHost("192.168.182.50");
+  configure.setPort(8888);
   configure.init();
 
   // Create Driver (this instance is thread-safe)
-  ArangoDriver client = new ArangoDriver(configure);
+  ArangoDriver arangoDriver = new ArangoDriver(configure);
   
-  String collectionName = "mytest";
-  TestComplexEntity01 value = new TestComplexEntity01("name", "desc", 10); // any POJO class
+```
+... or with a properties file (arangodb.properties)
 
-  // Create Collection
-  CollectionEntity collection = client.createCollection(collectionName);
+``` Java
+  // Initialize configure
+  ArangoConfigure configure = new ArangoConfigure();
+  configure.loadProperties();
+  configure.init();
 
-  // Create Document
-  DocumentEntity<TestComplexEntity01> ret1 = client.createDocument(collectionName, value, null, null);
-  String documentHandle = ret1.getDocumentHandle();
+  // Create Driver (this instance is thread-safe)
+  ArangoDriver arangoDriver = new ArangoDriver(configure);
   
-  // Get Document
-  DocumentEntity<TestComplexEntity01> ret2 =
-    client.getDocument(documentHandle, TestComplexEntity01.class);
-
-  // Delete Document
-  driver.deleteDocument(documentHandle, -1, DeletePolicy.LAST);  
-
-  // finalize library
-  configure.shutdown();
 ```
 
-## Database Change
+Example for arangodb.properties:
+``` Java
+port=8888
+host=192.168.182.50
+user=root
+password=
+enableCURLLogger=true
 
-Since ArangoDB-1.4, support multi database.
-
-ArangoDriver is thread-safe. But ArangoDriver#setDefaultDatabase() is not safety.
-So, if you wants to switch the database, you need to create an another instance.
-
-```Java
-public class ExampleMDB {
-
-	public static void main(String[] args) {
-
-		// Initialize configure
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.init();
-		
-		// Create Driver (this instance is thread-safe)
-		// If you use a multi database, you need create each instance.
-		ArangoDriver driverA = new ArangoDriver(configure); // db = _system (configure#defaultDatabase)
-		ArangoDriver driverB = new ArangoDriver(configure, "mydb2");
-		
-		try {
-			
-			// Create Collection at db(_system)
-			driverA.createCollection("example1", false, null, null, null, null, CollectionType.DOCUMENT);
-			driverA.createDocument("example1", 
-					new MapBuilder().put("attr1", "value1").put("attr2", "value2").get(), 
-					false, false);
-
-			// Create Database mydb2
-			driverB.createDatabase("mydb2");
-			
-			// Create Collection at db(mydb2)
-			driverB.createCollection("example2", false, null, null, null, null, CollectionType.DOCUMENT);
-			driverB.createDocument("example2", 
-					new MapBuilder().put("attr1-B", "value1").put("attr2-B", "value2").get(), 
-					false, false);
-			
-			// print all database names.
-			System.out.println(driverA.getDatabases());
-			// -> _system, mydb2
-
-			// get all document-handle, and print get & print document. (_system DB)
-			for (String documentHandle: driverA.getDocuments("example1", true)) {
-				DocumentEntity<Map> doc = driverA.getDocument(documentHandle, Map.class);
-				System.out.println(doc.getEntity());
-			}
-
-			for (String documentHandle: driverB.getDocuments("example2", true)) {
-				DocumentEntity<Map> doc = driverB.getDocument(documentHandle, Map.class);
-				System.out.println(doc.getEntity());
-			}
-
-		} catch (ArangoException e) {
-			e.printStackTrace();
-		} finally {
-			configure.shutdown();
-		}
-
-	}
-
-}
 ```
 
 
-
-## Use AQL
-
-Use ForEach
-
-```Java
-// Query
-String query = "FOR t IN unit_test_query_test FILTER t.age >= @age SORT t.age RETURN t";
-// Bind Variables
-Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
-
-// Execute Query
-CursorResultSet<TestComplexEntity01> rs = driver.executeQueryWithResultSet(
-		query, bindVars, TestComplexEntity01.class, true, 20);
-
-for (TestComplexEntity01 obj: rs) {
-	System.out.println(obj);
-}
-
+# Basic database operations
+## create database
+``` Java
+  // create database 
+  arangoDriver.createDatabase("myDatabase");
+  // and set as default
+  arangoDriver.setDefaultDatabase("myDatabase");
+  
 ```
 
-Not use ForEach
+## changing the database
+This ArangoDB driver is thread-safe. Unfortunately the ArangoDriver#setDefaultDatabase() is not (yet). So its recommended to create a new driver instance, if you want to change the database.
 
-```Java
-String query = "FOR t IN unit_test_query_test FILTER t.age >= @age SORT t.age RETURN t";
-Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
-
-CursorResultSet<TestComplexEntity01> rs = driver.executeQueryWithResultSet(
-		query, bindVars, TestComplexEntity01.class, true, 20);
-
-while (rs.hasNext()) {
-	TestComplexEntity01 obj = rs.next();
-	System.out.println(obj);
-}
-rs.close();
+``` Java
+  //Driver instance to database "_system" (default database)
+  ArangoDriver driverSystem = new ArangoDriver(configure);
+  //Driver instance to database "mydb2"
+  ArangoDriver driverMyDB = new ArangoDriver(configure, "mydb2");
+  
 ```
 
-## More example
+## drop database
+``` Java
+  // drop database 
+  arangoDriver.deleteDatabase("myDatabase");
+  
+```
 
-# Support API
+# Basic collection operations
+## create collection
+``` Java
+  // create collection
+  CollectionEntity myArangoCollection = ArangoCollectionarangoDriver.createCollection("myCollection");
+  
+```
 
-[PDF File](support_api.pdf)
+## delete collection by name
+``` Java
+  // delete database 
+  arangoDriver.deleteCollection("myCollection");
+  
+```
 
-# TODO
+## delete collection by id
+``` Java
+  // delete database 
+  arangoDriver.deleteCollection(myArangoCollection.getId());
+  
+```
 
-* Exact ETAG support 
-* Batch process
-* Maven Repo and download packages.
-* Online JavaDoc.
-* Multi Server connection (ex. Consistent Hash)
+# Basic document operations
 
-* PUT /_api/simple/near
-* PUT /_api/simple/within
-* Blueprints
-* Document of Serialization control by annotation (@Exclude)
+For the next examples we use a small object:
 
-This library does not support admin/_echo
+``` Java
+public class MyObject {
 
-# Develop Note
+    private String name;
+    private int age;
 
-## UnitTest environment
+    public MyObject(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    /*
+    *  + getter and setter
+    */
+   
 
-    master: arango-test-server:9999 (auth=true)
-    slave: arango-test-server-slave:8529
+}  
+```
 
-# License
+## create document
+``` Java
+  // create document 
+  MyObject myObject = new MyObject("Homer", 38);
+  DocumentEntity<MyObject> myDocument = arangoDriver.createDocument("myCollection", myObject);
+  
+```
 
-Apache License 2.0
+When creating a document, the attributes of the object will be stored as key-value pair
+E.g. in the previous example the object was stored as follows:
+``` properties
+"name" : "Homer"
+"age" : "38"
+```
+  
 
-# Author
+## delete document
+``` Java
+  // delete document 
+  arangoDriver.deleteDocument(myDocument.getDocumentHandle());
+  
+```
 
-Twitter: @tamtam180
+# AQL
+## Executing an AQL statement
+
+E.g. get all Simpsons aged 3 or older in ascending order:
+
+``` Java
+    arangoDriver.deleteDatabase("myDatabase");
+    arangoDriver.createDatabase("myDatabase");
+    arangoDriver.setDefaultDatabase("myDatabase");
+    CollectionEntity myArangoCollection = arangoDriver.createCollection("myCollection");
+    
+    arangoDriver.createDocument("myCollection", new MyObject("Homer", 38));
+    arangoDriver.createDocument("myCollection", new MyObject("Marge", 36));
+    arangoDriver.createDocument("myCollection", new MyObject("Bart", 10));
+    arangoDriver.createDocument("myCollection", new MyObject("Lisa", 8));
+    arangoDriver.createDocument("myCollection", new MyObject("Maggie", 2));
+    
+    String query = "FOR t IN myCollection FILTER t.age >= @age SORT t.age RETURN t";
+    Map<String, Object> bindVars = new MapBuilder().put("age", 3).get();
+    CursorResultSet<MyObject> rs = arangoDriver.executeQueryWithResultSet(
+      query, bindVars, MyObject.class, true, 20
+    );
+    
+    for (MyObject obj: rs) {
+      System.out.println(obj.getName());
+    }
+   
+  
+```
+
+instead of using a for statement you can also use an iterator:
+``` Java
+  while (rs.hasNext()) {
+    MyObject obj = rs.next();
+    System.out.println(obj.getName());
+  }
+  rs.close();
+```
+
+#User Management
+If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Authentication.html) you can manage users with the driver.
+
+##add user
+``` Java
+  //username, password, active, extras
+  arangoDriver.createUser("myUser", "myPassword", true, null);
+```
+
+##list users
+``` Java
+  List<UserEntity> users = arangoDriver.getUsers();
+  for(UserEntity user : users) {
+    System.out.println(user.getName())
+  }
+```
+
+
+##DELETE user
+``` Java
+  arangoDriver.createUser("myUser");
+```
+
+
+#Graphs
+This driver supports the new [graph api](https://docs.arangodb.com/HttpGharial/README.html).
+
+Some of the basic graph operations are described in the following:
+
+##add graph
+A graph consists of vertices and edges (stored in collections). Which collections are used within a graph is defined via edge definitions. A graph can contain more than one edge definition, at least one is needed.
+
+``` Java
+  List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+  EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+  // define the edgeCollection to store the edges
+  edgeDefinition.setCollection("myEdgeCollection");
+  // define a set of collections where an edge is going out...
+  List<String> from = new ArrayList<String>();
+  // and add one or more collections
+  from.add("myCollection1");
+  from.add("myCollection2");
+  edgeDefinition.setFrom(from)
+   
+  // repeat this for the collections where an edge is going into  
+  List<String> to = new ArrayList<String>();
+  to.add("myCollection1");
+  to.add("myCollection3");
+  edgeDefinition.setTo(to);
+  
+  edgeDefinitions.add(edgeDefinition);
+  
+  // A graph can contain additional vertex collections, defined in the set of orphan collections
+  List<String> orphanCollections = new ArrayList<String>(); 
+  orphanCollections.add("myCollection4");
+  orphanCollections.add("myCollection5");
+  
+  // now it's possible to create a graph (the last parameter is the waitForSync option)
+  GraphEntity graph = arangoDriver.createGraph("myGraph", edgeDefinitions, orphanCollections, true);
+```
+
+##delete graph
+
+A graph can be deleted by its name
+
+``` Java
+  arangoDriver.deleteGraph("myGraph");
+```
+
+##add vertex
+
+Vertices are stored in the vertex collections defined above.
+
+``` Java
+  MyObject myObject1 = new MyObject("Homer", 38);
+  MyObject myObject2 = new MyObject("Marge", 36);
+  DocumentEntity<MyObject> vertexFrom = arangoDriver.graphCreateVertex(
+      "myGraph",
+      "collection1",
+      myObject1,
+      true); 
+  
+  DocumentEntity<MyObject> vertexTo = arangoDriver.graphCreateVertex(
+      "myGraph",
+      "collection3",
+      myObject2,
+      true); 
+```
+
+## add edge
+
+Now an edge can be created to set a relation between vertices
+
+``` Java
+    EdgeEntity<?> edge = arangoDriver.graphCreateEdge(
+      "myGraph",
+      "myEdgeCollection",
+      null,
+      vertexFrom.getDocumentHandle(),
+      vertexTo.getDocumentHandle(),
+      null,
+      null);
+``` 
