@@ -108,7 +108,6 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
       }
       if (line.indexOf("Etag") != -1) {
         String etag = line.split(" ")[1].replaceAll("\"", "").trim();
-        int a = etag.length();
         batchResponseEntity.httpResponseEntity.setEtag( Long.parseLong(etag));
         continue;
       }

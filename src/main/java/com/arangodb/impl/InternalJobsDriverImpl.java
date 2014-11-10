@@ -23,10 +23,7 @@ import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationObject;
 import com.arangodb.util.MapBuilder;
-import com.sun.org.apache.regexp.internal.recompile;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
 
 /**

@@ -16,7 +16,7 @@ public interface InternalTransactionDriver extends BaseDriverInterface {
   TransactionEntity createTransaction (String action);
 
 
-  <T> T  executeTransaction(String database, TransactionEntity transactionEntity, Class clazz) throws ArangoException;
+  TransactionResultEntity  executeTransaction(String database, TransactionEntity transactionEntity) throws ArangoException;
 
 
 }

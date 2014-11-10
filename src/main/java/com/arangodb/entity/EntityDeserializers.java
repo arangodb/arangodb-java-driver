@@ -921,6 +921,37 @@ public class EntityDeserializers {
 
   }
 
+  public static class TransactionResultEntityDeserializer implements JsonDeserializer<TransactionResultEntity> {
+
+    @Override
+    public TransactionResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+
+      if (json.isJsonNull()) {
+        return null;
+      }
+
+      JsonObject obj = json.getAsJsonObject();
+      TransactionResultEntity entity = deserializeBaseParameter(obj, new TransactionResultEntity());
+
+      if (obj.has("result")) { // MEMO:
+        if (obj.get("result") instanceof JsonObject) {
+          entity.setResult((Object) obj.get("result"));
+        } else if (obj.getAsJsonPrimitive("result").isBoolean()) {
+          entity.setResult((Boolean) (obj.getAsJsonPrimitive("result").getAsBoolean()));
+        } else if (obj.getAsJsonPrimitive("result").isNumber()) {
+          entity.setResult(obj.getAsJsonPrimitive("result").getAsNumber());
+        } else  if (obj.getAsJsonPrimitive("result").isString()) {
+          entity.setResult((String) (obj.getAsJsonPrimitive("result").getAsString()));
+        }
+      }
+
+
+      return entity;
+    }
+
+  }
+
   public static class UserEntityDeserializer implements JsonDeserializer<UserEntity> {
 
     @Override

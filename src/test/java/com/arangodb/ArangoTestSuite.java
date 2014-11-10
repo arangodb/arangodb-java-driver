@@ -32,7 +32,7 @@ import com.arangodb.util.StringJoinTest;
 @RunWith(Suite.class)
 @SuiteClasses({
 
-// Utils Test
+  // Utils Test
   StringJoinTest.class,
 
   // Drivers Test
@@ -68,6 +68,7 @@ import com.arangodb.util.StringJoinTest;
   ArangoDriverGraphEdgeGetTest.class,
   ArangoDriverGraphEdgeDeleteTest.class,
   ArangoDriverGraphEdgeReplaceTest.class,
+  ArangoDriverTransactionTest.class,
   ArangoDriverThreadSafeTest.class,
   ArangoDriverReplicationTest.class,
   ArangoDriverReplicationTestScenario1.class

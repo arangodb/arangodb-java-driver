@@ -20,10 +20,9 @@ import com.arangodb.entity.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -42,9 +41,6 @@ public class ArangoDriverAsyncTest extends BaseTest {
     super(configure, driver);
   }
 
-  private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
-
-
   @Before
   public void before() throws ArangoException {
     for (String col: new String[]{"blub"}) {
@@ -57,13 +53,16 @@ public class ArangoDriverAsyncTest extends BaseTest {
       } catch (ArangoException e) {
 
       }
+      AqlFunctionsEntity res = driver.getAqlFunctions(null);
+      Iterator<String> it = res.getAqlFunctions().keySet().iterator();
+      while(it.hasNext()) {
+        driver.deleteAqlFunction(it.next(), false);
+      }
     }
-    logger.debug("----------");
   }
 
   @After
   public void after() {
-    logger.debug("----------");
   }
 
   @Test
@@ -193,7 +192,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
       driver.createDocument("blub", value, true, false);
     }
     driver.stopAsyncMode();
-    driver.deleteExpiredJobs((int) (System.currentTimeMillis() / 1000L));
+    driver.deleteExpiredJobs((int) (System.currentTimeMillis() / 2000L));
     jobs = driver.getJobs(JobsEntity.JobState.PENDING);
     assertTrue(jobs.size() == 0);
 
@@ -238,7 +237,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
       e.printStackTrace();
     }
     DefaultEntity de = driver.getJobResult(id1);
-    assertThat(de.getStatusCode() , is(200));
+    assertThat(de.getStatusCode() , is(201));
 
     DefaultEntity de2 = driver.getJobResult(id2);
 
