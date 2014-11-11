@@ -93,6 +93,30 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl impl
     }
     
   }
+
+  @Override
+  public IndexEntity createCappedByDocumentSizeIndex(String database, String collectionName, int byteSize) throws ArangoException {
+
+    validateCollectionName(collectionName);
+    HttpResponseEntity res = httpManager.doPost(
+      createEndpointUrl(baseUrl, database, "/_api/index"),
+      new MapBuilder("collection", collectionName).get(),
+      EntityFactory.toJsonString(
+        new MapBuilder()
+          .put("type", IndexType.CAP.name().toLowerCase(Locale.US))
+          .put("byteSize", byteSize)
+          .get()));
+
+    // HTTP:200,201,404
+
+    try {
+      IndexEntity entity = createEntity(res, IndexEntity.class);
+      return entity;
+    } catch (ArangoException e) {
+      throw e;
+    }
+
+  }
   
   @Override
   public IndexEntity createFulltextIndex(String database, String collectionName, Integer minLength, String... fields) throws ArangoException {
