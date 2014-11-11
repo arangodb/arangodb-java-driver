@@ -4676,27 +4676,62 @@ public class ArangoDriver extends BaseArangoDriver {
   //
   // }
 
-  // ***************************************
-  // *** end of graph **********************
-  // ***************************************
 
+  /**
+   * Creates an AQL Function
+   *
+   * @param name - the name of the function as string
+   * @param code - the function as javascript string
+   * @return DefaultEntity
+   * @throws ArangoException
+   */
   public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
     return aqlFunctionsDriver.createAqlFunction(name, code);
   }
 
+  /**
+   * Gets all AQL functions whithin a given namespace
+   *
+   * @param namespace - the namespace
+   * @return AqlFunctionsEntity
+   * @throws ArangoException
+   */
   public AqlFunctionsEntity getAqlFunctions(String namespace) throws ArangoException {
     return aqlFunctionsDriver.getAqlFunctions(namespace);
   }
 
+  /**
+   * Delete an AQL function. If *isNameSpace* is set to true all functions within the namespace *name*
+   * are deleted.
+   *
+   * @param name - This is either the name of a function or a namespace
+   * @param isNameSpace - If set to true the param *name* is treated as a namespace
+   * @return DefaultEntity
+   * @throws ArangoException
+   */
   public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
     return aqlFunctionsDriver.deleteAqlFunction(name, isNameSpace);
   }
 
+  /**
+   * Creates a transaction entity.
+   *
+   * @param action - the transaction as javascript code
+   * @return TransactionEntity
+   */
   public TransactionEntity createTransaction(String action) {
     return this.transactionDriver.createTransaction(action);
-  };
+  }
 
+  /**
+   * Executes the transaction on the database server.
+   *
+   * @param transactionEntity - The configuration object containing all data for the transaction
+   * @return TransactionResultEntity
+   * @throws ArangoException
+   */
   public TransactionResultEntity executeTransaction(TransactionEntity transactionEntity) throws ArangoException {
     return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity);
-  };
+  }
 }
+
