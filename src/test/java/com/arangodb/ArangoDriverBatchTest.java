@@ -19,8 +19,6 @@ package com.arangodb;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
@@ -43,7 +41,6 @@ public class ArangoDriverBatchTest extends BaseTest {
     super(configure, driver);
   }
 
-  private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
 
 
   @Before
@@ -54,12 +51,10 @@ public class ArangoDriverBatchTest extends BaseTest {
       } catch (ArangoException e) {
       }
     }
-    logger.debug("----------");
   }
 
   @After
   public void after() {
-    logger.debug("----------");
   }
 
   @Test
