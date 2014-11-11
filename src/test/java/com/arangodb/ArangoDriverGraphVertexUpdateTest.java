@@ -60,7 +60,6 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -113,7 +112,6 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       this.collectionName,
       v1.getDocumentKey(),
       TestComplexEntity01.class,
-      null,
       null,
       null);
     assertThat(vertex.getCode(), is(200));
@@ -209,7 +207,6 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -267,7 +264,6 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -305,7 +301,6 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -318,8 +313,8 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       new TestComplexEntity01("zzz", null, 99),
       null,
       true,
-      null,
-      rev);
+      rev,
+      null);
     assertThat(updatedVertex.getCode(), is(200));
     assertThat(updatedVertex.isError(), is(false));
 
@@ -363,7 +358,6 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -371,7 +365,7 @@ public class ArangoDriverGraphVertexUpdateTest extends BaseGraphTest {
     try {
       Long rev = vertex.getDocumentRevision() + 1;
       driver.graphUpdateVertex(this.graphName, this.collectionName, vertex.getDocumentKey(), new TestComplexEntity01(
-          "zzz", null, 99), null, true, null, rev);
+          "zzz", null, 99), null, true, rev, null);
       fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(412));

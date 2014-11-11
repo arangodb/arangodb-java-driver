@@ -22,7 +22,48 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.arangodb.entity.*;
+import com.arangodb.entity.AdminLogEntity;
+import com.arangodb.entity.AqlFunctionsEntity;
+import com.arangodb.entity.ArangoUnixTime;
+import com.arangodb.entity.ArangoVersion;
+import com.arangodb.entity.BatchResponseEntity;
+import com.arangodb.entity.BooleanResultEntity;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionOptions;
+import com.arangodb.entity.CollectionsEntity;
+import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.DefaultEntity;
+import com.arangodb.entity.DeletedEntity;
+import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.DocumentResultEntity;
+import com.arangodb.entity.EdgeDefinitionEntity;
+import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.Endpoint;
+import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.GraphsEntity;
+import com.arangodb.entity.ImportResultEntity;
+import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.IndexType;
+import com.arangodb.entity.IndexesEntity;
+import com.arangodb.entity.JobsEntity;
+import com.arangodb.entity.PlainEdgeEntity;
+import com.arangodb.entity.Policy;
+import com.arangodb.entity.ReplicationApplierConfigEntity;
+import com.arangodb.entity.ReplicationApplierStateEntity;
+import com.arangodb.entity.ReplicationInventoryEntity;
+import com.arangodb.entity.ReplicationLoggerConfigEntity;
+import com.arangodb.entity.ReplicationLoggerStateEntity;
+import com.arangodb.entity.ReplicationSyncEntity;
+import com.arangodb.entity.RestrictType;
+import com.arangodb.entity.ScalarExampleEntity;
+import com.arangodb.entity.SimpleByResultEntity;
+import com.arangodb.entity.StatisticsDescriptionEntity;
+import com.arangodb.entity.StatisticsEntity;
+import com.arangodb.entity.StringsResultEntity;
+import com.arangodb.entity.TransactionEntity;
+import com.arangodb.entity.TransactionResultEntity;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
 import com.arangodb.http.HttpManager;
@@ -43,7 +84,6 @@ import com.arangodb.util.ResultSetUtils;
  * @version 2.2.
  */
 public class ArangoDriver extends BaseArangoDriver {
-
 
   private ArangoConfigure configure;
   private BatchHttpManager httpManager;
@@ -69,21 +109,24 @@ public class ArangoDriver extends BaseArangoDriver {
   private String database;
 
   /**
-   * Constructor to create an instance of the driver that uses the
-   * default database.
+   * Constructor to create an instance of the driver that uses the default
+   * database.
    * 
-   * @param ArangoConfigure configure - A configuration object.
+   * @param ArangoConfigure
+   *          configure - A configuration object.
    */
   public ArangoDriver(ArangoConfigure configure) {
     this(configure, null);
   }
 
   /**
-   * Constructor to create an instance of the driver that uses the
-   * provided database.
+   * Constructor to create an instance of the driver that uses the provided
+   * database.
    *
-   * @param ArangoConfigure configure - A configuration object.
-   * @param String  database - the database that will be used.
+   * @param ArangoConfigure
+   *          configure - A configuration object.
+   * @param String
+   *          database - the database that will be used.
    */
   public ArangoDriver(ArangoConfigure configure, String database) {
 
@@ -180,12 +223,12 @@ public class ArangoDriver extends BaseArangoDriver {
     }
   }
 
-
   /**
-   * This method enables batch execution. Until 'cancelBatchMode' or 'executeBatch' is called
-   * every other call is stacked and will be either executed or discarded when the batch mode is canceled.
-   * Each call will return a 'requestId' in the http response, that can be used to select the matching result from the
-   * batch execution.
+   * This method enables batch execution. Until 'cancelBatchMode' or
+   * 'executeBatch' is called every other call is stacked and will be either
+   * executed or discarded when the batch mode is canceled. Each call will
+   * return a 'requestId' in the http response, that can be used to select the
+   * matching result from the batch execution.
    *
    * @see com.arangodb.ArangoDriver#cancelBatchMode()
    * @see ArangoDriver#executeBatch()
@@ -202,14 +245,17 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This method sets the driver to asynchronous execution. If the parameter 'fireAndforget' is set to true
-   * each call to ArangoDB will be send without a return value. If set to false the return value will be the 'job id'.
-   * Each job result can be received by the method 'getJobResult'.
+   * This method sets the driver to asynchronous execution. If the parameter
+   * 'fireAndforget' is set to true each call to ArangoDB will be send without a
+   * return value. If set to false the return value will be the 'job id'. Each
+   * job result can be received by the method 'getJobResult'.
    *
-   * @param boolean fireAndForget - if set to true the asynchronous mode is set to 'fire and forget'.
+   * @param boolean fireAndForget - if set to true the asynchronous mode is set
+   *        to 'fire and forget'.
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
-   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState,
+   *      int)
    * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
    * @see ArangoDriver#getLastJobId()
    * @throws com.arangodb.ArangoException
@@ -230,7 +276,8 @@ public class ArangoDriver extends BaseArangoDriver {
    *
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see com.arangodb.ArangoDriver#getJobResult(String)
-   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState,
+   *      int)
    * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
    * @see ArangoDriver#getLastJobId()
    * @throws com.arangodb.ArangoException
@@ -250,7 +297,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
-   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState,
+   *      int)
    * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
    * @see ArangoDriver#getLastJobId()
    */
@@ -265,7 +313,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
-   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState,
+   *      int)
    * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
    * @see ArangoDriver#getLastJobId()
    */
@@ -274,9 +323,11 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * Returns a list of all job ids of asynchronous executed jobs, filtered by job state.
+   * Returns a list of all job ids of asynchronous executed jobs, filtered by
+   * job state.
    *
-   * @param JobsEntity.JobState jobState -  the job state as a filter.
+   * @param JobsEntity
+   *          .JobState jobState - the job state as a filter.
    * @param int count - a limit for the result set.
    * @return List<String>
    * @see ArangoDriver#startAsyncMode(boolean)
@@ -291,9 +342,11 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * Returns a list of all job ids of asynchronous executed jobs, filtered by job state.
+   * Returns a list of all job ids of asynchronous executed jobs, filtered by
+   * job state.
    *
-   * @param JobsEntity.JobState jobState -  the job state as a filter.
+   * @param JobsEntity
+   *          .JobState jobState - the job state as a filter.
    * @return List<String>
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
@@ -324,7 +377,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a job from ArangoDB.
    *
-   * @param String jobId - the id of the job
+   * @param String
+   *          jobId - the id of the job
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
@@ -354,7 +408,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the job result for a given job id.
    *
-   * @param String jobId -  the job id.
+   * @param String
+   *          jobId - the job id.
    * @return <T> - A generic return value, containing the job result
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
@@ -385,9 +440,11 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This method returns the result of a call to ArangoDB executed within a batch request.
+   * This method returns the result of a call to ArangoDB executed within a
+   * batch request.
    *
-   * @param String requestId - the id of a request.
+   * @param String
+   *          requestId - the id of a request.
    * @return <T> - A generic return value, containing the result.
    * @see ArangoDriver#startBatchMode()
    * @see ArangoDriver#executeBatch()
@@ -411,7 +468,8 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This method cancels the batch execution mode. All stacked calls are discarded.
+   * This method cancels the batch execution mode. All stacked calls are
+   * discarded.
    *
    * @see ArangoDriver#startBatchMode()
    * @see ArangoDriver#executeBatch()
@@ -2096,28 +2154,41 @@ public class ArangoDriver extends BaseArangoDriver {
    * Gets a vertex with the given key if it is contained within your graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to get.
    * @param key
+   *          The key (document handle) of the vertex to get.
    * @param clazz
-   * @return <T> DocumentEntity<T>
+   *          The class of the vertex to get.
+   * @return <T> DocumentEntity<T> The resulting DocumentEntity containing the
+   *         vertex document.
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<?> clazz)
       throws ArangoException {
-    return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, null, null, null);
+    return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, null, null);
   }
 
   /**
    * Gets a vertex with the given key if it is contained within your graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to get.
    * @param key
+   *          The key (document handle) of the vertex to get.
    * @param clazz
-   * @param rev
-   * @param ifNoneMatchRevision
+   *          The class of the vertex to get.
    * @param ifMatchRevision
-   * @return <T> DocumentEntity<T>
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to return a document.
+   * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to return a document.
+   * @return <T> DocumentEntity<T> The resulting DocumentEntity containing the
+   *         vertex document.
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphGetVertex(
@@ -2125,7 +2196,6 @@ public class ArangoDriver extends BaseArangoDriver {
     String collectionName,
     String key,
     Class<?> clazz,
-    Long rev,
     Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException {
     return graphDriver.getVertex(
@@ -2134,9 +2204,8 @@ public class ArangoDriver extends BaseArangoDriver {
       collectionName,
       key,
       clazz,
-      rev,
-      ifNoneMatchRevision,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**
@@ -2144,8 +2213,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * Furthermore all edges connected to this vertex will be deleted.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to delete.
    * @param key
+   *          The key (document handle) of the vertex to delete.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -2158,9 +2230,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * Furthermore all edges connected to this vertex will be deleted.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to delete.
    * @param key
+   *          The key (document handle) of the vertex to delete.
    * @param waitForSync
+   *          Wait for sync.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -2174,12 +2250,20 @@ public class ArangoDriver extends BaseArangoDriver {
    * Furthermore all edges connected to this vertex will be deleted.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to delete.
    * @param key
+   *          The key (document handle) of the vertex to delete.
    * @param waitForSync
-   * @param rev
+   *          Wait for sync.
    * @param ifMatchRevision
-   * @return DeletedEntity
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to return a document.
+   * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to return a document.
+   * @return
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertex(
@@ -2187,16 +2271,16 @@ public class ArangoDriver extends BaseArangoDriver {
     String collectionName,
     String key,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.deleteVertex(
       getDefaultDatabase(),
       graphName,
       collectionName,
       key,
       waitForSync,
-      rev,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**
@@ -2207,7 +2291,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param collectionName
    * @param key
    * @param vertex
-   * @return <T> DocumentEntity<T>
+   * @return
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
@@ -2224,9 +2308,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param key
    * @param vertex
    * @param waitForSync
-   * @param rev
+   *          Wait for sync.
    * @param ifMatchRevision
-   * @return <T> DocumentEntity<T>
+   * @param ifNoneMatchRevision
+   * @return
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphReplaceVertex(
@@ -2235,8 +2320,8 @@ public class ArangoDriver extends BaseArangoDriver {
     String key,
     Object vertex,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.replaceVertex(
       getDefaultDatabase(),
       graphName,
@@ -2244,8 +2329,8 @@ public class ArangoDriver extends BaseArangoDriver {
       key,
       vertex,
       waitForSync,
-      rev,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**
@@ -2257,7 +2342,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param key
    * @param vertex
    * @param keepNull
-   * @return <T> DocumentEntity<T>
+   * @return
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphUpdateVertex(
@@ -2288,9 +2373,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param vertex
    * @param keepNull
    * @param waitForSync
-   * @param rev
+   *          Wait for sync.
    * @param ifMatchRevision
-   * @return <T> DocumentEntity<T>
+   * @param ifNoneMatchRevision
+   * @return
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphUpdateVertex(
@@ -2300,8 +2386,8 @@ public class ArangoDriver extends BaseArangoDriver {
     Object vertex,
     Boolean keepNull,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.updateVertex(
       getDefaultDatabase(),
       graphName,
@@ -2310,8 +2396,8 @@ public class ArangoDriver extends BaseArangoDriver {
       vertex,
       keepNull,
       waitForSync,
-      rev,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**

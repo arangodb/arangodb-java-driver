@@ -226,9 +226,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param collectionName
    * @param key
    * @param clazz
-   * @param rev
-   * @param ifNoneMatchRevision
    * @param ifMatchRevision
+   * @param ifNoneMatchRevision
    * @return
    * @throws ArangoException
    */
@@ -238,9 +237,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String collectionName,
     String key,
     Class<?> clazz,
-    Long rev,
-    Long ifNoneMatchRevision,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   /**
    * Replaces a vertex with the given key by the content in the body. This will
@@ -252,8 +250,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param key
    * @param vertex
    * @param waitForSync
-   * @param rev
    * @param ifMatchRevision
+   * @param ifNoneMatchRevision
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
    */
@@ -264,8 +262,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String key,
     Object vertex,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   /**
    * Updates a vertex with the given key by adding the content in the body. This
@@ -278,9 +276,9 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param vertex
    * @param keepNull
    * @param waitForSync
-   * @param rev
    * @param ifMatchRevision
-   * @return <T> DocumentEntity<T>
+   * @param ifNoneMatchRevision
+   * @return
    * @throws ArangoException
    */
   <T> DocumentEntity<T> updateVertex(
@@ -291,8 +289,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Object vertex,
     Boolean keepNull,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   /**
    * Deletes a vertex with the given key, if it is contained within the graph.
@@ -303,9 +301,9 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param collectionName
    * @param key
    * @param waitForSync
-   * @param rev
    * @param ifMatchRevision
-   * @return DeletedEntity
+   * @param ifNoneMatchRevision
+   * @return
    * @throws ArangoException
    */
   DeletedEntity deleteVertex(
@@ -314,8 +312,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String collectionName,
     String key,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   /**
    * 

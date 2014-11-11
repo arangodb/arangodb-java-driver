@@ -110,7 +110,6 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
         collectionName,
         vertex.getDocumentKey(),
         TestComplexEntity01.class,
-        null,
         vertex.getDocumentRevision(),
         null);
     } catch (ArangoException e) {
@@ -202,7 +201,6 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -234,7 +232,6 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       this.collectionName,
       v1.getDocumentKey(),
       TestComplexEntity01.class,
-      null,
       null,
       null);
     assertThat(vertex.getCode(), is(200));
@@ -272,7 +269,6 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       v1.getDocumentKey(),
       TestComplexEntity01.class,
       null,
-      null,
       null);
     assertThat(vertex.getCode(), is(200));
 
@@ -282,8 +278,8 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       this.collectionName,
       v1.getDocumentKey(),
       null,
-      null,
-      v1.getDocumentRevision());
+      v1.getDocumentRevision(),
+      null);
     assertThat(deleted.getCode(), is(202));
     assertThat(deleted.getDeleted(), is(true));
 
@@ -304,7 +300,6 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
       this.collectionName,
       v1.getDocumentKey(),
       TestComplexEntity01.class,
-      null,
       null,
       null);
     assertThat(vertex.getCode(), is(200));

@@ -351,9 +351,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String collectionName,
     String key,
     Class<?> clazz,
-    Long rev,
-    Long ifNoneMatchRevision,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doGet(
@@ -365,8 +364,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "vertex",
         StringUtils.encodeUrl(collectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("rev", rev).get());
+      new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true).get(),
+      new MapBuilder().get());
 
     return createEntity(res, VertexEntity.class, clazz);
 
@@ -380,8 +379,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String key,
     Object vertex,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doPut(
@@ -393,8 +392,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "vertex",
         StringUtils.encodeUrl(collectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get(),
+      new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).get(),
       EntityFactory.toJsonString(vertex));
 
     return createEntity(res, VertexEntity.class, vertex.getClass());
@@ -410,8 +409,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     Object vertex,
     Boolean keepNull,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doPatch(
@@ -423,8 +422,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "vertex",
         StringUtils.encodeUrl(collectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("keepNull", keepNull).put("waitForSync", waitForSync).put("rev", rev).get(),
+      new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true).get(),
+      new MapBuilder().put("keepNull", keepNull).put("waitForSync", waitForSync).get(),
       EntityFactory.toJsonString(vertex, keepNull != null && !keepNull));
 
     return createEntity(res, VertexEntity.class, vertex.getClass());
@@ -437,8 +436,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String collectionName,
     String key,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doDelete(
@@ -450,8 +449,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "vertex",
         StringUtils.encodeUrl(collectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get());
+      new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).get());
 
     return createEntity(res, DeletedEntity.class);
   }
