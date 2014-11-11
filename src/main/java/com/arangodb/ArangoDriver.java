@@ -3881,6 +3881,8 @@ public class ArangoDriver extends BaseArangoDriver {
    *
    * @param graphName
    *          The name of the graph.
+   * @param collectionName
+   *          The name of the collection, where the vertex will be created.
    * @param vertex
    *          The vertex object to be stored
    * @param waitForSync
@@ -4173,13 +4175,55 @@ public class ArangoDriver extends BaseArangoDriver {
    * given collection.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
-   * @param key
+   *          The name of the collection where the edge will be created.
    * @param fromHandle
+   *          Document handle of vertex, where the edge comes from.
    * @param toHandle
+   *          Document handle of vertex, where the edge goes to.
    * @param value
-   * @param label
+   *          Object to be stored with edge.
    * @param waitForSync
+   *          Wait for sync.
+   * @return <T> EdgeEntity<T>
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> graphCreateEdge(
+    String graphName,
+    String edgeCollectionName,
+    String fromHandle,
+    String toHandle,
+    Object value,
+    Boolean waitForSync) throws ArangoException {
+    return graphDriver.createEdge(
+      getDefaultDatabase(),
+      graphName,
+      edgeCollectionName,
+      fromHandle,
+      toHandle,
+      value,
+      waitForSync);
+  }
+
+  /**
+   * Stores a new edge with the information contained within the body into the
+   * given collection.
+   * 
+   * @param graphName
+   *          The name of the graph.
+   * @param edgeCollectionName
+   *          The name of the collection where the edge will be created.
+   * @param key
+   *          The key of the edge to create (has to be unique).
+   * @param fromHandle
+   *          Document handle of vertex, where the edge comes from.
+   * @param toHandle
+   *          Document handle of vertex, where the edge goes to.
+   * @param value
+   *          Object to be stored with edge.
+   * @param waitForSync
+   *          Wait for sync.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4207,10 +4251,15 @@ public class ArangoDriver extends BaseArangoDriver {
    * given collection.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection where the edge will be created.
    * @param key
+   *          The key of the edge to create (has to be unique).
    * @param fromHandle
+   *          Document handle of vertex, where the edge comes from.
    * @param toHandle
+   *          Document handle of vertex, where the edge goes to.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4235,12 +4284,19 @@ public class ArangoDriver extends BaseArangoDriver {
    * Loads an edge with the given key if it is contained within your graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to get.
    * @param key
+   *          The key of the edge to get.
    * @param clazz
-   * @param rev
-   * @param ifNoneMatchRevision
+   *          The class of the edge to get.
    * @param ifMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to load the edge.
+   * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to load the edge.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4249,42 +4305,47 @@ public class ArangoDriver extends BaseArangoDriver {
     String edgeCollectionName,
     String key,
     Class<?> clazz,
-    Long rev,
-    Long ifNoneMatchRevision,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.getEdge(
       getDefaultDatabase(),
       graphName,
       edgeCollectionName,
       key,
       clazz,
-      rev,
-      ifNoneMatchRevision,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**
    * Loads an edge with the given key if it is contained within your graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to get.
    * @param key
+   *          The key of the edge to get.
    * @param clazz
+   *          The class of the edge to get.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphGetEdge(String graphName, String edgeCollectionName, String key, Class<?> clazz)
       throws ArangoException {
-    return graphDriver.getEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, clazz, null, null, null);
+    return graphDriver.getEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, clazz, null, null);
   }
 
   /**
    * Deletes an edge with the given id, if it is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to delete.
    * @param key
-   * @return
+   *          The key of the edge to delete.
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteEdge(String graphName, String edgeCollectionName, String key) throws ArangoException {
@@ -4295,9 +4356,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * Deletes an edge with the given id, if it is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to delete.
    * @param key
+   *          The key of the edge to delete.
    * @param waitForSync
+   *          Wait for sync.
    * @return
    * @throws ArangoException
    */
@@ -4310,12 +4375,20 @@ public class ArangoDriver extends BaseArangoDriver {
    * Deletes an edge with the given id, if it is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to delete.
    * @param key
+   *          The key of the edge to delete.
    * @param waitForSync
-   * @param rev
+   *          Wait for sync.
    * @param ifMatchRevision
-   * @return
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to delete the edge.
+   * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to delete the edge.
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteEdge(
@@ -4323,16 +4396,16 @@ public class ArangoDriver extends BaseArangoDriver {
     String edgeCollectionName,
     String key,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.deleteEdge(
       getDefaultDatabase(),
       graphName,
       edgeCollectionName,
       key,
       waitForSync,
-      rev,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**
@@ -4340,9 +4413,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * only run successfully if the edge is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to replace.
    * @param key
+   *          The key of the edge to replace.
    * @param value
+   *          The object to replace the existing edge.
    * @return
    * @throws ArangoException
    */
@@ -4356,13 +4433,22 @@ public class ArangoDriver extends BaseArangoDriver {
    * only run successfully if the edge is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to replace.
    * @param key
+   *          The key of the edge to replace.
    * @param value
+   *          The object to replace the existing edge.
    * @param waitForSync
-   * @param rev
+   *          Wait for sync.
    * @param ifMatchRevision
-   * @return
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to replace the edge.
+   * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to replace the edge.
+   * @return EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphReplaceEdge(
@@ -4371,8 +4457,8 @@ public class ArangoDriver extends BaseArangoDriver {
     String key,
     Object value,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.replaceEdge(
       getDefaultDatabase(),
       graphName,
@@ -4380,8 +4466,8 @@ public class ArangoDriver extends BaseArangoDriver {
       key,
       value,
       waitForSync,
-      rev,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   /**
@@ -4389,11 +4475,15 @@ public class ArangoDriver extends BaseArangoDriver {
    * will only run successfully if the edge is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to update.
    * @param key
+   *          The key of the edge to update.
    * @param value
+   *          The object to update the existing edge.
    * @param keepNull
-   * @return
+   * @return EdgeEntity<T>
    * @throws ArangoException
    */
   public <T> EdgeEntity<T> graphUpdateEdge(
@@ -4419,13 +4509,22 @@ public class ArangoDriver extends BaseArangoDriver {
    * will only run successfully if the edge is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the collection containing edge to update.
    * @param key
+   *          The key of the edge to update.
    * @param value
+   *          The object to update the existing edge.
    * @param waitForSync
+   *          Wait for sync.
    * @param keepNull
-   * @param rev
    * @param ifMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to update the edge.
+   * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to update the edge.
    * @return
    * @throws ArangoException
    */
@@ -4436,8 +4535,8 @@ public class ArangoDriver extends BaseArangoDriver {
     Object value,
     Boolean waitForSync,
     Boolean keepNull,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
     return graphDriver.updateEdge(
       getDefaultDatabase(),
       graphName,
@@ -4446,8 +4545,8 @@ public class ArangoDriver extends BaseArangoDriver {
       value,
       waitForSync,
       keepNull,
-      rev,
-      ifMatchRevision);
+      ifMatchRevision,
+      ifNoneMatchRevision);
   }
 
   // Some methods not using the graph api

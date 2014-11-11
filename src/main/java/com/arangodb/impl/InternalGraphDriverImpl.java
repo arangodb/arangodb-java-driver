@@ -460,6 +460,19 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String database,
     String graphName,
     String edgeCollectionName,
+    String fromHandle,
+    String toHandle,
+    Object value,
+    Boolean waitForSync) throws ArangoException {
+    return this.createEdge(database, graphName, edgeCollectionName, null, fromHandle, toHandle, value, waitForSync);
+
+  }
+
+  @Override
+  public <T> EdgeEntity<T> createEdge(
+    String database,
+    String graphName,
+    String edgeCollectionName,
     String key,
     String fromHandle,
     String toHandle,
@@ -477,7 +490,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         throw new IllegalArgumentException("value need object type(not support array, primitive, etc..).");
       }
     }
-    obj.addProperty("_key", key);
+    if (key != null) {
+      obj.addProperty("_key", key);
+    }
     obj.addProperty("_from", fromHandle);
     obj.addProperty("_to", toHandle);
 
@@ -508,9 +523,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String edgeCollectionName,
     String key,
     Class<?> clazz,
-    Long rev,
-    Long ifNoneMatchRevision,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doGet(
@@ -523,7 +537,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
       new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("rev", rev).get());
+      new MapBuilder().get());
 
     return createEntity(res, EdgeEntity.class, clazz);
 
@@ -536,8 +550,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String edgeCollectionName,
     String key,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doDelete(
@@ -549,8 +563,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "edge",
         StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get());
+      new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).get());
 
     return createEntity(res, DeletedEntity.class);
 
@@ -564,8 +578,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String key,
     Object value,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doPut(
@@ -577,8 +591,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "/edge",
         StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("waitForSync", waitForSync).put("rev", rev).get(),
+      new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).get(),
       value == null ? null : EntityFactory.toJsonString(value));
 
     return createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
@@ -594,8 +608,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     Object value,
     Boolean waitForSync,
     Boolean keepNull,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException {
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException {
 
     validateCollectionName(graphName);
     HttpResponseEntity res = httpManager.doPatch(
@@ -607,8 +621,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "/edge",
         StringUtils.encodeUrl(edgeCollectionName),
         StringUtils.encodeUrl(key)),
-      new MapBuilder().put("If-Match", ifMatchRevision, true).get(),
-      new MapBuilder().put("waitForSync", waitForSync).put("keepNull", keepNull).put("rev", rev).get(),
+      new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true).get(),
+      new MapBuilder().put("waitForSync", waitForSync).put("keepNull", keepNull).get(),
       value == null ? null : EntityFactory.toJsonString(value));
 
     return createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
