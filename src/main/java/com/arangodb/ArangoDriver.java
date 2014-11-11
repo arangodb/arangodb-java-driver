@@ -1763,7 +1763,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns a GraphsEntity containing all graph as GraphEntity object of the
    * default database.
    *
-   * @return GraphsEntity
+   * @return GraphsEntity Object containing all graphs of the database.
    * @throws ArangoException
    */
   public GraphsEntity getGraphs() throws ArangoException {
@@ -1774,7 +1774,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Creates a list of the names of all available graphs of the default
    * database.
    *
-   * @return List<String>
+   * @return List<String> All graph names of the database.
    * @throws ArangoException
    */
   public List<String> getGraphList() throws ArangoException {
@@ -1785,10 +1785,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * Creates a graph.
    * 
    * @param graphName
+   *          The name of the graph to be created.
    * @param edgeDefinitions
+   *          List of the graphs edge definitions.
    * @param orphanCollections
+   *          List of the graphs orphan collections.
    * @param waitForSync
-   * @return GraphEntity
+   *          Wait for sync.
+   * @return GraphEntity The new graph.
    * @throws ArangoException
    */
   public GraphEntity createGraph(
@@ -1803,8 +1807,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Creates an empty graph.
    *
    * @param graphName
+   *          The name of the graph to be created.
    * @param waitForSync
-   * @return GraphEntity
+   *          Wait for sync.
+   * @return GraphEntity The new graph.
    * @throws ArangoException
    */
   public GraphEntity createGraph(String graphName, Boolean waitForSync) throws ArangoException {
@@ -1816,7 +1822,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * collections.
    *
    * @param graphName
-   * @return GraphEntity
+   *          The name of the graph.
+   * @return GraphEntity The graph.
    * @throws ArangoException
    */
   public GraphEntity getGraph(String graphName) throws ArangoException {
@@ -1828,6 +1835,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * dropped.
    *
    * @param graphName
+   *          Name of the graph to be deleted.
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity deleteGraph(String graphName) throws ArangoException {
@@ -1839,7 +1848,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * the graph will be dropped, if they are not used in another graph.
    * 
    * @param graphName
+   *          Name of the graph to be deleted.
    * @param dropCollections
+   *          Indicates if the collections of the graph will be dropped
    * @throws ArangoException
    */
   public void deleteGraph(String graphName, Boolean dropCollections) throws ArangoException {
@@ -1851,7 +1862,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * graphs edgeDefinitions (in "from", "to", and "orphanCollections")
    *
    * @param graphName
-   * @return List<String>
+   *          The graph name.
+   * @return List<String> List of the names of the vertex collections
    * @throws ArangoException
    */
   public List<String> graphGetVertexCollections(String graphName) throws ArangoException {
@@ -1863,8 +1875,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * collection, if it is not used in any other graph.
    *
    * @param graphName
+   *          The graph name.
    * @param collectionName
+   *          The name of the vertex collection to be removed from the graph.
    * @param dropCollection
+   *          Indicates if the collection will be dropped
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertexCollection(String graphName, String collectionName, Boolean dropCollection)
@@ -1876,8 +1891,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Creates a vertex collection
    *
    * @param graphName
+   *          The graph name.
    * @param collectionName
-   * @return GraphEntity
+   *          The name of the collection to be created.
+   * @return GraphEntity The graph, including the new collection.
    * @throws ArangoException
    */
   public GraphEntity graphCreateVertexCollection(String graphName, String collectionName) throws ArangoException {
@@ -1889,7 +1906,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * graphs edgeDefinitions
    *
    * @param graphName
-   * @return List<String>
+   *          The graph name.
+   * @return List<String> List of the names of all edge collections of the
+   *         graph.
    * @throws ArangoException
    */
   public List<String> graphGetEdgeCollections(String graphName) throws ArangoException {
@@ -1900,8 +1919,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Adds a new edge definition to an existing graph
    *
    * @param graphName
+   *          The graph name.
    * @param edgeDefinition
-   * @return GraphEntity
+   *          The edge definition to be added.
+   * @return GraphEntity The graph, including the new edge definition.
    * @throws ArangoException
    */
   public GraphEntity graphCreateEdgeDefinition(String graphName, EdgeDefinitionEntity edgeDefinition)
@@ -1915,9 +1936,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * well.
    *
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
+   *          The name of the edge collection of the edge definition that has to
+   *          be replaced.
    * @param edgeDefinition
-   * @return GraphEntity
+   *          The new edge definition.
+   * @return GraphEntity The graph, including the changed edge definition.
    * @throws ArangoException
    */
   public GraphEntity graphReplaceEdgeDefinition(
@@ -1932,8 +1957,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * collections is dropped as well as long as it is not used in other graphs.
    *
    * @param graphName
+   *          The name of the graph.
    * @param edgeCollectionName
-   * @return
+   *          The name of edge collection of the edge definition which has to be
+   *          deleted.
+   * @return The graph, excluding the deleted edge definition.
    */
   public GraphEntity graphDeleteEdgeDefinition(String graphName, String edgeCollectionName, Boolean dropCollection)
       throws ArangoException {
@@ -1945,9 +1973,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * the given collection.
    *
    * @param graphName
+   *          The name of the graph.
    * @param vertex
+   *          The vertex object to be stored
    * @param waitForSync
-   * @return <T> DocumentEntity<T>
+   *          Wait for sync.
+   * @return <T> DocumentEntity<T> The resulting DocumentEntity containing the
+   *         vertex document.
    * @throws ArangoException
    */
   public <T> DocumentEntity<T>
@@ -2550,21 +2582,22 @@ public class ArangoDriver extends BaseArangoDriver {
     return result;
   }
 
-  public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
-    String graphName,
-    Class<T> clazzT,
-    S vertexExample) throws ArangoException {
-    validateCollectionName(graphName);
-    String query = "for i in graph_edges(@graphName, @vertexExample) return i";
-
-    Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
-        .get();
-
-    // CursorEntity<EdgeEntity<T>> result = this.executeQuery(query, bindVars,
-    // clazzT, true, 20);
-
-    return null;
-  }
+  // public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
+  // String graphName,
+  // Class<T> clazzT,
+  // S vertexExample) throws ArangoException {
+  // validateCollectionName(graphName);
+  // String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+  //
+  // Map<String, Object> bindVars = new MapBuilder().put("graphName",
+  // graphName).put("vertexExample", vertexExample)
+  // .get();
+  //
+  // CursorEntity<EdgeEntity<T>> result = this.executeQuery(query, bindVars,
+  // EdgeEntity<T>.class, true, 20);
+  //
+  // return null;
+  // }
 
   // public <T> CursorEntity<EdgeEntity<T>> graphGetEdgesWithData(
   // String graphName,
