@@ -3631,7 +3631,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @param ifNoneMatchRevision
    *          If not null the revision of the vertex in the database has to be
    *          different to return a document.
-   * @return
+   * @return DeletedEntity
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertex(
@@ -3656,10 +3656,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to replace.
    * @param key
+   *          The key (document handle) of the vertex to replace.
    * @param vertex
-   * @return
+   *          The object to replace the existing vertex.
+   * @return DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
@@ -3672,13 +3676,21 @@ public class ArangoDriver extends BaseArangoDriver {
    * only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to replace.
    * @param key
+   *          The key (document handle) of the vertex to replace.
    * @param vertex
+   *          The object to replace the existing vertex.
    * @param waitForSync
    *          Wait for sync.
    * @param ifMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to replace the document.
    * @param ifNoneMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          different to replace the document.
    * @return
    * @throws ArangoException
    */
@@ -3706,11 +3718,15 @@ public class ArangoDriver extends BaseArangoDriver {
    * will only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to update.
    * @param key
+   *          The key (document handle) of the vertex to be updated.
    * @param vertex
+   *          The object to update the existing vertex.
    * @param keepNull
-   * @return
+   * @return DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphUpdateVertex(
@@ -3736,15 +3752,23 @@ public class ArangoDriver extends BaseArangoDriver {
    * will only run successfully if the vertex is contained within the graph.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param collectionName
+   *          The collection, containing the vertex to update.
    * @param key
+   *          The key (document handle) of the vertex to be updated.
    * @param vertex
+   *          The object to update the existing vertex.
    * @param keepNull
    * @param waitForSync
    *          Wait for sync.
    * @param ifMatchRevision
+   *          If not null the revision of the vertex in the database has to be
+   *          equal to update the document.
    * @param ifNoneMatchRevision
-   * @return
+   *          If not null the revision of the vertex in the database has to be
+   *          different to update the document.
+   * @return DocumentEntity<T>
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> graphUpdateVertex(
