@@ -13,6 +13,8 @@ public interface InternalIndexDriver  extends BaseDriverInterface {
 
   IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException;
 
+  IndexEntity createCappedByDocumentSizeIndex(String database, String collectionName, int byteSize) throws ArangoException;
+
   IndexEntity createFulltextIndex(String database, String collectionName, Integer minLength, String... fields) throws ArangoException;
 
   IndexEntity deleteIndex(String database, String indexHandle) throws ArangoException;
