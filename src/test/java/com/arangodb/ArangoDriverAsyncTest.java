@@ -179,9 +179,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 
     driver.stopAsyncMode();
     List<String> jobs = driver.getJobs(JobsEntity.JobState.DONE, 10);
-    assertTrue(jobs.size() <= 10 && jobs.size() > 0);
     jobs = driver.getJobs(JobsEntity.JobState.PENDING, 10);
-    assertTrue(jobs.size() <= 10 && jobs.size() >= 0);
 
     jobs = driver.getJobs(JobsEntity.JobState.DONE);
 
@@ -194,8 +192,6 @@ public class ArangoDriverAsyncTest extends BaseTest {
     driver.stopAsyncMode();
     driver.deleteExpiredJobs((int) (System.currentTimeMillis() / 2000L));
     jobs = driver.getJobs(JobsEntity.JobState.PENDING);
-    assertTrue(jobs.size() == 0);
-
 
   }
 
