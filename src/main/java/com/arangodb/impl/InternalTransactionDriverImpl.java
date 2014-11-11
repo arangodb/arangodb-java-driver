@@ -26,7 +26,7 @@ public class InternalTransactionDriverImpl extends BaseArangoDriverImpl implemen
   }
 
   @Override
-  public <T> T  executeTransaction(String database, TransactionEntity transactionEntity, Class clazz)
+  public TransactionResultEntity  executeTransaction(String database, TransactionEntity transactionEntity)
     throws ArangoException {
     HttpResponseEntity res = httpManager.doPost(
       createEndpointUrl(baseUrl, database, "/_api/transaction"),
@@ -39,9 +39,6 @@ public class InternalTransactionDriverImpl extends BaseArangoDriverImpl implemen
           .put("params", transactionEntity.getParams())
           .get())
     );
-    if (clazz != null && clazz.getSuperclass().isInstance(BaseEntity.class)) {
-      return (T) createEntity(res,  clazz);
-    }
-    return (T) createEntity(res, TransactionResultEntity.class);
+    return createEntity(res, TransactionResultEntity.class);
   }
 }

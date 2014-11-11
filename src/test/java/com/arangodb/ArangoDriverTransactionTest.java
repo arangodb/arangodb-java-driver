@@ -92,24 +92,46 @@ public class ArangoDriverTransactionTest extends BaseTest {
 
     TransactionEntity transaction = driver.createTransaction("function (params) {return params;}");
     transaction.setParams(5);
-    TransactionResultEntity result = driver.executeTransaction(transaction, null) ;
+    TransactionResultEntity result = driver.executeTransaction(transaction) ;
+
+    assertThat(result.getResultAsDouble(), is(5.0));
+    assertThat(result.getStatusCode(), is(200));
+    assertThat(result.getCode(), is(200));
+    assertThat(result.isError(), is(false));
+
+
+    transaction = driver.createTransaction("function (params) {" +
+      "var db = require('internal').db;" +
+      "return db.someCollection.all().toArray()[0];" +
+      "}");
+    transaction.addReadCollection("someCollection");
+    result = driver.executeTransaction(transaction);
 
     assertThat(result.getStatusCode(), is(200));
     assertThat(result.getCode(), is(200));
     assertThat(result.isError(), is(false));
 
     transaction = driver.createTransaction("function (params) {return params;}");
-    transaction.setParams(new ParamObject());
-    result = driver.executeTransaction(transaction, null);
+    transaction.setParams(5);
+    result = driver.executeTransaction(transaction) ;
 
+    assertThat(result.getResultAsInt(), is(5));
     assertThat(result.getStatusCode(), is(200));
     assertThat(result.getCode(), is(200));
     assertThat(result.isError(), is(false));
 
-    transaction = driver.createTransaction("function (params) {var db = require(\"internal\").db; return db.someCollection.all().toArray()[0];}");
-    transaction.addReadCollection("someCollection");
-    DocumentEntity tr = driver.executeTransaction(transaction, DocumentEntity.class);
+    transaction.setParams(true);
+    result = driver.executeTransaction(transaction) ;
 
+    assertThat(result.<Boolean>getResult(), is(true));
+    assertThat(result.getStatusCode(), is(200));
+    assertThat(result.getCode(), is(200));
+    assertThat(result.isError(), is(false));
+
+    transaction.setParams("Hans");
+    result = driver.executeTransaction(transaction) ;
+
+    assertThat(result.<String>getResult(), is("Hans"));
     assertThat(result.getStatusCode(), is(200));
     assertThat(result.getCode(), is(200));
     assertThat(result.isError(), is(false));

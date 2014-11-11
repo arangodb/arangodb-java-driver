@@ -22,47 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.arangodb.entity.AdminLogEntity;
-import com.arangodb.entity.AqlFunctionsEntity;
-import com.arangodb.entity.ArangoUnixTime;
-import com.arangodb.entity.ArangoVersion;
-import com.arangodb.entity.BatchResponseEntity;
-import com.arangodb.entity.BooleanResultEntity;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionOptions;
-import com.arangodb.entity.CollectionsEntity;
-import com.arangodb.entity.CursorEntity;
-import com.arangodb.entity.DatabaseEntity;
-import com.arangodb.entity.DefaultEntity;
-import com.arangodb.entity.DeletedEntity;
-import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentResultEntity;
-import com.arangodb.entity.EdgeDefinitionEntity;
-import com.arangodb.entity.EdgeEntity;
-import com.arangodb.entity.Endpoint;
-import com.arangodb.entity.GraphEntity;
-import com.arangodb.entity.GraphsEntity;
-import com.arangodb.entity.ImportResultEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.IndexType;
-import com.arangodb.entity.IndexesEntity;
-import com.arangodb.entity.JobsEntity;
-import com.arangodb.entity.PlainEdgeEntity;
-import com.arangodb.entity.Policy;
-import com.arangodb.entity.ReplicationApplierConfigEntity;
-import com.arangodb.entity.ReplicationApplierStateEntity;
-import com.arangodb.entity.ReplicationInventoryEntity;
-import com.arangodb.entity.ReplicationLoggerConfigEntity;
-import com.arangodb.entity.ReplicationLoggerStateEntity;
-import com.arangodb.entity.ReplicationSyncEntity;
-import com.arangodb.entity.RestrictType;
-import com.arangodb.entity.ScalarExampleEntity;
-import com.arangodb.entity.SimpleByResultEntity;
-import com.arangodb.entity.StatisticsDescriptionEntity;
-import com.arangodb.entity.StatisticsEntity;
-import com.arangodb.entity.StringsResultEntity;
-import com.arangodb.entity.TransactionEntity;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
 import com.arangodb.http.HttpManager;
@@ -74,21 +34,16 @@ import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ResultSetUtils;
 
 /**
- * ArangoDB driver. Most of the functionality to use ArangoDB is provided via
+ * ArangoDB driver. All of the functionality to use ArangoDB is provided via
  * this class.
  * 
  * @author tamtam180 - kirscheless at gmail.com
- * @author gschwab
+ * @author gschwab - g.schwab@triagens.de
+ * @author fbartels - f.bartels@triagens.de
+ * @version 2.2.
  */
 public class ArangoDriver extends BaseArangoDriver {
 
-  // TODO Cas Operation as eTAG
-  // TODO Should fixed a Double check args.
-  // TODO Null check httpResponse.
-
-  // TODO コマンド式の実装に変更する。引数が増える度にメソッド数が爆発するのと、そうしないとバッチ処理も上手く書けないため。
-  // driver.execute(createDocumentCommand)
-  // class createDocumentCommand extends Command { }
 
   private ArangoConfigure configure;
   private BatchHttpManager httpManager;
@@ -98,9 +53,7 @@ public class ArangoDriver extends BaseArangoDriver {
   private InternalBatchDriverImpl batchDriver;
   private InternalCollectionDriver collectionDriver;
   private InternalDocumentDriver documentDriver;
-  // private InternalKVSDriverImpl kvsDriver;
   private InternalIndexDriver indexDriver;
-  // private InternalEdgeDriverImpl edgeDriver;
   private InternalAdminDriver adminDriver;
   private InternalJobsDriver jobsDriver;
   private InternalAqlFunctionsDriver aqlFunctionsDriver;
@@ -116,19 +69,21 @@ public class ArangoDriver extends BaseArangoDriver {
   private String database;
 
   /**
-   * Constructor
+   * Constructor to create an instance of the driver that uses the
+   * default database.
    * 
-   * @param configure
+   * @param ArangoConfigure configure - A configuration object.
    */
   public ArangoDriver(ArangoConfigure configure) {
     this(configure, null);
   }
 
   /**
-   * Constructor
-   * 
-   * @param configure
-   * @param database
+   * Constructor to create an instance of the driver that uses the
+   * provided database.
+   *
+   * @param ArangoConfigure configure - A configuration object.
+   * @param String  database - the database that will be used.
    */
   public ArangoDriver(ArangoConfigure configure, String database) {
 
@@ -225,6 +180,18 @@ public class ArangoDriver extends BaseArangoDriver {
     }
   }
 
+
+  /**
+   * This method enables batch execution. Until 'cancelBatchMode' or 'executeBatch' is called
+   * every other call is stacked and will be either executed or discarded when the batch mode is canceled.
+   * Each call will return a 'requestId' in the http response, that can be used to select the matching result from the
+   * batch execution.
+   *
+   * @see com.arangodb.ArangoDriver#cancelBatchMode()
+   * @see ArangoDriver#executeBatch()
+   * @see ArangoDriver#getBatchResponseByRequestId(String)
+   * @throws com.arangodb.ArangoException
+   */
   public void startBatchMode() throws ArangoException {
     if (this.httpManager.isBatchModeActive()) {
       throw new ArangoException("BatchMode is already active.");
@@ -234,6 +201,19 @@ public class ArangoDriver extends BaseArangoDriver {
 
   }
 
+  /**
+   * This method sets the driver to asynchronous execution. If the parameter 'fireAndforget' is set to true
+   * each call to ArangoDB will be send without a return value. If set to false the return value will be the 'job id'.
+   * Each job result can be received by the method 'getJobResult'.
+   *
+   * @param boolean fireAndForget - if set to true the asynchronous mode is set to 'fire and forget'.
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   * @throws com.arangodb.ArangoException
+   */
   public void startAsyncMode(boolean fireAndForget) throws ArangoException {
     if (this.httpManager.getHttpMode().equals(HttpManager.HttpMode.ASYNC)
         || this.httpManager.getHttpMode().equals(HttpManager.HttpMode.FIREANDFORGET)) {
@@ -245,6 +225,16 @@ public class ArangoDriver extends BaseArangoDriver {
     this.httpManager.resetJobs();
   }
 
+  /**
+   * This method sets the driver back to synchronous execution.
+   *
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   * @throws com.arangodb.ArangoException
+   */
   public void stopAsyncMode() throws ArangoException {
     if (this.httpManager.getHttpMode().equals(HttpManager.HttpMode.SYNC)) {
       throw new ArangoException("Arango driver already set to synchronous mode.");
@@ -253,39 +243,137 @@ public class ArangoDriver extends BaseArangoDriver {
     this.createModuleDrivers(false);
   }
 
+  /**
+   * Returns the id of the last asynchronous executed job.
+   *
+   * @return String
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public String getLastJobId() {
     return this.httpManager.getLastJobId();
   }
 
+  /**
+   * Returns a list of all job ids of asynchronous executed jobs.
+   *
+   * @return List<String>
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState, int)
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public List<String> getJobIds() {
     return this.httpManager.getJobIds();
   }
 
+  /**
+   * Returns a list of all job ids of asynchronous executed jobs, filtered by job state.
+   *
+   * @param JobsEntity.JobState jobState -  the job state as a filter.
+   * @param int count - a limit for the result set.
+   * @return List<String>
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobIds()
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public List<String> getJobs(JobsEntity.JobState jobState, int count) throws ArangoException {
     return this.jobsDriver.getJobs(getDefaultDatabase(), jobState, count);
   }
 
+  /**
+   * Returns a list of all job ids of asynchronous executed jobs, filtered by job state.
+   *
+   * @param JobsEntity.JobState jobState -  the job state as a filter.
+   * @return List<String>
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobIds()
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public List<String> getJobs(JobsEntity.JobState jobState) throws ArangoException {
     return this.jobsDriver.getJobs(getDefaultDatabase(), jobState);
   }
 
+  /**
+   * Deletes all job from ArangoDB.
+   *
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobIds()
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public void deleteAllJobs() throws ArangoException {
     this.jobsDriver.deleteAllJobs(getDefaultDatabase());
     this.httpManager.resetJobs();
   }
 
+  /**
+   * Deletes a job from ArangoDB.
+   *
+   * @param String jobId - the id of the job
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobIds()
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public void deleteJobById(String JobId) throws ArangoException {
     this.jobsDriver.deleteJobById(getDefaultDatabase(), JobId);
   }
 
+  /**
+   * Deletes all jobs by a provided expiration date.
+   *
+   * @param int timeStamp - a unix timestamp, every older job is deleted.
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobIds()
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public void deleteExpiredJobs(int timeStamp) throws ArangoException {
     this.jobsDriver.deleteExpiredJobs(getDefaultDatabase(), timeStamp);
   }
 
+  /**
+   * Returns the job result for a given job id.
+   *
+   * @param String jobId -  the job id.
+   * @return <T> - A generic return value, containing the job result
+   * @see ArangoDriver#startAsyncMode(boolean)
+   * @see ArangoDriver#stopAsyncMode()
+   * @see com.arangodb.ArangoDriver#getJobResult(String)
+   * @see com.arangodb.ArangoDriver#getJobIds()
+   * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
+   * @see ArangoDriver#getLastJobId()
+   */
   public <T> T getJobResult(String jobId) throws ArangoException {
     return this.jobsDriver.getJobResult(getDefaultDatabase(), jobId);
   }
 
+  /**
+   * This method sends all stacked requests as batch to ArangoDB.
+   *
+   * @see ArangoDriver#startBatchMode()
+   * @see com.arangodb.ArangoDriver#cancelBatchMode()
+   * @throws com.arangodb.ArangoException
+   */
   public DefaultEntity executeBatch() throws ArangoException {
     if (!this.httpManager.isBatchModeActive()) {
       throw new ArangoException("BatchMode is not active.");
@@ -296,6 +384,16 @@ public class ArangoDriver extends BaseArangoDriver {
     return result;
   }
 
+  /**
+   * This method returns the result of a call to ArangoDB executed within a batch request.
+   *
+   * @param String requestId - the id of a request.
+   * @return <T> - A generic return value, containing the result.
+   * @see ArangoDriver#startBatchMode()
+   * @see ArangoDriver#executeBatch()
+   * @see com.arangodb.ArangoDriver#cancelBatchMode()
+   * @throws com.arangodb.ArangoException
+   */
   public <T> T getBatchResponseByRequestId(String requestId) throws ArangoException {
     BatchResponseEntity batchResponseEntity = this.batchDriver.getBatchResponseListEntity().getResponseFromRequestId(
       requestId);
@@ -312,6 +410,13 @@ public class ArangoDriver extends BaseArangoDriver {
     }
   }
 
+  /**
+   * This method cancels the batch execution mode. All stacked calls are discarded.
+   *
+   * @see ArangoDriver#startBatchMode()
+   * @see ArangoDriver#executeBatch()
+   * @throws com.arangodb.ArangoException
+   */
   public void cancelBatchMode() throws ArangoException {
     if (!this.httpManager.isBatchModeActive()) {
       throw new ArangoException("BatchMode is not active.");
@@ -2638,7 +2743,7 @@ public class ArangoDriver extends BaseArangoDriver {
     return this.transactionDriver.createTransaction(action);
   };
 
-  public <T> T executeTransaction(TransactionEntity transactionEntity, Class<T> clazz) throws ArangoException {
-    return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity, clazz);
-  }
+  public TransactionResultEntity executeTransaction(TransactionEntity transactionEntity) throws ArangoException {
+    return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity);
+  };
 }
