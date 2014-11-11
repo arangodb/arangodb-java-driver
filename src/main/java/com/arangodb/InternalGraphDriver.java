@@ -321,6 +321,28 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param database
    * @param graphName
    * @param edgeCollectionName
+   * @param fromHandle
+   * @param toHandle
+   * @param value
+   * @param waitForSync
+   * @return <T> EdgeEntity<T>
+   * @throws ArangoException
+   */
+  <T> EdgeEntity<T> createEdge(
+    String database,
+    String graphName,
+    String edgeCollectionName,
+    String fromHandle,
+    String toHandle,
+    Object value,
+    Boolean waitForSync) throws ArangoException;
+
+  /**
+   * 
+   * 
+   * @param database
+   * @param graphName
+   * @param edgeCollectionName
    * @param key
    * @param fromHandle
    * @param toHandle
@@ -359,9 +381,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String edgeCollectionName,
     String key,
     Class<?> clazz,
-    Long rev,
-    Long ifNoneMatchRevision,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   /**
    * Deletes an edge with the given id, if it is contained within the graph.
@@ -395,8 +416,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param key
    * @param value
    * @param waitForSync
-   * @param rev
    * @param ifMatchRevision
+   * @param ifNoneMatchRevision
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -407,8 +428,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String key,
     Object value,
     Boolean waitForSync,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   /**
    * Updates an edge with the given key by adding the content in the body. This
@@ -421,8 +442,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
    * @param value
    * @param waitForSync
    * @param keepNull
-   * @param rev
    * @param ifMatchRevision
+   * @param ifNoneMatchRevision
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -434,8 +455,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     Object value,
     Boolean waitForSync,
     Boolean keepNull,
-    Long rev,
-    Long ifMatchRevision) throws ArangoException;
+    Long ifMatchRevision,
+    Long ifNoneMatchRevision) throws ArangoException;
 
   <T> CursorEntity<EdgeEntity<T>> getEdges(
     String database,

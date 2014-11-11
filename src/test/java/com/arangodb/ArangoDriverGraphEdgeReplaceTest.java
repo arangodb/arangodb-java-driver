@@ -333,8 +333,8 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
       edge.getDocumentKey(),
       new TestComplexEntity01("xx", "yy", 20),
       null,
-      null,
-      rev);
+      rev,
+      null);
     assertThat(replacedEdge.getCode(), is(202));
     assertThat(replacedEdge.isError(), is(false));
     assertThat(replacedEdge.getDocumentKey(), is(edge.getDocumentKey()));
@@ -392,8 +392,8 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
         edge.getDocumentKey(),
         new TestComplexEntity01("xx", "yy", 20),
         null,
-        null,
-        rev);
+        rev,
+        null);
       fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(412));

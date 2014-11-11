@@ -187,7 +187,6 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
       edge1.getDocumentKey(),
       TestComplexEntity02.class,
       rev,
-      null,
       null);
     assertThat(edge2.getCode(), is(200));
     assertThat(edge2.isError(), is(false));
@@ -233,7 +232,6 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
         edge1.getDocumentKey(),
         TestComplexEntity02.class,
         rev,
-        null,
         null);
       fail();
     } catch (ArangoException e) {
@@ -272,8 +270,7 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
       edge1.getDocumentKey(),
       TestComplexEntity02.class,
       null,
-      rev,
-      null);
+      rev);
     assertThat(edge2.getStatusCode(), is(304));
     assertThat(edge2.isNotModified(), is(true));
     assertThat(edge2.isError(), is(false));
@@ -308,8 +305,7 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
       edge1.getDocumentKey(),
       TestComplexEntity02.class,
       null,
-      rev,
-      null);
+      rev);
 
     assertThat(edge2.getCode(), is(200));
     assertThat(edge2.isError(), is(false));
@@ -353,9 +349,8 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
       this.edgeCollectionName,
       edge1.getDocumentKey(),
       TestComplexEntity02.class,
-      null,
-      null,
-      rev);
+      rev,
+      null);
     assertThat(edge2.getCode(), is(200));
     assertThat(edge2.isError(), is(false));
 
@@ -399,9 +394,8 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
         this.edgeCollectionName,
         edge1.getDocumentKey(),
         TestComplexEntity02.class,
-        null,
-        null,
-        rev);
+        rev,
+        null);
       fail();
     } catch (ArangoException e) {
       assertThat(e.getCode(), is(412));
