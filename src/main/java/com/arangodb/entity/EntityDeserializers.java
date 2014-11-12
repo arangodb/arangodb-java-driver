@@ -48,6 +48,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 
 /**
+ * Entity deserializer , internally used.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  * 
  */

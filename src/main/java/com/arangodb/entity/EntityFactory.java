@@ -37,6 +37,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
 /**
+ * Entity factory , internally used.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  */
 public class EntityFactory {
