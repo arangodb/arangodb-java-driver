@@ -37,8 +37,8 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
-import com.arangodb.entity.GraphGetCollectionsResultEntity;
 import com.arangodb.entity.GraphsEntity;
+import com.arangodb.entity.StringsResultEntity;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
@@ -157,9 +157,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       throw new ArangoException("unknown error");
     }
 
-    GraphGetCollectionsResultEntity result = createEntity(res, GraphGetCollectionsResultEntity.class, null, true);
+    StringsResultEntity result = createEntity(res, StringsResultEntity.class, null, true);
 
-    return result.getCollections();
+    return result.getResult();
   }
 
   /**
@@ -233,9 +233,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       throw new ArangoException("unknown error");
     }
 
-    GraphGetCollectionsResultEntity result = createEntity(res, GraphGetCollectionsResultEntity.class, null, true);
+    StringsResultEntity result = createEntity(res, StringsResultEntity.class, null, true);
 
-    return result.getCollections();
+    return result.getResult();
   }
 
   @Override
