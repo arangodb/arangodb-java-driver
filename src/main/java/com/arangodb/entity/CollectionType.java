@@ -17,11 +17,20 @@
 package com.arangodb.entity;
 
 /**
+ * Enumeration class for collection types.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public enum CollectionType {
+  /**
+   * Document collection type
+   */
   DOCUMENT(2),
+
+  /**
+   * Edge collection type, used for graphs
+   */
   EDGE(3);
   private final int type;
   private CollectionType(int type) {

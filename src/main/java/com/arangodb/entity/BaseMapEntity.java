@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
+ *
+ * Abstract base class for map results
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */

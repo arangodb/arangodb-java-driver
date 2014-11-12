@@ -17,11 +17,17 @@
 package com.arangodb.entity;
 
 /**
+ *
+ * Entity representing a boolean result.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class BooleanResultEntity extends BaseEntity {
 
+  /**
+   * The result
+   */
   Boolean result;
 
   public Boolean getResult() {

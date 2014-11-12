@@ -19,12 +19,22 @@ package com.arangodb.entity;
 
 
 /**
+ *
+ * An entity representing the ArangoDB version
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class ArangoVersion extends BaseEntity {
-  
+
+  /**
+   * Name of the server
+   */
   String server;
+
+  /**
+   * The current version
+   */
   String version;
   
   public String getServer() {

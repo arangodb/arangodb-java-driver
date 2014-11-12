@@ -19,14 +19,31 @@ package com.arangodb.entity;
 
 
 /**
+ * The generic document entity
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
-  
+
+  /**
+   * the documents revision number
+   */
   long documentRevision;
+
+  /**
+   * the document handle
+   */
   String documentHandle;
+
+  /**
+   * the document key
+   */
   String documentKey;
+
+  /**
+   * The entity representation of the requested document.
+   */
   T entity;
   
   public DocumentEntity() {

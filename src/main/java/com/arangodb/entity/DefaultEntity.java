@@ -17,6 +17,9 @@
 package com.arangodb.entity;
 
 /**
+ * A default entity extending the base entity .
+ * This is used mostly as a result object for empty server responses
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */

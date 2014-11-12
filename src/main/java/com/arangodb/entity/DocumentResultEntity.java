@@ -19,20 +19,35 @@ package com.arangodb.entity;
 import java.util.List;
 
 /**
+ * An entity representing a list of documents
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class DocumentResultEntity<T> extends BaseEntity {
 
+  /**
+   * The list of generic document entities
+   */
   List<DocumentEntity<T>> result;
-  
+
+  /**
+   * Returns the first document from the list
+   *
+   * @return DocumentEntity<T>
+   */
   public DocumentEntity<T> getOne() {
     if (result == null || result.isEmpty()) {
       return null;
     }
     return result.get(0);
   }
-  
+
+  /**
+   * The size of the documents list
+   *
+   * @return int
+   */
   public int size() {
     if (result == null) {
       return 0;

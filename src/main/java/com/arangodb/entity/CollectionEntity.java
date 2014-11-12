@@ -19,45 +19,85 @@ package com.arangodb.entity;
 import java.io.Serializable;
 
 /**
+ * A representation of an ArangoDB collection
+ *
  * @author tamtam180 - kirscheless at gmail.com
  * 
  */
 public class CollectionEntity extends BaseEntity {
 
+  /**
+   * The collections name
+   */
   String name;
 
+  /**
+   * The unique id of the collection
+   */
   long id;
 
+  /**
+   * The collections type, either EDGE or DOCUMENT
+   */
   CollectionType type;
 
+  /**
+   * The state of the collection
+   */
   CollectionStatus status;
 
+  /**
+   * If true each write operation is synchronised to disk before the server sends a response
+   */
   Boolean waitForSync;
 
+  /**
+   * If true the collection is a system collection
+   */
   Boolean isSystem;
 
+  /**
+   * If true then the collection data will be kept in memory only and ArangoDB will not write or sync the data to disk.
+   */
   Boolean isVolatile;
 
+  /**
+   * The maximal size setting for journals / datafiles.
+   */
   long journalSize;
 
+  /**
+   * The amount of documents in the collection
+   */
   long count;
 
+  /**
+   * The collections revision
+   */
   long revision;
 
+  /**
+   * The collection figures
+   * @see com.arangodb.entity.CollectionEntity.Figures
+   * @see com.arangodb.ArangoDriver#getCollectionFigures(long)
+   * @see com.arangodb.ArangoDriver#getCollectionFigures(String)
+   */
   Figures figures;
 
   /**
-   * @since 1.4.0
+   * The collection key options
+   * @see com.arangodb.entity.CollectionKeyOption
    */
   CollectionKeyOption keyOptions;
 
   /**
-   * @since 1.4.0
+   * The checksum of the collection
+   * @see com.arangodb.ArangoDriver#getCollectionChecksum(String, Boolean, Boolean)
    */
   long checksum;
 
   /**
-   * @since 1.4.0
+   * Whether or not the collection will be compacted.
    */
   Boolean doCompact;
 
@@ -181,33 +221,116 @@ public class CollectionEntity extends BaseEntity {
     this.doCompact = doCompact;
   }
 
+  /**
+   * additional statistical information about the collection.
+   */
   public static class Figures implements Serializable {
 
+    /**
+     * The number of curretly active documents in all datafiles and journals of the collection. Documents that are
+     * contained in the write-ahead log only are not reported in this figure.
+     */
     long aliveCount;
+
+    /**
+     * The total size in bytes used by all active documents of the collection. Documents that are contained in the
+     * write-ahead log only are not reported in this figure.
+     */
     long aliveSize;
+
+    /**
+     * The number of dead documents. This includes document versions that have been deleted or replaced by a newer
+     * version. Documents deleted or replaced that are contained the write-ahead log only are not reported in this figure.
+     */
     long deadCount;
+
+    /**
+     * The total size in bytes used by all dead documents.
+     */
     long deadSize;
+
+    /**
+     * The total number of deletion markers. Deletion markers only contained in the write-ahead log are not reporting
+     * in this figure.
+     */
     long deadDeletion;
+
+    /**
+     * The number of datafiles.
+     */
     long datafileCount;
+
+    /**
+     * The total filesize of datafiles (in bytes).
+     */
     long datafileFileSize;
+
+    /**
+     * The number of journal files.
+     */
     long journalsCount;
+
+    /**
+     * The total filesize of all journal files (in bytes).
+     */
     long journalsFileSize;
-    /** @since 1.4.0 */
+
+    /**
+     * The number of compactor files.
+     */
     long compactorsCount;
-    /** @since 1.4.0 */
+
+    /**
+     * The total filesize of all compactor files (in bytes).
+     */
     long compactorsFileSize;
-    /** @since 1.4.0 */
+
+    /**
+     * The number of shape files. This value is deprecated and kept for compatibility reasons only. The value will
+     * always be 0 since ArangoDB 2.0 and higher. *figures.shapefiles.fileSize: The total filesize of the shape files.
+     * This value is deprecated and kept for compatibility reasons only. The value will always be 0 in ArangoDB 2.0 and
+     * higher.
+     */
     long shapefilesCount;
-    /** @since 1.4.0 */
+
+    /**
+     * The total size of all shapes (in bytes). This includes shapes that are not in use anymore. Shapes that are
+     * contained in the write-ahead log only are not reported in this figure.
+     */
     long shapefilesFileSize;
-    /** @since 1.4.0 */
+
+    /**
+     * The total number of shapes used in the collection. This includes shapes that are not in use anymore. Shapes that
+     * are contained in the write-ahead log only are not reported in this figure.
+     */
     long shapesCount;
-    /** @since 1.4.0 */
+
+    /**
+     * The total number of attributes used in the collection. Note: the value includes data of attributes that are not
+     * in use anymore. Attributes that are contained in the write-ahead log only are not reported in this figure.
+     */
     long attributesCount;
-    /** @since 2.0.0 */
+
+    /**
+     * The total number of indexes defined for the collection, including the pre-defined indexes (e.g. primary index).
+     */
     long indexesCount;
+
+    /**
+     * The total memory allocated for indexes in bytes.
+     */
     long indexesSize;
+
+    /**
+     * The tick of the last marker that was stored in a journal of the collection. This might be 0 if the collection
+     * does not yet have a journal.
+     */
     long lastTick;
+
+    /**
+     * The number of markers in the write-ahead log for this collection that have not been transferred to journals or
+     * datafiles.
+     */
     long uncollectedLogfileEntries;
 
     public long getAliveCount() {

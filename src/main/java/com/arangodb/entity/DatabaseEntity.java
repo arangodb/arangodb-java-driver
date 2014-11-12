@@ -17,14 +17,31 @@
 package com.arangodb.entity;
 
 /**
+ * An entity representing an ArangoDB database
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class DatabaseEntity extends BaseEntity {
 
+  /**
+   * The name of the database
+   */
   String name;
+
+  /**
+   * The id of the database
+   */
   String id;
+
+  /**
+   * The path of the database
+   */
   String path;
+
+  /**
+   * If true the database is the system database
+   */
   boolean isSystem;
   
   public String getName() {

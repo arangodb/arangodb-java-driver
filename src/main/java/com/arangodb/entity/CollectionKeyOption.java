@@ -19,14 +19,34 @@ package com.arangodb.entity;
 import java.io.Serializable;
 
 /**
+ *
+ * additional options for key generation.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class CollectionKeyOption implements Serializable {
 
+  /**
+   * specifies the type of the key generator. The currently available generators are traditional and autoincrement.
+   */
   String type;
+
+  /**
+   * if set to true, then it is allowed to supply own key values in the _key attribute of a document. If set to false,
+   * then the key generator will solely be responsible for generating keys and supplying own key values in the _key
+   * attribute of documents is considered an error.
+   */
   boolean allowUserKeys;
+
+  /**
+   * increment value for autoincrement key generator. Not used for other key generator types.
+   */
   long increment;
+
+  /**
+   * initial offset value for autoincrement key generator. Not used for other key generator types.
+   */
   long offset;
   
   public static CollectionKeyOption createIncrementOption(boolean allowUserKeys, long increment, long offset) {

@@ -24,6 +24,9 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 /**
+ *
+ * Used only internally for entity deserialisation
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */

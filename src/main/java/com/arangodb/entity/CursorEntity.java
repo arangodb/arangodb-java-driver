@@ -22,26 +22,60 @@ import java.util.List;
 import com.arangodb.util.CollectionUtils;
 
 /**
+ * Cursor entity that represents the result of a AQL query.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 
+  /**
+   * True if the cursor has more results.
+   */
   boolean hasMore;
+
+  /**
+   * The amount of results in the cursor
+   */
   int count = -1;
+
+  /**
+   * The cursor id
+   */
   long cursorId = -1;
+
+  /**
+   * A list of bind variables returned by the query
+   */
   List<String> bindVars;
+
+  /**
+   * A list of objects containing the results
+   */
   List<? extends T> results;
   
   public Iterator<T> iterator() {
     return (Iterator<T>) CollectionUtils.safetyIterator(results);
   }
+
+  /**
+   * The size of the cursor results.
+   *
+   * @return int
+   */
   public int size() {
     if (results == null) {
       return 0;
     }
     return results.size();
   }
+
+  /**
+   * Returns the cursor element at position *index*
+   *
+   * @param index
+   * @return Object
+   */
   public T get(int index) {
     rangeCheck(index);
     return results.get(index);

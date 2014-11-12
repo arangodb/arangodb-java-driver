@@ -17,6 +17,8 @@
 package com.arangodb.entity;
 
 /**
+ * An enumeration representing the possible directions of graph functions.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */

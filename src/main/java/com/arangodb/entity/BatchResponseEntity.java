@@ -22,13 +22,22 @@ import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationObject;
 
 /**
+ * This entity is a representation of the result of a batch part
+ *
  * @author tamtam180 - kirscheless at gmail.com
  * 
  */
 public class BatchResponseEntity extends BaseEntity {
 
+  /**
+   * The context of the function call, this is used to to process the server response to
+   * an api entity.
+   */
   InvocationObject invocationObject;
 
+  /**
+   * The http response of the batch part.
+   */
   public HttpResponseEntity httpResponseEntity;
 
   public BatchResponseEntity(InvocationObject invocationObject) {

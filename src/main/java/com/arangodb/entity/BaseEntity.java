@@ -25,32 +25,81 @@ import com.arangodb.annotations.Exclude;
  *
  */
 public abstract class BaseEntity implements Serializable {
-  
+
+  /**
+   * If true an error occurred while creating this entity
+   */
   @Exclude(deserialize=false)
   boolean error;
+
+  /**
+   * The http response code of the response
+   */
   @Exclude(deserialize=false)
   int code;
+
+  /**
+   * The Arango error number of the error
+   */
   @Exclude(deserialize=false)
   int errorNumber;
+
+  /**
+   * If an error occurred this is the error message
+   */
   @Exclude(deserialize=false)
   String errorMessage;
+
+  /**
+   * The http status code of the response
+   */
   @Exclude(deserialize=false)
   int statusCode;
+
+  /**
+   * The check sum of the requested resource
+   */
   @Exclude(deserialize=false)
   long etag;
+
+  /**
+   * The requestId, this attribute is only used for batch requests.
+   */
   @Exclude(deserialize=false)
   String requestId;
-  
+
+  /**
+   * If the resource has been modified it returns true
+   *
+   * @return boolean
+   */
   public boolean isNotModified() {
     return statusCode == 304; //HttpStatus.SC_NOT_MODIFIED;
   }
+
+  /**
+   * If the request is unauthorized this returns true
+   *
+   * @return boolean
+   */
   public boolean isUnauthorized() {
     return statusCode == 401;
   }
+
+  /**
+   * If the requested resource has not been modified it returns true
+   *
+   * @return boolean
+   */
   public boolean isNotFound() {
     return statusCode == 404;
   }
 
+  /**
+   * If this is the response of a batch request it returns true
+   *
+   * @return boolean
+   */
   public boolean isBatchResponseEntity() {
     return statusCode == 206;
   }
