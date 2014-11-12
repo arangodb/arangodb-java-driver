@@ -4,42 +4,11 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class EdgeDefinitionEntity extends BaseEntity implements DocumentHolder {
+public class EdgeDefinitionEntity {
 
-  @SerializedName("_rev")
-  long documentRevision;
-  @SerializedName("_id")
-  String documentHandle;
-  @SerializedName("_key")
-  String documentKey;
-  
   String collection;
   List<String> from;
   List<String> to;
-  
-
-  public long getDocumentRevision() {
-    return documentRevision;  }
-
-  public String getDocumentHandle() {
-    return documentHandle;  
-  }
-
-  public String getDocumentKey() {
-    return documentKey;  
-  }
-
-  public void setDocumentRevision(long documentRevision) {
-    this.documentRevision = documentRevision;
-  }
-
-  public void setDocumentHandle(String documentHandle) {
-    this.documentHandle = documentHandle;
-  }
-
-  public void setDocumentKey(String documentKey) {
-    this.documentKey = documentKey;
-  }
 
   public String getCollection() {
     return collection;

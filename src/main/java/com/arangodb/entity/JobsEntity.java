@@ -22,11 +22,17 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * This entity represents a list of job ids.
+ *
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class JobsEntity extends BaseEntity {
 
+  /**
+   * The enumeration containing the job state
+   */
   public static enum JobState {
     DONE , PENDING;
     public java.lang.String getName() {
