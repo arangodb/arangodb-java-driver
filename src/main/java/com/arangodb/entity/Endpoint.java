@@ -20,12 +20,21 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * This entity represents an endpoint
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class Endpoint implements Serializable {
 
+  /**
+   * The endpoint address as string
+   */
   String endpoint;
+
+  /**
+   * The list of databases available at this endpoint as string
+   */
   List<String> databases;
   
   public String getEndpoint() {
