@@ -16,9 +16,7 @@
 
 package com.arangodb.entity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +31,6 @@ public class TransactionEntity extends BaseEntity {
 
     List<String> write = new ArrayList<String>();
   }
-
 
   ReadWriteCollections collections = new ReadWriteCollections();
 
@@ -57,11 +54,11 @@ public class TransactionEntity extends BaseEntity {
     this.collections = collections;
   }
 
-  public void addReadCollection (String collection) {
+  public void addReadCollection(String collection) {
     this.collections.read.add(collection);
   }
 
-  public void addWriteCollection (String collection) {
+  public void addWriteCollection(String collection) {
     this.collections.write.add(collection);
   }
 

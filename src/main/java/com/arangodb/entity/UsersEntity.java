@@ -5,11 +5,19 @@ import java.util.Map;
 
 /**
  * @author a-brandt
+ * @author gschwab
  * 
  */
 public class UsersEntity extends BaseEntity {
 
+  /**
+   * List of users.
+   */
   private List<UsersEntity> users;
+
+  /**
+   * Map of users.
+   */
   private Map<String, UsersEntity> names;
 
   public List<UsersEntity> getUsers() {

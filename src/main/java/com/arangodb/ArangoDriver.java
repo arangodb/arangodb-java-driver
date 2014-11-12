@@ -2552,7 +2552,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Executes a javascript code.
    *
-   * @param jsCode - a javascript function as string
+   * @param jsCode
+   *          - a javascript function as string
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -2560,14 +2561,18 @@ public class ArangoDriver extends BaseArangoDriver {
     return adminDriver.executeScript(getDefaultDatabase(), jsCode);
   }
 
-
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName - - The collection name.
-   * @param example - The example as a map.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2587,10 +2592,15 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName - - The collection name.
-   * @param example - The example as a map.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2616,10 +2626,15 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName - - The collection name.
-   * @param example - The example as a map.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2645,10 +2660,15 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName - - The collection name.
-   * @param example - The example as a map.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2674,9 +2694,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName - - The collection name.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2692,9 +2716,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName - - The collection name.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2710,9 +2738,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName - - The collection name.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - - The collection name.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2731,9 +2763,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName - The collection name.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2752,8 +2788,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the first document matching the example
    *
-   * @param collectionName - The collection name.
-   * @param example - The example as a map.
+   * @param collectionName
+   *          - The collection name.
+   * @param example
+   *          - The example as a map.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2771,7 +2809,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a random document from the collection
    *
-   * @param collectionName - The collection name.
+   * @param collectionName
+   *          - The collection name.
    * @param clazz
    *          - the expected class, the result from the server request is
    *          deserialized to an instance of this class.
@@ -2784,18 +2823,28 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents within a given range. In order to execute a range query, a skip-list index on the
-   * queried attribute must be present.
+   * This will find all documents within a given range. In order to execute a
+   * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param left - The lower bound
-   * @param right - The upper bound
-   * @param closed - If true, use interval including left and right, otherwise exclude right, but include left.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param left
+   *          - The lower bound
+   * @param right
+   *          - The upper bound
+   * @param closed
+   *          - If true, use interval including left and right, otherwise
+   *          exclude right, but include left.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2822,18 +2871,28 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents within a given range. In order to execute a range query, a skip-list index on the
-   * queried attribute must be present.
+   * This will find all documents within a given range. In order to execute a
+   * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param left - The lower bound
-   * @param right - The upper bound
-   * @param closed - If true, use interval including left and right, otherwise exclude right, but include left.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param left
+   *          - The lower bound
+   * @param right
+   *          - The upper bound
+   * @param closed
+   *          - If true, use interval including left and right, otherwise
+   *          exclude right, but include left.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2860,18 +2919,28 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents within a given range. In order to execute a range query, a skip-list index on the
-   * queried attribute must be present.
+   * This will find all documents within a given range. In order to execute a
+   * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param left - The lower bound
-   * @param right - The upper bound
-   * @param closed - If true, use interval including left and right, otherwise exclude right, but include left.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param left
+   *          - The lower bound
+   * @param right
+   *          - The upper bound
+   * @param closed
+   *          - If true, use interval including left and right, otherwise
+   *          exclude right, but include left.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<DocumentEntity<T>>
    * @throws ArangoException
@@ -2898,18 +2967,28 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents within a given range. In order to execute a range query, a skip-list index on the
-   * queried attribute must be present.
+   * This will find all documents within a given range. In order to execute a
+   * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param left - The lower bound
-   * @param right - The upper bound
-   * @param closed - If true, use interval including left and right, otherwise exclude right, but include left.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param left
+   *          - The lower bound
+   * @param right
+   *          - The upper bound
+   * @param closed
+   *          - If true, use interval including left and right, otherwise
+   *          exclude right, but include left.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<DocumentEntity<T>>
    * @throws ArangoException
@@ -2936,16 +3015,24 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents from the collection that match the fulltext query specified in query. In order to use
-   * the fulltext operator, a fulltext index must be defined for the collection and the specified attribute.
+   * This will find all documents from the collection that match the fulltext
+   * query specified in query. In order to use the fulltext operator, a fulltext
+   * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param query - The fulltext query as string.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param query
+   *          - The fulltext query as string.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2970,16 +3057,24 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents from the collection that match the fulltext query specified in query. In order to use
-   * the fulltext operator, a fulltext index must be defined for the collection and the specified attribute.
+   * This will find all documents from the collection that match the fulltext
+   * query specified in query. In order to use the fulltext operator, a fulltext
+   * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param query - The fulltext query as string.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param query
+   *          - The fulltext query as string.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -3004,16 +3099,24 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents from the collection that match the fulltext query specified in query. In order to use
-   * the fulltext operator, a fulltext index must be defined for the collection and the specified attribute.
+   * This will find all documents from the collection that match the fulltext
+   * query specified in query. In order to use the fulltext operator, a fulltext
+   * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param query - The fulltext query as string.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param query
+   *          - The fulltext query as string.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<DocumentEntity<T>>
    * @throws ArangoException
@@ -3038,16 +3141,24 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will find all documents from the collection that match the fulltext query specified in query. In order to use
-   * the fulltext operator, a fulltext index must be defined for the collection and the specified attribute.
+   * This will find all documents from the collection that match the fulltext
+   * query specified in query. In order to use the fulltext operator, a fulltext
+   * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName - The collection name.
-   * @param attribute - The attribute path to check.
-   * @param query - The fulltext query as string.
-   * @param skip -  The number of documents to skip in the query.
-   * @param limit - The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param collectionName
+   *          - The collection name.
+   * @param attribute
+   *          - The attribute path to check.
+   * @param query
+   *          - The fulltext query as string.
+   * @param skip
+   *          - The number of documents to skip in the query.
+   * @param limit
+   *          - The maximal amount of documents to return. The skip is applied
+   *          before the limit restriction.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<DocumentEntity<T>>
    * @throws ArangoException
@@ -3072,12 +3183,18 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will remove all documents in the collection that match the specified example object.
+   * This will remove all documents in the collection that match the specified
+   * example object.
    *
-   * @param collectionName - The collection name.
-   * @param example - The example as a map.
-   * @param waitForSync - if set to true the response is returned when the server has finished.
-   * @param limit - limits the amount of documents which will be deleted.
+   * @param collectionName
+   *          - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param waitForSync
+   *          - if set to true the response is returned when the server has
+   *          finished.
+   * @param limit
+   *          - limits the amount of documents which will be deleted.
    * @return SimpleByResultEntity
    * @throws ArangoException
    */
@@ -3090,13 +3207,20 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will replace all documents in the collection that match the specified example object.
+   * This will replace all documents in the collection that match the specified
+   * example object.
    *
-   * @param collectionName - The collection name.
-   * @param example - The example as a map.
-   * @param newValue - The new values.
-   * @param waitForSync - if set to true the response is returned when the server has finished.
-   * @param limit - limits the amount of documents which will be replaced.
+   * @param collectionName
+   *          - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param newValue
+   *          - The new values.
+   * @param waitForSync
+   *          - if set to true the response is returned when the server has
+   *          finished.
+   * @param limit
+   *          - limits the amount of documents which will be replaced.
    * @return SimpleByResultEntity
    * @throws ArangoException
    */
@@ -3116,14 +3240,22 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will update all documents in the collection that match the specified example object.
+   * This will update all documents in the collection that match the specified
+   * example object.
    *
-   * @param collectionName - The collection name.
-   * @param example - The example as a map.
-   * @param newValue - The new values.
-   * @param keepNull - - If true null values are kept.
-   * @param waitForSync - if set to true the response is returned when the server has finished.
-   * @param limit - limits the amount of documents which will be updated.
+   * @param collectionName
+   *          - The collection name.
+   * @param example
+   *          - The example as a map.
+   * @param newValue
+   *          - The new values.
+   * @param keepNull
+   *          - - If true null values are kept.
+   * @param waitForSync
+   *          - if set to true the response is returned when the server has
+   *          finished.
+   * @param limit
+   *          - limits the amount of documents which will be updated.
    * @return SimpleByResultEntity
    * @throws ArangoException
    */
@@ -3145,13 +3277,17 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will return the first document(s) from the collection, in the order of insertion/update time.
+   * This will return the first document(s) from the collection, in the order of
+   * insertion/update time.
    *
-   * @param collectionName - The collection name.
-   * @param count - the number of documents to return at most. Specifiying count is optional. If it is not specified,
-   *              it defaults to 1.
+   * @param collectionName
+   *          - The collection name.
+   * @param count
+   *          - the number of documents to return at most. Specifiying count is
+   *          optional. If it is not specified, it defaults to 1.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @return <T> DocumentResultEntity<T>
    * @throws ArangoException
    */
@@ -3161,13 +3297,17 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * This will return the last document(s) from the collection, in the order of insertion/update time.
+   * This will return the last document(s) from the collection, in the order of
+   * insertion/update time.
    *
-   * @param collectionName - The collection name.
-   * @param count - the number of documents to return at most. Specifiying count is optional. If it is not specified,
-   *              it defaults to 1.
+   * @param collectionName
+   *          - The collection name.
+   * @param count
+   *          - the number of documents to return at most. Specifiying count is
+   *          optional. If it is not specified, it defaults to 1.
    * @param clazz
-   *          - the expected class, the result from the server request is deserialized to an instance of this class.
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @return <T> DocumentResultEntity<T>
    * @throws ArangoException
    */
@@ -3179,10 +3319,14 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a database user.
    *
-   * @param username - the username as string
-   * @param passwd - the username as string
-   * @param active - if true the user is active
-   * @param extra - additional user data
+   * @param username
+   *          - the username as string
+   * @param passwd
+   *          - the username as string
+   * @param active
+   *          - if true the user is active
+   * @param extra
+   *          - additional user data
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3194,10 +3338,14 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Replaces the data of a database user.
    *
-   * @param username - the username as string
-   * @param passwd - the username as string
-   * @param active - if true the user is active
-   * @param extra - additional user data
+   * @param username
+   *          - the username as string
+   * @param passwd
+   *          - the username as string
+   * @param active
+   *          - if true the user is active
+   * @param extra
+   *          - additional user data
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3209,10 +3357,14 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Updates the data of a database user.
    *
-   * @param username - the username as string
-   * @param passwd - the username as string
-   * @param active - if true the user is active
-   * @param extra - additional user data
+   * @param username
+   *          - the username as string
+   * @param passwd
+   *          - the username as string
+   * @param active
+   *          - if true the user is active
+   * @param extra
+   *          - additional user data
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3224,7 +3376,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a database user.
    *
-   * @param username - the username as string
+   * @param username
+   *          - the username as string
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3235,7 +3388,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a database user.
    *
-   * @param username - the username as string
+   * @param username
+   *          - the username as string
    * @return UserEntity
    * @throws ArangoException
    */
@@ -3276,9 +3430,12 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates documents in the collection.
    *
-   * @param collection - the collection as a string
-   * @param createCollection - if set to true the collection is created if it does not exist
-   * @param values - a list of Objects that will be stored as documents
+   * @param collection
+   *          - the collection as a string
+   * @param createCollection
+   *          - if set to true the collection is created if it does not exist
+   * @param values
+   *          - a list of Objects that will be stored as documents
    * @return ImportResultEntity
    * @throws ArangoException
    */
@@ -3290,9 +3447,12 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates documents in the collection.
    *
-   * @param collection - the collection as a string
-   * @param createCollection - if set to true the collection is created if it does not exist
-   * @param headerValues - a list of lists that will be stored as documents
+   * @param collection
+   *          - the collection as a string
+   * @param createCollection
+   *          - if set to true the collection is created if it does not exist
+   * @param headerValues
+   *          - a list of lists that will be stored as documents
    * @return ImportResultEntity
    * @throws ArangoException
    */
@@ -3303,7 +3463,6 @@ public class ArangoDriver extends BaseArangoDriver {
     return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, createCollection, headerValues);
   }
 
-  
   /**
    * @return
    * @throws ArangoException
@@ -4551,6 +4710,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns all Edges of a graph, each edge as a PlainEdgeEntity.
    * 
    * @param graphName
+   *          The name of the graph.
    * @return CursorEntity<PlainEdgeEntity>
    * @throws ArangoException
    */
@@ -4616,8 +4776,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns all Edges of vertices matching the map.
    * 
    * @param graphName
+   *          The name of the graph.
    * @param clazzT
+   *          Class of returned edge documents.
    * @param vertexExample
+   *          Map with example of vertex, where edges start or end.
    * @return <T> CursorEntity<T>
    * @throws ArangoException
    */
