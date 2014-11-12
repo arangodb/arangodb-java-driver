@@ -21,14 +21,25 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ *
+ * A entity defining admin logs
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class AdminLogEntity extends BaseEntity {
 
+  /**
+   * The total amount of log entries
+   */
   int totalAmount;
+
+  /**
+   * A list of log entries
+   * @see com.arangodb.entity.AdminLogEntity.LogEntry
+   */
   List<LogEntry> logs;
-  
+
   public int getTotalAmount() {
     return totalAmount;
   }
@@ -43,10 +54,27 @@ public class AdminLogEntity extends BaseEntity {
   }
 
   public static class LogEntry implements Serializable {
+
+    /**
+     * The log id
+     */
     int lid;
+
+    /**
+     * The integer representation of a log level
+     */
     int level;
+
+    /**
+     * The timestamp of the log entry
+     */
     Date timestamp;
+
+    /**
+     * The log message
+     */
     String text;
+
     public int getLid() {
       return lid;
     }

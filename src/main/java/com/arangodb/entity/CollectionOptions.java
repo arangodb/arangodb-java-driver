@@ -3,26 +3,61 @@ package com.arangodb.entity;
 import java.util.List;
 
 /**
- * Created by fbartels on 10/28/14.
+ *
+ * Convenience object for collection creation.
+ *
+ * @see com.arangodb.entity.CollectionEntity
+ * author fbartels - f.bartels@triagens.de
  */
 public class CollectionOptions {
 
+  /**
+   * If true each write operation is synchronised to disk before the server sends a response
+   */
   private Boolean waitForSync;
 
+  /**
+   * Whether or not the collection will be compacted.
+   */
   private Boolean doCompact;
 
+  /**
+   * The maximal size setting for journals / datafiles.
+   */
   private Integer journalSize;
 
+  /**
+   * If true the collection is a system collection
+   */
   private Boolean isSystem;
 
+  /**
+   * If true then the collection data will be kept in memory only and ArangoDB will not write or sync the data to disk.
+   */
   private Boolean isVolatile;
 
+  /**
+   * The collections type, either EDGE or DOCUMENT
+   */
   private CollectionType type;
 
+  /**
+   * The collection key options
+   * @see com.arangodb.entity.CollectionKeyOption
+   */
   private CollectionKeyOption keyOptions;
 
+  /**
+   * in a cluster, this value determines the number of shards to create for the collection. In a single server setup,
+   * this option is meaningless.
+   */
   private int numberOfShards;
 
+  /**
+   * in a cluster, this attribute determines which document attributes are used to determine the target shard for
+   * documents. Documents are sent to shards based on the values of their shard key attributes. The values of all
+   * shard key attributes in a document are hashed, and the hash value is used to determine the target shard.
+   */
   private List<String> shardKeys;
 
 

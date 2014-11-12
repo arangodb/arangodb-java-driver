@@ -23,11 +23,16 @@ import com.arangodb.ArangoException;
 import com.arangodb.http.HttpManager;
 
 /**
+ * A representation of the complete result of a batch request.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class BatchResponseListEntity extends BaseEntity {
-  
+
+  /**
+   * A list of BatchResponseEntities, each one representing a single batch part of a batch request.
+   */
   List<BatchResponseEntity> batchResponseEntities;
 
   public List<BatchResponseEntity> getBatchResponseEntities() {

@@ -20,12 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A entity representing a list of ArangoDB collections
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class CollectionsEntity extends BaseEntity {
-  
+
+  /**
+   * The list of collections
+   */
   List<CollectionEntity> collections;
+
+  /**
+   * A map containing the collection names as keys and the collections as values
+   */
   Map<String, CollectionEntity> names;
   
   public List<CollectionEntity> getCollections() {

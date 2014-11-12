@@ -17,11 +17,17 @@
 package com.arangodb.entity;
 
 /**
+ *
+ * An entity used as a result for deletions.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class DeletedEntity extends DefaultEntity {
 
+  /**
+   * if true the deletion has been executed successfully
+   */
   Boolean deleted;
 
   public Boolean getDeleted() {

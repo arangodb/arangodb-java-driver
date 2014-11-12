@@ -22,11 +22,16 @@ import java.util.List;
 import com.arangodb.util.CollectionUtils;
 
 /**
+ * An entity representing a list of document ids
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class DocumentsEntity extends BaseEntity implements Iterable<String> {
 
+  /**
+   * the list of document ids
+   */
   List<String> documents;
 
   public Iterator<String> iterator() {

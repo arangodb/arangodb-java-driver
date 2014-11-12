@@ -20,11 +20,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * An entity wrapping a list of AQL functions
+ *
  * @author Florian Bartels - f.bartels@triagens.de
  *
  */
 public class AqlFunctionsEntity extends BaseEntity {
-  
+
+  /**
+   * A map containing the function name as key and the function as value
+   */
   Map<String, String> aqlFunctions;
 
   public AqlFunctionsEntity () {

@@ -20,15 +20,36 @@ import java.io.Serializable;
 import java.util.TreeMap;
 
 /**
+ * Enumeration describing the collection state
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public enum CollectionStatus {
-  
+
+  /**
+   * initial state of a new collection
+   */
   NEW_BORN_COLLECTION(1),
+
+  /**
+   * collection is not in memory
+   */
   UNLOADED(2),
+
+  /**
+   * collection is in memory
+   */
   LOADED(3),
+
+  /**
+   * temporary state of a collection in the process of being unloaded
+   */
   IN_THE_PROCESS_OF_BEING_UNLOADED(4),
+
+  /**
+   * deleted state
+   */
   DELETED(5)
   ;
   

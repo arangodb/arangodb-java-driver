@@ -17,13 +17,26 @@
 package com.arangodb.entity;
 
 /**
+ * An entity representing the arango server time
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class ArangoUnixTime extends BaseEntity {
 
+  /**
+   * the unix timestamp as double
+   */
   double time;
+
+  /**
+   * the unix timestamp as integer
+   */
   int second;
+
+  /**
+   * the microseconds part of the unix timestamp
+   */
   int microsecond;
   
   public long getTimeMillis() {
