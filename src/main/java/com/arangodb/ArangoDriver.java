@@ -3464,150 +3464,158 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * @return
+   * Returns the current database
+   *
+   * @return DatabaseEntity
    * @throws ArangoException
-   * @see http://www.arangodb.com/manuals/current/HttpDatabase.html#
-   *      HttpDatabaseCurrent
-   * @since 1.4.0
    */
   public DatabaseEntity getCurrentDatabase() throws ArangoException {
     return databaseDriver.getCurrentDatabase();
   }
 
   /**
-   * @return
+   * Returns all databases
+   *
+   * @return StringsResultEntity
    * @throws ArangoException
-   * @see http 
-   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseList2
-   * @since 1.4.0
    */
   public StringsResultEntity getDatabases() throws ArangoException {
     return getDatabases(false);
   }
 
   /**
+   * Returns all databases
+   *
    * @param currentUserAccessableOnly
-   * @return
+   *          - If true only the databases are returned that the current user
+   *          can access
+   * @return StringsResultEntity
    * @throws ArangoException
-   * @see http 
-   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseList
-   * @since 1.4.1
    */
   public StringsResultEntity getDatabases(boolean currentUserAccessableOnly) throws ArangoException {
     return databaseDriver.getDatabases(currentUserAccessableOnly, null, null);
   }
 
   /**
+   * Returns all databases the user identified by his credentials can access
+   *
    * @param username
+   *          - the username as string
    * @param password
-   * @return
+   *          - the password as string
+   * @return StringsResultEntity
    * @throws ArangoException
-   * @since 1.4.1
    */
   public StringsResultEntity getDatabases(String username, String password) throws ArangoException {
     return databaseDriver.getDatabases(true, username, password);
   }
 
   /**
+   * This method creates a database
+   *
    * @param database
+   *          - the database name as a string
    * @param users
-   * @return
+   *          - a list of users which are supposed to have access to the
+   *          database
+   * @return BooleanResultEntity
    * @throws ArangoException
-   * @see http 
-   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseCreate
-   * @since 1.4.0
    */
   public BooleanResultEntity createDatabase(String database, UserEntity... users) throws ArangoException {
     return databaseDriver.createDatabase(database, users);
   }
 
   /**
+   * This method deletes a database
+   *
    * @param database
-   * @return
+   *          - the database name as a string
+   * @return BooleanResultEntity
    * @throws ArangoException
-   * @see http 
-   *      ://www.arangodb.com/manuals/current/HttpDatabase.html#HttpDatabaseDelete
-   * @since 1.4.0
    */
   public BooleanResultEntity deleteDatabase(String database) throws ArangoException {
     return databaseDriver.deleteDatabase(database);
   }
 
-  // ***************************************
-  // *** end of database *******************
-  // ***************************************
-
-  // ***************************************
-  // *** start of endpoint *****************
-  // ***************************************
-
   /**
+   * This method creates an endpoint.
+   *
    * @param endpoint
+   *          - the endpoint as string
    * @param databases
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
+   *          - a list of databases that are allowed on this endpoint
+   * @return BooleanResultEntity
    */
   public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {
     return endpointDriver.createEndpoint(endpoint, databases);
   }
 
   /**
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
+   * This method returns all endpoints.
+   *
+   * @return List<Endpoint>
    */
   public List<Endpoint> getEndpoints() throws ArangoException {
     return endpointDriver.getEndpoints();
   }
 
   /**
+   * This method deletes an endpoint
+   *
    * @param endpoint
-   * @return
-   * @throws ArangoException
-   * @since 1.4.0
+   *          - the endpoint as string
+   * @return BooleanResultEntity
    */
   public BooleanResultEntity deleteEndpoint(String endpoint) throws ArangoException {
     return endpointDriver.deleteEndpoint(endpoint);
   }
 
-  // ***************************************
-  // *** end of endpoint *******************
-  // ***************************************
-
-  // ***************************************
-  // *** start of replication **************
-  // ***************************************
-
   /**
-   * @return
+   * Returns the list of collections and indexes available on the server. This
+   * list can be used by replication clients to initiate an initial sync with
+   * the server.
+   *
+   * @return ReplicationInventoryEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationInventoryEntity getReplicationInventory() throws ArangoException {
     return replicationDriver.getReplicationInventory(getDefaultDatabase(), null);
   }
 
   /**
+   * Returns the list of collections and indexes available on the server. This
+   * list can be used by replication clients to initiate an initial sync with
+   * the server.
+   *
    * @param includeSystem
-   * @return
+   *          - if true the system collections are included into the result
+   * @return ReplicationInventoryEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationInventoryEntity getReplicationInventory(boolean includeSystem) throws ArangoException {
     return replicationDriver.getReplicationInventory(getDefaultDatabase(), includeSystem);
   }
 
   /**
+   * Returns the data from the collection for the requested range.
+   *
    * @param collectionName
+   *          - the collection name
    * @param from
+   *          - Lower bound tick value for results.
    * @param to
+   *          - Upper bound tick value for results.
    * @param chunkSize
+   *          - Approximate maximum size of the returned result.
    * @param ticks
+   *          - Whether or not to include tick values in the dump. Default value
+   *          is true.
    * @param clazz
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
    * @param handler
+   *          - a handler object that processes the dump
    * @throws ArangoException
-   * @since 1.4.0
    */
   public <T> void getReplicationDump(
     String collectionName,
@@ -3631,15 +3639,26 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Starts a full data synchronization from a remote endpoint into the local
+   * ArangoDB database.
+   *
    * @param endpoint
+   *          - the endpoint as string
    * @param database
+   *          - the database name as a string
    * @param username
+   *          - the username as string
    * @param password
+   *          - the password as string
    * @param restrictType
+   *          - collection filtering. When specified, the allowed values are
+   *          include or exclude.
    * @param restrictCollections
-   * @return
+   *          - If restrictType is include, only the specified collections will
+   *          be sychronised. If restrictType is exclude, all but the specified
+   *          collections will be synchronized.
+   * @return ReplicationSyncEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationSyncEntity syncReplication(
     String endpoint,
@@ -3659,34 +3678,42 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * @return
+   * Returns the servers id. The id is also returned by other replication API
+   * methods, and this method is an easy means of determining a server's id.
+   *
+   * @return String
    * @throws ArangoException
-   * @since 1.4.0
    */
   public String getReplicationServerId() throws ArangoException {
     return replicationDriver.getReplicationServerId();
   }
 
   /**
-   * @return
+   * Starts the replication logger
+   *
+   * @return boolean
    * @throws ArangoException
-   * @since 1.4.0
    */
   public boolean startReplicationLogger() throws ArangoException {
     return replicationDriver.startReplicationLogger(getDefaultDatabase());
   }
 
   /**
-   * @return
+   * Stops the replication logger
+   *
+   * @return boolean
    * @throws ArangoException
-   * @since 1.4.0
    */
   public boolean stopReplicationLogger() throws ArangoException {
     return replicationDriver.stopReplicationLogger(getDefaultDatabase());
   }
 
   /**
-   * @return
+   * Returns the current state of the server's replication logger. The state
+   * will include information about whether the logger is running and about the
+   * last logged tick value.
+   *
+   * @return ReplicationLoggerStateEntity
    * @throws ArangoException
    * @since 1.4.0
    */
@@ -3695,22 +3722,28 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * @return
+   * Returns the configuration of the replication logger
+   *
+   * @return ReplicationLoggerConfigEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationLoggerConfigEntity getReplicationLoggerConfig() throws ArangoException {
     return replicationDriver.getReplicationLoggerConfig(getDefaultDatabase());
   }
 
   /**
+   * Sets the replication logger configuration
+   *
    * @param autoStart
+   *          - if true autoStart is activated
    * @param logRemoteChanges
+   *          - if true remote changes are logged
    * @param maxEvents
+   *          - the maximum amount of events to log
    * @param maxEventsSize
-   * @return
+   *          - the maximum size of events
+   * @return ReplicationLoggerConfigEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationLoggerConfigEntity setReplicationLoggerConfig(
     Boolean autoStart,
@@ -3726,7 +3759,9 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * @return
+   * Returns the configuration of the replication applier.
+   *
+   * @return ReplicationApplierConfigEntity
    * @throws ArangoException
    * @since 1.4.0
    */
@@ -3735,19 +3770,40 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Sets the configuration of the replication applier.
+   *
    * @param endpoint
+   *          - the logger server to connect to (e.g.
+   *          "tcp://192.168.173.13:8529").
    * @param database
+   *          - the name of the database on the endpoint.
    * @param username
+   *          - an optional ArangoDB username to use when connecting to the
+   *          endpoint
    * @param password
+   *          - the password to use when connecting to the endpoint.
    * @param maxConnectRetries
+   *          - the maximum number of connection attempts the applier will make
+   *          in a row. If the applier cannot establish a connection to the
+   *          endpoint in this number of attempts, it will stop itself.
    * @param connectTimeout
+   *          - the timeout (in seconds) when attempting to connect to the
+   *          endpoint. This value is used for each connection attempt.
    * @param requestTimeout
+   *          - the timeout (in seconds) for individual requests to the
+   *          endpoint.
    * @param chunkSize
+   *          - the requested maximum size for log transfer packets that is used
+   *          when the endpoint is contacted.
    * @param autoStart
+   *          - whether or not to auto-start the replication applier on (next
+   *          and following) server starts
    * @param adaptivePolling
-   * @return
+   *          - if set to true, the replication applier will fall to sleep for
+   *          an increasingly long period in case the logger server at the
+   *          endpoint does not have any more replication events to apply.
+   * @return ReplicationApplierConfigEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationApplierConfigEntity setReplicationApplierConfig(
     String endpoint,
@@ -3775,51 +3831,53 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
-   * @param param
-   * @return
+   * Sets the configuration of the replication applier.
+   *
+   * @param replicationApplierConfigEntity
+   *          - an instance of ReplicationApplierConfigEntity containing the
+   *          complete config
+   * @return ReplicationApplierConfigEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
-  public ReplicationApplierConfigEntity setReplicationApplierConfig(ReplicationApplierConfigEntity param)
-      throws ArangoException {
-    return replicationDriver.setReplicationApplierConfig(getDefaultDatabase(), param);
+  public ReplicationApplierConfigEntity setReplicationApplierConfig(
+    ReplicationApplierConfigEntity replicationApplierConfigEntity) throws ArangoException {
+    return replicationDriver.setReplicationApplierConfig(getDefaultDatabase(), replicationApplierConfigEntity);
   }
 
   /**
+   * Starts the replication applier. This will return immediately if the
+   * replication applier is already running.
+   *
    * @param from
-   * @return
+   *          - The remote lastLogTick value from which to start applying.
+   * @return ReplicationApplierStateEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationApplierStateEntity startReplicationApplier(Long from) throws ArangoException {
     return replicationDriver.startReplicationApplier(getDefaultDatabase(), from);
   }
 
   /**
-   * @return
+   * Stops the replication applier. This will return immediately if the
+   * replication applier is not running.
+   *
+   * @return ReplicationApplierStateEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationApplierStateEntity stopReplicationApplier() throws ArangoException {
     return replicationDriver.stopReplicationApplier(getDefaultDatabase());
   }
 
   /**
-   * @return
+   * Returns the state of the replication applier, regardless of whether the
+   * applier is currently running or not.
+   *
+   * @return ReplicationApplierStateEntity
    * @throws ArangoException
-   * @since 1.4.0
    */
   public ReplicationApplierStateEntity getReplicationApplierState() throws ArangoException {
     return replicationDriver.getReplicationApplierState(getDefaultDatabase());
   }
-
-  // ***************************************
-  // *** end of replication ****************
-  // ***************************************
-
-  // ***************************************
-  // *** start of graph ********************
-  // ***************************************
 
   /**
    * Returns a GraphsEntity containing all graph as GraphEntity object of the
@@ -4835,27 +4893,67 @@ public class ArangoDriver extends BaseArangoDriver {
   //
   // }
 
-  // ***************************************
-  // *** end of graph **********************
-  // ***************************************
-
+  /**
+   * Creates an AQL Function
+   *
+   * @param name
+   *          - the name of the function as string
+   * @param code
+   *          - the function as javascript string
+   * @return DefaultEntity
+   * @throws ArangoException
+   */
   public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
     return aqlFunctionsDriver.createAqlFunction(name, code);
   }
 
+  /**
+   * Gets all AQL functions whithin a given namespace
+   *
+   * @param namespace
+   *          - the namespace
+   * @return AqlFunctionsEntity
+   * @throws ArangoException
+   */
   public AqlFunctionsEntity getAqlFunctions(String namespace) throws ArangoException {
     return aqlFunctionsDriver.getAqlFunctions(namespace);
   }
 
+  /**
+   * Delete an AQL function. If *isNameSpace* is set to true all functions
+   * within the namespace *name* are deleted.
+   *
+   * @param name
+   *          - This is either the name of a function or a namespace
+   * @param isNameSpace
+   *          - If set to true the param *name* is treated as a namespace
+   * @return DefaultEntity
+   * @throws ArangoException
+   */
   public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
     return aqlFunctionsDriver.deleteAqlFunction(name, isNameSpace);
   }
 
+  /**
+   * Creates a transaction entity.
+   *
+   * @param action
+   *          - the transaction as javascript code
+   * @return TransactionEntity
+   */
   public TransactionEntity createTransaction(String action) {
     return this.transactionDriver.createTransaction(action);
-  };
+  }
 
+  /**
+   * Executes the transaction on the database server.
+   *
+   * @param transactionEntity
+   *          - The configuration object containing all data for the transaction
+   * @return TransactionResultEntity
+   * @throws ArangoException
+   */
   public TransactionResultEntity executeTransaction(TransactionEntity transactionEntity) throws ArangoException {
     return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity);
-  };
+  }
 }
