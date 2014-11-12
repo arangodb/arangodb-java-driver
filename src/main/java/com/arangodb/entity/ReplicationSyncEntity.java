@@ -19,12 +19,22 @@ package com.arangodb.entity;
 import java.util.List;
 
 /**
+ * Result of a full data synchronization from a remote endpoint into the local ArangoDB database.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class ReplicationSyncEntity extends BaseEntity {
 
+  /**
+   * a list of collections that were transferred from the endpoint
+   */
   List<CollectionEntity> collections;
+
+  /**
+   *  the last log tick on the endpoint at the time the transfer was started. Use this value as the from value when
+   *  starting the continuous synchronization later.
+   */
   long lastLogTick;
   
   public List<CollectionEntity> getCollections() {
