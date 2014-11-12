@@ -20,26 +20,80 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * the state of the replication applier, regardless of whether the applier is currently running or not.
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class ReplicationApplierState implements Serializable {
 
+  /**
+   * whether or not the applier is active and running
+   */
   Boolean running;
+
+  /**
+   * the last tick value from the continuous replication log the applier has applied
+   */
   Long lastAppliedContinuousTick;
+
+  /**
+   * the last tick value from the continuous replication log the applier has processed.
+   */
   Long lastProcessedContinuousTick;
+
+  /**
+   * the last tick value the logger server can provide.
+   */
   Long lastAvailableContinuousTick;
+
+  /**
+   * the time on the applier server.
+   */
   Date time;
+
+  /**
+   * the total number of requests the applier has made to the endpoint.
+   */
   Long totalRequests;
+
+  /**
+   * the total number of failed connection attempts the applier has made.
+   */
   Long totalFailedConnects;
+
+  /**
+   * the total number of log events the applier has processed.
+   */
   Long totalEvents;
+
+  /**
+   * details about the last error that happened on the applier.
+   */
   LastError lastError;
+
+  /**
+   * details about the replication applier progress.
+   * @see com.arangodb.entity.ReplicationApplierState.Progress
+   */
   Progress progress;
   
   public static class Progress implements Serializable {
+    /**
+     * the date and time the progress was logged
+     */
     Date time;
+
+    /**
+     * a textual description of the progress
+     */
     String message;
+
+    /**
+     * the current number of failed connection attempts
+     */
     Long failedConnects;
+
     public Date getTime() {
       return time;
     }
@@ -61,9 +115,21 @@ public class ReplicationApplierState implements Serializable {
   }
   
   public static class LastError implements Serializable {
+    /**
+     * the date and time the error occurred In case no error has occurred, lastError will be empty.
+     */
     Date time;
+
+    /**
+     * a textual error description
+     */
     String errorMessage;
+
+    /**
+     * a numerical error code
+     */
     Integer errorNum;
+
     public Date getTime() {
       return time;
     }

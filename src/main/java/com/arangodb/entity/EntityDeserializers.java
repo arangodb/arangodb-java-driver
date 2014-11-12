@@ -643,8 +643,8 @@ public class EntityDeserializers {
         entity.fields = context.deserialize(obj.getAsJsonArray("fields"), fieldsType);
       }
 
-      if (obj.has("getJson")) {
-        entity.getJson = obj.getAsJsonPrimitive("getJson").getAsBoolean();
+      if (obj.has("geoJson")) {
+        entity.geoJson = obj.getAsJsonPrimitive("geoJson").getAsBoolean();
       }
 
       if (obj.has("isNewlyCreated")) {

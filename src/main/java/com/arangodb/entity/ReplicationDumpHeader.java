@@ -19,6 +19,8 @@ package com.arangodb.entity;
 import java.io.Serializable;
 
 /**
+ *
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */

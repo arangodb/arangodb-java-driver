@@ -95,7 +95,7 @@ public class ArangoDriverIndexTest extends BaseTest {
       assertThat(entity.getCode(), is(201));
       assertThat(entity.isError(), is(false));
       assertThat(entity.isNewlyCreated(), is(true));
-      assertThat(entity.isGetJson(), is(false));
+      assertThat(entity.isGeoJson(), is(false));
       assertThat(entity.getId(), is(notNullValue()));
       assertThat(entity.getType(), is(IndexType.GEO));
     }
@@ -108,7 +108,7 @@ public class ArangoDriverIndexTest extends BaseTest {
       assertThat(entity.getCode(), is(200));
       assertThat(entity.isError(), is(false));
       assertThat(entity.isNewlyCreated(), is(false));
-      assertThat(entity.isGetJson(), is(false));
+      assertThat(entity.isGeoJson(), is(false));
       assertThat(entity.getId(), is(notNullValue()));
       assertThat(entity.getType(), is(IndexType.GEO));
     }
@@ -136,7 +136,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.GEO));
 
@@ -166,7 +166,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.HASH));
 
@@ -195,7 +195,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.HASH));
 
@@ -211,7 +211,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.SKIPLIST));
 
@@ -227,7 +227,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.SKIPLIST));
 
@@ -248,7 +248,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.HASH));
 
@@ -344,7 +344,7 @@ public class ArangoDriverIndexTest extends BaseTest {
     assertThat(entity.getCode(), is(201));
     assertThat(entity.isError(), is(false));
     assertThat(entity.isNewlyCreated(), is(true));
-    assertThat(entity.isGetJson(), is(false));
+    assertThat(entity.isGeoJson(), is(false));
     assertThat(entity.getId(), is(notNullValue()));
     assertThat(entity.getType(), is(IndexType.HASH));
 

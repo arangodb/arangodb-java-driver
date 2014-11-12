@@ -20,12 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * An entity defining an index list
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class IndexesEntity extends BaseEntity {
 
+  /**
+   * the list of index entites
+   */
   List<IndexEntity> indexes;
+
+  /**
+   * a map containing the indices , there ids as keys.
+   */
   Map<String, IndexEntity> identifiers;
   
   public List<IndexEntity> getIndexes() {

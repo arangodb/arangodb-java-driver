@@ -17,15 +17,37 @@
 package com.arangodb.entity;
 
 /**
+ * An entity representing a ReplicationApplierState
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class ReplicationApplierStateEntity extends BaseEntity {
 
+  /**
+   * The applier state
+   * @see com.arangodb.entity.ReplicationApplierState
+   */
   ReplicationApplierState state;
+
+  /**
+   * The version of the server
+   */
   String serverVersion;
+
+  /**
+   * The server id
+   */
   String serverId;
+
+  /**
+   * The endpoint
+   */
   String endpoint;
+
+  /**
+   * The database
+   */
   String database;
   
   public ReplicationApplierState getState() {

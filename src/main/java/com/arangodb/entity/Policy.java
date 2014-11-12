@@ -17,10 +17,19 @@
 package com.arangodb.entity;
 
 /**
+ * Enumeration for update/replace policy
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public enum Policy {
+  /**
+   * if ERROR an error is returned when there is a revision mismatch
+   */
   ERROR,
+
+  /**
+   * if LAST the operation is performed even when there is a revision mismatch
+   */
   LAST
 }

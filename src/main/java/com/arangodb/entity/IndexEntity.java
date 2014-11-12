@@ -19,20 +19,55 @@ package com.arangodb.entity;
 import java.util.List;
 
 /**
+ * An entity representing an index on a collection
+ *
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class IndexEntity extends BaseEntity {
 
+  /**
+   * the index id
+   */
   String id;
+
+  /**
+   * the type of the index
+   * @see com.arangodb.entity.IndexType
+   */
   IndexType type;
+
+  /**
+   * the fields the index is defined on
+   */
   List<String> fields;
-  boolean getJson;
+
+  /**
+   * if the index is a geoIndex and *geoJson* is true, then the order within the list is longitude followed by latitude.
+   * This corresponds to the format described in http://geojson.org/geojson-spec.html#positions
+   */
+  boolean geoJson;
+
+  /**
+   * is a newly created index
+   */
   boolean isNewlyCreated;
+
+  /**
+   * if true the index is a unique index.
+   */
   boolean unique;
+
+  /**
+   * the maximum amount of documents in case the index type is capped
+   */
   int size;
+
+  /**
+   * minimum character length of words to index in case the index type is a fulltext
+   */
   int minLength;
-  
+
   public String getId() {
     return id;
   }
@@ -42,8 +77,8 @@ public class IndexEntity extends BaseEntity {
   public List<String> getFields() {
     return fields;
   }
-  public boolean isGetJson() {
-    return getJson;
+  public boolean isGeoJson() {
+    return geoJson;
   }
   public boolean isNewlyCreated() {
     return isNewlyCreated;
@@ -63,8 +98,8 @@ public class IndexEntity extends BaseEntity {
   public void setFields(List<String> fields) {
     this.fields = fields;
   }
-  public void setGetJson(boolean getJson) {
-    this.getJson = getJson;
+  public void setGeoJson(boolean getJson) {
+    this.geoJson = getJson;
   }
   public void setNewlyCreated(boolean isNewlyCreated) {
     this.isNewlyCreated = isNewlyCreated;
