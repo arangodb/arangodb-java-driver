@@ -16,20 +16,19 @@
 
 package com.arangodb.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  *
  */
 public class TransactionResultEntity extends BaseEntity {
 
+  /**
+   * Result object of transaction.
+   */
   private Object result;
 
-
   public <T> T getResult() {
-    T r = (T) this.result;
     return (T) this.result;
   }
 
@@ -57,7 +56,6 @@ public class TransactionResultEntity extends BaseEntity {
     java.lang.Number number = (java.lang.Number) this.result;
     return number.intValue();
   }
-
 
   public void setResult(Object result) {
     this.result = result;

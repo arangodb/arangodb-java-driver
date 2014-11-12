@@ -20,18 +20,22 @@ import java.io.InputStream;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  *
  */
 public class StreamEntity extends BaseEntity {
-  
+
   public StreamEntity() {
-    
+
   }
-  
+
   public StreamEntity(InputStream stream) {
     this.stream = stream;
   }
-  
+
+  /**
+   * Input stream.
+   */
   InputStream stream;
 
   public InputStream getStream() {
@@ -41,5 +45,5 @@ public class StreamEntity extends BaseEntity {
   public void setStream(InputStream stream) {
     this.stream = stream;
   }
-  
+
 }

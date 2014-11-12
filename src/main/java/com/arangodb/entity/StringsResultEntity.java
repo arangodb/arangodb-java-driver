@@ -20,10 +20,14 @@ import java.util.List;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author gschwab
  *
  */
 public class StringsResultEntity extends BaseEntity {
 
+  /**
+   * List of strings
+   */
   List<String> result;
 
   public List<String> getResult() {
@@ -33,5 +37,5 @@ public class StringsResultEntity extends BaseEntity {
   public void setResult(List<String> result) {
     this.result = result;
   }
-  
+
 }
