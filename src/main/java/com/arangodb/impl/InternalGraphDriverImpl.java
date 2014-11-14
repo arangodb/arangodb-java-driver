@@ -340,7 +340,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     if (!res.isJsonResponse()) {
       throw new ArangoException("unknown error");
     }
-    return createEntity(res, VertexEntity.class, vertex.getClass());
+    DocumentEntity<T> result = createEntity(res, VertexEntity.class, vertex.getClass());
+    result.setEntity(vertex);
+    return result;
   }
 
   @Override
