@@ -499,6 +499,9 @@ public class EntityDeserializers {
     private Type bindVarsType = new TypeToken<List<String>>() {
     }.getType();
 
+    private Type extraType = new TypeToken<Map<String, Object>>() {
+    }.getType();
+
     @Override
     public CursorEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
@@ -548,6 +551,25 @@ public class EntityDeserializers {
 
       if (obj.has("bindVars")) {
         entity.bindVars = context.deserialize(obj.get("bindVars"), bindVarsType);
+      }
+      
+      if (obj.has("extra")) {
+        entity.extra = context.deserialize(obj.get("extra"), extraType);
+
+        if (entity.extra.containsKey("stats")) {
+          if (entity.extra.get("stats") instanceof Map<?, ?>) {
+            Map<String, Object> m = (Map<String, Object>) entity.extra.get("stats");
+            if (m.containsKey("fullCount")) {
+              try {
+                if (m.get("fullCount") instanceof Double) {
+                  Double v = (Double) m.get("fullCount");
+                  entity.fullCount = v.intValue();
+                }
+              }
+              catch (Exception e) { } 
+            }
+          }
+        }
       }
 
       return entity;

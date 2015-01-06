@@ -65,14 +65,15 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
     Map<String, Object> bindVars,
     Class<T> clazz,
     Boolean calcCount,
-    Integer batchSize) throws ArangoException {
+    Integer batchSize,
+    Boolean fullCount) throws ArangoException {
 
     HttpResponseEntity res = httpManager.doPost(
       createEndpointUrl(baseUrl, database, "/_api/cursor"),
       null,
       EntityFactory.toJsonString(new MapBuilder().put("query", query)
           .put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars).put("count", calcCount)
-          .put("batchSize", batchSize).get()));
+          .put("batchSize", batchSize).put("options", new MapBuilder().put("fullCount", fullCount).get()).get()));
     try {
       CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
       // resultを処理する
@@ -81,6 +82,22 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
     } catch (ArangoException e) {
       throw e;
     }
+
+  }
+
+  // ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
+  // ※ここでは単純にコールするだけ
+
+  @Override
+  public <T> CursorEntity<T> executeQuery(
+    String database,
+    String query,
+    Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount,
+    Integer batchSize) throws ArangoException {
+
+    return executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
 
   }
 
@@ -128,9 +145,25 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
     Map<String, Object> bindVars,
     Class<T> clazz,
     Boolean calcCount,
+    Integer batchSize,
+    Boolean fullCount) throws ArangoException {
+
+    CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
+    CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+    return rs;
+
+  }
+
+  @Override
+  public <T> CursorResultSet<T> executeQueryWithResultSet(
+    String database,
+    String query,
+    Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount,
     Integer batchSize) throws ArangoException {
 
-    CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize);
+    CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
     CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
     return rs;
 

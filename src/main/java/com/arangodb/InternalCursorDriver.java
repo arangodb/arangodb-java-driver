@@ -18,11 +18,29 @@ public interface InternalCursorDriver extends BaseDriverInterface {
     Map<String, Object> bindVars,
     Class<T> clazz,
     Boolean calcCount,
+    Integer batchSize,
+    Boolean fullCount) throws ArangoException;
+
+  <T> CursorEntity<T> executeQuery(
+    String database,
+    String query,
+    Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount,
     Integer batchSize) throws ArangoException;
 
   <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException;
 
   DefaultEntity finishQuery(String database, long cursorId) throws ArangoException;
+
+  <T> CursorResultSet<T> executeQueryWithResultSet(
+    String database,
+    String query,
+    Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount,
+    Integer batchSize,
+    Boolean fullCount) throws ArangoException;
 
   <T> CursorResultSet<T> executeQueryWithResultSet(
     String database,

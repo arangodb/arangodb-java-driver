@@ -182,5 +182,40 @@ public class ArangoDriverCursorTest extends BaseTest {
     
   }
 
+  @Test
+  public void test_executeQueryFullCount() throws ArangoException {
+    
+    // Collectionを作る
+    String collectionName = "unit_test_query_test";
+    try {
+      driver.createCollection(collectionName);
+    } catch (ArangoException e) {}
+    driver.truncateCollection(collectionName);
+    
+    // テストデータを作る
+    for (int i = 0; i < 100; i++) {
+      TestComplexEntity01 value = new TestComplexEntity01(
+          "user_" + (i % 10), 
+          "desc" + (i % 10), 
+          i);
+      driver.createDocument(collectionName, value, null, null);
+    }
+    
+    //String query = "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
+    String query = "FOR t IN unit_test_query_test FILTER t.age >= @age LIMIT 2 RETURN t";
+    Map<String, Object> bindVars = new MapBuilder().put("age", 10).get();
+    
+    // 全件とれる範囲
+    {
+      CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01>executeQuery(
+          query, bindVars, TestComplexEntity01.class, true, 1, true);
+      assertThat(result.size(), is(1));
+      assertThat(result.getCount(), is(2));
+      assertThat(result.getFullCount(), is(90));
+      assertThat(result.hasMore(), is(true));
+    }
+    
+  }
+
   
 }

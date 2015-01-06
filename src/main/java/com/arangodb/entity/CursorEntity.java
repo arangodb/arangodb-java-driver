@@ -18,6 +18,7 @@ package com.arangodb.entity;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.arangodb.util.CollectionUtils;
 
@@ -38,6 +39,11 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
    * The amount of results in the cursor
    */
   int count = -1;
+  
+  /**
+   * The number of results before the final LIMIT
+   */
+  int fullCount = -1;
 
   /**
    * The cursor id
@@ -48,6 +54,11 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
    * A list of bind variables returned by the query
    */
   List<String> bindVars;
+
+  /**
+   * A list of extra data returned by the query
+   */
+  Map<String, Object> extra;
 
   /**
    * A list of objects containing the results
@@ -95,8 +106,13 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
   public boolean isHasMore() {
     return hasMore;
   }
+
   public boolean hasMore() {
     return hasMore;
+  }
+
+  public int getFullCount() {
+    return fullCount;
   }
 
   public int getCount() {
@@ -110,6 +126,10 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
   public List<String> getBindVars() {
     return bindVars;
   }
+  
+  public Map<String, Object> getExtra() {
+    return extra;
+  }
 
   public void setResults(List<T> results) {
     this.results = results;
@@ -117,6 +137,10 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 
   public void setHasMore(boolean hasMore) {
     this.hasMore = hasMore;
+  }
+  
+  public void setFullCount(int count) {
+    this.fullCount = count;
   }
 
   public void setCount(int count) {
@@ -129,6 +153,10 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 
   public void setBindVars(List<String> bindVars) {
     this.bindVars = bindVars;
+  }
+  
+  public void setExtra(Map<String, Object> extra) {
+    this.extra = extra;
   }
   
 }

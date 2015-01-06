@@ -2101,6 +2101,37 @@ public class ArangoDriver extends BaseArangoDriver {
    *          - if set to true the result count is returned
    * @param batchSize
    *          - the batch size of the result cursor
+   * @param fullCount
+   *          - if set to true, then all results before the final LIMIT will be counted
+   * @param <T>
+   * @return <T> CursorEntity<T>
+   * @throws ArangoException
+   */
+  public <T> CursorEntity<T> executeQuery(
+    String query,
+    Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount,
+    Integer batchSize,
+    Boolean fullCount) throws ArangoException {
+
+    return cursorDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize, fullCount);
+  }
+
+  /**
+   * This method executes an AQL query and returns a CursorEntity
+   *
+   * @param query
+   *          - an AQL query as string
+   * @param bindVars
+   *          - a map containing all bind variables,
+   * @param clazz
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
+   * @param calcCount
+   *          - if set to true the result count is returned
+   * @param batchSize
+   *          - the batch size of the result cursor
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2112,8 +2143,7 @@ public class ArangoDriver extends BaseArangoDriver {
     Boolean calcCount,
     Integer batchSize) throws ArangoException {
 
-    return cursorDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize);
-
+    return cursorDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize, false);
   }
 
   /**
@@ -2158,6 +2188,37 @@ public class ArangoDriver extends BaseArangoDriver {
    *          - if set to true the result count is returned
    * @param batchSize
    *          - the batch size of the result cursor
+   * @param fullCount
+   *          - if set to true, then all results before the final LIMIT will be counted
+   * @param <T>
+   * @return <T> CursorResultSet<T>
+   * @throws ArangoException
+   */
+  public <T> CursorResultSet<T> executeQueryWithResultSet(
+    String query,
+    Map<String, Object> bindVars,
+    Class<T> clazz,
+    Boolean calcCount,
+    Integer batchSize,
+    Boolean fullCount) throws ArangoException {
+
+    return cursorDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize, fullCount);
+  }
+  
+  /**
+   * This method executes an AQL query and returns a CursorResultSet
+   *
+   * @param query
+   *          - an AQL query as string
+   * @param bindVars
+   *          - a map containing all bind variables,
+   * @param clazz
+   *          - the expected class, the result from the server request is
+   *          deserialized to an instance of this class.
+   * @param calcCount
+   *          - if set to true the result count is returned
+   * @param batchSize
+   *          - the batch size of the result cursor
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2168,7 +2229,8 @@ public class ArangoDriver extends BaseArangoDriver {
     Class<T> clazz,
     Boolean calcCount,
     Integer batchSize) throws ArangoException {
-    return cursorDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize);
+
+    return cursorDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize, false);
   }
 
   /**
