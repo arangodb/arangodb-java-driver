@@ -221,8 +221,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
           30, null, 0, 0, TestComplexEntity01.class);
       fail("例外が発生しないとだめ");
     } catch (ArangoException e) {
-      assertThat(e.getErrorNumber(), is(500));
-      assertThat(e.getCode(), is(500));
+      assertThat(e.getErrorNumber(), is(1209));
+      assertThat(e.getCode(), is(404));
     }
 
   }
