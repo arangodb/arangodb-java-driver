@@ -1,11 +1,11 @@
 
 This library is a Java driver for ArangoDB.
 
-Support version: ArangoDB-2.2.x
+Supported version: ArangoDB-2.3.x, and ArangoDB-2.4.x
 
 # Required
 
-* [ArangoDB](https://github.com/triAGENS/ArangoDB) Version 2.2.x
+* [ArangoDB](https://github.com/triAGENS/ArangoDB) version 2.3.x or version 2.4.x
 * Java 1.6 later
 
 
@@ -20,13 +20,13 @@ To add the driver to your project with maven, add the following code to your pom
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>[2.2-SNAPSHOT,2.2]</version>
+    <version>[2.3-SNAPSHOT,2.3]</version>
   </dependency>
 	....
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 2.2-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
+If you want to test with a snapshot version (e.g. 2.3-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
