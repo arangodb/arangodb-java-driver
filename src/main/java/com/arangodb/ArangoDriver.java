@@ -72,8 +72,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Constructor to create an instance of the driver that uses the default
    * database.
    * 
-   * @param ArangoConfigure
-   *          configure - A configuration object.
+   * @param ArangoConfigure A configuration object.
    */
   public ArangoDriver(ArangoConfigure configure) {
     this(configure, null);
@@ -83,10 +82,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * Constructor to create an instance of the driver that uses the provided
    * database.
    *
-   * @param ArangoConfigure
-   *          configure - A configuration object.
-   * @param String
-   *          database - the database that will be used.
+   * @param ArangoConfigure A configuration object.
+   * @param String the database that will be used.
    */
   public ArangoDriver(ArangoConfigure configure, String database) {
 
@@ -210,8 +207,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * return value. If set to false the return value will be the 'job id'. Each
    * job result can be received by the method 'getJobResult'.
    *
-   * @param boolean fireAndForget - if set to true the asynchronous mode is set
-   *        to 'fire and forget'.
+   * @param boolean if set to true the asynchronous mode is set to 'fire and forget'.
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
    * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState,
@@ -286,9 +282,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns a list of all job ids of asynchronous executed jobs, filtered by
    * job state.
    *
-   * @param JobsEntity
-   *          .JobState jobState - the job state as a filter.
-   * @param int count - a limit for the result set.
+   * @param JobsEntity.JobState the job state as a filter.
+   * @param int a limit for the result set.
    * @return List<String>
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
@@ -306,8 +301,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * job state.
    *
    * 
-   * @param JobsEntity
-   *          .JobState jobState - the job state as a filter.
+   * @param JobsEntity.JobState the job state as a filter.
    * @return List<String>
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
@@ -338,8 +332,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a job from ArangoDB.
    *
-   * @param String
-   *          jobId - the id of the job
+   * @param String the id of the job
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
@@ -354,7 +347,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes all jobs by a provided expiration date.
    *
-   * @param int timeStamp - a unix timestamp, every older job is deleted.
+   * @param int a unix timestamp, every older job is deleted.
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
    * @see com.arangodb.ArangoDriver#getJobResult(String)
@@ -369,8 +362,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the job result for a given job id.
    *
-   * @param String
-   *          jobId - the job id.
+   * @param String the job id.
    * @return <T> - A generic return value, containing the job result
    * @see ArangoDriver#startAsyncMode(boolean)
    * @see ArangoDriver#stopAsyncMode()
@@ -404,8 +396,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * This method returns the result of a call to ArangoDB executed within a
    * batch request.
    *
-   * @param String
-   *          requestId - the id of a request.
+   * @param String the id of a request.
    * @return <T> - A generic return value, containing the result.
    * @see ArangoDriver#startBatchMode()
    * @see ArangoDriver#executeBatch()
@@ -467,8 +458,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a new collection.
    *
-   * @param name
-   *          - the name of the collection
+   * @param name the name of the collection
    * @return CollectionEntity - the created collectionEntity.
    * @throws ArangoException
    */
@@ -479,10 +469,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a new collection.
    *
-   * @param name
-   *          - the name of the collection
-   * @param collectionOptions
-   *          - an object containing the various options.
+   * @param name the name of the collection
+   * @param collectionOptions an object containing the various options.
    * @return CollectionEntity - the created collectionEntity.
    * @throws ArangoException
    */
@@ -493,8 +481,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB by id
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -505,8 +492,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB by name
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -517,8 +503,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB including all properties by id
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -529,8 +514,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB including all properties by name
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -541,8 +525,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB including revision by id
    *
-   * @param name
-   *          - the id of the collection.
+   * @param name the id of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -553,8 +536,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB including revision by name
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -565,8 +547,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB by id including the document count
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -577,8 +558,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB by name including the document count
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -589,8 +569,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB by id including the collection figures
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -601,8 +580,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a collection from ArangoDB by name including the collection figures
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -614,11 +592,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns a collection from ArangoDB by name including the collection
    * checksum
    *
-   * @param name
-   *          - the id of the collection.
-   * @pramam withRevisions - includes the revision into the checksum calculation
-   * @pramam withData - includes the collections data into the checksum
-   *         calculation
+   * @param name the id of the collection.
+   * @param withRevisions includes the revision into the checksum calculation
+   * @param withData includes the collections data into the checksum calculation
    * @return CollectionEntity - the requested collectionEntity.
    * @throws ArangoException
    */
@@ -640,9 +616,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all collections from ArangoDB
    *
-   * @param excludeSystem
-   *          - if set to true system collections will not be added to the
-   *          result
+   * @param excludeSystem if set to true system collections will not be added to the result
    * @return CollectionsEntity - the CollectionsEntity.
    * @throws ArangoException
    */
@@ -653,8 +627,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and loads it into memory.
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -665,8 +638,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and loads it into memory.
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -677,10 +649,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and loads it into memory.
    *
-   * @param id
-   *          - the id of the collection.
-   * @param count
-   *          - if set to true the documents count is returned.
+   * @param id the id of the collection.
+   * @param count if set to true the documents count is returned.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -691,10 +661,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and loads it into memory.
    *
-   * @param name
-   *          - the name of the collection.
-   * @param count
-   *          - if set to true the documents count is returned.
+   * @param name the name of the collection.
+   * @param count if set to true the documents count is returned.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -705,8 +673,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and deletes it from memory.
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -717,8 +684,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and deletes it from memory.
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -729,8 +695,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and deletes all documents.
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -741,8 +706,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and deletes all documents.
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -753,12 +717,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and changes it's journalSize and waitForSync.
    *
-   * @param id
-   *          - the id of the collection.
-   * @param newWaitForSync
-   *          - a new value for the waitForSyncProperty
-   * @param journalSize
-   *          - a new value for the collections journalSize
+   * @param id the id of the collection.
+   * @param newWaitForSync a new value for the waitForSyncProperty
+   * @param journalSize a new value for the collections journalSize
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -774,12 +735,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and changes it's journalSize and waitForSync.
    *
-   * @param name
-   *          - the name of the collection.
-   * @param newWaitForSync
-   *          - a new value for the waitForSyncProperty
-   * @param journalSize
-   *          - a new value for the collections journalSize
+   * @param name the name of the collection.
+   * @param newWaitForSync a new value for the waitForSyncProperty
+   * @param journalSize a new value for the collections journalSize
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -791,10 +749,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and changes it's name.
    *
-   * @param id
-   *          - the id of the collection.
-   * @param newName
-   *          - the new name for the collection
+   * @param id the id of the collection.
+   * @param newName the new name for the collection
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -805,10 +761,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the collection and changes it's name.
    *
-   * @param name
-   *          - the name of the collection.
-   * @param newName
-   *          - the new name for the collection
+   * @param name the name of the collection.
+   * @param newName the new name for the collection
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -819,8 +773,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a collection by id.
    *
-   * @param id
-   *          - the id of the collection.
+   * @param id the id of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -831,8 +784,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a collection by name.
    *
-   * @param name
-   *          - the name of the collection.
+   * @param name the name of the collection.
    * @return CollectionEntity - the collectionEntity.
    * @throws ArangoException
    */
@@ -843,10 +795,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a document in the collection defined by The collection id
    *
-   * @param collectionId
-   *          - The id of the collection
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionId The id of the collection
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -857,10 +807,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a document in the collection defined by the collection's name
    *
-   * @param collectionName
-   *          - The name of the collection
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionName The name of the collection
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -873,12 +821,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * method allows to define to documents key. Note that the collection's
    * property CollectionKeyOption.allowUserKeys has to be set accordingly.
    *
-   * @param collectionId
-   *          - The id of the collection
-   * @param documentKey
-   *          - the desired document key
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionId The id of the collection
+   * @param documentKey the desired document key
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    * @see CollectionKeyOption#allowUserKeys
@@ -892,12 +837,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * method allows to define to documents key. Note that the collection's
    * property CollectionKeyOption.allowUserKeys has to be set accordingly.
    *
-   * @param collectionName
-   *          - The name of the collection
-   * @param documentKey
-   *          - the desired document key
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionName The name of the collection
+   * @param documentKey the desired document key
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    * @see CollectionKeyOption#allowUserKeys
@@ -910,15 +852,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a document in the collection defined by The collection id.
    *
-   * @param collectionId
-   *          - The id of the collection
-   * @param value
-   *          - An object containing the documents attributes
-   * @param createCollection
-   *          - if set to true the collection is created if it does not exist
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionId The id of the collection
+   * @param value An object containing the documents attributes
+   * @param createCollection if set to true the collection is created if it does not exist
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return DocumentEntity<?>
    * @throws ArangoException
    * @see CollectionKeyOption#allowUserKeys
@@ -932,15 +869,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a document in the collection defined by the collection's name.
    *
-   * @param collectionName
-   *          - The name of the collection
-   * @param value
-   *          - An object containing the documents attributes
-   * @param createCollection
-   *          - if set to true the collection is created if it does not exist
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionName The name of the collection
+   * @param value An object containing the documents attributes
+   * @param createCollection if set to true the collection is created if it does not exist
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return DocumentEntity<?>
    * @throws ArangoException
    * @see CollectionKeyOption#allowUserKeys
@@ -964,17 +896,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * method allows to define to documents key. Note that the collection's
    * property CollectionKeyOption.allowUserKeys has to be set accordingly.
    *
-   * @param collectionId
-   *          - The id of the collection
-   * @param documentKey
-   *          - the desired document key
-   * @param value
-   *          - An object containing the documents attributes
-   * @param createCollection
-   *          - if set to true the collection is created if it does not exist
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionId The id of the collection
+   * @param documentKey the desired document key
+   * @param value An object containing the documents attributes
+   * @param createCollection if set to true the collection is created if it does not exist
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return DocumentEntity<?>
    * @throws ArangoException
    * @see CollectionKeyOption#allowUserKeys
@@ -993,17 +919,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * method allows to define to documents key. Note that the collection's
    * property CollectionKeyOption.allowUserKeys has to be set accordingly.
    *
-   * @param collectionName
-   *          - The name of the collection
-   * @param documentKey
-   *          - the desired document key
-   * @param value
-   *          - An object containing the documents attributes
-   * @param createCollection
-   *          - if set to true the collection is created if it does not exist
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionName The name of the collection
+   * @param documentKey the desired document key
+   * @param value An object containing the documents attributes
+   * @param createCollection if set to true the collection is created if it does not exist
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return DocumentEntity<?>
    * @throws ArangoException
    * @see CollectionKeyOption#allowUserKeys
@@ -1026,12 +946,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method replaces the content of the document defined by documentId.
    *
-   * @param collectionId
-   *          - The collection's id.
-   * @param documentId
-   *          - The document's id.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionId The collection's id.
+   * @param documentId The document's id.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1042,28 +959,26 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method replaces the content of the document defined by documentId.
    *
-   * @param collectionName
-   *          - The collection's name.
-   * @param documentId
-   *          - The document's id.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionName The collection's name.
+   * @param documentId The document's id.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
-  public DocumentEntity<?> replaceDocument(String collectionName, long documentId, Object value) throws ArangoException {
+  public DocumentEntity<?> replaceDocument(
+          String collectionName,
+          long documentId,
+          Object value
+  ) throws ArangoException {
     return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null, null);
   }
 
   /**
    * This method replaces the content of the document defined by documentKey.
    *
-   * @param collectionId
-   *          - The collection's id.
-   * @param documentKey
-   *          - The document's key.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionId The collection's id.
+   * @param documentKey The document's key.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1074,12 +989,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method replaces the content of the document defined by documentKey.
    *
-   * @param collectionName
-   *          - The collection's name.
-   * @param documentKey
-   *          - The document's key.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionName The collection's name.
+   * @param documentKey The document's key.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1091,10 +1003,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method replaces the content of the document defined by documentHandle.
    *
-   * @param documentHandle
-   *          - The document handle.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param documentHandle The document handle.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1109,19 +1019,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * parameter is used. If it is set to *last* the operation is performed
    * anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionId
-   *          - The collection's id.
-   * @param documentId
-   *          - The document's id.
-   * @param value
-   *          - An object containing the new attributes of the document.
-   * @param rev
-   *          - the desired revision.
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionId The collection's id.
+   * @param documentId The document's id.
+   * @param value An object containing the new attributes of the document.
+   * @param rev the desired revision.
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return
    * @throws ArangoException
    */
@@ -1147,19 +1050,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * parameter is used. If it is set to *last* the operation is performed
    * anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionName
-   *          - The collection's name.
-   * @param documentId
-   *          - The document's id.
-   * @param value
-   *          - An object containing the new attributes of the document.
-   * @param rev
-   *          - the desired revision.
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionName The collection's name.
+   * @param documentId The document's id.
+   * @param value An object containing the new attributes of the document.
+   * @param rev the desired revision.
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return
    * @throws ArangoException
    */
@@ -1185,19 +1081,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * parameter is used. If it is set to *last* the operation is performed
    * anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionId
-   *          - The collection's id.
-   * @param documentKey
-   *          - The document's key.
-   * @param value
-   *          - An object containing the new attributes of the document.
-   * @param rev
-   *          - the desired revision.
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionId The collection's id.
+   * @param documentKey The document's key.
+   * @param value An object containing the new attributes of the document.
+   * @param rev the desired revision.
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return
    * @throws ArangoException
    */
@@ -1218,19 +1107,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * parameter is used. If it is set to *last* the operation is performed
    * anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionName
-   *          - The collection's name.
-   * @param documentKey
-   *          - The document's key.
-   * @param value
-   *          - An object containing the new attributes of the document.
-   * @param rev
-   *          - the desired revision.
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param collectionName The collection's name.
+   * @param documentKey The document's key.
+   * @param value An object containing the new attributes of the document.
+   * @param rev the desired revision.
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return
    * @throws ArangoException
    */
@@ -1251,17 +1133,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * parameter is used. If it is set to *last* the operation is performed
    * anyway. if it is set to *error* an error is thrown.
    *
-   * @param documentHandle
-   *          - The document's handle.
-   * @param value
-   *          - An object containing the new attributes of the document.
-   * @param rev
-   *          - the desired revision.
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
+   * @param documentHandle The document's handle.
+   * @param value An object containing the new attributes of the document.
+   * @param rev the desired revision.
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
    * @return
    * @throws ArangoException
    */
@@ -1277,28 +1153,29 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentId.
    *
-   * @param collectionId
-   *          - The collection's id.
-   * @param documentId
-   *          - The document's id.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionId The collection's id.
+   * @param documentId The document's id.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
   public DocumentEntity<?> updateDocument(long collectionId, long documentId, Object value) throws ArangoException {
-    return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null, null, null);
+    return updateDocument(
+            createDocumentHandle(collectionId, String.valueOf(documentId)),
+            value,
+            null,
+            null,
+            null,
+            null
+    );
   }
 
   /**
    * This method updates a document defined by documentId.
    *
-   * @param collectionName
-   *          - The collection's name.
-   * @param documentId
-   *          - The document's id.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionName The collection's name.
+   * @param documentId The document's id.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1315,12 +1192,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentKey.
    *
-   * @param collectionId
-   *          - The collection's id.
-   * @param documentKey
-   *          - The document's key.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionId The collection's id.
+   * @param documentKey The document's key.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1331,12 +1205,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentKey.
    *
-   * @param collectionName
-   *          - The collection's name.
-   * @param documentKey
-   *          - The document's key.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param collectionName The collection's name.
+   * @param documentKey The document's key.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1348,10 +1219,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentHandle.
    *
-   * @param documentHandle
-   *          - The document's handle.
-   * @param value
-   *          - An object containing the documents attributes
+   * @param documentHandle The document's handle.
+   * @param value An object containing the documents attributes
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1362,14 +1231,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentId.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentId
-   *          - The document id.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionId The collection id.
+   * @param documentId The document id.
+   * @param value An object containing the documents attributes
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1387,14 +1252,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentId.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentId
-   *          - The document id.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionName The collection name.
+   * @param documentId The document id.
+   * @param value An object containing the documents attributes
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1412,14 +1273,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentKey.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentKey
-   *          - The document key.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionId The collection id.
+   * @param documentKey The document key.
+   * @param value An object containing the documents attributes
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1431,14 +1288,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentKey.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentKey
-   *          - The document key.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionName The collection name.
+   * @param documentKey The document key.
+   * @param value An object containing the documents attributes
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1450,12 +1303,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method updates a document defined by documentKey.
    *
-   * @param documentHandle
-   *          - The document handle.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param documentHandle The document handle.
+   * @param value An object containing the documents attributes
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1471,21 +1321,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * set to *last* the operation is performed anyway. if it is set to *error* an
    * error is thrown.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentId
-   *          - The document id.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionId The collection id.
+   * @param documentId The document id.
+   * @param value An object containing the documents attributes
+   * @param rev The desired revision
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1513,21 +1355,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * set to *last* the operation is performed anyway. if it is set to *error* an
    * error is thrown.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentId
-   *          - The document id.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionName The collection name.
+   * @param documentId The document id.
+   * @param value An object containing the documents attributes
+   * @param rev The desired revision
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1555,21 +1389,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * set to *last* the operation is performed anyway. if it is set to *error* an
    * error is thrown.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentKey
-   *          - The document key.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionId The collection id.
+   * @param documentKey The document key.
+   * @param value An object containing the documents attributes
+   * @param rev The desired revision
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1591,21 +1417,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * set to *last* the operation is performed anyway. if it is set to *error* an
    * error is thrown.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentKey
-   *          - The document key.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param collectionName The collection name.
+   * @param documentKey The document key.
+   * @param value An object containing the documents attributes
+   * @param rev The desired revision
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1627,19 +1445,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * it is set to *last* the operation is performed anyway. if it is set to
    * *error* an error is thrown.
    *
-   * @param documentKey
-   *          - The document handle.
-   * @param value
-   *          - An object containing the documents attributes
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param keepNull
-   *          - If true null values are kept.
+   * @param documentKey The document handle.
+   * @param value An object containing the documents attributes
+   * @param rev The desired revision
+   * @param policy The update policy
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param keepNull If true null values are kept.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1663,8 +1474,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns all document handles from a collection.
    *
-   * @param collectionId
-   *          - The collection id.
+   * @param collectionId The collection id.
    * @return List<String> - The list of document handles
    * @throws ArangoException
    */
@@ -1675,8 +1485,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns all document handles from a collection.
    *
-   * @param collectionName
-   *          - The collection name.
+   * @param collectionName The collection name.
    * @return List<String> - The list of document handles
    * @throws ArangoException
    */
@@ -1687,10 +1496,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns all document handles from a collection.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param handleConvert
-   *          - if set to true only the document ids are returned
+   * @param collectionId The collection id.
+   * @param handleConvert if set to true only the document ids are returned
    * @return List<String> - The list of document handles
    * @throws ArangoException
    */
@@ -1701,10 +1508,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns all document handles from a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param handleConvert
-   *          - if set to true only the document ids are returned
+   * @param collectionName The collection name.
+   * @param handleConvert if set to true only the document ids are returned
    * @return List<String> - The list of document handles
    * @throws ArangoException
    */
@@ -1715,10 +1520,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns the current revision of a document.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentId
-   *          - The document id
+   * @param collectionId The collection id.
+   * @param documentId The document id
    * @return long
    * @throws ArangoException
    */
@@ -1729,10 +1532,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns the current revision of a document.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentId
-   *          - The document id
+   * @param collectionName The collection name.
+   * @param documentId The document id
    * @return long
    * @throws ArangoException
    */
@@ -1743,10 +1544,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns the current revision of a document.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentKey
-   *          - The document key
+   * @param collectionId The collection id.
+   * @param documentKey The document key
    * @return long
    * @throws ArangoException
    */
@@ -1757,10 +1556,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns the current revision of a document.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentKey
-   *          - The document key
+   * @param collectionName The collection name.
+   * @param documentKey The document key
    * @return long
    * @throws ArangoException
    */
@@ -1771,8 +1568,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method returns the current revision of a document.
    *
-   * @param documentHandle
-   *          - The document handle
+   * @param documentHandle The document handle
    * @return long
    * @throws ArangoException
    */
@@ -1783,13 +1579,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a document entity.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentId
-   *          - The document id
-   * @param clazz
-   *          - The expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionId The collection id.
+   * @param documentId The document id
+   * @param clazz The expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
@@ -1801,13 +1593,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a document entity.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentId
-   *          - The document id
-   * @param clazz
-   *          - The expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param documentId The document id
+   * @param clazz The expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
@@ -1820,13 +1608,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a document entity.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentKey
-   *          - The document key
-   * @param clazz
-   *          - The expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionId The collection id.
+   * @param documentKey The document key
+   * @param clazz The expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
@@ -1839,13 +1623,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a document entity.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentKey
-   *          - The document key
-   * @param clazz
-   *          - The expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param documentKey The document key
+   * @param clazz The expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
@@ -1858,11 +1638,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a document entity.
    *
-   * @param documentHandle
-   *          - The document handle
-   * @param clazz
-   *          - The expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param documentHandle The document handle
+   * @param clazz The expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
@@ -1876,17 +1653,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * *ifMatchRevision* can not be used at the same time, one of these two has to
    * be null.
    *
-   * @param documentHandle
-   *          - The document handle
-   * @param clazz
-   *          - The expected class, the result from the server request is
-   *          deserialized to an instance of this class.
-   * @param ifNoneMatchRevision
-   *          - if set the document is only returned id it has a different
-   *          revision.
-   * @param ifMatchRevision
-   *          - if set the document is only returned id it has the same
-   *          revision.
+   * @param documentHandle The document handle
+   * @param clazz The expected class, the result from the server request is deserialized to an instance of this class.
+   * @param ifNoneMatchRevision if set the document is only returned id it has a different revision.
+   * @param ifMatchRevision if set the document is only returned id it has the same revision.
    * @param <T>
    * @return <T> DocumentEntity<T>
    * @throws ArangoException
@@ -1903,10 +1673,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a document from the database.
    * 
-   * @param collectionId
-   *          - The collection id.
-   * @param documentId
-   *          - The document id.
+   * @param collectionId The collection id.
+   * @param documentId The document id.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1917,10 +1685,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a document from the database.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentId
-   *          - The document id.
+   * @param collectionName The collection name.
+   * @param documentId The document id.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1931,10 +1697,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a document from the database.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentKey
-   *          - The document key.
+   * @param collectionId The collection id.
+   * @param documentKey The document key.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1945,10 +1709,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a document from the database.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentKey
-   *          - The document key.
+   * @param collectionName The collection name.
+   * @param documentKey The document key.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1959,8 +1721,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a document from the database.
    *
-   * @param documentHandle
-   *          - The document handle.
+   * @param documentHandle The document handle.
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1974,14 +1735,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * the given revision the policy parameter is used. If it is set to *last* the
    * operation is performed anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentId
-   *          - The document id.
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
+   * @param collectionId The collection id.
+   * @param documentId The document id.
+   * @param rev The desired revision
+   * @param policy The update policy
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -1996,14 +1753,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * the given revision the policy parameter is used. If it is set to *last* the
    * operation is performed anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentId
-   *          - The document id.
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
+   * @param collectionName The collection name.
+   * @param documentId The document id.
+   * @param rev The desired revision
+   * @param policy The update policy
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -2018,14 +1771,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * the given revision the policy parameter is used. If it is set to *last* the
    * operation is performed anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param documentKey
-   *          - The document key.
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
+   * @param collectionId The collection id.
+   * @param documentKey The document key.
+   * @param rev The desired revision
+   * @param policy The update policy
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -2040,14 +1789,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * the given revision the policy parameter is used. If it is set to *last* the
    * operation is performed anyway. if it is set to *error* an error is thrown.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param documentKey
-   *          - The document key.
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
+   * @param collectionName The collection name.
+   * @param documentKey The document key.
+   * @param rev The desired revision
+   * @param policy The update policy
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -2062,12 +1807,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * the given revision the policy parameter is used. If it is set to *last* the
    * operation is performed anyway. if it is set to *error* an error is thrown.
    *
-   * @param documentHandle
-   *          - The document handle.
-   * @param rev
-   *          - The desired revision
-   * @param policy
-   *          - The update policy
+   * @param documentHandle The document handle.
+   * @param rev The desired revision
+   * @param policy The update policy
    * @return DocumentEntity<?>
    * @throws ArangoException
    */
@@ -2078,8 +1820,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method validates a given AQL query string and returns a CursorEntity
    *
-   * @param query
-   *          - an AQL query as string
+   * @param query an AQL query as string
    * @return CursorEntity<?>
    * @throws ArangoException
    */
@@ -2090,19 +1831,12 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method executes an AQL query and returns a CursorEntity
    *
-   * @param query
-   *          - an AQL query as string
-   * @param bindVars
-   *          - a map containing all bind variables,
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
-   * @param calcCount
-   *          - if set to true the result count is returned
-   * @param batchSize
-   *          - the batch size of the result cursor
-   * @param fullCount
-   *          - if set to true, then all results before the final LIMIT will be counted
+   * @param query an AQL query as string
+   * @param bindVars a map containing all bind variables,
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
+   * @param calcCount if set to true the result count is returned
+   * @param batchSize the batch size of the result cursor
+   * @param fullCount if set to true, then all results before the final LIMIT will be counted
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2121,17 +1855,11 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method executes an AQL query and returns a CursorEntity
    *
-   * @param query
-   *          - an AQL query as string
-   * @param bindVars
-   *          - a map containing all bind variables,
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
-   * @param calcCount
-   *          - if set to true the result count is returned
-   * @param batchSize
-   *          - the batch size of the result cursor
+   * @param query an AQL query as string
+   * @param bindVars a map containing all bind variables,
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
+   * @param calcCount if set to true the result count is returned
+   * @param batchSize the batch size of the result cursor
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2149,11 +1877,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Continues data retrieval for an existing cursor
    *
-   * @param cursorId
-   *          - The id of a cursor.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param cursorId The id of a cursor.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2165,8 +1890,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a cursor from the database.
    *
-   * @param cursorId
-   *          - The id of a cursor.
+   * @param cursorId The id of a cursor.
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -2177,19 +1901,12 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method executes an AQL query and returns a CursorResultSet
    *
-   * @param query
-   *          - an AQL query as string
-   * @param bindVars
-   *          - a map containing all bind variables,
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
-   * @param calcCount
-   *          - if set to true the result count is returned
-   * @param batchSize
-   *          - the batch size of the result cursor
-   * @param fullCount
-   *          - if set to true, then all results before the final LIMIT will be counted
+   * @param query an AQL query as string
+   * @param bindVars a map containing all bind variables,
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
+   * @param calcCount if set to true the result count is returned
+   * @param batchSize the batch size of the result cursor
+   * @param fullCount if set to true, then all results before the final LIMIT will be counted
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2202,23 +1919,25 @@ public class ArangoDriver extends BaseArangoDriver {
     Integer batchSize,
     Boolean fullCount) throws ArangoException {
 
-    return cursorDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize, fullCount);
+    return cursorDriver.executeQueryWithResultSet(
+            getDefaultDatabase(),
+            query,
+            bindVars,
+            clazz,
+            calcCount,
+            batchSize,
+            fullCount
+    );
   }
   
   /**
    * This method executes an AQL query and returns a CursorResultSet
    *
-   * @param query
-   *          - an AQL query as string
-   * @param bindVars
-   *          - a map containing all bind variables,
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
-   * @param calcCount
-   *          - if set to true the result count is returned
-   * @param batchSize
-   *          - the batch size of the result cursor
+   * @param query an AQL query as string
+   * @param bindVars a map containing all bind variables,
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
+   * @param calcCount if set to true the result count is returned
+   * @param batchSize the batch size of the result cursor
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2230,20 +1949,24 @@ public class ArangoDriver extends BaseArangoDriver {
     Boolean calcCount,
     Integer batchSize) throws ArangoException {
 
-    return cursorDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize, false);
+    return cursorDriver.executeQueryWithResultSet(
+            getDefaultDatabase(),
+            query,
+            bindVars,
+            clazz,
+            calcCount,
+            batchSize,
+            false
+    );
   }
 
   /**
    * This method creates an index for a collection.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param type
-   *          - the index type.
-   * @param unique
-   *          - if set to true the index will be a unique index
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionId The collection id.
+   * @param type the index type.
+   * @param unique if set to true the index will be a unique index
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2255,14 +1978,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates an index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param type
-   *          - the index type.
-   * @param unique
-   *          - if set to true the index will be a unique index
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionName The collection name.
+   * @param type the index type.
+   * @param unique if set to true the index will be a unique index
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2274,12 +1993,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a hash index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param unique
-   *          - if set to true the index will be a unique index
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionName The collection name.
+   * @param unique if set to true the index will be a unique index
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2290,12 +2006,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a geo index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param unique
-   *          - if set to true the index will be a unique index
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionName The collection name.
+   * @param unique if set to true the index will be a unique index
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2306,12 +2019,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a skip list index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param unique
-   *          - if set to true the index will be a unique index
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionName The collection name.
+   * @param unique if set to true the index will be a unique index
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2323,10 +2033,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a capped index for a collection.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param size
-   *          - the maximum amount of documents
+   * @param collectionId The collection id.
+   * @param size the maximum amount of documents
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2337,10 +2045,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a capped index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param size
-   *          - the maximum amount of documents
+   * @param collectionName The collection name.
+   * @param size the maximum amount of documents
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2351,10 +2057,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a capped index for a collection.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param byteSize
-   *          - the maximum size of the document data in bytes
+   * @param collectionId The collection id.
+   * @param byteSize the maximum size of the document data in bytes
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2365,10 +2069,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a capped index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param byteSize
-   *          - the maximum size of the document data in bytes
+   * @param collectionName The collection name.
+   * @param byteSize the maximum size of the document data in bytes
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2379,10 +2081,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a full text index for a collection.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionId The collection id.
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2393,10 +2093,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a full text index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionName The collection name.
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2407,28 +2105,26 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a full text index for a collection.
    *
-   * @param collectionId
-   *          - The collection id.
-   * @param minLength
-   *          - Minimum character length of words to index.
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionId The collection id.
+   * @param minLength Minimum character length of words to index.
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
-  public IndexEntity createFulltextIndex(long collectionId, Integer minLength, String... fields) throws ArangoException {
+  public IndexEntity createFulltextIndex(
+          long collectionId,
+          Integer minLength,
+          String... fields
+  ) throws ArangoException {
     return createFulltextIndex(String.valueOf(collectionId), minLength, fields);
   }
 
   /**
    * This method creates a full text index for a collection.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param minLength
-   *          - Minimum character length of words to index.
-   * @param fields
-   *          - the fields (document attributes) the index is created on
+   * @param collectionName The collection name.
+   * @param minLength Minimum character length of words to index.
+   * @param fields the fields (document attributes) the index is created on
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2440,8 +2136,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes an index from a collection
    *
-   * @param indexHandle
-   *          - the index handle
+   * @param indexHandle the index handle
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2452,8 +2147,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns an index from a collection.
    *
-   * @param indexHandle
-   *          - the index handle
+   * @param indexHandle the index handle
    * @return IndexEntity
    * @throws ArangoException
    */
@@ -2464,8 +2158,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all indices from a collection.
    *
-   * @param collectionId
-   *          - The collection id.
+   * @param collectionId The collection id.
    * @return IndexesEntity
    * @throws ArangoException
    */
@@ -2476,8 +2169,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all indices from a collection.
    *
-   * @param collectionName
-   *          - The collection name.
+   * @param collectionName The collection name.
    * @return IndexesEntity
    * @throws ArangoException
    */
@@ -2490,24 +2182,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * please note the following: fatal or 0 error or 1 warning or 2 info or 3
    * debug or 4 The default value is info.
    *
-   * @param logLevel
-   *          - if set only logs with this *logLevel* are returned
-   * @param logLevelUpTo
-   *          - if set all logs up to the *logLevelUpTo* are returned
-   * @param start
-   *          - Returns all log entries such that their log entry identifier
-   *          (lid value) is greater or equal to start.
-   * @param size
-   *          - Restricts the result to at most size log entries.
-   * @param offset
-   *          - Starts to return log entries skipping the first offset log
-   *          entries.
-   * @param sortAsc
-   *          - if set to true the default sort order (descending) is reverted
-   *          to ascending
-   * @param text
-   *          - Only return the log entries containing the text specified in
-   *          text.
+   * @param logLevel if set only logs with this *logLevel* are returned
+   * @param logLevelUpTo if set all logs up to the *logLevelUpTo* are returned
+   * @param start Returns all log entries such that their log entry identifier (lid value) is greater or equal to start.
+   * @param size Restricts the result to at most size log entries.
+   * @param offset Starts to return log entries skipping the first offset log entries.
+   * @param sortAsc if set to true the default sort order (descending) is reverted to ascending
+   * @param text Only return the log entries containing the text specified in text.
    * @return
    * @throws ArangoException
    */
@@ -2575,8 +2256,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Executes a javascript code.
    *
-   * @param jsCode
-   *          - a javascript function as string
+   * @param jsCode a javascript function as string
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -2587,18 +2267,11 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param example The example as a map.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2615,18 +2288,11 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param example The example as a map.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2649,18 +2315,11 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName - The collection name.
+   * @param example The example as a map.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<DocumentEntity<T>>
    * @throws ArangoException
@@ -2683,18 +2342,11 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This will find all documents matching a given example.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName - The collection name.
+   * @param example The example as a map.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<DocumentEntity<T>>
    * @throws ArangoException
@@ -2717,16 +2369,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName - The collection name.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2739,16 +2385,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName - The collection name.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2761,16 +2401,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName
-   *          - - The collection name.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName - The collection name.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<DocumentEntity<T>>
    * @throws ArangoException
@@ -2786,16 +2420,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all documents of a collections.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<DocumentEntity<T>>
    * @throws ArangoException
@@ -2811,13 +2439,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the first document matching the example
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param example The example as a map.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> ScalarExampleEntity<T>
    * @throws ArangoException
@@ -2832,11 +2456,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a random document from the collection
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> ScalarExampleEntity<T>
    * @throws ArangoException
@@ -2849,25 +2470,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will find all documents within a given range. In order to execute a
    * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param left
-   *          - The lower bound
-   * @param right
-   *          - The upper bound
-   * @param closed
-   *          - If true, use interval including left and right, otherwise
-   *          exclude right, but include left.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param left The lower bound
+   * @param right The upper bound
+   * @param closed If true, use interval including left and right, otherwise exclude right, but include left.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -2897,25 +2507,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will find all documents within a given range. In order to execute a
    * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param left
-   *          - The lower bound
-   * @param right
-   *          - The upper bound
-   * @param closed
-   *          - If true, use interval including left and right, otherwise
-   *          exclude right, but include left.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param left The lower bound
+   * @param right The upper bound
+   * @param closed If true, use interval including left and right, otherwise exclude right, but include left.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -2945,25 +2544,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will find all documents within a given range. In order to execute a
    * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param left
-   *          - The lower bound
-   * @param right
-   *          - The upper bound
-   * @param closed
-   *          - If true, use interval including left and right, otherwise
-   *          exclude right, but include left.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param left The lower bound
+   * @param right The upper bound
+   * @param closed If true, use interval including left and right, otherwise exclude right, but include left.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<DocumentEntity<T>>
    * @throws ArangoException
@@ -2993,25 +2581,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will find all documents within a given range. In order to execute a
    * range query, a skip-list index on the queried attribute must be present.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param left
-   *          - The lower bound
-   * @param right
-   *          - The upper bound
-   * @param closed
-   *          - If true, use interval including left and right, otherwise
-   *          exclude right, but include left.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param left The lower bound
+   * @param right The upper bound
+   * @param closed If true, use interval including left and right, otherwise exclude right, but include left.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<DocumentEntity<T>>
    * @throws ArangoException
@@ -3042,20 +2619,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * query specified in query. In order to use the fulltext operator, a fulltext
    * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param query
-   *          - The fulltext query as string.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param query The fulltext query as string.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<T>
    * @throws ArangoException
@@ -3084,20 +2653,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * query specified in query. In order to use the fulltext operator, a fulltext
    * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param query
-   *          - The fulltext query as string.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param query The fulltext query as string.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<T>
    * @throws ArangoException
@@ -3126,20 +2687,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * query specified in query. In order to use the fulltext operator, a fulltext
    * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param query
-   *          - The fulltext query as string.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param query The fulltext query as string.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorEntity<DocumentEntity<T>>
    * @throws ArangoException
@@ -3168,20 +2721,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * query specified in query. In order to use the fulltext operator, a fulltext
    * index must be defined for the collection and the specified attribute.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param attribute
-   *          - The attribute path to check.
-   * @param query
-   *          - The fulltext query as string.
-   * @param skip
-   *          - The number of documents to skip in the query.
-   * @param limit
-   *          - The maximal amount of documents to return. The skip is applied
-   *          before the limit restriction.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param attribute The attribute path to check.
+   * @param query The fulltext query as string.
+   * @param skip The number of documents to skip in the query.
+   * @param limit The maximal amount of documents to return. The skip is applied before the limit restriction.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
    * @param <T>
    * @return <T> CursorResultSet<DocumentEntity<T>>
    * @throws ArangoException
@@ -3209,15 +2754,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will remove all documents in the collection that match the specified
    * example object.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param limit
-   *          - limits the amount of documents which will be deleted.
+   * @param collectionName The collection name.
+   * @param example The example as a map.
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param limit limits the amount of documents which will be deleted.
    * @return SimpleByResultEntity
    * @throws ArangoException
    */
@@ -3233,17 +2773,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will replace all documents in the collection that match the specified
    * example object.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param newValue
-   *          - The new values.
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param limit
-   *          - limits the amount of documents which will be replaced.
+   * @param collectionName The collection name.
+   * @param example The example as a map.
+   * @param newValue The new values.
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param limit limits the amount of documents which will be replaced.
    * @return SimpleByResultEntity
    * @throws ArangoException
    */
@@ -3266,19 +2800,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will update all documents in the collection that match the specified
    * example object.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param example
-   *          - The example as a map.
-   * @param newValue
-   *          - The new values.
-   * @param keepNull
-   *          - - If true null values are kept.
-   * @param waitForSync
-   *          - if set to true the response is returned when the server has
-   *          finished.
-   * @param limit
-   *          - limits the amount of documents which will be updated.
+   * @param collectionName The collection name.
+   * @param example The example as a map.
+   * @param newValue The new values.
+   * @param keepNull - If true null values are kept.
+   * @param waitForSync if set to true the response is returned when the server has finished.
+   * @param limit limits the amount of documents which will be updated.
    * @return SimpleByResultEntity
    * @throws ArangoException
    */
@@ -3303,14 +2830,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will return the first document(s) from the collection, in the order of
    * insertion/update time.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param count
-   *          - the number of documents to return at most. Specifiying count is
-   *          optional. If it is not specified, it defaults to 1.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param count the number of documents to return at most. Specifiying count
+   *              is optional. If it is not specified, it defaults to 1.
+   * @param clazz the expected class, the result from the server request
+   *              is deserialized to an instance of this class.
    * @return <T> DocumentResultEntity<T>
    * @throws ArangoException
    */
@@ -3323,14 +2847,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * This will return the last document(s) from the collection, in the order of
    * insertion/update time.
    *
-   * @param collectionName
-   *          - The collection name.
-   * @param count
-   *          - the number of documents to return at most. Specifiying count is
-   *          optional. If it is not specified, it defaults to 1.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
+   * @param collectionName The collection name.
+   * @param count the number of documents to return at most. Specifiying count is optional.
+   *              If it is not specified, it defaults to 1.
+   * @param clazz the expected class, the result from the server request is
+   *              deserialized to an instance of this class.
    * @return <T> DocumentResultEntity<T>
    * @throws ArangoException
    */
@@ -3342,14 +2863,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a database user.
    *
-   * @param username
-   *          - the username as string
-   * @param passwd
-   *          - the username as string
-   * @param active
-   *          - if true the user is active
-   * @param extra
-   *          - additional user data
+   * @param username the username as string
+   * @param passwd the username as string
+   * @param active if true the user is active
+   * @param extra additional user data
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3361,14 +2878,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Replaces the data of a database user.
    *
-   * @param username
-   *          - the username as string
-   * @param passwd
-   *          - the username as string
-   * @param active
-   *          - if true the user is active
-   * @param extra
-   *          - additional user data
+   * @param username the username as string
+   * @param passwd the username as string
+   * @param active if true the user is active
+   * @param extra additional user data
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3380,14 +2893,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Updates the data of a database user.
    *
-   * @param username
-   *          - the username as string
-   * @param passwd
-   *          - the username as string
-   * @param active
-   *          - if true the user is active
-   * @param extra
-   *          - additional user data
+   * @param username the username as string
+   * @param passwd the username as string
+   * @param active if true the user is active
+   * @param extra additional user data
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3399,8 +2908,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes a database user.
    *
-   * @param username
-   *          - the username as string
+   * @param username the username as string
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -3411,8 +2919,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns a database user.
    *
-   * @param username
-   *          - the username as string
+   * @param username the username as string
    * @return UserEntity
    * @throws ArangoException
    */
@@ -3453,12 +2960,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates documents in the collection.
    *
-   * @param collection
-   *          - the collection as a string
-   * @param createCollection
-   *          - if set to true the collection is created if it does not exist
-   * @param values
-   *          - a list of Objects that will be stored as documents
+   * @param collection the collection as a string
+   * @param createCollection if set to true the collection is created if it does not exist
+   * @param values a list of Objects that will be stored as documents
    * @return ImportResultEntity
    * @throws ArangoException
    */
@@ -3470,12 +2974,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates documents in the collection.
    *
-   * @param collection
-   *          - the collection as a string
-   * @param createCollection
-   *          - if set to true the collection is created if it does not exist
-   * @param headerValues
-   *          - a list of lists that will be stored as documents
+   * @param collection the collection as a string
+   * @param createCollection if set to true the collection is created if it does not exist
+   * @param headerValues a list of lists that will be stored as documents
    * @return ImportResultEntity
    * @throws ArangoException
    */
@@ -3509,9 +3010,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all databases
    *
-   * @param currentUserAccessableOnly
-   *          - If true only the databases are returned that the current user
-   *          can access
+   * @param currentUserAccessableOnly If true only the databases are returned that the current user can access
    * @return StringsResultEntity
    * @throws ArangoException
    */
@@ -3522,10 +3021,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all databases the user identified by his credentials can access
    *
-   * @param username
-   *          - the username as string
-   * @param password
-   *          - the password as string
+   * @param username the username as string
+   * @param password the password as string
    * @return StringsResultEntity
    * @throws ArangoException
    */
@@ -3536,11 +3033,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates a database
    *
-   * @param database
-   *          - the database name as a string
-   * @param users
-   *          - a list of users which are supposed to have access to the
-   *          database
+   * @param database the database name as a string
+   * @param users a list of users which are supposed to have access to the database
    * @return BooleanResultEntity
    * @throws ArangoException
    */
@@ -3551,8 +3045,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method deletes a database
    *
-   * @param database
-   *          - the database name as a string
+   * @param database the database name as a string
    * @return BooleanResultEntity
    * @throws ArangoException
    */
@@ -3563,10 +3056,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method creates an endpoint.
    *
-   * @param endpoint
-   *          - the endpoint as string
-   * @param databases
-   *          - a list of databases that are allowed on this endpoint
+   * @param endpoint the endpoint as string
+   * @param databases a list of databases that are allowed on this endpoint
    * @return BooleanResultEntity
    */
   public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {
@@ -3585,8 +3076,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * This method deletes an endpoint
    *
-   * @param endpoint
-   *          - the endpoint as string
+   * @param endpoint the endpoint as string
    * @return BooleanResultEntity
    */
   public BooleanResultEntity deleteEndpoint(String endpoint) throws ArangoException {
@@ -3610,8 +3100,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * list can be used by replication clients to initiate an initial sync with
    * the server.
    *
-   * @param includeSystem
-   *          - if true the system collections are included into the result
+   * @param includeSystem if true the system collections are included into the result
    * @return ReplicationInventoryEntity
    * @throws ArangoException
    */
@@ -3622,22 +3111,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns the data from the collection for the requested range.
    *
-   * @param collectionName
-   *          - the collection name
-   * @param from
-   *          - Lower bound tick value for results.
-   * @param to
-   *          - Upper bound tick value for results.
-   * @param chunkSize
-   *          - Approximate maximum size of the returned result.
-   * @param ticks
-   *          - Whether or not to include tick values in the dump. Default value
-   *          is true.
-   * @param clazz
-   *          - the expected class, the result from the server request is
-   *          deserialized to an instance of this class.
-   * @param handler
-   *          - a handler object that processes the dump
+   * @param collectionName the collection name
+   * @param from Lower bound tick value for results.
+   * @param to Upper bound tick value for results.
+   * @param chunkSize Approximate maximum size of the returned result.
+   * @param ticks Whether or not to include tick values in the dump. Default value is true.
+   * @param clazz the expected class, the result from the server request is deserialized to an instance of this class.
+   * @param handler a handler object that processes the dump
    * @throws ArangoException
    */
   public <T> void getReplicationDump(
@@ -3665,21 +3145,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * Starts a full data synchronization from a remote endpoint into the local
    * ArangoDB database.
    *
-   * @param endpoint
-   *          - the endpoint as string
-   * @param database
-   *          - the database name as a string
-   * @param username
-   *          - the username as string
-   * @param password
-   *          - the password as string
-   * @param restrictType
-   *          - collection filtering. When specified, the allowed values are
-   *          include or exclude.
-   * @param restrictCollections
-   *          - If restrictType is include, only the specified collections will
-   *          be sychronised. If restrictType is exclude, all but the specified
-   *          collections will be synchronized.
+   * @param endpoint the endpoint as string
+   * @param database the database name as a string
+   * @param username the username as string
+   * @param password the password as string
+   * @param restrictType collection filtering. When specified, the allowed values are include or exclude.
+   * @param restrictCollections If restrictType is include, only the specified collections will be sychronised.
+   *                            If restrictType is exclude, all but the specified collections will be synchronized.
    * @return ReplicationSyncEntity
    * @throws ArangoException
    */
@@ -3757,14 +3229,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Sets the replication logger configuration
    *
-   * @param autoStart
-   *          - if true autoStart is activated
-   * @param logRemoteChanges
-   *          - if true remote changes are logged
-   * @param maxEvents
-   *          - the maximum amount of events to log
-   * @param maxEventsSize
-   *          - the maximum size of events
+   * @param autoStart if true autoStart is activated
+   * @param logRemoteChanges if true remote changes are logged
+   * @param maxEvents the maximum amount of events to log
+   * @param maxEventsSize the maximum size of events
    * @return ReplicationLoggerConfigEntity
    * @throws ArangoException
    */
@@ -3795,36 +3263,21 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Sets the configuration of the replication applier.
    *
-   * @param endpoint
-   *          - the logger server to connect to (e.g.
-   *          "tcp://192.168.173.13:8529").
-   * @param database
-   *          - the name of the database on the endpoint.
-   * @param username
-   *          - an optional ArangoDB username to use when connecting to the
-   *          endpoint
-   * @param password
-   *          - the password to use when connecting to the endpoint.
-   * @param maxConnectRetries
-   *          - the maximum number of connection attempts the applier will make
-   *          in a row. If the applier cannot establish a connection to the
-   *          endpoint in this number of attempts, it will stop itself.
-   * @param connectTimeout
-   *          - the timeout (in seconds) when attempting to connect to the
-   *          endpoint. This value is used for each connection attempt.
-   * @param requestTimeout
-   *          - the timeout (in seconds) for individual requests to the
-   *          endpoint.
-   * @param chunkSize
-   *          - the requested maximum size for log transfer packets that is used
-   *          when the endpoint is contacted.
-   * @param autoStart
-   *          - whether or not to auto-start the replication applier on (next
-   *          and following) server starts
-   * @param adaptivePolling
-   *          - if set to true, the replication applier will fall to sleep for
-   *          an increasingly long period in case the logger server at the
-   *          endpoint does not have any more replication events to apply.
+   * @param endpoint the logger server to connect to (e.g. "tcp://192.168.173.13:8529").
+   * @param database the name of the database on the endpoint.
+   * @param username an optional ArangoDB username to use when connecting to the endpoint
+   * @param password the password to use when connecting to the endpoint.
+   * @param maxConnectRetries the maximum number of connection attempts the applier will make in a row.
+   *                          If the applier cannot establish a connection to the endpoint in this
+   *                          number of attempts, it will stop itself.
+   * @param connectTimeout the timeout (in seconds) when attempting to connect to the endpoint.
+   *                       This value is used for each connection attempt.
+   * @param requestTimeout the timeout (in seconds) for individual requests to the endpoint.
+   * @param chunkSize the requested maximum size for log transfer packets that is used when the endpoint is contacted.
+   * @param autoStart whether or not to auto-start the replication applier on (next and following) server starts
+   * @param adaptivePolling if set to true, the replication applier will fall to sleep for an increasingly
+   *                        long period in case the logger server at the endpoint does not have any
+   *                        more replication events to apply.
    * @return ReplicationApplierConfigEntity
    * @throws ArangoException
    */
@@ -3856,9 +3309,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Sets the configuration of the replication applier.
    *
-   * @param replicationApplierConfigEntity
-   *          - an instance of ReplicationApplierConfigEntity containing the
-   *          complete config
+   * @param replicationApplierConfigEntity an instance of ReplicationApplierConfigEntity containing the complete config
    * @return ReplicationApplierConfigEntity
    * @throws ArangoException
    */
@@ -3871,8 +3322,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Starts the replication applier. This will return immediately if the
    * replication applier is already running.
    *
-   * @param from
-   *          - The remote lastLogTick value from which to start applying.
+   * @param from The remote lastLogTick value from which to start applying.
    * @return ReplicationApplierStateEntity
    * @throws ArangoException
    */
@@ -3927,14 +3377,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a graph.
    * 
-   * @param graphName
-   *          The name of the graph to be created.
-   * @param edgeDefinitions
-   *          List of the graphs edge definitions.
-   * @param orphanCollections
-   *          List of the graphs orphan collections.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph to be created.
+   * @param edgeDefinitions List of the graphs edge definitions.
+   * @param orphanCollections List of the graphs orphan collections.
+   * @param waitForSync Wait for sync.
    * @return GraphEntity The new graph.
    * @throws ArangoException
    */
@@ -3949,10 +3395,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates an empty graph.
    *
-   * @param graphName
-   *          The name of the graph to be created.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph to be created.
+   * @param waitForSync Wait for sync.
    * @return GraphEntity The new graph.
    * @throws ArangoException
    */
@@ -3964,8 +3408,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Get graph object by name, including its edge definitions and vertex
    * collections.
    *
-   * @param graphName
-   *          The name of the graph.
+   * @param graphName The name of the graph.
    * @return GraphEntity The graph.
    * @throws ArangoException
    */
@@ -3977,8 +3420,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Delete a graph by its name. The collections of the graph will not be
    * dropped.
    *
-   * @param graphName
-   *          Name of the graph to be deleted.
+   * @param graphName Name of the graph to be deleted.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -3990,10 +3432,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * Delete a graph by its name. If dropCollections is true, all collections of
    * the graph will be dropped, if they are not used in another graph.
    * 
-   * @param graphName
-   *          Name of the graph to be deleted.
-   * @param dropCollections
-   *          Indicates if the collections of the graph will be dropped
+   * @param graphName Name of the graph to be deleted.
+   * @param dropCollections Indicates if the collections of the graph will be dropped
    * @throws ArangoException
    */
   public void deleteGraph(String graphName, Boolean dropCollections) throws ArangoException {
@@ -4004,8 +3444,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns a list of all vertex collection of a graph that are defined in the
    * graphs edgeDefinitions (in "from", "to", and "orphanCollections")
    *
-   * @param graphName
-   *          The graph name.
+   * @param graphName The graph name.
    * @return List<String> List of the names of the vertex collections
    * @throws ArangoException
    */
@@ -4017,12 +3456,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * Removes a vertex collection from the graph and optionally deletes the
    * collection, if it is not used in any other graph.
    *
-   * @param graphName
-   *          The graph name.
-   * @param collectionName
-   *          The name of the vertex collection to be removed from the graph.
-   * @param dropCollection
-   *          Indicates if the collection will be dropped
+   * @param graphName The graph name.
+   * @param collectionName The name of the vertex collection to be removed from the graph.
+   * @param dropCollection Indicates if the collection will be dropped
    * @throws ArangoException
    */
   public DeletedEntity graphDeleteVertexCollection(String graphName, String collectionName, Boolean dropCollection)
@@ -4033,10 +3469,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a vertex collection
    *
-   * @param graphName
-   *          The graph name.
-   * @param collectionName
-   *          The name of the collection to be created.
+   * @param graphName The graph name.
+   * @param collectionName The name of the collection to be created.
    * @return GraphEntity The graph, including the new collection.
    * @throws ArangoException
    */
@@ -4048,8 +3482,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * Returns a list of all edge collection of a graph that are defined in the
    * graphs edgeDefinitions
    *
-   * @param graphName
-   *          The graph name.
+   * @param graphName The graph name.
    * @return List<String> List of the names of all edge collections of the
    *         graph.
    * @throws ArangoException
@@ -4061,10 +3494,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Adds a new edge definition to an existing graph
    *
-   * @param graphName
-   *          The graph name.
-   * @param edgeDefinition
-   *          The edge definition to be added.
+   * @param graphName The graph name.
+   * @param edgeDefinition The edge definition to be added.
    * @return GraphEntity The graph, including the new edge definition.
    * @throws ArangoException
    */
@@ -4078,13 +3509,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * change the edge definitions of all other graphs using this definition as
    * well.
    *
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the edge collection of the edge definition that has to
-   *          be replaced.
-   * @param edgeDefinition
-   *          The new edge definition.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the edge collection of the edge definition that has to be replaced.
+   * @param edgeDefinition The new edge definition.
    * @return GraphEntity The graph, including the changed edge definition.
    * @throws ArangoException
    */
@@ -4099,11 +3526,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * Removes an existing edge definition from this graph. All data stored in the
    * collections is dropped as well as long as it is not used in other graphs.
    *
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of edge collection of the edge definition which has to be
-   *          deleted.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of edge collection of the edge definition which has to be deleted.
    * @return The graph, excluding the deleted edge definition.
    */
   public GraphEntity graphDeleteEdgeDefinition(String graphName, String edgeCollectionName, Boolean dropCollection)
@@ -4115,14 +3539,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Stores a new vertex with the information contained within the document into
    * the given collection.
    *
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The name of the collection, where the vertex will be created.
-   * @param vertex
-   *          The vertex object to be stored
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph.
+   * @param collectionName The name of the collection, where the vertex will be created.
+   * @param vertex The vertex object to be stored
+   * @param waitForSync Wait for sync.
    * @return <T> DocumentEntity<T> The resulting DocumentEntity containing the
    *         vertex document.
    * @throws ArangoException
@@ -4135,14 +3555,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Gets a vertex with the given key if it is contained within your graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to get.
-   * @param key
-   *          The key (document handle) of the vertex to get.
-   * @param clazz
-   *          The class of the vertex to get.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to get.
+   * @param key The key (document handle) of the vertex to get.
+   * @param clazz The class of the vertex to get.
    * @return <T> DocumentEntity<T> The resulting DocumentEntity containing the
    *         vertex document.
    * @throws ArangoException
@@ -4155,20 +3571,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Gets a vertex with the given key if it is contained within your graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to get.
-   * @param key
-   *          The key (document handle) of the vertex to get.
-   * @param clazz
-   *          The class of the vertex to get.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to return a document.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to return a document.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to get.
+   * @param key The key (document handle) of the vertex to get.
+   * @param clazz The class of the vertex to get.
+   * @param ifMatchRevision If not null the revision of the vertex in the database has to be equal to return a document.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the database has
+   *                            to be different to return a document.
    * @return <T> DocumentEntity<T> The resulting DocumentEntity containing the
    *         vertex document.
    * @throws ArangoException
@@ -4194,12 +3603,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * Deletes a vertex with the given key, if it is contained within the graph.
    * Furthermore all edges connected to this vertex will be deleted.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to delete.
-   * @param key
-   *          The key (document handle) of the vertex to delete.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to delete.
+   * @param key The key (document handle) of the vertex to delete.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -4211,14 +3617,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Deletes a vertex with the given key, if it is contained within the graph.
    * Furthermore all edges connected to this vertex will be deleted.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to delete.
-   * @param key
-   *          The key (document handle) of the vertex to delete.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to delete.
+   * @param key The key (document handle) of the vertex to delete.
+   * @param waitForSync Wait for sync.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -4231,20 +3633,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * Deletes a vertex with the given key, if it is contained within the graph.
    * Furthermore all edges connected to this vertex will be deleted.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to delete.
-   * @param key
-   *          The key (document handle) of the vertex to delete.
-   * @param waitForSync
-   *          Wait for sync.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to return a document.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to return a document.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to delete.
+   * @param key The key (document handle) of the vertex to delete.
+   * @param waitForSync Wait for sync.
+   * @param ifMatchRevision If not null the revision of the vertex in the database has to be equal to return a document.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the
+   *                            database has to be different to return a document.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -4269,14 +3664,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Replaces a vertex with the given key by the content in the body. This will
    * only run successfully if the vertex is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to replace.
-   * @param key
-   *          The key (document handle) of the vertex to replace.
-   * @param vertex
-   *          The object to replace the existing vertex.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to replace.
+   * @param key The key (document handle) of the vertex to replace.
+   * @param vertex The object to replace the existing vertex.
    * @return DocumentEntity<T>
    * @throws ArangoException
    */
@@ -4289,22 +3680,15 @@ public class ArangoDriver extends BaseArangoDriver {
    * Replaces a vertex with the given key by the content in the body. This will
    * only run successfully if the vertex is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to replace.
-   * @param key
-   *          The key (document handle) of the vertex to replace.
-   * @param vertex
-   *          The object to replace the existing vertex.
-   * @param waitForSync
-   *          Wait for sync.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to replace the document.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to replace the document.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to replace.
+   * @param key The key (document handle) of the vertex to replace.
+   * @param vertex The object to replace the existing vertex.
+   * @param waitForSync Wait for sync.
+   * @param ifMatchRevision If not null the revision of the vertex in the database
+   *                        has to be equal to replace the document.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the database
+   *                            has to be different to replace the document.
    * @return
    * @throws ArangoException
    */
@@ -4331,14 +3715,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Updates a vertex with the given key by adding the content in the body. This
    * will only run successfully if the vertex is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to update.
-   * @param key
-   *          The key (document handle) of the vertex to be updated.
-   * @param vertex
-   *          The object to update the existing vertex.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to update.
+   * @param key The key (document handle) of the vertex to be updated.
+   * @param vertex The object to update the existing vertex.
    * @param keepNull
    * @return DocumentEntity<T>
    * @throws ArangoException
@@ -4365,23 +3745,16 @@ public class ArangoDriver extends BaseArangoDriver {
    * Updates a vertex with the given key by adding the content in the body. This
    * will only run successfully if the vertex is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param collectionName
-   *          The collection, containing the vertex to update.
-   * @param key
-   *          The key (document handle) of the vertex to be updated.
-   * @param vertex
-   *          The object to update the existing vertex.
+   * @param graphName The name of the graph.
+   * @param collectionName The collection, containing the vertex to update.
+   * @param key The key (document handle) of the vertex to be updated.
+   * @param vertex The object to update the existing vertex.
    * @param keepNull
-   * @param waitForSync
-   *          Wait for sync.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to update the document.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to update the document.
+   * @param waitForSync Wait for sync.
+   * @param ifMatchRevision If not null the revision of the vertex in the database
+   *                        has to be equal to update the document.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the database
+   *                            has to be different to update the document.
    * @return DocumentEntity<T>
    * @throws ArangoException
    */
@@ -4410,18 +3783,12 @@ public class ArangoDriver extends BaseArangoDriver {
    * Stores a new edge with the information contained within the body into the
    * given collection.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection where the edge will be created.
-   * @param fromHandle
-   *          Document handle of vertex, where the edge comes from.
-   * @param toHandle
-   *          Document handle of vertex, where the edge goes to.
-   * @param value
-   *          Object to be stored with edge.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection where the edge will be created.
+   * @param fromHandle Document handle of vertex, where the edge comes from.
+   * @param toHandle Document handle of vertex, where the edge goes to.
+   * @param value Object to be stored with edge.
+   * @param waitForSync Wait for sync.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4446,20 +3813,13 @@ public class ArangoDriver extends BaseArangoDriver {
    * Stores a new edge with the information contained within the body into the
    * given collection.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection where the edge will be created.
-   * @param key
-   *          The key of the edge to create (has to be unique).
-   * @param fromHandle
-   *          Document handle of vertex, where the edge comes from.
-   * @param toHandle
-   *          Document handle of vertex, where the edge goes to.
-   * @param value
-   *          Object to be stored with edge.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection where the edge will be created.
+   * @param key The key of the edge to create (has to be unique).
+   * @param fromHandle Document handle of vertex, where the edge comes from.
+   * @param toHandle Document handle of vertex, where the edge goes to.
+   * @param value Object to be stored with edge.
+   * @param waitForSync Wait for sync.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4486,16 +3846,11 @@ public class ArangoDriver extends BaseArangoDriver {
    * Stores a new edge with the information contained within the body into the
    * given collection.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection where the edge will be created.
-   * @param key
-   *          The key of the edge to create (has to be unique).
-   * @param fromHandle
-   *          Document handle of vertex, where the edge comes from.
-   * @param toHandle
-   *          Document handle of vertex, where the edge goes to.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection where the edge will be created.
+   * @param key The key of the edge to create (has to be unique).
+   * @param fromHandle Document handle of vertex, where the edge comes from.
+   * @param toHandle Document handle of vertex, where the edge goes to.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4519,20 +3874,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Loads an edge with the given key if it is contained within your graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to get.
-   * @param key
-   *          The key of the edge to get.
-   * @param clazz
-   *          The class of the edge to get.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to load the edge.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to load the edge.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to get.
+   * @param key The key of the edge to get.
+   * @param clazz The class of the edge to get.
+   * @param ifMatchRevision If not null the revision of the vertex in the database has to be equal to load the edge.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the
+   *                            database has to be different to load the edge.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4556,14 +3904,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Loads an edge with the given key if it is contained within your graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to get.
-   * @param key
-   *          The key of the edge to get.
-   * @param clazz
-   *          The class of the edge to get.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to get.
+   * @param key The key of the edge to get.
+   * @param clazz The class of the edge to get.
    * @return <T> EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4575,12 +3919,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes an edge with the given id, if it is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to delete.
-   * @param key
-   *          The key of the edge to delete.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to delete.
+   * @param key The key of the edge to delete.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -4591,14 +3932,10 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes an edge with the given id, if it is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to delete.
-   * @param key
-   *          The key of the edge to delete.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to delete.
+   * @param key The key of the edge to delete.
+   * @param waitForSync Wait for sync.
    * @return
    * @throws ArangoException
    */
@@ -4610,20 +3947,13 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Deletes an edge with the given id, if it is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to delete.
-   * @param key
-   *          The key of the edge to delete.
-   * @param waitForSync
-   *          Wait for sync.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to delete the edge.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to delete the edge.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to delete.
+   * @param key The key of the edge to delete.
+   * @param waitForSync Wait for sync.
+   * @param ifMatchRevision If not null the revision of the vertex in the database has to be equal to delete the edge.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the
+   *                            database has to be different to delete the edge.
    * @return DeletedEntity
    * @throws ArangoException
    */
@@ -4648,14 +3978,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Replaces an edge with the given key by the content in the body. This will
    * only run successfully if the edge is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to replace.
-   * @param key
-   *          The key of the edge to replace.
-   * @param value
-   *          The object to replace the existing edge.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to replace.
+   * @param key The key of the edge to replace.
+   * @param value The object to replace the existing edge.
    * @return
    * @throws ArangoException
    */
@@ -4668,22 +3994,14 @@ public class ArangoDriver extends BaseArangoDriver {
    * Replaces an edge with the given key by the content in the body. This will
    * only run successfully if the edge is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to replace.
-   * @param key
-   *          The key of the edge to replace.
-   * @param value
-   *          The object to replace the existing edge.
-   * @param waitForSync
-   *          Wait for sync.
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to replace the edge.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to replace the edge.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to replace.
+   * @param key The key of the edge to replace.
+   * @param value The object to replace the existing edge.
+   * @param waitForSync Wait for sync.
+   * @param ifMatchRevision If not null the revision of the vertex in the database has to be equal to replace the edge.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the
+   *                            database has to be different to replace the edge.
    * @return EdgeEntity<T>
    * @throws ArangoException
    */
@@ -4710,14 +4028,10 @@ public class ArangoDriver extends BaseArangoDriver {
    * Updates an edge with the given key by adding the content in the body. This
    * will only run successfully if the edge is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to update.
-   * @param key
-   *          The key of the edge to update.
-   * @param value
-   *          The object to update the existing edge.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to update.
+   * @param key The key of the edge to update.
+   * @param value The object to update the existing edge.
    * @param keepNull
    * @return EdgeEntity<T>
    * @throws ArangoException
@@ -4744,23 +4058,15 @@ public class ArangoDriver extends BaseArangoDriver {
    * Updates an edge with the given key by adding the content in the body. This
    * will only run successfully if the edge is contained within the graph.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param edgeCollectionName
-   *          The name of the collection containing edge to update.
-   * @param key
-   *          The key of the edge to update.
-   * @param value
-   *          The object to update the existing edge.
-   * @param waitForSync
-   *          Wait for sync.
+   * @param graphName The name of the graph.
+   * @param edgeCollectionName The name of the collection containing edge to update.
+   * @param key The key of the edge to update.
+   * @param value The object to update the existing edge.
+   * @param waitForSync Wait for sync.
    * @param keepNull
-   * @param ifMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          equal to update the edge.
-   * @param ifNoneMatchRevision
-   *          If not null the revision of the vertex in the database has to be
-   *          different to update the edge.
+   * @param ifMatchRevision If not null the revision of the vertex in the database has to be equal to update the edge.
+   * @param ifNoneMatchRevision If not null the revision of the vertex in the
+   *                            database has to be different to update the edge.
    * @return
    * @throws ArangoException
    */
@@ -4790,8 +4096,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all Edges of a graph, each edge as a PlainEdgeEntity.
    * 
-   * @param graphName
-   *          The name of the graph.
+   * @param graphName The name of the graph.
    * @return CursorEntity<PlainEdgeEntity>
    * @throws ArangoException
    */
@@ -4856,12 +4161,9 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Returns all Edges of vertices matching the map.
    * 
-   * @param graphName
-   *          The name of the graph.
-   * @param clazzT
-   *          Class of returned edge documents.
-   * @param vertexExample
-   *          Map with example of vertex, where edges start or end.
+   * @param graphName The name of the graph.
+   * @param clazzT Class of returned edge documents.
+   * @param vertexExample Map with example of vertex, where edges start or end.
    * @return <T> CursorEntity<T>
    * @throws ArangoException
    */
@@ -4919,10 +4221,8 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates an AQL Function
    *
-   * @param name
-   *          - the name of the function as string
-   * @param code
-   *          - the function as javascript string
+   * @param name the name of the function as string
+   * @param code the function as javascript string
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -4933,8 +4233,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Gets all AQL functions whithin a given namespace
    *
-   * @param namespace
-   *          - the namespace
+   * @param namespace the namespace
    * @return AqlFunctionsEntity
    * @throws ArangoException
    */
@@ -4946,10 +4245,8 @@ public class ArangoDriver extends BaseArangoDriver {
    * Delete an AQL function. If *isNameSpace* is set to true all functions
    * within the namespace *name* are deleted.
    *
-   * @param name
-   *          - This is either the name of a function or a namespace
-   * @param isNameSpace
-   *          - If set to true the param *name* is treated as a namespace
+   * @param name This is either the name of a function or a namespace
+   * @param isNameSpace If set to true the param *name* is treated as a namespace
    * @return DefaultEntity
    * @throws ArangoException
    */
@@ -4960,8 +4257,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Creates a transaction entity.
    *
-   * @param action
-   *          - the transaction as javascript code
+   * @param action the transaction as javascript code
    * @return TransactionEntity
    */
   public TransactionEntity createTransaction(String action) {
@@ -4971,8 +4267,7 @@ public class ArangoDriver extends BaseArangoDriver {
   /**
    * Executes the transaction on the database server.
    *
-   * @param transactionEntity
-   *          - The configuration object containing all data for the transaction
+   * @param transactionEntity The configuration object containing all data for the transaction
    * @return TransactionResultEntity
    * @throws ArangoException
    */
