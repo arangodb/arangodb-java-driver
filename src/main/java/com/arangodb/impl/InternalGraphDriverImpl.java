@@ -335,7 +335,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
         "vertex",
         StringUtils.encodeUrl(collectionName)),
       new MapBuilder().put("waitForSync", waitForSync).get(),
-      EntityFactory.toJsonString(vertex));
+      EntityFactory.toJsonString(vertex)
+    );
 
     if (!res.isJsonResponse()) {
       throw new ArangoException("unknown error");

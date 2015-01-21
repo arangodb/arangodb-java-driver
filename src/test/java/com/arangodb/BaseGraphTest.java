@@ -51,10 +51,10 @@ public class BaseGraphTest extends BaseTest {
 
   @After
   public void after() throws ArangoException {
-    String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
-        + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
-        + "  graph._drop(g, true)\n" + "});";
-    driver.executeScript(deleteAllGraphsAndTheirCollections);
+//    String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+//        + "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
+//        + "  graph._drop(g, true)\n" + "});";
+//    driver.executeScript(deleteAllGraphsAndTheirCollections);
   }
 
   protected List<EdgeDefinitionEntity> createEdgeDefinitions(int count, int offset) {

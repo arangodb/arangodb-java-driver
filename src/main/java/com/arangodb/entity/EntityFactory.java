@@ -28,13 +28,7 @@ import com.arangodb.entity.CollectionEntity.Figures;
 import com.arangodb.entity.EntityDeserializers.CollectionKeyOptionDeserializer;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.JsonSequenceEntity;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.FieldNamingStrategy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
+import com.google.gson.*;
 
 /**
  * Entity factory , internally used.
@@ -116,6 +110,29 @@ public class EntityFactory {
   }
 
   public static <T> String toJsonString(T obj) {
+    if (obj.getClass().equals(BaseDocument.class)) {
+      String tmp = toJsonString(obj, true);
+      JsonParser jsonParser = new JsonParser();
+      JsonElement jsonElement = jsonParser.parse(tmp);
+      JsonObject jsonObject = jsonElement.getAsJsonObject();
+      JsonObject result = jsonObject.getAsJsonObject("properties");
+      JsonElement keyObject = jsonObject.get("_key");
+      if (keyObject != null && keyObject.getClass() != JsonNull.class) {
+        result.add("_key", jsonObject.get("_key"));
+      }
+      JsonElement handleObject = jsonObject.get("_id");
+      if (handleObject != null && handleObject.getClass() != JsonNull.class) {
+        result.add("_id", jsonObject.get("_id"));
+      }
+//      JsonElement revisionValue =  jsonObject.get("documentRevision");
+//      result.add("_rev", revisionValue);
+      System.out.println("************");
+      System.out.println(result.toString());
+      System.out.println(jsonObject.toString());
+      System.out.println(toJsonString(obj, false));
+      System.out.println("************");
+      return result.toString();
+    }
     return toJsonString(obj, false);
   }
 

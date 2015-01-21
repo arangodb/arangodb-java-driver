@@ -1645,6 +1645,9 @@ public class ArangoDriver extends BaseArangoDriver {
    * @throws ArangoException
    */
   public <T> DocumentEntity<T> getDocument(String documentHandle, Class<?> clazz) throws ArangoException {
+    if (clazz.getName() == BaseDocument.class.getName()) {
+      return documentDriver.getDocument(getDefaultDatabase(), documentHandle, clazz, null, null);
+    }
     return documentDriver.getDocument(getDefaultDatabase(), documentHandle, clazz, null, null);
   }
 

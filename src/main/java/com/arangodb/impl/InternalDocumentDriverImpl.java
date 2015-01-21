@@ -22,11 +22,7 @@ import java.util.Locale;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.entity.DefaultEntity;
-import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentsEntity;
-import com.arangodb.entity.EntityFactory;
-import com.arangodb.entity.Policy;
+import com.arangodb.entity.*;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.CollectionUtils;

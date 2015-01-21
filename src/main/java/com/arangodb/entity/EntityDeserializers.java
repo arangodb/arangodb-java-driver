@@ -18,16 +18,8 @@ package com.arangodb.entity;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.arangodb.entity.CollectionEntity.Figures;
 import com.arangodb.entity.ReplicationApplierState.LastError;
@@ -39,12 +31,7 @@ import com.arangodb.entity.StatisticsDescriptionEntity.Figure;
 import com.arangodb.entity.StatisticsDescriptionEntity.Group;
 import com.arangodb.entity.StatisticsEntity.FigureValue;
 import com.arangodb.util.DateUtils;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -178,6 +165,9 @@ public class EntityDeserializers {
     }
     if (obj.has("_key")) {
       entity.setDocumentKey(obj.getAsJsonPrimitive("_key").getAsString());
+    }
+    if (true) {
+
     }
 
     return entity;
@@ -602,12 +592,90 @@ public class EntityDeserializers {
       Class<?> clazz = getParameterized();
       if (clazz != null) {
         entity.entity = context.deserialize(obj, clazz);
+        if (clazz.getName().equalsIgnoreCase(BaseDocument.class.getName())) {
+          // iterate all key/value pairs of the jsonObject and determine its class(String, Number, Boolean, HashMap, List)
+          ((BaseDocument) entity.entity).setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
+        }
       }
 
       return entity;
     }
+  }
+
+  public static class DeserializeSingleEntry {
+
+    private static final List<String> nonProperties = new ArrayList<String>()        {
+      {
+        add("_id");
+        add("_rev");
+        add("_key");
+      }
+    };
+
+    /**
+     * desirializes any jsonElement
+     *
+     * @param jsonElement
+     * @return
+     */
+    public static Object deserializeJsonElement (JsonElement jsonElement) {
+      if (jsonElement.getClass() == JsonPrimitive.class) {
+        return deserializeJsonPrimitive((JsonPrimitive) jsonElement);
+      } else if (jsonElement.getClass() == JsonArray.class) {
+        return deserializeJsonArray((JsonArray) jsonElement);
+      } else if (jsonElement.getClass() == JsonObject.class) {
+        return deserializeJsonObject((JsonObject) jsonElement);
+      }
+      return null;
+    }
+
+
+    /**
+     * desirializes a JsonObject into a Map<String, Object>
+     *
+     * @param jsonObject a jsonObject
+     * @return the deserialized jsonObject
+     */
+    private static Map<String, Object> deserializeJsonObject(JsonObject jsonObject) {
+      Map<String, Object> result = new HashMap<String, Object>();
+      Set<Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+      for(Map.Entry<String,JsonElement> entry : entrySet){
+        if (! nonProperties.contains(entry.getKey())) {
+          result.put(entry.getKey(), deserializeJsonElement((JsonElement) jsonObject.get(entry.getKey())));
+        }
+      }
+      return result;
+    }
+
+    private static List<Object> deserializeJsonArray (JsonArray jsonArray) {
+      List<Object> tmpObjectList = new ArrayList<Object>();
+      Iterator iterator = (jsonArray.iterator());
+      while(iterator.hasNext()) {
+        tmpObjectList.add(deserializeJsonElement((JsonElement) iterator.next()));
+      }
+      return tmpObjectList;
+    }
+
+    /**
+     * deserializes a jsonPrimitiv into the equivalent java primitive
+     *
+     * @param jsonPrimitive
+     * @return null|String|Double|Boolean
+     */
+    private static Object deserializeJsonPrimitive (JsonPrimitive jsonPrimitive) {
+      if (jsonPrimitive.isBoolean()) {
+        return jsonPrimitive.getAsBoolean();
+      } else if (jsonPrimitive.isNumber()) {
+        return jsonPrimitive.getAsDouble();
+      } else if (jsonPrimitive.isString()) {
+        return jsonPrimitive.getAsString();
+      }
+      return null;
+    }
 
   }
+
+
 
   public static class DocumentsEntityDeserializer implements JsonDeserializer<DocumentsEntity> {
     private Type documentsType = new TypeToken<List<String>>() {
