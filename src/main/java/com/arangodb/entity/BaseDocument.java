@@ -182,7 +182,9 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
      * @param value the value of the attribute ti replace the old value
      */
     public void updateAttribute (String key, Object value) {
-        this.properties.replace(key, value);
+        if (this.properties.containsKey(key)) {
+            this.properties.put(key, value);
+        }
     }
 
 //    /**
