@@ -110,29 +110,6 @@ public class EntityFactory {
   }
 
   public static <T> String toJsonString(T obj) {
-    if (obj.getClass().equals(BaseDocument.class)) {
-      String tmp = toJsonString(obj, true);
-      JsonParser jsonParser = new JsonParser();
-      JsonElement jsonElement = jsonParser.parse(tmp);
-      JsonObject jsonObject = jsonElement.getAsJsonObject();
-      JsonObject result = jsonObject.getAsJsonObject("properties");
-      JsonElement keyObject = jsonObject.get("_key");
-      if (keyObject != null && keyObject.getClass() != JsonNull.class) {
-        result.add("_key", jsonObject.get("_key"));
-      }
-      JsonElement handleObject = jsonObject.get("_id");
-      if (handleObject != null && handleObject.getClass() != JsonNull.class) {
-        result.add("_id", jsonObject.get("_id"));
-      }
-//      JsonElement revisionValue =  jsonObject.get("documentRevision");
-//      result.add("_rev", revisionValue);
-      System.out.println("************");
-      System.out.println(result.toString());
-      System.out.println(jsonObject.toString());
-      System.out.println(toJsonString(obj, false));
-      System.out.println("************");
-      return result.toString();
-    }
     return toJsonString(obj, false);
   }
 
@@ -151,6 +128,24 @@ public class EntityFactory {
   }
 
   public static <T> String toJsonString(T obj, boolean includeNullValue) {
+    if (obj.getClass().equals(BaseDocument.class)) {
+      String tmp = includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
+      JsonParser jsonParser = new JsonParser();
+      JsonElement jsonElement = jsonParser.parse(tmp);
+      JsonObject jsonObject = jsonElement.getAsJsonObject();
+      JsonObject result = jsonObject.getAsJsonObject("properties");
+      JsonElement keyObject = jsonObject.get("_key");
+      if (keyObject != null && keyObject.getClass() != JsonNull.class) {
+        result.add("_key", jsonObject.get("_key"));
+      }
+      JsonElement handleObject = jsonObject.get("_id");
+      if (handleObject != null && handleObject.getClass() != JsonNull.class) {
+        result.add("_id", jsonObject.get("_id"));
+      }
+//      JsonElement revisionValue =  jsonObject.get("documentRevision");
+//      result.add("_rev", revisionValue);
+      return result.toString();
+    }
     return includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
   }
 
