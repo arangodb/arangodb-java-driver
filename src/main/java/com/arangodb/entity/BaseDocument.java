@@ -187,6 +187,16 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
         }
     }
 
+    /**
+     * get a single attribute of the document
+     *
+     * @param key the key of the attribute
+     * @return value of the attribute key
+     */
+    public Object getAttribute(String key) {
+        return this.properties.get(key);
+    }
+
 //    /**
 //     * check the list if it is suitable
 //     *
