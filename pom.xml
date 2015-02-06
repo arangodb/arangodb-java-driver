@@ -59,11 +59,12 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.3</version>
+				<version>1.6.5</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<stagingProfileId>84aff6e87e214c</stagingProfileId>
 					<autoReleaseAfterClose>false</autoReleaseAfterClose>
 				</configuration>
 			</plugin>
@@ -83,7 +84,7 @@
 				</executions>
 				<configuration>
 					<finalName>
-						arangodb-java-driver-${version}-standalone
+						arangodb-java-driver-${project.version}-standalone
 					</finalName>
 					<attach>false</attach>
 					<appendAssemblyId>false</appendAssemblyId>
@@ -100,6 +101,7 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<compilerArgument></compilerArgument>
 				</configuration>
 			</plugin>
 
@@ -135,12 +137,16 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
 				<configuration>
 					<forkMode>never</forkMode>
 					<includes>
