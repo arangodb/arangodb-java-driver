@@ -139,16 +139,16 @@ public class EntityDeserializers {
     if (obj.has("error")) {
       entity.error = obj.getAsJsonPrimitive("error").getAsBoolean();
     }
-    if (obj.has("code")) {
+    if (obj.has("code") && obj.getAsJsonPrimitive("code").isNumber()) {
       entity.code = obj.getAsJsonPrimitive("code").getAsInt();
     }
-    if (obj.has("errorNum")) {
+    if (obj.has("errorNum") && obj.getAsJsonPrimitive("errorNum").isNumber()) {
       entity.errorNumber = obj.getAsJsonPrimitive("errorNum").getAsInt();
     }
     if (obj.has("errorMessage")) {
       entity.errorMessage = obj.getAsJsonPrimitive("errorMessage").getAsString();
     }
-    if (obj.has("etag")) {
+    if (obj.has("etag") && obj.getAsJsonPrimitive("errorNum").isNumber()) {
       entity.etag = obj.getAsJsonPrimitive("etag").getAsLong();
     }
 
