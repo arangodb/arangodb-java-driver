@@ -348,3 +348,15 @@ Now an edge can be created to set a relation between vertices
       null,
       null);
 ``` 
+
+# Known bugs
+Due to deserializition of some attribute combinations of name/type may lead to exceptions.
+These combinations are:
+
+| attribute name | attribute type |
+|----------------|----------------|
+| error          | boolean        |
+| code           | numeric        |
+| errorNum       | numeric        |
+| errorMessage   | String         |
+| etag           | numeric        |

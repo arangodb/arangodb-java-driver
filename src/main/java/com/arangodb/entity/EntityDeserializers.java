@@ -136,7 +136,7 @@ public class EntityDeserializers {
   }
 
   private static <T extends BaseEntity> T deserializeBaseParameter(JsonObject obj, T entity) {
-    if (obj.has("error")) {
+    if (obj.has("error") && obj.getAsJsonPrimitive("error").isBoolean()) {
       entity.error = obj.getAsJsonPrimitive("error").getAsBoolean();
     }
     if (obj.has("code") && obj.getAsJsonPrimitive("code").isNumber()) {
