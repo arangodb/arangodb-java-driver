@@ -20,13 +20,13 @@ To add the driver to your project with maven, add the following code to your pom
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>[2.3-SNAPSHOT,2.3]</version>
+    <version>[2.4.1-SNAPSHOT,2.4.1]</version>
   </dependency>
 	....
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 2.3-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
+If you want to test with a snapshot version (e.g. 2.4.1-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
