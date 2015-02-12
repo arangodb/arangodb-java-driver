@@ -153,10 +153,16 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
   }
 
   @Override
-  public <T> DocumentEntity<T> getDocument(String database, String documentHandle, Class<?> clazz, Long ifNoneMatchRevision, Long ifMatchRevision) throws ArangoException {
+  public <T> DocumentEntity<T> getDocument(
+    String database, 
+		String documentHandle, 
+		Class<?> clazz, 
+		Long ifNoneMatchRevision, 
+		Long ifMatchRevision) throws ArangoException {
+    
     validateDocumentHandle(documentHandle);
-    HttpResponseEntity res = httpManager.doGet(
-        createEndpointUrl(baseUrl, database, "/_api/document", documentHandle),
+	  HttpResponseEntity res = httpManager.doGet(
+			  createEndpointUrl(baseUrl, database, "/_api/document", documentHandle),
         new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision).get(),
         null);
     DocumentEntity<T> entity = createEntity(res, DocumentEntity.class, clazz);

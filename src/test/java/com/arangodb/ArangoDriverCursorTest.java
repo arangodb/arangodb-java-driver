@@ -61,13 +61,17 @@ public class ArangoDriverCursorTest extends BaseTest {
   public void test_validateQuery_400_1() throws ArangoException {
     
     // =じゃなくて==じゃないとダメ。文法間違いエラー
-    CursorEntity<?> entity = driver.validateQuery(
-        //"SELECT t FROM unit_test_cursor t WHERE t.name = @name@"
-        "FOR t IN unit_test_cursor FILTER t.name = @name@"
-        );
+	  try {
+		    CursorEntity<?> entity = driver.validateQuery(
+		            //"SELECT t FROM unit_test_cursor t WHERE t.name = @name@"
+		            "FOR t IN unit_test_cursor FILTER t.name = @name@"
+		            );
+		  
+	  } catch (ArangoException e) {
+		    assertThat(e.getCode(), is(400));
+		    assertThat(e.getErrorNumber(), is(1501));
+	  }
     
-    assertThat(entity.getCode(), is(400));
-    assertThat(entity.getErrorNumber(), is(1501));
     
   }
 

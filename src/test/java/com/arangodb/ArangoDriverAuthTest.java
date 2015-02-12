@@ -50,7 +50,7 @@ public class ArangoDriverAuthTest {
     } catch (ArangoException e) {
       assertThat(e.isUnauthorized(), is(true));
       assertThat(e.getEntity().getStatusCode(), is(401));
-      assertThat(e.getMessage(), containsString("Unauthorized"));
+      assertThat(e.getErrorMessage(), containsString("Unauthorized"));
     }
     
     configure.shutdown();
@@ -130,8 +130,9 @@ public class ArangoDriverAuthTest {
       ArangoUnixTime time = driver.getTime();
       fail("");
     } catch (ArangoException e) {
-      assertThat(e.getErrorNumber(), is(401));
-      assertThat(e.getMessage(), containsString("Unauthorized"));
+        assertThat(e.getCode(), is(401));
+        assertThat(e.getErrorNumber(), is(0));
+      assertThat(e.getErrorMessage(), containsString("Unauthorized"));
     }
     configure.shutdown();
 
@@ -166,8 +167,9 @@ public class ArangoDriverAuthTest {
       ArangoUnixTime time = driver.getTime();
       fail("");
     } catch (ArangoException e) {
-      assertThat(e.getErrorNumber(), is(401));
-      assertThat(e.getMessage(), containsString("Unauthorized"));
+        assertThat(e.getCode(), is(401));
+        assertThat(e.getErrorNumber(), is(0));
+      assertThat(e.getErrorMessage(), containsString("Unauthorized"));
     }
     configure.shutdown();
 
@@ -202,8 +204,9 @@ public class ArangoDriverAuthTest {
       ArangoUnixTime time = driver.getTime();
       fail("");
     } catch (ArangoException e) {
-      assertThat(e.getErrorNumber(), is(401));
-      assertThat(e.getMessage(), containsString("Unauthorized"));
+        assertThat(e.getErrorNumber(), is(0));
+        assertThat(e.getCode(), is(401));
+      assertThat(e.getErrorMessage(), containsString("Unauthorized"));
     }
     configure.shutdown();
 

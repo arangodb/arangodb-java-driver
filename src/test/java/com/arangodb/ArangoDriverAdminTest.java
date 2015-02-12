@@ -191,7 +191,7 @@ public class ArangoDriverAdminTest extends BaseTest {
       driver.executeScript("xxx");
       fail();
     } catch (ArangoException e) {
-      String t = "JavaScript exception in file 'undefined' at 1,14: ReferenceError: xxx is not defined\n"
+      String t = "Internal Server Error: JavaScript exception in file 'undefined' at 1,14: ReferenceError: xxx is not defined\n"
           + "!(function() {xxx}());\n" + "!             ^\n"
           + "stacktrace: ReferenceError: xxx is not defined\n";
       assertThat(e.getErrorMessage(), startsWith(t));

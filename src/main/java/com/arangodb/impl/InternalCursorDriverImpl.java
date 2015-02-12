@@ -46,12 +46,12 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
       createEndpointUrl(baseUrl, database, "/_api/query"),
       null,
       EntityFactory.toJsonString(new MapBuilder("query", query).get()));
-    try {
+//    try {
       CursorEntity<?> entity = createEntity(res, CursorEntity.class);
       return entity;
-    } catch (ArangoException e) {
-      return (CursorEntity<?>) e.getEntity();
-    }
+//    } catch (ArangoException e) {
+//      return (CursorEntity<?>) e.getEntity();
+//    }
 
   }
 

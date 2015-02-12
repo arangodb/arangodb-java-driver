@@ -67,8 +67,16 @@ public class ArangoException extends Exception {
     return (entity != null && entity.isUnauthorized());
   }
   
-  public boolean isNotFound() {
-    return (entity != null && entity.isNotFound());
+//  public boolean isNotFound() {
+//    return (entity != null && entity.isNotFound());
+//  }
+  
+  public void setCode(int code) {
+	  entity.setCode(code);
+  }
+  
+  public void setErrorNumber(int errorNumber) {
+	  entity.setErrorNumber(errorNumber);
   }
   
 }

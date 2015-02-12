@@ -65,11 +65,14 @@ public class ArangoDriverAqlfunctionsTest extends BaseTest {
     assertThat(res.getCode(), is(201));
     assertThat(res.getErrorMessage(), is((String) null));
 
-    res = driver.createAqlFunction(
-      "someNamespace::testC&&&&&&&&&&de", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
-    assertThat(res.getCode(), is(400));
-    assertThat(res.getErrorMessage(), is("invalid user function name"));
+    try {
+        res = driver.createAqlFunction(
+        	      "someNamespace::testC&&&&&&&&&&de", "function (celsius) { return celsius * 2.8 + 32; }"
+        	    );
+    } catch (ArangoException e) {
+        assertThat(e.getCode(), is(400));
+        assertThat(e.getErrorMessage(), is("invalid user function name"));
+    }
 
     res = driver.createAqlFunction(
       "anotherNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"

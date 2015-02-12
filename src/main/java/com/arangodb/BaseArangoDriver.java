@@ -21,7 +21,11 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.arangodb.entity.ArangoExceptionEntity;
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEntity;
+import com.arangodb.entity.DefaultEntity;
+import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EntityDeserializers;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.KeyValueEntity;
@@ -32,6 +36,9 @@ import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.DateUtils;
 import com.arangodb.util.ReflectionUtils;
 import com.arangodb.util.StringUtils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -175,6 +182,77 @@ public abstract class BaseArangoDriver {
     if (res == null) {
       return null;
     }
+    boolean isDocumentEntity = false;
+    boolean requestSuccessful = true;
+    // the following was added to ensure, that attributes with a key like "error", "code", "errorNum" 
+    // and "etag" will be serialized, when no error was thrown by the database
+    if( clazz == DocumentEntity.class) {
+      isDocumentEntity = true;
+    }    
+    int statusCode = res.getStatusCode();
+    if (statusCode >= 400) {
+      requestSuccessful = false;
+    	DefaultEntity defaultEntity = new DefaultEntity();
+        if (res.getText() != null && ! res.getText().equalsIgnoreCase("") && statusCode != 500) {
+            JsonParser jsonParser = new JsonParser();
+            JsonElement jsonElement = jsonParser.parse(res.getText());
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            JsonElement errorMessage = jsonObject.get("errorMessage");
+            defaultEntity.setErrorMessage(errorMessage.getAsString());
+            JsonElement errorNumber = jsonObject.get("errorNum");
+            defaultEntity.setErrorNumber(errorNumber.getAsInt());
+        } else {
+            String statusPhrase = "";
+            switch (statusCode) {
+            case 400:
+            	statusPhrase = "Bad Request";
+            	break;
+            case 401:
+            	statusPhrase = "Unauthorized";
+            	break;
+            case 403:
+            	statusPhrase = "Forbidden";
+            	break;
+            case 404:
+            	statusPhrase = "Not Found";
+            	break;
+            case 405:
+            	statusPhrase = "Method Not Allowed";
+            	break;
+            case 406:
+            	statusPhrase = "Not Acceptable";
+            	break;
+            case 407:
+            	statusPhrase = "Proxy Authentication Required";
+            	break;
+            case 408:
+            	statusPhrase = "Request Time-out";
+            	break;
+            case 409:
+            	statusPhrase = "Conflict";
+            	break;
+            case 500:
+            	statusPhrase = "Internal Server Error";
+            	break;
+        	default:
+            	statusPhrase = "unknown error";
+            	break;
+            }
+            
+        	defaultEntity.setErrorMessage(statusPhrase);
+        	if (statusCode == 500) {
+        		defaultEntity.setErrorMessage(statusPhrase + ": " + res.getText());
+        	}
+        }
+        
+        defaultEntity.setCode(statusCode);
+        defaultEntity.setStatusCode(statusCode);
+        defaultEntity.setError(true);
+    	ArangoException arangoException = new ArangoException(defaultEntity);
+    	arangoException.setCode(statusCode);
+    	throw arangoException;
+    } 
+    
     try {
       EntityDeserializers.setParameterized(pclazz);
 
@@ -193,6 +271,14 @@ public abstract class BaseArangoDriver {
       if (validate) {
         validate(res, entity);
       }
+      
+      if (isDocumentEntity && requestSuccessful) {
+        entity.setCode(statusCode);
+        entity.setErrorMessage(null);
+        entity.setError(false);
+        entity.setErrorNumber(0);
+      }
+      
       return entity;
     } finally {
       EntityDeserializers.removeParameterized();

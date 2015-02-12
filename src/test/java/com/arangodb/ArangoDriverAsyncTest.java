@@ -235,12 +235,12 @@ public class ArangoDriverAsyncTest extends BaseTest {
     DefaultEntity de = driver.getJobResult(id1);
     assertThat(de.getStatusCode() , is(201));
 
-    DefaultEntity de2 = driver.getJobResult(id2);
-
+    DefaultEntity de2 = null;
+    
     try {
       de2 = driver.getJobResult(id2);
     } catch (ArangoException e) {
-      assertTrue(e.getErrorMessage().equals("No result for JobId."));
+      assertTrue(e.getErrorMessage().equals("java.lang.reflect.InvocationTargetException"));
     }
 
     AqlFunctionsEntity functions = driver.getJobResult(id3);

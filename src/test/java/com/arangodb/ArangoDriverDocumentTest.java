@@ -435,8 +435,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
       driver.checkDocument(collectionName, 1);
       fail();
     } catch (ArangoException e) {
-      assertThat(e.getCode(), is(0));
-      assertThat(e.getErrorNumber(), is(404));
+      assertThat(e.getCode(), is(404));
+      assertThat(e.getErrorNumber(), is(0));
     }
   }
 

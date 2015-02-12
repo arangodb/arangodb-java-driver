@@ -16,6 +16,8 @@
 
 package com.arangodb.entity;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.*;
@@ -151,7 +153,7 @@ public class EntityDeserializers {
     if (obj.has("etag") && obj.getAsJsonPrimitive("errorNum").isNumber()) {
       entity.etag = obj.getAsJsonPrimitive("etag").getAsLong();
     }
-
+	    
     return entity;
   }
 
@@ -585,7 +587,9 @@ public class EntityDeserializers {
       }
 
       JsonObject obj = json.getAsJsonObject();
-      DocumentEntity<Object> entity = deserializeBaseParameter(obj, new DocumentEntity<Object>());
+//      DocumentEntity<Object> entity = deserializeBaseParameter(obj, new DocumentEntity<Object>());
+//      deserializeDocumentParameter(obj, entity);
+      DocumentEntity<Object> entity = new DocumentEntity<Object>();
       deserializeDocumentParameter(obj, entity);
 
       // 他のフィールドはリフレクションで。 (TODO: Annotationのサポートと上記パラメータを弾く)

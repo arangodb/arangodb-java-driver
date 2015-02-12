@@ -87,6 +87,7 @@ public class ArangoConfigureTest {
   }
 
   @Test
+  @Ignore
   public void so_connect_timeout() throws ArangoException {
 
     ArangoConfigure configure = new ArangoConfigure();

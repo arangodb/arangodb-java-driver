@@ -86,14 +86,14 @@ public abstract class BaseEntity implements Serializable {
     return statusCode == 401;
   }
 
-  /**
-   * If the requested resource has not been modified it returns true
-   *
-   * @return boolean
-   */
-  public boolean isNotFound() {
-    return statusCode == 404;
-  }
+//  /**
+//   * If the requested resource has not been modified it returns true
+//   *
+//   * @return boolean
+//   */
+//  public boolean isNotFound() {
+//    return statusCode == 404;
+//  }
 
   /**
    * If this is the response of a batch request it returns true
