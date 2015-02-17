@@ -24,6 +24,8 @@ package com.arangodb.entity;
 public enum IndexType {
   /** Primary Index */
   PRIMARY,
+  /** Edge Index */
+  EDGE,
   /** Cap Index */
   CAP,
   /** Geo Index */
