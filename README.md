@@ -349,6 +349,7 @@ Now an edge can be created to set a relation between vertices
       null);
 ``` 
 
+<<<<<<< HEAD
 # Known bugs
 Due to deserializition of some attribute combinations of name/type may lead to exceptions.
 These combinations are:
@@ -360,3 +361,12 @@ These combinations are:
 | errorNum       | numeric        |
 | errorMessage   | String         |
 | etag           | numeric        |
+=======
+# What's new in 2.4
+
+## since 2.4.1
+httpclient version 4.3.6
+
+## since 2.4.2
+Fixed issue#2
+>>>>>>> d20660a... some docu
