@@ -9,6 +9,8 @@ import com.arangodb.impl.BaseDriverInterface;
  * Created by fbartels on 10/27/14.
  */
 public interface InternalIndexDriver  extends BaseDriverInterface {
+  IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, boolean sparse, String... fields) throws ArangoException;
+
   IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException;
 
   IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException;

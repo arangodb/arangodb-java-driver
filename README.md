@@ -1,11 +1,11 @@
 
 This library is a Java driver for ArangoDB.
 
-Supported version: ArangoDB-2.4.x
+Supported version: ArangoDB-2.4.x or ArangoDB 2.5.x
 
 # Required
 
-* [ArangoDB](https://github.com/triAGENS/ArangoDB) version 2.4.x
+* [ArangoDB](https://github.com/arangodb/arangodb) version 2.4.x or 2.5.x
 * Java 1.6 later
 
 
@@ -13,7 +13,8 @@ Supported version: ArangoDB-2.4.x
 
 ## Maven
 
-To add the driver to your project with maven, add the following code to your pom.xml:
+To add the driver to your project with maven, add the following code to your pom.xml
+(please use a driver with a version number compatible to your ArangoDB server's version):
 
 ```XML
 <dependencies>
@@ -349,10 +350,13 @@ Now an edge can be created to set a relation between vertices
       null);
 ``` 
 
-# What's new in 2.4
+# What's new in 2.4 / 2.5
 
 ## since 2.4.1
 httpclient version 4.3.6
 
 ## since 2.4.2
 Fixed issue#2
+
+## since 2.5.0
+Added support for sparse indexes

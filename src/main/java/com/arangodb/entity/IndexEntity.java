@@ -57,6 +57,11 @@ public class IndexEntity extends BaseEntity {
    * if true the index is a unique index.
    */
   boolean unique;
+  
+  /**
+   * if true the index is sparse
+   */
+  boolean sparse;
 
   /**
    * the maximum amount of documents in case the index type is capped
@@ -67,6 +72,11 @@ public class IndexEntity extends BaseEntity {
    * minimum character length of words to index in case the index type is a fulltext
    */
   int minLength;
+  
+  /**
+   * index selectivity estimate (if provided by the index)
+   */
+  double selectivityEstimate;
 
   public String getId() {
     return id;
@@ -86,8 +96,14 @@ public class IndexEntity extends BaseEntity {
   public boolean isUnique() {
     return unique;
   }
+  public boolean isSparse() {
+    return sparse;
+  }
   public int getSize() {
     return size;
+  }
+  public double getSelectivityEstimate() {
+    return selectivityEstimate;
   }
   public void setId(String id) {
     this.id = id;
@@ -107,6 +123,9 @@ public class IndexEntity extends BaseEntity {
   public void setUnique(boolean unique) {
     this.unique = unique;
   }
+  public void setSparse(boolean sparse) {
+    this.sparse = sparse;
+  }
   public void setSize(int size) {
     this.size = size;
   }
@@ -115,6 +134,9 @@ public class IndexEntity extends BaseEntity {
   }
   public void setMinLength(int minLength) {
     this.minLength = minLength;
+  }
+  public void setSelectivityEstimate(double selectivityEstimate) {
+    this.selectivityEstimate = selectivityEstimate;
   }
   
 }

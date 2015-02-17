@@ -39,10 +39,13 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl impl
   }
 
   @Override
-  public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException {
+  public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, boolean sparse, String... fields) throws ArangoException {
 
     if (type == IndexType.PRIMARY) {
       throw new IllegalArgumentException("cannot create primary index.");
+    }
+    if (type == IndexType.EDGE) {
+      throw new IllegalArgumentException("cannot create edge index.");
     }
     if (type == IndexType.CAP) {
       throw new IllegalArgumentException("cannot create cap index. use createCappedIndex.");
@@ -56,6 +59,7 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl impl
             new MapBuilder()
             .put("type", type.name().toLowerCase(Locale.US))
             .put("unique", unique)
+            .put("sparse", sparse)
             .put("fields", fields)
             .get()));
     
@@ -68,6 +72,12 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl impl
       throw e;
     }
     
+  }
+  
+  
+  @Override
+  public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException {
+    return createIndex(database, collectionName, type, unique, false, fields);
   }
 
   @Override
