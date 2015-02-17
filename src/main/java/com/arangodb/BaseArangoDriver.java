@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.arangodb.entity.ArangoExceptionEntity;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.DefaultEntity;
