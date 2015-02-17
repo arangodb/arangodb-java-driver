@@ -102,6 +102,9 @@ public abstract class BaseArangoDriver {
       }
     } else {
       valid = databaseNamePattern.matcher(database).matches();
+      if (database.equals("_system")) {
+          valid = true;
+        }
     }
     if (!valid) {
       throw new ArangoException("invalid format database:" + database);
