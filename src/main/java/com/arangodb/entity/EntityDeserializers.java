@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
+import com.arangodb.ArangoException;
 import com.arangodb.entity.CollectionEntity.Figures;
 import com.arangodb.entity.ReplicationApplierState.LastError;
 import com.arangodb.entity.ReplicationApplierState.Progress;
@@ -1718,7 +1719,8 @@ public class EntityDeserializers {
 
       if (graph.has("edgeDefinitions")) {
         JsonArray edgeDefinitions = graph.getAsJsonArray("edgeDefinitions");
-        entity.edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+        entity.edgeDefinitionsEntity = new EdgeDefinitionsEntity();
+//        EdgeDefinitionsEntity edgeDefinitionsEntity = new EdgeDefinitionsEntity(); 
         if (!edgeDefinitions.equals(null)) {
           for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
             EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
@@ -1727,12 +1729,29 @@ public class EntityDeserializers {
               edgeDefinitionEntity.setCollection(edgeDefinition.get("collection").getAsString());
             }
             if (edgeDefinition.has("from")) {
-              edgeDefinitionEntity.setFrom(new ArrayList<String>());
+              List<String> from = new ArrayList<String>();
+              JsonElement fromElem = edgeDefinition.get("from");
+              JsonArray fromArray = fromElem.getAsJsonArray();
+              Iterator<JsonElement> iterator = fromArray.iterator();
+              while(iterator.hasNext()) {
+                JsonElement e  = iterator.next();
+                from.add(e.getAsString());
+              }
+              
+              edgeDefinitionEntity.setFrom(from);
             }
             if (edgeDefinition.has("to")) {
-              edgeDefinitionEntity.setTo(new ArrayList<String>());
+              List<String> to = new ArrayList<String>();
+              JsonElement toElem = edgeDefinition.get("to");
+              JsonArray toArray = toElem.getAsJsonArray();
+              Iterator<JsonElement> iterator = toArray.iterator();
+              while(iterator.hasNext()) {
+                JsonElement e  = iterator.next();
+                to.add(e.getAsString());
+              }
+              edgeDefinitionEntity.setTo(to);
             }
-            entity.edgeDefinitions.add(edgeDefinitionEntity);
+            entity.edgeDefinitionsEntity.addEdgeDefinition(edgeDefinitionEntity);
           }
         }
       }

@@ -116,10 +116,12 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
   public void test_getGraph() throws ArangoException {
     driver.createGraph(this.graphName, this.createEdgeDefinitions(2, 0), this.createOrphanCollections(2), true);
     GraphEntity graph = driver.getGraph(this.graphName);
+    assertThat(graph.getEdgeDefinitionsEntity().getEdgeDefinitions().get(0).getClass().getName(), is(EdgeDefinitionEntity.class.getName()));
+    assertThat(graph.getEdgeDefinitionsEntity().getEdgeDefinitions().get(0).getFrom().size(), is(3));
     assertThat(graph.getOrphanCollections().size(), is(2));
     assertThat(graph.getName(), is(this.graphName));
-    assertThat(graph.getEdgeDefinitions().size(), is(2));
-    assertThat(graph.getEdgeDefinitions().get(0).getCollection().startsWith("edge"), is(true));
+    assertThat(graph.getEdgeDefinitionsEntity().getSize(), is(2));
+    assertThat(graph.getEdgeDefinitionsEntity().getEdgeDefinitions().get(0).getCollection().startsWith("edge"), is(true));
 
   }
 
@@ -349,7 +351,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
     to2.add(toCollectionName2);
     edgeDefinition2.setTo(to2);
     GraphEntity graph = driver.graphReplaceEdgeDefinition(this.graphName, edgeCollectionName, edgeDefinition2);
-    List<EdgeDefinitionEntity> edgeDefinitions = graph.getEdgeDefinitions();
+    List<EdgeDefinitionEntity> edgeDefinitions = graph.getEdgeDefinitionsEntity().getEdgeDefinitions();
     for (EdgeDefinitionEntity edgeDef : edgeDefinitions) {
       List<String> f = edgeDef.getFrom();
       assertThat(f.contains(from1), is(false));
@@ -399,7 +401,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
     to2.add(toCollectionName2);
     edgeDefinition2.setTo(to2);
     GraphEntity graph1 = driver.graphReplaceEdgeDefinition(graphName1, edgeCollectionName, edgeDefinition2);
-    List<EdgeDefinitionEntity> edgeDefinitions1 = graph1.getEdgeDefinitions();
+    List<EdgeDefinitionEntity> edgeDefinitions1 = graph1.getEdgeDefinitionsEntity().getEdgeDefinitions();
     for (EdgeDefinitionEntity edgeDef : edgeDefinitions1) {
       List<String> f = edgeDef.getFrom();
       assertThat(f.contains(from1), is(false));
@@ -407,7 +409,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
       assertThat(t.contains(to1), is(false));
     }
     GraphEntity graph2 = driver.graphReplaceEdgeDefinition(graphName1, edgeCollectionName, edgeDefinition2);
-    List<EdgeDefinitionEntity> edgeDefinitions2 = graph2.getEdgeDefinitions();
+    List<EdgeDefinitionEntity> edgeDefinitions2 = graph2.getEdgeDefinitionsEntity().getEdgeDefinitions();
     for (EdgeDefinitionEntity edgeDef : edgeDefinitions2) {
       List<String> f = edgeDef.getFrom();
       assertThat(f.contains(from1), is(false));

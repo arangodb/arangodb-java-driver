@@ -50,9 +50,9 @@ public class GraphEntity extends BaseEntity implements DocumentHolder {
   List<String> orphanCollections;
 
   /**
-   * List of edge definitions of the graph.
+   * The edge definitions of the graph.
    */
-  List<EdgeDefinitionEntity> edgeDefinitions;
+  EdgeDefinitionsEntity edgeDefinitionsEntity;
 
   /**
    * Name of the graph.
@@ -89,12 +89,20 @@ public class GraphEntity extends BaseEntity implements DocumentHolder {
     this.documentKey = documentKey;
   }
 
+  public EdgeDefinitionsEntity getEdgeDefinitionsEntity() {
+    return edgeDefinitionsEntity;
+  }
+
   public List<EdgeDefinitionEntity> getEdgeDefinitions() {
-    return edgeDefinitions;
+    return edgeDefinitionsEntity.getEdgeDefinitions();
+  }
+
+  public void setEdgeDefinitionsEntity(EdgeDefinitionsEntity edgeDefinitionsEntity) {
+    this.edgeDefinitionsEntity = edgeDefinitionsEntity;
   }
 
   public void setEdgeDefinitions(List<EdgeDefinitionEntity> edgeDefinitions) {
-    this.edgeDefinitions = edgeDefinitions;
+    this.edgeDefinitionsEntity.setEdgeDefinitions(edgeDefinitions);
   }
 
   public List<String> getOrphanCollections() {
