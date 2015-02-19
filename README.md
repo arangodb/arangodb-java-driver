@@ -358,5 +358,15 @@ httpclient version 4.3.6
 ## since 2.4.2
 Fixed issue#2
 
+## since 2.4.3
+* Fixed a graph bug: when retrieving a graph via the driver, "from" and "to" were emtpy. This is fixed now. 
+* GraphEntity has been changed, so that edge definitions are stored in an EdgeDefinitionsEntity. 
+* Some additional methods in GraphEntity:
+  * public EdgeDefinitionsEntity getEdgeDefinitionsEntity()
+  * public void setEdgeDefinitionsEntity(EdgeDefinitionsEntity edgeDefinitionsEntity)
+* Some additional methods in EdgeDefinitionsEntity:
+  * public int getSize()
+  * public EdgeDefinitionEntity getEdgeDefinition(String collectionName)
+
 ## since 2.5.0
 Added support for sparse indexes
