@@ -64,6 +64,7 @@ public class ArangoDriver extends BaseArangoDriver {
   private InternalEndpointDriver endpointDriver;
   private InternalReplicationDriver replicationDriver;
   private InternalGraphDriver graphDriver;
+  private InternalEdgeDriver edgeDriver;
   private InternalTransactionDriver transactionDriver;
 
   private String database;
@@ -114,6 +115,7 @@ public class ArangoDriver extends BaseArangoDriver {
       this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
       this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
       this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
+      this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, this.httpManager);
       this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
       this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
     } else {
@@ -174,9 +176,13 @@ public class ArangoDriver extends BaseArangoDriver {
         new Class<?>[] { InternalReplicationDriver.class },
         new InvocationHandlerImpl(this.replicationDriver));
       this.graphDriver = (InternalGraphDriver) Proxy.newProxyInstance(
-        InternalGraphDriver.class.getClassLoader(),
-        new Class<?>[] { InternalGraphDriver.class },
-        new InvocationHandlerImpl(this.graphDriver));
+          InternalGraphDriver.class.getClassLoader(),
+          new Class<?>[] { InternalGraphDriver.class },
+          new InvocationHandlerImpl(this.graphDriver));
+      this.edgeDriver = (InternalEdgeDriver) Proxy.newProxyInstance(
+          InternalEdgeDriver.class.getClassLoader(),
+          new Class<?>[] { InternalEdgeDriver.class },
+          new InvocationHandlerImpl(this.edgeDriver));
     }
   }
 
@@ -4338,4 +4344,38 @@ public class ArangoDriver extends BaseArangoDriver {
   public TransactionResultEntity executeTransaction(TransactionEntity transactionEntity) throws ArangoException {
     return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity);
   }
+
+  /**
+   * Create an edge in an edge collection.
+   *
+   * @param databaseName the database name
+   * @param collectionName name of the edge collection
+   * @param object the edge object
+   * @param from id of document 'from'
+   * @param to id of document 'to'
+   * @param createCollection if true, the collection will be created if it does not exists
+   * @param waitForSync wait for sync
+   * @return the new created EdgeEntity object
+   * @throws ArangoException
+   */
+  public <T> EdgeEntity<T> createEdge(
+      String databaseName,
+      String collectionName,
+      Object object,
+      String from,
+      String to,
+      Boolean createCollection,
+      Boolean waitForSync
+      ) throws ArangoException {
+
+    return this.edgeDriver.createEdge(
+        databaseName,
+        collectionName,
+        object,
+        from,
+        to,
+        createCollection,
+        waitForSync);
+  }
+
 }

@@ -38,6 +38,7 @@ import com.arangodb.ArangoException;
 public class BaseTest {
 
   protected static ArangoConfigure configure;
+  protected static final String databaseName = "unitTestDatabase";
 
   // Suite.classを使った場合、Parametersがテストクラスの数だけ最初に一気に連続で呼ばれる。
   // そのため、単純にクラス変数にconfigureを保持すると、AfterClassの時に別のテストケースのものを終了してしまう。
@@ -58,15 +59,14 @@ public class BaseTest {
   @Parameters()
   public static Collection<Object[]> getParameterizedDrivers() {
 
-    String database = "unitTestDatabase";
     ArangoConfigure configure = new ArangoConfigure();
     configure.init();
     ArangoDriver driver = new ArangoDriver(configure);
-    ArangoDriver driverMDB = new ArangoDriver(configure, database);
+    ArangoDriver driverMDB = new ArangoDriver(configure, databaseName);
 
     // create mydb
     try {
-      driver.createDatabase(database);
+      driver.createDatabase(databaseName);
     } catch (ArangoException e) {
     }
 
