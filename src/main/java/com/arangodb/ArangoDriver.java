@@ -3472,6 +3472,21 @@ public class ArangoDriver extends BaseArangoDriver {
   }
 
   /**
+   * Creates a graph.
+   * 
+   * @param graph The graph objet to be persistet.
+   * @param waitForSync Wait for sync.
+   * @return GraphEntity The new graph.
+   * @throws ArangoException
+   */
+  public GraphEntity createGraph(GraphEntity graph, Boolean waitForSync) throws ArangoException {
+    String graphName = graph.getName();
+    List<EdgeDefinitionEntity> edgeDefinitions = graph.getEdgeDefinitions();
+    List<String> orphanCollections = graph.getOrphanCollections();
+    return graphDriver.createGraph(getDefaultDatabase(), graphName, edgeDefinitions, orphanCollections, waitForSync);
+  }
+
+  /**
    * Creates an empty graph.
    *
    * @param graphName The name of the graph to be created.
