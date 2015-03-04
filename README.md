@@ -368,5 +368,14 @@ Fixed issue#2
   * public int getSize()
   * public EdgeDefinitionEntity getEdgeDefinition(String collectionName)
 
+## since 2.4.4
+* fixed issue #5
+  * added method to driver.createGraph(GraphEntity g); 
+* fixed issue #6
+* fixed issue #7 
+
 ## since 2.5.0
 Added support for sparse indexes
+
+## since 2.5.1
+see 2.4.4
