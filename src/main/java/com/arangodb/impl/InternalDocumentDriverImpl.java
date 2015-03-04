@@ -123,7 +123,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
         createEndpointUrl(baseUrl, database, "/_api/document"), 
         new MapBuilder("collection", collectionName).get()
         );
-    
+
     DocumentsEntity entity = createEntity(res, DocumentsEntity.class);
     List<String> documents = CollectionUtils.safety(entity.getDocuments());
     

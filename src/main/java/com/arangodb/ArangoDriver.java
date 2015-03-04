@@ -202,6 +202,7 @@ public class ArangoDriver extends BaseArangoDriver {
     if (this.httpManager.isBatchModeActive()) {
       throw new ArangoException("BatchMode is already active.");
     }
+    this.httpManager.emptyCallStack();
     this.httpManager.setBatchModeActive(true);
     this.createModuleDrivers(true);
 
@@ -414,15 +415,21 @@ public class ArangoDriver extends BaseArangoDriver {
       requestId);
     try {
       this.httpManager.setPreDefinedResponse(batchResponseEntity.getHttpResponseEntity());
-      return (T) batchResponseEntity
+
+      T result =  (T) batchResponseEntity
           .getInvocationObject()
           .getMethod()
           .invoke(
             batchResponseEntity.getInvocationObject().getArangoDriver(),
             batchResponseEntity.getInvocationObject().getArgs());
+      this.httpManager.setPreDefinedResponse(null);
+      return result;
     } catch (InvocationTargetException e) {
-      return (T) createEntity(batchResponseEntity.getHttpResponseEntity(), (Class) DefaultEntity.class);
+      T result = (T) createEntity(batchResponseEntity.getHttpResponseEntity(), (Class) DefaultEntity.class); 
+      this.httpManager.setPreDefinedResponse(null);
+      return result;
     } catch (Exception e) {
+      this.httpManager.setPreDefinedResponse(null);
       throw new ArangoException(e);
     }
   }
@@ -441,6 +448,8 @@ public class ArangoDriver extends BaseArangoDriver {
     }
     this.httpManager.setBatchModeActive(false);
     this.createModuleDrivers(false);
+    this.httpManager.emptyCallStack();
+    this.httpManager.setPreDefinedResponse(null);
   }
 
   /**

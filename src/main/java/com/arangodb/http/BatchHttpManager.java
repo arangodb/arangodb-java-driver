@@ -66,4 +66,8 @@ public class BatchHttpManager extends HttpManager {
     public void setBatchModeActive(boolean batchModeActive) {
       this.batchModeActive = batchModeActive;
     }
+    
+    public void emptyCallStack() {
+      this.callStack = new ArrayList<BatchPart>();
+    }
 }
