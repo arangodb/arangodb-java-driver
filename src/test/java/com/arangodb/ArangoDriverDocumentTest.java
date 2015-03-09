@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.EntityFactory;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -54,7 +55,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
   CollectionEntity col1;
   CollectionEntity col2;
-
+  TestInterfaceInstanceCreator testInstanceCreator;
+  
   @Before
   public void before() throws ArangoException {
 
@@ -72,12 +74,18 @@ public class ArangoDriverDocumentTest extends BaseTest {
     col1 = driver.createCollection(collectionName);
     col2 = driver.createCollection(collectionName2);
 
+    //configure Gson to use our instance creator whenever documents of TestInterface are requested
+    testInstanceCreator = new TestInterfaceInstanceCreator();
+	EntityFactory.configure(EntityFactory.getGsonBuilder().registerTypeAdapter(TestInterface.class, testInstanceCreator));
+
     logger.debug("--");
 
   }
 
   @After
   public void after() {
+	//revert to default configuration
+	EntityFactory.configure(EntityFactory.getGsonBuilder());
     logger.debug("----------");
   }
 
@@ -320,7 +328,27 @@ public class ArangoDriverDocumentTest extends BaseTest {
     assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
     assertThat(retVal.getEntity().getAge(), is(9999));
   }
+ 
+  @Test
+  public void test_get_document_with_instance_creator() throws ArangoException {
+	//save an instance of TestInterfaceImpl with null as "name"
+	DocumentEntity<TestInterfaceImpl> doc = driver.createDocument(collectionName, new TestInterfaceImpl(null), null, false);
 
+	assertThat(doc.getDocumentKey(), is(notNullValue()));
+	assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
+	assertThat(doc.getDocumentRevision(), is(not(0L)));
+
+	//now we should get back an instance created with our configured InstanceCreator<TestInterface> (with "name" already set)
+	DocumentEntity<TestInterface> retVal = driver.getDocument(doc.getDocumentHandle(), TestInterface.class);
+    assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
+    assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
+    assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
+    assertThat(retVal.getEntity(), instanceOf(TestInterface.class));
+    assertThat(retVal.getEntity(), instanceOf(TestInterfaceImpl.class));
+	assertThat(testInstanceCreator.getCounter(), is(1));
+    assertThat(retVal.getEntity().getName(), is("name 0"));
+  }
+  
   @Test
   public void test_get_document_collection_not_found() throws ArangoException {
     // Get
