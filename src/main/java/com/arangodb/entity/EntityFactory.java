@@ -40,7 +40,7 @@ public class EntityFactory {
   private static Gson gson;
   private static Gson gsonNull;
 
-  private static GsonBuilder getBuilder() {
+  public static GsonBuilder getGsonBuilder() {
     return new GsonBuilder()
       .addSerializationExclusionStrategy(new ExcludeExclusionStrategy(true))
       .addDeserializationExclusionStrategy(new ExcludeExclusionStrategy(false))
@@ -101,10 +101,32 @@ public class EntityFactory {
   }
 
   static {
-    gson = getBuilder().create();
-    gsonNull = getBuilder().serializeNulls().create();
+	  configure(getGsonBuilder());
   }
 
+  /**
+   * Configures instances of Gson used by this factory.
+   * 
+   * @param builders one or two GsonBuilder instances. If only one is provided it will be used for
+   *        initializing both <code>gson</code> and <code>gsonNull</code> fields (latter with
+   *        <code>serializeNulls()</code> called prior to creating). If two are given - first initializes <code>gson</code>
+   *        field, second initializes <code>gsonNull</code> (used when serialization of nulls is requested).
+   */
+  public static void configure(GsonBuilder ...builders) {
+	  if (builders.length < 1) {
+		  throw new IllegalArgumentException("builders");
+	  }
+
+	  gson = builders[0].create();
+	  
+	  if (builders.length > 1) {
+		  gsonNull = builders[1].create();
+	  } else {
+		  //use the first one again, but with nulls serialization turned on
+		  gsonNull = builders[0].serializeNulls().create();
+	  }
+  }
+  
   public static <T> T createEntity(String jsonText, Type type) {
     return gson.fromJson(jsonText, type);
   }
