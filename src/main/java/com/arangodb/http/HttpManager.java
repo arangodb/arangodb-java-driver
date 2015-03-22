@@ -17,10 +17,16 @@
 package com.arangodb.http;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -30,6 +36,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -38,18 +46,21 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,8 +79,8 @@ public class HttpManager {
 
   private Logger logger = LoggerFactory.getLogger(HttpManager.class);
 
-  private PoolingClientConnectionManager cm;
-  private DefaultHttpClient client;
+  private PoolingHttpClientConnectionManager cm;
+  private CloseableHttpClient client;
 
   private ArangoConfigure configure;
 
@@ -95,30 +106,77 @@ public class HttpManager {
 
   public void init() {
     // ConnectionManager
-    cm = new PoolingClientConnectionManager();
+    cm = new PoolingHttpClientConnectionManager();
     cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
     cm.setMaxTotal(configure.getMaxTotalConnection());
-    // Params
-    HttpParams params = new BasicHttpParams();
+    
+    Builder custom = RequestConfig.custom();
+
+    // RequestConfig
     if (configure.getConnectionTimeout() >= 0) {
-      HttpConnectionParams.setConnectionTimeout(params, configure.getConnectionTimeout());
+      custom.setConnectTimeout(configure.getConnectionTimeout());
     }
     if (configure.getTimeout() >= 0) {
-      HttpConnectionParams.setSoTimeout(params, configure.getTimeout());
+      custom.setConnectionRequestTimeout(configure.getTimeout());
+      custom.setSocketTimeout(configure.getTimeout());
     }
+    custom.setStaleConnectionCheckEnabled(configure.isStaleConnectionCheck());
 
-    HttpConnectionParams.setStaleCheckingEnabled(params, configure.isStaleConnectionCheck());
+    RequestConfig requestConfig = custom.build();
+    
+    HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig);
+    builder.setConnectionManager(cm);
 
-    // Client
-    client = new DefaultHttpClient(cm, params);
-    // TODO KeepAlive Strategy
+    // KeepAlive Strategy
+    ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
+
+      public long getKeepAliveDuration(HttpResponse response,
+          HttpContext context) {
+        // Honor 'keep-alive' header
+        HeaderElementIterator it = new BasicHeaderElementIterator(
+            response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+        while (it.hasNext()) {
+          HeaderElement he = it.nextElement();
+          String param = he.getName();
+          String value = he.getValue();
+          if (value != null && param.equalsIgnoreCase("timeout")) {
+            try {
+              return Long.parseLong(value) * 1000;
+            } catch (NumberFormatException ignore) {
+            }
+          }
+        }
+        HttpHost target = (HttpHost) context
+            .getAttribute(HttpClientContext.HTTP_TARGET_HOST);
+        if ("www.naughty-server.com".equalsIgnoreCase(target.getHostName())) {
+          // Keep alive for 5 seconds only
+          return 5 * 1000;
+        } else {
+          // otherwise keep alive for 30 seconds
+          return 30 * 1000;
+        }
+      }
+
+    };
+    builder.setKeepAliveStrategy(keepAliveStrategy);
+
+    // Retry Handler
+    builder.setRetryHandler(new DefaultHttpRequestRetryHandler(configure
+        .getRetryCount(), false));
 
     // Proxy
     if (configure.getProxyHost() != null && configure.getProxyPort() != 0) {
       HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
-      client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+      // client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+      DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
+          proxy);
+      builder.setRoutePlanner(routePlanner);
     }
 
+    // Client
+    client = builder.build();
+ 
     // Basic Auth
     // if (configure.getUser() != null && configure.getPassword() != null) {
     // AuthScope scope = AuthScope.ANY; // TODO
@@ -127,9 +185,6 @@ public class HttpManager {
     // configure.getPassword());
     // client.getCredentialsProvider().setCredentials(scope, credentials);
     // }
-
-    // Retry Handler
-    client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configure.getRetryCount(), false));
 
   }
 
@@ -295,7 +350,7 @@ public class HttpManager {
 
     // common-header
     String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.0; +http://mt.orz.at/)"; // TODO:
-                                                  // 定数化
+    // 定数化
     request.setHeader("User-Agent", userAgent);
     // request.setHeader("Content-Type", "binary/octet-stream");
 
@@ -452,7 +507,7 @@ public class HttpManager {
     return res.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED;
   }
 
-  public DefaultHttpClient getClient() {
+  public CloseableHttpClient getClient() {
     return client;
   }
 
