@@ -22,19 +22,17 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * 
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class BaseTest {
 
   protected static ArangoConfigure configure;
