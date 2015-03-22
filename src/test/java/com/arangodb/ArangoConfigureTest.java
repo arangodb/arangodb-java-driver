@@ -25,7 +25,7 @@ import static org.junit.Assert.fail;
 
 import java.net.SocketTimeoutException;
 
-import org.junit.Ignore;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.junit.Test;
 
 /**
@@ -60,29 +60,29 @@ public class ArangoConfigureTest {
 
   }
 
-  @Ignore
+
   @Test
   public void connect_timeout() throws ArangoException {
 
     ArangoConfigure configure = new ArangoConfigure();
+    configure.setHost("127.0.0.200");
     configure.setConnectionTimeout(1); // 1ms
     configure.init();
 
     ArangoDriver driver = new ArangoDriver(configure);
-/*
+
     try {
-      driver.getVersion();
+      driver.getCollections();
       fail("did no timeout");
     } catch (ArangoException e) {
       assertThat(e.getCause(), instanceOf(ConnectTimeoutException.class));
     }
-*/
+
     configure.shutdown();
 
   }
 
   @Test
-  @Ignore
   public void so_connect_timeout() throws ArangoException {
 
     ArangoConfigure configure = new ArangoConfigure();
