@@ -236,7 +236,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String graphName,
     String collectionName,
     String key,
-    Class<?> clazz,
+    Class<T> clazz,
     Long ifMatchRevision,
     Long ifNoneMatchRevision) throws ArangoException;
 
@@ -260,7 +260,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
     String graphName,
     String collectionName,
     String key,
-    Object vertex,
+ T vertex,
     Boolean waitForSync,
     Long ifMatchRevision,
     Long ifNoneMatchRevision) throws ArangoException;

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
@@ -178,7 +177,7 @@ public abstract class BaseArangoDriver {
    */
   protected <T extends BaseEntity> T createEntity(
     HttpResponseEntity res,
-    Class<? extends BaseEntity> clazz,
+    Class<T> clazz,
     Class<?>[] pclazz,
     boolean validate) throws ArangoException {
     if (res == null) {
@@ -302,7 +301,7 @@ public abstract class BaseArangoDriver {
 
   protected <T extends BaseEntity> T createEntity(
     HttpResponseEntity res,
-    Class<? extends BaseEntity> clazz,
+    Class<T> clazz,
     Class<?>... pclazz) throws ArangoException {
     return createEntity(res, clazz, pclazz, true);
   }

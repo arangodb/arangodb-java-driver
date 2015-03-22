@@ -40,7 +40,7 @@ public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl imple
   public <T> EdgeEntity<T> createEdge(
       String databaseName,
       String collectionName,
-      Object object,
+      T object,
       String from,
       String to,
       Boolean createCollection,
@@ -63,7 +63,7 @@ public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl imple
         body);
     
     EdgeEntity<T> edgeEntity = createEntity(response, EdgeEntity.class);
-    edgeEntity.setEntity((T) object);
+    edgeEntity.setEntity(object);
     return edgeEntity;
   }
 

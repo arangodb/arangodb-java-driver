@@ -23,7 +23,50 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.arangodb.entity.*;
+import com.arangodb.entity.AdminLogEntity;
+import com.arangodb.entity.AqlFunctionsEntity;
+import com.arangodb.entity.ArangoUnixTime;
+import com.arangodb.entity.ArangoVersion;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BatchResponseEntity;
+import com.arangodb.entity.BooleanResultEntity;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionKeyOption;
+import com.arangodb.entity.CollectionOptions;
+import com.arangodb.entity.CollectionsEntity;
+import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.DefaultEntity;
+import com.arangodb.entity.DeletedEntity;
+import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.DocumentResultEntity;
+import com.arangodb.entity.EdgeDefinitionEntity;
+import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.Endpoint;
+import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.GraphsEntity;
+import com.arangodb.entity.ImportResultEntity;
+import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.IndexType;
+import com.arangodb.entity.IndexesEntity;
+import com.arangodb.entity.JobsEntity;
+import com.arangodb.entity.PlainEdgeEntity;
+import com.arangodb.entity.Policy;
+import com.arangodb.entity.ReplicationApplierConfigEntity;
+import com.arangodb.entity.ReplicationApplierStateEntity;
+import com.arangodb.entity.ReplicationInventoryEntity;
+import com.arangodb.entity.ReplicationLoggerConfigEntity;
+import com.arangodb.entity.ReplicationLoggerStateEntity;
+import com.arangodb.entity.ReplicationSyncEntity;
+import com.arangodb.entity.RestrictType;
+import com.arangodb.entity.ScalarExampleEntity;
+import com.arangodb.entity.SimpleByResultEntity;
+import com.arangodb.entity.StatisticsDescriptionEntity;
+import com.arangodb.entity.StatisticsEntity;
+import com.arangodb.entity.StringsResultEntity;
+import com.arangodb.entity.TransactionEntity;
+import com.arangodb.entity.TransactionResultEntity;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
 import com.arangodb.http.HttpManager;
@@ -3657,7 +3700,7 @@ public class ArangoDriver extends BaseArangoDriver {
    *         vertex document.
    * @throws ArangoException
    */
-  public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<?> clazz)
+  public <T> DocumentEntity<T> graphGetVertex(String graphName, String collectionName, String key, Class<T> clazz)
       throws ArangoException {
     return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, null, null);
   }
@@ -3680,7 +3723,7 @@ public class ArangoDriver extends BaseArangoDriver {
     String graphName,
     String collectionName,
     String key,
-    Class<?> clazz,
+    Class<T> clazz,
     Long ifNoneMatchRevision,
     Long ifMatchRevision) throws ArangoException {
     return graphDriver.getVertex(
@@ -3765,7 +3808,7 @@ public class ArangoDriver extends BaseArangoDriver {
    * @return DocumentEntity<T>
    * @throws ArangoException
    */
-  public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, Object vertex)
+  public <T> DocumentEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, T vertex)
       throws ArangoException {
     return graphDriver.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, null, null, null);
   }
@@ -3790,7 +3833,7 @@ public class ArangoDriver extends BaseArangoDriver {
     String graphName,
     String collectionName,
     String key,
-    Object vertex,
+    T vertex,
     Boolean waitForSync,
     Long ifMatchRevision,
     Long ifNoneMatchRevision) throws ArangoException {
@@ -4385,7 +4428,7 @@ public class ArangoDriver extends BaseArangoDriver {
   public <T> EdgeEntity<T> createEdge(
       String databaseName,
       String collectionName,
-      Object object,
+      T object,
       String from,
       String to,
       Boolean createCollection,

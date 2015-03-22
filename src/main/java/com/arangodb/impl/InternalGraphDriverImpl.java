@@ -39,7 +39,6 @@ import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphGetCollectionsResultEntity;
 import com.arangodb.entity.GraphsEntity;
-import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
@@ -119,7 +118,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName)),
       new MapBuilder().get(),
       null);
-    GraphEntity g = createEntity(res, GraphEntity.class);
     return createEntity(res, GraphEntity.class);
 
   }
@@ -341,7 +339,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     if (!res.isJsonResponse()) {
       throw new ArangoException("unknown error");
     }
-    DocumentEntity<T> result = createEntity(res, VertexEntity.class, vertex.getClass());
+    DocumentEntity<T> result = createEntity(res, DocumentEntity.class, vertex.getClass());
     result.setEntity(vertex);
     return result;
   }
@@ -352,7 +350,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String graphName,
     String collectionName,
     String key,
-    Class<?> clazz,
+    Class<T> clazz,
     Long ifMatchRevision,
     Long ifNoneMatchRevision) throws ArangoException {
 
@@ -369,8 +367,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true).get(),
       new MapBuilder().get());
 
-    return createEntity(res, VertexEntity.class, clazz);
-
+    return createEntity(res, DocumentEntity.class, clazz);
   }
 
   @Override
@@ -379,7 +376,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
     String graphName,
     String collectionName,
     String key,
-    Object vertex,
+    T vertex,
     Boolean waitForSync,
     Long ifMatchRevision,
     Long ifNoneMatchRevision) throws ArangoException {
@@ -398,8 +395,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       new MapBuilder().put("waitForSync", waitForSync).get(),
       EntityFactory.toJsonString(vertex));
 
-    return createEntity(res, VertexEntity.class, vertex.getClass());
-
+    return createEntity(res, DocumentEntity.class, vertex.getClass());
   }
 
   @Override
@@ -428,7 +424,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
       new MapBuilder().put("keepNull", keepNull).put("waitForSync", waitForSync).get(),
       EntityFactory.toJsonString(vertex, keepNull != null && !keepNull));
 
-    return createEntity(res, VertexEntity.class, vertex.getClass());
+    return createEntity(res, DocumentEntity.class, vertex.getClass());
   }
 
   @Override
