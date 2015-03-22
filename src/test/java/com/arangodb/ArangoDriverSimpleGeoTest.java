@@ -22,9 +22,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 import com.arangodb.entity.IndexType;
 import com.arangodb.util.TestUtils;
 

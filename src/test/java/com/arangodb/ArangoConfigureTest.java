@@ -25,13 +25,8 @@ import static org.junit.Assert.fail;
 
 import java.net.SocketTimeoutException;
 
-import org.apache.http.conn.ConnectTimeoutException;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 
 /**
  * UnitTest for ArangoConfigure.

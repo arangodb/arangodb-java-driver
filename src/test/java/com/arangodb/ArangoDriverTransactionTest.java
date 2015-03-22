@@ -16,17 +16,16 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.*;
-import com.arangodb.util.MapBuilder;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
-
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.TransactionEntity;
+import com.arangodb.entity.TransactionResultEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com

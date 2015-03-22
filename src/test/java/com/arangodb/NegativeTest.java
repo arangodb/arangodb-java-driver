@@ -23,10 +23,6 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
-import com.arangodb.ErrorNums;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EntityFactory;
@@ -72,6 +68,14 @@ public class NegativeTest extends BaseTest {
 
   public static class TestComplex {
     private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
   }
 
   @Test
@@ -82,12 +86,12 @@ public class NegativeTest extends BaseTest {
     ArangoDriver driver = new ArangoDriver(configure);
 
     TestComplex value = new TestComplex();
-    value.name = "A\"A'@:///A";
+    value.setName("A\"A'@:///A");
 
     // String value = "AAA";
     DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
     String documentHandle = doc.getDocumentHandle();
-    DocumentEntity<TestComplex> doc2 = driver.getDocument(documentHandle, TestComplex.class);
+    driver.getDocument(documentHandle, TestComplex.class);
 
     configure.shutdown();
 
@@ -104,7 +108,7 @@ public class NegativeTest extends BaseTest {
       String value = "AAA";
       DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
       String documentHandle = doc.getDocumentHandle();
-      DocumentEntity<String> doc2 = driver.getDocument(documentHandle, String.class);
+      driver.getDocument(documentHandle, String.class);
       fail();
     } catch (ArangoException e) {
       assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));

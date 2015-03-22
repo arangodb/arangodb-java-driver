@@ -30,17 +30,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 import com.arangodb.entity.ReplicationApplierConfigEntity;
 import com.arangodb.entity.ReplicationApplierStateEntity;
 import com.arangodb.entity.ReplicationDumpHeader;
 import com.arangodb.entity.ReplicationDumpRecord;
 import com.arangodb.entity.ReplicationInventoryEntity;
+import com.arangodb.entity.ReplicationInventoryEntity.Collection;
 import com.arangodb.entity.ReplicationLoggerConfigEntity;
 import com.arangodb.entity.ReplicationLoggerStateEntity;
-import com.arangodb.entity.ReplicationInventoryEntity.Collection;
 import com.arangodb.util.DumpHandler;
 import com.arangodb.util.DumpHandlerAdapter;
 import com.google.gson.Gson;

@@ -23,10 +23,6 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
-import com.arangodb.ErrorNums;
 import com.arangodb.entity.DocumentEntity;
 import com.google.gson.Gson;
 

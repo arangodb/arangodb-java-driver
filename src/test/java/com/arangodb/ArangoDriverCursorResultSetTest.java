@@ -24,10 +24,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
-import com.arangodb.CursorResultSet;
 import com.arangodb.util.MapBuilder;
 
 /**

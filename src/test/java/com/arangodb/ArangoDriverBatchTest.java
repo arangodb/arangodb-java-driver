@@ -16,21 +16,19 @@
 
 package com.arangodb;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
-import com.arangodb.entity.*;
-
-import java.util.Iterator;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.arangodb.entity.AqlFunctionsEntity;
+import com.arangodb.entity.BaseEntity;
+import com.arangodb.entity.DefaultEntity;
+import com.arangodb.entity.DocumentEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com

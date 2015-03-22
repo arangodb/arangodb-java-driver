@@ -16,21 +16,17 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 import com.arangodb.entity.BooleanResultEntity;
-import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.StringsResultEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.util.MapBuilder;

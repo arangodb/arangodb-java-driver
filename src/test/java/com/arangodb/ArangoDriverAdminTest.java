@@ -26,9 +26,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
-import com.arangodb.ArangoException;
 import com.arangodb.entity.AdminLogEntity;
 import com.arangodb.entity.ArangoUnixTime;
 import com.arangodb.entity.ArangoVersion;

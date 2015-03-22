@@ -231,7 +231,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 
     {
       try {
-        CollectionEntity res = driver.createCollection(collectionName);
+        driver.createCollection(collectionName);
         fail("ここに来てはダメー！");
       } catch (ArangoException e) {
         assertThat(e.getCode(), is(409));
