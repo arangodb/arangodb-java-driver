@@ -18,8 +18,6 @@ package com.arangodb.bench;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
@@ -31,77 +29,84 @@ import com.arangodb.util.TestUtils;
  *
  */
 public class BenchmarkImport {
-  
-  public static void main(String[] args) throws Exception {
-    
-    final int max = 10;
-    final String collection = "bench-test";
-    ArangoConfigure configure = new ArangoConfigure();
-    configure.init();
-    
-    try {
-      
-      ArangoDriver driver = new ArangoDriver(configure);
-      List<Station> stations = TestUtils.readStations();
-      
-      // truncate collection
-      try {
-        driver.truncateCollection("bench-test");
-      } catch (ArangoException e) {}
-      
-      // Bench import
-      BenchLogic logic1 = new BenchImport(driver);
-      BenchLogic logic2 = new BenchDocument(driver);
-      
-      // Bench create document
-      long time1 = 0, time2 = 0;
-      for (int i = 0; i < max; i++) {
-        time1 += logic1.bench(stations);
-        time2 += logic2.bench(stations);
-      }
-      
-      System.out.println("import:" + time1);
-      System.out.println("document:" + time2);
-      
-    } finally {
-      configure.shutdown();
-    }
-    
-  }
-  
-  static private abstract class BenchLogic {
-    protected ArangoDriver driver;
-    public BenchLogic(ArangoDriver driver) {
-      this.driver = driver;
-    }
-    abstract protected void execute(List<?> values) throws Exception;
-    public long bench(List<?> values) throws Exception {
-      long t = System.currentTimeMillis();
-      execute(values);
-      return System.currentTimeMillis() - t;
-    }
-  }
-  
-  static class BenchImport extends BenchLogic {
-    public BenchImport(ArangoDriver driver) {
-      super(driver);
-    }
-    @Override
-    protected void execute(List<?> values) throws Exception {
-      driver.importDocuments("bench-test", true, values);
-    }
-  }
 
-  static class BenchDocument extends BenchLogic {
-    public BenchDocument(ArangoDriver driver) {
-      super(driver);
-    }
-    @Override
-    protected void execute(List<?> values) throws Exception {
-      for (Object value: values) {
-        driver.createDocument("bench-test", value, true, false);
-      }
-    }
-  }
+	final static String COLLECTION_NAME = "bench-test";
+
+	public static void main(String[] args) throws Exception {
+
+		final int max = 10;
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.init();
+
+		try {
+
+			ArangoDriver driver = new ArangoDriver(configure);
+			List<Station> stations = TestUtils.readStations();
+
+			// truncate collection
+			try {
+				driver.truncateCollection(COLLECTION_NAME);
+			} catch (ArangoException e) {
+			}
+
+			// Bench import
+			BenchLogic logic1 = new BenchImport(driver);
+			BenchLogic logic2 = new BenchDocument(driver);
+
+			// Bench create document
+			long time1 = 0, time2 = 0;
+			for (int i = 0; i < max; i++) {
+				time1 += logic1.bench(stations);
+				time2 += logic2.bench(stations);
+			}
+
+			System.out.println("import:" + time1);
+			System.out.println("document:" + time2);
+
+		} finally {
+			configure.shutdown();
+		}
+
+	}
+
+	static private abstract class BenchLogic {
+		protected ArangoDriver driver;
+
+		public BenchLogic(ArangoDriver driver) {
+			this.driver = driver;
+		}
+
+		abstract protected void execute(List<?> values) throws Exception;
+
+		public long bench(List<?> values) throws Exception {
+			long t = System.currentTimeMillis();
+			execute(values);
+			return System.currentTimeMillis() - t;
+		}
+	}
+
+	static class BenchImport extends BenchLogic {
+		public BenchImport(ArangoDriver driver) {
+			super(driver);
+		}
+
+		@Override
+		protected void execute(List<?> values) throws Exception {
+			driver.importDocuments(COLLECTION_NAME, true, values);
+		}
+	}
+
+	static class BenchDocument extends BenchLogic {
+		public BenchDocument(ArangoDriver driver) {
+			super(driver);
+		}
+
+		@Override
+		protected void execute(List<?> values) throws Exception {
+			for (Object value : values) {
+				driver.createDocument("bench-test", value, true, false);
+			}
+		}
+	}
 
 }
