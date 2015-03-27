@@ -36,161 +36,155 @@ import com.arangodb.entity.DocumentEntity;
  */
 public class ArangoDriverBatchTest extends BaseTest {
 
-  String colName = "unit_test_batchTest";
+	String colName = "unit_test_batchTest";
 
-  public ArangoDriverBatchTest(ArangoConfigure configure, ArangoDriver driver) {
-    super(configure, driver);
-  }
+	public ArangoDriverBatchTest(ArangoConfigure configure, ArangoDriver driver) {
+		super(configure, driver);
+	}
 
+	@Before
+	public void before() throws ArangoException {
+		try {
+			driver.cancelBatchMode();
+		} catch (ArangoException e) {
+		}
+		try {
+			driver.deleteCollection(colName);
+		} catch (ArangoException e) {
+		}
+	}
 
+	@After
+	public void after() {
+		try {
+			driver.cancelBatchMode();
+		} catch (ArangoException e) {
+		}
+		try {
+			driver.deleteCollection(colName);
+		} catch (ArangoException e) {
+		}
+	}
 
-  @Before
-  public void before() throws ArangoException {
-    try {
-      driver.cancelBatchMode();
-    } catch (ArangoException e) {
-    }
-    try {
-      driver.deleteCollection(colName);
-    } catch (ArangoException e) {
-    }
-  }
+	@Test
+	public void test_StartCancelExecuteBatchMode() throws ArangoException {
 
-  @After
-  public void after() {
-    try {
-      driver.cancelBatchMode();
-    } catch (ArangoException e) {
-    }
-    try {
-      driver.deleteCollection(colName);
-    } catch (ArangoException e) {
-    }
-  }
+		driver.startBatchMode();
+		String msg = "";
+		try {
+			driver.startBatchMode();
+		} catch (ArangoException e) {
+			msg = e.getErrorMessage();
+		}
+		assertThat(msg, is("BatchMode is already active."));
 
-  @Test
-  public void test_StartCancelExecuteBatchMode() throws ArangoException {
+		driver.cancelBatchMode();
+		msg = "";
+		try {
+			driver.cancelBatchMode();
+		} catch (ArangoException e) {
+			msg = e.getErrorMessage();
+		}
+		assertThat(msg, is("BatchMode is not active."));
 
-    driver.startBatchMode();
-    String msg = "";
-    try {
-      driver.startBatchMode();
-    } catch (ArangoException e) {
-      msg = e.getErrorMessage();
-    }
-    assertThat(msg , is("BatchMode is already active."));
+		msg = "";
+		try {
+			driver.executeBatch();
+		} catch (ArangoException e) {
+			msg = e.getErrorMessage();
+		}
+		assertThat(msg, is("BatchMode is not active."));
 
-    driver.cancelBatchMode();
-    msg = "";
-    try {
-      driver.cancelBatchMode();
-    } catch (ArangoException e) {
-      msg = e.getErrorMessage();
-    }
-    assertThat(msg , is("BatchMode is not active."));
+	}
 
-    msg = "";
-    try {
-      driver.executeBatch();
-    } catch (ArangoException e) {
-      msg = e.getErrorMessage();
-    }
-    assertThat(msg , is("BatchMode is not active."));
+	@Test
+	public void test_execBatchMode() throws ArangoException {
 
-  }
+		try {
+			driver.truncateCollection("_aqlfunctions");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-  @Test
-  public void test_execBatchMode() throws ArangoException {
+		driver.startBatchMode();
 
-    try {
-      driver.truncateCollection("_aqlfunctions");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+		BaseEntity res = driver.createAqlFunction("someNamespace::testCode",
+			"function (celsius) { return celsius * 2.8 + 32; }");
 
-    driver.startBatchMode();
+		assertThat(res.getStatusCode(), is(206));
+		assertThat(res.getRequestId(), is("request1"));
 
-    BaseEntity res = driver.createAqlFunction(
-      "someNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
+		res = driver.createAqlFunction("someNamespace::testC&&&&&&&&&&de",
+			"function (celsius) { return celsius * 2.8 + 32; }");
 
-    assertThat(res.getStatusCode(), is(206));
-    assertThat(res.getRequestId() , is("request1"));
+		assertThat(res.getStatusCode(), is(206));
+		assertThat(res.getRequestId(), is("request2"));
 
-    res = driver.createAqlFunction(
-      "someNamespace::testC&&&&&&&&&&de", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
+		res = driver.getAqlFunctions(null);
+		assertThat(res.getStatusCode(), is(206));
+		assertThat(res.getRequestId(), is("request3"));
 
-    assertThat(res.getStatusCode(), is(206));
-    assertThat(res.getRequestId(), is("request2"));
+		for (int i = 0; i < 10; i++) {
+			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			res = driver.createDocument(colName, value, true, false);
 
-    res = driver.getAqlFunctions(null);
-    assertThat(res.getStatusCode(), is(206));
-    assertThat(res.getRequestId(), is("request3"));
+			assertThat(res.getStatusCode(), is(206));
+			assertThat(res.getRequestId(), is("request" + (4 + i)));
+		}
 
-    for (int i = 0; i < 10; i++) {
-      TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-      res = driver.createDocument(colName, value, true, false);
+		driver.getDocuments(colName);
 
-      assertThat(res.getStatusCode(), is(206));
-      assertThat(res.getRequestId(), is("request" + (4 + i)));
-    }
+		driver.executeBatch();
+		DefaultEntity created = driver.getBatchResponseByRequestId("request1");
+		assertThat(created.getStatusCode(), is(201));
+		AqlFunctionsEntity functions = driver.getBatchResponseByRequestId("request3");
+		assertThat(functions.getStatusCode(), is(200));
+		assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]), is("someNamespace::testCode"));
+		for (int i = 0; i < 10; i++) {
+			DocumentEntity<TestComplexEntity01> resultComplex = driver.getBatchResponseByRequestId("request" + (4 + i));
+			assertThat(resultComplex.getStatusCode(), is(202));
+		}
 
-    List<String> r = driver.getDocuments(colName);
+		List<String> documents = driver.getBatchResponseByRequestId("request14");
+		assertThat(documents.size(), is(10));
 
-    DefaultEntity result = driver.executeBatch();
-    DefaultEntity created = driver.getBatchResponseByRequestId("request1");
-    assertThat(created.getStatusCode() , is(201));
-    AqlFunctionsEntity functions =  driver.getBatchResponseByRequestId("request3");
-    assertThat(functions.getStatusCode() , is(200));
-    assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]) , is("someNamespace::testCode"));
-    for (int i = 0; i < 10; i++) {
-      DocumentEntity<TestComplexEntity01>  resultComplex =  driver.getBatchResponseByRequestId("request" + (4+i));
-      assertThat(resultComplex.getStatusCode() , is(202));
-    }
+		try {
+			driver.truncateCollection("_aqlfunctions");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    List<String> documents =  driver.getBatchResponseByRequestId("request14");
-    assertThat(documents.size(), is(10));
+	}
 
-    try {
-      driver.truncateCollection("_aqlfunctions");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+	@Test
+	public void test_execBatchMode_twice() throws ArangoException {
 
-  }
+		driver.startBatchMode();
 
-  @Test
-  public void test_execBatchMode_twice() throws ArangoException {
+		BaseEntity res;
 
-    driver.startBatchMode();
+		for (int i = 0; i < 10; i++) {
+			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			res = driver.createDocument(colName, value, true, false);
+			assertThat(res.getRequestId(), is("request" + (i + 1)));
+		}
 
-    BaseEntity res;
+		driver.executeBatch();
 
-    for (int i = 0; i < 10; i++) {
-      TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-      res = driver.createDocument(colName, value, true, false);
-      assertThat(res.getRequestId(), is("request" + (i + 1)));
-    }
+		assertThat(driver.getDocuments(colName).size(), is(10));
 
-    driver.executeBatch();
+		driver.startBatchMode();
 
-    assertThat(driver.getDocuments(colName).size(), is(10));
+		for (int i = 20; i < 30; i++) {
+			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			res = driver.createDocument(colName, value, true, false);
+			assertThat(res.getRequestId(), is("request" + (i + 1 - 20)));
+		}
 
-    driver.startBatchMode();
+		driver.executeBatch();
 
-    for (int i = 20; i < 30; i++) {
-      TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-      res = driver.createDocument(colName, value, true, false);
-      assertThat(res.getRequestId(), is("request" + (i + 1 - 20)));
-    }
+		assertThat(driver.getDocuments(colName).size(), is(20));
 
-    driver.executeBatch();
-
-    assertThat(driver.getDocuments(colName).size(), is(20));
-
-  }
+	}
 
 }
-
-
