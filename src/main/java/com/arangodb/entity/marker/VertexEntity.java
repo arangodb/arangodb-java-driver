@@ -16,13 +16,12 @@
 
 package com.arangodb.entity.marker;
 
-import com.arangodb.entity.BaseEntity;
-
+import com.arangodb.entity.DocumentEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * @since 1.4.0
  */
-public class VertexEntity<T> extends BaseEntity {
-  private VertexEntity(){}
+public class VertexEntity<T> extends DocumentEntity<T> {
+
 }

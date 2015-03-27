@@ -37,75 +37,78 @@ import com.arangodb.util.MapBuilder;
  */
 public class ArangoDriverDatabaseAndUserTest {
 
-  ArangoConfigure configure;
-  ArangoDriver driver;
-  
-  @Before
-  public void before() {
+    ArangoConfigure configure;
+    ArangoDriver driver;
 
-    configure = new ArangoConfigure();
-    configure.init();
-    driver = new ArangoDriver(configure);
+    @Before
+    public void before() {
 
-  }
-  
-  @After
-  public void after() {
-    configure.shutdown();
-  }
+        configure = new ArangoConfigure();
+        configure.init();
+        driver = new ArangoDriver(configure);
 
-  @Test
-  public void test_create_database_with_users_and_database_user() throws ArangoException {
-    
-    String database = "db-1";
-    
-    try {
-      driver.deleteDatabase(database);
-    } catch (ArangoException e) {}
-    
-    BooleanResultEntity entity = driver.createDatabase(
-        database, 
-        new UserEntity("user1", "pass1", true, null),
-        new UserEntity("user2", "pass2", false, null),
-        new UserEntity("user3", "pass3", true, new MapBuilder().put("attr1", "value1").get()),
-        new UserEntity("user4", "pass4", false, new MapBuilder().put("attr2", "value2").get())
-        );
-    assertThat(entity.getResult(), is(true));
-    
-    // change default db
-    try {
-      driver.createUser("user1", "pass1", true, null);
-    } catch (ArangoException e) {}
-    driver.setDefaultDatabase(database);
-
-    // root user cannot access
-    try {
-      driver.getUsers();
-      fail();
-    } catch (ArangoException e) {
-      assertThat(e.isUnauthorized(), is(true));
     }
-    
-    // user1 can access
-    configure.setUser("user1");
-    configure.setPassword("pass1");
-    StringsResultEntity res2 = driver.getDatabases(true);
-    assertThat(res2.getResult(), is(Arrays.asList("_system", "db-1")));
-    
-    // user2 cannot access
-    configure.setUser("user2");
-    configure.setPassword("pass2");
-    try {
-      driver.getUsers();
-      fail();
-    } catch (ArangoException e) {
-      assertThat(e.isUnauthorized(), is(true));
-    }
-    
-    StringsResultEntity res3 = driver.getDatabases("user1", "pass1");
-    assertThat(res3.getResult(), is(Arrays.asList("_system", "db-1")));
 
-  }
-  
-  
+    @After
+    public void after() {
+        configure.shutdown();
+    }
+
+    @Test
+    public void test_create_database_with_users_and_database_user() throws ArangoException {
+
+        String database = "db-1";
+
+        try {
+            driver.deleteDatabase(database);
+        } catch (ArangoException e) {
+        }
+
+        try {
+            driver.deleteDatabase("unitTestDatabase");
+        } catch (ArangoException e) {
+        }
+
+        BooleanResultEntity entity = driver.createDatabase(database, new UserEntity("user1", "pass1", true, null),
+            new UserEntity("user2", "pass2", false, null),
+            new UserEntity("user3", "pass3", true, new MapBuilder().put("attr1", "value1").get()), new UserEntity(
+                    "user4", "pass4", false, new MapBuilder().put("attr2", "value2").get()));
+        assertThat(entity.getResult(), is(true));
+
+        // change default db
+        try {
+            driver.createUser("user1", "pass1", true, null);
+        } catch (ArangoException e) {
+        }
+        driver.setDefaultDatabase(database);
+
+        // root user cannot access
+        try {
+            driver.getUsers();
+            fail();
+        } catch (ArangoException e) {
+            assertThat(e.isUnauthorized(), is(true));
+        }
+
+        // user1 can access
+        configure.setUser("user1");
+        configure.setPassword("pass1");
+        StringsResultEntity res2 = driver.getDatabases(true);
+        assertThat(res2.getResult(), is(Arrays.asList("_system", "db-1")));
+
+        // user2 cannot access
+        configure.setUser("user2");
+        configure.setPassword("pass2");
+        try {
+            driver.getUsers();
+            fail();
+        } catch (ArangoException e) {
+            assertThat(e.isUnauthorized(), is(true));
+        }
+
+        StringsResultEntity res3 = driver.getDatabases("user1", "pass1");
+        assertThat(res3.getResult(), is(Arrays.asList("_system", "db-1")));
+
+    }
+
 }
