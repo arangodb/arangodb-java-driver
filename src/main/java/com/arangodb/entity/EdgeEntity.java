@@ -25,25 +25,25 @@ import com.google.gson.annotations.SerializedName;
  */
 public class EdgeEntity<T> extends DocumentEntity<T> {
 
-  @SerializedName("_from")
-  String fromVertexHandle;
-  @SerializedName("_to")
-  String toVertexHandle;
+	@SerializedName("_from")
+	String fromVertexHandle;
+	@SerializedName("_to")
+	String toVertexHandle;
 
-  public String getFromVertexHandle() {
-    return fromVertexHandle;
-  }
+	public String getFromVertexHandle() {
+		return fromVertexHandle;
+	}
 
-  public String getToVertexHandle() {
-    return toVertexHandle;
-  }
+	public String getToVertexHandle() {
+		return toVertexHandle;
+	}
 
-  public void setFromVertexHandle(String fromVertexHandle) {
-    this.fromVertexHandle = fromVertexHandle;
-  }
+	public void setFromVertexHandle(String fromVertexHandle) {
+		this.fromVertexHandle = fromVertexHandle;
+	}
 
-  public void setToVertexHandle(String toVertexHandle) {
-    this.toVertexHandle = toVertexHandle;
-  }
+	public void setToVertexHandle(String toVertexHandle) {
+		this.toVertexHandle = toVertexHandle;
+	}
 
 }

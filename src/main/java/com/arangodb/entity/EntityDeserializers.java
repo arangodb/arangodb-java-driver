@@ -127,13 +127,13 @@ public class EntityDeserializers {
 		return holder.get();
 	}
 
-	private static boolean hasNextParameterized() {
-		ClassHolder holder = parameterizedBridger.get();
-		if (holder == null) {
-			return false;
-		}
-		return holder.hasNext();
-	}
+	// private static boolean hasNextParameterized() {
+	// ClassHolder holder = parameterizedBridger.get();
+	// if (holder == null) {
+	// return false;
+	// }
+	// return holder.hasNext();
+	// }
 
 	private static Class<?> nextParameterized() {
 		ClassHolder holder = parameterizedBridger.get();
@@ -565,7 +565,7 @@ public class EntityDeserializers {
 
 				if (entity.extra.containsKey("stats")) {
 					if (entity.extra.get("stats") instanceof Map<?, ?>) {
-						Map<String, Object> m = (Map<String, Object>) entity.extra.get("stats");
+						Map<?, ?> m = (Map<?, ?>) entity.extra.get("stats");
 						if (m.containsKey("fullCount")) {
 							try {
 								if (m.get("fullCount") instanceof Double) {
@@ -674,7 +674,7 @@ public class EntityDeserializers {
 
 		private static List<Object> deserializeJsonArray(JsonArray jsonArray) {
 			List<Object> tmpObjectList = new ArrayList<Object>();
-			Iterator iterator = (jsonArray.iterator());
+			Iterator<JsonElement> iterator = jsonArray.iterator();
 			while (iterator.hasNext()) {
 				tmpObjectList.add(deserializeJsonElement((JsonElement) iterator.next()));
 			}

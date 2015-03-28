@@ -16,8 +16,6 @@
 
 package com.arangodb.entity;
 
-import java.io.Serializable;
-
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationObject;
 
@@ -29,39 +27,37 @@ import com.arangodb.http.InvocationObject;
  */
 public class BatchResponseEntity extends BaseEntity {
 
-  /**
-   * The context of the function call, this is used to to process the server response to
-   * an api entity.
-   */
-  InvocationObject invocationObject;
+	/**
+	 * The context of the function call, this is used to to process the server
+	 * response to an api entity.
+	 */
+	InvocationObject invocationObject;
 
-  /**
-   * The http response of the batch part.
-   */
-  public HttpResponseEntity httpResponseEntity;
+	/**
+	 * The http response of the batch part.
+	 */
+	public HttpResponseEntity httpResponseEntity;
 
-  public BatchResponseEntity(InvocationObject invocationObject) {
-    this.invocationObject = invocationObject;
-    this.httpResponseEntity = new HttpResponseEntity();
-  }
+	public BatchResponseEntity(InvocationObject invocationObject) {
+		this.invocationObject = invocationObject;
+		this.httpResponseEntity = new HttpResponseEntity();
+	}
 
-  public InvocationObject getInvocationObject() {
+	public InvocationObject getInvocationObject() {
 
-    return  invocationObject;
-  }
+		return invocationObject;
+	}
 
-  public void setInvocationObject(InvocationObject invocationObject) {
-    this.invocationObject = invocationObject;
-  }
+	public void setInvocationObject(InvocationObject invocationObject) {
+		this.invocationObject = invocationObject;
+	}
 
+	public HttpResponseEntity getHttpResponseEntity() {
+		return httpResponseEntity;
+	}
 
-  public HttpResponseEntity getHttpResponseEntity() {
-    return httpResponseEntity;
-  }
-
-  public void setHttpResponseEntity(HttpResponseEntity httpResponseEntity) {
-    this.httpResponseEntity = httpResponseEntity;
-  }
-
+	public void setHttpResponseEntity(HttpResponseEntity httpResponseEntity) {
+		this.httpResponseEntity = httpResponseEntity;
+	}
 
 }

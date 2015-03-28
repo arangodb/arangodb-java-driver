@@ -27,27 +27,30 @@ import java.util.List;
  */
 public class Endpoint implements Serializable {
 
-  /**
-   * The endpoint address as string
-   */
-  String endpoint;
+	/**
+	 * The endpoint address as string
+	 */
+	String endpoint;
 
-  /**
-   * The list of databases available at this endpoint as string
-   */
-  List<String> databases;
-  
-  public String getEndpoint() {
-    return endpoint;
-  }
-  public List<String> getDatabases() {
-    return databases;
-  }
-  public void setEndpoint(String endpoint) {
-    this.endpoint = endpoint;
-  }
-  public void setDatabases(List<String> databases) {
-    this.databases = databases;
-  }
-  
+	/**
+	 * The list of databases available at this endpoint as string
+	 */
+	List<String> databases;
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public List<String> getDatabases() {
+		return databases;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public void setDatabases(List<String> databases) {
+		this.databases = databases;
+	}
+
 }

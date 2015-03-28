@@ -17,10 +17,8 @@
 package com.arangodb.entity;
 
 import java.util.List;
-import java.util.Map;
 
 import com.arangodb.ArangoException;
-import com.arangodb.http.HttpManager;
 
 /**
  * A representation of the complete result of a batch request.
@@ -30,28 +28,28 @@ import com.arangodb.http.HttpManager;
  */
 public class BatchResponseListEntity extends BaseEntity {
 
-  /**
-   * A list of BatchResponseEntities, each one representing a single batch part of a batch request.
-   */
-  List<BatchResponseEntity> batchResponseEntities;
+	/**
+	 * A list of BatchResponseEntities, each one representing a single batch
+	 * part of a batch request.
+	 */
+	List<BatchResponseEntity> batchResponseEntities;
 
-  public List<BatchResponseEntity> getBatchResponseEntities() {
-    return batchResponseEntities;
-  }
+	public List<BatchResponseEntity> getBatchResponseEntities() {
+		return batchResponseEntities;
+	}
 
+	public void setBatchResponseEntities(List<BatchResponseEntity> batchResponseEntities) {
+		this.batchResponseEntities = batchResponseEntities;
+	}
 
-  public void setBatchResponseEntities(List<BatchResponseEntity> batchResponseEntities) {
-    this.batchResponseEntities = batchResponseEntities;
-  }
+	public BatchResponseEntity getResponseFromRequestId(String requestId) throws ArangoException {
+		for (BatchResponseEntity bpe : this.batchResponseEntities) {
+			if (bpe.getRequestId().equals(requestId)) {
+				return bpe;
+			}
+		}
+		throw new ArangoException("RequestId not found in batch.");
 
-  public BatchResponseEntity getResponseFromRequestId(String requestId) throws ArangoException {
-    for (BatchResponseEntity bpe : this.batchResponseEntities) {
-      if (bpe.getRequestId().equals(requestId)) {
-        return bpe;
-      }
-    }
-    throw new ArangoException("RequestId not found in batch.");
-
-  }
+	}
 
 }

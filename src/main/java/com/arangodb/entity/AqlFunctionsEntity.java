@@ -16,7 +16,6 @@
 
 package com.arangodb.entity;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,24 +26,24 @@ import java.util.Map;
  */
 public class AqlFunctionsEntity extends BaseEntity {
 
-  /**
-   * A map containing the function name as key and the function as value
-   */
-  Map<String, String> aqlFunctions;
+	/**
+	 * A map containing the function name as key and the function as value
+	 */
+	Map<String, String> aqlFunctions;
 
-  public AqlFunctionsEntity () {
-  }
+	public AqlFunctionsEntity() {
+	}
 
-  AqlFunctionsEntity (Map<String, String> aqlfunctions) {
-    this.aqlFunctions = aqlfunctions;
-  }
+	AqlFunctionsEntity(Map<String, String> aqlfunctions) {
+		this.aqlFunctions = aqlfunctions;
+	}
 
-  public Map<String, String> getAqlFunctions() {
-    return aqlFunctions;
-  }
+	public Map<String, String> getAqlFunctions() {
+		return aqlFunctions;
+	}
 
-  public int size() {
-    return this.aqlFunctions.size();
-  }
-  
+	public int size() {
+		return this.aqlFunctions.size();
+	}
+
 }
