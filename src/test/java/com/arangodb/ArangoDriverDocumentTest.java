@@ -43,446 +43,446 @@ import com.arangodb.entity.EntityFactory;
  */
 public class ArangoDriverDocumentTest extends BaseTest {
 
-  public ArangoDriverDocumentTest(ArangoConfigure configure, ArangoDriver driver) {
-    super(configure, driver);
-  }
+	public ArangoDriverDocumentTest(ArangoConfigure configure, ArangoDriver driver) {
+		super(configure, driver);
+	}
 
-  private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
+	private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
 
-  final String collectionName = "unit_test_arango_001"; // 通常ケースで使うコレクション名
-  final String collectionName2 = "unit_test_arango_002";
-  final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
+	final String collectionName = "unit_test_arango_001"; // 通常ケースで使うコレクション名
+	final String collectionName2 = "unit_test_arango_002";
+	final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
 
-  CollectionEntity col1;
-  CollectionEntity col2;
-  TestInterfaceInstanceCreator testInstanceCreator;
-  
-  @Before
-  public void before() throws ArangoException {
+	CollectionEntity col1;
+	CollectionEntity col2;
+	TestInterfaceInstanceCreator testInstanceCreator;
 
-    logger.debug("----------");
+	@Before
+	public void before() throws ArangoException {
 
-    // 事前に消しておく
-    for (String col : new String[] { collectionName, collectionName2, collectionName404 }) {
-      try {
-        driver.deleteCollection(col);
-      } catch (ArangoException e) {
-      }
-    }
+		logger.debug("----------");
 
-    // 1と2は作る
-    col1 = driver.createCollection(collectionName);
-    col2 = driver.createCollection(collectionName2);
+		// 事前に消しておく
+		for (String col : new String[] { collectionName, collectionName2, collectionName404 }) {
+			try {
+				driver.deleteCollection(col);
+			} catch (ArangoException e) {
+			}
+		}
 
-    //configure Gson to use our instance creator whenever documents of TestInterface are requested
-    testInstanceCreator = new TestInterfaceInstanceCreator();
-	EntityFactory.configure(EntityFactory.getGsonBuilder().registerTypeAdapter(TestInterface.class, testInstanceCreator));
+		// 1と2は作る
+		col1 = driver.createCollection(collectionName);
+		col2 = driver.createCollection(collectionName2);
 
-    logger.debug("--");
+		// configure Gson to use our instance creator whenever documents of
+		// TestInterface are requested
+		testInstanceCreator = new TestInterfaceInstanceCreator();
+		EntityFactory.configure(EntityFactory.getGsonBuilder().registerTypeAdapter(TestInterface.class,
+			testInstanceCreator));
 
-  }
+		logger.debug("--");
 
-  @After
-  public void after() {
-	//revert to default configuration
-	EntityFactory.configure(EntityFactory.getGsonBuilder());
-    logger.debug("----------");
-  }
+	}
 
-  @Test
-  public void test_create_normal() throws ArangoException {
+	@After
+	public void after() {
+		// revert to default configuration
+		EntityFactory.configure(EntityFactory.getGsonBuilder());
+		logger.debug("----------");
+	}
 
-    // 適当にドキュメントを作る
-    TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:" + 9999, 9999);
-    DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, null, false);
+	@Test
+	public void test_create_normal() throws ArangoException {
 
-    assertThat(doc.getDocumentKey(), is(notNullValue()));
-    assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-    assertThat(doc.getDocumentRevision(), is(not(0L)));
+		// 適当にドキュメントを作る
+		TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:" + 9999, 9999);
+		DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, null, false);
 
-  }
+		assertThat(doc.getDocumentKey(), is(notNullValue()));
+		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
+		assertThat(doc.getDocumentRevision(), is(not(0L)));
 
-  @Test
-  public void test_create_normal100() throws ArangoException {
+	}
 
-    // 適当にドキュメントを作る
-    for (int i = 0; i < 100; i++) {
-      TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "説明:" + i, i);
-      driver.createDocument(collectionName, value, null, false);
-    }
+	@Test
+	public void test_create_normal100() throws ArangoException {
 
-    // 100個格納できていることを確認する
-    assertThat(driver.getCollectionCount(collectionName).getCount(), is(100L));
+		// 適当にドキュメントを作る
+		for (int i = 0; i < 100; i++) {
+			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "説明:" + i, i);
+			driver.createDocument(collectionName, value, null, false);
+		}
 
-  }
+		// 100個格納できていることを確認する
+		assertThat(driver.getCollectionCount(collectionName).getCount(), is(100L));
 
-  @Test
-  public void test_create_sameobject() throws ArangoException {
-    // 適当にドキュメントを作る
-    for (int i = 0; i < 100; i++) {
-      TestComplexEntity01 value = new TestComplexEntity01("user", "説明:", 10);
-      driver.createDocument(collectionName, value, null, true);
-    }
-    // 100個格納できていることを確認する
-    assertThat(driver.getCollectionCount(collectionName).getCount(), is(100L));
-  }
+	}
 
-  /**
-   * 存在しないコレクションに追加しようとするテスト
-   * 
-   * @throws ArangoException
-   */
-  @Test
-  public void test_create_404() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
-    try {
-      driver.createDocument(collectionName404, value, false, true);
-      fail("no exception was thrown");
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1203));
-    }
+	@Test
+	public void test_create_sameobject() throws ArangoException {
+		// 適当にドキュメントを作る
+		for (int i = 0; i < 100; i++) {
+			TestComplexEntity01 value = new TestComplexEntity01("user", "説明:", 10);
+			driver.createDocument(collectionName, value, null, true);
+		}
+		// 100個格納できていることを確認する
+		assertThat(driver.getCollectionCount(collectionName).getCount(), is(100L));
+	}
 
-  }
+	/**
+	 * 存在しないコレクションに追加しようとするテスト
+	 * 
+	 * @throws ArangoException
+	 */
+	@Test
+	public void test_create_404() throws ArangoException {
+		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
+		try {
+			driver.createDocument(collectionName404, value, false, true);
+			fail("no exception was thrown");
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+			assertThat(e.getErrorNumber(), is(1203));
+		}
 
-  /**
-   * コレクションがない場合、コレクションを勝手に作ってくれることを確認。
-   * 
-   * @throws ArangoException
-   */
-  @Test
-  public void test_create_404_insert() throws ArangoException {
+	}
 
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
-    // 存在しないコレクションに追加しようとする
-    DocumentEntity<TestComplexEntity01> res = driver.createDocument(collectionName404, value, true, true);
-    assertThat(res, is(notNullValue()));
-    CollectionEntity col3 = driver.getCollection(collectionName404);
-    assertThat(col3, is(notNullValue()));
+	/**
+	 * コレクションがない場合、コレクションを勝手に作ってくれることを確認。
+	 * 
+	 * @throws ArangoException
+	 */
+	@Test
+	public void test_create_404_insert() throws ArangoException {
 
-    assertThat(res.getDocumentHandle().startsWith(collectionName404 + "/"), is(true));
-    assertThat(res.getDocumentRevision(), is(not(0L)));
-    assertThat(res.getDocumentKey(), is(notNullValue()));
+		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
+		// 存在しないコレクションに追加しようとする
+		DocumentEntity<TestComplexEntity01> res = driver.createDocument(collectionName404, value, true, true);
+		assertThat(res, is(notNullValue()));
+		CollectionEntity col3 = driver.getCollection(collectionName404);
+		assertThat(col3, is(notNullValue()));
 
-  }
+		assertThat(res.getDocumentHandle().startsWith(collectionName404 + "/"), is(true));
+		assertThat(res.getDocumentRevision(), is(not(0L)));
+		assertThat(res.getDocumentKey(), is(notNullValue()));
 
-  @Test
-  public void test_replace() throws ArangoException {
+	}
 
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
+	@Test
+	public void test_replace() throws ArangoException {
 
-    // Create Document
-    DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, true, false);
-    assertThat(doc, is(notNullValue()));
-    value.setUser(null);
-    value.setDesc("UpdatedDescription");
-    value.setAge(15);
-    DocumentEntity<TestComplexEntity01> doc2 = driver.replaceDocument(doc.getDocumentHandle(), value, null, null, null);
-    assertThat(doc2.getStatusCode(), is(202));
-    // Get
-    DocumentEntity<TestComplexEntity01> doc3 = driver.getDocument(doc2.getDocumentHandle(), TestComplexEntity01.class);
-    assertThat(doc3.getStatusCode(), is(200));
-    assertThat(doc3.getEntity(), is(notNullValue()));
-    assertThat(doc3.getEntity().getUser(), is(nullValue()));
-    assertThat(doc3.getEntity().getDesc(), is("UpdatedDescription"));
-    assertThat(doc3.getEntity().getAge(), is(15));
-  }
+		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 
-  @Test
-  public void test_replace_404() throws ArangoException {
+		// Create Document
+		DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, true, false);
+		assertThat(doc, is(notNullValue()));
+		value.setUser(null);
+		value.setDesc("UpdatedDescription");
+		value.setAge(15);
+		DocumentEntity<TestComplexEntity01> doc2 = driver.replaceDocument(doc.getDocumentHandle(), value, null, null,
+			null);
+		assertThat(doc2.getStatusCode(), is(202));
+		// Get
+		DocumentEntity<TestComplexEntity01> doc3 = driver.getDocument(doc2.getDocumentHandle(),
+			TestComplexEntity01.class);
+		assertThat(doc3.getStatusCode(), is(200));
+		assertThat(doc3.getEntity(), is(notNullValue()));
+		assertThat(doc3.getEntity().getUser(), is(nullValue()));
+		assertThat(doc3.getEntity().getDesc(), is("UpdatedDescription"));
+		assertThat(doc3.getEntity().getAge(), is(15));
+	}
 
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
-    // 存在しないコレクションに追加しようとする
-    try {
-      driver.replaceDocument(collectionName404, 1, value, null, null, null);
-      fail("no exception was thrown");
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1203));
-    }
-  }
+	@Test
+	public void test_replace_404() throws ArangoException {
 
-  @Test
-  public void test_replace_404_2() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
-    // 存在するコレクションだが、ドキュメントが存在しない
-    try {
-      driver.replaceDocument(collectionName, 1, value, null, null, null);
-      fail("no exception was thrown");
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1202));
-    }
-  }
+		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
+		// 存在しないコレクションに追加しようとする
+		try {
+			driver.replaceDocument(collectionName404, 1, value, null, null, null);
+			fail("no exception was thrown");
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+			assertThat(e.getErrorNumber(), is(1203));
+		}
+	}
 
-  @Test
-  public void test_partial_update() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
+	@Test
+	public void test_replace_404_2() throws ArangoException {
+		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
+		// 存在するコレクションだが、ドキュメントが存在しない
+		try {
+			driver.replaceDocument(collectionName, 1, value, null, null, null);
+			fail("no exception was thrown");
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+			assertThat(e.getErrorNumber(), is(1202));
+		}
+	}
 
-    // Create Document
-    DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, true, false);
-    assertThat(doc, is(notNullValue()));
+	@Test
+	public void test_partial_update() throws ArangoException {
+		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 
-    // PartialUpdate
-    value.setUser(null);
-    value.setDesc("UpdatedDescription");
-    value.setAge(15);
-    DocumentEntity<TestComplexEntity01> doc2 = driver.updateDocument(
-      doc.getDocumentHandle(),
-      value,
-      null,
-      null,
-      null,
-      null);
-    assertThat(doc2.getStatusCode(), is(202));
-    // Get
-    DocumentEntity<TestComplexEntity01> doc3 = driver.getDocument(doc2.getDocumentHandle(), TestComplexEntity01.class);
-    assertThat(doc3.getStatusCode(), is(200));
-    assertThat(doc3.getEntity(), is(notNullValue()));
-    assertThat(doc3.getEntity().getUser(), is("test-user")); // not update
-    assertThat(doc3.getEntity().getDesc(), is("UpdatedDescription"));
-    assertThat(doc3.getEntity().getAge(), is(15));
-    DocumentEntity<TestComplexEntity01> doc4 = driver.updateDocument(
-      doc.getDocumentHandle(),
-      value,
-      null,
-      null,
-      null,
-      false);
-    assertThat(doc4.getStatusCode(), is(202));
-    DocumentEntity<TestComplexEntity01> doc5 = driver.getDocument(doc2.getDocumentHandle(), TestComplexEntity01.class);
-    assertThat(doc5.getStatusCode(), is(200));
-    assertThat(doc5.getEntity(), is(notNullValue()));
-    assertThat(doc5.getEntity().getUser(), is(nullValue())); // update
-    assertThat(doc5.getEntity().getDesc(), is("UpdatedDescription"));
-    assertThat(doc5.getEntity().getAge(), is(15));
-  }
+		// Create Document
+		DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, true, false);
+		assertThat(doc, is(notNullValue()));
 
-  @Test
-  public void test_getDocuments() throws ArangoException {
-    // create document
-    DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName, new TestComplexEntity01(
-        "test-user1", "test-user1-desc", 21), true, false);
-    DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName, new TestComplexEntity01(
-        "test-user2", "test-user2-desc", 22), true, false);
-    DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName, new TestComplexEntity01(
-        "test-user3", "test-user3-desc", 23), true, false);
-    assertThat(doc1, is(notNullValue()));
-    assertThat(doc2, is(notNullValue()));
-    assertThat(doc3, is(notNullValue()));
+		// PartialUpdate
+		value.setUser(null);
+		value.setDesc("UpdatedDescription");
+		value.setAge(15);
+		DocumentEntity<TestComplexEntity01> doc2 = driver.updateDocument(doc.getDocumentHandle(), value, null, null,
+			null, null);
+		assertThat(doc2.getStatusCode(), is(202));
+		// Get
+		DocumentEntity<TestComplexEntity01> doc3 = driver.getDocument(doc2.getDocumentHandle(),
+			TestComplexEntity01.class);
+		assertThat(doc3.getStatusCode(), is(200));
+		assertThat(doc3.getEntity(), is(notNullValue()));
+		assertThat(doc3.getEntity().getUser(), is("test-user")); // not update
+		assertThat(doc3.getEntity().getDesc(), is("UpdatedDescription"));
+		assertThat(doc3.getEntity().getAge(), is(15));
+		DocumentEntity<TestComplexEntity01> doc4 = driver.updateDocument(doc.getDocumentHandle(), value, null, null,
+			null, false);
+		assertThat(doc4.getStatusCode(), is(202));
+		DocumentEntity<TestComplexEntity01> doc5 = driver.getDocument(doc2.getDocumentHandle(),
+			TestComplexEntity01.class);
+		assertThat(doc5.getStatusCode(), is(200));
+		assertThat(doc5.getEntity(), is(notNullValue()));
+		assertThat(doc5.getEntity().getUser(), is(nullValue())); // update
+		assertThat(doc5.getEntity().getDesc(), is("UpdatedDescription"));
+		assertThat(doc5.getEntity().getAge(), is(15));
+	}
 
-    //
-    Set<String> tree = new TreeSet<String>(Arrays.asList(
-      "/_api/document/" + doc1.getDocumentHandle(),
-      "/_api/document/" + doc2.getDocumentHandle(),
-      "/_api/document/" + doc3.getDocumentHandle()));
+	@Test
+	public void test_getDocuments() throws ArangoException {
+		// create document
+		DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName, new TestComplexEntity01(
+				"test-user1", "test-user1-desc", 21), true, false);
+		DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName, new TestComplexEntity01(
+				"test-user2", "test-user2-desc", 22), true, false);
+		DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName, new TestComplexEntity01(
+				"test-user3", "test-user3-desc", 23), true, false);
+		assertThat(doc1, is(notNullValue()));
+		assertThat(doc2, is(notNullValue()));
+		assertThat(doc3, is(notNullValue()));
 
-    // get documents
-    Set<String> docIds = new TreeSet<String>(driver.getDocuments(collectionName));
-    assertThat(docIds.size(), is(3));
+		//
+		Set<String> tree = new TreeSet<String>(Arrays.asList("/_api/document/" + doc1.getDocumentHandle(),
+			"/_api/document/" + doc2.getDocumentHandle(), "/_api/document/" + doc3.getDocumentHandle()));
 
-    assertThat(docIds, is(tree));
-  }
+		// get documents
+		Set<String> docIds = new TreeSet<String>(driver.getDocuments(collectionName));
+		assertThat(docIds.size(), is(3));
 
-  @Test
-  public void test_getDocuments_handle() throws ArangoException {
+		assertThat(docIds, is(tree));
+	}
 
-    // create document
-    DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName, new TestComplexEntity01(
-        "test-user1", "test-user1-desc", 21), true, false);
-    DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName, new TestComplexEntity01(
-        "test-user2", "test-user2-desc", 22), true, false);
-    DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName, new TestComplexEntity01(
-        "test-user3", "test-user3-desc", 23), true, false);
-    assertThat(doc1, is(notNullValue()));
-    assertThat(doc2, is(notNullValue()));
-    assertThat(doc3, is(notNullValue()));
+	@Test
+	public void test_getDocuments_handle() throws ArangoException {
 
-    //
-    Set<String> tree = new TreeSet<String>(Arrays.asList(
-      doc1.getDocumentHandle(),
-      doc2.getDocumentHandle(),
-      doc3.getDocumentHandle()));
+		// create document
+		DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName, new TestComplexEntity01(
+				"test-user1", "test-user1-desc", 21), true, false);
+		DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName, new TestComplexEntity01(
+				"test-user2", "test-user2-desc", 22), true, false);
+		DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName, new TestComplexEntity01(
+				"test-user3", "test-user3-desc", 23), true, false);
+		assertThat(doc1, is(notNullValue()));
+		assertThat(doc2, is(notNullValue()));
+		assertThat(doc3, is(notNullValue()));
 
-    // get documents
-    Set<String> docIds = new TreeSet<String>(driver.getDocuments(collectionName, true));
-    assertThat(docIds.size(), is(3));
-    assertThat(docIds, is(tree));
+		//
+		Set<String> tree = new TreeSet<String>(Arrays.asList(doc1.getDocumentHandle(), doc2.getDocumentHandle(),
+			doc3.getDocumentHandle()));
 
-  }
+		// get documents
+		Set<String> docIds = new TreeSet<String>(driver.getDocuments(collectionName, true));
+		assertThat(docIds.size(), is(3));
+		assertThat(docIds, is(tree));
 
-  @Test
-  public void test_get_document() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:" + 9999, 9999);
-    DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, null, false);
+	}
 
-    assertThat(doc.getDocumentKey(), is(notNullValue()));
-    assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-    assertThat(doc.getDocumentRevision(), is(not(0L)));
-    DocumentEntity<TestComplexEntity01> retVal = driver.getDocument(doc.getDocumentHandle(), TestComplexEntity01.class);
-    assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
-    assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
-    assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
-    assertThat(retVal.getEntity(), instanceOf(TestComplexEntity01.class));
-    assertThat(retVal.getEntity().getUser(), is("user-9999"));
-    assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
-    assertThat(retVal.getEntity().getAge(), is(9999));
-  }
- 
-  @Test
-  public void test_get_document_with_instance_creator() throws ArangoException {
-	//save an instance of TestInterfaceImpl with null as "name"
-	DocumentEntity<TestInterfaceImpl> doc = driver.createDocument(collectionName, new TestInterfaceImpl(null), null, false);
+	@Test
+	public void test_get_document() throws ArangoException {
+		TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:" + 9999, 9999);
+		DocumentEntity<TestComplexEntity01> doc = driver.createDocument(collectionName, value, null, false);
 
-	assertThat(doc.getDocumentKey(), is(notNullValue()));
-	assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-	assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getDocumentKey(), is(notNullValue()));
+		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
+		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		DocumentEntity<TestComplexEntity01> retVal = driver.getDocument(doc.getDocumentHandle(),
+			TestComplexEntity01.class);
+		assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
+		assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
+		assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
+		assertThat(retVal.getEntity(), instanceOf(TestComplexEntity01.class));
+		assertThat(retVal.getEntity().getUser(), is("user-9999"));
+		assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
+		assertThat(retVal.getEntity().getAge(), is(9999));
+	}
 
-	//now we should get back an instance created with our configured InstanceCreator<TestInterface> (with "name" already set)
-	DocumentEntity<TestInterface> retVal = driver.getDocument(doc.getDocumentHandle(), TestInterface.class);
-    assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
-    assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
-    assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
-    assertThat(retVal.getEntity(), instanceOf(TestInterface.class));
-    assertThat(retVal.getEntity(), instanceOf(TestInterfaceImpl.class));
-	assertThat(testInstanceCreator.getCounter(), is(1));
-    assertThat(retVal.getEntity().getName(), is("name 0"));
-  }
-  
-  @Test
-  public void test_get_document_collection_not_found() throws ArangoException {
-    // Get
-    try {
-      driver.getDocument(collectionName404, 1L, TestComplexEntity01.class);
-      fail("");
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1203));
-      // collection not found
-    }
-  }
+	@Test
+	public void test_get_document_with_instance_creator() throws ArangoException {
+		// save an instance of TestInterfaceImpl with null as "name"
+		DocumentEntity<TestInterfaceImpl> doc = driver.createDocument(collectionName, new TestInterfaceImpl(null),
+			null, false);
 
-  @Test
-  public void test_get_document_doc_not_found() throws ArangoException {
-    // Get
-    try {
-      driver.getDocument(collectionName, 1L, TestComplexEntity01.class);
-      fail("");
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(1202));
-      // document not found
-    }
-  }
+		assertThat(doc.getDocumentKey(), is(notNullValue()));
+		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
+		assertThat(doc.getDocumentRevision(), is(not(0L)));
 
-  // TODO: If-None-Match, If-Matchヘッダを付けても挙動が変わらない。arango-1.4.0
+		// now we should get back an instance created with our configured
+		// InstanceCreator<TestInterface> (with "name" already set)
+		DocumentEntity<TestInterface> retVal = driver.getDocument(doc.getDocumentHandle(), TestInterface.class);
+		assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
+		assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
+		assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
+		assertThat(retVal.getEntity(), instanceOf(TestInterface.class));
+		assertThat(retVal.getEntity(), instanceOf(TestInterfaceImpl.class));
+		assertThat(testInstanceCreator.getCounter(), is(1));
+		assertThat(retVal.getEntity().getName(), is("name 0"));
+	}
 
-  // @Test
-  // public void test_get_document_none_match_eq() throws ArangoException {
-  //
-  // // create document
-  // TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:" +
-  // 9999, 9999);
-  // DocumentEntity<TestComplexEntity01> doc =
-  // driver.createDocument(collectionName, value, null, false);
-  //
-  // assertThat(doc.getDocumentKey(), is(notNullValue()));
-  // assertThat(doc.getDocumentHandle(), is(collectionName + "/" +
-  // doc.getDocumentKey()));
-  // assertThat(doc.getDocumentRevision(), is(not(0L)));
-  //
-  // // Get
-  // DocumentEntity<TestComplexEntity01> retVal =
-  // driver.getDocument(doc.getDocumentHandle(), TestComplexEntity01.class,
-  // doc.getDocumentRevision(), null);
-  // assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
-  // assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
-  // assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
-  //
-  // assertThat(retVal.getEntity(), instanceOf(TestComplexEntity01.class));
-  // assertThat(retVal.getEntity().getUser(), is("user-9999"));
-  // assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
-  // assertThat(retVal.getEntity().getAge(), is(9999));
-  //
-  // }
-  //
-  // @Test
-  // public void test_get_document_none_match_ne() throws ArangoException {
-  //
-  // // create document
-  // TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:" +
-  // 9999, 9999);
-  // DocumentEntity<TestComplexEntity01> doc =
-  // driver.createDocument(collectionName, value, null, false);
-  //
-  // assertThat(doc.getDocumentKey(), is(notNullValue()));
-  // assertThat(doc.getDocumentHandle(), is(collectionName + "/" +
-  // doc.getDocumentKey()));
-  // assertThat(doc.getDocumentRevision(), is(not(0L)));
-  //
-  // // Get
-  // DocumentEntity<TestComplexEntity01> retVal =
-  // driver.getDocument(doc.getDocumentHandle(), TestComplexEntity01.class,
-  // doc.getDocumentRevision() + 1, null);
-  // assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
-  // assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
-  // assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
-  //
-  // assertThat(retVal.getEntity(), instanceOf(TestComplexEntity01.class));
-  // assertThat(retVal.getEntity().getUser(), is("user-9999"));
-  // assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
-  // assertThat(retVal.getEntity().getAge(), is(9999));
-  //
-  // }
+	@Test
+	public void test_get_document_collection_not_found() throws ArangoException {
+		// Get
+		try {
+			driver.getDocument(collectionName404, 1L, TestComplexEntity01.class);
+			fail("");
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+			assertThat(e.getErrorNumber(), is(1203));
+			// collection not found
+		}
+	}
 
-  /**
-   * Mapで取得した時に特別なキー(_id, _rev, _key)はEntityに入ってこないこと TODO:
-   * アノテーションで設定できるようにしようかな。。
-   * 
-   * @throws ArangoException
-   */
-  @Test
-  public void test_get_as_map() throws ArangoException {
-  }
+	@Test
+	public void test_get_document_doc_not_found() throws ArangoException {
+		// Get
+		try {
+			driver.getDocument(collectionName, 1L, TestComplexEntity01.class);
+			fail("");
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+			assertThat(e.getErrorNumber(), is(1202));
+			// document not found
+		}
+	}
 
-  @Test
-  public void test_checkDocument() throws ArangoException {
+	// TODO: If-None-Match, If-Matchヘッダを付けても挙動が変わらない。arango-1.4.0
 
-    DocumentEntity<String> doc = driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3), null, null);
+	// @Test
+	// public void test_get_document_none_match_eq() throws ArangoException {
+	//
+	// // create document
+	// TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:"
+	// +
+	// 9999, 9999);
+	// DocumentEntity<TestComplexEntity01> doc =
+	// driver.createDocument(collectionName, value, null, false);
+	//
+	// assertThat(doc.getDocumentKey(), is(notNullValue()));
+	// assertThat(doc.getDocumentHandle(), is(collectionName + "/" +
+	// doc.getDocumentKey()));
+	// assertThat(doc.getDocumentRevision(), is(not(0L)));
+	//
+	// // Get
+	// DocumentEntity<TestComplexEntity01> retVal =
+	// driver.getDocument(doc.getDocumentHandle(), TestComplexEntity01.class,
+	// doc.getDocumentRevision(), null);
+	// assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
+	// assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
+	// assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
+	//
+	// assertThat(retVal.getEntity(), instanceOf(TestComplexEntity01.class));
+	// assertThat(retVal.getEntity().getUser(), is("user-9999"));
+	// assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
+	// assertThat(retVal.getEntity().getAge(), is(9999));
+	//
+	// }
+	//
+	// @Test
+	// public void test_get_document_none_match_ne() throws ArangoException {
+	//
+	// // create document
+	// TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "説明:"
+	// +
+	// 9999, 9999);
+	// DocumentEntity<TestComplexEntity01> doc =
+	// driver.createDocument(collectionName, value, null, false);
+	//
+	// assertThat(doc.getDocumentKey(), is(notNullValue()));
+	// assertThat(doc.getDocumentHandle(), is(collectionName + "/" +
+	// doc.getDocumentKey()));
+	// assertThat(doc.getDocumentRevision(), is(not(0L)));
+	//
+	// // Get
+	// DocumentEntity<TestComplexEntity01> retVal =
+	// driver.getDocument(doc.getDocumentHandle(), TestComplexEntity01.class,
+	// doc.getDocumentRevision() + 1, null);
+	// assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
+	// assertThat(retVal.getDocumentRevision(), is(doc.getDocumentRevision()));
+	// assertThat(retVal.getDocumentKey(), is(doc.getDocumentKey()));
+	//
+	// assertThat(retVal.getEntity(), instanceOf(TestComplexEntity01.class));
+	// assertThat(retVal.getEntity().getUser(), is("user-9999"));
+	// assertThat(retVal.getEntity().getDesc(), is("説明:9999"));
+	// assertThat(retVal.getEntity().getAge(), is(9999));
+	//
+	// }
 
-    Long etag = driver.checkDocument(doc.getDocumentHandle());
-    assertThat(etag, is(doc.getDocumentRevision()));
-  }
+	/**
+	 * Mapで取得した時に特別なキー(_id, _rev, _key)はEntityに入ってこないこと TODO:
+	 * アノテーションで設定できるようにしようかな。。
+	 * 
+	 * @throws ArangoException
+	 */
+	@Test
+	public void test_get_as_map() throws ArangoException {
+	}
 
-  @Test
-  public void test_check_document_doc_not_found() throws ArangoException {
+	@Test
+	public void test_checkDocument() throws ArangoException {
 
-    DocumentEntity<String> doc = driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3), null, null);
+		DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
+			new TestComplexEntity02(1, 2, 3), null, null);
 
-    try {
-      driver.checkDocument(collectionName, 1);
-      fail();
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-      assertThat(e.getErrorNumber(), is(0));
-    }
-  }
+		Long etag = driver.checkDocument(doc.getDocumentHandle());
+		assertThat(etag, is(doc.getDocumentRevision()));
+	}
 
-  @Test
-  public void test_delete() throws ArangoException {
-    DocumentEntity<String> doc = driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3));
-    DocumentEntity a = driver.deleteDocument(doc.getDocumentHandle());
+	@Test
+	public void test_check_document_doc_not_found() throws ArangoException {
 
-  }
+		DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
+			new TestComplexEntity02(1, 2, 3), null, null);
 
-  @Test
-  public void test_delete_doc_not_found() throws ArangoException {
-    try {
-      driver.deleteDocument(collectionName, 1);
-      fail();
-    } catch (ArangoException e) {
-      assertThat(e.getCode(), is(404));
-    }
-  }
+		try {
+			driver.checkDocument(collectionName, 1);
+			fail();
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+			assertThat(e.getErrorNumber(), is(0));
+		}
+	}
+
+	@Test
+	public void test_delete() throws ArangoException {
+		DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
+			new TestComplexEntity02(1, 2, 3));
+		DocumentEntity a = driver.deleteDocument(doc.getDocumentHandle());
+
+	}
+
+	@Test
+	public void test_delete_doc_not_found() throws ArangoException {
+		try {
+			driver.deleteDocument(collectionName, 1);
+			fail();
+		} catch (ArangoException e) {
+			assertThat(e.getCode(), is(404));
+		}
+	}
 
 }

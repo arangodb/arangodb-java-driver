@@ -79,12 +79,12 @@ public class ExampleMDB {
 			// get all document-handle, and print get & print document. (_system
 			// DB)
 			for (String documentHandle : driverA.getDocuments("example1", true)) {
-				DocumentEntity<Map<String, Object>> doc = driverA.getDocument(documentHandle, Map.class);
+				DocumentEntity<Map> doc = driverA.getDocument(documentHandle, Map.class);
 				System.out.println(doc.getEntity());
 			}
 
 			for (String documentHandle : driverB.getDocuments("example2", true)) {
-				DocumentEntity<Map<String, Object>> doc = driverB.getDocument(documentHandle, Map.class);
+				DocumentEntity<Map> doc = driverB.getDocument(documentHandle, Map.class);
 				System.out.println(doc.getEntity());
 			}
 

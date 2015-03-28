@@ -23,7 +23,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.TransactionEntity;
 import com.arangodb.entity.TransactionResultEntity;
 
@@ -33,109 +32,103 @@ import com.arangodb.entity.TransactionResultEntity;
  */
 public class ArangoDriverTransactionTest extends BaseTest {
 
-  public class ParamObject {
-    private String a = "a";
+	public class ParamObject {
+		private String a = "a";
 
-    private String b = "b";
+		private String b = "b";
 
-    private int i = 3;
+		private int i = 3;
 
-    public String getA() {
-      return a;
-    }
+		public String getA() {
+			return a;
+		}
 
-    public void setA(String a) {
-      this.a = a;
-    }
+		public void setA(String a) {
+			this.a = a;
+		}
 
-    public String getB() {
-      return b;
-    }
+		public String getB() {
+			return b;
+		}
 
-    public void setB(String b) {
-      this.b = b;
-    }
+		public void setB(String b) {
+			this.b = b;
+		}
 
-    public int getI() {
-      return i;
-    }
+		public int getI() {
+			return i;
+		}
 
-    public void setI(int i) {
-      this.i = i;
-    }
-  }
+		public void setI(int i) {
+			this.i = i;
+		}
+	}
 
-  public ArangoDriverTransactionTest(ArangoConfigure configure, ArangoDriver driver) {
-    super(configure, driver);
-  }
+	public ArangoDriverTransactionTest(ArangoConfigure configure, ArangoDriver driver) {
+		super(configure, driver);
+	}
 
-  @Before
-  public void setup() throws ArangoException {
-    TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "desc:" + 9999, 9999);
-    DocumentEntity<TestComplexEntity01> doc = driver.createDocument("someCollection", value, true, false);
-  }
+	@Before
+	public void setup() throws ArangoException {
+		TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "desc:" + 9999, 9999);
+		driver.createDocument("someCollection", value, true, false);
+	}
 
-  @After
-  public void teardown() throws ArangoException {
-    try {
-      driver.deleteCollection("someCollection");
-    } catch (ArangoException e) {
+	@After
+	public void teardown() throws ArangoException {
+		try {
+			driver.deleteCollection("someCollection");
+		} catch (ArangoException e) {
 
-    }
-  }
+		}
+	}
 
+	@Test
+	public void test_Transaction() throws ArangoException {
 
-  @Test
-  public void test_Transaction() throws ArangoException {
+		TransactionEntity transaction = driver.createTransaction("function (params) {return params;}");
+		transaction.setParams(5);
+		TransactionResultEntity result = driver.executeTransaction(transaction);
 
+		assertThat(result.getResultAsDouble(), is(5.0));
+		assertThat(result.getStatusCode(), is(200));
+		assertThat(result.getCode(), is(200));
+		assertThat(result.isError(), is(false));
 
-    TransactionEntity transaction = driver.createTransaction("function (params) {return params;}");
-    transaction.setParams(5);
-    TransactionResultEntity result = driver.executeTransaction(transaction) ;
+		transaction = driver.createTransaction("function (params) {" + "var db = require('internal').db;"
+				+ "return db.someCollection.all().toArray()[0];" + "}");
+		transaction.addReadCollection("someCollection");
+		result = driver.executeTransaction(transaction);
 
-    assertThat(result.getResultAsDouble(), is(5.0));
-    assertThat(result.getStatusCode(), is(200));
-    assertThat(result.getCode(), is(200));
-    assertThat(result.isError(), is(false));
+		assertThat(result.getStatusCode(), is(200));
+		assertThat(result.getCode(), is(200));
+		assertThat(result.isError(), is(false));
 
+		transaction = driver.createTransaction("function (params) {return params;}");
+		transaction.setParams(5);
+		result = driver.executeTransaction(transaction);
 
-    transaction = driver.createTransaction("function (params) {" +
-      "var db = require('internal').db;" +
-      "return db.someCollection.all().toArray()[0];" +
-      "}");
-    transaction.addReadCollection("someCollection");
-    result = driver.executeTransaction(transaction);
+		assertThat(result.getResultAsInt(), is(5));
+		assertThat(result.getStatusCode(), is(200));
+		assertThat(result.getCode(), is(200));
+		assertThat(result.isError(), is(false));
 
-    assertThat(result.getStatusCode(), is(200));
-    assertThat(result.getCode(), is(200));
-    assertThat(result.isError(), is(false));
+		transaction.setParams(true);
+		result = driver.executeTransaction(transaction);
 
-    transaction = driver.createTransaction("function (params) {return params;}");
-    transaction.setParams(5);
-    result = driver.executeTransaction(transaction) ;
+		assertThat(result.<Boolean> getResult(), is(true));
+		assertThat(result.getStatusCode(), is(200));
+		assertThat(result.getCode(), is(200));
+		assertThat(result.isError(), is(false));
 
-    assertThat(result.getResultAsInt(), is(5));
-    assertThat(result.getStatusCode(), is(200));
-    assertThat(result.getCode(), is(200));
-    assertThat(result.isError(), is(false));
+		transaction.setParams("Hans");
+		result = driver.executeTransaction(transaction);
 
-    transaction.setParams(true);
-    result = driver.executeTransaction(transaction) ;
+		assertThat(result.<String> getResult(), is("Hans"));
+		assertThat(result.getStatusCode(), is(200));
+		assertThat(result.getCode(), is(200));
+		assertThat(result.isError(), is(false));
 
-    assertThat(result.<Boolean>getResult(), is(true));
-    assertThat(result.getStatusCode(), is(200));
-    assertThat(result.getCode(), is(200));
-    assertThat(result.isError(), is(false));
-
-    transaction.setParams("Hans");
-    result = driver.executeTransaction(transaction) ;
-
-    assertThat(result.<String>getResult(), is("Hans"));
-    assertThat(result.getStatusCode(), is(200));
-    assertThat(result.getCode(), is(200));
-    assertThat(result.isError(), is(false));
-
-  }
-
+	}
 
 }
