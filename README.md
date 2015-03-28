@@ -21,13 +21,13 @@ To add the driver to your project with maven, add the following code to your pom
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>[2.4.2-SNAPSHOT,2.4.2]</version>
+    <version>[2.5.3-SNAPSHOT,2.5.3]</version>
   </dependency>
 	....
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 2.4.2-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
+If you want to test with a snapshot version (e.g. 2.5.3-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
@@ -288,7 +288,7 @@ A graph consists of vertices and edges (stored in collections). Which collection
   // and add one or more collections
   from.add("myCollection1");
   from.add("myCollection2");
-  edgeDefinition.setFrom(from)
+  edgeDefinition.setFrom(from);
    
   // repeat this for the collections where an edge is going into  
   List<String> to = new ArrayList<String>();
