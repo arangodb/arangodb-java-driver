@@ -33,6 +33,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
@@ -46,7 +47,6 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.entity.ContentType;
@@ -71,477 +71,496 @@ import com.arangodb.util.IOUtils;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author a-brandt
  * 
  */
 public class HttpManager {
 
-  private static final ContentType APPLICATION_JSON_UTF8 = ContentType.create("application/json", "utf-8");
-
-  private Logger logger = LoggerFactory.getLogger(HttpManager.class);
-
-  private PoolingHttpClientConnectionManager cm;
-  private CloseableHttpClient client;
-
-  private ArangoConfigure configure;
-
-  private HttpResponseEntity preDefinedResponse;
-
-  private HttpMode httpMode = HttpMode.SYNC;
-
-  private List<String> jobIds = new ArrayList<String>();
-
-  private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
-
-  public static enum HttpMode {
-    SYNC, ASYNC, FIREANDFORGET
-  }
-
-  public HttpManager(ArangoConfigure configure) {
-    this.configure = configure;
-  }
-
-  public ArangoConfigure getConfiguration() {
-    return this.configure;
-  }
-
-  public void init() {
-    // ConnectionManager
-    cm = new PoolingHttpClientConnectionManager();
-    cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
-    cm.setMaxTotal(configure.getMaxTotalConnection());
-    
-    Builder custom = RequestConfig.custom();
-
-    // RequestConfig
-    if (configure.getConnectionTimeout() >= 0) {
-      custom.setConnectTimeout(configure.getConnectionTimeout());
-    }
-    if (configure.getTimeout() >= 0) {
-      custom.setConnectionRequestTimeout(configure.getTimeout());
-      custom.setSocketTimeout(configure.getTimeout());
-    }
-    custom.setStaleConnectionCheckEnabled(configure.isStaleConnectionCheck());
-
-    RequestConfig requestConfig = custom.build();
-    
-    HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig);
-    builder.setConnectionManager(cm);
-
-    // KeepAlive Strategy
-    ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
-
-      public long getKeepAliveDuration(HttpResponse response,
-          HttpContext context) {
-        // Honor 'keep-alive' header
-        HeaderElementIterator it = new BasicHeaderElementIterator(
-            response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-        while (it.hasNext()) {
-          HeaderElement he = it.nextElement();
-          String param = he.getName();
-          String value = he.getValue();
-          if (value != null && param.equalsIgnoreCase("timeout")) {
-            try {
-              return Long.parseLong(value) * 1000;
-            } catch (NumberFormatException ignore) {
-            }
-          }
-        }
-        HttpHost target = (HttpHost) context
-            .getAttribute(HttpClientContext.HTTP_TARGET_HOST);
-        if ("www.naughty-server.com".equalsIgnoreCase(target.getHostName())) {
-          // Keep alive for 5 seconds only
-          return 5 * 1000;
-        } else {
-          // otherwise keep alive for 30 seconds
-          return 30 * 1000;
-        }
-      }
-
-    };
-    builder.setKeepAliveStrategy(keepAliveStrategy);
-
-    // Retry Handler
-    builder.setRetryHandler(new DefaultHttpRequestRetryHandler(configure
-        .getRetryCount(), false));
-
-    // Proxy
-    if (configure.getProxyHost() != null && configure.getProxyPort() != 0) {
-      HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
-      // client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-
-      DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(
-          proxy);
-      builder.setRoutePlanner(routePlanner);
-    }
-
-    // Client
-    client = builder.build();
- 
-    // Basic Auth
-    // if (configure.getUser() != null && configure.getPassword() != null) {
-    // AuthScope scope = AuthScope.ANY; // TODO
-    // this.credentials = new
-    // UsernamePasswordCredentials(configure.getUser(),
-    // configure.getPassword());
-    // client.getCredentialsProvider().setCredentials(scope, credentials);
-    // }
-
-  }
-
-  public void destroy() {
-    if (cm != null) {
-      cm.shutdown();
-    }
-    configure = null;
-  }
-
-  public HttpMode getHttpMode() {
-    return httpMode;
-  }
-
-  public void setHttpMode(HttpMode httpMode) {
-    this.httpMode = httpMode;
-  }
-
-  public HttpResponseEntity doGet(String url) throws ArangoException {
-    return doGet(url, null);
-  }
-
-  public HttpResponseEntity doGet(String url, Map<String, Object> params) throws ArangoException {
-    return doHeadGetDelete(RequestType.GET, url, null, params);
-  }
-
-  public HttpResponseEntity doGet(String url, Map<String, Object> headers, Map<String, Object> params)
-      throws ArangoException {
-    return doHeadGetDelete(RequestType.GET, url, headers, params);
-  }
-
-  public HttpResponseEntity doGet(String url, Map<String, Object> headers, Map<String, Object> params,
-      String username, String password) throws ArangoException {
-    return doHeadGetDelete(RequestType.GET, url, headers, params, username, password);
-  }
-
-  public HttpResponseEntity doHead(String url, Map<String, Object> params) throws ArangoException {
-    return doHeadGetDelete(RequestType.HEAD, url, null, params);
-  }
-
-  public HttpResponseEntity doDelete(String url, Map<String, Object> params) throws ArangoException {
-    return doHeadGetDelete(RequestType.DELETE, url, null, params);
-  }
-
-  public HttpResponseEntity doDelete(String url, Map<String, Object> headers, Map<String, Object> params)
-      throws ArangoException {
-    return doHeadGetDelete(RequestType.DELETE, url, headers, params);
-  }
-
-  public HttpResponseEntity doHeadGetDelete(RequestType type, String url, Map<String, Object> headers,
-      Map<String, Object> params) throws ArangoException {
-    return doHeadGetDelete(type, url, headers, params, null, null);
-  }
-
-  public HttpResponseEntity doHeadGetDelete(RequestType type, String url, Map<String, Object> headers,
-      Map<String, Object> params, String username, String password) throws ArangoException {
-    HttpRequestEntity requestEntity = new HttpRequestEntity();
-    requestEntity.type = type;
-    requestEntity.url = url;
-    requestEntity.headers = headers;
-    requestEntity.parameters = params;
-    requestEntity.username = username;
-    requestEntity.password = password;
-    return execute(requestEntity);
-  }
-
-  public HttpResponseEntity doPost(String url, Map<String, Object> headers, Map<String, Object> params,
-      String bodyText) throws ArangoException {
-    return doPostPutPatch(RequestType.POST, url, headers, params, bodyText, null);
-  }
-
-  public HttpResponseEntity doPost(String url, Map<String, Object> params, String bodyText) throws ArangoException {
-    return doPostPutPatch(RequestType.POST, url, null, params, bodyText, null);
-  }
-
-  public HttpResponseEntity doPost(String url, Map<String, Object> params, HttpEntity entity) throws ArangoException {
-    return doPostPutPatch(RequestType.POST, url, null, params, null, entity);
-  }
-
-  public HttpResponseEntity doPostWithHeaders(String url, Map<String, Object> params, HttpEntity entity,
-                                              Map<String, Object> headers, String body) throws ArangoException {
-    return doPostPutPatch(RequestType.POST, url, headers, params, body, entity);
-  }
-
-  public HttpResponseEntity doPut(String url, Map<String, Object> headers, Map<String, Object> params, String bodyText)
-      throws ArangoException {
-    return doPostPutPatch(RequestType.PUT, url, headers, params, bodyText, null);
-  }
-
-  public HttpResponseEntity doPut(String url, Map<String, Object> params, String bodyText) throws ArangoException {
-    return doPostPutPatch(RequestType.PUT, url, null, params, bodyText, null);
-  }
-
-  public HttpResponseEntity doPatch(String url, Map<String, Object> headers, Map<String, Object> params,
-      String bodyText) throws ArangoException {
-    return doPostPutPatch(RequestType.PATCH, url, headers, params, bodyText, null);
-  }
-
-  public HttpResponseEntity doPatch(String url, Map<String, Object> params, String bodyText) throws ArangoException {
-    return doPostPutPatch(RequestType.PATCH, url, null, params, bodyText, null);
-  }
-
-  private HttpResponseEntity doPostPutPatch(RequestType type, String url, Map<String, Object> headers,
-      Map<String, Object> params, String bodyText, HttpEntity entity) throws ArangoException {
-    HttpRequestEntity requestEntity = new HttpRequestEntity();
-    requestEntity.type = type;
-    requestEntity.url = url;
-    requestEntity.headers = headers;
-    requestEntity.parameters = params;
-    requestEntity.bodyText = bodyText;
-    requestEntity.entity = entity;
-    return execute(requestEntity);
-  }
-
-  /**
-   * 
-   * @param requestEntity
-   * @return
-   * @throws ArangoException
-   */
-  public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
-
-    String url = buildUrl(requestEntity);
-
-    if (logger.isDebugEnabled()) {
-      if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
-          || requestEntity.type == RequestType.PATCH) {
-        logger.debug("[REQ]http-{}: url={}, headers={}, body={}", new Object[] { requestEntity.type, url,
-            requestEntity.headers, requestEntity.bodyText });
-      } else {
-        logger.debug("[REQ]http-{}: url={}, headers={}", new Object[] { requestEntity.type, url,
-            requestEntity.headers });
-      }
-    }
-
-    HttpRequestBase request = null;
-    switch (requestEntity.type) {
-    case GET:
-      request = new HttpGet(url);
-      break;
-    case POST:
-      HttpPost post = new HttpPost(url);
-      configureBodyParams(requestEntity, post);
-      request = post;
-      break;
-    case PUT:
-      HttpPut put = new HttpPut(url);
-      configureBodyParams(requestEntity, put);
-      request = put;
-      break;
-    case PATCH:
-      HttpPatch patch = new HttpPatch(url);
-      configureBodyParams(requestEntity, patch);
-      request = patch;
-      break;
-    case HEAD:
-      request = new HttpHead(url);
-      break;
-    case DELETE:
-      request = new HttpDelete(url);
-      break;
-    }
-
-    // common-header
-    String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.0; +http://mt.orz.at/)"; // TODO:
-    // 定数化
-    request.setHeader("User-Agent", userAgent);
-    // request.setHeader("Content-Type", "binary/octet-stream");
-
-    // optinal-headers
-    if (requestEntity.headers != null) {
-      for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
-        request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
-      }
-    }
-
-    // Basic Auth
-    Credentials credentials = null;
-    if (requestEntity.username != null && requestEntity.password != null) {
-      credentials = new UsernamePasswordCredentials(requestEntity.username, requestEntity.password);
-    } else if (configure.getUser() != null && configure.getPassword() != null) {
-      credentials = new UsernamePasswordCredentials(configure.getUser(), configure.getPassword());
-    }
-    if (credentials != null) {
-      request.addHeader(BasicScheme.authenticate(credentials, "US-ASCII", false));
-    }
-
-    if (this.getHttpMode().equals(HttpMode.ASYNC)) {
-      request.addHeader("x-arango-async", "store");
-    } else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
-      request.addHeader("x-arango-async", "true");
-    }
-    // CURL/httpie Logger
-    if (configure.isEnableCURLLogger()) {
-      CURLLogger.log(url, requestEntity, userAgent, credentials);
-    }
-    HttpResponse response = null;
-    if (preDefinedResponse != null) {
-      return preDefinedResponse;
-    }
-    try {
-      response = client.execute(request);
-      if (response == null) {
-        return null;
-      }
-
-      HttpResponseEntity responseEntity = new HttpResponseEntity();
-
-      // http status
-      StatusLine status = response.getStatusLine();
-      responseEntity.statusCode = status.getStatusCode();
-      responseEntity.statusPhrase = status.getReasonPhrase();
-
-      logger.debug("[RES]http-{}: statusCode={}", requestEntity.type, responseEntity.statusCode);
-
-      // ヘッダの処理
-      // // TODO etag特殊処理は削除する。
-      Header etagHeader = response.getLastHeader("etag");
-      if (etagHeader != null) {
-        responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
-      }
-      // ヘッダをMapに変換する
-      responseEntity.headers = new TreeMap<String, String>();
-      for (Header header : response.getAllHeaders()) {
-        responseEntity.headers.put(header.getName(), header.getValue());
-      }
-
-      // レスポンスの取得
-      HttpEntity entity = response.getEntity();
-      if (entity != null) {
-        Header contentType = entity.getContentType();
-        if (contentType != null) {
-          responseEntity.contentType = contentType.getValue();
-          if (responseEntity.isDumpResponse()) {
-            responseEntity.stream = entity.getContent();
-            logger.debug("[RES]http-{}: stream, {}", requestEntity.type, contentType.getValue());
-          }
-        }
-        // Close stream in this method.
-        if (responseEntity.stream == null) {
-          responseEntity.text = IOUtils.toString(entity.getContent());
-          logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
-        }
-      }
-
-      if (this.getHttpMode().equals(HttpMode.ASYNC)) {
-        Map<String, String> map = responseEntity.getHeaders();
-        this.addJob(map.get("X-Arango-Async-Id"), this.getCurrentObject());
-      } else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
-        return null;
-      }
-
-      return responseEntity;
-
-    } catch (ClientProtocolException e) {
-      throw new ArangoException(e);
-    } catch (IOException e) {
-      throw new ArangoException(e);
-    }
-
-  }
-
-  public static String buildUrl(HttpRequestEntity requestEntity) {
-    if (requestEntity.parameters != null && !requestEntity.parameters.isEmpty()) {
-      String paramString = URLEncodedUtils.format(toList(requestEntity.parameters), "utf-8");
-      if (requestEntity.url.contains("?")) {
-        return requestEntity.url + "&" + paramString;
-      } else {
-        return requestEntity.url + "?" + paramString;
-      }
-    }
-    return requestEntity.url;
-  }
-
-  private static List<NameValuePair> toList(Map<String, Object> parameters) {
-    ArrayList<NameValuePair> paramList = new ArrayList<NameValuePair>(parameters.size());
-    for (Entry<String, Object> param : parameters.entrySet()) {
-      if (param.getValue() != null) {
-        paramList.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
-      }
-    }
-    return paramList;
-  }
-
-  public static void configureBodyParams(HttpRequestEntity requestEntity, HttpEntityEnclosingRequestBase request) {
-
-    if (requestEntity.entity != null) {
-      request.setEntity(requestEntity.entity);
-    } else if (requestEntity.bodyText != null) {
-      request.setEntity(new StringEntity(requestEntity.bodyText, APPLICATION_JSON_UTF8));
-    }
-
-  }
-
-  public static boolean is400Error(ArangoException e) {
-    return e.getCode() == HttpStatus.SC_BAD_REQUEST;
-  }
-
-  public static boolean is404Error(ArangoException e) {
-    return e.getCode() == HttpStatus.SC_NOT_FOUND;
-  }
-
-  public static boolean is412Error(ArangoException e) {
-    return e.getCode() == HttpStatus.SC_PRECONDITION_FAILED;
-  }
-
-  public static boolean is200(HttpResponseEntity res) {
-    return res.getStatusCode() == HttpStatus.SC_OK;
-  }
-
-  public static boolean is400Error(HttpResponseEntity res) {
-    return res.getStatusCode() == HttpStatus.SC_BAD_REQUEST;
-  }
-
-  public static boolean is404Error(HttpResponseEntity res) {
-    return res.getStatusCode() == HttpStatus.SC_NOT_FOUND;
-  }
-
-  public static boolean is412Error(HttpResponseEntity res) {
-    return res.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED;
-  }
-
-  public CloseableHttpClient getClient() {
-    return client;
-  }
-
-  public InvocationObject getCurrentObject() {
-    return null;
-  }
-
-  public void setCurrentObject(InvocationObject currentObject) {
-  }
-
-  public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {
-    this.preDefinedResponse = preDefinedResponse;
-  }
-
-  public List<String> getJobIds() {
-    return jobIds;
-  }
-
-  public Map<String, InvocationObject> getJobs() {
-    return jobs;
-  }
-
-  public void addJob(String jobId, InvocationObject invocationObject) {
-    jobIds.add(jobId);
-    jobs.put(jobId, invocationObject);
-  }
-
-  public String getLastJobId() {
-    return jobIds.size() == 0 ? null : jobIds.get(jobIds.size() -1);
-  }
-
-  public void resetJobs() {
-    this.jobIds = new ArrayList<String>();
-    this.jobs.clear();
-
-  }
+	private static final ContentType APPLICATION_JSON_UTF8 = ContentType.create("application/json", "utf-8");
+
+	private Logger logger = LoggerFactory.getLogger(HttpManager.class);
+
+	private PoolingHttpClientConnectionManager cm;
+	private CloseableHttpClient client;
+
+	private ArangoConfigure configure;
+
+	private HttpResponseEntity preDefinedResponse;
+
+	private HttpMode httpMode = HttpMode.SYNC;
+
+	private List<String> jobIds = new ArrayList<String>();
+
+	private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
+
+	public static enum HttpMode {
+		SYNC, ASYNC, FIREANDFORGET
+	}
+
+	public HttpManager(ArangoConfigure configure) {
+		this.configure = configure;
+	}
+
+	public ArangoConfigure getConfiguration() {
+		return this.configure;
+	}
+
+	public void init() {
+		// ConnectionManager
+		cm = new PoolingHttpClientConnectionManager();
+		cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
+		cm.setMaxTotal(configure.getMaxTotalConnection());
+
+		Builder custom = RequestConfig.custom();
+
+		// RequestConfig
+		if (configure.getConnectionTimeout() >= 0) {
+			custom.setConnectTimeout(configure.getConnectionTimeout());
+		}
+		if (configure.getTimeout() >= 0) {
+			custom.setConnectionRequestTimeout(configure.getTimeout());
+			custom.setSocketTimeout(configure.getTimeout());
+		}
+		custom.setStaleConnectionCheckEnabled(configure.isStaleConnectionCheck());
+
+		RequestConfig requestConfig = custom.build();
+
+		HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig);
+		builder.setConnectionManager(cm);
+
+		// KeepAlive Strategy
+		ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
+
+			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+				// Honor 'keep-alive' header
+				HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+				while (it.hasNext()) {
+					HeaderElement he = it.nextElement();
+					String param = he.getName();
+					String value = he.getValue();
+					if (value != null && param.equalsIgnoreCase("timeout")) {
+						try {
+							return Long.parseLong(value) * 1000;
+						} catch (NumberFormatException ignore) {
+						}
+					}
+				}
+				// otherwise keep alive for 30 seconds
+				return 30 * 1000;
+			}
+
+		};
+		builder.setKeepAliveStrategy(keepAliveStrategy);
+
+		// Retry Handler
+		builder.setRetryHandler(new DefaultHttpRequestRetryHandler(configure.getRetryCount(), false));
+
+		// Proxy
+		if (configure.getProxyHost() != null && configure.getProxyPort() != 0) {
+			HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
+
+			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+			builder.setRoutePlanner(routePlanner);
+		}
+
+		// Client
+		client = builder.build();
+
+		// Basic Auth
+		// if (configure.getUser() != null && configure.getPassword() != null) {
+		// AuthScope scope = AuthScope.ANY; // TODO
+		// this.credentials = new
+		// UsernamePasswordCredentials(configure.getUser(),
+		// configure.getPassword());
+		// client.getCredentialsProvider().setCredentials(scope, credentials);
+		// }
+
+	}
+
+	public void destroy() {
+		if (cm != null) {
+			cm.shutdown();
+		}
+		configure = null;
+	}
+
+	public HttpMode getHttpMode() {
+		return httpMode;
+	}
+
+	public void setHttpMode(HttpMode httpMode) {
+		this.httpMode = httpMode;
+	}
+
+	public HttpResponseEntity doGet(String url) throws ArangoException {
+		return doGet(url, null);
+	}
+
+	public HttpResponseEntity doGet(String url, Map<String, Object> params) throws ArangoException {
+		return doHeadGetDelete(RequestType.GET, url, null, params);
+	}
+
+	public HttpResponseEntity doGet(String url, Map<String, Object> headers, Map<String, Object> params)
+			throws ArangoException {
+		return doHeadGetDelete(RequestType.GET, url, headers, params);
+	}
+
+	public HttpResponseEntity doGet(
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params,
+		String username,
+		String password) throws ArangoException {
+		return doHeadGetDelete(RequestType.GET, url, headers, params, username, password);
+	}
+
+	public HttpResponseEntity doHead(String url, Map<String, Object> params) throws ArangoException {
+		return doHeadGetDelete(RequestType.HEAD, url, null, params);
+	}
+
+	public HttpResponseEntity doDelete(String url, Map<String, Object> params) throws ArangoException {
+		return doHeadGetDelete(RequestType.DELETE, url, null, params);
+	}
+
+	public HttpResponseEntity doDelete(String url, Map<String, Object> headers, Map<String, Object> params)
+			throws ArangoException {
+		return doHeadGetDelete(RequestType.DELETE, url, headers, params);
+	}
+
+	public HttpResponseEntity doHeadGetDelete(
+		RequestType type,
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params) throws ArangoException {
+		return doHeadGetDelete(type, url, headers, params, null, null);
+	}
+
+	public HttpResponseEntity doHeadGetDelete(
+		RequestType type,
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params,
+		String username,
+		String password) throws ArangoException {
+		HttpRequestEntity requestEntity = new HttpRequestEntity();
+		requestEntity.type = type;
+		requestEntity.url = url;
+		requestEntity.headers = headers;
+		requestEntity.parameters = params;
+		requestEntity.username = username;
+		requestEntity.password = password;
+		return execute(requestEntity);
+	}
+
+	public HttpResponseEntity doPost(
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params,
+		String bodyText) throws ArangoException {
+		return doPostPutPatch(RequestType.POST, url, headers, params, bodyText, null);
+	}
+
+	public HttpResponseEntity doPost(String url, Map<String, Object> params, String bodyText) throws ArangoException {
+		return doPostPutPatch(RequestType.POST, url, null, params, bodyText, null);
+	}
+
+	public HttpResponseEntity doPost(String url, Map<String, Object> params, HttpEntity entity) throws ArangoException {
+		return doPostPutPatch(RequestType.POST, url, null, params, null, entity);
+	}
+
+	public HttpResponseEntity doPostWithHeaders(
+		String url,
+		Map<String, Object> params,
+		HttpEntity entity,
+		Map<String, Object> headers,
+		String body) throws ArangoException {
+		return doPostPutPatch(RequestType.POST, url, headers, params, body, entity);
+	}
+
+	public HttpResponseEntity doPut(String url, Map<String, Object> headers, Map<String, Object> params, String bodyText)
+			throws ArangoException {
+		return doPostPutPatch(RequestType.PUT, url, headers, params, bodyText, null);
+	}
+
+	public HttpResponseEntity doPut(String url, Map<String, Object> params, String bodyText) throws ArangoException {
+		return doPostPutPatch(RequestType.PUT, url, null, params, bodyText, null);
+	}
+
+	public HttpResponseEntity doPatch(
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params,
+		String bodyText) throws ArangoException {
+		return doPostPutPatch(RequestType.PATCH, url, headers, params, bodyText, null);
+	}
+
+	public HttpResponseEntity doPatch(String url, Map<String, Object> params, String bodyText) throws ArangoException {
+		return doPostPutPatch(RequestType.PATCH, url, null, params, bodyText, null);
+	}
+
+	private HttpResponseEntity doPostPutPatch(
+		RequestType type,
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params,
+		String bodyText,
+		HttpEntity entity) throws ArangoException {
+		HttpRequestEntity requestEntity = new HttpRequestEntity();
+		requestEntity.type = type;
+		requestEntity.url = url;
+		requestEntity.headers = headers;
+		requestEntity.parameters = params;
+		requestEntity.bodyText = bodyText;
+		requestEntity.entity = entity;
+		return execute(requestEntity);
+	}
+
+	/**
+	 * 
+	 * @param requestEntity
+	 * @return
+	 * @throws ArangoException
+	 */
+	public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
+
+		String url = buildUrl(requestEntity);
+
+		if (logger.isDebugEnabled()) {
+			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
+					|| requestEntity.type == RequestType.PATCH) {
+				logger.debug("[REQ]http-{}: url={}, headers={}, body={}", new Object[] { requestEntity.type, url,
+						requestEntity.headers, requestEntity.bodyText });
+			} else {
+				logger.debug("[REQ]http-{}: url={}, headers={}", new Object[] { requestEntity.type, url,
+						requestEntity.headers });
+			}
+		}
+
+		HttpRequestBase request = null;
+		switch (requestEntity.type) {
+		case GET:
+			request = new HttpGet(url);
+			break;
+		case POST:
+			HttpPost post = new HttpPost(url);
+			configureBodyParams(requestEntity, post);
+			request = post;
+			break;
+		case PUT:
+			HttpPut put = new HttpPut(url);
+			configureBodyParams(requestEntity, put);
+			request = put;
+			break;
+		case PATCH:
+			HttpPatch patch = new HttpPatch(url);
+			configureBodyParams(requestEntity, patch);
+			request = patch;
+			break;
+		case HEAD:
+			request = new HttpHead(url);
+			break;
+		case DELETE:
+			request = new HttpDelete(url);
+			break;
+		}
+
+		// common-header
+		String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)";
+		request.setHeader("User-Agent", userAgent);
+
+		// optinal-headers
+		if (requestEntity.headers != null) {
+			for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
+				request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
+			}
+		}
+
+		// Basic Auth
+		Credentials credentials = null;
+		if (requestEntity.username != null && requestEntity.password != null) {
+			credentials = new UsernamePasswordCredentials(requestEntity.username, requestEntity.password);
+		} else if (configure.getUser() != null && configure.getPassword() != null) {
+			credentials = new UsernamePasswordCredentials(configure.getUser(), configure.getPassword());
+		}
+		if (credentials != null) {
+			BasicScheme basicScheme = new BasicScheme();
+			try {
+				request.addHeader(basicScheme.authenticate(credentials, request, null));
+			} catch (AuthenticationException e) {
+				throw new ArangoException(e);
+			}
+		}
+
+		if (this.getHttpMode().equals(HttpMode.ASYNC)) {
+			request.addHeader("x-arango-async", "store");
+		} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
+			request.addHeader("x-arango-async", "true");
+		}
+		// CURL/httpie Logger
+		if (configure.isEnableCURLLogger()) {
+			CURLLogger.log(url, requestEntity, userAgent, credentials);
+		}
+		HttpResponse response = null;
+		if (preDefinedResponse != null) {
+			return preDefinedResponse;
+		}
+		try {
+			response = client.execute(request);
+			if (response == null) {
+				return null;
+			}
+
+			HttpResponseEntity responseEntity = new HttpResponseEntity();
+
+			// http status
+			StatusLine status = response.getStatusLine();
+			responseEntity.statusCode = status.getStatusCode();
+			responseEntity.statusPhrase = status.getReasonPhrase();
+
+			logger.debug("[RES]http-{}: statusCode={}", requestEntity.type, responseEntity.statusCode);
+
+			// ヘッダの処理
+			// // TODO etag特殊処理は削除する。
+			Header etagHeader = response.getLastHeader("etag");
+			if (etagHeader != null) {
+				responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
+			}
+			// ヘッダをMapに変換する
+			responseEntity.headers = new TreeMap<String, String>();
+			for (Header header : response.getAllHeaders()) {
+				responseEntity.headers.put(header.getName(), header.getValue());
+			}
+
+			// レスポンスの取得
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				Header contentType = entity.getContentType();
+				if (contentType != null) {
+					responseEntity.contentType = contentType.getValue();
+					if (responseEntity.isDumpResponse()) {
+						responseEntity.stream = entity.getContent();
+						logger.debug("[RES]http-{}: stream, {}", requestEntity.type, contentType.getValue());
+					}
+				}
+				// Close stream in this method.
+				if (responseEntity.stream == null) {
+					responseEntity.text = IOUtils.toString(entity.getContent());
+					logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
+				}
+			}
+
+			if (this.getHttpMode().equals(HttpMode.ASYNC)) {
+				Map<String, String> map = responseEntity.getHeaders();
+				this.addJob(map.get("X-Arango-Async-Id"), this.getCurrentObject());
+			} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
+				return null;
+			}
+
+			return responseEntity;
+
+		} catch (ClientProtocolException e) {
+			throw new ArangoException(e);
+		} catch (IOException e) {
+			throw new ArangoException(e);
+		}
+
+	}
+
+	public static String buildUrl(HttpRequestEntity requestEntity) {
+		if (requestEntity.parameters != null && !requestEntity.parameters.isEmpty()) {
+			String paramString = URLEncodedUtils.format(toList(requestEntity.parameters), "utf-8");
+			if (requestEntity.url.contains("?")) {
+				return requestEntity.url + "&" + paramString;
+			} else {
+				return requestEntity.url + "?" + paramString;
+			}
+		}
+		return requestEntity.url;
+	}
+
+	private static List<NameValuePair> toList(Map<String, Object> parameters) {
+		ArrayList<NameValuePair> paramList = new ArrayList<NameValuePair>(parameters.size());
+		for (Entry<String, Object> param : parameters.entrySet()) {
+			if (param.getValue() != null) {
+				paramList.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
+			}
+		}
+		return paramList;
+	}
+
+	public static void configureBodyParams(HttpRequestEntity requestEntity, HttpEntityEnclosingRequestBase request) {
+
+		if (requestEntity.entity != null) {
+			request.setEntity(requestEntity.entity);
+		} else if (requestEntity.bodyText != null) {
+			request.setEntity(new StringEntity(requestEntity.bodyText, APPLICATION_JSON_UTF8));
+		}
+
+	}
+
+	public static boolean is400Error(ArangoException e) {
+		return e.getCode() == HttpStatus.SC_BAD_REQUEST;
+	}
+
+	public static boolean is404Error(ArangoException e) {
+		return e.getCode() == HttpStatus.SC_NOT_FOUND;
+	}
+
+	public static boolean is412Error(ArangoException e) {
+		return e.getCode() == HttpStatus.SC_PRECONDITION_FAILED;
+	}
+
+	public static boolean is200(HttpResponseEntity res) {
+		return res.getStatusCode() == HttpStatus.SC_OK;
+	}
+
+	public static boolean is400Error(HttpResponseEntity res) {
+		return res.getStatusCode() == HttpStatus.SC_BAD_REQUEST;
+	}
+
+	public static boolean is404Error(HttpResponseEntity res) {
+		return res.getStatusCode() == HttpStatus.SC_NOT_FOUND;
+	}
+
+	public static boolean is412Error(HttpResponseEntity res) {
+		return res.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED;
+	}
+
+	public CloseableHttpClient getClient() {
+		return client;
+	}
+
+	public InvocationObject getCurrentObject() {
+		return null;
+	}
+
+	public void setCurrentObject(InvocationObject currentObject) {
+	}
+
+	public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {
+		this.preDefinedResponse = preDefinedResponse;
+	}
+
+	public List<String> getJobIds() {
+		return jobIds;
+	}
+
+	public Map<String, InvocationObject> getJobs() {
+		return jobs;
+	}
+
+	public void addJob(String jobId, InvocationObject invocationObject) {
+		jobIds.add(jobId);
+		jobs.put(jobId, invocationObject);
+	}
+
+	public String getLastJobId() {
+		return jobIds.size() == 0 ? null : jobIds.get(jobIds.size() - 1);
+	}
+
+	public void resetJobs() {
+		this.jobIds = new ArrayList<String>();
+		this.jobs.clear();
+
+	}
 }

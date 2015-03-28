@@ -27,14 +27,13 @@ import com.arangodb.impl.BaseDriverInterface;
 
 public interface InternalEdgeDriver extends BaseDriverInterface {
 
-   <T> EdgeEntity<T> createEdge(
-      String databaseName,
-      String collectionName,
-      T object,
-      String from,
-      String to,
-      Boolean createCollection,
-      Boolean waitForSync
-      ) throws ArangoException;
+	<T> EdgeEntity<T> createEdge(
+		String graphName,
+		String collectionName,
+		T object,
+		String from,
+		String to,
+		Boolean createCollection,
+		Boolean waitForSync) throws ArangoException;
 
 }

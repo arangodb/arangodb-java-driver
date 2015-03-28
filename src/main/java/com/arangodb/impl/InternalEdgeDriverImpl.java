@@ -32,39 +32,31 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalEdgeDriver {
 
-  InternalEdgeDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
-    super(configure, cursorDriver, httpManager);
-  }
+	InternalEdgeDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+		super(configure, cursorDriver, httpManager);
+	}
 
-  @Override
-  public <T> EdgeEntity<T> createEdge(
-      String databaseName,
-      String collectionName,
-      T object,
-      String from,
-      String to,
-      Boolean createCollection,
-      Boolean waitForSync) throws ArangoException {
-    
-    Map<String, Object> params = 
-        new MapBuilder()
-    .put("collection", collectionName)
-    .put("from", from)
-    .put("to", to)
-    .put("createCollection", createCollection)
-    .put("waitForSync", waitForSync)
-    .get(); 
+	@Override
+	public <T> EdgeEntity<T> createEdge(
+		String graphName,
+		String collectionName,
+		T object,
+		String from,
+		String to,
+		Boolean createCollection,
+		Boolean waitForSync) throws ArangoException {
 
-    String body = EntityFactory.toJsonString(object);
-    
-    HttpResponseEntity response = httpManager.doPost(
-        createEndpointUrl(baseUrl, databaseName, "/_api/edge"),
-        params,
-        body);
-    
-    EdgeEntity<T> edgeEntity = createEntity(response, EdgeEntity.class);
-    edgeEntity.setEntity(object);
-    return edgeEntity;
-  }
+		Map<String, Object> params = new MapBuilder().put("collection", collectionName).put("from", from).put("to", to)
+				.put("createCollection", createCollection).put("waitForSync", waitForSync).get();
+
+		String body = EntityFactory.toJsonString(object);
+
+		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(baseUrl, graphName, "/_api/edge"), params,
+			body);
+
+		EdgeEntity<T> edgeEntity = createEntity(response, EdgeEntity.class);
+		edgeEntity.setEntity(object);
+		return edgeEntity;
+	}
 
 }
