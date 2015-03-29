@@ -379,3 +379,7 @@ Added support for sparse indexes
 
 ## since 2.5.1
 see 2.4.4
+
+## since 2.5.3
+* fixed issue #9
+	* added method to driver.getTraversal(...);
