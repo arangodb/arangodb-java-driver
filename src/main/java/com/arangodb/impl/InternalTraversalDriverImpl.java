@@ -46,7 +46,7 @@ public class InternalTraversalDriverImpl extends BaseArangoDriverImpl implements
 		String edgeCollection,
 		String startVertex,
 		Class<V> vertexClazz,
-		Class<E> edgeClass,
+		Class<E> edgeClazz,
 		String filter,
 		Long minDepth,
 		Long maxDepth,
@@ -127,12 +127,7 @@ public class InternalTraversalDriverImpl extends BaseArangoDriverImpl implements
 		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(baseUrl, databaseName, "/_api/traversal"),
 			null, body);
 
-		// TraversalEntity<V, E> traversal = createEntity(response,
-		// TraversalEntity.class);
-		//
-		// return traversal;
-
-		return null;
+		return createEntity(response, TraversalEntity.class, vertexClazz, edgeClazz);
 	}
 
 }

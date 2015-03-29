@@ -5037,7 +5037,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		String edgeCollection,
 		String startVertex,
 		Class<V> vertexClazz,
-		Class<E> edgeClass,
+		Class<E> edgeClazz,
 		String filter,
 		Long minDepth,
 		Long maxDepth,
@@ -5054,7 +5054,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Long maxIterations) throws ArangoException {
 
 		return this.traversalDriver.getTraversal(getDefaultDatabase(), graphName, edgeCollection, startVertex,
-			vertexClazz, edgeClass, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy,
+			vertexClazz, edgeClazz, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy,
 			order, itemOrder, verticesUniqueness, edgesUniqueness, maxIterations);
 	}
 }

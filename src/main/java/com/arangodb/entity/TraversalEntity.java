@@ -23,19 +23,5 @@ package com.arangodb.entity;
 /**
  * @author a-brandt
  */
-public class TraversalEntity<V, E> extends BaseEntity {
-
-	/**
-	 * Visited vertices and edges.
-	 */
-	private VisitedEntity<V, E> visited;
-
-	public VisitedEntity<V, E> getVisited() {
-		return visited;
-	}
-
-	public void setVisited(VisitedEntity<V, E> visited) {
-		this.visited = visited;
-	}
-
+public class TraversalEntity<V, T> extends DocumentEntity<VisitedEntity<V, T>> {
 }

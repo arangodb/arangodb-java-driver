@@ -27,7 +27,7 @@ import com.arangodb.entity.marker.VertexEntity;
 /**
  * @author a-brandt
  */
-public class VisitedEntity<V, E> extends BaseEntity {
+public class VisitedEntity<V, E> {
 
 	/**
 	 * List of vertices.

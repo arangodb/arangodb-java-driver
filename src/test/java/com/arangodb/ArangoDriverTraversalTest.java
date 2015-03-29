@@ -20,8 +20,13 @@
 
 package com.arangodb;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +38,9 @@ import com.arangodb.InternalTraversalDriver.Strategy;
 import com.arangodb.InternalTraversalDriver.Uniqueness;
 import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
+import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.TraversalEntity;
+import com.arangodb.entity.VisitedEntity;
 import com.arangodb.entity.marker.VertexEntity;
 
 /**
@@ -91,6 +98,8 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 	public void test_create_vertex() throws ArangoException {
 		String edgeCollection = null;
 		String startVertex = "person/Alice";
+		Class<Person> vertexClass = Person.class;
+		Class<Map> edgeClass = Map.class;
 		String filter = null;
 		Long minDepth = null;
 		Long maxDepth = null;
@@ -106,10 +115,32 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		Uniqueness edgesUniqueness = null;
 		Long maxIterations = null;
 
-		TraversalEntity<Object, Object> traversal = driver.getTraversal(graphName, edgeCollection, startVertex, null,
-			null, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy, order, itemOrder,
-			verticesUniqueness, edgesUniqueness, maxIterations);
+		TraversalEntity<Person, Map> traversal = driver.getTraversal(graphName, edgeCollection, startVertex,
+			vertexClass, edgeClass, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy,
+			order, itemOrder, verticesUniqueness, edgesUniqueness, maxIterations);
 
+		VisitedEntity<Person, Map> visited = traversal.getEntity();
+		assertThat(visited, is(notNullValue()));
+
+		List<VertexEntity<Person>> vertices = visited.getVertices();
+		assertThat(vertices, is(notNullValue()));
+		assertThat(vertices.size(), is(4));
+		assertThat(vertices.get(0).getEntity().getName(), is("Alice"));
+		assertThat(vertices.get(1).getEntity().getName(), is("Bob"));
+		assertThat(vertices.get(2).getEntity().getName(), is("Charlie"));
+		assertThat(vertices.get(3).getEntity().getName(), is("Dave"));
+
+		List<PathEntity<Person, Map>> paths = visited.getPaths();
+		assertThat(paths, is(notNullValue()));
+		assertThat(paths.size(), is(4));
+
+		// start vertex!
+		assertThat(paths.get(0).getEdges().size(), is(0));
+		assertThat(paths.get(0).getVertices().size(), is(1));
+		assertThat(paths.get(0).getVertices().get(0).getEntity().getName(), is("Alice"));
+
+		assertThat(paths.get(3).getEdges().size(), is(2));
+		assertThat(paths.get(3).getVertices().size(), is(3));
 	}
 
 	private VertexEntity<Person> createPerson(String name) throws ArangoException {
@@ -131,6 +162,6 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		public void setName(String name) {
 			this.name = name;
 		}
-
 	}
+
 }

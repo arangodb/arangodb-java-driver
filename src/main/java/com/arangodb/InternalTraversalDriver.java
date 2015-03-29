@@ -26,23 +26,30 @@ import com.arangodb.impl.BaseDriverInterface;
 public interface InternalTraversalDriver extends BaseDriverInterface {
 
 	public enum Direction {
-		OUTBOUND, INBOUND, ANY
+		OUTBOUND,
+		INBOUND,
+		ANY
 	}
 
 	public enum Strategy {
-		DEPTHFIRST, BREADTHFIRST
+		DEPTHFIRST,
+		BREADTHFIRST
 	}
 
 	public enum Order {
-		PREORDER, POSTORDER
+		PREORDER,
+		POSTORDER
 	}
 
 	public enum ItemOrder {
-		FORWARD, BACKWARD
+		FORWARD,
+		BACKWARD
 	}
 
 	public enum Uniqueness {
-		NONE, GLOBAL, PATH
+		NONE,
+		GLOBAL,
+		PATH
 	}
 
 	<V, E> TraversalEntity<V, E> getTraversal(
@@ -51,7 +58,7 @@ public interface InternalTraversalDriver extends BaseDriverInterface {
 		String edgeCollection,
 		String startVertex,
 		Class<V> vertexClazz,
-		Class<E> edgeClass,
+		Class<E> edgeClazz,
 		String filter,
 		Long minDepth,
 		Long maxDepth,

@@ -46,7 +46,7 @@ import com.arangodb.entity.marker.VertexEntity;
 /**
  * @author a-brandt
  */
-public class PathEntity<V, E> extends BaseEntity {
+public class PathEntity<V, E> {
 
 	/**
 	 * List of edges.
