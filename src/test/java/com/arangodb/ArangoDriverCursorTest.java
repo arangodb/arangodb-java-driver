@@ -18,6 +18,7 @@ package com.arangodb;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -220,5 +221,53 @@ public class ArangoDriverCursorTest extends BaseTest {
     
   }
 
-  
+  @Test
+  public void test_executeQueryUniqueResult() throws ArangoException {
+    
+    // Collectionを作る
+    String collectionName = "unit_test_query_test";
+    try {
+      driver.createCollection(collectionName);
+    } catch (ArangoException e) {}
+    driver.truncateCollection(collectionName);
+    
+    // テストデータを作る
+    for (int i = 0; i < 100; i++) {
+      TestComplexEntity01 value = new TestComplexEntity01(
+          "user_" + (i % 10), 
+          "desc" + (i % 10), 
+          i);
+      driver.createDocument(collectionName, value, null, null);
+    }
+    
+    //String query = "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
+    String query = "FOR t IN unit_test_query_test FILTER t.age >= @age LIMIT 2 RETURN t";
+    Map<String, Object> bindVars = new MapBuilder().put("age", 10).get();
+    
+    // 全件とれる範囲
+    {
+      CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01>executeQuery(
+          query, bindVars, TestComplexEntity01.class, true, 0);
+      assertThat(result.size(), is(2));
+      assertThat(result.getCount(), is(2));
+      String msg = "";
+      try {
+        result.getUniqueResult();
+      } catch (NonUniqueResultException e) {
+        msg = e.getMessage();     
+      }
+      assertThat(msg, startsWith("Query did not return a unique result:"));
+    }
+    
+    //String query = "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
+    query = "FOR t IN unit_test_query_test FILTER t.age == @age LIMIT 2 RETURN t";
+    {
+      CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01>executeQuery(
+          query, bindVars, TestComplexEntity01.class, true, 0);
+      assertThat(result.size(), is(1));
+      assertThat(result.getCount(), is(1));
+      TestComplexEntity01 entity = result.getUniqueResult();      
+      assertThat(entity.getAge(), is(10));
+    }
+  }
 }
