@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.arangodb.NonUniqueResultException;
 import com.arangodb.util.CollectionUtils;
 
 /**
@@ -101,6 +102,13 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
   
   public List<? extends T> getResults() {
     return results;
+  }
+  
+  public T getUniqueResult() {
+    int size = size();
+    if (size == 0) return null;
+    if (size > 1) throw new NonUniqueResultException(size);
+    return get(0);
   }
 
   public boolean isHasMore() {
