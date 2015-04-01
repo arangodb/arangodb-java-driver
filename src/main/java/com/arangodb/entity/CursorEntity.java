@@ -27,144 +27,150 @@ import com.arangodb.util.CollectionUtils;
  * Cursor entity that represents the result of a AQL query.
  *
  * @author tamtam180 - kirscheless at gmail.com
+ * @author mrbatista
  *
  */
 public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 
-  /**
-   * True if the cursor has more results.
-   */
-  boolean hasMore;
+	/**
+	 * True if the cursor has more results.
+	 */
+	boolean hasMore;
 
-  /**
-   * The amount of results in the cursor
-   */
-  int count = -1;
-  
-  /**
-   * The number of results before the final LIMIT
-   */
-  int fullCount = -1;
+	/**
+	 * The amount of results in the cursor
+	 */
+	int count = -1;
 
-  /**
-   * The cursor id
-   */
-  long cursorId = -1;
+	/**
+	 * The number of results before the final LIMIT
+	 */
+	int fullCount = -1;
 
-  /**
-   * A list of bind variables returned by the query
-   */
-  List<String> bindVars;
+	/**
+	 * The cursor id
+	 */
+	long cursorId = -1;
 
-  /**
-   * A list of extra data returned by the query
-   */
-  Map<String, Object> extra;
+	/**
+	 * A list of bind variables returned by the query
+	 */
+	List<String> bindVars;
 
-  /**
-   * A list of objects containing the results
-   */
-  List<? extends T> results;
-  
-  public Iterator<T> iterator() {
-    return (Iterator<T>) CollectionUtils.safetyIterator(results);
-  }
+	/**
+	 * A list of extra data returned by the query
+	 */
+	Map<String, Object> extra;
 
-  /**
-   * The size of the cursor results.
-   *
-   * @return int
-   */
-  public int size() {
-    if (results == null) {
-      return 0;
-    }
-    return results.size();
-  }
+	/**
+	 * A list of objects containing the results
+	 */
+	List<? extends T> results;
 
-  /**
-   * Returns the cursor element at position *index*
-   *
-   * @param index
-   * @return Object
-   */
-  public T get(int index) {
-    rangeCheck(index);
-    return results.get(index);
-  }
+	@Override
+	public Iterator<T> iterator() {
+		return (Iterator<T>) CollectionUtils.safetyIterator(results);
+	}
 
-  private void rangeCheck(int index) {
-    int size = size();
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-    }
-  }  
-  
-  public List<? extends T> getResults() {
-    return results;
-  }
-  
-  public T getUniqueResult() {
-    int size = size();
-    if (size == 0) return null;
-    if (size > 1) throw new NonUniqueResultException(size);
-    return get(0);
-  }
+	/**
+	 * The size of the cursor results.
+	 *
+	 * @return int
+	 */
+	public int size() {
+		if (results == null) {
+			return 0;
+		}
+		return results.size();
+	}
 
-  public boolean isHasMore() {
-    return hasMore;
-  }
+	/**
+	 * Returns the cursor element at position *index*
+	 *
+	 * @param index
+	 * @return Object
+	 */
+	public T get(int index) {
+		rangeCheck(index);
+		return results.get(index);
+	}
 
-  public boolean hasMore() {
-    return hasMore;
-  }
+	private void rangeCheck(int index) {
+		int size = size();
+		if (index < 0 || index >= size) {
+			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+		}
+	}
 
-  public int getFullCount() {
-    return fullCount;
-  }
+	public List<? extends T> getResults() {
+		return results;
+	}
 
-  public int getCount() {
-    return count;
-  }
+	public T getUniqueResult() {
+		int size = size();
+		if (size == 0) {
+			return null;
+		}
+		if (size > 1) {
+			throw new NonUniqueResultException(size);
+		}
+		return get(0);
+	}
 
-  public long getCursorId() {
-    return cursorId;
-  }
+	public boolean isHasMore() {
+		return hasMore;
+	}
 
-  public List<String> getBindVars() {
-    return bindVars;
-  }
-  
-  public Map<String, Object> getExtra() {
-    return extra;
-  }
+	public boolean hasMore() {
+		return hasMore;
+	}
 
-  public void setResults(List<T> results) {
-    this.results = results;
-  }
+	public int getFullCount() {
+		return fullCount;
+	}
 
-  public void setHasMore(boolean hasMore) {
-    this.hasMore = hasMore;
-  }
-  
-  public void setFullCount(int count) {
-    this.fullCount = count;
-  }
+	public int getCount() {
+		return count;
+	}
 
-  public void setCount(int count) {
-    this.count = count;
-  }
+	public long getCursorId() {
+		return cursorId;
+	}
 
-  public void setCursorId(long cursorId) {
-    this.cursorId = cursorId;
-  }
+	public List<String> getBindVars() {
+		return bindVars;
+	}
 
-  public void setBindVars(List<String> bindVars) {
-    this.bindVars = bindVars;
-  }
-  
-  public void setExtra(Map<String, Object> extra) {
-    this.extra = extra;
-  }
-  
+	public Map<String, Object> getExtra() {
+		return extra;
+	}
+
+	public void setResults(List<T> results) {
+		this.results = results;
+	}
+
+	public void setHasMore(boolean hasMore) {
+		this.hasMore = hasMore;
+	}
+
+	public void setFullCount(int count) {
+		this.fullCount = count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public void setCursorId(long cursorId) {
+		this.cursorId = cursorId;
+	}
+
+	public void setBindVars(List<String> bindVars) {
+		this.bindVars = bindVars;
+	}
+
+	public void setExtra(Map<String, Object> extra) {
+		this.extra = extra;
+	}
+
 }
