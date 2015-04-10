@@ -89,7 +89,8 @@ public class ArangoDriverDocumentKeyTest {
 		DocumentEntity<DocumentKeyTestEntity1> doc = driver.createDocument("unit_test_arango_001", obj, true, null);
 		assertThat(doc.getDocumentKey(), is("s1"));
 		assertThat(doc.getDocumentHandle(), is("unit_test_arango_001/s1"));
-		assertThat(doc.getEntity(), is(nullValue()));
+		assertThat(doc.getEntity(), is(notNullValue()));
+		assertThat(doc.getEntity(), is(obj));
 
 		// get
 		doc = driver.getDocument(doc.getDocumentHandle(), DocumentKeyTestEntity1.class);
@@ -220,8 +221,7 @@ public class ArangoDriverDocumentKeyTest {
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
 		try {
-			DocumentEntity<DocumentKeyTestEntity1> doc3 = driver.getDocument(doc2.getDocumentHandle(),
-				DocumentKeyTestEntity1.class);
+			driver.getDocument(doc2.getDocumentHandle(), DocumentKeyTestEntity1.class);
 			fail();
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(404));

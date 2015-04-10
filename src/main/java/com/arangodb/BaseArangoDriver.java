@@ -18,6 +18,7 @@ package com.arangodb;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -266,7 +267,7 @@ public abstract class BaseArangoDriver {
 				entity = ReflectionUtils.newInstance(c);
 			} else if (res.isBatchRepsonse()) {
 				try {
-					entity = (T) clazz.newInstance();
+					entity = clazz.newInstance();
 				} catch (Exception e) {
 					throw new ArangoException(e);
 				}
@@ -367,11 +368,11 @@ public abstract class BaseArangoDriver {
 		// res.getContentType());
 	}
 
-	protected String createEndpointUrl(String baseUrl, String database, Object... paths) throws ArangoException {
+	protected String createEndpointUrl(String database, Object... paths) throws ArangoException {
 
 		// FIXME: Very very foolish implement.
 
-		ArrayList<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<String>();
 
 		if (database != null) {
 			validateDatabaseName(database, false);
@@ -383,7 +384,7 @@ public abstract class BaseArangoDriver {
 				list.add(path.toString());
 			}
 		}
-		return baseUrl + StringUtils.join(false, list);
+		return StringUtils.join(false, list);
 	}
 
 }

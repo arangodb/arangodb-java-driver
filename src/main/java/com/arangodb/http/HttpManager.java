@@ -17,6 +17,7 @@
 package com.arangodb.http;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +79,7 @@ public class HttpManager {
 
 	private static final ContentType APPLICATION_JSON_UTF8 = ContentType.create("application/json", "utf-8");
 
-	private Logger logger = LoggerFactory.getLogger(HttpManager.class);
+	private static Logger logger = LoggerFactory.getLogger(HttpManager.class);
 
 	private PoolingHttpClientConnectionManager cm;
 	private CloseableHttpClient client;
@@ -131,6 +132,7 @@ public class HttpManager {
 		// KeepAlive Strategy
 		ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
 
+			@Override
 			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
 				// Honor 'keep-alive' header
 				HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
@@ -316,14 +318,55 @@ public class HttpManager {
 	}
 
 	/**
+	 * Executes the request and handles connect exceptions
 	 * 
 	 * @param requestEntity
-	 * @return
+	 *            the request
+	 * @return the response of the request
+	 * 
 	 * @throws ArangoException
 	 */
 	public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
+		int retries = 0;
+		int connectRetryCount = configure.getConnectRetryCount();
 
-		String url = buildUrl(requestEntity);
+		while (true) {
+			try {
+				return executeInternal(configure.getBaseUrl(), requestEntity);
+			} catch (ConnectException ex) {
+				retries++;
+				if (connectRetryCount > 0 && retries > connectRetryCount) {
+					logger.error(ex.getMessage(), ex);
+					throw new ArangoException(ex);
+				}
+
+				if (configure.hasFallbackHost()) {
+					configure.changeCurrentHost();
+				}
+
+				logger.warn(ex.getMessage(), ex);
+				try {
+					// 1000 milliseconds is one second.
+					Thread.sleep(configure.getConnectRetryWait());
+				} catch (InterruptedException iex) {
+					Thread.currentThread().interrupt();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Executes the request
+	 * 
+	 * @param requestEntity
+	 *            the request
+	 * @return the response of the request
+	 * @throws ArangoException
+	 */
+	private HttpResponseEntity executeInternal(String baseUrl, HttpRequestEntity requestEntity) throws ArangoException,
+			ConnectException {
+
+		String url = buildUrl(baseUrl, requestEntity);
 
 		if (logger.isDebugEnabled()) {
 			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
@@ -457,25 +500,25 @@ public class HttpManager {
 			}
 
 			return responseEntity;
-
+		} catch (ConnectException ex) {
+			throw ex;
 		} catch (ClientProtocolException e) {
 			throw new ArangoException(e);
 		} catch (IOException e) {
 			throw new ArangoException(e);
 		}
-
 	}
 
-	public static String buildUrl(HttpRequestEntity requestEntity) {
+	public static String buildUrl(String baseUrl, HttpRequestEntity requestEntity) {
 		if (requestEntity.parameters != null && !requestEntity.parameters.isEmpty()) {
 			String paramString = URLEncodedUtils.format(toList(requestEntity.parameters), "utf-8");
 			if (requestEntity.url.contains("?")) {
-				return requestEntity.url + "&" + paramString;
+				return baseUrl + requestEntity.url + "&" + paramString;
 			} else {
-				return requestEntity.url + "?" + paramString;
+				return baseUrl + requestEntity.url + "?" + paramString;
 			}
 		}
-		return requestEntity.url;
+		return baseUrl + requestEntity.url;
 	}
 
 	private static List<NameValuePair> toList(Map<String, Object> parameters) {

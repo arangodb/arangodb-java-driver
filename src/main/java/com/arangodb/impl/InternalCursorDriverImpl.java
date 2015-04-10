@@ -35,138 +35,133 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalCursorDriver {
 
-  InternalCursorDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
-    super(configure, httpManager);
-  }
+	InternalCursorDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+		super(configure, httpManager);
+	}
 
-  @Override
-  public CursorEntity<?> validateQuery(String database, String query) throws ArangoException {
+	@Override
+	public CursorEntity<?> validateQuery(String database, String query) throws ArangoException {
 
-    HttpResponseEntity res = httpManager.doPost(
-      createEndpointUrl(baseUrl, database, "/_api/query"),
-      null,
-      EntityFactory.toJsonString(new MapBuilder("query", query).get()));
-//    try {
-      CursorEntity<?> entity = createEntity(res, CursorEntity.class);
-      return entity;
-//    } catch (ArangoException e) {
-//      return (CursorEntity<?>) e.getEntity();
-//    }
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/query"), null,
+			EntityFactory.toJsonString(new MapBuilder("query", query).get()));
+		// try {
+		CursorEntity<?> entity = createEntity(res, CursorEntity.class);
+		return entity;
+		// } catch (ArangoException e) {
+		// return (CursorEntity<?>) e.getEntity();
+		// }
 
-  }
+	}
 
-  // ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
-  // ※ここでは単純にコールするだけ
+	// ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
+	// ※ここでは単純にコールするだけ
 
-  @Override
-  public <T> CursorEntity<T> executeQuery(
-    String database,
-    String query,
-    Map<String, Object> bindVars,
-    Class<T> clazz,
-    Boolean calcCount,
-    Integer batchSize,
-    Boolean fullCount) throws ArangoException {
+	@Override
+	public <T> CursorEntity<T> executeQuery(
+		String database,
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize,
+		Boolean fullCount) throws ArangoException {
 
-    HttpResponseEntity res = httpManager.doPost(
-      createEndpointUrl(baseUrl, database, "/_api/cursor"),
-      null,
-      EntityFactory.toJsonString(new MapBuilder().put("query", query)
-          .put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars).put("count", calcCount)
-          .put("batchSize", batchSize).put("options", new MapBuilder().put("fullCount", fullCount).get()).get()));
-    try {
-      CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
-      // resultを処理する
-      // EntityFactory.createResult(entity, clazz);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
+		HttpResponseEntity res = httpManager.doPost(
+			createEndpointUrl(database, "/_api/cursor"),
+			null,
+			EntityFactory.toJsonString(new MapBuilder().put("query", query)
+					.put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars).put("count", calcCount)
+					.put("batchSize", batchSize).put("options", new MapBuilder().put("fullCount", fullCount).get())
+					.get()));
+		try {
+			CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
+			// resultを処理する
+			// EntityFactory.createResult(entity, clazz);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
 
-  }
+	}
 
-  // ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
-  // ※ここでは単純にコールするだけ
+	// ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
+	// ※ここでは単純にコールするだけ
 
-  @Override
-  public <T> CursorEntity<T> executeQuery(
-    String database,
-    String query,
-    Map<String, Object> bindVars,
-    Class<T> clazz,
-    Boolean calcCount,
-    Integer batchSize) throws ArangoException {
+	@Override
+	public <T> CursorEntity<T> executeQuery(
+		String database,
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize) throws ArangoException {
 
-    return executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
+		return executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
 
-  }
+	}
 
-  @Override
-  public <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException {
+	@Override
+	public <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException {
 
-    HttpResponseEntity res = httpManager.doPut(
-      createEndpointUrl(baseUrl, database, "/_api/cursor", cursorId),
-      null,
-      null);
+		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/cursor", cursorId), null, null);
 
-    try {
-      CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
-      // resultを処理する
-      // EntityFactory.createResult(entity, clazz);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
+		try {
+			CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
+			// resultを処理する
+			// EntityFactory.createResult(entity, clazz);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
 
-  }
+	}
 
-  @Override
-  public DefaultEntity finishQuery(String database, long cursorId) throws ArangoException {
-    HttpResponseEntity res = httpManager
-        .doDelete(createEndpointUrl(baseUrl, database, "/_api/cursor/", cursorId), null);
+	@Override
+	public DefaultEntity finishQuery(String database, long cursorId) throws ArangoException {
+		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/cursor/", cursorId), null);
 
-    try {
-      DefaultEntity entity = createEntity(res, DefaultEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      // TODO Mode
-      if (e.getErrorNumber() == 1600) {
-        // 既に削除されている
-        return (DefaultEntity) e.getEntity();
-      }
-      throw e;
-    }
-  }
+		try {
+			DefaultEntity entity = createEntity(res, DefaultEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			// TODO Mode
+			if (e.getErrorNumber() == 1600) {
+				// 既に削除されている
+				return (DefaultEntity) e.getEntity();
+			}
+			throw e;
+		}
+	}
 
-  @Override
-  public <T> CursorResultSet<T> executeQueryWithResultSet(
-    String database,
-    String query,
-    Map<String, Object> bindVars,
-    Class<T> clazz,
-    Boolean calcCount,
-    Integer batchSize,
-    Boolean fullCount) throws ArangoException {
+	@Override
+	public <T> CursorResultSet<T> executeQueryWithResultSet(
+		String database,
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize,
+		Boolean fullCount) throws ArangoException {
 
-    CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
-    CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
-    return rs;
+		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
+		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+		return rs;
 
-  }
+	}
 
-  @Override
-  public <T> CursorResultSet<T> executeQueryWithResultSet(
-    String database,
-    String query,
-    Map<String, Object> bindVars,
-    Class<T> clazz,
-    Boolean calcCount,
-    Integer batchSize) throws ArangoException {
+	@Override
+	public <T> CursorResultSet<T> executeQueryWithResultSet(
+		String database,
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize) throws ArangoException {
 
-    CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
-    CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
-    return rs;
+		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
+		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+		return rs;
 
-  }
+	}
 
 }

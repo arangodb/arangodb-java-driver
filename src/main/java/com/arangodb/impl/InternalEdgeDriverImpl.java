@@ -51,8 +51,7 @@ public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl imple
 
 		String body = EntityFactory.toJsonString(object);
 
-		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(baseUrl, graphName, "/_api/edge"), params,
-			body);
+		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(graphName, "/_api/edge"), params, body);
 
 		EdgeEntity<T> edgeEntity = createEntity(response, EdgeEntity.class);
 		edgeEntity.setEntity(object);

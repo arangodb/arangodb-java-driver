@@ -18,6 +18,8 @@ package com.arangodb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -50,10 +52,9 @@ public class ArangoConfigure {
 	/** default property file */
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
-	/** server port */
-	int port;
-	/** server host */
-	String host;
+	List<ArangoHost> arangoHosts;
+	int currentArangoHost;
+
 	/** connection timeout(ms) */
 	int connectionTimeout = -1;
 	/** socket read timeout(ms) */
@@ -77,6 +78,16 @@ public class ArangoConfigure {
 	/** http retry count */
 	int retryCount = 3;
 
+	/**
+	 * number of connect retries (0 means infinite)
+	 */
+	int connectRetryCount = 3;
+
+	/**
+	 * milliseconds
+	 */
+	int connectRetryWait = 1000;
+
 	/** Default Database */
 	String defaultDatabase;
 
@@ -95,8 +106,11 @@ public class ArangoConfigure {
 	}
 
 	private void init(String propertyPath) {
-		this.host = DEFAULT_HOST;
-		this.port = DEFAULT_PORT;
+		arangoHosts = new ArrayList<ArangoHost>();
+		ArangoHost defaultHost = new ArangoHost(DEFAULT_HOST, DEFAULT_PORT);
+		arangoHosts.add(defaultHost);
+		currentArangoHost = 0;
+
 		this.maxPerConnection = DEFAULT_MAX_PER_CONNECTION;
 		this.maxTotalConnection = DEFAULT_MAX_CONNECTION;
 		loadProperties(propertyPath);
@@ -128,12 +142,29 @@ public class ArangoConfigure {
 				//
 				String port = prop.getProperty("port");
 				if (port != null) {
-					setPort(Integer.parseInt(port));
+					arangoHosts.get(0).setPort(Integer.parseInt(port));
 				}
 
 				String host = prop.getProperty("host");
 				if (host != null) {
-					setHost(host);
+					arangoHosts.get(0).setHost(host);
+				}
+
+				String arangoHost = prop.getProperty("arangoHost");
+				if (arangoHost != null) {
+					ArangoHost ah = parseArangoHost(arangoHost);
+					if (ah != null) {
+						arangoHosts.get(0).setHost(ah.getHost());
+						arangoHosts.get(0).setPort(ah.getPort());
+					}
+				}
+
+				String fallbackArangoHost = prop.getProperty("fallbackArangoHost");
+				if (fallbackArangoHost != null) {
+					ArangoHost ah = parseArangoHost(fallbackArangoHost);
+					if (ah != null) {
+						addFallbackArangoHost(ah);
+					}
 				}
 
 				String timeout = prop.getProperty("timeout");
@@ -171,6 +202,16 @@ public class ArangoConfigure {
 					setRetryCount(Integer.parseInt(retryCount));
 				}
 
+				String connnectRetryCount = prop.getProperty("connnectRetryCount");
+				if (connnectRetryCount != null) {
+					setConnectRetryCount(Integer.parseInt(connnectRetryCount));
+				}
+
+				String connectRetryWait = prop.getProperty("connectRetryWait");
+				if (connectRetryWait != null) {
+					setConnectRetryWait(Integer.parseInt(connectRetryWait));
+				}
+
 				String user = prop.getProperty("user");
 				if (user != null) {
 					setUser(user);
@@ -206,6 +247,19 @@ public class ArangoConfigure {
 		}
 	}
 
+	private ArangoHost parseArangoHost(String str) {
+		if (str == null) {
+			return null;
+		}
+
+		String[] split = str.split(":", 2);
+		if (split.length != 2) {
+			return null;
+		}
+
+		return new ArangoHost(split[0], Integer.parseInt(split[1]));
+	}
+
 	public void init() {
 		this.httpManager = new BatchHttpManager(this);
 		this.httpManager.init();
@@ -218,14 +272,34 @@ public class ArangoConfigure {
 		}
 	}
 
-	// TODO changes this for multiple host support
 	public String getBaseUrl() {
-		return "http://" + this.host + ":" + this.port;
+		ArangoHost currentHost = getCurrentHost();
+
+		return "http://" + currentHost.getHost() + ":" + currentHost.getPort();
 	}
 
-	// TODO changes this for multiple host support
 	public String getEndpoint() {
-		return "tcp://" + this.host + ":" + this.port;
+		ArangoHost currentHost = getCurrentHost();
+
+		return "tcp://" + currentHost.getHost() + ":" + currentHost.getPort();
+	}
+
+	private ArangoHost getCurrentHost() {
+		return arangoHosts.get(currentArangoHost);
+	}
+
+	public boolean hasFallbackHost() {
+		return arangoHosts.size() > 1;
+	}
+
+	public ArangoHost changeCurrentHost() {
+		currentArangoHost++;
+
+		if (currentArangoHost >= arangoHosts.size()) {
+			currentArangoHost = 0;
+		}
+
+		return getCurrentHost();
 	}
 
 	public static String getDefaultHost() {
@@ -241,31 +315,51 @@ public class ArangoConfigure {
 	}
 
 	/**
-	 * Don't use method. Please use {@link #getPort() getPort}
+	 * Get the server port number
+	 * 
+	 * Don't use method. Please use {@link #getArangoHost() getArangoHost}
 	 * 
 	 * @deprecated
+	 * @return the port number
 	 */
 	@Deprecated
 	public int getClientPort() {
-		return port;
+		return arangoHosts.get(0).getPort();
 	}
 
 	/**
 	 * Get the server port number
 	 * 
+	 * Don't use method. Please use {@link #getArangoHost() getArangoHost}
+	 * 
+	 * @deprecated
 	 * @return the port number
 	 */
+	@Deprecated
 	public int getPort() {
-		return port;
+		return arangoHosts.get(0).getPort();
 	}
 
 	/**
 	 * Get the database host name
 	 * 
+	 * Don't use method. Please use {@link #getArangoHost() getArangoHost}
+	 * 
+	 * @deprecated
 	 * @return the host name
 	 */
+	@Deprecated
 	public String getHost() {
-		return host;
+		return arangoHosts.get(0).getHost();
+	}
+
+	/**
+	 * Get the default database host name and port
+	 * 
+	 * @return the host name and port
+	 */
+	public ArangoHost getArangoHost() {
+		return arangoHosts.get(0);
 	}
 
 	public int getConnectionTimeout() {
@@ -293,33 +387,70 @@ public class ArangoConfigure {
 	}
 
 	/**
-	 * Don't use this method. Please use {@link #setPort(int) setPort}
+	 * Set the port number of the database
+	 * 
+	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
+	 * setArangoHost}
 	 * 
 	 * @deprecated
+	 * @param port
+	 *            the port number
 	 */
 	@Deprecated
-	public void setClinetPort(int clinetPort) {
-		this.port = clinetPort;
+	public void setClinetPort(int clientPort) {
+		arangoHosts.get(0).setPort(clientPort);
 	}
 
 	/**
 	 * Set the port number of the database
 	 * 
+	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
+	 * setArangoHost}
+	 * 
+	 * @deprecated
 	 * @param port
 	 *            the port number
 	 */
+	@Deprecated
 	public void setPort(int port) {
-		this.port = port;
+		arangoHosts.get(0).setPort(port);
 	}
 
 	/**
 	 * Set the host name of the database
 	 * 
+	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
+	 * setArangoHost}
+	 * 
+	 * @deprecated
 	 * @param host
 	 *            the host name
 	 */
+	@Deprecated
 	public void setHost(String host) {
-		this.host = host;
+		arangoHosts.get(0).setHost(host);
+	}
+
+	/**
+	 * Set the host name and port of the database
+	 * 
+	 * @param arangoHost
+	 *            the host name and port
+	 */
+	public void setArangoHost(ArangoHost arangoHost) {
+		ArangoHost host = arangoHosts.get(0);
+		host.setHost(arangoHost.getHost());
+		host.setPort(arangoHost.getPort());
+	}
+
+	/**
+	 * Set the host name and port of the fallback database
+	 * 
+	 * @param arangoHost
+	 *            the host name and port
+	 */
+	public void addFallbackArangoHost(ArangoHost arangoHost) {
+		arangoHosts.add(arangoHost);
 	}
 
 	public void setConnectionTimeout(int connectionTimeout) {
@@ -407,4 +538,33 @@ public class ArangoConfigure {
 	public void setStaleConnectionCheck(boolean staleConnectionCheck) {
 		this.staleConnectionCheck = staleConnectionCheck;
 	}
+
+	public int getConnectRetryCount() {
+		return connectRetryCount;
+	}
+
+	/**
+	 * Set number of connect retries (0 means infinite)
+	 * 
+	 * @param connectRetryCount
+	 *            number of connect retries
+	 */
+	public void setConnectRetryCount(int connectRetryCount) {
+		this.connectRetryCount = connectRetryCount;
+	}
+
+	public int getConnectRetryWait() {
+		return connectRetryWait;
+	}
+
+	/**
+	 * Set wait time for a connect retry
+	 * 
+	 * @param connectRetryWait
+	 *            milliseconds to wait
+	 */
+	public void setConnectRetryWait(int connectRetryWait) {
+		this.connectRetryWait = connectRetryWait;
+	}
+
 }

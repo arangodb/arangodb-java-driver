@@ -34,171 +34,158 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalIndexDriver {
 
-  InternalIndexDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
-    super(configure , null,  httpManager);
-  }
+	InternalIndexDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+		super(configure, null, httpManager);
+	}
 
-  @Override
-  public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, boolean sparse, String... fields) throws ArangoException {
+	@Override
+	public IndexEntity createIndex(
+		String database,
+		String collectionName,
+		IndexType type,
+		boolean unique,
+		boolean sparse,
+		String... fields) throws ArangoException {
 
-    if (type == IndexType.PRIMARY) {
-      throw new IllegalArgumentException("cannot create primary index.");
-    }
-    if (type == IndexType.EDGE) {
-      throw new IllegalArgumentException("cannot create edge index.");
-    }
-    if (type == IndexType.CAP) {
-      throw new IllegalArgumentException("cannot create cap index. use createCappedIndex.");
-    }
-    
-    validateCollectionName(collectionName);
-    HttpResponseEntity res = httpManager.doPost(
-        createEndpointUrl(baseUrl, database, "/_api/index"), 
-        new MapBuilder("collection", collectionName).get(),
-        EntityFactory.toJsonString(
-            new MapBuilder()
-            .put("type", type.name().toLowerCase(Locale.US))
-            .put("unique", unique)
-            .put("sparse", sparse)
-            .put("fields", fields)
-            .get()));
-    
-    // HTTP:200,201,404
-    
-    try {
-      IndexEntity entity = createEntity(res, IndexEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
-    
-  }
-  
-  
-  @Override
-  public IndexEntity createIndex(String database, String collectionName, IndexType type, boolean unique, String... fields) throws ArangoException {
-    return createIndex(database, collectionName, type, unique, false, fields);
-  }
+		if (type == IndexType.PRIMARY) {
+			throw new IllegalArgumentException("cannot create primary index.");
+		}
+		if (type == IndexType.EDGE) {
+			throw new IllegalArgumentException("cannot create edge index.");
+		}
+		if (type == IndexType.CAP) {
+			throw new IllegalArgumentException("cannot create cap index. use createCappedIndex.");
+		}
 
-  @Override
-  public IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException {
-    
-    validateCollectionName(collectionName);
-    HttpResponseEntity res = httpManager.doPost(
-        createEndpointUrl(baseUrl, database, "/_api/index"), 
-        new MapBuilder("collection", collectionName).get(),
-        EntityFactory.toJsonString(
-            new MapBuilder()
-            .put("type", IndexType.CAP.name().toLowerCase(Locale.US))
-            .put("size", size)
-            .get()));
-    
-    // HTTP:200,201,404
-    
-    try {
-      IndexEntity entity = createEntity(res, IndexEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
-    
-  }
+		validateCollectionName(collectionName);
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"), new MapBuilder(
+				"collection", collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
+				.put("type", type.name().toLowerCase(Locale.US)).put("unique", unique).put("sparse", sparse)
+				.put("fields", fields).get()));
 
-  @Override
-  public IndexEntity createCappedByDocumentSizeIndex(String database, String collectionName, int byteSize) throws ArangoException {
+		// HTTP:200,201,404
 
-    validateCollectionName(collectionName);
-    HttpResponseEntity res = httpManager.doPost(
-      createEndpointUrl(baseUrl, database, "/_api/index"),
-      new MapBuilder("collection", collectionName).get(),
-      EntityFactory.toJsonString(
-        new MapBuilder()
-          .put("type", IndexType.CAP.name().toLowerCase(Locale.US))
-          .put("byteSize", byteSize)
-          .get()));
+		try {
+			IndexEntity entity = createEntity(res, IndexEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
 
-    // HTTP:200,201,404
+	}
 
-    try {
-      IndexEntity entity = createEntity(res, IndexEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
+	@Override
+	public IndexEntity createIndex(
+		String database,
+		String collectionName,
+		IndexType type,
+		boolean unique,
+		String... fields) throws ArangoException {
+		return createIndex(database, collectionName, type, unique, false, fields);
+	}
 
-  }
-  
-  @Override
-  public IndexEntity createFulltextIndex(String database, String collectionName, Integer minLength, String... fields) throws ArangoException {
+	@Override
+	public IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException {
 
-    validateCollectionName(collectionName);
-    HttpResponseEntity res = httpManager.doPost(
-        createEndpointUrl(baseUrl, database, "/_api/index"), 
-        new MapBuilder("collection", collectionName).get(),
-        EntityFactory.toJsonString(
-            new MapBuilder()
-            .put("type", IndexType.FULLTEXT.name().toLowerCase(Locale.US))
-            .put("minLength", minLength)
-            .put("fields", fields)
-            .get()));
-    
-    try {
-      IndexEntity entity = createEntity(res, IndexEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
-    
-  }
-  
-  @Override
-  public IndexEntity deleteIndex(String database, String indexHandle) throws ArangoException {
-    
-    validateDocumentHandle(indexHandle); // 書式同じなので
-    HttpResponseEntity res = httpManager.doDelete(
-        createEndpointUrl(baseUrl, database, "/_api/index", indexHandle), 
-        null);
-    
-    try {
-      IndexEntity entity = createEntity(res, IndexEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
-    
-  }
+		validateCollectionName(collectionName);
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"), new MapBuilder(
+				"collection", collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
+				.put("type", IndexType.CAP.name().toLowerCase(Locale.US)).put("size", size).get()));
 
-  @Override
-  public IndexEntity getIndex(String database, String indexHandle) throws ArangoException {
-    
-    validateDocumentHandle(indexHandle);
-    HttpResponseEntity res = httpManager.doGet(
-        createEndpointUrl(baseUrl, database, "/_api/index", indexHandle));
-    
-    try {
-      IndexEntity entity = createEntity(res, IndexEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
-    
-  }
+		// HTTP:200,201,404
 
-  @Override
-  public IndexesEntity getIndexes(String database, String collectionName) throws ArangoException {
-    
-    validateCollectionName(collectionName);
-    HttpResponseEntity res = httpManager.doGet(
-        createEndpointUrl(baseUrl, database, "/_api/index"),
-        new MapBuilder("collection", collectionName).get());
-    
-    try {
-      IndexesEntity entity = createEntity(res, IndexesEntity.class);
-      return entity;
-    } catch (ArangoException e) {
-      throw e;
-    }
-    
-  }
-  
+		try {
+			IndexEntity entity = createEntity(res, IndexEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
+
+	}
+
+	@Override
+	public IndexEntity createCappedByDocumentSizeIndex(String database, String collectionName, int byteSize)
+			throws ArangoException {
+
+		validateCollectionName(collectionName);
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"), new MapBuilder(
+				"collection", collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
+				.put("type", IndexType.CAP.name().toLowerCase(Locale.US)).put("byteSize", byteSize).get()));
+
+		// HTTP:200,201,404
+
+		try {
+			IndexEntity entity = createEntity(res, IndexEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
+
+	}
+
+	@Override
+	public IndexEntity createFulltextIndex(String database, String collectionName, Integer minLength, String... fields)
+			throws ArangoException {
+
+		validateCollectionName(collectionName);
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"), new MapBuilder(
+				"collection", collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
+				.put("type", IndexType.FULLTEXT.name().toLowerCase(Locale.US)).put("minLength", minLength)
+				.put("fields", fields).get()));
+
+		try {
+			IndexEntity entity = createEntity(res, IndexEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
+
+	}
+
+	@Override
+	public IndexEntity deleteIndex(String database, String indexHandle) throws ArangoException {
+
+		validateDocumentHandle(indexHandle); // 書式同じなので
+		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/index", indexHandle), null);
+
+		try {
+			IndexEntity entity = createEntity(res, IndexEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
+
+	}
+
+	@Override
+	public IndexEntity getIndex(String database, String indexHandle) throws ArangoException {
+
+		validateDocumentHandle(indexHandle);
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/index", indexHandle));
+
+		try {
+			IndexEntity entity = createEntity(res, IndexEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
+
+	}
+
+	@Override
+	public IndexesEntity getIndexes(String database, String collectionName) throws ArangoException {
+
+		validateCollectionName(collectionName);
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/index"), new MapBuilder(
+				"collection", collectionName).get());
+
+		try {
+			IndexesEntity entity = createEntity(res, IndexesEntity.class);
+			return entity;
+		} catch (ArangoException e) {
+			throw e;
+		}
+
+	}
+
 }

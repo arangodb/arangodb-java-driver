@@ -73,14 +73,20 @@ The driver is configured with some default values:
 <tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
 </table>
 
+Since 2.5.4 you can configure a default and a fallback database:
+
+<table>
+<tr><th>property-key</th><th>description</th><th>default value</th></tr>
+<tr><th>arangoHost</th><td>ArangoDB host and port </td><td>127.0.0.1:8529</td></tr>
+<tr><th>fallbackArangoHost</th><td>fallback ArangoDB host and port </td><td></td></tr>
+</table>
 
 To customize the configuration the parameters can be changed in the code...
 
 ``` Java
   // Initialize configure
   ArangoConfigure configure = new ArangoConfigure();
-  configure.setHost("192.168.182.50");
-  configure.setPort(8888);
+  configure.setArangoHost(new ArangoHost("192.168.182.50", 8888));
   configure.init();
 
   // Create Driver (this instance is thread-safe)
@@ -102,8 +108,7 @@ To customize the configuration the parameters can be changed in the code...
 
 Example for arangodb.properties:
 ``` Java
-port=8888
-host=192.168.182.50
+arangoHost=192.168.182.50:8888
 user=root
 password=
 enableCURLLogger=true
@@ -383,3 +388,10 @@ see 2.4.4
 ## since 2.5.3
 * fixed issue #9
 	* added method to driver.getTraversal(...);
+	
+## since 2.5.4
+* fixed issue #12
+    * added auto reconnection when connection breaks
+    * added fallback server endpoints
+    
+	

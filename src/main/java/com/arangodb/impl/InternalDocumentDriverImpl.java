@@ -68,12 +68,13 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		}
 
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(baseUrl, database, "/_api/document"),
+			createEndpointUrl(database, "/_api/document"),
 			new MapBuilder().put("collection", collectionName).put("createCollection", createCollection)
 					.put("waitForSync", waitForSync).get(), body);
 
-		return createEntity(res, DocumentEntity.class);
-
+		DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
+		result.setEntity(value);
+		return result;
 	}
 
 	@Override
@@ -110,9 +111,9 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(baseUrl, database, "/_api/document", documentHandle), new MapBuilder().put("rev", rev)
-					.put("policy", policy == null ? null : policy.name()).put("waitForSync", waitForSync).get(),
-			EntityFactory.toJsonString(value));
+			createEndpointUrl(database, "/_api/document", documentHandle),
+			new MapBuilder().put("rev", rev).put("policy", policy == null ? null : policy.name())
+					.put("waitForSync", waitForSync).get(), EntityFactory.toJsonString(value));
 
 		return createEntity(res, DocumentEntity.class);
 
@@ -130,7 +131,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doPatch(
-			createEndpointUrl(baseUrl, database, "/_api/document", documentHandle),
+			createEndpointUrl(database, "/_api/document", documentHandle),
 			new MapBuilder().put("rev", rev).put("policy", policy == null ? null : policy.name())
 					.put("waitForSync", waitForSync).put("keepNull", keepNull).get(),
 			EntityFactory.toJsonString(value, keepNull != null && !keepNull));
@@ -146,8 +147,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	public List<String> getDocuments(String database, String collectionName, boolean handleConvert)
 			throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, database, "/_api/document"),
-			new MapBuilder("collection", collectionName).get());
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/document"), new MapBuilder(
+				"collection", collectionName).get());
 
 		DocumentsEntity entity = createEntity(res, DocumentsEntity.class);
 		List<String> documents = CollectionUtils.safety(entity.getDocuments());
@@ -167,8 +168,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	@Override
 	public long checkDocument(String database, String documentHandle) throws ArangoException {
 		validateDocumentHandle(documentHandle);
-		HttpResponseEntity res = httpManager.doHead(
-			createEndpointUrl(baseUrl, database, "/_api/document", documentHandle), null);
+		HttpResponseEntity res = httpManager
+				.doHead(createEndpointUrl(database, "/_api/document", documentHandle), null);
 
 		DefaultEntity entity = createEntity(res, DefaultEntity.class);
 		return entity.getEtag();
@@ -184,8 +185,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		Long ifMatchRevision) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
-		HttpResponseEntity res = httpManager.doGet(
-			createEndpointUrl(baseUrl, database, "/_api/document", documentHandle),
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/document", documentHandle),
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision).get(),
 			null);
 		DocumentEntity<T> entity = createEntity(res, DocumentEntity.class, clazz);
@@ -200,8 +200,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 			throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
-		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(baseUrl, database, "/_api/document", documentHandle), new MapBuilder().put("rev", rev)
+		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/document", documentHandle),
+			new MapBuilder().put("rev", rev)
 					.put("policy", policy == null ? null : policy.name().toLowerCase(Locale.US)).get());
 
 		try {

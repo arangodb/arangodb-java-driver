@@ -124,8 +124,8 @@ public class InternalTraversalDriverImpl extends BaseArangoDriverImpl implements
 
 		String body = EntityFactory.toJsonString(object);
 
-		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(baseUrl, databaseName, "/_api/traversal"),
-			null, body);
+		HttpResponseEntity response = httpManager
+				.doPost(createEndpointUrl(databaseName, "/_api/traversal"), null, body);
 
 		return createEntity(response, TraversalEntity.class, vertexClazz, edgeClazz);
 	}

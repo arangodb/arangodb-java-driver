@@ -58,7 +58,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 	@Override
 	public GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException {
-		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(baseUrl, databaseName, "/_api/gharial"),
+		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(databaseName, "/_api/gharial"),
 			new MapBuilder().put("waitForSync", waitForSync).get(),
 			EntityFactory.toJsonString(new MapBuilder().put("name", graphName).get()));
 		return createEntity(response, GraphEntity.class);
@@ -73,7 +73,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		Boolean waitForSync) throws ArangoException {
 
 		HttpResponseEntity response = httpManager.doPost(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial"),
+			createEndpointUrl(databaseName, "/_api/gharial"),
 			new MapBuilder().put("waitForSync", waitForSync).get(),
 			EntityFactory.toJsonString(new MapBuilder().put("name", graphName).put("edgeDefinitions", edgeDefinitions)
 					.put("orphanCollections", orphanCollections).get()));
@@ -98,7 +98,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 	@Override
 	public List<String> getGraphList(String databaseName) throws ArangoException {
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, databaseName, "/_api/gharial"));
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(databaseName, "/_api/gharial"));
 		GraphsEntity graphsEntity = createEntity(res, GraphsEntity.class);
 		List<String> graphList = new ArrayList<String>();
 		List<GraphEntity> graphs = graphsEntity.getGraphs();
@@ -114,8 +114,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 	public GraphEntity getGraph(String databaseName, String graphName) throws ArangoException {
 		validateCollectionName(graphName); // ??
 		HttpResponseEntity res = httpManager.doGet(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName)),
-			new MapBuilder().get(), null);
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName)), new MapBuilder().get(),
+			null);
 		return createEntity(res, GraphEntity.class);
 
 	}
@@ -125,8 +125,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 			throws ArangoException {
 		validateCollectionName(graphName); // ??
 		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName)),
-			new MapBuilder().get(), new MapBuilder().put("dropCollections", dropCollections).get());
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName)), new MapBuilder().get(),
+			new MapBuilder().put("dropCollections", dropCollections).get());
 
 		if (!res.isJsonResponse()) {
 			throw new ArangoException("unknown error");
@@ -141,7 +141,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 	@Override
 	public List<String> getVertexCollections(String databaseName, String graphName) throws ArangoException {
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, databaseName, "/_api/gharial",
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(databaseName, "/_api/gharial",
 			StringUtils.encodeUrl(graphName), "/vertex"));
 
 		if (!res.isJsonResponse()) {
@@ -174,7 +174,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		validateCollectionName(graphName);
 
 		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/vertex",
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/vertex",
 				StringUtils.encodeUrl(collectionName)), new MapBuilder().get(),
 			new MapBuilder().put("dropCollection", dropCollection).get());
 
@@ -191,8 +191,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		validateCollectionName(collectionName);
 
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/vertex"),
-			null, EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).get()));
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/vertex"), null,
+			EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).get()));
 
 		if (!res.isJsonResponse()) {
 			throw new ArangoException("unknown error");
@@ -206,7 +206,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 	@Override
 	public List<String> getEdgeCollections(String databaseName, String graphName) throws ArangoException {
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(baseUrl, databaseName, "/_api/gharial",
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(databaseName, "/_api/gharial",
 			StringUtils.encodeUrl(graphName), "/edge"));
 
 		if (!res.isJsonResponse()) {
@@ -227,7 +227,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		String edgeDefinitionJson = this.convertToString(edgeDefinition);
 
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge"), null,
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge"), null,
 			edgeDefinitionJson);
 
 		if (!res.isJsonResponse()) {
@@ -252,7 +252,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		String edgeDefinitionJson = this.convertToString(edgeDefinition);
 
 		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
 				StringUtils.encodeUrl(edgeName)), null, edgeDefinitionJson);
 		if (!res.isJsonResponse()) {
 			throw new ArangoException("unknown error");
@@ -274,7 +274,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		validateCollectionName(edgeName);
 
 		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
 				StringUtils.encodeUrl(edgeName)), new MapBuilder().put("dropCollection", dropCollection).get());
 		if (!res.isJsonResponse()) {
 			throw new ArangoException("unknown error");
@@ -321,7 +321,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(baseUrl, database, "/_api/gharial", StringUtils.encodeUrl(graphName), "vertex",
+			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), "vertex",
 				StringUtils.encodeUrl(collectionName)), new MapBuilder().put("waitForSync", waitForSync).get(),
 			EntityFactory.toJsonString(obj));
 
@@ -346,9 +346,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doGet(
-			createEndpointUrl(baseUrl, StringUtils.encodeUrl(databaseName), "/_api/gharial",
-				StringUtils.encodeUrl(graphName), "vertex", StringUtils.encodeUrl(collectionName),
-				StringUtils.encodeUrl(key)),
+			createEndpointUrl(StringUtils.encodeUrl(databaseName), "/_api/gharial", StringUtils.encodeUrl(graphName),
+				"vertex", StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true)
 					.get(), new MapBuilder().get());
 
@@ -368,9 +367,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(baseUrl, StringUtils.encodeUrl(databaseName), "/_api/gharial",
-				StringUtils.encodeUrl(graphName), "vertex", StringUtils.encodeUrl(collectionName),
-				StringUtils.encodeUrl(key)),
+			createEndpointUrl(StringUtils.encodeUrl(databaseName), "/_api/gharial", StringUtils.encodeUrl(graphName),
+				"vertex", StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true)
 					.get(), new MapBuilder().put("waitForSync", waitForSync).get(), EntityFactory.toJsonString(vertex));
 
@@ -391,7 +389,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPatch(
-			createEndpointUrl(baseUrl, databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "vertex",
+			createEndpointUrl(databaseName, "/_api/gharial", StringUtils.encodeUrl(graphName), "vertex",
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true)
 					.get(), new MapBuilder().put("keepNull", keepNull).put("waitForSync", waitForSync).get(),
@@ -412,9 +410,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(baseUrl, StringUtils.encodeUrl(databaseName), "/_api/gharial",
-				StringUtils.encodeUrl(graphName), "vertex", StringUtils.encodeUrl(collectionName),
-				StringUtils.encodeUrl(key)),
+			createEndpointUrl(StringUtils.encodeUrl(databaseName), "/_api/gharial", StringUtils.encodeUrl(graphName),
+				"vertex", StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-Match", ifMatchRevision, true).put("If-None-Match", ifNoneMatchRevision, true)
 					.get(), new MapBuilder().put("waitForSync", waitForSync).get());
 
@@ -464,7 +461,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(baseUrl, database, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
+			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
 				StringUtils.encodeUrl(edgeCollectionName)), new MapBuilder().put("waitForSync", waitForSync).get(),
 			EntityFactory.toJsonString(obj));
 
@@ -488,7 +485,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doGet(
-			createEndpointUrl(baseUrl, database, "/_api/gharial", StringUtils.encodeUrl(graphName), "edge",
+			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), "edge",
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true)
 					.get(), new MapBuilder().get());
@@ -509,7 +506,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(baseUrl, database, "/_api/gharial", StringUtils.encodeUrl(graphName), "edge",
+			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), "edge",
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true)
 					.get(), new MapBuilder().put("waitForSync", waitForSync).get());
@@ -531,7 +528,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(baseUrl, database, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
+			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true)
 					.get(), new MapBuilder().put("waitForSync", waitForSync).get(), value == null ? null
@@ -555,7 +552,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPatch(
-			createEndpointUrl(baseUrl, database, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
+			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), "/edge",
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision, true)
 					.get(), new MapBuilder().put("waitForSync", waitForSync).put("keepNull", keepNull).get(),
@@ -588,7 +585,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 				.put("properties", properties).get();
 
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(baseUrl, database, "/_api/graph", StringUtils.encodeUrl(graphName), "edges",
+			createEndpointUrl(database, "/_api/graph", StringUtils.encodeUrl(graphName), "edges",
 				StringUtils.encodeUrl(vertexKey)),
 			null,
 			EntityFactory.toJsonString(new MapBuilder().put("batchSize", batchSize).put("limit", limit)

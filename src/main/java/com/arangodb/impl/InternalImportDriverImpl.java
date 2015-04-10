@@ -32,42 +32,50 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalImportDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalImportDriver {
 
-  InternalImportDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
-    super(configure , httpManager);
-  }
-  
-  @Override
-  public ImportResultEntity importDocuments(String database, String collection, Boolean createCollection, Collection<?> values) throws ArangoException {
+	InternalImportDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+		super(configure, httpManager);
+	}
 
-    HttpResponseEntity res = httpManager.doPost(
-        createEndpointUrl(baseUrl, database, "/_api/import"), 
-        new MapBuilder().put("collection", collection).put("createCollection", createCollection).put("type", "array").get(), 
-        EntityFactory.toJsonString(values));
-    
-    return createEntity(res, ImportResultEntity.class);
-    
-  }
+	@Override
+	public ImportResultEntity importDocuments(
+		String database,
+		String collection,
+		Boolean createCollection,
+		Collection<?> values) throws ArangoException {
 
-//  public void importDocuments(String collection, Boolean createCollection, Iterator<?> itr) throws ArangoException {
-//
-//    HttpResponseEntity res = httpManager.doPost(
-//        baseUrl + "/_api/import", 
-//        new MapBuilder().put("collection", collection).put("createCollection", createCollection).put("type", "documents").get(), 
-//        EntityFactory.toJsonSequenceEntity(itr));
-//    
-//  }
-  
-  
-  @Override
-  public ImportResultEntity importDocumentsByHeaderValues(String database, String collection, Boolean createCollection, Collection<? extends Collection<?>> headerValues) throws ArangoException {
+		HttpResponseEntity res = httpManager.doPost(
+			createEndpointUrl(database, "/_api/import"),
+			new MapBuilder().put("collection", collection).put("createCollection", createCollection)
+					.put("type", "array").get(), EntityFactory.toJsonString(values));
 
-    HttpResponseEntity res = httpManager.doPost(
-        createEndpointUrl(baseUrl, database,  "/_api/import"), 
-        new MapBuilder().put("collection", collection).put("createCollection", createCollection).get(), 
-        EntityFactory.toImportHeaderValues(headerValues));
-    
-    return createEntity(res, ImportResultEntity.class);
-    
-  }
+		return createEntity(res, ImportResultEntity.class);
+
+	}
+
+	// public void importDocuments(String collection, Boolean createCollection,
+	// Iterator<?> itr) throws ArangoException {
+	//
+	// HttpResponseEntity res = httpManager.doPost(
+	// baseUrl + "/_api/import",
+	// new MapBuilder().put("collection", collection).put("createCollection",
+	// createCollection).put("type", "documents").get(),
+	// EntityFactory.toJsonSequenceEntity(itr));
+	//
+	// }
+
+	@Override
+	public ImportResultEntity importDocumentsByHeaderValues(
+		String database,
+		String collection,
+		Boolean createCollection,
+		Collection<? extends Collection<?>> headerValues) throws ArangoException {
+
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/import"),
+			new MapBuilder().put("collection", collection).put("createCollection", createCollection).get(),
+			EntityFactory.toImportHeaderValues(headerValues));
+
+		return createEntity(res, ImportResultEntity.class);
+
+	}
 
 }

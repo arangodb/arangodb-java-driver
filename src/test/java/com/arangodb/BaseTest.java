@@ -56,6 +56,7 @@ public abstract class BaseTest {
 	public static Collection<Object[]> getParameterizedDrivers() {
 
 		ArangoConfigure configure = new ArangoConfigure();
+		configure.setConnectRetryCount(2);
 		configure.init();
 		ArangoDriver driver = new ArangoDriver(configure);
 		ArangoDriver driverMDB = new ArangoDriver(configure, databaseName);

@@ -36,70 +36,97 @@ import org.junit.Test;
  */
 public class ArangoConfigureTest {
 
-    @Test
-    public void load_from_property_file() {
+	@Test
+	public void load_from_property_file() {
 
-        // validate file in classpath.
-        assertThat(getClass().getResource("/arangodb.properties"), is(notNullValue()));
+		// validate file in classpath.
+		assertThat(getClass().getResource("/arangodb.properties"), is(notNullValue()));
 
-        ArangoConfigure configure = new ArangoConfigure();
-        assertThat(configure.getPort(), is(8529));
-        assertThat(configure.getHost(), is(notNullValue()));
-        assertThat(configure.getDefaultDatabase(), is(nullValue()));
+		ArangoConfigure configure = new ArangoConfigure();
+		assertThat(configure.getArangoHost().getPort(), is(8529));
+		assertThat(configure.getArangoHost().getHost(), is(notNullValue()));
+		assertThat(configure.getDefaultDatabase(), is(nullValue()));
 
-    }
+	}
 
-    @Test
-    public void load_from_proerty_file2() {
+	@Test
+	public void load_from_proerty_file2() {
 
-        ArangoConfigure configure = new ArangoConfigure();
-        configure.loadProperties("/arangodb-test.properties");
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.loadProperties("/arangodb-test.properties");
 
-        assertThat(configure.getRetryCount(), is(10));
-        assertThat(configure.getDefaultDatabase(), is("mydb2"));
+		assertThat(configure.getRetryCount(), is(10));
+		assertThat(configure.getDefaultDatabase(), is("mydb2"));
 
-    }
+		ArangoHost arangoHost = configure.getArangoHost();
+		assertThat(arangoHost.getPort(), is(9999));
+		assertThat(arangoHost.getHost(), is(notNullValue()));
 
-    @Test
-    public void connect_timeout() throws ArangoException {
+		assertThat(configure.hasFallbackHost(), is(true));
+	}
 
-        ArangoConfigure configure = new ArangoConfigure();
-        configure.setHost("1.0.0.200");
-        configure.setConnectionTimeout(1); // 1ms
-        configure.init();
+	@Test
+	public void connect_timeout() throws ArangoException {
 
-        ArangoDriver driver = new ArangoDriver(configure);
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.getArangoHost().setHost("1.0.0.200");
+		configure.setConnectionTimeout(1); // 1ms
+		configure.init();
 
-        try {
-            driver.getCollections();
-            fail("did no timeout");
-        } catch (ArangoException e) {
-            assertThat(e.getCause(), instanceOf(ConnectTimeoutException.class));
-        }
+		ArangoDriver driver = new ArangoDriver(configure);
 
-        configure.shutdown();
+		try {
+			driver.getCollections();
+			fail("did no timeout");
+		} catch (ArangoException e) {
+			assertThat(e.getCause(), instanceOf(ConnectTimeoutException.class));
+		}
 
-    }
+		configure.shutdown();
 
-    @Test
-    public void so_connect_timeout() throws ArangoException {
+	}
 
-        ArangoConfigure configure = new ArangoConfigure();
-        configure.setConnectionTimeout(5000);
-        configure.setTimeout(1); // 1ms
-        configure.init();
+	@Test
+	public void so_connect_timeout() throws ArangoException {
 
-        ArangoDriver driver = new ArangoDriver(configure);
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.setConnectionTimeout(5000);
+		configure.setTimeout(1); // 1ms
+		configure.init();
 
-        try {
-            driver.getCollections();
-            fail("did no timeout");
-        } catch (ArangoException e) {
-            assertThat(e.getCause(), instanceOf(SocketTimeoutException.class));
-        }
+		ArangoDriver driver = new ArangoDriver(configure);
 
-        configure.shutdown();
+		try {
+			driver.getCollections();
+			fail("did no timeout");
+		} catch (ArangoException e) {
+			assertThat(e.getCause(), instanceOf(SocketTimeoutException.class));
+		}
 
-    }
+		configure.shutdown();
+
+	}
+
+	@Test
+	public void reconnectFallbackArangoHost() throws ArangoException {
+
+		ArangoConfigure configure = new ArangoConfigure();
+
+		// copy default arango host to fallback
+		ArangoHost arangoHost = configure.getArangoHost();
+		ArangoHost ah = new ArangoHost(arangoHost.getHost(), arangoHost.getPort());
+		configure.addFallbackArangoHost(ah);
+
+		// change default port to wrong port
+		arangoHost.setPort(1025);
+		configure.init();
+
+		ArangoDriver driver = new ArangoDriver(configure);
+
+		driver.getCollections();
+
+		configure.shutdown();
+
+	}
 
 }
