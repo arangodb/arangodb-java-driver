@@ -14,7 +14,6 @@ Supported version: ArangoDB-2.4.x or ArangoDB 2.5.x
 * [ArangoDB](https://github.com/arangodb/arangodb) version 2.4.x or 2.5.x
 * Java 1.6 later
 
-
 # Basics
 
 ## Maven
