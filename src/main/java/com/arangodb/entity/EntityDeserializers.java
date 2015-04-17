@@ -583,6 +583,77 @@ public class EntityDeserializers {
 		}
 	}
 
+	public static class CursorDocumentEntityDeserializer implements JsonDeserializer<DocumentCursorEntity<?>> {
+		private Type bindVarsType = new TypeToken<List<String>>() {
+		}.getType();
+
+		private Type extraType = new TypeToken<Map<String, Object>>() {
+		}.getType();
+
+		@Override
+		public DocumentCursorEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			JsonObject obj = json.getAsJsonObject();
+			DocumentCursorEntity<Object> entity = deserializeBaseParameter(obj, new DocumentCursorEntity<Object>());
+
+			if (obj.has("result")) {
+				JsonArray array = obj.getAsJsonArray("result");
+				if (array == null || array.isJsonNull() || array.size() == 0) {
+					entity.results = new ArrayList<DocumentEntity<Object>>();
+				} else {
+					List<DocumentEntity<Object>> list = new ArrayList<DocumentEntity<Object>>(array.size());
+					for (int i = 0, imax = array.size(); i < imax; i++) {
+						DocumentEntity<Object> de = context.deserialize(array.get(i), DocumentEntity.class);
+						list.add(de);
+					}
+					entity.results = list;
+				}
+			}
+
+			if (obj.has("hasMore")) {
+				entity.hasMore = obj.getAsJsonPrimitive("hasMore").getAsBoolean();
+			}
+
+			if (obj.has("count")) {
+				entity.count = obj.getAsJsonPrimitive("count").getAsInt();
+			}
+
+			if (obj.has("id")) {
+				entity.cursorId = obj.getAsJsonPrimitive("id").getAsLong();
+			}
+
+			if (obj.has("bindVars")) {
+				entity.bindVars = context.deserialize(obj.get("bindVars"), bindVarsType);
+			}
+
+			if (obj.has("extra")) {
+				entity.extra = context.deserialize(obj.get("extra"), extraType);
+
+				if (entity.extra.containsKey("stats")) {
+					if (entity.extra.get("stats") instanceof Map<?, ?>) {
+						Map<?, ?> m = (Map<?, ?>) entity.extra.get("stats");
+						if (m.containsKey("fullCount")) {
+							try {
+								if (m.get("fullCount") instanceof Double) {
+									Double v = (Double) m.get("fullCount");
+									entity.fullCount = v.intValue();
+								}
+							} catch (Exception e) {
+							}
+						}
+					}
+				}
+			}
+
+			return entity;
+		}
+	}
+
 	public static class DocumentEntityDeserializer implements JsonDeserializer<DocumentEntity<?>> {
 
 		@Override
@@ -676,7 +747,7 @@ public class EntityDeserializers {
 			List<Object> tmpObjectList = new ArrayList<Object>();
 			Iterator<JsonElement> iterator = jsonArray.iterator();
 			while (iterator.hasNext()) {
-				tmpObjectList.add(deserializeJsonElement((JsonElement) iterator.next()));
+				tmpObjectList.add(deserializeJsonElement(iterator.next()));
 			}
 			return tmpObjectList;
 		}

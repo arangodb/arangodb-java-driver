@@ -17,6 +17,7 @@
 package com.arangodb.impl;
 
 import com.arangodb.ArangoConfigure;
+import com.arangodb.InternalCursorDocumentDriver;
 import com.arangodb.InternalCursorDriver;
 import com.arangodb.InternalKVSDriver;
 import com.arangodb.InternalTransactionDriver;
@@ -24,11 +25,18 @@ import com.arangodb.http.HttpManager;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
+ * @author a-brandt
  *
  */
 public class ImplFactory {
 	public static InternalCursorDriverImpl createCursorDriver(ArangoConfigure configure, HttpManager httpManager) {
 		return new InternalCursorDriverImpl(configure, httpManager);
+	}
+
+	public static InternalCursorDocumentDriverImpl createCursorDocumentDriver(
+		ArangoConfigure configure,
+		HttpManager httpManager) {
+		return new InternalCursorDocumentDriverImpl(configure, httpManager);
 	}
 
 	public static InternalCollectionDriverImpl createCollectionDriver(ArangoConfigure configure, HttpManager httpManager) {
@@ -54,8 +62,9 @@ public class ImplFactory {
 	public static InternalSimpleDriverImpl createSimpleDriver(
 		ArangoConfigure configure,
 		InternalCursorDriver cursorDriver,
+		InternalCursorDocumentDriver cursorDocumentDriver,
 		HttpManager httpManager) {
-		return new InternalSimpleDriverImpl(configure, cursorDriver, httpManager);
+		return new InternalSimpleDriverImpl(configure, cursorDriver, cursorDocumentDriver, httpManager);
 	}
 
 	public static InternalIndexDriverImpl createIndexDriver(ArangoConfigure configure, HttpManager httpManager) {
@@ -101,15 +110,17 @@ public class ImplFactory {
 	public static InternalGraphDriverImpl createGraphDriver(
 		ArangoConfigure configure,
 		InternalCursorDriver cursorDriver,
+		InternalCursorDocumentDriver cursorDocumentDriver,
 		HttpManager httpManager) {
-		return new InternalGraphDriverImpl(configure, cursorDriver, httpManager);
+		return new InternalGraphDriverImpl(configure, cursorDriver, cursorDocumentDriver, httpManager);
 	}
 
 	public static InternalEdgeDriverImpl createEdgeDriver(
 		ArangoConfigure configure,
 		InternalCursorDriver cursorDriver,
+		InternalCursorDocumentDriver cursorDocumentDriver,
 		HttpManager httpManager) {
-		return new InternalEdgeDriverImpl(configure, cursorDriver, httpManager);
+		return new InternalEdgeDriverImpl(configure, cursorDriver, cursorDocumentDriver, httpManager);
 	}
 
 	public static InternalTraversalDriverImpl createTraversalDriver(ArangoConfigure configure, HttpManager httpManager) {

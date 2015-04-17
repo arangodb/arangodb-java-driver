@@ -44,11 +44,12 @@ import com.arangodb.util.StringJoinTest;
 
 		ArangoDriverDatabaseTest.class, ArangoDriverDatabaseAndUserTest.class,
 
-		ArangoDriverBatchTest.class, ArangoDriverAsyncTest.class,
-		ArangoDriverDocumentTest.class,
+		ArangoDriverBatchTest.class, ArangoDriverAsyncTest.class, ArangoDriverDocumentTest.class,
 		ArangoDriverAqlfunctionsTest.class,
 		ArangoDriverDocumentKeyTest.class,
 		ArangoDriverCollectionTest.class,
+		ArangoDriverDocumentCursorEntityTest.class,
+		ArangoDriverDocumentCursorTest.class,
 		ArangoDriverCursorTest.class,
 		ArangoDriverCursorResultSetTest.class,
 

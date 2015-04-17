@@ -231,24 +231,31 @@ E.g. get all Simpsons aged 3 or older in ascending order:
     
     String query = "FOR t IN myCollection FILTER t.age >= @age SORT t.age RETURN t";
     Map<String, Object> bindVars = new MapBuilder().put("age", 3).get();
-    CursorResultSet<MyObject> rs = arangoDriver.executeQueryWithResultSet(
+    
+    DocumentCursor<MyObject> documentCursor = arangoDriver.executeDocumentQuery(
       query, bindVars, MyObject.class, true, 20
     );
     
-    for (MyObject obj: rs) {
+    while (DocumentEntity<MyObject> documentEntity : documentCursor.asList()) {
+      MyObject obj = documentEntity.getEntity();
       System.out.println(obj.getName());
     }
-   
-  
 ```
 
-instead of using a for statement you can also use an iterator:
+instead of using a for statement you can also use an DocumentEntitiy or an entity iterator:
 ``` Java
-  while (rs.hasNext()) {
-    MyObject obj = rs.next();
-    System.out.println(obj.getName());
-  }
-  rs.close();
+    Iterator<DocumentEntity<Person>> iterator = documentCursor.iterator();
+    while (iterator.hasNext()) {
+      DocumentEntity<MyObject> documentEntity = iterator.next();
+      MyObject obj = documentEntity.getEntity();
+      System.out.println(obj.getName());
+    }
+
+    Iterator<Person> iterator = documentCursor.entityIterator();
+    while (iterator.hasNext()) {
+      MyObject obj = iterator.next();
+      System.out.println(obj.getName());
+    }
 ```
 
 #User Management
@@ -393,5 +400,11 @@ see 2.4.4
 * fixed issue #12
     * added auto reconnection when connection breaks
     * added fallback server endpoints
-    
+* added new cursor implementation for AQL queries
+    * DocumentCursor<T> executeDocumentQuery(...)
+* added new cursor implementation for simple queries
+    * DocumentCursor<T> executeSimpleAllDocuments(...)
+    * DocumentCursor<T> executeSimpleByExampleDocuments(...)
+    * DocumentCursor<T> executeSimpleRangeWithDocuments(...)
+    * DocumentCursor<T> executeSimpleFulltextWithDocuments(...)
 	

@@ -36,13 +36,13 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DeletedEntity;
+import com.arangodb.entity.DocumentCursorEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentResultEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
@@ -82,7 +82,6 @@ import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
 import com.arangodb.util.DumpHandler;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.util.ResultSetUtils;
 
 /**
  * ArangoDB driver. All of the functionality to use ArangoDB is provided via
@@ -101,6 +100,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	private BatchHttpManager httpManager;
 
 	private InternalCursorDriver cursorDriver;
+	private InternalCursorDocumentDriver cursorDocumentDriver;
 	private InternalBatchDriverImpl batchDriver;
 	private InternalCollectionDriver collectionDriver;
 	private InternalDocumentDriver documentDriver;
@@ -156,20 +156,24 @@ public class ArangoDriver extends BaseArangoDriver {
 	private void createModuleDrivers(boolean createProxys) {
 		if (!createProxys) {
 			this.cursorDriver = ImplFactory.createCursorDriver(configure, this.httpManager);
+			this.cursorDocumentDriver = ImplFactory.createCursorDocumentDriver(configure, this.httpManager);
 			this.batchDriver = ImplFactory.createBatchDriver(configure, this.httpManager);
 			this.collectionDriver = ImplFactory.createCollectionDriver(configure, this.httpManager);
 			this.documentDriver = ImplFactory.createDocumentDriver(configure, this.httpManager);
 			this.indexDriver = ImplFactory.createIndexDriver(configure, this.httpManager);
 			this.adminDriver = ImplFactory.createAdminDriver(configure, this.httpManager);
 			this.aqlFunctionsDriver = ImplFactory.createAqlFunctionsDriver(configure, this.httpManager);
-			this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver, this.httpManager);
+			this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver, cursorDocumentDriver,
+				this.httpManager);
 			this.usersDriver = ImplFactory.createUsersDriver(configure, this.httpManager);
 			this.importDriver = ImplFactory.createImportDriver(configure, this.httpManager);
 			this.databaseDriver = ImplFactory.createDatabaseDriver(configure, this.httpManager);
 			this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
 			this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
-			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
-			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, this.httpManager);
+			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, cursorDocumentDriver,
+				this.httpManager);
+			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, cursorDocumentDriver,
+				this.httpManager);
 			this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
 			this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
 			this.traversalDriver = ImplFactory.createTraversalDriver(configure, httpManager);
@@ -182,6 +186,10 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.cursorDriver = (InternalCursorDriver) Proxy.newProxyInstance(
 				InternalCursorDriver.class.getClassLoader(), new Class<?>[] { InternalCursorDriver.class },
 				new InvocationHandlerImpl(this.cursorDriver));
+			this.cursorDocumentDriver = (InternalCursorDocumentDriver) Proxy.newProxyInstance(
+				InternalCursorDocumentDriver.class.getClassLoader(),
+				new Class<?>[] { InternalCursorDocumentDriver.class }, new InvocationHandlerImpl(
+						this.cursorDocumentDriver));
 			this.collectionDriver = (InternalCollectionDriver) Proxy.newProxyInstance(
 				InternalCollectionDriver.class.getClassLoader(), new Class<?>[] { InternalCollectionDriver.class },
 				new InvocationHandlerImpl(this.collectionDriver));
@@ -2096,7 +2104,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            an AQL query as string
 	 * @return CursorEntity<?>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #validateDocumentQuery()}
 	 */
+	@Deprecated
 	public CursorEntity<?> validateQuery(String query) throws ArangoException {
 		return cursorDriver.validateQuery(getDefaultDatabase(), query);
 	}
@@ -2121,7 +2132,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> executeQuery(
 		String query,
 		Map<String, Object> bindVars,
@@ -2150,7 +2164,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> executeQuery(
 		String query,
 		Map<String, Object> bindVars,
@@ -2172,7 +2189,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #continueDocumentQuery()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> continueQuery(long cursorId, Class<?>... clazz) throws ArangoException {
 		return cursorDriver.continueQuery(getDefaultDatabase(), cursorId, clazz);
 	}
@@ -2184,7 +2204,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The id of a cursor.
 	 * @return DefaultEntity
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #finishDocumentQuery()}
 	 */
+	@Deprecated
 	public DefaultEntity finishQuery(long cursorId) throws ArangoException {
 		return cursorDriver.finishQuery(getDefaultDatabase(), cursorId);
 	}
@@ -2209,7 +2232,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorResultSet<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<T> executeQueryWithResultSet(
 		String query,
 		Map<String, Object> bindVars,
@@ -2239,7 +2265,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorResultSet<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<T> executeQueryWithResultSet(
 		String query,
 		Map<String, Object> bindVars,
@@ -2248,6 +2277,172 @@ public class ArangoDriver extends BaseArangoDriver {
 		Integer batchSize) throws ArangoException {
 
 		return cursorDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount,
+			batchSize, false);
+	}
+
+	/**
+	 * This method validates a given AQL query string and returns a
+	 * CursorDocumentEntity
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @return CursorDocumentEntity<?>
+	 * @throws ArangoException
+	 */
+	public DocumentCursorEntity<?> validateDocumentQuery(String query) throws ArangoException {
+		return cursorDocumentDriver.validateQuery(getDefaultDatabase(), query);
+	}
+
+	/**
+	 * This method executes an AQL query and returns a CursorDocumentEntity
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @param calcCount
+	 *            if set to true the result count is returned
+	 * @param batchSize
+	 *            the batch size of the result cursor
+	 * @param fullCount
+	 *            if set to true, then all results before the final LIMIT will
+	 *            be counted
+	 * @param <T>
+	 * @return <T> CursorDocumentEntity<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursorEntity<T> executeCursorDocumentEntityQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize,
+		Boolean fullCount) throws ArangoException {
+
+		return cursorDocumentDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize,
+			fullCount);
+	}
+
+	/**
+	 * This method executes an AQL query and returns a CursorDocumentEntity
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @param calcCount
+	 *            if set to true the result count is returned
+	 * @param batchSize
+	 *            the batch size of the result cursor
+	 * @param <T>
+	 * @return <T> CursorDocumentEntity<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursorEntity<T> executeCursorDocumentEntityQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize) throws ArangoException {
+
+		return cursorDocumentDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize,
+			false);
+	}
+
+	/**
+	 * Continues data retrieval for an existing cursor
+	 *
+	 * @param cursorId
+	 *            The id of a cursor.
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @param <T>
+	 * @return <T> CursorDocumentEntity<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursorEntity<T> continueCursorDocumentEntityQuery(long cursorId, Class<?>... clazz)
+			throws ArangoException {
+		return cursorDocumentDriver.continueQuery(getDefaultDatabase(), cursorId, clazz);
+	}
+
+	/**
+	 * Deletes a cursor from the database.
+	 *
+	 * @param cursorId
+	 *            The id of a cursor.
+	 * @return DefaultEntity
+	 * @throws ArangoException
+	 */
+	public DefaultEntity finishCursorDocumentEntityQuery(long cursorId) throws ArangoException {
+		return cursorDocumentDriver.finishQuery(getDefaultDatabase(), cursorId);
+	}
+
+	/**
+	 * This method executes an AQL query and returns a CursorDocumentResultSet
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @param calcCount
+	 *            if set to true the result count is returned
+	 * @param batchSize
+	 *            the batch size of the result cursor
+	 * @param fullCount
+	 *            if set to true, then all results before the final LIMIT will
+	 *            be counted
+	 * @param <T>
+	 * @return <T> CursorDocumentResultSet<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursor<T> executeDocumentQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize,
+		Boolean fullCount) throws ArangoException {
+
+		return cursorDocumentDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount,
+			batchSize, fullCount);
+	}
+
+	/**
+	 * This method executes an AQL query and returns a CursorDocumentResultSet
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @param calcCount
+	 *            if set to true the result count is returned
+	 * @param batchSize
+	 *            the batch size of the result cursor
+	 * @param <T>
+	 * @return <T> CursorDocumentResultSet<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursor<T> executeDocumentQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize) throws ArangoException {
+
+		return cursorDocumentDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount,
 			batchSize, false);
 	}
 
@@ -2706,7 +2901,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> executeSimpleByExample(
 		String collectionName,
 		Map<String, Object> example,
@@ -2731,16 +2929,18 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<T>
+	 * @return CursorResultSet<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleByExampleWithResusltSet(
 		String collectionName,
 		Map<String, Object> example,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleByExampleWithResultSet(getDefaultDatabase(), collectionName, example, skip,
 			limit, clazz);
 	}
@@ -2760,16 +2960,18 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<DocumentEntity<T>>
+	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleByExampleWithDocument(
 		String collectionName,
 		Map<String, Object> example,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleByExampleWithDocument(getDefaultDatabase(), collectionName, example, skip,
 			limit, clazz);
 	}
@@ -2789,18 +2991,48 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<DocumentEntity<T>>
+	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleByExampleWithDocumentResusltSet(
 		String collectionName,
 		Map<String, Object> example,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleByExampleWithDocumentResultSet(getDefaultDatabase(), collectionName, example,
 			skip, limit, clazz);
+	}
+
+	/**
+	 * This will find all documents matching a given example.
+	 *
+	 * @param collectionName
+	 *            - The collection name.
+	 * @param example
+	 *            The example as a map.
+	 * @param skip
+	 *            The number of documents to skip in the query.
+	 * @param limit
+	 *            The maximal amount of documents to return. The skip is applied
+	 *            before the limit restriction.
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @return DocumentCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursor<T> executeSimpleByExampleDocuments(
+		String collectionName,
+		Map<String, Object> example,
+		int skip,
+		int limit,
+		Class<T> clazz) throws ArangoException {
+		return simpleDriver.executeSimpleByExampleDocuments(getDefaultDatabase(), collectionName, example, skip, limit,
+			clazz);
 	}
 
 	/**
@@ -2816,11 +3048,13 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<T>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments()}
 	 */
-	public <T> CursorEntity<T> executeSimpleAll(String collectionName, int skip, int limit, Class<?> clazz)
+	@Deprecated
+	public <T> CursorEntity<T> executeSimpleAll(String collectionName, int skip, int limit, Class<T> clazz)
 			throws ArangoException {
 		return simpleDriver.executeSimpleAll(getDefaultDatabase(), collectionName, skip, limit, clazz);
 	}
@@ -2838,15 +3072,17 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<T>
+	 * @return CursorResultSet<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleAllWithResultSet(
 		String collectionName,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleAllWithResultSet(getDefaultDatabase(), collectionName, skip, limit, clazz);
 	}
 
@@ -2863,15 +3099,17 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<DocumentEntity<T>>
+	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleAllWithDocument(
 		String collectionName,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleAllWithDocument(getDefaultDatabase(), collectionName, skip, limit, clazz);
 	}
 
@@ -2888,17 +3126,40 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<DocumentEntity<T>>
+	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleAllWithDocumentResultSet(
 		String collectionName,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleAllWithDocumentResultSet(getDefaultDatabase(), collectionName, skip, limit,
 			clazz);
+	}
+
+	/**
+	 * Returns all documents of a collections.
+	 *
+	 * @param collectionName
+	 *            The collection name.
+	 * @param skip
+	 *            The number of documents to skip in the query.
+	 * @param limit
+	 *            The maximal amount of documents to return. The skip is applied
+	 *            before the limit restriction.
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @return DocumentCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> DocumentCursor<T> executeSimpleAllDocuments(String collectionName, int skip, int limit, Class<T> clazz)
+			throws ArangoException {
+		return simpleDriver.executeSimpleAllDocuments(getDefaultDatabase(), collectionName, skip, limit, clazz);
 	}
 
 	/**
@@ -2918,7 +3179,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> ScalarExampleEntity<T> executeSimpleFirstExample(
 		String collectionName,
 		Map<String, Object> example,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleFirstExample(getDefaultDatabase(), collectionName, example, clazz);
 	}
 
@@ -2934,7 +3195,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return <T> ScalarExampleEntity<T>
 	 * @throws ArangoException
 	 */
-	public <T> ScalarExampleEntity<T> executeSimpleAny(String collectionName, Class<?> clazz) throws ArangoException {
+	public <T> ScalarExampleEntity<T> executeSimpleAny(String collectionName, Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleAny(getDefaultDatabase(), collectionName, clazz);
 	}
 
@@ -2961,10 +3222,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<T>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> executeSimpleRange(
 		String collectionName,
 		String attribute,
@@ -2973,7 +3236,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean closed,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleRange(getDefaultDatabase(), collectionName, attribute, left, right, closed,
 			skip, limit, clazz);
 	}
@@ -3001,10 +3264,51 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<T>
+	 * @return DocumentCursor<T>
 	 * @throws ArangoException
 	 */
+	public <T> DocumentCursor<T> executeSimpleRangeWithDocuments(
+		String collectionName,
+		String attribute,
+		Object left,
+		Object right,
+		Boolean closed,
+		int skip,
+		int limit,
+		Class<T> clazz) throws ArangoException {
+		return simpleDriver.executeSimpleRangeWithDocuments(getDefaultDatabase(), collectionName, attribute, left,
+			right, closed, skip, limit, clazz);
+	}
+
+	/**
+	 * This will find all documents within a given range. In order to execute a
+	 * range query, a skip-list index on the queried attribute must be present.
+	 *
+	 * @param collectionName
+	 *            The collection name.
+	 * @param attribute
+	 *            The attribute path to check.
+	 * @param left
+	 *            The lower bound
+	 * @param right
+	 *            The upper bound
+	 * @param closed
+	 *            If true, use interval including left and right, otherwise
+	 *            exclude right, but include left.
+	 * @param skip
+	 *            The number of documents to skip in the query.
+	 * @param limit
+	 *            The maximal amount of documents to return. The skip is applied
+	 *            before the limit restriction.
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @return CursorResultSet<T>
+	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments()}
+	 */
+	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleRangeWithResultSet(
 		String collectionName,
 		String attribute,
@@ -3013,7 +3317,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean closed,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleRangeWithResultSet(getDefaultDatabase(), collectionName, attribute, left,
 			right, closed, skip, limit, clazz);
 	}
@@ -3041,10 +3345,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<DocumentEntity<T>>
+	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleRangeWithDocument(
 		String collectionName,
 		String attribute,
@@ -3053,7 +3359,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean closed,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleRangeWithDocument(getDefaultDatabase(), collectionName, attribute, left,
 			right, closed, skip, limit, clazz);
 	}
@@ -3081,10 +3387,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<DocumentEntity<T>>
+	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleRangeWithDocumentResultSet(
 		String collectionName,
 		String attribute,
@@ -3093,7 +3401,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean closed,
 		int skip,
 		int limit,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleRangeWithDocumentResultSet(getDefaultDatabase(), collectionName, attribute,
 			left, right, closed, skip, limit, clazz);
 	}
@@ -3118,10 +3426,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<T>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> executeSimpleFulltext(
 		String collectionName,
 		String attribute,
@@ -3129,7 +3439,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		int skip,
 		int limit,
 		String index,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleFulltext(getDefaultDatabase(), collectionName, attribute, query, skip, limit,
 			index, clazz);
 	}
@@ -3154,10 +3464,47 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<T>
+	 * @return DocumentCursor<T>
 	 * @throws ArangoException
 	 */
+	public <T> DocumentCursor<T> executeSimpleFulltextWithDocuments(
+		String collectionName,
+		String attribute,
+		String query,
+		int skip,
+		int limit,
+		String index,
+		Class<T> clazz) throws ArangoException {
+		return simpleDriver.executeSimpleFulltextWithDocuments(getDefaultDatabase(), collectionName, attribute, query,
+			skip, limit, index, clazz);
+	}
+
+	/**
+	 * This will find all documents from the collection that match the fulltext
+	 * query specified in query. In order to use the fulltext operator, a
+	 * fulltext index must be defined for the collection and the specified
+	 * attribute.
+	 *
+	 * @param collectionName
+	 *            The collection name.
+	 * @param attribute
+	 *            The attribute path to check.
+	 * @param query
+	 *            The fulltext query as string.
+	 * @param skip
+	 *            The number of documents to skip in the query.
+	 * @param limit
+	 *            The maximal amount of documents to return. The skip is applied
+	 *            before the limit restriction.
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @return CursorResultSet<T>
+	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments()}
+	 */
+	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleFulltextWithResultSet(
 		String collectionName,
 		String attribute,
@@ -3165,7 +3512,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		int skip,
 		int limit,
 		String index,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleFulltextWithResultSet(getDefaultDatabase(), collectionName, attribute, query,
 			skip, limit, index, clazz);
 	}
@@ -3190,10 +3537,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<DocumentEntity<T>>
+	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleFulltextWithDocument(
 		String collectionName,
 		String attribute,
@@ -3201,7 +3550,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		int skip,
 		int limit,
 		String index,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleFulltextWithDocument(getDefaultDatabase(), collectionName, attribute, query,
 			skip, limit, index, clazz);
 	}
@@ -3226,10 +3575,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorResultSet<DocumentEntity<T>>
+	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments()}
 	 */
+	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleFulltextWithDocumentResultSet(
 		String collectionName,
 		String attribute,
@@ -3237,7 +3588,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		int skip,
 		int limit,
 		String index,
-		Class<?> clazz) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 		return simpleDriver.executeSimpleFulltextWithDocumentResultSet(getDefaultDatabase(), collectionName, attribute,
 			query, skip, limit, index, clazz);
 	}
@@ -3341,7 +3692,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return <T> DocumentResultEntity<T>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentResultEntity<T> executeSimpleFirst(String collectionName, Integer count, Class<?> clazz)
+	public <T> DocumentResultEntity<T> executeSimpleFirst(String collectionName, Integer count, Class<T> clazz)
 			throws ArangoException {
 		return simpleDriver.executeSimpleFirst(getDefaultDatabase(), collectionName, count, clazz);
 	}
@@ -3361,7 +3712,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return <T> DocumentResultEntity<T>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentResultEntity<T> executeSimpleLast(String collectionName, Integer count, Class<?> clazz)
+	public <T> DocumentResultEntity<T> executeSimpleLast(String collectionName, Integer count, Class<T> clazz)
 			throws ArangoException {
 		return simpleDriver.executeSimpleLast(getDefaultDatabase(), collectionName, count, clazz);
 	}
@@ -3454,11 +3805,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public List<DocumentEntity<UserEntity>> getUsersDocument() throws ArangoException {
-
-		CursorResultSet<DocumentEntity<UserEntity>> rs = executeSimpleAllWithDocumentResultSet("_users", 0, 0,
-			UserEntity.class);
-		return ResultSetUtils.toList(rs);
-
+		DocumentCursor<UserEntity> documentCursor = executeSimpleAllDocuments("_users", 0, 0, UserEntity.class);
+		return documentCursor.asList();
 	}
 
 	/**
@@ -3468,10 +3816,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public List<UserEntity> getUsers() throws ArangoException {
-
-		CursorResultSet<UserEntity> rs = executeSimpleAllWithResultSet("_users", 0, 0, UserEntity.class);
-		return ResultSetUtils.toList(rs);
-
+		DocumentCursor<UserEntity> documentCursor = executeSimpleAllDocuments("_users", 0, 0, UserEntity.class);
+		return documentCursor.asEntityList();
 	}
 
 	/**

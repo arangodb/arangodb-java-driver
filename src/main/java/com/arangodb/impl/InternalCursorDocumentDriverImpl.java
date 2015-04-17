@@ -21,8 +21,9 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.CursorResultSet;
-import com.arangodb.entity.CursorEntity;
+import com.arangodb.DocumentCursor;
+import com.arangodb.InternalCursorDocumentDriver;
+import com.arangodb.entity.DocumentCursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.http.HttpManager;
@@ -31,25 +32,22 @@ import com.arangodb.util.MapBuilder;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * 
- * @Deprecated As of release 2.5.4, replaced by
- *             {@link InternalCursorDocumentDriverImpl}
+ * @author a-brandt
  *
  */
-public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalCursorDriver {
+public class InternalCursorDocumentDriverImpl extends BaseArangoDriverImpl implements InternalCursorDocumentDriver {
 
-	InternalCursorDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+	InternalCursorDocumentDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, httpManager);
 	}
 
-	@Deprecated
 	@Override
-	public CursorEntity<?> validateQuery(String database, String query) throws ArangoException {
+	public DocumentCursorEntity<?> validateQuery(String database, String query) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/query"), null,
 			EntityFactory.toJsonString(new MapBuilder("query", query).get()));
 		// try {
-		CursorEntity<?> entity = createEntity(res, CursorEntity.class);
+		DocumentCursorEntity<?> entity = createEntity(res, DocumentCursorEntity.class);
 		return entity;
 		// } catch (ArangoException e) {
 		// return (CursorEntity<?>) e.getEntity();
@@ -60,9 +58,8 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 	// ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
 	// ※ここでは単純にコールするだけ
 
-	@Deprecated
 	@Override
-	public <T> CursorEntity<T> executeQuery(
+	public <T> DocumentCursorEntity<T> executeQuery(
 		String database,
 		String query,
 		Map<String, Object> bindVars,
@@ -80,7 +77,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 					.get()));
 		try {
 			@SuppressWarnings("unchecked")
-			CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
+			DocumentCursorEntity<T> entity = createEntity(res, DocumentCursorEntity.class, clazz);
 			// resultを処理する
 			// EntityFactory.createResult(entity, clazz);
 			return entity;
@@ -92,9 +89,9 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 
 	// ※Iteratorで綺麗に何回もRoundtripもしてくれる処理はClientのレイヤーで行う。
 	// ※ここでは単純にコールするだけ
-	@Deprecated
+
 	@Override
-	public <T> CursorEntity<T> executeQuery(
+	public <T> DocumentCursorEntity<T> executeQuery(
 		String database,
 		String query,
 		Map<String, Object> bindVars,
@@ -106,15 +103,15 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 
 	}
 
-	@Deprecated
 	@Override
-	public <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException {
+	public <T> DocumentCursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz)
+			throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/cursor", cursorId), null, null);
 
 		try {
 			@SuppressWarnings("unchecked")
-			CursorEntity<T> entity = createEntity(res, CursorEntity.class, clazz);
+			DocumentCursorEntity<T> entity = createEntity(res, DocumentCursorEntity.class, clazz);
 			// resultを処理する
 			// EntityFactory.createResult(entity, clazz);
 			return entity;
@@ -124,7 +121,6 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 
 	}
 
-	@Deprecated
 	@Override
 	public DefaultEntity finishQuery(String database, long cursorId) throws ArangoException {
 		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/cursor/", cursorId), null);
@@ -142,9 +138,8 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		}
 	}
 
-	@Deprecated
 	@Override
-	public <T> CursorResultSet<T> executeQueryWithResultSet(
+	public <T> DocumentCursor<T> executeQueryWithResultSet(
 		String database,
 		String query,
 		Map<String, Object> bindVars,
@@ -153,15 +148,14 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		Integer batchSize,
 		Boolean fullCount) throws ArangoException {
 
-		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+		DocumentCursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
+		DocumentCursor<T> rs = new DocumentCursor<T>(database, this, entity, clazz);
 		return rs;
 
 	}
 
-	@Deprecated
 	@Override
-	public <T> CursorResultSet<T> executeQueryWithResultSet(
+	public <T> DocumentCursor<T> executeQueryWithResultSet(
 		String database,
 		String query,
 		Map<String, Object> bindVars,
@@ -169,8 +163,8 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		Boolean calcCount,
 		Integer batchSize) throws ArangoException {
 
-		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+		DocumentCursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
+		DocumentCursor<T> rs = new DocumentCursor<T>(database, this, entity, clazz);
 		return rs;
 
 	}
