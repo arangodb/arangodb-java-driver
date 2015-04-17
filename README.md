@@ -1,4 +1,10 @@
 
+![ArangoDB-Logo](https://www.arangodb.org/wp-content/uploads/2012/10/logo_arangodb_transp.png)
+
+# arangodb-java-driver
+
+[![Build Status](https://secure.travis-ci.org/triAGENS/arangodb-java-driver.png)](http://travis-ci.org/triAGENS/arangodb-java-driver)
+
 This library is a Java driver for ArangoDB.
 
 Supported version: ArangoDB-2.4.x or ArangoDB 2.5.x
