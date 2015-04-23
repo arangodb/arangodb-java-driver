@@ -2009,6 +2009,7 @@ public class EntityDeserializers {
 				JsonObject result = obj.getAsJsonObject("result");
 				if (result.has("visited")) {
 					JsonObject visited = result.getAsJsonObject("visited");
+					@SuppressWarnings("unchecked")
 					VisitedEntity<Object, Object> v = (VisitedEntity<Object, Object>) context.deserialize(visited,
 						VisitedEntity.class);
 					entity.setEntity(v);
