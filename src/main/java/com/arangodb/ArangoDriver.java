@@ -32,17 +32,18 @@ import com.arangodb.entity.AdminLogEntity;
 import com.arangodb.entity.AqlFunctionsEntity;
 import com.arangodb.entity.ArangoUnixTime;
 import com.arangodb.entity.ArangoVersion;
+import com.arangodb.entity.BaseCursorEntity;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DeletedEntity;
-import com.arangodb.entity.DocumentCursorEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentResultEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
@@ -2262,8 +2263,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            if set to true the result count is returned
 	 * @param batchSize
 	 *            the batch size of the result cursor
-	 * @param <T>
-	 * @return <T> CursorResultSet<T>
+	 * @return CursorResultSet<T>
 	 * @throws ArangoException
 	 * @Deprecated As of release 2.5.4, replaced by
 	 *             {@link #executeDocumentQuery()}
@@ -2286,10 +2286,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param query
 	 *            an AQL query as string
-	 * @return CursorDocumentEntity<?>
+	 * @return BaseCursorEntity<?, ?>
 	 * @throws ArangoException
 	 */
-	public DocumentCursorEntity<?> validateDocumentQuery(String query) throws ArangoException {
+	public BaseCursorEntity<?, ?> validateDocumentQuery(String query) throws ArangoException {
 		return cursorDocumentDriver.validateQuery(getDefaultDatabase(), query);
 	}
 
@@ -2310,49 +2310,20 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
-	 * @param <T>
-	 * @return <T> CursorDocumentEntity<T>
+	 * @return BaseCursorEntity<T, S>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentCursorEntity<T> executeCursorDocumentEntityQuery(
+	public <T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> executeCursorDocumentEntityQuery(
 		String query,
 		Map<String, Object> bindVars,
+		Class<S> classDocumentEntity,
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
 		Boolean fullCount) throws ArangoException {
 
-		return cursorDocumentDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize,
-			fullCount);
-	}
-
-	/**
-	 * This method executes an AQL query and returns a CursorDocumentEntity
-	 *
-	 * @param query
-	 *            an AQL query as string
-	 * @param bindVars
-	 *            a map containing all bind variables,
-	 * @param clazz
-	 *            the expected class, the result from the server request is
-	 *            deserialized to an instance of this class.
-	 * @param calcCount
-	 *            if set to true the result count is returned
-	 * @param batchSize
-	 *            the batch size of the result cursor
-	 * @param <T>
-	 * @return <T> CursorDocumentEntity<T>
-	 * @throws ArangoException
-	 */
-	public <T> DocumentCursorEntity<T> executeCursorDocumentEntityQuery(
-		String query,
-		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize) throws ArangoException {
-
-		return cursorDocumentDriver.executeQuery(getDefaultDatabase(), query, bindVars, clazz, calcCount, batchSize,
-			false);
+		return cursorDocumentDriver.executeBaseCursorEntityQuery(getDefaultDatabase(), query, bindVars,
+			classDocumentEntity, clazz, calcCount, batchSize, fullCount);
 	}
 
 	/**
@@ -2363,13 +2334,15 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorDocumentEntity<T>
+	 * @return BaseCursorEntity<T, S>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentCursorEntity<T> continueCursorDocumentEntityQuery(long cursorId, Class<?>... clazz)
-			throws ArangoException {
-		return cursorDocumentDriver.continueQuery(getDefaultDatabase(), cursorId, clazz);
+	public <T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> continueBaseCursorEntityQuery(
+		long cursorId,
+		Class<S> classDocumentEntity,
+		Class<T> clazz) throws ArangoException {
+		return cursorDocumentDriver.continueBaseCursorEntityQuery(getDefaultDatabase(), cursorId, classDocumentEntity,
+			clazz);
 	}
 
 	/**
@@ -2401,8 +2374,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
-	 * @param <T>
-	 * @return <T> CursorDocumentResultSet<T>
+	 * @return DocumentCursor<T>
 	 * @throws ArangoException
 	 */
 	public <T> DocumentCursor<T> executeDocumentQuery(
@@ -2413,8 +2385,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		Integer batchSize,
 		Boolean fullCount) throws ArangoException {
 
-		return cursorDocumentDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount,
-			batchSize, fullCount);
+		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(query, query,
+			bindVars, DocumentEntity.class, clazz, calcCount, batchSize, fullCount);
+		return new DocumentCursor<T>(baseCursor);
 	}
 
 	/**
@@ -2431,8 +2404,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            if set to true the result count is returned
 	 * @param batchSize
 	 *            the batch size of the result cursor
-	 * @param <T>
-	 * @return <T> CursorDocumentResultSet<T>
+	 * @return CursorDocumentResultSet<T>
 	 * @throws ArangoException
 	 */
 	public <T> DocumentCursor<T> executeDocumentQuery(
@@ -2442,8 +2414,38 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean calcCount,
 		Integer batchSize) throws ArangoException {
 
-		return cursorDocumentDriver.executeQueryWithResultSet(getDefaultDatabase(), query, bindVars, clazz, calcCount,
-			batchSize, false);
+		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(query, query,
+			bindVars, DocumentEntity.class, clazz, calcCount, batchSize, false);
+		return new DocumentCursor<T>(baseCursor);
+	}
+
+	/**
+	 * This method executes an AQL query and returns a CursorDocumentResultSet
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param clazz
+	 *            the expected class, the result from the server request is
+	 *            deserialized to an instance of this class.
+	 * @param calcCount
+	 *            if set to true the result count is returned
+	 * @param batchSize
+	 *            the batch size of the result cursor
+	 * @return BaseCursor<T, S>
+	 * @throws ArangoException
+	 */
+	public <T, S extends DocumentEntity<T>> BaseCursor<T, S> executeBaseCursorQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<S> classDocumentEntity,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize) throws ArangoException {
+
+		return cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(), query, bindVars, classDocumentEntity,
+			clazz, calcCount, batchSize, false);
 	}
 
 	/**

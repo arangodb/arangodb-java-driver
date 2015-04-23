@@ -583,7 +583,7 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class CursorDocumentEntityDeserializer implements JsonDeserializer<DocumentCursorEntity<?>> {
+	public static class BaseCursorEntityDeserializer implements JsonDeserializer<BaseCursorEntity<?, ?>> {
 		private Type bindVarsType = new TypeToken<List<String>>() {
 		}.getType();
 
@@ -591,7 +591,7 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public DocumentCursorEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+		public BaseCursorEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
 
 			if (json.isJsonNull()) {
@@ -599,19 +599,32 @@ public class EntityDeserializers {
 			}
 
 			JsonObject obj = json.getAsJsonObject();
-			DocumentCursorEntity<Object> entity = deserializeBaseParameter(obj, new DocumentCursorEntity<Object>());
+			BaseCursorEntity<Object, DocumentEntity<Object>> entity = deserializeBaseParameter(obj,
+				new BaseCursorEntity<Object, DocumentEntity<Object>>());
 
 			if (obj.has("result")) {
 				JsonArray array = obj.getAsJsonArray("result");
 				if (array == null || array.isJsonNull() || array.size() == 0) {
 					entity.results = new ArrayList<DocumentEntity<Object>>();
 				} else {
-					List<DocumentEntity<Object>> list = new ArrayList<DocumentEntity<Object>>(array.size());
-					for (int i = 0, imax = array.size(); i < imax; i++) {
-						DocumentEntity<Object> de = context.deserialize(array.get(i), DocumentEntity.class);
-						list.add(de);
+
+					Class<?> clazz = getParameterized();
+					boolean withDocument = DocumentEntity.class.isAssignableFrom(clazz);
+					if (withDocument) {
+						nextParameterized();
 					}
-					entity.results = list;
+					try {
+						List<DocumentEntity<Object>> list = new ArrayList<DocumentEntity<Object>>(array.size());
+						for (int i = 0, imax = array.size(); i < imax; i++) {
+							DocumentEntity<Object> de = context.deserialize(array.get(i), clazz);
+							list.add(de);
+						}
+						entity.results = list;
+					} finally {
+						if (withDocument) {
+							backParameterized();
+						}
+					}
 				}
 			}
 

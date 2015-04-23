@@ -2,8 +2,9 @@ package com.arangodb;
 
 import java.util.Map;
 
-import com.arangodb.entity.DocumentCursorEntity;
+import com.arangodb.entity.BaseCursorEntity;
 import com.arangodb.entity.DefaultEntity;
+import com.arangodb.entity.DocumentEntity;
 import com.arangodb.impl.BaseDriverInterface;
 
 /**
@@ -12,43 +13,34 @@ import com.arangodb.impl.BaseDriverInterface;
 
 public interface InternalCursorDocumentDriver extends BaseDriverInterface {
 
-	DocumentCursorEntity<?> validateQuery(String database, String query) throws ArangoException;
+	BaseCursorEntity<?, ?> validateQuery(String database, String query) throws ArangoException;
 
-	<T> DocumentCursorEntity<T> executeQuery(
+	<T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> executeBaseCursorEntityQuery(
 		String database,
 		String query,
 		Map<String, Object> bindVars,
+		Class<S> classDocumentEntity,
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
 		Boolean fullCount) throws ArangoException;
 
-	<T> DocumentCursorEntity<T> executeQuery(
+	<T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> continueBaseCursorEntityQuery(
 		String database,
-		String query,
-		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize) throws ArangoException;
-
-	<T> DocumentCursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException;
+		long cursorId,
+		Class<S> classDocumentEntity,
+		Class<T> clazz) throws ArangoException;
 
 	DefaultEntity finishQuery(String database, long cursorId) throws ArangoException;
 
-	<T> DocumentCursor<T> executeQueryWithResultSet(
+	<T, S extends DocumentEntity<T>> BaseCursor<T, S> executeBaseCursorQuery(
 		String database,
 		String query,
 		Map<String, Object> bindVars,
+		Class<S> classDocumentEntity,
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
 		Boolean fullCount) throws ArangoException;
 
-	<T> DocumentCursor<T> executeQueryWithResultSet(
-		String database,
-		String query,
-		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize) throws ArangoException;
 }

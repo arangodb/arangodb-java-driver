@@ -20,11 +20,12 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
+import com.arangodb.BaseCursor;
 import com.arangodb.CursorResultSet;
 import com.arangodb.DocumentCursor;
 import com.arangodb.InternalCursorDocumentDriver;
 import com.arangodb.InternalCursorDriver;
-import com.arangodb.entity.DocumentCursorEntity;
+import com.arangodb.entity.BaseCursorEntity;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentResultEntity;
@@ -613,12 +614,17 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
 		return createEntity(res, CursorEntity.class, clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> DocumentCursor<T> responseToDocumentCursor(String database, Class<T> clazz, HttpResponseEntity res)
 			throws ArangoException {
-		@SuppressWarnings("unchecked")
-		DocumentCursorEntity<T> cursorDocumentEntity = createEntity(res, DocumentCursorEntity.class, clazz);
 
-		return new DocumentCursor<T>(database, cursorDocumentDriver, cursorDocumentEntity, clazz);
+		BaseCursorEntity<T, DocumentEntity<T>> baseCursorEntity = createEntity(res, BaseCursorEntity.class,
+			DocumentEntity.class, clazz);
+
+		BaseCursor<T, DocumentEntity<T>> baseCursor = new BaseCursor(database, cursorDocumentDriver, baseCursorEntity,
+				DocumentEntity.class, clazz);
+
+		return new DocumentCursor<T>(baseCursor);
 	}
 
 }

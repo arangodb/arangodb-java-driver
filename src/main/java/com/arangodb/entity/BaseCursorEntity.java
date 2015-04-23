@@ -32,7 +32,7 @@ import com.arangodb.util.CollectionUtils;
  * @author abrandt
  *
  */
-public class DocumentCursorEntity<T> extends BaseEntity implements Iterable<DocumentEntity<T>> {
+public class BaseCursorEntity<S, T extends DocumentEntity<S>> extends BaseEntity implements Iterable<T> {
 
 	/**
 	 * True if the cursor has more results.
@@ -67,10 +67,10 @@ public class DocumentCursorEntity<T> extends BaseEntity implements Iterable<Docu
 	/**
 	 * A list of objects containing the results
 	 */
-	List<DocumentEntity<T>> results;
+	List<T> results;
 
 	@Override
-	public Iterator<DocumentEntity<T>> iterator() {
+	public Iterator<T> iterator() {
 		return CollectionUtils.safetyIterator(results);
 	}
 
@@ -92,7 +92,7 @@ public class DocumentCursorEntity<T> extends BaseEntity implements Iterable<Docu
 	 * @param index
 	 * @return Object
 	 */
-	public DocumentEntity<T> get(int index) {
+	public T get(int index) {
 		rangeCheck(index);
 		return results.get(index);
 	}
@@ -109,9 +109,9 @@ public class DocumentCursorEntity<T> extends BaseEntity implements Iterable<Docu
 	 * 
 	 * @return list of DocumentEntity objects
 	 */
-	public List<DocumentEntity<T>> getResults() {
-		List<DocumentEntity<T>> result = new ArrayList<DocumentEntity<T>>();
-		Iterator<DocumentEntity<T>> iterator = iterator();
+	public List<T> getResults() {
+		List<T> result = new ArrayList<T>();
+		Iterator<T> iterator = iterator();
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
 		}
@@ -128,7 +128,7 @@ public class DocumentCursorEntity<T> extends BaseEntity implements Iterable<Docu
 	 * 
 	 * @return the single result or null
 	 */
-	public DocumentEntity<T> getUniqueResult() {
+	public T getUniqueResult() {
 		int size = size();
 		if (size == 0) {
 			return null;
@@ -168,7 +168,7 @@ public class DocumentCursorEntity<T> extends BaseEntity implements Iterable<Docu
 		return extra;
 	}
 
-	public void setResults(List<DocumentEntity<T>> results) {
+	public void setResults(List<T> results) {
 		this.results = results;
 	}
 

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
+import com.arangodb.BaseCursor;
 import com.arangodb.DocumentCursor;
 import com.arangodb.entity.DocumentEntity;
 
@@ -99,6 +100,15 @@ public class AqlAndCursorExample {
 				DocumentEntity<Person> documentEntity = iterator.next();
 				Person person = documentEntity.getEntity();
 				System.out.printf("  %15s(%5s): %d%n", person.name, person.gender, person.age);
+			}
+
+			BaseCursor<Person, DocumentEntity<Person>> baseCursor = driver.executeBaseCursorQuery(queryString,
+				bindVars, DocumentEntity.class, Person.class, true, 5);
+			iterator = baseCursor.iterator();
+			while (iterator.hasNext()) {
+				DocumentEntity<Person> documentEntity = iterator.next();
+				Person person = documentEntity.getEntity();
+				System.out.printf("  xxxxx %15s(%5s): %d%n", person.name, person.gender, person.age);
 			}
 
 		} catch (ArangoException e) {
