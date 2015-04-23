@@ -16,9 +16,6 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.util.CollectionUtils;
-
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,34 +27,34 @@ import java.util.List;
  */
 public class JobsEntity extends BaseEntity {
 
-  /**
-   * The enumeration containing the job state
-   */
-  public static enum JobState {
-    DONE , PENDING;
-    public java.lang.String getName() {
-      if (this == DONE) {
-        return "done";
-      }
-      if (this == PENDING) {
-        return "pending";
-      }
-      return null;
-    }
-  }
+	/**
+	 * The enumeration containing the job state
+	 */
+	public static enum JobState {
+		DONE,
+		PENDING;
+		public java.lang.String getName() {
+			if (this == DONE) {
+				return "done";
+			}
+			if (this == PENDING) {
+				return "pending";
+			}
+			return null;
+		}
+	}
 
-  List<String> jobs;
+	List<String> jobs;
 
-  public List<String> getJobs() {
-    return jobs;
-  }
+	public List<String> getJobs() {
+		return jobs;
+	}
 
-  public void setJobs(List<String> jobs) {
-    this.jobs = jobs;
-  }
+	public void setJobs(List<String> jobs) {
+		this.jobs = jobs;
+	}
 
-
-  public JobsEntity(List<String> jobs) {
-    this.jobs = jobs;
-  }
+	public JobsEntity(List<String> jobs) {
+		this.jobs = jobs;
+	}
 }
