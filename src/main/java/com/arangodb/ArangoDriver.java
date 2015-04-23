@@ -37,7 +37,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
@@ -2414,8 +2413,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean calcCount,
 		Integer batchSize) throws ArangoException {
 
-		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(query, query,
-			bindVars, DocumentEntity.class, clazz, calcCount, batchSize, false);
+		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
+			query, bindVars, DocumentEntity.class, clazz, calcCount, batchSize, false);
 		return new DocumentCursor<T>(baseCursor);
 	}
 
