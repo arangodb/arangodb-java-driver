@@ -20,10 +20,11 @@ package com.arangodb.entity;
  * An enumeration representing the possible directions of graph functions.
  *
  * @author tamtam180 - kirscheless at gmail.com
+ * 
+ * @Deprecated As of release 2.5.4, replaced by {@link com.arangodb.Direction}
  *
  */
+@Deprecated
 public enum Direction {
-  ANY,
-  IN,
-  OUT
+	ANY, IN, OUT
 }

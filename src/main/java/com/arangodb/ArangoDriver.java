@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.arangodb.InternalTraversalDriver.Direction;
 import com.arangodb.InternalTraversalDriver.ItemOrder;
 import com.arangodb.InternalTraversalDriver.Order;
 import com.arangodb.InternalTraversalDriver.Strategy;
@@ -81,7 +80,11 @@ import com.arangodb.http.InvocationHandlerImpl;
 import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
 import com.arangodb.util.DumpHandler;
+import com.arangodb.util.GraphEdgesOptions;
+import com.arangodb.util.GraphVerticesOptions;
+import com.arangodb.util.JsonUtils;
 import com.arangodb.util.MapBuilder;
+import com.arangodb.util.ShortestPathOptions;
 
 /**
  * ArangoDB driver. All of the functionality to use ArangoDB is provided via
@@ -2322,7 +2325,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean fullCount) throws ArangoException {
 
 		return cursorDocumentDriver.executeBaseCursorEntityQuery(getDefaultDatabase(), query, bindVars,
-			classDocumentEntity, clazz, calcCount, batchSize, fullCount);
+			classDocumentEntity, clazz, calcCount, batchSize, fullCount, null);
 	}
 
 	/**
@@ -2373,6 +2376,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
+	 * @param ttl
+	 *            an optional time-to-live for the cursor (in seconds)
 	 * @return DocumentCursor<T>
 	 * @throws ArangoException
 	 */
@@ -2382,10 +2387,12 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException {
+		Boolean fullCount,
+		Integer ttl) throws ArangoException {
 
+		@SuppressWarnings("unchecked")
 		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(query, query,
-			bindVars, DocumentEntity.class, clazz, calcCount, batchSize, fullCount);
+			bindVars, DocumentEntity.class, clazz, calcCount, batchSize, fullCount, ttl);
 		return new DocumentCursor<T>(baseCursor);
 	}
 
@@ -2413,8 +2420,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean calcCount,
 		Integer batchSize) throws ArangoException {
 
+		@SuppressWarnings("unchecked")
 		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
-			query, bindVars, DocumentEntity.class, clazz, calcCount, batchSize, false);
+			query, bindVars, DocumentEntity.class, clazz, calcCount, batchSize, false, null);
 		return new DocumentCursor<T>(baseCursor);
 	}
 
@@ -2444,7 +2452,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Integer batchSize) throws ArangoException {
 
 		return cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(), query, bindVars, classDocumentEntity,
-			clazz, calcCount, batchSize, false);
+			clazz, calcCount, batchSize, false, null);
 	}
 
 	/**
@@ -4719,7 +4727,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return DocumentEntity<T>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentEntity<T> graphUpdateVertex(
+	public <T> VertexEntity<T> graphUpdateVertex(
 		String graphName,
 		String collectionName,
 		String key,
@@ -4754,7 +4762,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return DocumentEntity<T>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentEntity<T> graphUpdateVertex(
+	public <T> VertexEntity<T> graphUpdateVertex(
 		String graphName,
 		String collectionName,
 		String key,
@@ -5105,7 +5113,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the graph.
 	 * @return CursorEntity<PlainEdgeEntity>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursor()}
 	 */
+	@Deprecated
 	public CursorEntity<PlainEdgeEntity> graphGetEdges(String graphName) throws ArangoException {
 
 		validateCollectionName(graphName);
@@ -5115,7 +5126,153 @@ public class ArangoDriver extends BaseArangoDriver {
 		CursorEntity<PlainEdgeEntity> result = this.executeQuery(query, bindVars, PlainEdgeEntity.class, true, 20);
 
 		return result;
+	}
 
+	/**
+	 * Returns edges as an EdgeCursor by a given query
+	 * 
+	 * @param graphName
+	 *            the graph name
+	 * @param query
+	 *            the query
+	 * @param bindVars
+	 *            the variables
+	 * @param clazz
+	 *            the result class
+	 * @param calcCount
+	 *            count results
+	 * @param batchSize
+	 *            result batch size of the cursor
+	 * @param fullCount
+	 *            do a full count
+	 * @param ttl
+	 *            an optional time-to-live for the cursor (in seconds)
+	 * @return EdgeCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> EdgeCursor<T> executeEdgeQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize,
+		Boolean fullCount,
+		Integer ttl) throws ArangoException {
+
+		@SuppressWarnings("unchecked")
+		BaseCursor<T, EdgeEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
+			query, bindVars, EdgeEntity.class, clazz, calcCount, batchSize, fullCount, ttl);
+		return new EdgeCursor<T>(baseCursor);
+	}
+
+	/**
+	 * Returns vertices as a VertexCursor by a given query
+	 * 
+	 * @param graphName
+	 *            the graph name
+	 * @param query
+	 *            the query
+	 * @param bindVars
+	 *            the variables
+	 * @param clazz
+	 *            the result class
+	 * @param calcCount
+	 *            count results
+	 * @param batchSize
+	 *            result batch size of the cursor
+	 * @param fullCount
+	 *            do a full count
+	 * @param ttl
+	 *            an optional time-to-live for the cursor (in seconds)
+	 * @return EdgeCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> VertexCursor<T> executeVertexQuery(
+		String query,
+		Map<String, Object> bindVars,
+		Class<T> clazz,
+		Boolean calcCount,
+		Integer batchSize,
+		Boolean fullCount,
+		Integer ttl) throws ArangoException {
+
+		@SuppressWarnings("unchecked")
+		BaseCursor<T, VertexEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
+			query, bindVars, VertexEntity.class, clazz, calcCount, batchSize, fullCount, ttl);
+		return new VertexCursor<T>(baseCursor);
+	}
+
+	/**
+	 * Returns an EdgeCursor by a given vertex example and some options
+	 * 
+	 * @param graphName
+	 *            The name of the graph.
+	 * @param clazz
+	 * @param vertexExample
+	 *            An example for the desired vertices
+	 * @param graphEdgesOptions
+	 *            An object containing the options
+	 * @return EdgeCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> EdgeCursor<T> graphGetEdgeCursor(
+		String graphName,
+		Class<T> clazz,
+		Object vertexExample,
+		GraphEdgesOptions graphEdgesOptions) throws ArangoException {
+
+		validateCollectionName(graphName);
+
+		String query = "for i in graph_edges(@graphName, @vertexExample, @options) return i";
+		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+				.put("vertexExample", JsonUtils.convertNullToMap(vertexExample))
+				.put("options", JsonUtils.convertNullToMap(graphEdgesOptions)).get();
+
+		return executeEdgeQuery(query, bindVars, clazz, true, 20, false, null);
+	}
+
+	/**
+	 * Returns a VertexCursor by a given vertex example and some options
+	 * 
+	 * @param graphName
+	 *            The name of the graph.
+	 * @param clazz
+	 * @param vertexExample
+	 *            An example for the desired vertices
+	 * @param graphEdgesOptions
+	 *            An object containing the options
+	 * @return EdgeCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> VertexCursor<T> graphGetVertexCursor(
+		String graphName,
+		Class<T> clazz,
+		Object vertexExample,
+		GraphVerticesOptions graphVerticesOptions) throws ArangoException {
+
+		validateCollectionName(graphName);
+
+		String query = "for i in graph_vertices(@graphName , @vertexExample, @options) return i";
+
+		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+				.put("vertexExample", JsonUtils.convertNullToMap(vertexExample))
+				.put("options", JsonUtils.convertNullToMap(graphVerticesOptions)).get();
+
+		return executeVertexQuery(query, bindVars, clazz, true, 20, false, null);
+	}
+
+	/**
+	 * Returns all Edges of a graph, each edge as a PlainEdgeEntity.
+	 * 
+	 * @param graphName
+	 *            The name of the graph.
+	 * @return EdgeCursor<PlainEdgeEntity>
+	 * @throws ArangoException
+	 */
+	public EdgeCursor<PlainEdgeEntity> graphGetEdgeCursor(String graphName) throws ArangoException {
+		validateCollectionName(graphName);
+
+		return graphGetEdgeCursor(graphName, PlainEdgeEntity.class, null, null);
 	}
 
 	/**
@@ -5124,9 +5281,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param graphName
 	 * @param clazz
 	 * @param vertexDocumentHandle
-	 * @return <T> CursorEntity<T>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursor()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz, String vertexDocumentHandle)
 			throws ArangoException {
 
@@ -5142,16 +5302,35 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
+	 * Returns all Edges of a given vertex.
+	 * 
+	 * @param graphName
+	 * @param clazz
+	 * @param vertexExample
+	 *            a vertex example or a document handle
+	 * @return EdgeCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> EdgeCursor<T> graphGetEdgeCursorByExample(String graphName, Class<T> clazz, Object vertexExample)
+			throws ArangoException {
+
+		return graphGetEdgeCursor(graphName, clazz, vertexExample, null);
+	}
+
+	/**
 	 * Returns all Edges of vertices matching the example object (non-primitive
 	 * set to null will not be used for comparing).
 	 * 
 	 * @param graphName
-	 * @param clazzT
+	 * @param clazz
 	 * @param vertexExample
-	 * @return <T> CursorEntity<T>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursorByExampleObject()}
 	 */
-	public <T, S> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazzT, S vertexExample)
+	@Deprecated
+	public <T, S> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazz, S vertexExample)
 			throws ArangoException {
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, @vertexExample) return i";
@@ -5159,7 +5338,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
 				.get();
 
-		CursorEntity<T> result = this.executeQuery(query, bindVars, clazzT, true, 20);
+		CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
 
 		return result;
 	}
@@ -5169,16 +5348,19 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * 
 	 * @param graphName
 	 *            The name of the graph.
-	 * @param clazzT
+	 * @param clazz
 	 *            Class of returned edge documents.
 	 * @param vertexExample
 	 *            Map with example of vertex, where edges start or end.
-	 * @return <T> CursorEntity<T>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
+	 * @Deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursorByExampleMap()}
 	 */
+	@Deprecated
 	public <T> CursorEntity<T> graphGetEdgesByExampleMap(
 		String graphName,
-		Class<T> clazzT,
+		Class<T> clazz,
 		Map<String, Object> vertexExample) throws ArangoException {
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, @vertexExample) return i";
@@ -5186,9 +5368,41 @@ public class ArangoDriver extends BaseArangoDriver {
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
 				.get();
 
-		CursorEntity<T> result = this.executeQuery(query, bindVars, clazzT, true, 20);
+		CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20, null);
 
 		return result;
+	}
+
+	/**
+	 * Returns all Edges of vertices matching the map.
+	 * 
+	 * @param graphName
+	 *            The name of the graph.
+	 * @param clazz
+	 *            Class of returned edge documents.
+	 * @param vertexExample
+	 *            Map with example of vertex, where edges start or end.
+	 * @return EdgeCursor<T>
+	 * @throws ArangoException
+	 */
+	public <T> EdgeCursor<T> graphGetShortesPath(
+		String graphName,
+		Class<T> clazz,
+		Object startVertexExample,
+		Object endVertexExample,
+		ShortestPathOptions shortestPathOptions) throws ArangoException {
+
+		validateCollectionName(graphName);
+
+		String query = "for i in graph_shortest_path(@graphName, @startVertexExample, @endVertexExample, @options) return i";
+
+		Map<String, Object> options = shortestPathOptions == null ? null : shortestPathOptions.toMap();
+
+		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
+				.put("options", options).get();
+
+		return executeEdgeQuery(query, bindVars, clazz, true, 20, false, null);
 	}
 
 	// public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(

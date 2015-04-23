@@ -61,9 +61,10 @@ public class InternalCursorDocumentDriverImpl extends BaseArangoDriverImpl imple
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException {
+		Boolean fullCount,
+		Integer ttl) throws ArangoException {
 
-		HttpResponseEntity res = getCursor(database, query, bindVars, calcCount, batchSize, fullCount);
+		HttpResponseEntity res = getCursor(database, query, bindVars, calcCount, batchSize, fullCount, ttl);
 
 		try {
 			return createEntity(res, BaseCursorEntity.class, classDocumentEntity, clazz);
@@ -79,14 +80,31 @@ public class InternalCursorDocumentDriverImpl extends BaseArangoDriverImpl imple
 		Map<String, Object> bindVars,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException {
-		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(database, "/_api/cursor"),
-			null,
-			EntityFactory.toJsonString(new MapBuilder().put("query", query)
-					.put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars).put("count", calcCount)
-					.put("batchSize", batchSize).put("options", new MapBuilder().put("fullCount", fullCount).get())
-					.get()));
+		Boolean fullCount,
+		Integer ttl) throws ArangoException {
+
+		MapBuilder mp = new MapBuilder();
+		mp.put("query", query).put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars)
+				.put("count", calcCount).put("batchSize", batchSize);
+
+		if (ttl != null) {
+			mp.put("ttl", ttl);
+		}
+
+		MapBuilder optionsMp = new MapBuilder();
+
+		if (fullCount != null) {
+			optionsMp.put("fullCount", fullCount);
+		}
+
+		// TODO add maxPlans
+
+		// TODO add optimizer.rules
+
+		mp.put("options", optionsMp.get());
+
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/cursor"), null,
+			EntityFactory.toJsonString(mp.get()));
 		return res;
 	}
 
@@ -133,10 +151,11 @@ public class InternalCursorDocumentDriverImpl extends BaseArangoDriverImpl imple
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException {
+		Boolean fullCount,
+		Integer ttl) throws ArangoException {
 
 		BaseCursorEntity<T, S> entity = executeBaseCursorEntityQuery(database, query, bindVars, classDocumentEntity,
-			clazz, calcCount, batchSize, fullCount);
+			clazz, calcCount, batchSize, fullCount, ttl);
 
 		return new BaseCursor<T, S>(database, this, entity, classDocumentEntity, clazz);
 	}

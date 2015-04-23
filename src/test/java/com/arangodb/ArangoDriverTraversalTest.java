@@ -31,7 +31,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.InternalTraversalDriver.Direction;
 import com.arangodb.InternalTraversalDriver.ItemOrder;
 import com.arangodb.InternalTraversalDriver.Order;
 import com.arangodb.InternalTraversalDriver.Strategy;
@@ -56,6 +55,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		super(configure, driver);
 	}
 
+	@Override
 	@Before
 	public void _before() throws ArangoException {
 		super._before();

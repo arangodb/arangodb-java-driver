@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
+import com.arangodb.Direction;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.http.HttpManager;

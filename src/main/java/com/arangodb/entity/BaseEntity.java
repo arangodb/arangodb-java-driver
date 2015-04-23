@@ -26,138 +26,137 @@ import com.arangodb.annotations.Exclude;
  */
 public abstract class BaseEntity implements Serializable {
 
-  /**
-   * If true an error occurred while creating this entity
-   */
-  @Exclude(deserialize=false)
-  boolean error;
+	/**
+	 * If true an error occurred while creating this entity
+	 */
+	@Exclude(deserialize = false)
+	boolean error;
 
-  /**
-   * The http response code of the response
-   */
-  @Exclude(deserialize=false)
-  int code;
+	/**
+	 * The http response code of the response
+	 */
+	@Exclude(deserialize = false)
+	int code;
 
-  /**
-   * The Arango error number of the error
-   */
-  @Exclude(deserialize=false)
-  int errorNumber;
+	/**
+	 * The Arango error number of the error
+	 */
+	@Exclude(deserialize = false)
+	int errorNumber;
 
-  /**
-   * If an error occurred this is the error message
-   */
-  @Exclude(deserialize=false)
-  String errorMessage;
+	/**
+	 * If an error occurred this is the error message
+	 */
+	@Exclude(deserialize = false)
+	String errorMessage;
 
-  /**
-   * The http status code of the response
-   */
-  @Exclude(deserialize=false)
-  int statusCode;
+	/**
+	 * The http status code of the response
+	 */
+	@Exclude(deserialize = false)
+	int statusCode;
 
-  /**
-   * The check sum of the requested resource
-   */
-  @Exclude(deserialize=false)
-  long etag;
+	/**
+	 * The check sum of the requested resource
+	 */
+	@Exclude(deserialize = false)
+	long etag;
 
-  /**
-   * The requestId, this attribute is only used for batch requests.
-   */
-  @Exclude(deserialize=false)
-  String requestId;
+	/**
+	 * The requestId, this attribute is only used for batch requests.
+	 */
+	@Exclude(deserialize = false)
+	String requestId;
 
-  /**
-   * If the resource has been modified it returns true
-   *
-   * @return boolean
-   */
-  public boolean isNotModified() {
-    return statusCode == 304; //HttpStatus.SC_NOT_MODIFIED;
-  }
+	/**
+	 * If the resource has been modified it returns true
+	 *
+	 * @return boolean
+	 */
+	public boolean isNotModified() {
+		return statusCode == 304; // HttpStatus.SC_NOT_MODIFIED;
+	}
 
-  /**
-   * If the request is unauthorized this returns true
-   *
-   * @return boolean
-   */
-  public boolean isUnauthorized() {
-    return statusCode == 401;
-  }
+	/**
+	 * If the request is unauthorized this returns true
+	 *
+	 * @return boolean
+	 */
+	public boolean isUnauthorized() {
+		return statusCode == 401;
+	}
 
-//  /**
-//   * If the requested resource has not been modified it returns true
-//   *
-//   * @return boolean
-//   */
-//  public boolean isNotFound() {
-//    return statusCode == 404;
-//  }
+	// /**
+	// * If the requested resource has not been modified it returns true
+	// *
+	// * @return boolean
+	// */
+	// public boolean isNotFound() {
+	// return statusCode == 404;
+	// }
 
-  /**
-   * If this is the response of a batch request it returns true
-   *
-   * @return boolean
-   */
-  public boolean isBatchResponseEntity() {
-    return statusCode == 206;
-  }
+	/**
+	 * If this is the response of a batch request it returns true
+	 *
+	 * @return boolean
+	 */
+	public boolean isBatchResponseEntity() {
+		return statusCode == 206;
+	}
 
-  public boolean isError() {
-    return error;
-  }
+	public boolean isError() {
+		return error;
+	}
 
-  public void setError(boolean error) {
-    this.error = error;
-  }
+	public void setError(boolean error) {
+		this.error = error;
+	}
 
-  public int getCode() {
-    return code;
-  }
+	public int getCode() {
+		return code;
+	}
 
-  public int getErrorNumber() {
-    return errorNumber;
-  }
+	public int getErrorNumber() {
+		return errorNumber;
+	}
 
-  public String getErrorMessage() {
-    return errorMessage;
-  }
+	public String getErrorMessage() {
+		return errorMessage;
+	}
 
-  public void setCode(int code) {
-    this.code = code;
-  }
+	public void setCode(int code) {
+		this.code = code;
+	}
 
-  public void setErrorNumber(int errorNumber) {
-    this.errorNumber = errorNumber;
-  }
+	public void setErrorNumber(int errorNumber) {
+		this.errorNumber = errorNumber;
+	}
 
-  public void setErrorMessage(String errorMessage) {
-    this.errorMessage = errorMessage;
-  }
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
-  public long getEtag() {
-    return etag;
-  }
+	public long getEtag() {
+		return etag;
+	}
 
-  public void setEtag(long etag) {
-    this.etag = etag;
-  }
+	public void setEtag(long etag) {
+		this.etag = etag;
+	}
 
-  public int getStatusCode() {
-    return statusCode;
-  }
+	public int getStatusCode() {
+		return statusCode;
+	}
 
-  public void setStatusCode(int statusCode) {
-    this.statusCode = statusCode;
-  }
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
 
+	public String getRequestId() {
+		return requestId;
+	}
 
-  public String getRequestId() {
-    return requestId;
-  }
-
-  public void setRequestId(String requestId) {
-    this.requestId = requestId;
-  }
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
 }

@@ -67,6 +67,15 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 	}
 
 	/**
+	 * Get total number of results for queries with LIMIT clause
+	 * 
+	 * @return total number of results
+	 */
+	public int getFullCount() {
+		return baseCursor.getFullCount();
+	}
+
+	/**
 	 * Return a single instance that matches the query, or null if the query
 	 * returns no results.
 	 * 
@@ -77,6 +86,70 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 	 */
 	public S getUniqueResult() {
 		return baseCursor.getUniqueResult();
+	}
+
+	/**
+	 * If the resource has been modified it returns true
+	 *
+	 * @return boolean
+	 */
+	public boolean isNotModified() {
+		return baseCursor.getEntity().isNotModified();
+	}
+
+	/**
+	 * If the request is unauthorized this returns true
+	 *
+	 * @return boolean
+	 */
+	public boolean isUnauthorized() {
+		return baseCursor.getEntity().isUnauthorized();
+	}
+
+	public boolean isError() {
+		return baseCursor.getEntity().isError();
+	}
+
+	public int getCode() {
+		return baseCursor.getEntity().getCode();
+	}
+
+	public int getErrorNumber() {
+		return baseCursor.getEntity().getErrorNumber();
+	}
+
+	public String getErrorMessage() {
+		return baseCursor.getEntity().getErrorMessage();
+	}
+
+	public long getEtag() {
+		return baseCursor.getEntity().getEtag();
+	}
+
+	public int getStatusCode() {
+		return baseCursor.getEntity().getStatusCode();
+	}
+
+	public String getRequestId() {
+		return baseCursor.getEntity().getRequestId();
+	}
+
+	/**
+	 * Returns true if the cursor can load more data from the database
+	 * 
+	 * @return true, if the cursor can load more data from the database
+	 */
+	public boolean hasMore() {
+		return baseCursor.getEntity().hasMore();
+	}
+
+	/**
+	 * Returns the cursor identifier
+	 * 
+	 * @return the cursor identifier
+	 */
+	public Long getCursorId() {
+		return baseCursor.getEntity().getCursorId();
 	}
 
 }

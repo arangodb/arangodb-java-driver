@@ -44,7 +44,9 @@ import com.arangodb.util.StringJoinTest;
 
 		ArangoDriverDatabaseTest.class, ArangoDriverDatabaseAndUserTest.class,
 
-		ArangoDriverBatchTest.class, ArangoDriverAsyncTest.class, ArangoDriverDocumentTest.class,
+		ArangoDriverBatchTest.class,
+		ArangoDriverAsyncTest.class,
+		ArangoDriverDocumentTest.class,
 		ArangoDriverAqlfunctionsTest.class,
 		ArangoDriverDocumentKeyTest.class,
 		ArangoDriverCollectionTest.class,
@@ -62,8 +64,9 @@ import com.arangodb.util.StringJoinTest;
 		ArangoDriverGraphTest.class, ArangoDriverGraphVertexTest.class, ArangoDriverGraphVertexReplaceTest.class,
 		ArangoDriverGraphVertexUpdateTest.class, ArangoDriverGraphEdgeCreateTest.class,
 		ArangoDriverGraphEdgeGetTest.class, ArangoDriverGraphEdgeDeleteTest.class,
-		ArangoDriverGraphEdgeReplaceTest.class, ArangoDriverTransactionTest.class, ArangoDriverThreadSafeTest.class,
-		ArangoDriverReplicationTest.class, ArangoDriverReplicationTestScenario1.class, ArangoDriverTraversalTest.class
+		ArangoDriverGraphEdgesGetCursorTest.class, ArangoDriverGraphEdgeReplaceTest.class,
+		ArangoDriverTransactionTest.class, ArangoDriverThreadSafeTest.class, ArangoDriverReplicationTest.class,
+		ArangoDriverReplicationTestScenario1.class, ArangoDriverTraversalTest.class
 
 })
 public class ArangoTestSuite {

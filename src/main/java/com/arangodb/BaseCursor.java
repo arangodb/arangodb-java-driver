@@ -119,6 +119,15 @@ public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
 	}
 
 	/**
+	 * et total number of results for queries with LIMIT clause
+	 * 
+	 * @return total number of results
+	 */
+	public int getFullCount() {
+		return entity.getFullCount();
+	}
+
+	/**
 	 * Return a single instance that matches the query, or null if the query
 	 * returns no results.
 	 * 
@@ -222,6 +231,15 @@ public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
 			throw new UnsupportedOperationException("remove is not supported");
 		}
 
+	}
+
+	/**
+	 * Returns the BaseCursorEntity object
+	 * 
+	 * @return BaseCursorEntity
+	 */
+	public BaseCursorEntity<T, S> getEntity() {
+		return entity;
 	}
 
 }

@@ -23,7 +23,8 @@ public interface InternalCursorDocumentDriver extends BaseDriverInterface {
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException;
+		Boolean fullCount,
+		Integer ttl) throws ArangoException;
 
 	<T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> continueBaseCursorEntityQuery(
 		String database,
@@ -41,6 +42,7 @@ public interface InternalCursorDocumentDriver extends BaseDriverInterface {
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException;
+		Boolean fullCount,
+		Integer ttl) throws ArangoException;
 
 }

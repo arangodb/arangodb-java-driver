@@ -482,6 +482,24 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		Long ifMatchRevision,
 		Long ifNoneMatchRevision) throws ArangoException;
 
+	/**
+	 * 
+	 * 
+	 * @param database
+	 * @param graphName
+	 * @param vertexKey
+	 * @param clazz
+	 * @param batchSize
+	 * @param limit
+	 * @param count
+	 * @param direction
+	 * @param labels
+	 * @param driver
+	 * @param properties
+	 * @return
+	 * @throws ArangoException
+	 */
+	@Deprecated
 	<T> CursorEntity<EdgeEntity<T>> getEdges(
 		String database,
 		String graphName,

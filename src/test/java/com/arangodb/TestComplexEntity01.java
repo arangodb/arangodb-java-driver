@@ -23,41 +23,41 @@ package com.arangodb;
  */
 public class TestComplexEntity01 {
 
-  private String user;// = "testUser01";
-  private String desc;// = "This is a test user";
-  private int age;// = 18;
+	private String user;// = "testUser01";
+	private String desc;// = "This is a test user";
+	private Integer age;// = 18;
 
-  public TestComplexEntity01() {
-  }
+	public TestComplexEntity01() {
+	}
 
-  public TestComplexEntity01(String user, String desc, int age) {
-    this.user = user;
-    this.desc = desc;
-    this.age = age;
-  }
+	public TestComplexEntity01(String user, String desc, Integer age) {
+		this.user = user;
+		this.desc = desc;
+		this.age = age;
+	}
 
-  public String getUser() {
-    return user;
-  }
+	public String getUser() {
+		return user;
+	}
 
-  public String getDesc() {
-    return desc;
-  }
+	public String getDesc() {
+		return desc;
+	}
 
-  public int getAge() {
-    return age;
-  }
+	public Integer getAge() {
+		return age;
+	}
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+	public void setUser(String user) {
+		this.user = user;
+	}
 
-  public void setDesc(String desc) {
-    this.desc = desc;
-  }
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
 
-  public void setAge(int age) {
-    this.age = age;
-  }
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 
 }

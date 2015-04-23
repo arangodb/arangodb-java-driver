@@ -247,7 +247,7 @@ E.g. get all Simpsons aged 3 or older in ascending order:
     }
 ```
 
-instead of using a for statement you can also use an DocumentEntitiy or an entity iterator:
+instead of using a ```for``` statement you can also use an DocumentEntitiy or an entity iterator:
 ``` Java
     Iterator<DocumentEntity<Person>> iterator = documentCursor.iterator();
     while (iterator.hasNext()) {
