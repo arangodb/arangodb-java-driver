@@ -23,60 +23,60 @@ import com.arangodb.entity.BaseEntity;
  *
  */
 public class ArangoException extends Exception {
-  
-  protected BaseEntity entity;
-  
-  public ArangoException() {
-    super();
-  }
-  
-  public ArangoException(BaseEntity entity) {
-    super((entity.getErrorNumber() == 0 ? "" : "[" + entity.getErrorNumber() + "]") + entity.getErrorMessage());
-    this.entity = entity;
-  }
-  
-  public ArangoException(String message, Throwable cause) {
-    super(message, cause);
-  }
 
-  public ArangoException(String message) {
-    super(message);
-  }
+	protected BaseEntity entity;
 
-  public ArangoException(Throwable cause) {
-    super(cause);
-  }
+	public ArangoException() {
+		super();
+	}
 
-  public int getErrorNumber() {
-    return (entity == null) ? 0 : entity.getErrorNumber();
-  }
-  
-  public int getCode() {
-    return (entity == null) ? 0: entity.getCode();
-  }
-  
-  public String getErrorMessage() {
-    return (entity == null) ? getMessage() : entity.getErrorMessage();
-  }
-  
-  public <T extends BaseEntity> T getEntity() {
-    return (T) entity;
-  }
-  
-  public boolean isUnauthorized() {
-    return (entity != null && entity.isUnauthorized());
-  }
-  
-//  public boolean isNotFound() {
-//    return (entity != null && entity.isNotFound());
-//  }
-  
-  public void setCode(int code) {
-	  entity.setCode(code);
-  }
-  
-  public void setErrorNumber(int errorNumber) {
-	  entity.setErrorNumber(errorNumber);
-  }
-  
+	public ArangoException(BaseEntity entity) {
+		super((entity.getErrorNumber() == 0 ? "" : "[" + entity.getErrorNumber() + "]") + entity.getErrorMessage());
+		this.entity = entity;
+	}
+
+	public ArangoException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ArangoException(String message) {
+		super(message);
+	}
+
+	public ArangoException(Throwable cause) {
+		super(cause);
+	}
+
+	public int getErrorNumber() {
+		return (entity == null) ? 0 : entity.getErrorNumber();
+	}
+
+	public int getCode() {
+		return (entity == null) ? 0 : entity.getCode();
+	}
+
+	public String getErrorMessage() {
+		return (entity == null) ? getMessage() : entity.getErrorMessage();
+	}
+
+	public BaseEntity getEntity() {
+		return entity;
+	}
+
+	public boolean isUnauthorized() {
+		return (entity != null && entity.isUnauthorized());
+	}
+
+	// public boolean isNotFound() {
+	// return (entity != null && entity.isNotFound());
+	// }
+
+	public void setCode(int code) {
+		entity.setCode(code);
+	}
+
+	public void setErrorNumber(int errorNumber) {
+		entity.setErrorNumber(errorNumber);
+	}
+
 }
