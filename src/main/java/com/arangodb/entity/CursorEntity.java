@@ -67,6 +67,7 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 	 */
 	List<? extends T> results;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
 		return (Iterator<T>) CollectionUtils.safetyIterator(results);
@@ -102,10 +103,24 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 		}
 	}
 
+	/**
+	 * Returns the DocumentEntity objects of this CursorDocumentEntity
+	 * 
+	 * @return list of DocumentEntity objects
+	 */
 	public List<? extends T> getResults() {
 		return results;
 	}
 
+	/**
+	 * Return a single instance that matches the query, or null if the query
+	 * returns no results.
+	 * 
+	 * Throws NonUniqueResultException (RuntimeException) if there is more than
+	 * one matching result
+	 * 
+	 * @return the single result or null
+	 */
 	public T getUniqueResult() {
 		int size = size();
 		if (size == 0) {

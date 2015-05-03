@@ -7,7 +7,7 @@ import com.arangodb.entity.EdgeEntity;
  */
 public class EdgeCursor<T> extends BaseCursorProxy<T, EdgeEntity<T>> {
 
-	public EdgeCursor(BaseCursor<T, EdgeEntity<T>> baseCursor) {
+	public EdgeCursor(DocumentCursorResult<T, EdgeEntity<T>> baseCursor) {
 		super(baseCursor);
 	}
 }

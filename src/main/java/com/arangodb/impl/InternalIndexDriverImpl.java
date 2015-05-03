@@ -35,7 +35,7 @@ import com.arangodb.util.MapBuilder;
 public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalIndexDriver {
 
 	InternalIndexDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
-		super(configure, null, null, httpManager);
+		super(configure, null, httpManager);
 	}
 
 	@Override

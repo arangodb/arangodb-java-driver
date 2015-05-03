@@ -34,6 +34,7 @@ import org.junit.Test;
 import com.arangodb.entity.DeletedEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.marker.VertexEntity;
+import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.GraphVerticesOptions;
 
 /**
@@ -270,20 +271,24 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex3.getDocumentHandle(),
 			new TestComplexEntity02(10, 11, 12), null);
 
+		// setCount = true
+		AqlQueryOptions aqlQueryOptions = driver.getDefaultAqlQueryOptions().setCount(true);
+
 		VertexCursor<TestComplexEntity01> vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME,
-			TestComplexEntity01.class, null, null);
+			TestComplexEntity01.class, null, null, aqlQueryOptions);
 		assertEquals(4, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 
 		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, new TestComplexEntity01(
-				"Homer", null, null), null);
+				"Homer", null, null), null, aqlQueryOptions);
 		assertEquals(1, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 
 		GraphVerticesOptions graphVerticesOptions = new GraphVerticesOptions();
 		graphVerticesOptions.setDirection(Direction.INBOUND);
 
-		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, null, graphVerticesOptions);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, null, graphVerticesOptions,
+			aqlQueryOptions);
 		assertEquals(2, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 
@@ -291,7 +296,8 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		vertexCollectionRestriction.add("from1-1");
 		graphVerticesOptions.setVertexCollectionRestriction(vertexCollectionRestriction);
 
-		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, null, graphVerticesOptions);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, null, graphVerticesOptions,
+			aqlQueryOptions);
 		assertEquals(0, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 

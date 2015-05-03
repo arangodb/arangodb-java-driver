@@ -21,79 +21,52 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import com.arangodb.entity.BaseCursorEntity;
-import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.CursorEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * @author a-brandt
  *
  */
-public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
+public class CursorResult<T> implements Iterable<T> {
 
 	private String database;
-	private transient InternalCursorDocumentDriver cursorDriver;
-	private transient Class<S> classDocumentEntity;
-	private transient Class<T> clazz;
-	private transient BaseCursorEntity<T, S> entity;
+	private transient InternalCursorDriver cursorDriver;
+	private transient Class<?>[] clazz;
+	private transient CursorEntity<T> entity;
 	private transient int pos;
 	private int count;
+	private CursorIterator iter;
 
-	public BaseCursor(String database, InternalCursorDocumentDriver cursorDriver, BaseCursorEntity<T, S> entity,
-		Class<S> classDocumentEntity, Class<T> clazz) {
+	public CursorResult(String database, InternalCursorDriver cursorDriver, CursorEntity<T> entity, Class<?>... clazz) {
 		this.database = database;
 		this.cursorDriver = cursorDriver;
-		this.classDocumentEntity = classDocumentEntity;
 		this.clazz = clazz;
 		this.entity = entity;
 		this.count = entity == null ? 0 : entity.getCount();
 		this.pos = 0;
+		this.iter = null;
 	}
 
 	@Override
-	public Iterator<S> iterator() {
-		return new DocumentEntityIterator();
+	public Iterator<T> iterator() {
+		if (iter == null) {
+			iter = new CursorIterator();
+		}
+
+		return iter;
 	}
 
 	/**
-	 * Returns an iterator over a entity set of elements of type T.
-	 * 
-	 * @return an Iterator.
-	 */
-	public Iterator<T> entityIterator() {
-		return new EntityIterator();
-	}
-
-	/**
-	 * Returns the DocumentEntity objects as a list
+	 * Returns the objects as a list
 	 * 
 	 * @return list of DocumentEntity objects
 	 */
-	public List<S> asList() {
-		List<S> result = new ArrayList<S>();
-		Iterator<S> iterator = iterator();
+	public List<T> asList() {
+		List<T> result = new ArrayList<T>();
+		Iterator<T> iterator = iterator();
 
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
-		}
-
-		return result;
-	}
-
-	/**
-	 * Returns the entities of DocumentEntity objects as a list
-	 * 
-	 * @return list of DocumentEntity objects
-	 */
-	public List<T> asEntityList() {
-		List<T> result = new ArrayList<T>();
-		Iterator<S> iterator = iterator();
-
-		while (iterator.hasNext()) {
-			T e = iterator.next().getEntity();
-			if (e != null) {
-				result.add(e);
-			}
 		}
 
 		return result;
@@ -119,7 +92,7 @@ public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
 	}
 
 	/**
-	 * et total number of results for queries with LIMIT clause
+	 * Get total number of results for queries with LIMIT clause
 	 * 
 	 * @return total number of results
 	 */
@@ -136,7 +109,7 @@ public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
 	 * 
 	 * @return the single result or null
 	 */
-	public S getUniqueResult() {
+	public T getUniqueResult() {
 		return entity.getUniqueResult();
 	}
 
@@ -147,55 +120,23 @@ public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
 	 */
 	private void updateEntity() throws ArangoException {
 		long cursorId = entity.getCursorId();
-		this.entity = cursorDriver.continueBaseCursorEntityQuery(database, cursorId, classDocumentEntity, clazz);
+		this.entity = cursorDriver.continueQuery(database, cursorId, this.clazz);
 		this.pos = 0;
 	}
 
 	/**
-	 * internal DocumentEntity iterator
+	 * Returns the CursorEntity object
+	 * 
+	 * @return CursorEntity
 	 */
-	public class DocumentEntityIterator implements Iterator<S> {
-
-		@Override
-		public boolean hasNext() {
-			if (entity == null) {
-				return false;
-			}
-			if (pos < entity.size()) {
-				return true;
-			}
-			if (entity.hasMore()) {
-				return true;
-			}
-			return false;
-		}
-
-		@Override
-		public S next() {
-			if (hasNext()) {
-				if (pos >= entity.size()) {
-					try {
-						updateEntity();
-					} catch (ArangoException e) {
-						throw new IllegalStateException(e);
-					}
-				}
-				return entity.get(pos++);
-			}
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException("remove is not supported");
-		}
-
+	public CursorEntity<T> getEntity() {
+		return entity;
 	}
 
 	/**
-	 * internal DocumentEntity iterator
+	 * internal iterator
 	 */
-	public class EntityIterator implements Iterator<T> {
+	public class CursorIterator implements Iterator<T> {
 
 		@Override
 		public boolean hasNext() {
@@ -221,25 +162,16 @@ public class BaseCursor<T, S extends DocumentEntity<T>> implements Iterable<S> {
 						throw new IllegalStateException(e);
 					}
 				}
-				return entity.get(pos++).getEntity();
+				return entity.get(pos++);
 			}
 			throw new NoSuchElementException();
 		}
 
 		@Override
 		public void remove() {
-			throw new UnsupportedOperationException("remove is not supported");
+			throw new UnsupportedOperationException("remove is not supported!");
 		}
 
-	}
-
-	/**
-	 * Returns the BaseCursorEntity object
-	 * 
-	 * @return BaseCursorEntity
-	 */
-	public BaseCursorEntity<T, S> getEntity() {
-		return entity;
 	}
 
 }

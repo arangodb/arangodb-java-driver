@@ -20,12 +20,10 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.BaseCursor;
 import com.arangodb.CursorResultSet;
 import com.arangodb.DocumentCursor;
-import com.arangodb.InternalCursorDocumentDriver;
+import com.arangodb.DocumentCursorResult;
 import com.arangodb.InternalCursorDriver;
-import com.arangodb.entity.BaseCursorEntity;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentResultEntity;
@@ -43,9 +41,8 @@ import com.arangodb.util.MapBuilder;
 public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl implements
 		com.arangodb.InternalSimpleDriver {
 
-	InternalSimpleDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver,
-		InternalCursorDocumentDriver cursorDocumentDriver, HttpManager httpManager) {
-		super(configure, cursorDriver, cursorDocumentDriver, httpManager);
+	InternalSimpleDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+		super(configure, cursorDriver, httpManager);
 	}
 
 	// ----- all --------------------
@@ -618,11 +615,11 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl imp
 	private <T> DocumentCursor<T> responseToDocumentCursor(String database, Class<T> clazz, HttpResponseEntity res)
 			throws ArangoException {
 
-		BaseCursorEntity<T, DocumentEntity<T>> baseCursorEntity = createEntity(res, BaseCursorEntity.class,
-			DocumentEntity.class, clazz);
+		CursorEntity<DocumentEntity<T>> baseCursorEntity = createEntity(res, CursorEntity.class, DocumentEntity.class,
+			clazz);
 
-		BaseCursor<T, DocumentEntity<T>> baseCursor = new BaseCursor(database, cursorDocumentDriver, baseCursorEntity,
-				DocumentEntity.class, clazz);
+		DocumentCursorResult<T, DocumentEntity<T>> baseCursor = new DocumentCursorResult<T, DocumentEntity<T>>(
+				database, cursorDriver, baseCursorEntity, DocumentEntity.class, clazz);
 
 		return new DocumentCursor<T>(baseCursor);
 	}

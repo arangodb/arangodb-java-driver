@@ -7,7 +7,7 @@ import com.arangodb.entity.marker.VertexEntity;
  */
 public class VertexCursor<T> extends BaseCursorProxy<T, VertexEntity<T>> {
 
-	public VertexCursor(BaseCursor<T, VertexEntity<T>> baseCursor) {
+	public VertexCursor(DocumentCursorResult<T, VertexEntity<T>> baseCursor) {
 		super(baseCursor);
 	}
 }

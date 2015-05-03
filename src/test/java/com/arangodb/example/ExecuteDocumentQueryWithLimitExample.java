@@ -23,7 +23,7 @@ import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.DocumentCursor;
-import com.arangodb.entity.DocumentEntity;
+import com.arangodb.util.AqlQueryOptions;
 
 /**
  * AQL example with new cursor implementation
@@ -32,9 +32,9 @@ import com.arangodb.entity.DocumentEntity;
  * @author a-brandt
  *
  */
-public class AqlAndCursorExample {
+public class ExecuteDocumentQueryWithLimitExample {
 
-	private static final String COLLECTION_NAME = "example_collection1";
+	private static final String COLLECTION_NAME = "example_collection3";
 
 	public static class Person {
 		public String name;
@@ -80,24 +80,29 @@ public class AqlAndCursorExample {
 				driver.createDocument(COLLECTION_NAME, value, true, null);
 			}
 
-			// build an AQL query string
-			String queryString = "FOR t IN example_collection1 "
-					+ "FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
+			// build an AQL query string (with LIMIT)
+			String queryString = "FOR t IN " + COLLECTION_NAME
+					+ " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender LIMIT 5 RETURN t";
 
 			// bind @gender to WOMAN
 			HashMap<String, Object> bindVars = new HashMap<String, Object>();
 			bindVars.put("gender", "WOMAN");
 
-			// query (calcCount = true, batchSize = 5)
-			DocumentCursor<Person> rs = driver.executeDocumentQuery(queryString, bindVars, Person.class, true, 5);
+			// set foullCount = true to get the total number of results
+			AqlQueryOptions aqlOptions = driver.getDefaultAqlQueryOptions().setCount(true).setFullCount(true);
 
-			// get total number of results
-			System.out.println(rs.getCount());
+			DocumentCursor<Person> rs = driver.executeDocumentQuery(queryString, bindVars, aqlOptions, Person.class);
 
-			Iterator<DocumentEntity<Person>> iterator = rs.iterator();
-			while (iterator.hasNext()) {
-				DocumentEntity<Person> documentEntity = iterator.next();
-				Person person = documentEntity.getEntity();
+			// number of results with LIMIT = 5
+			System.out.println("cursor count = " + rs.getCount());
+
+			// number of results without LIMIT
+			System.out.println("cursor full count = " + rs.getFullCount());
+
+			// using the entity iterator
+			Iterator<Person> iterator2 = rs.entityIterator();
+			while (iterator2.hasNext()) {
+				Person person = iterator2.next();
 				System.out.printf("  %15s(%5s): %d%n", person.name, person.gender, person.age);
 			}
 

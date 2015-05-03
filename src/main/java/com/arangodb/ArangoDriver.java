@@ -31,11 +31,11 @@ import com.arangodb.entity.AdminLogEntity;
 import com.arangodb.entity.AqlFunctionsEntity;
 import com.arangodb.entity.ArangoUnixTime;
 import com.arangodb.entity.ArangoVersion;
-import com.arangodb.entity.BaseCursorEntity;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
@@ -79,6 +79,7 @@ import com.arangodb.http.HttpManager;
 import com.arangodb.http.InvocationHandlerImpl;
 import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
+import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.DumpHandler;
 import com.arangodb.util.GraphEdgesOptions;
 import com.arangodb.util.GraphVerticesOptions;
@@ -103,7 +104,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	private BatchHttpManager httpManager;
 
 	private InternalCursorDriver cursorDriver;
-	private InternalCursorDocumentDriver cursorDocumentDriver;
 	private InternalBatchDriverImpl batchDriver;
 	private InternalCollectionDriver collectionDriver;
 	private InternalDocumentDriver documentDriver;
@@ -159,24 +159,20 @@ public class ArangoDriver extends BaseArangoDriver {
 	private void createModuleDrivers(boolean createProxys) {
 		if (!createProxys) {
 			this.cursorDriver = ImplFactory.createCursorDriver(configure, this.httpManager);
-			this.cursorDocumentDriver = ImplFactory.createCursorDocumentDriver(configure, this.httpManager);
 			this.batchDriver = ImplFactory.createBatchDriver(configure, this.httpManager);
 			this.collectionDriver = ImplFactory.createCollectionDriver(configure, this.httpManager);
 			this.documentDriver = ImplFactory.createDocumentDriver(configure, this.httpManager);
 			this.indexDriver = ImplFactory.createIndexDriver(configure, this.httpManager);
 			this.adminDriver = ImplFactory.createAdminDriver(configure, this.httpManager);
 			this.aqlFunctionsDriver = ImplFactory.createAqlFunctionsDriver(configure, this.httpManager);
-			this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver, cursorDocumentDriver,
-				this.httpManager);
+			this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver, this.httpManager);
 			this.usersDriver = ImplFactory.createUsersDriver(configure, this.httpManager);
 			this.importDriver = ImplFactory.createImportDriver(configure, this.httpManager);
 			this.databaseDriver = ImplFactory.createDatabaseDriver(configure, this.httpManager);
 			this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
 			this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
-			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, cursorDocumentDriver,
-				this.httpManager);
-			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, cursorDocumentDriver,
-				this.httpManager);
+			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
+			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, this.httpManager);
 			this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
 			this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
 			this.traversalDriver = ImplFactory.createTraversalDriver(configure, httpManager);
@@ -189,10 +185,6 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.cursorDriver = (InternalCursorDriver) Proxy.newProxyInstance(
 				InternalCursorDriver.class.getClassLoader(), new Class<?>[] { InternalCursorDriver.class },
 				new InvocationHandlerImpl(this.cursorDriver));
-			this.cursorDocumentDriver = (InternalCursorDocumentDriver) Proxy.newProxyInstance(
-				InternalCursorDocumentDriver.class.getClassLoader(),
-				new Class<?>[] { InternalCursorDocumentDriver.class }, new InvocationHandlerImpl(
-						this.cursorDocumentDriver));
 			this.collectionDriver = (InternalCollectionDriver) Proxy.newProxyInstance(
 				InternalCollectionDriver.class.getClassLoader(), new Class<?>[] { InternalCollectionDriver.class },
 				new InvocationHandlerImpl(this.collectionDriver));
@@ -2107,10 +2099,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            an AQL query as string
 	 * @return CursorEntity<?>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #validateDocumentQuery()}
 	 */
-	@Deprecated
 	public CursorEntity<?> validateQuery(String query) throws ArangoException {
 		return cursorDriver.validateQuery(getDefaultDatabase(), query);
 	}
@@ -2192,10 +2181,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param <T>
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #continueDocumentQuery()}
 	 */
-	@Deprecated
 	public <T> CursorEntity<T> continueQuery(long cursorId, Class<?>... clazz) throws ArangoException {
 		return cursorDriver.continueQuery(getDefaultDatabase(), cursorId, clazz);
 	}
@@ -2207,10 +2193,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The id of a cursor.
 	 * @return DefaultEntity
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #finishDocumentQuery()}
 	 */
-	@Deprecated
 	public DefaultEntity finishQuery(long cursorId) throws ArangoException {
 		return cursorDriver.finishQuery(getDefaultDatabase(), cursorId);
 	}
@@ -2283,20 +2266,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * This method validates a given AQL query string and returns a
-	 * CursorDocumentEntity
-	 *
-	 * @param query
-	 *            an AQL query as string
-	 * @return BaseCursorEntity<?, ?>
-	 * @throws ArangoException
-	 */
-	public BaseCursorEntity<?, ?> validateDocumentQuery(String query) throws ArangoException {
-		return cursorDocumentDriver.validateQuery(getDefaultDatabase(), query);
-	}
-
-	/**
-	 * This method executes an AQL query and returns a CursorDocumentEntity
+	 * This method executes an AQL query and returns a CursorEntity.
 	 *
 	 * @param query
 	 *            an AQL query as string
@@ -2312,147 +2282,119 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
-	 * @return BaseCursorEntity<T, S>
+	 * @return CursorEntity<T>
 	 * @throws ArangoException
 	 */
-	public <T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> executeCursorDocumentEntityQuery(
+	public <T> CursorEntity<T> executeCursorEntityQuery(
 		String query,
 		Map<String, Object> bindVars,
-		Class<S> classDocumentEntity,
-		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize,
-		Boolean fullCount) throws ArangoException {
+		Boolean fullCount,
+		Class<?>... clazz) throws ArangoException {
 
-		return cursorDocumentDriver.executeBaseCursorEntityQuery(getDefaultDatabase(), query, bindVars,
-			classDocumentEntity, clazz, calcCount, batchSize, fullCount, null);
+		AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(calcCount).setBatchSize(batchSize)
+				.setFullCount(fullCount);
+
+		return cursorDriver.executeCursorEntityQuery(getDefaultDatabase(), query, bindVars, aqlQueryOptions, clazz);
 	}
 
 	/**
-	 * Continues data retrieval for an existing cursor
-	 *
-	 * @param cursorId
-	 *            The id of a cursor.
-	 * @param clazz
-	 *            the expected class, the result from the server request is
-	 *            deserialized to an instance of this class.
-	 * @return BaseCursorEntity<T, S>
-	 * @throws ArangoException
+	 * Creates a default AqlQueryOptions object
+	 * 
+	 * @return default AqlQueryOptions object
 	 */
-	public <T, S extends DocumentEntity<T>> BaseCursorEntity<T, S> continueBaseCursorEntityQuery(
-		long cursorId,
-		Class<S> classDocumentEntity,
-		Class<T> clazz) throws ArangoException {
-		return cursorDocumentDriver.continueBaseCursorEntityQuery(getDefaultDatabase(), cursorId, classDocumentEntity,
-			clazz);
+	public AqlQueryOptions getDefaultAqlQueryOptions() {
+		return new AqlQueryOptions().setBatchSize(20).setCount(false).setFullCount(false);
 	}
 
 	/**
-	 * Deletes a cursor from the database.
-	 *
-	 * @param cursorId
-	 *            The id of a cursor.
-	 * @return DefaultEntity
-	 * @throws ArangoException
-	 */
-	public DefaultEntity finishCursorDocumentEntityQuery(long cursorId) throws ArangoException {
-		return cursorDocumentDriver.finishQuery(getDefaultDatabase(), cursorId);
-	}
-
-	/**
-	 * This method executes an AQL query and returns a CursorDocumentResultSet
+	 * This method executes an AQL query and returns a DocumentCursor
 	 *
 	 * @param query
 	 *            an AQL query as string
 	 * @param bindVars
 	 *            a map containing all bind variables,
+	 * @param aqlQueryOptions
+	 *            AQL query options (null for default values)
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param calcCount
-	 *            if set to true the result count is returned
-	 * @param batchSize
-	 *            the batch size of the result cursor
-	 * @param fullCount
-	 *            if set to true, then all results before the final LIMIT will
-	 *            be counted
-	 * @param ttl
-	 *            an optional time-to-live for the cursor (in seconds)
 	 * @return DocumentCursor<T>
 	 * @throws ArangoException
 	 */
 	public <T> DocumentCursor<T> executeDocumentQuery(
 		String query,
 		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize,
-		Boolean fullCount,
-		Integer ttl) throws ArangoException {
+		AqlQueryOptions aqlQueryOptions,
+		Class<T> clazz) throws ArangoException {
+
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
 
 		@SuppressWarnings("unchecked")
-		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(query, query,
-			bindVars, DocumentEntity.class, clazz, calcCount, batchSize, fullCount, ttl);
+		DocumentCursorResult<T, DocumentEntity<T>> baseCursor = cursorDriver.executeBaseCursorQuery(
+			getDefaultDatabase(), query, bindVars, aqlQueryOptions, DocumentEntity.class, clazz);
 		return new DocumentCursor<T>(baseCursor);
 	}
 
 	/**
-	 * This method executes an AQL query and returns a CursorDocumentResultSet
+	 * This method executes an AQL query and returns a CursorResult
 	 *
 	 * @param query
 	 *            an AQL query as string
 	 * @param bindVars
 	 *            a map containing all bind variables,
+	 * @param aqlQueryOptions
+	 *            AQL query options
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param calcCount
-	 *            if set to true the result count is returned
-	 * @param batchSize
-	 *            the batch size of the result cursor
-	 * @return CursorDocumentResultSet<T>
+	 * @return CursorResult<T>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentCursor<T> executeDocumentQuery(
+	public <T> CursorResult<T> executeAqlQuery(
 		String query,
 		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize) throws ArangoException {
+		AqlQueryOptions aqlQueryOptions,
+		Class<T> clazz) throws ArangoException {
 
-		@SuppressWarnings("unchecked")
-		BaseCursor<T, DocumentEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
-			query, bindVars, DocumentEntity.class, clazz, calcCount, batchSize, false, null);
-		return new DocumentCursor<T>(baseCursor);
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
+
+		return cursorDriver.executeAqlQuery(getDefaultDatabase(), query, bindVars, aqlQueryOptions, clazz);
 	}
 
 	/**
-	 * This method executes an AQL query and returns a CursorDocumentResultSet
+	 * This method executes an AQL query and returns a DocumentCursorResult
 	 *
 	 * @param query
 	 *            an AQL query as string
 	 * @param bindVars
 	 *            a map containing all bind variables,
+	 * @param aqlQueryOptions
+	 *            AQL query options
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param calcCount
-	 *            if set to true the result count is returned
-	 * @param batchSize
-	 *            the batch size of the result cursor
-	 * @return BaseCursor<T, S>
+	 * @return DocumentCursorResult<T, S>
 	 * @throws ArangoException
 	 */
-	public <T, S extends DocumentEntity<T>> BaseCursor<T, S> executeBaseCursorQuery(
+	public <T, S extends DocumentEntity<T>> DocumentCursorResult<T, S> executeAqlQueryWithDocumentCursorResutl(
 		String query,
 		Map<String, Object> bindVars,
+		AqlQueryOptions aqlQueryOptions,
 		Class<S> classDocumentEntity,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize) throws ArangoException {
+		Class<T> clazz) throws ArangoException {
 
-		return cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(), query, bindVars, classDocumentEntity,
-			clazz, calcCount, batchSize, false, null);
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
+
+		return cursorDriver.executeBaseCursorQuery(getDefaultDatabase(), query, bindVars, aqlQueryOptions,
+			classDocumentEntity, clazz);
 	}
 
 	/**
@@ -5137,31 +5079,26 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the query
 	 * @param bindVars
 	 *            the variables
+	 * @param aqlQueryOptions
+	 *            AQL query options (null for default values)
 	 * @param clazz
 	 *            the result class
-	 * @param calcCount
-	 *            count results
-	 * @param batchSize
-	 *            result batch size of the cursor
-	 * @param fullCount
-	 *            do a full count
-	 * @param ttl
-	 *            an optional time-to-live for the cursor (in seconds)
 	 * @return EdgeCursor<T>
 	 * @throws ArangoException
 	 */
 	public <T> EdgeCursor<T> executeEdgeQuery(
 		String query,
 		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize,
-		Boolean fullCount,
-		Integer ttl) throws ArangoException {
+		AqlQueryOptions aqlQueryOptions,
+		Class<T> clazz) throws ArangoException {
+
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
 
 		@SuppressWarnings("unchecked")
-		BaseCursor<T, EdgeEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
-			query, bindVars, EdgeEntity.class, clazz, calcCount, batchSize, fullCount, ttl);
+		DocumentCursorResult<T, EdgeEntity<T>> baseCursor = cursorDriver.executeBaseCursorQuery(getDefaultDatabase(),
+			query, bindVars, aqlQueryOptions, EdgeEntity.class, clazz);
 		return new EdgeCursor<T>(baseCursor);
 	}
 
@@ -5174,31 +5111,26 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the query
 	 * @param bindVars
 	 *            the variables
+	 * @param aqlQueryOptions
+	 *            AQL query options (null for default values)
 	 * @param clazz
 	 *            the result class
-	 * @param calcCount
-	 *            count results
-	 * @param batchSize
-	 *            result batch size of the cursor
-	 * @param fullCount
-	 *            do a full count
-	 * @param ttl
-	 *            an optional time-to-live for the cursor (in seconds)
-	 * @return EdgeCursor<T>
+	 * @return VertexCursor<T>
 	 * @throws ArangoException
 	 */
 	public <T> VertexCursor<T> executeVertexQuery(
 		String query,
 		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize,
-		Boolean fullCount,
-		Integer ttl) throws ArangoException {
+		AqlQueryOptions aqlQueryOptions,
+		Class<T> clazz) throws ArangoException {
+
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
 
 		@SuppressWarnings("unchecked")
-		BaseCursor<T, VertexEntity<T>> baseCursor = cursorDocumentDriver.executeBaseCursorQuery(getDefaultDatabase(),
-			query, bindVars, VertexEntity.class, clazz, calcCount, batchSize, fullCount, ttl);
+		DocumentCursorResult<T, VertexEntity<T>> baseCursor = cursorDriver.executeBaseCursorQuery(getDefaultDatabase(),
+			query, bindVars, aqlQueryOptions, VertexEntity.class, clazz);
 		return new VertexCursor<T>(baseCursor);
 	}
 
@@ -5212,6 +5144,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An example for the desired vertices
 	 * @param graphEdgesOptions
 	 *            An object containing the options
+	 * @param aqlQueryOptions
+	 *            AQL query options (null for default values (count = true))
 	 * @return EdgeCursor<T>
 	 * @throws ArangoException
 	 */
@@ -5219,7 +5153,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		String graphName,
 		Class<T> clazz,
 		Object vertexExample,
-		GraphEdgesOptions graphEdgesOptions) throws ArangoException {
+		GraphEdgesOptions graphEdgesOptions,
+		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
 		validateCollectionName(graphName);
 
@@ -5228,7 +5163,11 @@ public class ArangoDriver extends BaseArangoDriver {
 				.put("vertexExample", JsonUtils.convertNullToMap(vertexExample))
 				.put("options", JsonUtils.convertNullToMap(graphEdgesOptions)).get();
 
-		return executeEdgeQuery(query, bindVars, clazz, true, 20, false, null);
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions().setCount(true);
+		}
+
+		return executeEdgeQuery(query, bindVars, aqlQueryOptions, clazz);
 	}
 
 	/**
@@ -5239,16 +5178,19 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 * @param vertexExample
 	 *            An example for the desired vertices
-	 * @param graphEdgesOptions
+	 * @param graphVerticesOptions
 	 *            An object containing the options
-	 * @return EdgeCursor<T>
+	 * @param aqlQueryOptions
+	 *            AQL query options
+	 * @return VertexCursor<T>
 	 * @throws ArangoException
 	 */
 	public <T> VertexCursor<T> graphGetVertexCursor(
 		String graphName,
 		Class<T> clazz,
 		Object vertexExample,
-		GraphVerticesOptions graphVerticesOptions) throws ArangoException {
+		GraphVerticesOptions graphVerticesOptions,
+		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
 		validateCollectionName(graphName);
 
@@ -5258,7 +5200,7 @@ public class ArangoDriver extends BaseArangoDriver {
 				.put("vertexExample", JsonUtils.convertNullToMap(vertexExample))
 				.put("options", JsonUtils.convertNullToMap(graphVerticesOptions)).get();
 
-		return executeVertexQuery(query, bindVars, clazz, true, 20, false, null);
+		return executeVertexQuery(query, bindVars, aqlQueryOptions, clazz);
 	}
 
 	/**
@@ -5272,7 +5214,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public EdgeCursor<PlainEdgeEntity> graphGetEdgeCursor(String graphName) throws ArangoException {
 		validateCollectionName(graphName);
 
-		return graphGetEdgeCursor(graphName, PlainEdgeEntity.class, null, null);
+		return graphGetEdgeCursor(graphName, PlainEdgeEntity.class, null, null, null);
 	}
 
 	/**
@@ -5314,7 +5256,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> EdgeCursor<T> graphGetEdgeCursorByExample(String graphName, Class<T> clazz, Object vertexExample)
 			throws ArangoException {
 
-		return graphGetEdgeCursor(graphName, clazz, vertexExample, null);
+		return graphGetEdgeCursor(graphName, clazz, vertexExample, null, null);
 	}
 
 	/**
@@ -5327,10 +5269,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return CursorEntity<T>
 	 * @throws ArangoException
 	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #graphGetEdgeCursorByExampleObject()}
+	 *             {@link #graphGetEdgeCursorByExample()}
 	 */
 	@Deprecated
-	public <T, S> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazz, S vertexExample)
+	public <T> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazz, Object vertexExample)
 			throws ArangoException {
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, @vertexExample) return i";
@@ -5355,7 +5297,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return CursorEntity<T>
 	 * @throws ArangoException
 	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #graphGetEdgeCursorByExampleMap()}
+	 *             {@link #graphGetEdgeCursorByExample()}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> graphGetEdgesByExampleMap(
@@ -5380,8 +5322,14 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the graph.
 	 * @param clazz
 	 *            Class of returned edge documents.
-	 * @param vertexExample
-	 *            Map with example of vertex, where edges start or end.
+	 * @param startVertexExample
+	 *            Map with example of vertex, where edges start
+	 * @param endVertexExample
+	 *            Map with example of vertex, where edges end
+	 * @param shortestPathOptions
+	 *            Options for the shortest path
+	 * @param aqlQueryOptions
+	 *            AQL query options
 	 * @return EdgeCursor<T>
 	 * @throws ArangoException
 	 */
@@ -5390,7 +5338,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<T> clazz,
 		Object startVertexExample,
 		Object endVertexExample,
-		ShortestPathOptions shortestPathOptions) throws ArangoException {
+		ShortestPathOptions shortestPathOptions,
+		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
 		validateCollectionName(graphName);
 
@@ -5402,7 +5351,7 @@ public class ArangoDriver extends BaseArangoDriver {
 				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
 				.put("options", options).get();
 
-		return executeEdgeQuery(query, bindVars, clazz, true, 20, false, null);
+		return executeEdgeQuery(query, bindVars, aqlQueryOptions, clazz);
 	}
 
 	// public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(

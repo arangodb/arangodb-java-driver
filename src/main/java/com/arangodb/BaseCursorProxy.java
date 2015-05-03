@@ -10,9 +10,9 @@ import com.arangodb.entity.DocumentEntity;
  */
 public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable<S> {
 
-	private BaseCursor<T, S> baseCursor;
+	private DocumentCursorResult<T, S> baseCursor;
 
-	public BaseCursorProxy(BaseCursor<T, S> baseCursor) {
+	public BaseCursorProxy(DocumentCursorResult<T, S> baseCursor) {
 		this.baseCursor = baseCursor;
 	}
 
@@ -97,33 +97,8 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 		return baseCursor.getEntity().isNotModified();
 	}
 
-	/**
-	 * If the request is unauthorized this returns true
-	 *
-	 * @return boolean
-	 */
-	public boolean isUnauthorized() {
-		return baseCursor.getEntity().isUnauthorized();
-	}
-
-	public boolean isError() {
-		return baseCursor.getEntity().isError();
-	}
-
 	public int getCode() {
 		return baseCursor.getEntity().getCode();
-	}
-
-	public int getErrorNumber() {
-		return baseCursor.getEntity().getErrorNumber();
-	}
-
-	public String getErrorMessage() {
-		return baseCursor.getEntity().getErrorMessage();
-	}
-
-	public long getEtag() {
-		return baseCursor.getEntity().getEtag();
 	}
 
 	public int getStatusCode() {

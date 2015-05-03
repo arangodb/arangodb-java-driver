@@ -7,7 +7,7 @@ import com.arangodb.entity.DocumentEntity;
  */
 public class DocumentCursor<T> extends BaseCursorProxy<T, DocumentEntity<T>> {
 
-	public DocumentCursor(BaseCursor<T, DocumentEntity<T>> baseCursor) {
+	public DocumentCursor(DocumentCursorResult<T, DocumentEntity<T>> baseCursor) {
 		super(baseCursor);
 	}
 }

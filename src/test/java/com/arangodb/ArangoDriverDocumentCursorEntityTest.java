@@ -27,7 +27,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.entity.BaseCursorEntity;
+import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.util.MapBuilder;
 
@@ -65,8 +65,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 	@Test
 	public void test_validateQuery() throws ArangoException {
-		BaseCursorEntity<?, ?> entity = driver
-				.validateDocumentQuery("FOR t IN unit_test_cursor FILTER t.name == @name && t.age >= @age RETURN t");
+		CursorEntity<?> entity = driver
+				.validateQuery("FOR t IN unit_test_cursor FILTER t.name == @name && t.age >= @age RETURN t");
 
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.getBindVars().size(), is(2));
@@ -80,7 +80,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		// syntax error, unexpected assignment near '= @name@'
 
 		try {
-			driver.validateDocumentQuery("FOR t IN unit_test_cursor FILTER t.name = @name@");
+			driver.validateQuery("FOR t IN unit_test_cursor FILTER t.name = @name@");
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(400));
 			assertThat(e.getErrorNumber(), is(1501));
@@ -97,8 +97,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			BaseCursorEntity<?, ?> result = driver.executeCursorDocumentEntityQuery(query, bindVars,
-				DocumentEntity.class, TestComplexEntity01.class, true, 20, false);
+			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 20, false,
+				TestComplexEntity01.class);
 			assertThat(result.size(), is(10));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(false));
@@ -116,8 +116,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		// ちまちまとる範囲
 		long cursorId;
 		{
-			BaseCursorEntity<?, ?> result = driver.executeCursorDocumentEntityQuery(query, bindVars,
-				DocumentEntity.class, TestComplexEntity01.class, true, 3, false);
+			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 3, false,
+				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(3));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(true));
@@ -129,8 +129,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 次のRoundTrip
 		{
-			BaseCursorEntity<?, ?> result = driver.continueBaseCursorEntityQuery(cursorId, DocumentEntity.class,
-				TestComplexEntity01.class);
+			CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class, TestComplexEntity01.class);
 
 			assertThat(result.size(), is(3));
 			assertThat(result.getCount(), is(10));
@@ -139,8 +138,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 次のRoundTrip
 		{
-			BaseCursorEntity<?, ?> result = driver.continueBaseCursorEntityQuery(cursorId, DocumentEntity.class,
-				TestComplexEntity01.class);
+			CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(3));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(true));
@@ -148,8 +146,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 次のRoundTrip
 		{
-			BaseCursorEntity<?, ?> result = driver.continueBaseCursorEntityQuery(cursorId, DocumentEntity.class,
-				TestComplexEntity01.class);
+			CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(false));
@@ -157,7 +154,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 削除
 		{
-			driver.finishCursorDocumentEntityQuery(cursorId);
+			driver.finishQuery(cursorId);
 		}
 
 	}
@@ -171,8 +168,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			BaseCursorEntity<?, ?> result = driver.executeCursorDocumentEntityQuery(query, bindVars,
-				DocumentEntity.class, TestComplexEntity01.class, true, 1, true);
+			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 1, true,
+				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(2));
 			assertThat(result.getFullCount(), is(90));
@@ -191,8 +188,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			BaseCursorEntity<?, ?> result = driver.executeCursorDocumentEntityQuery(query, bindVars,
-				DocumentEntity.class, TestComplexEntity01.class, true, 0, false);
+			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 0, false,
+				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(2));
 			assertThat(result.getCount(), is(2));
 			String msg = "";
@@ -208,9 +205,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
 		query = "FOR t IN unit_test_query_test FILTER t.age == @age LIMIT 2 RETURN t";
 		{
-			BaseCursorEntity<TestComplexEntity01, DocumentEntity<TestComplexEntity01>> result = driver
-					.executeCursorDocumentEntityQuery(query, bindVars, DocumentEntity.class, TestComplexEntity01.class,
-						true, 0, false);
+			CursorEntity<DocumentEntity<TestComplexEntity01>> result = driver.executeCursorEntityQuery(query, bindVars,
+				true, 0, false, DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(1));
 			DocumentEntity<TestComplexEntity01> uniqueResult = result.getUniqueResult();

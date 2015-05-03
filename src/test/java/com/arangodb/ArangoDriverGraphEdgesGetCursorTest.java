@@ -35,6 +35,7 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.marker.VertexEntity;
+import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
 
@@ -64,7 +65,6 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		EdgeCursor<PlainEdgeEntity> cursor = driver.graphGetEdgeCursor(graph.getName());
 		assertThat(cursor.getCount(), is(8));
 		assertThat(cursor.getCode(), is(201));
-		assertThat(cursor.isError(), is(false));
 		assertThat(cursor.hasMore(), is(false));
 		assertThat(cursor.getCursorId(), is(-1L));
 
@@ -80,7 +80,6 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		EdgeCursor<PlainEdgeEntity> cursor = driver.graphGetEdgeCursor(graph.getName());
 		assertThat(cursor.getCount(), is(8));
 		assertThat(cursor.getCode(), is(201));
-		assertThat(cursor.isError(), is(false));
 		assertThat(cursor.hasMore(), is(false));
 		assertThat(cursor.getCursorId(), is(-1L));
 
@@ -199,6 +198,10 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 
 	}
 
+	private AqlQueryOptions getAqlQueryOptions(Boolean count, Integer batchSize, Boolean fullCount) {
+		return new AqlQueryOptions().setCount(count).setBatchSize(batchSize).setFullCount(fullCount);
+	}
+
 	@Test
 	public void batchSizeAndLimitTest() throws ArangoException {
 
@@ -231,12 +234,11 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		String query = "for i in graph_edges(@graphName, null) LIMIT 3 return i";
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", GRAPH_NAME).get();
 
-		EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars, TestComplexEntity02.class,
-			count, batchSize, fullCount, null);
+		EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars,
+			getAqlQueryOptions(count, batchSize, fullCount), TestComplexEntity02.class);
 
 		assertEquals(3, cursor.getCount());
 		assertEquals(201, cursor.getCode());
-		assertFalse(cursor.isError());
 		assertTrue(cursor.hasMore());
 		assertEquals(4, cursor.getFullCount());
 		assertTrue(cursor.getCursorId() > -1L);
@@ -282,12 +284,11 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", GRAPH_NAME)
 				.put("vertex", vertex1.getDocumentHandle()).put("options", options).get();
 
-		EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars, TestComplexEntity02.class,
-			count, batchSize, fullCount, ttl);
+		EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars,
+			getAqlQueryOptions(count, batchSize, fullCount), TestComplexEntity02.class);
 
 		assertEquals(2, cursor.getCount());
 		assertEquals(201, cursor.getCode());
-		assertFalse(cursor.isError());
 		assertFalse(cursor.hasMore());
 		assertEquals(new Long(-1L), cursor.getCursorId());
 
@@ -295,11 +296,11 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		bindVars = new MapBuilder().put("graphName", GRAPH_NAME).put("vertex", vertex2.getDocumentHandle())
 				.put("options", options).get();
 
-		cursor = driver.executeEdgeQuery(query, bindVars, TestComplexEntity02.class, count, batchSize, fullCount, null);
+		cursor = driver.executeEdgeQuery(query, bindVars, getAqlQueryOptions(count, batchSize, fullCount),
+			TestComplexEntity02.class);
 
 		assertEquals(0, cursor.getCount());
 		assertEquals(201, cursor.getCode());
-		assertFalse(cursor.isError());
 		assertFalse(cursor.hasMore());
 		assertEquals(new Long(-1L), cursor.getCursorId());
 
@@ -321,11 +322,11 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		shortestPathOptions.setDirection(Direction.OUTBOUND);
 
 		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetShortesPath(GRAPH_NAME, TestComplexEntity02.class,
-			vertex1.getDocumentHandle(), vertex2.getDocumentHandle(), shortestPathOptions);
+			vertex1.getDocumentHandle(), vertex2.getDocumentHandle(), shortestPathOptions, driver
+					.getDefaultAqlQueryOptions().setCount(true));
 
 		assertEquals(1, cursor.getCount());
 		assertEquals(201, cursor.getCode());
-		assertFalse(cursor.isError());
 		assertFalse(cursor.hasMore());
 		assertEquals(new Long(-1L), cursor.getCursorId());
 

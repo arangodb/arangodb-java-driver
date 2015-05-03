@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.InternalCursorDocumentDriver;
 import com.arangodb.InternalCursorDriver;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EntityFactory;
@@ -33,9 +32,8 @@ import com.arangodb.util.MapBuilder;
  */
 public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalEdgeDriver {
 
-	InternalEdgeDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver,
-		InternalCursorDocumentDriver cursorDocumentDriver, HttpManager httpManager) {
-		super(configure, cursorDriver, cursorDocumentDriver, httpManager);
+	InternalEdgeDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+		super(configure, cursorDriver, httpManager);
 	}
 
 	@Override

@@ -27,7 +27,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
-import com.arangodb.InternalCursorDocumentDriver;
 import com.arangodb.InternalCursorDriver;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DeletedEntity;
@@ -53,9 +52,8 @@ import com.google.gson.JsonObject;
  */
 public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalGraphDriver {
 
-	InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver,
-		InternalCursorDocumentDriver cursorDocumentDriver, HttpManager httpManager) {
-		super(configure, cursorDriver, cursorDocumentDriver, httpManager);
+	InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+		super(configure, cursorDriver, httpManager);
 	}
 
 	@Override
