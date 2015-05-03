@@ -238,8 +238,7 @@ E.g. get all Simpsons aged 3 or older in ascending order:
     Map<String, Object> bindVars = new MapBuilder().put("age", 3).get();
     
     DocumentCursor<MyObject> documentCursor = arangoDriver.executeDocumentQuery(
-      query, bindVars, MyObject.class, true, 20
-    );
+      query, bindVars, driver.getDefaultAqlQueryOptions(), MyObject.class);
     
     while (DocumentEntity<MyObject> documentEntity : documentCursor.asList()) {
       MyObject obj = documentEntity.getEntity();

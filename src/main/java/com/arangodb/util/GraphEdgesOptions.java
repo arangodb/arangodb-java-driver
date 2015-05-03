@@ -34,9 +34,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * inbound and any (default).
 	 * 
 	 * @param direction
+	 * @return this
 	 */
-	public void setDirection(Direction direction) {
+	public GraphEdgesOptions setDirection(Direction direction) {
 		this.direction = direction;
+		return this;
 	}
 
 	/**
@@ -54,9 +56,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * will be considered for the path.
 	 * 
 	 * @param edgeCollectionRestriction
+	 * @return this
 	 */
-	public void setEdgeCollectionRestriction(List<String> edgeCollectionRestriction) {
+	public GraphEdgesOptions setEdgeCollectionRestriction(List<String> edgeCollectionRestriction) {
 		this.edgeCollectionRestriction = edgeCollectionRestriction;
+		return this;
 	}
 
 	/**
@@ -74,9 +78,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * collections will be considered as start vertex of a path.
 	 * 
 	 * @param startVertexCollectionRestriction
+	 * @return this
 	 */
-	public void setStartVertexCollectionRestriction(List<String> startVertexCollectionRestriction) {
+	public GraphEdgesOptions setStartVertexCollectionRestriction(List<String> startVertexCollectionRestriction) {
 		this.startVertexCollectionRestriction = startVertexCollectionRestriction;
+		return this;
 	}
 
 	/**
@@ -94,9 +100,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * collections will be considered as end vertex of a path.
 	 * 
 	 * @param endVertexCollectionRestriction
+	 * @return this
 	 */
-	public void setEndVertexCollectionRestriction(List<String> endVertexCollectionRestriction) {
+	public GraphEdgesOptions setEndVertexCollectionRestriction(List<String> endVertexCollectionRestriction) {
 		this.endVertexCollectionRestriction = endVertexCollectionRestriction;
+		return this;
 	}
 
 	/**
@@ -112,9 +120,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * A filter example for the edges
 	 * 
 	 * @param edgeExamples
+	 * @return this
 	 */
-	public void setEdgeExamples(Object edgeExamples) {
+	public GraphEdgesOptions setEdgeExamples(Object edgeExamples) {
 		this.edgeExamples = edgeExamples;
+		return this;
 	}
 
 	/**
@@ -130,9 +140,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * An example for the desired neighbors
 	 * 
 	 * @param neighborExamples
+	 * @return this
 	 */
-	public void setNeighborExamples(Object neighborExamples) {
+	public GraphEdgesOptions setNeighborExamples(Object neighborExamples) {
 		this.neighborExamples = neighborExamples;
+		return this;
 	}
 
 	/**
@@ -152,9 +164,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * returned).
 	 * 
 	 * @param minDepth
+	 * @return this
 	 */
-	public void setMinDepth(Integer minDepth) {
+	public GraphEdgesOptions setMinDepth(Integer minDepth) {
 		this.minDepth = minDepth;
+		return this;
 	}
 
 	/**
@@ -174,9 +188,11 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * returned).
 	 * 
 	 * @param maxDepth
+	 * @return this
 	 */
-	public void setMaxDepth(Integer maxDepth) {
+	public GraphEdgesOptions setMaxDepth(Integer maxDepth) {
 		this.maxDepth = maxDepth;
+		return this;
 	}
 
 	/**
@@ -193,10 +209,12 @@ public class GraphEdgesOptions implements OptionsInterface {
 	 * the maximum number of iterations that the traversal is allowed to
 	 * perform. It is sensible to set this number so unbounded traversals
 	 * 
+	 * @return this
 	 * @param maxIterations
 	 */
-	public void setMaxIterations(Integer maxIterations) {
+	public GraphEdgesOptions setMaxIterations(Integer maxIterations) {
 		this.maxIterations = maxIterations;
+		return this;
 	}
 
 	@Override

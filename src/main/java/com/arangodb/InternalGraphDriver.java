@@ -344,28 +344,6 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param database
 	 * @param graphName
 	 * @param edgeCollectionName
-	 * @param fromHandle
-	 * @param toHandle
-	 * @param value
-	 * @param waitForSync
-	 * @return <T> EdgeEntity<T>
-	 * @throws ArangoException
-	 */
-	<T> EdgeEntity<T> createEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
-		String fromHandle,
-		String toHandle,
-		T value,
-		Boolean waitForSync) throws ArangoException;
-
-	/**
-	 * 
-	 * 
-	 * @param database
-	 * @param graphName
-	 * @param edgeCollectionName
 	 * @param key
 	 * @param fromHandle
 	 * @param toHandle

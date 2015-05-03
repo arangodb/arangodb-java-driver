@@ -1,5 +1,6 @@
 package com.arangodb.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EdgeDefinitionEntity {
@@ -8,27 +9,35 @@ public class EdgeDefinitionEntity {
 	List<String> from;
 	List<String> to;
 
+	public EdgeDefinitionEntity() {
+		this.from = new ArrayList<String>();
+		this.to = new ArrayList<String>();
+	}
+
 	public String getCollection() {
 		return collection;
 	}
 
-	public void setCollection(String collection) {
+	public EdgeDefinitionEntity setCollection(String collection) {
 		this.collection = collection;
+		return this;
 	}
 
 	public List<String> getFrom() {
 		return from;
 	}
 
-	public void setFrom(List<String> from) {
+	public EdgeDefinitionEntity setFrom(List<String> from) {
 		this.from = from;
+		return this;
 	}
 
 	public List<String> getTo() {
 		return to;
 	}
 
-	public void setTo(List<String> to) {
+	public EdgeDefinitionEntity setTo(List<String> to) {
 		this.to = to;
+		return this;
 	}
 }

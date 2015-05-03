@@ -423,19 +423,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		String database,
 		String graphName,
 		String edgeCollectionName,
-		String fromHandle,
-		String toHandle,
-		T value,
-		Boolean waitForSync) throws ArangoException {
-		return this.createEdge(database, graphName, edgeCollectionName, null, fromHandle, toHandle, value, waitForSync);
-
-	}
-
-	@Override
-	public <T> EdgeEntity<T> createEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
 		String key,
 		String fromHandle,
 		String toHandle,

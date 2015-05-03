@@ -4743,8 +4743,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		String toHandle,
 		T value,
 		Boolean waitForSync) throws ArangoException {
-		return graphDriver.createEdge(getDefaultDatabase(), graphName, edgeCollectionName, fromHandle, toHandle, value,
-			waitForSync);
+		return graphDriver.createEdge(getDefaultDatabase(), graphName, edgeCollectionName, null, fromHandle, toHandle,
+			value, waitForSync);
 	}
 
 	/**
@@ -5345,7 +5345,8 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		String query = "for i in graph_shortest_path(@graphName, @startVertexExample, @endVertexExample, @options) return i";
 
-		Map<String, Object> options = shortestPathOptions == null ? null : shortestPathOptions.toMap();
+		Map<String, Object> options = shortestPathOptions == null ? new MapBuilder().get() : shortestPathOptions
+				.toMap();
 
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
 				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
