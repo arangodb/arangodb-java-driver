@@ -414,5 +414,5 @@ see 2.4.4
     * DocumentCursor<T> executeSimpleRangeWithDocuments(...)
     * DocumentCursor<T> executeSimpleFulltextWithDocuments(...)
 * added some examples for AQL queries 
-	see src/test/java/com/arangodb/example
+	(see src/test/java/com/arangodb/example)
 
