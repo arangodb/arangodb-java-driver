@@ -35,87 +35,87 @@ import com.arangodb.http.HttpResponseEntity;
  */
 public class NegativeTest extends BaseTest {
 
-  public NegativeTest(ArangoConfigure configure, ArangoDriver driver) {
-    super(configure, driver);
-  }
-
-  /**
-   * 開発途中にあった命令だけど、今は存在しない。 きとんとエラーになること。
-   * 
-   * @throws ArangoException
-   */
-  @Ignore
-  @Test
-  public void test_collections() throws ArangoException {
-
-    ArangoConfigure configure = new ArangoConfigure();
-
-    HttpManager httpManager = new HttpManager(configure);
-    httpManager.init();
-
-    // TODO Create configure of common test.
-    HttpResponseEntity res = httpManager.doGet("http://" + configure.getHost() + ":" + configure.getPort()
-        + "/_api/collections", null);
-
-    DefaultEntity entity = EntityFactory.createEntity(res.getText(), DefaultEntity.class);
-    assertThat(entity.isError(), is(true));
-    assertThat(entity.getCode(), is(501));
-    assertThat(entity.getErrorNumber(), is(9));
-
-    httpManager.destroy();
-
-  }
-
-  public static class TestComplex {
-    private String name;
-
-	public String getName() {
-		return name;
+	public NegativeTest(ArangoConfigure configure, ArangoDriver driver) {
+		super(configure, driver);
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * 開発途中にあった命令だけど、今は存在しない。 きとんとエラーになること。
+	 * 
+	 * @throws ArangoException
+	 */
+	@Ignore
+	@Test
+	public void test_collections() throws ArangoException {
+
+		ArangoConfigure configure = new ArangoConfigure();
+
+		HttpManager httpManager = new HttpManager(configure);
+		httpManager.init();
+
+		// TODO Create configure of common test.
+		HttpResponseEntity res = httpManager.doGet("http://" + configure.getArangoHost().getHost() + ":"
+				+ configure.getArangoHost().getPort() + "/_api/collections", null);
+
+		DefaultEntity entity = EntityFactory.createEntity(res.getText(), DefaultEntity.class);
+		assertThat(entity.isError(), is(true));
+		assertThat(entity.getCode(), is(501));
+		assertThat(entity.getErrorNumber(), is(9));
+
+		httpManager.destroy();
+
 	}
-  }
 
-  @Test
-  public void test_issue_35_and_41() throws Exception {
+	public static class TestComplex {
+		private String name;
 
-    ArangoConfigure configure = new ArangoConfigure();
-    configure.init();
-    ArangoDriver driver = new ArangoDriver(configure);
+		public String getName() {
+			return name;
+		}
 
-    TestComplex value = new TestComplex();
-    value.setName("A\"A'@:///A");
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
 
-    // String value = "AAA";
-    DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
-    String documentHandle = doc.getDocumentHandle();
-    driver.getDocument(documentHandle, TestComplex.class);
+	@Test
+	public void test_issue_35_and_41() throws Exception {
 
-    configure.shutdown();
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.init();
+		ArangoDriver driver = new ArangoDriver(configure);
 
-  }
+		TestComplex value = new TestComplex();
+		value.setName("A\"A'@:///A");
 
-  @Test
-  public void test_primitive() throws Exception {
+		// String value = "AAA";
+		DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
+		String documentHandle = doc.getDocumentHandle();
+		driver.getDocument(documentHandle, TestComplex.class);
 
-    ArangoConfigure configure = new ArangoConfigure();
-    configure.init();
-    ArangoDriver driver = new ArangoDriver(configure);
+		configure.shutdown();
 
-    try {
-      String value = "AAA";
-      DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
-      String documentHandle = doc.getDocumentHandle();
-      driver.getDocument(documentHandle, String.class);
-      fail();
-    } catch (ArangoException e) {
-      assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
-    }
+	}
 
-    configure.shutdown();
+	@Test
+	public void test_primitive() throws Exception {
 
-  }
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.init();
+		ArangoDriver driver = new ArangoDriver(configure);
+
+		try {
+			String value = "AAA";
+			DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
+			String documentHandle = doc.getDocumentHandle();
+			driver.getDocument(documentHandle, String.class);
+			fail();
+		} catch (ArangoException e) {
+			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
+		}
+
+		configure.shutdown();
+
+	}
 
 }

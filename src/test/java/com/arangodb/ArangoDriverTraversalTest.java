@@ -94,6 +94,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 			bob.getDocumentHandle());
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void test_create_vertex() throws ArangoException {
 		String edgeCollection = null;

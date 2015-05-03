@@ -146,7 +146,7 @@ public class BaseDocumentTest extends BaseGraphTest {
 		BaseDocument myDoc1 = new BaseDocument("myKeyFROM", myMap);
 		Blub myDoc2 = new Blub("myKeyTO", new Blub("blub2", new Blub("blub3", 42)));
 		DocumentEntity<BaseDocument> v1 = driver.graphCreateVertex(this.graphName, "from", myDoc1, null);
-		DocumentEntity<Blub> v2 = driver.graphCreateVertex(this.graphName, "to", myDoc2, null);
+		driver.graphCreateVertex(this.graphName, "to", myDoc2, null);
 
 		DocumentEntity<BaseDocument> v1DB = driver.getDocument(v1.getDocumentHandle(), BaseDocument.class);
 		// DocumentEntity<Blub> v2DB =
@@ -158,7 +158,7 @@ public class BaseDocumentTest extends BaseGraphTest {
 		assertThat(v1DB.getDocumentRevision(), is(not(0L)));
 		assertThat(v1DB.getDocumentKey(), is(notNullValue()));
 		Map<String, Object> dbProperties = v1DB.getEntity().getProperties();
-		Object blub = dbProperties.get(key1);
+		dbProperties.get(key1);
 
 		assertThat((String) v1DB.getEntity().getProperties().get(key1), is(val1));
 		assertThat((Double) v1DB.getEntity().getProperties().get(key2), is(val2));
