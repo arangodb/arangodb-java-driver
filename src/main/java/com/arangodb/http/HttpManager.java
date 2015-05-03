@@ -17,7 +17,7 @@
 package com.arangodb.http;
 
 import java.io.IOException;
-import java.net.ConnectException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +95,9 @@ public class HttpManager {
 	private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
 
 	public static enum HttpMode {
-		SYNC, ASYNC, FIREANDFORGET
+		SYNC,
+		ASYNC,
+		FIREANDFORGET
 	}
 
 	public HttpManager(ArangoConfigure configure) {
@@ -333,7 +335,7 @@ public class HttpManager {
 		while (true) {
 			try {
 				return executeInternal(configure.getBaseUrl(), requestEntity);
-			} catch (ConnectException ex) {
+			} catch (SocketException ex) {
 				retries++;
 				if (connectRetryCount > 0 && retries > connectRetryCount) {
 					logger.error(ex.getMessage(), ex);
@@ -364,7 +366,7 @@ public class HttpManager {
 	 * @throws ArangoException
 	 */
 	private HttpResponseEntity executeInternal(String baseUrl, HttpRequestEntity requestEntity) throws ArangoException,
-			ConnectException {
+			SocketException {
 
 		String url = buildUrl(baseUrl, requestEntity);
 
@@ -500,7 +502,7 @@ public class HttpManager {
 			}
 
 			return responseEntity;
-		} catch (ConnectException ex) {
+		} catch (SocketException ex) {
 			throw ex;
 		} catch (ClientProtocolException e) {
 			throw new ArangoException(e);
