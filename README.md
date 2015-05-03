@@ -406,9 +406,13 @@ see 2.4.4
     * added fallback server endpoints
 * added new cursor implementation for AQL queries
     * DocumentCursor<T> executeDocumentQuery(...)
+    * VertexCursor<T> executeVertexQuery(...)
+    * EdgeCursor<T> executeEdgeQuery(...)
 * added new cursor implementation for simple queries
     * DocumentCursor<T> executeSimpleAllDocuments(...)
     * DocumentCursor<T> executeSimpleByExampleDocuments(...)
     * DocumentCursor<T> executeSimpleRangeWithDocuments(...)
     * DocumentCursor<T> executeSimpleFulltextWithDocuments(...)
-	
+* added some examples for AQL queries 
+	see src/test/java/com/arangodb/example
+
