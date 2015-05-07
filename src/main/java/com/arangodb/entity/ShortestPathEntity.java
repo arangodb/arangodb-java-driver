@@ -23,5 +23,5 @@ package com.arangodb.entity;
 /**
  * @author a-brandt
  */
-public class TraversalEntity<V, E> extends DocumentEntity<TraversalResultEntity<V, E>> {
+public class ShortestPathEntity<V, T> extends DocumentEntity<ShortestPathResultEntity<V, T>> {
 }

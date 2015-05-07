@@ -5,8 +5,10 @@ import java.util.Map;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.impl.BaseDriverInterface;
 import com.arangodb.util.AqlQueryOptions;
+import com.arangodb.util.ShortestPathOptions;
 
 /**
  * Created by fbartels on 10/27/14.
@@ -44,6 +46,30 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 		AqlQueryOptions aqlQueryOptions,
 		Class<S> classDocumentEntity,
 		Class<T> clazz) throws ArangoException;
+
+	/**
+	 * Get the shortest path from a vertex to another vertex
+	 * 
+	 * @param database
+	 * @param graphName
+	 * @param startVertexExample
+	 * @param endVertexExample
+	 * @param shortestPathOptions
+	 * @param aqlQueryOptions
+	 * @param vertexClass
+	 * @param edgeClass
+	 * @return
+	 * @throws ArangoException
+	 */
+	public <V, E> ShortestPathEntity<V, E> getShortesPath(
+		String database,
+		String graphName,
+		Object startVertexExample,
+		Object endVertexExample,
+		ShortestPathOptions shortestPathOptions,
+		AqlQueryOptions aqlQueryOptions,
+		Class<V> vertexClass,
+		Class<E> edgeClass) throws ArangoException;
 
 	@Deprecated
 	<T> CursorEntity<T> executeQuery(

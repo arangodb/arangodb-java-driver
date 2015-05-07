@@ -49,6 +49,7 @@ import com.google.gson.JsonObject;
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * @author gschwab
+ * @author a-brandt
  */
 public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl implements com.arangodb.InternalGraphDriver {
 
@@ -295,6 +296,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		return createVertex(database, graphName, collectionName, null, vertex, waitForSync);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> createVertex(
 		String database,
@@ -334,6 +336,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> getVertex(
 		String databaseName,
@@ -354,6 +357,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		return createEntity(res, VertexEntity.class, clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> replaceVertex(
 		String databaseName,
@@ -375,6 +379,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		return createEntity(res, VertexEntity.class, vertex.getClass());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> updateVertex(
 		String databaseName,
@@ -418,6 +423,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		return createEntity(res, DeletedEntity.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> createEdge(
 		String database,
@@ -460,6 +466,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> getEdge(
 		String database,
@@ -502,6 +509,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> replaceEdge(
 		String database,
@@ -525,6 +533,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> updateEdge(
 		String database,
@@ -548,6 +557,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> CursorEntity<EdgeEntity<T>> getEdges(
 		String database,
@@ -595,4 +605,5 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl impl
 		}
 		return e.name().toLowerCase(Locale.US);
 	}
+
 }

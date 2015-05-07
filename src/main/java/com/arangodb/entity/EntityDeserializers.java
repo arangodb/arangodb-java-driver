@@ -1908,6 +1908,7 @@ public class EntityDeserializers {
 	}
 
 	public static class TraversalEntityDeserializer implements JsonDeserializer<TraversalEntity<?, ?>> {
+		@SuppressWarnings("unchecked")
 		@Override
 		public TraversalEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
@@ -1923,31 +1924,35 @@ public class EntityDeserializers {
 
 			if (obj.has("result")) {
 				JsonObject result = obj.getAsJsonObject("result");
+				TraversalResultEntity<Object, Object> v = null;
+
 				if (result.has("visited")) {
 					JsonObject visited = result.getAsJsonObject("visited");
-					@SuppressWarnings("unchecked")
-					VisitedEntity<Object, Object> v = (VisitedEntity<Object, Object>) context.deserialize(visited,
-						VisitedEntity.class);
-					entity.setEntity(v);
+					v = (TraversalResultEntity<Object, Object>) context.deserialize(visited,
+						TraversalResultEntity.class);
+				} else {
+					v = new TraversalResultEntity<Object, Object>();
 				}
+				entity.setEntity(v);
 			}
 
 			return entity;
 		}
-
 	}
 
-	public static class VisitedEntityDeserializer implements JsonDeserializer<VisitedEntity<?, ?>> {
+	public static class TraversalResultEntityDeserializer implements JsonDeserializer<TraversalResultEntity<?, ?>> {
 		@Override
-		public VisitedEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
+		public TraversalResultEntity<?, ?> deserialize(
+			JsonElement json,
+			Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
 			JsonObject visited = json.getAsJsonObject();
-			VisitedEntity<Object, Object> entity = new VisitedEntity<Object, Object>();
+			TraversalResultEntity<Object, Object> entity = new TraversalResultEntity<Object, Object>();
 
 			Class<?> vertexClazz = getParameterized();
 			Class<?> edgeClazz = null;
@@ -1959,28 +1964,107 @@ public class EntityDeserializers {
 				entity.setVertices(getVertices(vertexClazz, context, visited.getAsJsonArray("vertices")));
 			}
 			if (visited.has("paths")) {
-				List<PathEntity<Object, Object>> pathEntities = new ArrayList<PathEntity<Object, Object>>();
-				JsonArray paths = visited.getAsJsonArray("paths");
-				if (!paths.equals(null)) {
-					for (int i = 0, imax = paths.size(); i < imax; i++) {
-						JsonObject path = paths.get(i).getAsJsonObject();
-						PathEntity<Object, Object> pathEntity = new PathEntity<Object, Object>();
-
-						if (path.has("edges")) {
-							pathEntity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray("edges")));
-						}
-						if (path.has("vertices")) {
-							pathEntity.setVertices(getVertices(vertexClazz, context, path.getAsJsonArray("vertices")));
-						}
-
-						pathEntities.add(pathEntity);
-					}
-				}
-				entity.setPaths(pathEntities);
+				entity.setPaths(getPaths(context, visited, vertexClazz, edgeClazz));
 			}
 
 			return entity;
 		}
+	}
+
+	public static class ShortestPathEntityDeserializer implements JsonDeserializer<ShortestPathEntity<?, ?>> {
+		@SuppressWarnings("unchecked")
+		@Override
+		public ShortestPathEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			JsonObject obj = json.getAsJsonObject();
+			ShortestPathEntity<Object, Object> entity = deserializeBaseParameter(obj,
+				new ShortestPathEntity<Object, Object>());
+			deserializeDocumentParameter(obj, entity);
+
+			if (obj.has("result")) {
+				JsonArray result = obj.getAsJsonArray("result");
+				ShortestPathResultEntity<Object, Object> v = null;
+
+				if (result.size() > 0) {
+					v = (ShortestPathResultEntity<Object, Object>) context.deserialize(result.get(0),
+						ShortestPathResultEntity.class);
+				} else {
+					v = new ShortestPathResultEntity<Object, Object>();
+				}
+				entity.setEntity(v);
+			}
+
+			return entity;
+		}
+	}
+
+	public static class ShortestPathResultEntityDeserializer implements
+			JsonDeserializer<ShortestPathResultEntity<?, ?>> {
+		@Override
+		public ShortestPathResultEntity<?, ?> deserialize(
+			JsonElement json,
+			Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			JsonObject visited = json.getAsJsonObject();
+			ShortestPathResultEntity<Object, Object> entity = new ShortestPathResultEntity<Object, Object>();
+
+			Class<?> vertexClazz = getParameterized();
+			Class<?> edgeClazz = null;
+			if (hasNextParameterized()) {
+				edgeClazz = nextParameterized();
+			}
+
+			if (visited.has("vertex")) {
+				entity.setVertex(getVertex(context, visited.getAsJsonObject("vertex"), vertexClazz));
+			}
+			if (visited.has("distance")) {
+				entity.setDistance(visited.get("distance").getAsLong());
+			}
+			if (visited.has("startVertex")) {
+				entity.setStartVertex(visited.get("startVertex").getAsString());
+			}
+			if (visited.has("paths")) {
+				entity.setPaths(getPaths(context, visited, vertexClazz, edgeClazz));
+			}
+
+			return entity;
+		}
+
+	}
+
+	private static List<PathEntity<Object, Object>> getPaths(
+		JsonDeserializationContext context,
+		JsonObject visited,
+		Class<?> vertexClazz,
+		Class<?> edgeClazz) {
+		List<PathEntity<Object, Object>> pathEntities = new ArrayList<PathEntity<Object, Object>>();
+		JsonArray paths = visited.getAsJsonArray("paths");
+		if (!paths.equals(null)) {
+			for (int i = 0, imax = paths.size(); i < imax; i++) {
+				JsonObject path = paths.get(i).getAsJsonObject();
+				PathEntity<Object, Object> pathEntity = new PathEntity<Object, Object>();
+
+				if (path.has("edges")) {
+					pathEntity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray("edges")));
+				}
+				if (path.has("vertices")) {
+					pathEntity.setVertices(getVertices(vertexClazz, context, path.getAsJsonArray("vertices")));
+				}
+
+				pathEntities.add(pathEntity);
+			}
+		}
+		return pathEntities;
 	}
 
 	private static List<VertexEntity<Object>> getVertices(
@@ -1991,17 +2075,25 @@ public class EntityDeserializers {
 		if (!vertices.equals(null)) {
 			for (int i = 0, imax = vertices.size(); i < imax; i++) {
 				JsonObject vertex = vertices.get(i).getAsJsonObject();
-				VertexEntity<Object> ve = deserializeBaseParameter(vertex, new VertexEntity<Object>());
-				deserializeDocumentParameter(vertex, ve);
-				if (vertexClazz != null) {
-					ve.setEntity(context.deserialize(vertex, vertexClazz));
-				} else {
-					ve.setEntity(context.deserialize(vertex, Object.class));
-				}
+				VertexEntity<Object> ve = getVertex(context, vertex, vertexClazz);
 				list.add(ve);
 			}
 		}
 		return list;
+	}
+
+	private static VertexEntity<Object> getVertex(
+		JsonDeserializationContext context,
+		JsonObject vertex,
+		Class<?> vertexClazz) {
+		VertexEntity<Object> ve = deserializeBaseParameter(vertex, new VertexEntity<Object>());
+		deserializeDocumentParameter(vertex, ve);
+		if (vertexClazz != null) {
+			ve.setEntity(context.deserialize(vertex, vertexClazz));
+		} else {
+			ve.setEntity(context.deserialize(vertex, Object.class));
+		}
+		return ve;
 	}
 
 	private static List<EdgeEntity<Object>> getEdges(

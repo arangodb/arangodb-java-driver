@@ -21,17 +21,19 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.DocumentCursorResult;
 import com.arangodb.CursorResult;
 import com.arangodb.CursorResultSet;
+import com.arangodb.DocumentCursorResult;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EntityFactory;
+import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
+import com.arangodb.util.ShortestPathOptions;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -134,6 +136,33 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		CursorEntity<T> entity = executeCursorEntityQuery(database, query, bindVars, aqlQueryOptions, clazz);
 
 		return new CursorResult<T>(database, this, entity, clazz);
+	}
+
+	@Override
+	public <V, E> ShortestPathEntity<V, E> getShortesPath(
+		String database,
+		String graphName,
+		Object startVertexExample,
+		Object endVertexExample,
+		ShortestPathOptions shortestPathOptions,
+		AqlQueryOptions aqlQueryOptions,
+		Class<V> vertexClass,
+		Class<E> edgeClass) throws ArangoException {
+
+		validateCollectionName(graphName);
+
+		String query = "for i in graph_shortest_path(@graphName, @startVertexExample, @endVertexExample, @options) return i";
+
+		Map<String, Object> options = shortestPathOptions == null ? new MapBuilder().get() : shortestPathOptions
+				.toMap();
+
+		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
+				.put("options", options).get();
+
+		HttpResponseEntity res = getCursor(database, query, bindVars, aqlQueryOptions);
+
+		return createEntity(res, ShortestPathEntity.class, vertexClass, edgeClass);
 	}
 
 	@Deprecated

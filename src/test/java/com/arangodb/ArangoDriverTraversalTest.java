@@ -39,7 +39,7 @@ import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.TraversalEntity;
-import com.arangodb.entity.VisitedEntity;
+import com.arangodb.entity.TraversalResultEntity;
 import com.arangodb.entity.marker.VertexEntity;
 
 /**
@@ -120,7 +120,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 			vertexClass, edgeClass, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy,
 			order, itemOrder, verticesUniqueness, edgesUniqueness, maxIterations);
 
-		VisitedEntity<Person, Map> visited = traversal.getEntity();
+		TraversalResultEntity<Person, Map> visited = traversal.getEntity();
 		assertThat(visited, is(notNullValue()));
 
 		List<VertexEntity<Person>> vertices = visited.getVertices();

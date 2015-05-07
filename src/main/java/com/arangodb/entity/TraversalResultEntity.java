@@ -27,7 +27,7 @@ import com.arangodb.entity.marker.VertexEntity;
 /**
  * @author a-brandt
  */
-public class VisitedEntity<V, E> {
+public class TraversalResultEntity<V, E> {
 
 	/**
 	 * List of vertices.
@@ -39,6 +39,11 @@ public class VisitedEntity<V, E> {
 	 */
 	private List<PathEntity<V, E>> paths;
 
+	/**
+	 * get the traversal vertices
+	 * 
+	 * @return list of VertexEntity objects
+	 */
 	public List<VertexEntity<V>> getVertices() {
 		return vertices;
 	}
@@ -47,6 +52,11 @@ public class VisitedEntity<V, E> {
 		this.vertices = vertices;
 	}
 
+	/**
+	 * get the traversal path
+	 * 
+	 * @return list of PathEntity objects
+	 */
 	public List<PathEntity<V, E>> getPaths() {
 		return paths;
 	}

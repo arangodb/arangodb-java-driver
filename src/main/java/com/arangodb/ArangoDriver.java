@@ -35,7 +35,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
@@ -64,6 +63,7 @@ import com.arangodb.entity.ReplicationLoggerStateEntity;
 import com.arangodb.entity.ReplicationSyncEntity;
 import com.arangodb.entity.RestrictType;
 import com.arangodb.entity.ScalarExampleEntity;
+import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.entity.SimpleByResultEntity;
 import com.arangodb.entity.StatisticsDescriptionEntity;
 import com.arangodb.entity.StatisticsEntity;
@@ -5315,44 +5315,21 @@ public class ArangoDriver extends BaseArangoDriver {
 		return result;
 	}
 
-	/**
-	 * Returns all Edges of vertices matching the map.
-	 * 
-	 * @param graphName
-	 *            The name of the graph.
-	 * @param clazz
-	 *            Class of returned edge documents.
-	 * @param startVertexExample
-	 *            Map with example of vertex, where edges start
-	 * @param endVertexExample
-	 *            Map with example of vertex, where edges end
-	 * @param shortestPathOptions
-	 *            Options for the shortest path
-	 * @param aqlQueryOptions
-	 *            AQL query options
-	 * @return EdgeCursor<T>
-	 * @throws ArangoException
-	 */
-	public <T> EdgeCursor<T> graphGetShortesPath(
+	public <V, E> ShortestPathEntity<V, E> graphGetShortesPath(
 		String graphName,
-		Class<T> clazz,
 		Object startVertexExample,
 		Object endVertexExample,
 		ShortestPathOptions shortestPathOptions,
-		AqlQueryOptions aqlQueryOptions) throws ArangoException {
+		AqlQueryOptions aqlQueryOptions,
+		Class<V> vertexClass,
+		Class<E> edgeClass) throws ArangoException {
 
-		validateCollectionName(graphName);
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
 
-		String query = "for i in graph_shortest_path(@graphName, @startVertexExample, @endVertexExample, @options) return i";
-
-		Map<String, Object> options = shortestPathOptions == null ? new MapBuilder().get() : shortestPathOptions
-				.toMap();
-
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
-				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
-				.put("options", options).get();
-
-		return executeEdgeQuery(query, bindVars, aqlQueryOptions, clazz);
+		return cursorDriver.getShortesPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
+			shortestPathOptions, aqlQueryOptions, vertexClass, edgeClass);
 	}
 
 	// public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
