@@ -22,44 +22,34 @@ package com.arangodb;
 
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.impl.BaseDriverInterface;
+import com.arangodb.util.TraversalQueryOptions;
 
 public interface InternalTraversalDriver extends BaseDriverInterface {
 
 	public enum Strategy {
-		DEPTHFIRST, BREADTHFIRST
+		DEPTHFIRST,
+		BREADTHFIRST
 	}
 
 	public enum Order {
-		PREORDER, POSTORDER
+		PREORDER,
+		POSTORDER
 	}
 
 	public enum ItemOrder {
-		FORWARD, BACKWARD
+		FORWARD,
+		BACKWARD
 	}
 
 	public enum Uniqueness {
-		NONE, GLOBAL, PATH
+		NONE,
+		GLOBAL,
+		PATH
 	}
 
 	<V, E> TraversalEntity<V, E> getTraversal(
 		String databaseName,
-		String graphName,
-		String edgeCollection,
-		String startVertex,
+		TraversalQueryOptions traversalQueryOptions,
 		Class<V> vertexClazz,
-		Class<E> edgeClazz,
-		String filter,
-		Long minDepth,
-		Long maxDepth,
-		String visitor,
-		Direction direction,
-		String init,
-		String expander,
-		String sort,
-		Strategy strategy,
-		Order order,
-		ItemOrder itemOrder,
-		Uniqueness verticesUniqueness,
-		Uniqueness edgesUniqueness,
-		Long maxIterations) throws ArangoException;
+		Class<E> edgeClazz) throws ArangoException;
 }

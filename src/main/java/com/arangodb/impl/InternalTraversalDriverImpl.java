@@ -20,16 +20,13 @@
 
 package com.arangodb.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
-import com.arangodb.Direction;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
+import com.arangodb.util.TraversalQueryOptions;
 
 /**
  * @author a-brandt
@@ -40,90 +37,19 @@ public class InternalTraversalDriverImpl extends BaseArangoDriverImpl implements
 		super(configure, httpManager);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V, E> TraversalEntity<V, E> getTraversal(
 		String databaseName,
-		String graphName,
-		String edgeCollection,
-		String startVertex,
+		TraversalQueryOptions traversalQueryOptions,
 		Class<V> vertexClazz,
-		Class<E> edgeClazz,
-		String filter,
-		Long minDepth,
-		Long maxDepth,
-		String visitor,
-		Direction direction,
-		String init,
-		String expander,
-		String sort,
-		Strategy strategy,
-		Order order,
-		ItemOrder itemOrder,
-		Uniqueness verticesUniqueness,
-		Uniqueness edgesUniqueness,
-		Long maxIterations) throws ArangoException {
+		Class<E> edgeClazz) throws ArangoException {
 
-		Map<String, Object> object = new HashMap<String, Object>();
-
-		if (graphName != null) {
-			object.put("graphName", graphName);
-		}
-		if (edgeCollection != null) {
-			object.put("edgeCollection", edgeCollection);
-		}
-		if (startVertex != null) {
-			object.put("startVertex", startVertex);
-		}
-		if (filter != null) {
-			object.put("filter", filter);
-		}
-		if (minDepth != null) {
-			object.put("minDepth", minDepth);
-		}
-		if (maxDepth != null) {
-			object.put("maxDepth", maxDepth);
-		}
-		if (visitor != null) {
-			object.put("visitor", visitor);
-		}
-		if (direction != null) {
-			object.put("direction", direction.toString().toLowerCase());
-		}
-		if (init != null) {
-			object.put("init", init);
-		}
-		if (expander != null) {
-			object.put("expander", expander);
-		}
-		if (sort != null) {
-			object.put("sort", sort);
-		}
-		if (strategy != null) {
-			object.put("strategy", strategy.toString().toLowerCase());
-		}
-		if (order != null) {
-			object.put("order", order.toString().toLowerCase());
-		}
-		if (itemOrder != null) {
-			object.put("itemOrder", itemOrder.toString().toLowerCase());
-		}
-		if (verticesUniqueness != null || edgesUniqueness != null) {
-			Map<String, Object> uniqueness = new HashMap<String, Object>();
-
-			if (verticesUniqueness != null) {
-				uniqueness.put("vertices", verticesUniqueness.toString().toLowerCase());
-			}
-			if (edgesUniqueness != null) {
-				uniqueness.put("edges", edgesUniqueness.toString().toLowerCase());
-			}
-
-			object.put("uniqueness", uniqueness);
-		}
-		if (maxIterations != null) {
-			object.put("maxIterations", maxIterations);
+		if (traversalQueryOptions == null) {
+			traversalQueryOptions = new TraversalQueryOptions();
 		}
 
-		String body = EntityFactory.toJsonString(object);
+		String body = EntityFactory.toJsonString(traversalQueryOptions.toMap());
 
 		HttpResponseEntity response = httpManager
 				.doPost(createEndpointUrl(databaseName, "/_api/traversal"), null, body);

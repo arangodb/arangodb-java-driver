@@ -23,10 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.arangodb.InternalTraversalDriver.ItemOrder;
-import com.arangodb.InternalTraversalDriver.Order;
-import com.arangodb.InternalTraversalDriver.Strategy;
-import com.arangodb.InternalTraversalDriver.Uniqueness;
 import com.arangodb.entity.AdminLogEntity;
 import com.arangodb.entity.AqlFunctionsEntity;
 import com.arangodb.entity.ArangoUnixTime;
@@ -35,6 +31,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
@@ -86,6 +83,7 @@ import com.arangodb.util.GraphVerticesOptions;
 import com.arangodb.util.JsonUtils;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
+import com.arangodb.util.TraversalQueryOptions;
 
 /**
  * ArangoDB driver. All of the functionality to use ArangoDB is provided via
@@ -5320,16 +5318,11 @@ public class ArangoDriver extends BaseArangoDriver {
 		Object startVertexExample,
 		Object endVertexExample,
 		ShortestPathOptions shortestPathOptions,
-		AqlQueryOptions aqlQueryOptions,
 		Class<V> vertexClass,
 		Class<E> edgeClass) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
 		return cursorDriver.getShortesPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
-			shortestPathOptions, aqlQueryOptions, vertexClass, edgeClass);
+			shortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass);
 	}
 
 	// public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
@@ -5472,77 +5465,20 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * 
 	 * See API documatation of Traversals
 	 * 
-	 * @param graphName
-	 *            (optional) name of the graph that contains the edges. Either
-	 *            edgeCollection or graphName has to be given. In case both
-	 *            values are set the graphName is prefered.
-	 * @param edgeCollection
-	 *            (optional) name of the collection that contains the edges.
-	 * @param startVertex
-	 *            id of the startVertex, e.g. "users/foo".
+	 * @param traversalQueryOptions
+	 *            the traversal options
 	 * @param vertexClazz
 	 *            Class of returned vertex documents.
 	 * @param edgeClass
 	 *            Class of returned edge documents.
-	 * @param filter
-	 *            (optional, default is to include all nodes): body (JavaScript
-	 *            code) of custom filter function function
-	 * @param minDepth
-	 *            (optional, ANDed with any existing filters): visits only nodes
-	 *            in at least the given depth
-	 * @param maxDepth
-	 *            (optional, ANDed with any existing filters): visits only nodes
-	 *            in at most the given depth
-	 * @param visitor
-	 *            (optional): body (JavaScript) code of custom visitor function
-	 * @param direction
-	 *            (optional): direction for traversal
-	 * @param init
-	 *            (optional): body (JavaScript) code of custom result
-	 *            initialisation function
-	 * @param expander
-	 *            (optional): body (JavaScript) code of custom expander function
-	 * @param sort
-	 *            (optional): body (JavaScript) code of a custom comparison
-	 *            function
-	 * @param strategy
-	 *            (optional): traversal strategy
-	 * @param order
-	 *            (optional): traversal order
-	 * @param itemOrder
-	 *            (optional): item iteration order
-	 * @param verticesUniqueness
-	 *            (optional): specifies uniqueness for vertices visited if set
-	 * @param edgesUniqueness
-	 *            (optional): specifies uniqueness for edges visited if set
-	 * @param maxIterations
-	 *            (optional): Maximum number of iterations in each traversal
 	 * @return
 	 * @throws ArangoException
 	 */
 	public <V, E> TraversalEntity<V, E> getTraversal(
-		String graphName,
-		String edgeCollection,
-		String startVertex,
+		TraversalQueryOptions traversalQueryOptions,
 		Class<V> vertexClazz,
-		Class<E> edgeClazz,
-		String filter,
-		Long minDepth,
-		Long maxDepth,
-		String visitor,
-		Direction direction,
-		String init,
-		String expander,
-		String sort,
-		Strategy strategy,
-		Order order,
-		ItemOrder itemOrder,
-		Uniqueness verticesUniqueness,
-		Uniqueness edgesUniqueness,
-		Long maxIterations) throws ArangoException {
+		Class<E> edgeClazz) throws ArangoException {
 
-		return this.traversalDriver.getTraversal(getDefaultDatabase(), graphName, edgeCollection, startVertex,
-			vertexClazz, edgeClazz, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy,
-			order, itemOrder, verticesUniqueness, edgesUniqueness, maxIterations);
+		return this.traversalDriver.getTraversal(getDefaultDatabase(), traversalQueryOptions, vertexClazz, edgeClazz);
 	}
 }

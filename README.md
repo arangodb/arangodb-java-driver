@@ -417,4 +417,9 @@ see 2.4.4
 	(see src/test/java/com/arangodb/example)
 
 ## since 2.5.5
-* renamed VisitedEntity to TraversalResultEntity
+* updated driver.getTraversal(...);
+	* removed VisitedEntity (Traversal) 
+    * added TraversalQueryOptions to avoid too many parameters
+* added an examples for Transaction API 
+	(see src/test/java/com/arangodb/example/TransactionExample.java)
+

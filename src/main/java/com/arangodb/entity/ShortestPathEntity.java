@@ -20,8 +20,78 @@
 
 package com.arangodb.entity;
 
+import java.util.List;
+
 /**
  * @author a-brandt
  */
-public class ShortestPathEntity<V, T> extends DocumentEntity<ShortestPathResultEntity<V, T>> {
+public class ShortestPathEntity<V, E> extends BaseEntity {
+
+	/**
+	 * End vertex handle.
+	 */
+	private String vertex;
+
+	/**
+	 * path distance
+	 */
+	private Long distance;
+
+	/**
+	 * start vertex handle
+	 */
+	private String startVertex;
+
+	/**
+	 * List of paths.
+	 */
+	private List<PathEntity<V, E>> paths;
+
+	public String getVertex() {
+		return vertex;
+	}
+
+	public void setVertex(String vertex) {
+		this.vertex = vertex;
+	}
+
+	/**
+	 * Retuns the distance
+	 * 
+	 * @return the distance
+	 */
+	public Long getDistance() {
+		return distance;
+	}
+
+	public void setDistance(Long distance) {
+		this.distance = distance;
+	}
+
+	/**
+	 * Returns the document handle of the start vertex
+	 * 
+	 * @return
+	 */
+	public String getStartVertex() {
+		return startVertex;
+	}
+
+	public void setStartVertex(String startVertex) {
+		this.startVertex = startVertex;
+	}
+
+	/**
+	 * Returns the path list
+	 * 
+	 * @return list of PathEntity objects
+	 */
+	public List<PathEntity<V, E>> getPaths() {
+		return paths;
+	}
+
+	public void setPaths(List<PathEntity<V, E>> paths) {
+		this.paths = paths;
+	}
+
 }

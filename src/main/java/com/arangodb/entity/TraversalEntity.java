@@ -20,8 +20,49 @@
 
 package com.arangodb.entity;
 
+import java.util.List;
+
+import com.arangodb.entity.marker.VertexEntity;
+
 /**
  * @author a-brandt
  */
-public class TraversalEntity<V, E> extends DocumentEntity<TraversalResultEntity<V, E>> {
+public class TraversalEntity<V, E> extends BaseEntity {
+
+	/**
+	 * List of vertices.
+	 */
+	private List<VertexEntity<V>> vertices;
+
+	/**
+	 * List of paths.
+	 */
+	private List<PathEntity<V, E>> paths;
+
+	/**
+	 * get the traversal vertices
+	 * 
+	 * @return list of VertexEntity objects
+	 */
+	public List<VertexEntity<V>> getVertices() {
+		return vertices;
+	}
+
+	public void setVertices(List<VertexEntity<V>> vertices) {
+		this.vertices = vertices;
+	}
+
+	/**
+	 * get the traversal path
+	 * 
+	 * @return list of PathEntity objects
+	 */
+	public List<PathEntity<V, E>> getPaths() {
+		return paths;
+	}
+
+	public void setPaths(List<PathEntity<V, E>> paths) {
+		this.paths = paths;
+	}
+
 }

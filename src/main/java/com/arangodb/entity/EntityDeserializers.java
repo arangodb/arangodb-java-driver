@@ -1920,51 +1920,27 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			TraversalEntity<Object, Object> entity = deserializeBaseParameter(obj,
 				new TraversalEntity<Object, Object>());
-			deserializeDocumentParameter(obj, entity);
+			deserializeBaseParameter(obj, entity);
 
-			if (obj.has("result")) {
-				JsonObject result = obj.getAsJsonObject("result");
-				TraversalResultEntity<Object, Object> v = null;
+			JsonObject result = getFirstResultAsJsonObject(obj);
+			if (result != null) {
+				if (result.getAsJsonObject().has("visited")) {
+					JsonObject visited = result.getAsJsonObject().getAsJsonObject("visited");
 
-				if (result.has("visited")) {
-					JsonObject visited = result.getAsJsonObject("visited");
-					v = (TraversalResultEntity<Object, Object>) context.deserialize(visited,
-						TraversalResultEntity.class);
-				} else {
-					v = new TraversalResultEntity<Object, Object>();
+					Class<?> vertexClazz = getParameterized();
+					Class<?> edgeClazz = null;
+
+					if (hasNextParameterized()) {
+						edgeClazz = nextParameterized();
+					}
+
+					if (visited.has("vertices")) {
+						entity.setVertices(getVertices(vertexClazz, context, visited.getAsJsonArray("vertices")));
+					}
+					if (visited.has("paths")) {
+						entity.setPaths(getPaths(context, visited, vertexClazz, edgeClazz));
+					}
 				}
-				entity.setEntity(v);
-			}
-
-			return entity;
-		}
-	}
-
-	public static class TraversalResultEntityDeserializer implements JsonDeserializer<TraversalResultEntity<?, ?>> {
-		@Override
-		public TraversalResultEntity<?, ?> deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) throws JsonParseException {
-
-			if (json.isJsonNull()) {
-				return null;
-			}
-
-			JsonObject visited = json.getAsJsonObject();
-			TraversalResultEntity<Object, Object> entity = new TraversalResultEntity<Object, Object>();
-
-			Class<?> vertexClazz = getParameterized();
-			Class<?> edgeClazz = null;
-			if (hasNextParameterized()) {
-				edgeClazz = nextParameterized();
-			}
-
-			if (visited.has("vertices")) {
-				entity.setVertices(getVertices(vertexClazz, context, visited.getAsJsonArray("vertices")));
-			}
-			if (visited.has("paths")) {
-				entity.setPaths(getPaths(context, visited, vertexClazz, edgeClazz));
 			}
 
 			return entity;
@@ -1972,7 +1948,6 @@ public class EntityDeserializers {
 	}
 
 	public static class ShortestPathEntityDeserializer implements JsonDeserializer<ShortestPathEntity<?, ?>> {
-		@SuppressWarnings("unchecked")
 		@Override
 		public ShortestPathEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {
@@ -1984,62 +1959,60 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			ShortestPathEntity<Object, Object> entity = deserializeBaseParameter(obj,
 				new ShortestPathEntity<Object, Object>());
-			deserializeDocumentParameter(obj, entity);
+			deserializeBaseParameter(obj, entity);
 
-			if (obj.has("result")) {
-				JsonArray result = obj.getAsJsonArray("result");
-				ShortestPathResultEntity<Object, Object> v = null;
+			JsonObject result = getFirstResultAsJsonObject(obj);
+			if (result != null) {
+				Class<?> vertexClazz = getParameterized();
+				Class<?> edgeClazz = null;
 
-				if (result.size() > 0) {
-					v = (ShortestPathResultEntity<Object, Object>) context.deserialize(result.get(0),
-						ShortestPathResultEntity.class);
-				} else {
-					v = new ShortestPathResultEntity<Object, Object>();
+				if (hasNextParameterized()) {
+					edgeClazz = nextParameterized();
 				}
-				entity.setEntity(v);
+
+				if (result.has("vertex")) {
+					if (result.get("vertex").isJsonObject()) {
+						entity.setVertex(result.getAsJsonObject("vertex").getAsJsonPrimitive("_id").getAsString());
+					} else if (result.get("vertex").isJsonPrimitive()) {
+						entity.setVertex(result.getAsJsonPrimitive("vertex").getAsString());
+					}
+				}
+				if (result.has("distance")) {
+					entity.setDistance(result.get("distance").getAsLong());
+				} else {
+					entity.setDistance(-1L);
+				}
+				if (result.has("startVertex")) {
+					entity.setStartVertex(result.get("startVertex").getAsString());
+				}
+				if (result.has("paths")) {
+					entity.setPaths(getPaths(context, result, vertexClazz, edgeClazz));
+				}
+			} else {
+				entity.setDistance(-1L);
 			}
 
 			return entity;
 		}
 	}
 
-	public static class ShortestPathResultEntityDeserializer implements
-			JsonDeserializer<ShortestPathResultEntity<?, ?>> {
-		@Override
-		public ShortestPathResultEntity<?, ?> deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) throws JsonParseException {
+	private static JsonObject getFirstResultAsJsonObject(JsonObject obj) {
+		if (obj.has("result")) {
+			if (obj.get("result").isJsonArray()) {
+				JsonArray result = obj.getAsJsonArray("result");
 
-			if (json.isJsonNull()) {
-				return null;
-			}
-
-			JsonObject visited = json.getAsJsonObject();
-			ShortestPathResultEntity<Object, Object> entity = new ShortestPathResultEntity<Object, Object>();
-
-			Class<?> vertexClazz = getParameterized();
-			Class<?> edgeClazz = null;
-			if (hasNextParameterized()) {
-				edgeClazz = nextParameterized();
+				if (result.size() > 0) {
+					JsonElement jsonElement = result.get(0);
+					if (jsonElement.isJsonObject()) {
+						return jsonElement.getAsJsonObject();
+					}
+				}
+			} else if (obj.get("result").isJsonObject()) {
+				return obj.getAsJsonObject("result");
 			}
 
-			if (visited.has("vertex")) {
-				entity.setVertex(getVertex(context, visited.getAsJsonObject("vertex"), vertexClazz));
-			}
-			if (visited.has("distance")) {
-				entity.setDistance(visited.get("distance").getAsLong());
-			}
-			if (visited.has("startVertex")) {
-				entity.setStartVertex(visited.get("startVertex").getAsString());
-			}
-			if (visited.has("paths")) {
-				entity.setPaths(getPaths(context, visited, vertexClazz, edgeClazz));
-			}
-
-			return entity;
 		}
-
+		return null;
 	}
 
 	private static List<PathEntity<Object, Object>> getPaths(

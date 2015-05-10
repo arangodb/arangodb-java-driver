@@ -114,11 +114,7 @@ public class EntityFactory {
 				.registerTypeAdapter(VertexEntity.class, new EntityDeserializers.VertexEntityDeserializer())
 				.registerTypeAdapter(EdgeEntity.class, new EntityDeserializers.EdgeEntityDeserializer())
 				.registerTypeAdapter(TraversalEntity.class, new EntityDeserializers.TraversalEntityDeserializer())
-				.registerTypeAdapter(TraversalResultEntity.class,
-					new EntityDeserializers.TraversalResultEntityDeserializer())
-				.registerTypeAdapter(ShortestPathEntity.class, new EntityDeserializers.ShortestPathEntityDeserializer())
-				.registerTypeAdapter(ShortestPathResultEntity.class,
-					new EntityDeserializers.ShortestPathResultEntityDeserializer());
+				.registerTypeAdapter(ShortestPathEntity.class, new EntityDeserializers.ShortestPathEntityDeserializer());
 	}
 
 	static {

@@ -31,8 +31,10 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.util.GraphEdgesOptions;
+import com.arangodb.util.ShortestPathOptions;
 
 /**
  * AQL example with new cursor implementation
@@ -98,18 +100,17 @@ public class GraphQueryExample {
 					entity.getToVertexHandle(), knows.getSince());
 			}
 
-			// TODO get_shortes_path
-			// edgeCursor = driver.graphGetShortesPath(GRAPH_NAME, Knows.class,
-			// new Person("A"), new Person("F"), null,
-			// null);
-			// edgeIterator = edgeCursor.iterator();
-			// while (edgeIterator.hasNext()) {
-			// EdgeEntity<Knows> entity = edgeIterator.next();
-			// Knows knows = entity.getEntity();
-			// System.out.printf("%20s  %20s->%20s %d%n",
-			// entity.getDocumentHandle(), entity.getFromVertexHandle(),
-			// entity.getToVertexHandle(), knows.getSince());
-			// }
+			// path A -> F
+			ShortestPathEntity<Person, Knows> shortestPath = driver.graphGetShortesPath(GRAPH_NAME, new Person("A"),
+				new Person("F"), new ShortestPathOptions().setDirection(Direction.OUTBOUND), Person.class, Knows.class);
+
+			printShortestPath(shortestPath);
+
+			// path F -> A (empty result)
+			shortestPath = driver.graphGetShortesPath(GRAPH_NAME, new Person("F"), new Person("A"),
+				new ShortestPathOptions().setDirection(Direction.OUTBOUND), Person.class, Knows.class);
+
+			printShortestPath(shortestPath);
 
 		} catch (ArangoException e) {
 			e.printStackTrace();
@@ -117,6 +118,16 @@ public class GraphQueryExample {
 			configure.shutdown();
 		}
 
+	}
+
+	private static void printShortestPath(ShortestPathEntity<Person, Knows> shortestPath) {
+		if (shortestPath.getDistance() > -1) {
+			System.out.printf("%20s -> %20s distance = %d, paths.size() = %d, paths.get(0).edges.size() = %d%n",
+				shortestPath.getStartVertex(), shortestPath.getVertex(), shortestPath.getDistance(), shortestPath
+						.getPaths().size(), shortestPath.getPaths().get(0).getEdges().size());
+		} else {
+			System.out.println("no path");
+		}
 	}
 
 	private static void createExampleGraph(ArangoDriver driver) {

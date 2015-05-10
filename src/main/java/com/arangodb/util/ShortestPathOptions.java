@@ -33,9 +33,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * inbound and any (default).
 	 * 
 	 * @param direction
+	 * @return this
 	 */
-	public void setDirection(Direction direction) {
+	public ShortestPathOptions setDirection(Direction direction) {
 		this.direction = direction;
+		return this;
 	}
 
 	/**
@@ -53,9 +55,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * will be considered for the path.
 	 * 
 	 * @param edgeCollectionRestriction
+	 * @return this
 	 */
-	public void setEdgeCollectionRestriction(List<String> edgeCollectionRestriction) {
+	public ShortestPathOptions setEdgeCollectionRestriction(List<String> edgeCollectionRestriction) {
 		this.edgeCollectionRestriction = edgeCollectionRestriction;
+		return this;
 	}
 
 	/**
@@ -73,9 +77,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * collections will be considered as start vertex of a path.
 	 * 
 	 * @param startVertexCollectionRestriction
+	 * @return this
 	 */
-	public void setStartVertexCollectionRestriction(List<String> startVertexCollectionRestriction) {
+	public ShortestPathOptions setStartVertexCollectionRestriction(List<String> startVertexCollectionRestriction) {
 		this.startVertexCollectionRestriction = startVertexCollectionRestriction;
+		return this;
 	}
 
 	/**
@@ -93,9 +99,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * collections will be considered as end vertex of a path.
 	 * 
 	 * @param endVertexCollectionRestriction
+	 * @return this
 	 */
-	public void setEndVertexCollectionRestriction(List<String> endVertexCollectionRestriction) {
+	public ShortestPathOptions setEndVertexCollectionRestriction(List<String> endVertexCollectionRestriction) {
 		this.endVertexCollectionRestriction = endVertexCollectionRestriction;
+		return this;
 	}
 
 	/**
@@ -111,9 +119,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * A filter example for the edges
 	 * 
 	 * @param edgeExamples
+	 * @return this
 	 */
-	public void setEdgeExamples(Object edgeExamples) {
+	public ShortestPathOptions setEdgeExamples(Object edgeExamples) {
 		this.edgeExamples = edgeExamples;
+		return this;
 	}
 
 	/**
@@ -133,9 +143,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * is Dijkstra.
 	 * 
 	 * @param algorithm
+	 * @return this
 	 */
-	public void setAlgorithm(String algorithm) {
+	public ShortestPathOptions setAlgorithm(String algorithm) {
 		this.algorithm = algorithm;
+		return this;
 	}
 
 	/**
@@ -151,9 +163,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * The name of the attribute of the edges containing the length as a string.
 	 * 
 	 * @param weight
+	 * @return this
 	 */
-	public void setWeight(String weight) {
+	public ShortestPathOptions setWeight(String weight) {
 		this.weight = weight;
+		return this;
 	}
 
 	/**
@@ -175,9 +189,11 @@ public class ShortestPathOptions implements OptionsInterface {
 	 * could not be calculated.
 	 * 
 	 * @param defaultWeight
+	 * @return this
 	 */
-	public void setDefaultWeight(Long defaultWeight) {
+	public ShortestPathOptions setDefaultWeight(Long defaultWeight) {
 		this.defaultWeight = defaultWeight;
+		return this;
 	}
 
 	/**

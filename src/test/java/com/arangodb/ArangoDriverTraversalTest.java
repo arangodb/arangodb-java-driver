@@ -31,16 +31,12 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.InternalTraversalDriver.ItemOrder;
-import com.arangodb.InternalTraversalDriver.Order;
-import com.arangodb.InternalTraversalDriver.Strategy;
-import com.arangodb.InternalTraversalDriver.Uniqueness;
 import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.TraversalEntity;
-import com.arangodb.entity.TraversalResultEntity;
 import com.arangodb.entity.marker.VertexEntity;
+import com.arangodb.util.TraversalQueryOptions;
 
 /**
  * @author a-brandt
@@ -97,33 +93,20 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void test_create_vertex() throws ArangoException {
-		String edgeCollection = null;
-		String startVertex = "person/Alice";
+		TraversalQueryOptions traversalQueryOptions = new TraversalQueryOptions();
+
+		traversalQueryOptions.setGraphName(graphName);
+		traversalQueryOptions.setStartVertex("person/Alice");
+		traversalQueryOptions.setDirection(Direction.OUTBOUND);
+
 		Class<Person> vertexClass = Person.class;
 		Class<Map> edgeClass = Map.class;
-		String filter = null;
-		Long minDepth = null;
-		Long maxDepth = null;
-		String visitor = null;
-		Direction direction = Direction.OUTBOUND;
-		String init = null;
-		String expander = null;
-		String sort = null;
-		Strategy strategy = null;
-		Order order = null;
-		ItemOrder itemOrder = null;
-		Uniqueness verticesUniqueness = null;
-		Uniqueness edgesUniqueness = null;
-		Long maxIterations = null;
 
-		TraversalEntity<Person, Map> traversal = driver.getTraversal(graphName, edgeCollection, startVertex,
-			vertexClass, edgeClass, filter, minDepth, maxDepth, visitor, direction, init, expander, sort, strategy,
-			order, itemOrder, verticesUniqueness, edgesUniqueness, maxIterations);
+		TraversalEntity<Person, Map> traversal = driver.getTraversal(traversalQueryOptions, vertexClass, edgeClass);
 
-		TraversalResultEntity<Person, Map> visited = traversal.getEntity();
-		assertThat(visited, is(notNullValue()));
+		assertThat(traversal, is(notNullValue()));
 
-		List<VertexEntity<Person>> vertices = visited.getVertices();
+		List<VertexEntity<Person>> vertices = traversal.getVertices();
 		assertThat(vertices, is(notNullValue()));
 		assertThat(vertices.size(), is(4));
 		assertThat(vertices.get(0).getEntity().getName(), is("Alice"));
@@ -131,7 +114,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		assertThat(vertices.get(2).getEntity().getName(), is("Charlie"));
 		assertThat(vertices.get(3).getEntity().getName(), is("Dave"));
 
-		List<PathEntity<Person, Map>> paths = visited.getPaths();
+		List<PathEntity<Person, Map>> paths = traversal.getPaths();
 		assertThat(paths, is(notNullValue()));
 		assertThat(paths.size(), is(4));
 
