@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized.Parameters;
 public abstract class BaseTest {
 
 	protected static ArangoConfigure configure;
-	protected static final String databaseName = "unitTestDatabase";
+	protected static final String DATABASE_NAME = "unitTestDatabase";
 
 	// Suite.classを使った場合、Parametersがテストクラスの数だけ最初に一気に連続で呼ばれる。
 	// そのため、単純にクラス変数にconfigureを保持すると、AfterClassの時に別のテストケースのものを終了してしまう。
@@ -59,11 +59,11 @@ public abstract class BaseTest {
 		configure.setConnectRetryCount(2);
 		configure.init();
 		ArangoDriver driver = new ArangoDriver(configure);
-		ArangoDriver driverMDB = new ArangoDriver(configure, databaseName);
+		ArangoDriver driverMDB = new ArangoDriver(configure, DATABASE_NAME);
 
 		// create mydb
 		try {
-			driver.createDatabase(databaseName);
+			driver.createDatabase(DATABASE_NAME);
 		} catch (ArangoException e) {
 		}
 
@@ -85,7 +85,7 @@ public abstract class BaseTest {
 		BaseTest.configure = configure;
 
 		try {
-			driver.createDatabase(databaseName);
+			driver.createDatabase(DATABASE_NAME);
 		} catch (ArangoException e) {
 		}
 

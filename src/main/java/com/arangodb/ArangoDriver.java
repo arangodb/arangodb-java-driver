@@ -31,7 +31,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
@@ -2115,7 +2114,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param calcCount
 	 *            if set to true the result count is returned
 	 * @param batchSize
-	 *            the batch size of the result cursor
+	 *            the batch size of the result cursor (The batch size has to be
+	 *            greater than 0)
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
@@ -2150,7 +2150,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param calcCount
 	 *            if set to true the result count is returned
 	 * @param batchSize
-	 *            the batch size of the result cursor
+	 *            the batch size of the result cursor (The batch size has to be
+	 *            greater than 0)
 	 * @param <T>
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
@@ -2209,7 +2210,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param calcCount
 	 *            if set to true the result count is returned
 	 * @param batchSize
-	 *            the batch size of the result cursor
+	 *            the batch size of the result cursor (The batch size has to be
+	 *            greater than 0)
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
@@ -2245,7 +2247,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param calcCount
 	 *            if set to true the result count is returned
 	 * @param batchSize
-	 *            the batch size of the result cursor
+	 *            the batch size of the result cursor (The batch size has to be
+	 *            greater than 0)
 	 * @return CursorResultSet<T>
 	 * @throws ArangoException
 	 * @Deprecated As of release 2.5.4, replaced by
@@ -2276,7 +2279,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param calcCount
 	 *            if set to true the result count is returned
 	 * @param batchSize
-	 *            the batch size of the result cursor
+	 *            the batch size of the result cursor (The batch size has to be
+	 *            greater than 0)
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted

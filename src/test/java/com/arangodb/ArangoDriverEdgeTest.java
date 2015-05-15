@@ -72,7 +72,7 @@ public class ArangoDriverEdgeTest extends BaseTest {
     DocumentEntity<TestComplexEntity01> toDoc = driver.createDocument(collectionName2, value, true, true);
     
     EdgeEntity<TestComplexEntity01> doc = driver.createEdge(
-        databaseName, 
+        DATABASE_NAME, 
         collectionName, 
         value, 
         fromDoc.getDocumentHandle(), 

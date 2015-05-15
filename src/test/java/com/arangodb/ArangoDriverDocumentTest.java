@@ -21,12 +21,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -267,15 +268,22 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(doc2, is(notNullValue()));
 		assertThat(doc3, is(notNullValue()));
 
-		//
-		Set<String> tree = new TreeSet<String>(Arrays.asList("/_api/document/" + doc1.getDocumentHandle(),
-			"/_api/document/" + doc2.getDocumentHandle(), "/_api/document/" + doc3.getDocumentHandle()));
-
 		// get documents
-		Set<String> docIds = new TreeSet<String>(driver.getDocuments(collectionName));
-		assertThat(docIds.size(), is(3));
+		List<String> documents = driver.getDocuments(collectionName);
+		assertEquals(3, documents.size());
 
-		assertThat(docIds, is(tree));
+		String prefix;
+		if (documents.get(0).startsWith("/_db/")) {
+			// since ArangoDB 2.6
+			prefix = "/_db/" + DATABASE_NAME + "/_api/document/";
+		} else {
+			prefix = "/_api/document/";
+		}
+
+		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(), prefix
+				+ doc3.getDocumentHandle());
+
+		assertTrue(documents.containsAll(list));
 	}
 
 	@Test
@@ -292,15 +300,22 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(doc2, is(notNullValue()));
 		assertThat(doc3, is(notNullValue()));
 
-		//
-		Set<String> tree = new TreeSet<String>(Arrays.asList(doc1.getDocumentHandle(), doc2.getDocumentHandle(),
-			doc3.getDocumentHandle()));
-
 		// get documents
-		Set<String> docIds = new TreeSet<String>(driver.getDocuments(collectionName, true));
-		assertThat(docIds.size(), is(3));
-		assertThat(docIds, is(tree));
+		List<String> documents = driver.getDocuments(collectionName, true);
+		assertEquals(3, documents.size());
 
+		String prefix;
+		if (documents.get(0).startsWith("/_db/")) {
+			// since ArangoDB 2.6
+			prefix = "/_db/" + DATABASE_NAME + "/_api/document/";
+		} else {
+			prefix = "";
+		}
+
+		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(), prefix
+				+ doc3.getDocumentHandle());
+
+		assertTrue(documents.containsAll(list));
 	}
 
 	@Test

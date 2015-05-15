@@ -42,7 +42,8 @@ public class AqlQueryOptions implements OptionsInterface {
 	/**
 	 * maximum number of result documents to be transferred from the server to
 	 * the client in one roundtrip (optional). If this attribute is not set, a
-	 * server-controlled default value will be used.
+	 * server-controlled default value will be used. The batch size has to be
+	 * greater than 0.
 	 * 
 	 * @return maximum number of result documents
 	 */
@@ -53,7 +54,8 @@ public class AqlQueryOptions implements OptionsInterface {
 	/**
 	 * maximum number of result documents to be transferred from the server to
 	 * the client in one roundtrip (optional). If this attribute is not set, a
-	 * server-controlled default value will be used.
+	 * server-controlled default value will be used. The batch size has to be
+	 * greater than 0.
 	 * 
 	 * @param batchSize
 	 *            maximum number of result documents

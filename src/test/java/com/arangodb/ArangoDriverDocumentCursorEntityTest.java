@@ -188,7 +188,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 0, false,
+			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 2, false,
 				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(2));
 			assertThat(result.getCount(), is(2));
@@ -206,7 +206,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		query = "FOR t IN unit_test_query_test FILTER t.age == @age LIMIT 2 RETURN t";
 		{
 			CursorEntity<DocumentEntity<TestComplexEntity01>> result = driver.executeCursorEntityQuery(query, bindVars,
-				true, 0, false, DocumentEntity.class, TestComplexEntity01.class);
+				true, 2, false, DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(1));
 			DocumentEntity<TestComplexEntity01> uniqueResult = result.getUniqueResult();
