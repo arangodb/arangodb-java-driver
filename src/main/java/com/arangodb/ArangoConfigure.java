@@ -95,6 +95,11 @@ public class ArangoConfigure {
 
 	boolean staleConnectionCheck = false;
 
+	/**
+	 * the default ArangoDB cursor batch size
+	 */
+	private int batchSize = 20;
+
 	BatchHttpManager httpManager;
 
 	public ArangoConfigure() {
@@ -235,6 +240,11 @@ public class ArangoConfigure {
 				String staleConnectionCheck = prop.getProperty("staleConnectionCheck");
 				if (staleConnectionCheck != null) {
 					setStaleConnectionCheck(Boolean.parseBoolean(staleConnectionCheck));
+				}
+
+				String batchSize = prop.getProperty("batchSize");
+				if (batchSize != null) {
+					setBatchSize(Integer.parseInt(batchSize));
 				}
 
 			}
@@ -565,6 +575,14 @@ public class ArangoConfigure {
 	 */
 	public void setConnectRetryWait(int connectRetryWait) {
 		this.connectRetryWait = connectRetryWait;
+	}
+
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(int batchSize) {
+		this.batchSize = batchSize;
 	}
 
 }

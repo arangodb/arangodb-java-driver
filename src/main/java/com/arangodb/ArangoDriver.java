@@ -31,6 +31,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionKeyOption;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionsEntity;
 import com.arangodb.entity.CursorEntity;
@@ -2307,7 +2308,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return default AqlQueryOptions object
 	 */
 	public AqlQueryOptions getDefaultAqlQueryOptions() {
-		return new AqlQueryOptions().setBatchSize(20).setCount(false).setFullCount(false);
+		return new AqlQueryOptions().setBatchSize(configure.getBatchSize()).setCount(false).setFullCount(false);
 	}
 
 	/**
