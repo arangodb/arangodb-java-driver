@@ -422,4 +422,5 @@ see 2.4.4
     * added TraversalQueryOptions to avoid too many parameters
 * added an examples for Transaction API 
 	(see src/test/java/com/arangodb/example/TransactionExample.java)
-
+* fixed issue #17
+	* Changed TransactionEntity.ReadWriteCollections to a static class
