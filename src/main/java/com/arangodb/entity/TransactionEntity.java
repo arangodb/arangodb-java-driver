@@ -25,72 +25,72 @@ import java.util.List;
  */
 public class TransactionEntity extends BaseEntity {
 
-  public class ReadWriteCollections {
+	public static class ReadWriteCollections {
 
-    List<String> read = new ArrayList<String>();
+		List<String> read = new ArrayList<String>();
 
-    List<String> write = new ArrayList<String>();
-  }
+		List<String> write = new ArrayList<String>();
+	}
 
-  ReadWriteCollections collections = new ReadWriteCollections();
+	ReadWriteCollections collections = new ReadWriteCollections();
 
-  String action;
+	String action;
 
-  Boolean waitForSync;
+	Boolean waitForSync;
 
-  int lockTimeout;
+	int lockTimeout;
 
-  Object params;
+	Object params;
 
-  public TransactionEntity(String action) {
-    this.action = action;
-  }
+	public TransactionEntity(String action) {
+		this.action = action;
+	}
 
-  public ReadWriteCollections getCollections() {
-    return collections;
-  }
+	public ReadWriteCollections getCollections() {
+		return collections;
+	}
 
-  public void setCollections(ReadWriteCollections collections) {
-    this.collections = collections;
-  }
+	public void setCollections(ReadWriteCollections collections) {
+		this.collections = collections;
+	}
 
-  public void addReadCollection(String collection) {
-    this.collections.read.add(collection);
-  }
+	public void addReadCollection(String collection) {
+		this.collections.read.add(collection);
+	}
 
-  public void addWriteCollection(String collection) {
-    this.collections.write.add(collection);
-  }
+	public void addWriteCollection(String collection) {
+		this.collections.write.add(collection);
+	}
 
-  public String getAction() {
-    return action;
-  }
+	public String getAction() {
+		return action;
+	}
 
-  public void setAction(String action) {
-    this.action = action;
-  }
+	public void setAction(String action) {
+		this.action = action;
+	}
 
-  public Boolean getWaitForSync() {
-    return waitForSync;
-  }
+	public Boolean getWaitForSync() {
+		return waitForSync;
+	}
 
-  public void setWaitForSync(Boolean waitForSync) {
-    this.waitForSync = waitForSync;
-  }
+	public void setWaitForSync(Boolean waitForSync) {
+		this.waitForSync = waitForSync;
+	}
 
-  public int getLockTimeout() {
-    return lockTimeout;
-  }
+	public int getLockTimeout() {
+		return lockTimeout;
+	}
 
-  public void setLockTimeout(int lockTimeout) {
-    this.lockTimeout = lockTimeout;
-  }
+	public void setLockTimeout(int lockTimeout) {
+		this.lockTimeout = lockTimeout;
+	}
 
-  public Object getParams() {
-    return params;
-  }
+	public Object getParams() {
+		return params;
+	}
 
-  public void setParams(Object params) {
-    this.params = params;
-  }
+	public void setParams(Object params) {
+		this.params = params;
+	}
 }
