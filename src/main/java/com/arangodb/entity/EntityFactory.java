@@ -195,7 +195,7 @@ public class EntityFactory {
 	/**
 	 * @param obj
 	 * @param includeNullValue
-	 * @return
+	 * @return a JsonElement object
 	 * @since 1.4.0
 	 */
 	public static <T> JsonElement toJsonElement(T obj, boolean includeNullValue) {

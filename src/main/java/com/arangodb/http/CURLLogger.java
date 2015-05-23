@@ -30,54 +30,54 @@ import com.arangodb.http.HttpRequestEntity.RequestType;
  */
 public class CURLLogger {
 
-  private static Logger logger = LoggerFactory.getLogger(CURLLogger.class);
-  
-  public static void log(String url, HttpRequestEntity requestEntity, String userAgent, Credentials credencials) {
-    
-    boolean includeBody = 
-        (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT || requestEntity.type == RequestType.PATCH) && 
-        (requestEntity.bodyText != null && requestEntity.bodyText.length() != 0);
-    
-    StringBuilder buffer = new StringBuilder();
-    
-    if (includeBody) {
-      buffer.append("\n");
-      buffer.append("cat <<-___EOB___ | ");
-    }
-    
-    buffer.append("curl -X ").append(requestEntity.type);
-    buffer.append(" --dump -");
-    
-    // header
-    if (requestEntity.headers != null && !requestEntity.headers.isEmpty()) {
-      for (Entry<String, Object> header: requestEntity.headers.entrySet()) {
-        buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
-      }
-    }
-    
-    // basic auth
-    if (credencials != null) {
-      buffer.append(" -u ").append(credencials.getUserPrincipal().getName()).append(":").append(credencials.getPassword());
-    }
-    
-    // user-agent
-    //buffer.append(" -A '").append(userAgent).append("'");
-    
-    if (includeBody) {
-      buffer.append(" -d @-");
-    }
-    
-    buffer.append(" '").append(url).append("'");
-    
-    if (includeBody) {
-      buffer.append("\n");
-      buffer.append(requestEntity.bodyText);
-      buffer.append("\n");
-      buffer.append("___EOB___");
-    }
-    
-    logger.debug("[CURL]{}", buffer);
-    
-  }
-  
+	private static Logger logger = LoggerFactory.getLogger(CURLLogger.class);
+
+	public static void log(String url, HttpRequestEntity requestEntity, String userAgent, Credentials credencials) {
+
+		boolean includeBody = (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT || requestEntity.type == RequestType.PATCH)
+				&& (requestEntity.bodyText != null && requestEntity.bodyText.length() != 0);
+
+		StringBuilder buffer = new StringBuilder();
+
+		if (includeBody) {
+			buffer.append("\n");
+			buffer.append("cat <<-___EOB___ | ");
+		}
+
+		buffer.append("curl -X ").append(requestEntity.type);
+		buffer.append(" --dump -");
+
+		// header
+		if (requestEntity.headers != null && !requestEntity.headers.isEmpty()) {
+			for (Entry<String, Object> header : requestEntity.headers.entrySet()) {
+				buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
+			}
+		}
+
+		// basic auth
+		if (credencials != null) {
+			buffer.append(" -u ").append(credencials.getUserPrincipal().getName()).append(":")
+					.append(credencials.getPassword());
+		}
+
+		// user-agent
+		// buffer.append(" -A '").append(userAgent).append("'");
+
+		if (includeBody) {
+			buffer.append(" -d @-");
+		}
+
+		buffer.append(" '").append(url).append("'");
+
+		if (includeBody) {
+			buffer.append("\n");
+			buffer.append(requestEntity.bodyText);
+			buffer.append("\n");
+			buffer.append("___EOB___");
+		}
+
+		logger.debug("[CURL]{}", buffer);
+
+	}
+
 }

@@ -23,41 +23,42 @@ package com.arangodb.entity;
  */
 public class TransactionResultEntity extends BaseEntity {
 
-  /**
-   * Result object of transaction.
-   */
-  private Object result;
+	/**
+	 * Result object of transaction.
+	 */
+	private Object result;
 
-  public <T> T getResult() {
-    return (T) this.result;
-  }
+	@SuppressWarnings("unchecked")
+	public <T> T getResult() {
+		return (T) this.result;
+	}
 
-  public long getResultAsLong() {
-    java.lang.Number number = (java.lang.Number) this.result;
-    return number.longValue();
-  }
+	public long getResultAsLong() {
+		java.lang.Number number = (java.lang.Number) this.result;
+		return number.longValue();
+	}
 
-  public double getResultAsDouble() {
-    java.lang.Number number = (java.lang.Number) this.result;
-    return number.doubleValue();
-  }
+	public double getResultAsDouble() {
+		java.lang.Number number = (java.lang.Number) this.result;
+		return number.doubleValue();
+	}
 
-  public byte getResultAsByte() {
-    java.lang.Number number = (java.lang.Number) this.result;
-    return number.byteValue();
-  }
+	public byte getResultAsByte() {
+		java.lang.Number number = (java.lang.Number) this.result;
+		return number.byteValue();
+	}
 
-  public float getResultAsFloat() {
-    java.lang.Number number = (java.lang.Number) this.result;
-    return number.floatValue();
-  }
+	public float getResultAsFloat() {
+		java.lang.Number number = (java.lang.Number) this.result;
+		return number.floatValue();
+	}
 
-  public int getResultAsInt() {
-    java.lang.Number number = (java.lang.Number) this.result;
-    return number.intValue();
-  }
+	public int getResultAsInt() {
+		java.lang.Number number = (java.lang.Number) this.result;
+		return number.intValue();
+	}
 
-  public void setResult(Object result) {
-    this.result = result;
-  }
+	public void setResult(Object result) {
+		this.result = result;
+	}
 }

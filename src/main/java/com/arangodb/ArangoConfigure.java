@@ -402,9 +402,9 @@ public class ArangoConfigure {
 	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
 	 * setArangoHost}
 	 * 
-	 * @deprecated
-	 * @param port
+	 * @param clientPort
 	 *            the port number
+	 * @deprecated
 	 */
 	@Deprecated
 	public void setClinetPort(int clientPort) {

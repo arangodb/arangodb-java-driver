@@ -28,7 +28,9 @@ import com.arangodb.util.MapBuilder;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * @see http://www.arangodb.com/manuals/current/HttpImport.html
+ * @see <a
+ *      href="https://docs.arangodb.com/HttpBulkImports/ImportingSelfContained.html">HttpBulkImports
+ *      documentation</a>
  */
 public class InternalImportDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalImportDriver {
 

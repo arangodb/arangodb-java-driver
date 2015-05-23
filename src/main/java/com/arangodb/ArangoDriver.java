@@ -95,6 +95,9 @@ import com.arangodb.util.TraversalQueryOptions;
  * @author a-brandt
  * 
  * @version 2.2.
+ * 
+ * @see <a href="https://www.arangodb.com/documentation">ArangoDB
+ *      documentation</a>
  */
 public class ArangoDriver extends BaseArangoDriver {
 
@@ -126,7 +129,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * Constructor to create an instance of the driver that uses the default
 	 * database.
 	 * 
-	 * @param ArangoConfigure
+	 * @param configure
 	 *            A configuration object.
 	 */
 	public ArangoDriver(ArangoConfigure configure) {
@@ -137,10 +140,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * Constructor to create an instance of the driver that uses the provided
 	 * database.
 	 *
-	 * @param ArangoConfigure
+	 * @param configure
 	 *            A configuration object.
-	 * @param String
-	 *            the database that will be used.
+	 * @param database
+	 *            the name of the database that will be used.
 	 */
 	public ArangoDriver(ArangoConfigure configure, String database) {
 
@@ -227,7 +230,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * This method enables batch execution. Until 'cancelBatchMode' or
 	 * 'executeBatch' is called every other call is stacked and will be either
 	 * executed or discarded when the batch mode is canceled. Each call will
-	 * return a 'requestId' in the http response, that can be used to select the
+	 * return a 'requestId' in the HTTP response, that can be used to select the
 	 * matching result from the batch execution.
 	 *
 	 * @see com.arangodb.ArangoDriver#cancelBatchMode()
@@ -251,8 +254,9 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * a return value. If set to false the return value will be the 'job id'.
 	 * Each job result can be received by the method 'getJobResult'.
 	 *
-	 * @param boolean if set to true the asynchronous mode is set to 'fire and
-	 *        forget'.
+	 * @param fireAndForget
+	 *            if set to true the asynchronous mode is set to 'fire and
+	 *            forget'.
 	 * @see ArangoDriver#stopAsyncMode()
 	 * @see com.arangodb.ArangoDriver#getJobResult(String)
 	 * @see com.arangodb.ArangoDriver#getJobs(com.arangodb.entity.JobsEntity.JobState,
@@ -327,9 +331,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * Returns a list of all job identifiers of asynchronous executed jobs,
 	 * filtered by job state.
 	 *
-	 * @param JobsEntity
-	 *            .JobState the job state as a filter.
-	 * @param int a limit for the result set.
+	 * @param jobState
+	 *            the job state as a filter.
+	 * @param count
+	 *            a limit for the result set.
 	 * @return List<String> list of all job identifiers
 	 * @see ArangoDriver#startAsyncMode(boolean)
 	 * @see ArangoDriver#stopAsyncMode()
@@ -347,8 +352,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * filtered by job state.
 	 *
 	 * 
-	 * @param JobsEntity
-	 *            .JobState the job state as a filter.
+	 * @param jobState
+	 *            the job state as a filter.
 	 * @return List<String> list of all job identifiers
 	 * @see ArangoDriver#startAsyncMode(boolean)
 	 * @see ArangoDriver#stopAsyncMode()
@@ -379,8 +384,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Deletes a job from ArangoDB.
 	 *
-	 * @param String
-	 *            the id of the job
+	 * @param jobId
+	 *            the identifier of the job
 	 * @see ArangoDriver#startAsyncMode(boolean)
 	 * @see ArangoDriver#stopAsyncMode()
 	 * @see com.arangodb.ArangoDriver#getJobResult(String)
@@ -388,14 +393,15 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @see com.arangodb.ArangoDriver#deleteExpiredJobs(int)
 	 * @see ArangoDriver#getLastJobId()
 	 */
-	public void deleteJobById(String JobId) throws ArangoException {
-		this.jobsDriver.deleteJobById(getDefaultDatabase(), JobId);
+	public void deleteJobById(String jobId) throws ArangoException {
+		this.jobsDriver.deleteJobById(getDefaultDatabase(), jobId);
 	}
 
 	/**
 	 * Deletes all jobs by a provided expiration date.
 	 *
-	 * @param int a unix timestamp, every older job is deleted.
+	 * @param timeStamp
+	 *            a unix timestamp, every older job is deleted.
 	 * @see ArangoDriver#startAsyncMode(boolean)
 	 * @see ArangoDriver#stopAsyncMode()
 	 * @see com.arangodb.ArangoDriver#getJobResult(String)
@@ -410,7 +416,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns the job result for a given job id.
 	 *
-	 * @param String
+	 * @param jobId
 	 *            the job id.
 	 * @return <T> - A generic return value, containing the job result
 	 * @see ArangoDriver#startAsyncMode(boolean)
@@ -445,7 +451,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * This method returns the result of a call to ArangoDB executed within a
 	 * batch request.
 	 *
-	 * @param String
+	 * @param requestId
 	 *            the id of a request.
 	 * @return <T> - A generic return value, containing the result.
 	 * @see ArangoDriver#startBatchMode()
@@ -453,6 +459,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @see com.arangodb.ArangoDriver#cancelBatchMode()
 	 * @throws com.arangodb.ArangoException
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> T getBatchResponseByRequestId(String requestId) throws ArangoException {
 		BatchResponseEntity batchResponseEntity = this.batchDriver.getBatchResponseListEntity()
 				.getResponseFromRequestId(requestId);
@@ -467,7 +474,7 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.httpManager.setPreDefinedResponse(null);
 			return result;
 		} catch (InvocationTargetException e) {
-			T result = (T) createEntity(batchResponseEntity.getHttpResponseEntity(), (Class) DefaultEntity.class);
+			T result = (T) createEntity(batchResponseEntity.getHttpResponseEntity(), DefaultEntity.class);
 			this.httpManager.setPreDefinedResponse(null);
 			return result;
 		} catch (Exception e) {
@@ -589,8 +596,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns a collection from ArangoDB including revision by id
 	 *
-	 * @param name
-	 *            the id of the collection.
+	 * @param id
+	 *            the identifier of the collection.
 	 * @return CollectionEntity - the requested collectionEntity.
 	 * @throws ArangoException
 	 */
@@ -1164,7 +1171,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
-	 * @return
+	 * @return DocumentEntity<T> a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> replaceDocument(
@@ -1198,7 +1205,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
-	 * @return
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> replaceDocument(
@@ -1232,7 +1239,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
-	 * @return
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> replaceDocument(
@@ -1265,7 +1272,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
-	 * @return
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> replaceDocument(
@@ -1296,7 +1303,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
-	 * @return
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> replaceDocument(
@@ -1544,7 +1551,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            finished.
 	 * @param keepNull
 	 *            If true null values are kept.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> updateDocument(
@@ -1581,7 +1588,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            finished.
 	 * @param keepNull
 	 *            If true null values are kept.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> updateDocument(
@@ -1618,7 +1625,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            finished.
 	 * @param keepNull
 	 *            If true null values are kept.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> updateDocument(
@@ -1640,7 +1647,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * it is set to *last* the operation is performed anyway. if it is set to
 	 * *error* an error is thrown.
 	 *
-	 * @param documentKey
+	 * @param documentHandle
 	 *            The document handle.
 	 * @param value
 	 *            An object containing the documents attributes
@@ -1697,7 +1704,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param collectionId
 	 *            The collection id.
 	 * @param handleConvert
-	 *            if set to true only the document ids are returned
+	 *            if set to true only the document identifiers are returned
 	 * @return List<String> - The list of document handles
 	 * @throws ArangoException
 	 */
@@ -1711,7 +1718,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param collectionName
 	 *            The collection name.
 	 * @param handleConvert
-	 *            if set to true only the document ids are returned
+	 *            if set to true only the document identifiers are returned
 	 * @return List<String> - The list of document handles
 	 * @throws ArangoException
 	 */
@@ -1726,7 +1733,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection id.
 	 * @param documentId
 	 *            The document id
-	 * @return long
+	 * @return the document revision number
 	 * @throws ArangoException
 	 */
 	public long checkDocument(long collectionId, long documentId) throws ArangoException {
@@ -1740,7 +1747,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection name.
 	 * @param documentId
 	 *            The document id
-	 * @return long
+	 * @return the document revision number
 	 * @throws ArangoException
 	 */
 	public long checkDocument(String collectionName, long documentId) throws ArangoException {
@@ -1754,7 +1761,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection id.
 	 * @param documentKey
 	 *            The document key
-	 * @return long
+	 * @return the document revision number
 	 * @throws ArangoException
 	 */
 	public long checkDocument(long collectionId, String documentKey) throws ArangoException {
@@ -1768,7 +1775,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection name.
 	 * @param documentKey
 	 *            The document key
-	 * @return long
+	 * @return the document revision number
 	 * @throws ArangoException
 	 */
 	public long checkDocument(String collectionName, String documentKey) throws ArangoException {
@@ -1780,7 +1787,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param documentHandle
 	 *            The document handle
-	 * @return long
+	 * @return the document revision number
 	 * @throws ArangoException
 	 */
 	public long checkDocument(String documentHandle) throws ArangoException {
@@ -1797,8 +1804,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            The expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> DocumentEntity<T>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(long collectionId, long documentId, Class<T> clazz) throws ArangoException {
@@ -1815,8 +1821,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            The expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> DocumentEntity<T>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(String collectionName, long documentId, Class<T> clazz)
@@ -1834,8 +1839,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            The expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> DocumentEntity<T>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(long collectionId, String documentKey, Class<T> clazz)
@@ -1853,8 +1857,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            The expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> DocumentEntity<T>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(String collectionName, String documentKey, Class<T> clazz)
@@ -1870,8 +1873,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            The expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> DocumentEntity<T>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(String documentHandle, Class<T> clazz) throws ArangoException {
@@ -1897,8 +1899,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param ifMatchRevision
 	 *            if set the document is only returned id it has the same
 	 *            revision.
-	 * @param <T>
-	 * @return <T> DocumentEntity<T>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(
@@ -1917,7 +1918,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection id.
 	 * @param documentId
 	 *            The document id.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(long collectionId, long documentId) throws ArangoException {
@@ -1931,7 +1932,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection name.
 	 * @param documentId
 	 *            The document id.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(String collectionName, long documentId) throws ArangoException {
@@ -1945,7 +1946,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection id.
 	 * @param documentKey
 	 *            The document key.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(long collectionId, String documentKey) throws ArangoException {
@@ -1959,7 +1960,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The collection name.
 	 * @param documentKey
 	 *            The document key.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(String collectionName, String documentKey) throws ArangoException {
@@ -1971,7 +1972,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param documentHandle
 	 *            The document handle.
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(String documentHandle) throws ArangoException {
@@ -1993,7 +1994,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The desired revision
 	 * @param policy
 	 *            The update policy
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(long collectionId, long documentId, Long rev, Policy policy)
@@ -2016,7 +2017,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The desired revision
 	 * @param policy
 	 *            The update policy
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(String collectionName, long documentId, Long rev, Policy policy)
@@ -2039,7 +2040,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The desired revision
 	 * @param policy
 	 *            The update policy
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(long collectionId, String documentKey, Long rev, Policy policy)
@@ -2062,7 +2063,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The desired revision
 	 * @param policy
 	 *            The update policy
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(String collectionName, String documentKey, Long rev, Policy policy)
@@ -2083,7 +2084,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The desired revision
 	 * @param policy
 	 *            The update policy
-	 * @return DocumentEntity<?>
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(String documentHandle, Long rev, Policy policy) throws ArangoException {
@@ -2095,7 +2096,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param query
 	 *            an AQL query as string
-	 * @return CursorEntity<?>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
 	 */
 	public CursorEntity<?> validateQuery(String query) throws ArangoException {
@@ -2120,11 +2121,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
-	 * @param <T>
-	 * @return <T> CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeDocumentQuery()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery(String, Map, AqlQueryOptions, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> executeQuery(
@@ -2153,11 +2153,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param batchSize
 	 *            the batch size of the result cursor (The batch size has to be
 	 *            greater than 0)
-	 * @param <T>
-	 * @return <T> CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeDocumentQuery()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery(String, Map, AqlQueryOptions, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> executeQuery(
@@ -2178,8 +2177,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
 	 */
 	public <T> CursorEntity<T> continueQuery(long cursorId, Class<?>... clazz) throws ArangoException {
@@ -2191,7 +2189,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param cursorId
 	 *            The id of a cursor.
-	 * @return DefaultEntity
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity finishQuery(long cursorId) throws ArangoException {
@@ -2216,11 +2214,11 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
-	 * @param <T>
-	 * @return <T> CursorResultSet<T>
+	 * 
+	 * @return a CursorResultSet object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeDocumentQuery()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery(String, Map, AqlQueryOptions, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<T> executeQueryWithResultSet(
@@ -2252,8 +2250,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            greater than 0)
 	 * @return CursorResultSet<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeDocumentQuery()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeDocumentQuery(String, Map, AqlQueryOptions, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<T> executeQueryWithResultSet(
@@ -2285,7 +2283,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param fullCount
 	 *            if set to true, then all results before the final LIMIT will
 	 *            be counted
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
 	 */
 	public <T> CursorEntity<T> executeCursorEntityQuery(
@@ -2761,7 +2759,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param text
 	 *            Only return the log entries containing the text specified in
 	 *            text.
-	 * @return
+	 * @return a AdminLogEntity object
 	 * @throws ArangoException
 	 */
 	public AdminLogEntity getServerLog(
@@ -2852,11 +2850,11 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
+	 * 
 	 * @return <T> CursorEntity<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleByExampleDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments(String, Map, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> executeSimpleByExample(
@@ -2885,8 +2883,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleByExampleDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments(String, Map, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleByExampleWithResusltSet(
@@ -2916,8 +2914,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleByExampleDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments(String, Map, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleByExampleWithDocument(
@@ -2947,8 +2945,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleByExampleDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleByExampleDocuments(String, Map, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleByExampleWithDocumentResusltSet(
@@ -3002,10 +3000,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleAllDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments(String, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> executeSimpleAll(String collectionName, int skip, int limit, Class<T> clazz)
@@ -3028,8 +3026,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleAllDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments(String, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleAllWithResultSet(
@@ -3055,8 +3053,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleAllDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments(String, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleAllWithDocument(
@@ -3082,8 +3080,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleAllDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleAllDocuments(String, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleAllWithDocumentResultSet(
@@ -3126,8 +3124,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> ScalarExampleEntity<T>
+	 * @return a ScalarExampleEntity object
 	 * @throws ArangoException
 	 */
 	public <T> ScalarExampleEntity<T> executeSimpleFirstExample(
@@ -3145,8 +3142,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @param <T>
-	 * @return <T> ScalarExampleEntity<T>
+	 * @return a ScalarExampleEntity object
 	 * @throws ArangoException
 	 */
 	public <T> ScalarExampleEntity<T> executeSimpleAny(String collectionName, Class<T> clazz) throws ArangoException {
@@ -3176,10 +3172,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleRangeWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments(String, String, Object, Object, Boolean, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> executeSimpleRange(
@@ -3259,8 +3255,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleRangeWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments(String, String, Object, Object, Boolean, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleRangeWithResultSet(
@@ -3301,8 +3297,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleRangeWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments(String, String, Object, Object, Boolean, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleRangeWithDocument(
@@ -3343,8 +3339,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleRangeWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleRangeWithDocuments(String, String, Object, Object, Boolean, int, int, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleRangeWithDocumentResultSet(
@@ -3380,10 +3376,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleFulltextWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments(String, String, String, int, int, String, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> executeSimpleFulltext(
@@ -3455,8 +3451,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<T>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleFulltextWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments(String, String, String, int, int, String, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<T> executeSimpleFulltextWithResultSet(
@@ -3493,8 +3489,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorEntity<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleFulltextWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments(String, String, String, int, int, String, Class)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<DocumentEntity<T>> executeSimpleFulltextWithDocument(
@@ -3531,8 +3527,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            deserialized to an instance of this class.
 	 * @return CursorResultSet<DocumentEntity<T>>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleFulltextWithDocuments()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #executeSimpleFulltextWithDocuments(String, String, String, int, int, String, Class)}
 	 */
 	@Deprecated
 	public <T> CursorResultSet<DocumentEntity<T>> executeSimpleFulltextWithDocumentResultSet(
@@ -4640,7 +4636,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param ifNoneMatchRevision
 	 *            If not null the revision of the vertex in the database has to
 	 *            be different to replace the document.
-	 * @return
+	 * @return a VertexEntity object
 	 * @throws ArangoException
 	 */
 	public <T> VertexEntity<T> graphReplaceVertex(
@@ -4669,7 +4665,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param vertex
 	 *            The object to update the existing vertex.
 	 * @param keepNull
-	 * @return DocumentEntity<T>
+	 *            True if the update should keep null values
+	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
 	public <T> VertexEntity<T> graphUpdateVertex(
@@ -4696,6 +4693,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param vertex
 	 *            The object to update the existing vertex.
 	 * @param keepNull
+	 *            True if the update should keep null values
 	 * @param waitForSync
 	 *            Wait for sync.
 	 * @param ifMatchRevision
@@ -4768,7 +4766,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            Object to be stored with edge.
 	 * @param waitForSync
 	 *            Wait for sync.
-	 * @return <T> EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphCreateEdge(
@@ -4797,7 +4795,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            Document handle of vertex, where the edge comes from.
 	 * @param toHandle
 	 *            Document handle of vertex, where the edge goes to.
-	 * @return <T> EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphCreateEdge(
@@ -4827,7 +4825,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param ifNoneMatchRevision
 	 *            If not null the revision of the vertex in the database has to
 	 *            be different to load the edge.
-	 * @return <T> EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphGetEdge(
@@ -4852,7 +4850,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The key of the edge to get.
 	 * @param clazz
 	 *            The class of the edge to get.
-	 * @return <T> EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphGetEdge(String graphName, String edgeCollectionName, String key, Class<T> clazz)
@@ -4888,7 +4886,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The key of the edge to delete.
 	 * @param waitForSync
 	 *            Wait for sync.
-	 * @return
+	 * @return a DeletedEntity object
 	 * @throws ArangoException
 	 */
 	public DeletedEntity graphDeleteEdge(String graphName, String edgeCollectionName, String key, Boolean waitForSync)
@@ -4940,7 +4938,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The key of the edge to replace.
 	 * @param value
 	 *            The object to replace the existing edge.
-	 * @return
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphReplaceEdge(String graphName, String edgeCollectionName, String key, T value)
@@ -4969,7 +4967,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param ifNoneMatchRevision
 	 *            If not null the revision of the vertex in the database has to
 	 *            be different to replace the edge.
-	 * @return EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphReplaceEdge(
@@ -4998,7 +4996,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param value
 	 *            The object to update the existing edge.
 	 * @param keepNull
-	 * @return EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphUpdateEdge(
@@ -5033,7 +5031,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param ifNoneMatchRevision
 	 *            If not null the revision of the vertex in the database has to
 	 *            be different to update the edge.
-	 * @return
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> graphUpdateEdge(
@@ -5058,8 +5056,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the graph.
 	 * @return CursorEntity<PlainEdgeEntity>
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #graphGetEdgeCursor()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursor(String, Class, Object, GraphEdgesOptions, AqlQueryOptions)}
 	 */
 	@Deprecated
 	public CursorEntity<PlainEdgeEntity> graphGetEdges(String graphName) throws ArangoException {
@@ -5076,8 +5074,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns edges as an EdgeCursor by a given query
 	 * 
-	 * @param graphName
-	 *            the graph name
 	 * @param query
 	 *            the query
 	 * @param bindVars
@@ -5108,8 +5104,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns vertices as a VertexCursor by a given query
 	 * 
-	 * @param graphName
-	 *            the graph name
 	 * @param query
 	 *            the query
 	 * @param bindVars
@@ -5226,10 +5220,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param graphName
 	 * @param clazz
 	 * @param vertexDocumentHandle
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #graphGetEdgeCursor()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursor(String, Class, Object, GraphEdgesOptions, AqlQueryOptions)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> graphGetEdges(String graphName, Class<T> clazz, String vertexDocumentHandle)
@@ -5269,10 +5263,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param graphName
 	 * @param clazz
 	 * @param vertexExample
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #graphGetEdgeCursorByExample()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursorByExample(String, Class, Object)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazz, Object vertexExample)
@@ -5297,10 +5291,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            Class of returned edge documents.
 	 * @param vertexExample
 	 *            Map with example of vertex, where edges start or end.
-	 * @return CursorEntity<T>
+	 * @return a CursorEntity object
 	 * @throws ArangoException
-	 * @Deprecated As of release 2.5.4, replaced by
-	 *             {@link #graphGetEdgeCursorByExample()}
+	 * @deprecated As of release 2.5.4, replaced by
+	 *             {@link #graphGetEdgeCursorByExample(String, Class, Object)}
 	 */
 	@Deprecated
 	public <T> CursorEntity<T> graphGetEdgesByExampleMap(
@@ -5474,9 +5468,9 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the traversal options
 	 * @param vertexClazz
 	 *            Class of returned vertex documents.
-	 * @param edgeClass
+	 * @param edgeClazz
 	 *            Class of returned edge documents.
-	 * @return
+	 * @return a TraversalEntity object
 	 * @throws ArangoException
 	 */
 	public <V, E> TraversalEntity<V, E> getTraversal(

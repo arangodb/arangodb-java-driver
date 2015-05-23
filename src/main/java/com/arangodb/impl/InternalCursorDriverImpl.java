@@ -37,10 +37,6 @@ import com.arangodb.util.ShortestPathOptions;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * 
- * @Deprecated As of release 2.5.4, replaced by
- *             {@link InternalCursorDocumentDriverImpl}
- *
  */
 public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalCursorDriver {
 
@@ -138,6 +134,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		return new CursorResult<T>(database, this, entity, clazz);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V, E> ShortestPathEntity<V, E> getShortesPath(
 		String database,

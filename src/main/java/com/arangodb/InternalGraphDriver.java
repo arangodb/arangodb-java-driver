@@ -250,7 +250,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param clazz
 	 * @param ifMatchRevision
 	 * @param ifNoneMatchRevision
-	 * @return
+	 * @return a VertexEntity object
 	 * @throws ArangoException
 	 */
 	<T> VertexEntity<T> getVertex(
@@ -301,7 +301,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param waitForSync
 	 * @param ifMatchRevision
 	 * @param ifNoneMatchRevision
-	 * @return
+	 * @return a VertexEntity object
 	 * @throws ArangoException
 	 */
 	<T> VertexEntity<T> updateVertex(
@@ -326,7 +326,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param waitForSync
 	 * @param ifMatchRevision
 	 * @param ifNoneMatchRevision
-	 * @return
+	 * @return a DeletedEntity object
 	 * @throws ArangoException
 	 */
 	DeletedEntity deleteVertex(
@@ -349,7 +349,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param toHandle
 	 * @param value
 	 * @param waitForSync
-	 * @return <T> EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	<T> EdgeEntity<T> createEdge(
@@ -370,10 +370,9 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param edgeCollectionName
 	 * @param key
 	 * @param clazz
-	 * @param rev
 	 * @param ifNoneMatchRevision
 	 * @param ifMatchRevision
-	 * @return <T> EdgeEntity<T>
+	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
 	<T> EdgeEntity<T> getEdge(
@@ -474,7 +473,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param labels
 	 * @param driver
 	 * @param properties
-	 * @return
+	 * @return a CursorEntity object
 	 * @throws ArangoException
 	 */
 	@Deprecated

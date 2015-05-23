@@ -92,8 +92,9 @@ public abstract class BaseArangoDriver {
 	 * @param database
 	 * @param allowNull
 	 * @throws ArangoException
-	 * @see http 
-	 *      ://www.arangodb.com/manuals/current/NamingConventions.html#DatabaseNames
+	 * @see <a
+	 *      href="http://www.arangodb.com/manuals/current/NamingConventions.html#DatabaseNames">DatabaseNames
+	 *      documentation</a>
 	 */
 	protected void validateDatabaseName(String database, boolean allowNull) throws ArangoException {
 		boolean valid = false;
@@ -169,12 +170,17 @@ public abstract class BaseArangoDriver {
 	}
 
 	/**
-	 * HTTPレスポンスから指定した型へ変換する。 レスポンスがエラーであるかを確認して、エラーの場合は例外を投げる。
+	 * Creates an entity object
 	 * 
 	 * @param res
-	 * @param type
+	 *            the response of the database
+	 * @param clazz
+	 *            the class of the entity object
+	 * @param pclazz
+	 *            the class of the object wrapped in the entity object
 	 * @param validate
-	 * @return
+	 *            true for validation
+	 * @return the result entity object of class T (T extends BaseEntity)
 	 * @throws ArangoException
 	 */
 	protected <T extends BaseEntity> T createEntity(

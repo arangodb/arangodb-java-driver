@@ -3,8 +3,6 @@ package com.arangodb.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.arangodb.ArangoException;
-
 public class EdgeDefinitionsEntity {
 
 	/**
@@ -40,7 +38,7 @@ public class EdgeDefinitionsEntity {
 	/**
 	 * get all edge definitions
 	 * 
-	 * @return
+	 * @return a list of EdgeDefinitionEntity objects
 	 */
 	public List<EdgeDefinitionEntity> getEdgeDefinitions() {
 		return edgeDefinitions;
@@ -62,7 +60,6 @@ public class EdgeDefinitionsEntity {
 	 * 
 	 * @param edgeDefinition
 	 *            the edge definition to be added
-	 * @throws ArangoException
 	 */
 	public void addEdgeDefinition(EdgeDefinitionEntity edgeDefinition) {
 		if (!this.edgeCollections.contains(edgeDefinition.getCollection())) {

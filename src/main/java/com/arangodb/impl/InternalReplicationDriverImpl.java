@@ -64,6 +64,7 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> void getReplicationDump(
 		String database,

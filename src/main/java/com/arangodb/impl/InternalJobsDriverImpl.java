@@ -28,7 +28,6 @@ import com.arangodb.util.MapBuilder;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * @see http://www.arangodb.com/manuals/current/HttpImport.html
  */
 public class InternalJobsDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalJobsDriver {
 
@@ -51,20 +50,21 @@ public class InternalJobsDriverImpl extends BaseArangoDriverImpl implements com.
 
 	@Override
 	public void deleteAllJobs(String database) throws ArangoException {
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/job", "all"), null);
+		httpManager.doDelete(createEndpointUrl(database, "/_api/job", "all"), null);
 	}
 
 	@Override
 	public void deleteJobById(String database, String JobId) throws ArangoException {
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/job", JobId), null);
+		httpManager.doDelete(createEndpointUrl(database, "/_api/job", JobId), null);
 	}
 
 	@Override
 	public void deleteExpiredJobs(String database, int timeStamp) throws ArangoException {
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/job", "expired"),
+		httpManager.doDelete(createEndpointUrl(database, "/_api/job", "expired"),
 			new MapBuilder().put("stamp", timeStamp).get());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getJobResult(String database, String jobId) throws ArangoException {
 		InvocationObject io = this.getHttpManager().getJobs().get(jobId);

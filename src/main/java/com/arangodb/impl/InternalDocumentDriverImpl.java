@@ -72,6 +72,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 			new MapBuilder().put("collection", collectionName).put("createCollection", createCollection)
 					.put("waitForSync", waitForSync).get(), body);
 
+		@SuppressWarnings("unchecked")
 		DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
 		result.setEntity(value);
 		return result;
@@ -100,6 +101,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 			true);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> DocumentEntity<T> replaceDocument(
 		String database,
@@ -136,6 +138,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 					.put("waitForSync", waitForSync).put("keepNull", keepNull).get(),
 			EntityFactory.toJsonString(value, keepNull != null && !keepNull));
 
+		@SuppressWarnings("unchecked")
 		DocumentEntity<T> entity = createEntity(res, DocumentEntity.class);
 		return entity;
 
@@ -188,6 +191,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/document", documentHandle),
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision).get(),
 			null);
+		@SuppressWarnings("unchecked")
 		DocumentEntity<T> entity = createEntity(res, DocumentEntity.class, clazz);
 		if (entity == null) {
 			entity = new DocumentEntity<T>();

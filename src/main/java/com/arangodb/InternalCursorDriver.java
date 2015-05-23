@@ -51,14 +51,22 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 	 * Get the shortest path from a vertex to another vertex
 	 * 
 	 * @param database
+	 *            the database name
 	 * @param graphName
+	 *            the graph name
 	 * @param startVertexExample
+	 *            a start vertex example object (or null)
 	 * @param endVertexExample
+	 *            a start vertex example object (or null)
 	 * @param shortestPathOptions
+	 *            shortest path options
 	 * @param aqlQueryOptions
+	 *            AQL query options
 	 * @param vertexClass
+	 *            the vertex class
 	 * @param edgeClass
-	 * @return
+	 *            the edge class
+	 * @return a ShortestPathEntity object
 	 * @throws ArangoException
 	 */
 	public <V, E> ShortestPathEntity<V, E> getShortesPath(

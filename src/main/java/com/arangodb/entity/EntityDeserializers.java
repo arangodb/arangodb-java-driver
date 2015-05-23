@@ -641,7 +641,7 @@ public class EntityDeserializers {
 		 * desirializes any jsonElement
 		 *
 		 * @param jsonElement
-		 * @return
+		 * @return a object
 		 */
 		public static Object deserializeJsonElement(JsonElement jsonElement) {
 			if (jsonElement.getClass() == JsonPrimitive.class) {
@@ -1908,7 +1908,6 @@ public class EntityDeserializers {
 	}
 
 	public static class TraversalEntityDeserializer implements JsonDeserializer<TraversalEntity<?, ?>> {
-		@SuppressWarnings("unchecked")
 		@Override
 		public TraversalEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException {

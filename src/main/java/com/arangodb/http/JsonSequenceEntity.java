@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.util.Iterator;
 
 import org.apache.http.entity.AbstractHttpEntity;
@@ -33,51 +32,51 @@ import com.google.gson.Gson;
  *
  */
 public class JsonSequenceEntity extends AbstractHttpEntity {
-  
-  private Iterator<?> it;
-  private Gson gson;
 
-  public JsonSequenceEntity(Iterator<?> it, Gson gson) {
-    this.it = it;
-    this.gson = gson;
-    setChunked(true);
-    setContentType("binary/octet-stream");
-  }
-  
-  public boolean isRepeatable() {
-    return false;
-  }
+	private Iterator<?> it;
+	private Gson gson;
 
-  public long getContentLength() {
-    return -1;
-  }
+	public JsonSequenceEntity(Iterator<?> it, Gson gson) {
+		this.it = it;
+		this.gson = gson;
+		setChunked(true);
+		setContentType("binary/octet-stream");
+	}
 
-  public InputStream getContent() throws IOException, IllegalStateException {
-    throw new IllegalStateException("cannot support this method.");
-  }
+	public boolean isRepeatable() {
+		return false;
+	}
 
-  public boolean isStreaming() {
-    return true;
-  }
+	public long getContentLength() {
+		return -1;
+	}
 
-  public void writeTo(OutputStream outstream) throws IOException {
-    
-    if (outstream == null) {
-      throw new IllegalArgumentException("Output stream may not be null");
-    }
-    
-    BufferedWriter writer = null;
-    try {
-      writer = new BufferedWriter(new OutputStreamWriter(outstream, "UTF-8"));
-      while (it.hasNext()) {
-        Object value = it.next();
-        gson.toJson(value, writer);
-        writer.newLine();
-      }
-      writer.flush();
-    } finally {
-    }
-    
-  }
+	public InputStream getContent() throws IOException, IllegalStateException {
+		throw new IllegalStateException("cannot support this method.");
+	}
+
+	public boolean isStreaming() {
+		return true;
+	}
+
+	public void writeTo(OutputStream outstream) throws IOException {
+
+		if (outstream == null) {
+			throw new IllegalArgumentException("Output stream may not be null");
+		}
+
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(outstream, "UTF-8"));
+			while (it.hasNext()) {
+				Object value = it.next();
+				gson.toJson(value, writer);
+				writer.newLine();
+			}
+			writer.flush();
+		} finally {
+		}
+
+	}
 
 }

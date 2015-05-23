@@ -108,11 +108,13 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	}
 
 	/**
+	 * Returns the ArangoDB version
 	 * 
-	 * @return
+	 * @return a ArangoVersion object
 	 * @throws ArangoException
-	 * @see http
-	 *      ://www.arangodb.com/manuals/current/HttpMisc.html#HttpMiscVersion
+	 * @see <a
+	 *      href="http://www.arangodb.com/manuals/current/HttpMisc.html#HttpMiscVersion">HttpMiscVersion
+	 *      documentation</a>
 	 */
 	@Override
 	public ArangoVersion getVersion() throws ArangoException {

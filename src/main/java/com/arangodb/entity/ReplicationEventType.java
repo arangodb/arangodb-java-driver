@@ -21,7 +21,8 @@ import java.util.TreeMap;
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * @since 1.4.0
- * @see https://www.arangodb.com/documentation
+ * @see <a href="https://www.arangodb.com/documentation">ArangoDB
+ *      documentation</a>
  * 
  */
 public enum ReplicationEventType {

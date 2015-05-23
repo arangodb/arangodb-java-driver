@@ -71,7 +71,7 @@ public class ShortestPathEntity<V, E> extends BaseEntity {
 	/**
 	 * Returns the document handle of the start vertex
 	 * 
-	 * @return
+	 * @return the document handle of the start vertex
 	 */
 	public String getStartVertex() {
 		return startVertex;
