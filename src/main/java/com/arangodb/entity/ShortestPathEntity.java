@@ -22,15 +22,12 @@ package com.arangodb.entity;
 
 import java.util.List;
 
+import com.arangodb.entity.marker.VertexEntity;
+
 /**
  * @author a-brandt
  */
 public class ShortestPathEntity<V, E> extends BaseEntity {
-
-	/**
-	 * End vertex handle.
-	 */
-	private String vertex;
 
 	/**
 	 * path distance
@@ -38,22 +35,15 @@ public class ShortestPathEntity<V, E> extends BaseEntity {
 	private Long distance;
 
 	/**
-	 * start vertex handle
+	 * List of edges of the shortest path.
 	 */
-	private String startVertex;
+	private List<EdgeEntity<E>> edges;
 
 	/**
-	 * List of paths.
+	 * List of vertices of the shortest path. (first vertex is the start vertex
+	 * and the last vertex is the end vertex)
 	 */
-	private List<PathEntity<V, E>> paths;
-
-	public String getVertex() {
-		return vertex;
-	}
-
-	public void setVertex(String vertex) {
-		this.vertex = vertex;
-	}
+	private List<VertexEntity<V>> vertices;
 
 	/**
 	 * Retuns the distance
@@ -69,29 +59,29 @@ public class ShortestPathEntity<V, E> extends BaseEntity {
 	}
 
 	/**
-	 * Returns the document handle of the start vertex
+	 * Returns the list of edges of the shortest path.
 	 * 
-	 * @return the document handle of the start vertex
+	 * @return the list of edges of the shortest path.
 	 */
-	public String getStartVertex() {
-		return startVertex;
+	public List<EdgeEntity<E>> getEdges() {
+		return edges;
 	}
 
-	public void setStartVertex(String startVertex) {
-		this.startVertex = startVertex;
+	public void setEdges(List<EdgeEntity<E>> edges) {
+		this.edges = edges;
 	}
 
 	/**
-	 * Returns the path list
+	 * Returns the list of vertices of the shortest path.
 	 * 
-	 * @return list of PathEntity objects
+	 * @return the list of vertices of the shortest path.
 	 */
-	public List<PathEntity<V, E>> getPaths() {
-		return paths;
+	public List<VertexEntity<V>> getVertices() {
+		return vertices;
 	}
 
-	public void setPaths(List<PathEntity<V, E>> paths) {
-		this.paths = paths;
+	public void setVertices(List<VertexEntity<V>> vertices) {
+		this.vertices = vertices;
 	}
 
 }
