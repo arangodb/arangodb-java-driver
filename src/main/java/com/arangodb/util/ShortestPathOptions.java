@@ -17,6 +17,7 @@ public class ShortestPathOptions implements OptionsInterface {
 	private String algorithm;
 	private String weight;
 	private Long defaultWeight;
+	private Boolean includeData = Boolean.TRUE;
 
 	/**
 	 * The direction of the edges as a string. Possible values are outbound,
@@ -227,6 +228,13 @@ public class ShortestPathOptions implements OptionsInterface {
 		}
 		if (defaultWeight != null) {
 			mp.put("defaultWeight", defaultWeight);
+		}
+		if (includeData != null) {
+			mp.put("includeData", includeData);
+			MapBuilder mp2 = new MapBuilder();
+			mp2.put("edges", true);
+			mp2.put("vertices", true);
+			mp.put("includePath", mp2.get());
 		}
 		return mp.get();
 	}
