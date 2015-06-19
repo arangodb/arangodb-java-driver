@@ -18,6 +18,7 @@ public class GraphEdgesOptions implements OptionsInterface {
 	private Integer minDepth;
 	private Integer maxDepth;
 	private Integer maxIterations;
+	private Boolean includeData = Boolean.TRUE;
 
 	/**
 	 * The direction of the edges as a string. Possible values are outbound,
@@ -217,6 +218,26 @@ public class GraphEdgesOptions implements OptionsInterface {
 		return this;
 	}
 
+	/**
+	 * Get include data
+	 * 
+	 * @return
+	 */
+	public Boolean getIncludeData() {
+		return includeData;
+	}
+
+	/**
+	 * set include data to be compatible with older versions of AnrangoDB
+	 * 
+	 * @param includeData
+	 * 
+	 * @since ArangoDB 2.6
+	 */
+	public void setIncludeData(Boolean includeData) {
+		this.includeData = includeData;
+	}
+
 	@Override
 	public Map<String, Object> toMap() {
 		MapBuilder mp = new MapBuilder();
@@ -247,6 +268,10 @@ public class GraphEdgesOptions implements OptionsInterface {
 		if (maxIterations != null) {
 			mp.put("maxIterations", maxIterations);
 		}
+		if (includeData != null) {
+			mp.put("includeData", includeData);
+		}
+
 		return mp.get();
 	}
 

@@ -232,7 +232,7 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		Boolean count = true;
 		Boolean fullCount = true;
 
-		String query = "for i in graph_edges(@graphName, null) LIMIT 3 return i";
+		String query = "for i in graph_edges(@graphName, null, {includeData: true}) LIMIT 3 return i";
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", GRAPH_NAME).get();
 
 		EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars,
@@ -279,7 +279,7 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		String query = "for i in graph_edges(@graphName, @vertex, @options) return i";
 
 		// options bindVars
-		Map<String, Object> options = new MapBuilder().put("direction", "outbound").get();
+		Map<String, Object> options = new MapBuilder().put("direction", "outbound").put("includeData", true).get();
 
 		// bindVars
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", GRAPH_NAME)

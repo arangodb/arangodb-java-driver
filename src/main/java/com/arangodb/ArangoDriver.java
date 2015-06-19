@@ -5211,7 +5211,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public EdgeCursor<PlainEdgeEntity> graphGetEdgeCursor(String graphName) throws ArangoException {
 		validateCollectionName(graphName);
 
-		return graphGetEdgeCursor(graphName, PlainEdgeEntity.class, null, null, null);
+		return graphGetEdgeCursor(graphName, PlainEdgeEntity.class, null, new GraphEdgesOptions(), null);
 	}
 
 	/**
@@ -5253,7 +5253,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> EdgeCursor<T> graphGetEdgeCursorByExample(String graphName, Class<T> clazz, Object vertexExample)
 			throws ArangoException {
 
-		return graphGetEdgeCursor(graphName, clazz, vertexExample, null, null);
+		return graphGetEdgeCursor(graphName, clazz, vertexExample, new GraphEdgesOptions(), null);
 	}
 
 	/**
