@@ -122,9 +122,10 @@ public class GraphQueryExample {
 
 	private static void printShortestPath(ShortestPathEntity<Person, Knows> shortestPath) {
 		if (shortestPath.getDistance() > -1) {
-			System.out.printf("%20s -> %20s distance = %d, paths.size() = %d, paths.get(0).edges.size() = %d%n",
-				shortestPath.getStartVertex(), shortestPath.getVertex(), shortestPath.getDistance(), shortestPath
-						.getPaths().size(), shortestPath.getPaths().get(0).getEdges().size());
+			System.out.printf("%s -> %s : distance = %d, getVertices().size() = %d, edges.size() = %d%n", shortestPath
+					.getVertices().get(0).getDocumentHandle(),
+				shortestPath.getVertices().get(shortestPath.getVertices().size() - 1).getDocumentHandle(),
+				shortestPath.getDistance(), shortestPath.getVertices().size(), shortestPath.getEdges().size());
 		} else {
 			System.out.println("no path");
 		}

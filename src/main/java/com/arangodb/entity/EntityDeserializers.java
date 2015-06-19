@@ -1969,23 +1969,32 @@ public class EntityDeserializers {
 					edgeClazz = nextParameterized();
 				}
 
-				if (result.has("vertex")) {
-					if (result.get("vertex").isJsonObject()) {
-						entity.setVertex(result.getAsJsonObject("vertex").getAsJsonPrimitive("_id").getAsString());
-					} else if (result.get("vertex").isJsonPrimitive()) {
-						entity.setVertex(result.getAsJsonPrimitive("vertex").getAsString());
-					}
-				}
 				if (result.has("distance")) {
 					entity.setDistance(result.get("distance").getAsLong());
 				} else {
 					entity.setDistance(-1L);
 				}
-				if (result.has("startVertex")) {
-					entity.setStartVertex(result.get("startVertex").getAsString());
+				if (result.has("edges")) {
+					// new version >= 2.6
+					entity.setEdges(getEdges(edgeClazz, context, result.getAsJsonArray("edges")));
+				}
+				if (result.has("vertices")) {
+					// new version >= 2.6
+					entity.setVertices(getVertices(vertexClazz, context, result.getAsJsonArray("vertices")));
 				}
 				if (result.has("paths")) {
-					entity.setPaths(getPaths(context, result, vertexClazz, edgeClazz));
+					// old version < 2.6
+					JsonArray paths = result.getAsJsonArray("paths");
+					if (!paths.equals(null) && paths.size() > 0) {
+						JsonObject path = paths.get(0).getAsJsonObject();
+
+						if (path.has("edges")) {
+							entity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray("edges")));
+						}
+						if (path.has("vertices")) {
+							entity.setVertices(getVertices(vertexClazz, context, path.getAsJsonArray("vertices")));
+						}
+					}
 				}
 			} else {
 				entity.setDistance(-1L);

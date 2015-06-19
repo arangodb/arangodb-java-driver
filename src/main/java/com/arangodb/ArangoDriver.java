@@ -5320,6 +5320,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<V> vertexClass,
 		Class<E> edgeClass) throws ArangoException {
 
+		if (shortestPathOptions == null) {
+			shortestPathOptions = new ShortestPathOptions();
+		}
+
 		return cursorDriver.getShortesPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
 			shortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass);
 	}

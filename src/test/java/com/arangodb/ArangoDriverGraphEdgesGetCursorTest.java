@@ -330,9 +330,7 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		assertEquals(201, entity.getCode());
 
 		assertEquals(1L, entity.getDistance().longValue());
-		assertEquals(vertex1.getDocumentHandle(), entity.getStartVertex());
-		assertEquals(vertex2.getDocumentHandle(), entity.getVertex());
-		// assertEquals(1, entity.getPaths().get(0).getEdges().size());
-		// assertEquals(2, entity.getPaths().get(0).getVertices().size());
+		assertEquals(1, entity.getEdges().size());
+		assertEquals(2, entity.getVertices().size());
 	}
 }
