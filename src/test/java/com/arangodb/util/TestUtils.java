@@ -20,10 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.arangodb.Station;
 
@@ -32,24 +29,25 @@ import com.arangodb.Station;
  *
  */
 public class TestUtils {
-  
-  public static List<Station> readStations() throws IOException {
 
-    ArrayList<Station> stations = new ArrayList<Station>(1000);
-    BufferedReader br = new BufferedReader(new InputStreamReader(TestUtils.class.getResourceAsStream("/test-data/jp-tokyo-station.tsv"), "utf-8"));
-    String line = null;
-    while ((line = br.readLine()) != null) {
-      line = line.trim();
-      if (line.length() == 0) {
-        continue;
-      }
-      Station station = new Station(line.split("  ", -1));
-      stations.add(station);
-    }
-    br.close();
-    
-    return stations;
-    
-  }
-  
+	public static List<Station> readStations() throws IOException {
+
+		ArrayList<Station> stations = new ArrayList<Station>(1000);
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(TestUtils.class.getResourceAsStream("/test-data/jp-tokyo-station.tsv"), "utf-8"));
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			line = line.trim();
+			if (line.length() == 0) {
+				continue;
+			}
+			Station station = new Station(line.split("  ", -1));
+			stations.add(station);
+		}
+		br.close();
+
+		return stations;
+
+	}
+
 }
