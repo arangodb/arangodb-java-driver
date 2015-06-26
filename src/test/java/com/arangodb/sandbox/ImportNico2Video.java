@@ -19,10 +19,8 @@ package com.arangodb.sandbox;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.zip.GZIPInputStream;
 
 import com.arangodb.ArangoClient;
@@ -35,20 +33,21 @@ import com.arangodb.util.LineIterator;
  *
  */
 public class ImportNico2Video {
-  
-  public static void main(String[] args) throws ArangoException, IllegalArgumentException, IOException {
-    
-    ArangoConfigure configure = new ArangoConfigure();
-    configure.init();
-    
-    ArangoClient client = new ArangoClient(configure);
-    
-    File file = new File("0000.dat.gz");
-    LineIterator itr = new LineIterator(new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "utf-8")));
-    client.importRawJsonDocuments("nico", true, itr, 10);
-    LineIterator.closeQuietly(itr);
-    configure.shutdown();
-    
-  }
-  
+
+	public static void main(String[] args) throws ArangoException, IllegalArgumentException, IOException {
+
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.init();
+
+		ArangoClient client = new ArangoClient(configure);
+
+		File file = new File("0000.dat.gz");
+		LineIterator itr = new LineIterator(
+				new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "utf-8")));
+		client.importRawJsonDocuments("nico", true, itr, 10);
+		LineIterator.closeQuietly(itr);
+		configure.shutdown();
+
+	}
+
 }

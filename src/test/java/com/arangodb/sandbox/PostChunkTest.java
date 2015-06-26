@@ -19,11 +19,10 @@ package com.arangodb.sandbox;
 import java.io.ByteArrayInputStream;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -31,24 +30,28 @@ import org.apache.http.impl.client.DefaultHttpClient;
  */
 public class PostChunkTest {
 
-  /**
-   * @param args
-   */
-  public static void main(String[] args) throws Exception {
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) throws Exception {
 
-    HttpClient client = new DefaultHttpClient();
-    
-    HttpPost post = new HttpPost("http://arango-test-server:9999/_api/import?collection=test1&createCollection=true&type=documents");
-    //post.setEntity(new StringEntity("{\"xx\": \"123\"}{\"xx\": \"456\"}"));
-    InputStreamEntity entity = new InputStreamEntity(new ByteArrayInputStream("{\"xx\": \"123\"}{\"xx\": \"456\"}".getBytes()), 26);
-    entity.setChunked(true);
-    post.setEntity(entity);
-    
-    HttpResponse res = client.execute(post);
+		HttpClientBuilder builder = HttpClientBuilder.create();
+		CloseableHttpClient client = builder.build();
 
-    System.out.println(res.getStatusLine());
-    
-    post.releaseConnection();
-  }
+		HttpPost post = new HttpPost(
+				"http://localhost:8529/_api/import?collection=test1&createCollection=true&type=documents");
+		// post.setEntity(new StringEntity("{\"xx\": \"123\"}{\"xx\":
+		// \"456\"}"));
+		InputStreamEntity entity = new InputStreamEntity(
+				new ByteArrayInputStream("{\"xx\": \"123\"}{\"xx\": \"456\"}".getBytes()), 26);
+		entity.setChunked(true);
+		post.setEntity(entity);
+
+		HttpResponse res = client.execute(post);
+
+		System.out.println(res.getStatusLine());
+
+		post.releaseConnection();
+	}
 
 }
