@@ -3,8 +3,6 @@ package com.arangodb.util;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import com.arangodb.Direction;
 
 public class GraphEdgesOptions implements OptionsInterface {
