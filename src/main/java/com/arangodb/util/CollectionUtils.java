@@ -77,4 +77,8 @@ public class CollectionUtils {
     return buffer.toString();
   }
   
+  public static boolean isNotEmpty(final Collection<?> coll) {
+    return coll != null && !coll.isEmpty();
+  }
+  
 }

@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
@@ -41,6 +39,7 @@ import com.arangodb.entity.GraphsEntity;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
+import com.arangodb.util.CollectionUtils;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.StringUtils;
 import com.google.gson.JsonElement;
