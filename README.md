@@ -424,3 +424,10 @@ see 2.4.4
 	(see src/test/java/com/arangodb/example/TransactionExample.java)
 * fixed issue #17
 	* Changed TransactionEntity.ReadWriteCollections to a static class
+
+## since 2.5.6
+* fixed issue #19
+	* createEdge takes graphName but needs database name
+* ArangoDB 2.6 support
+
+ 
