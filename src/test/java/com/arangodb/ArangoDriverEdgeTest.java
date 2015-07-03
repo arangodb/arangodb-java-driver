@@ -33,57 +33,51 @@ import com.arangodb.entity.EdgeEntity;
  */
 public class ArangoDriverEdgeTest extends BaseTest {
 
-  public ArangoDriverEdgeTest(ArangoConfigure configure, ArangoDriver driver) {
-    super(configure, driver);
-  }
+	public ArangoDriverEdgeTest(ArangoConfigure configure, ArangoDriver driver) {
+		super(configure, driver);
+	}
 
-  final String collectionName = "unit_test_edge_collection_EdgeTest";
-  final String collectionName2 = "unit_test_normal_collection_EdgeTest";
+	final String collectionName = "unit_test_edge_collection_EdgeTest";
+	final String collectionName2 = "unit_test_normal_collection_EdgeTest";
 
-  @Before
-  public void before() throws ArangoException {
-    try {
-      driver.deleteCollection(collectionName);
-    } catch (ArangoException e) {
-    }
-    try {
-      driver.deleteCollection(collectionName2);
-    } catch (ArangoException e) {
-    }
-  }
+	@Before
+	public void before() throws ArangoException {
+		try {
+			driver.deleteCollection(collectionName);
+		} catch (ArangoException e) {
+		}
+		try {
+			driver.deleteCollection(collectionName2);
+		} catch (ArangoException e) {
+		}
+	}
 
-  @After
-  public void after() throws ArangoException {
-    try {
-      driver.deleteCollection(collectionName);
-    } catch (ArangoException e) {
-    }
-    try {
-      driver.deleteCollection(collectionName2);
-    } catch (ArangoException e) {
-    }
-  }
+	@After
+	public void after() throws ArangoException {
+		try {
+			driver.deleteCollection(collectionName);
+		} catch (ArangoException e) {
+		}
+		try {
+			driver.deleteCollection(collectionName2);
+		} catch (ArangoException e) {
+		}
+	}
 
-  @Test
-  public void test_create_normal() throws ArangoException {
+	@Test
+	public void test_create_normal() throws ArangoException {
 
-    TestComplexEntity01 value = new TestComplexEntity01("user", "desc", 42);
-    DocumentEntity<TestComplexEntity01> fromDoc = driver.createDocument(collectionName2, value, true, true);
-    DocumentEntity<TestComplexEntity01> toDoc = driver.createDocument(collectionName2, value, true, true);
-    
-    EdgeEntity<TestComplexEntity01> doc = driver.createEdge(
-        DATABASE_NAME, 
-        collectionName, 
-        value, 
-        fromDoc.getDocumentHandle(), 
-        toDoc.getDocumentHandle(), 
-        true, 
-        true);
+		TestComplexEntity01 value = new TestComplexEntity01("user", "desc", 42);
+		DocumentEntity<TestComplexEntity01> fromDoc = driver.createDocument(collectionName2, value, true, true);
+		DocumentEntity<TestComplexEntity01> toDoc = driver.createDocument(collectionName2, value, true, true);
 
-    assertThat(doc.getDocumentKey(), is(notNullValue()));
-    assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-    assertThat(doc.getDocumentRevision(), is(not(0L)));
+		EdgeEntity<TestComplexEntity01> doc = driver.createEdge(collectionName, value, fromDoc.getDocumentHandle(),
+			toDoc.getDocumentHandle(), true, true);
 
-  }
+		assertThat(doc.getDocumentKey(), is(notNullValue()));
+		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
+		assertThat(doc.getDocumentRevision(), is(not(0L)));
+
+	}
 
 }

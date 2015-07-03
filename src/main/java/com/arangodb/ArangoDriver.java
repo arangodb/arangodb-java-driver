@@ -466,11 +466,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		try {
 			this.httpManager.setPreDefinedResponse(batchResponseEntity.getHttpResponseEntity());
 
-			T result = (T) batchResponseEntity
-					.getInvocationObject()
-					.getMethod()
-					.invoke(batchResponseEntity.getInvocationObject().getArangoDriver(),
-						batchResponseEntity.getInvocationObject().getArgs());
+			T result = (T) batchResponseEntity.getInvocationObject().getMethod().invoke(
+				batchResponseEntity.getInvocationObject().getArangoDriver(),
+				batchResponseEntity.getInvocationObject().getArgs());
 			this.httpManager.setPreDefinedResponse(null);
 			return result;
 		} catch (InvocationTargetException e) {
@@ -937,7 +935,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 * @see CollectionKeyOption#allowUserKeys
 	 */
-	public DocumentEntity<?> createDocument(long collectionId, String documentKey, Object value) throws ArangoException {
+	public DocumentEntity<?> createDocument(long collectionId, String documentKey, Object value)
+			throws ArangoException {
 		return createDocument(String.valueOf(collectionId), documentKey, value, null, null);
 	}
 
@@ -1065,8 +1064,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		T value,
 		Boolean createCollection,
 		Boolean waitForSync) throws ArangoException {
-		return documentDriver.createDocument(getDefaultDatabase(), collectionName, documentKey, value,
-			createCollection, waitForSync);
+		return documentDriver.createDocument(getDefaultDatabase(), collectionName, documentKey, value, createCollection,
+			waitForSync);
 	}
 
 	/**
@@ -1115,7 +1114,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return DocumentEntity<?>
 	 * @throws ArangoException
 	 */
-	public <T> DocumentEntity<T> replaceDocument(long collectionId, String documentKey, T value) throws ArangoException {
+	public <T> DocumentEntity<T> replaceDocument(long collectionId, String documentKey, T value)
+			throws ArangoException {
 		return replaceDocument(createDocumentHandle(collectionId, documentKey), value, null, null, null);
 	}
 
@@ -1346,8 +1346,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> updateDocument(String collectionName, long documentId, Object value)
 			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
-			null, null);
+		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null, null,
+			null);
 	}
 
 	/**
@@ -1362,7 +1362,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return DocumentEntity<?>
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> updateDocument(long collectionId, String documentKey, Object value) throws ArangoException {
+	public DocumentEntity<?> updateDocument(long collectionId, String documentKey, Object value)
+			throws ArangoException {
 		return updateDocument(createDocumentHandle(collectionId, documentKey), value, null, null, null, null);
 	}
 
@@ -1433,8 +1434,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> updateDocument(String collectionName, long documentId, Object value, Boolean keepNull)
 			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
-			null, keepNull);
+		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null, null,
+			keepNull);
 	}
 
 	/**
@@ -1807,7 +1808,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public <T> DocumentEntity<T> getDocument(long collectionId, long documentId, Class<T> clazz) throws ArangoException {
+	public <T> DocumentEntity<T> getDocument(long collectionId, long documentId, Class<T> clazz)
+			throws ArangoException {
 		return getDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), clazz);
 	}
 
@@ -2566,8 +2568,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public IndexEntity createSkipListIndex(String collectionName, boolean unique, boolean sparse, String... fields)
 			throws ArangoException {
-		return indexDriver
-				.createIndex(getDefaultDatabase(), collectionName, IndexType.SKIPLIST, unique, sparse, fields);
+		return indexDriver.createIndex(getDefaultDatabase(), collectionName, IndexType.SKIPLIST, unique, sparse,
+			fields);
 	}
 
 	/**
@@ -3310,8 +3312,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		int skip,
 		int limit,
 		Class<T> clazz) throws ArangoException {
-		return simpleDriver.executeSimpleRangeWithDocument(getDefaultDatabase(), collectionName, attribute, left,
-			right, closed, skip, limit, clazz);
+		return simpleDriver.executeSimpleRangeWithDocument(getDefaultDatabase(), collectionName, attribute, left, right,
+			closed, skip, limit, clazz);
 	}
 
 	/**
@@ -4237,8 +4239,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		List<EdgeDefinitionEntity> edgeDefinitions,
 		List<String> orphanCollections,
 		Boolean waitForSync) throws ArangoException {
-		return graphDriver
-				.createGraph(getDefaultDatabase(), graphName, edgeDefinitions, orphanCollections, waitForSync);
+		return graphDriver.createGraph(getDefaultDatabase(), graphName, edgeDefinitions, orphanCollections,
+			waitForSync);
 	}
 
 	/**
@@ -4255,8 +4257,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		String graphName = graph.getName();
 		List<EdgeDefinitionEntity> edgeDefinitions = graph.getEdgeDefinitions();
 		List<String> orphanCollections = graph.getOrphanCollections();
-		return graphDriver
-				.createGraph(getDefaultDatabase(), graphName, edgeDefinitions, orphanCollections, waitForSync);
+		return graphDriver.createGraph(getDefaultDatabase(), graphName, edgeDefinitions, orphanCollections,
+			waitForSync);
 	}
 
 	/**
@@ -4612,8 +4614,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> VertexEntity<T> graphReplaceVertex(String graphName, String collectionName, String key, T vertex)
 			throws ArangoException {
-		return graphDriver
-				.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, null, null, null);
+		return graphDriver.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, null, null,
+			null);
 	}
 
 	/**
@@ -4891,8 +4893,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DeletedEntity graphDeleteEdge(String graphName, String edgeCollectionName, String key, Boolean waitForSync)
 			throws ArangoException {
-		return graphDriver
-				.deleteEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, waitForSync, null, null);
+		return graphDriver.deleteEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, waitForSync, null,
+			null);
 	}
 
 	/**
@@ -5434,8 +5436,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Create an edge in an edge collection.
 	 *
-	 * @param graphName
-	 *            the graph name
 	 * @param collectionName
 	 *            name of the edge collection
 	 * @param object
@@ -5452,7 +5452,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public <T> EdgeEntity<T> createEdge(
-		String graphName,
 		String collectionName,
 		T object,
 		String from,
@@ -5460,7 +5459,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		Boolean createCollection,
 		Boolean waitForSync) throws ArangoException {
 
-		return this.edgeDriver.createEdge(graphName, collectionName, object, from, to, createCollection, waitForSync);
+		return this.edgeDriver.createEdge(getDefaultDatabase(), collectionName, object, from, to, createCollection,
+			waitForSync);
 	}
 
 	/**

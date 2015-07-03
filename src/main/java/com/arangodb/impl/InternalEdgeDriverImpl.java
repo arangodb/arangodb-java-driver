@@ -38,7 +38,7 @@ public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl imple
 
 	@Override
 	public <T> EdgeEntity<T> createEdge(
-		String graphName,
+		String database,
 		String collectionName,
 		T object,
 		String from,
@@ -51,7 +51,7 @@ public class InternalEdgeDriverImpl extends BaseArangoDriverWithCursorImpl imple
 
 		String body = EntityFactory.toJsonString(object);
 
-		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(graphName, "/_api/edge"), params, body);
+		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(database, "/_api/edge"), params, body);
 
 		@SuppressWarnings("unchecked")
 		EdgeEntity<T> edgeEntity = createEntity(response, EdgeEntity.class);
