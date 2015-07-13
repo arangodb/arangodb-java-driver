@@ -7,11 +7,11 @@
 
 This library is a Java driver for ArangoDB.
 
-Supported version: ArangoDB-2.4.x or ArangoDB 2.5.x
+Supported version: ArangoDB-2.4.x, ArangoDB 2.5.x and ArangoDB 2.6.x
 
 # Required
 
-* [ArangoDB](https://github.com/arangodb/arangodb) version 2.4.x or 2.5.x
+* [ArangoDB](https://github.com/arangodb/arangodb) version 2.4.x, 2.5.x or 2.6.x
 * Java 1.6 later
 
 # Basics
