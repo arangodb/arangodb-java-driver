@@ -77,7 +77,7 @@ public class EdgeDefinitionsEntity {
 	 */
 	public EdgeDefinitionEntity getEdgeDefinition(String collectionName) {
 		for (EdgeDefinitionEntity edgeDefintion : this.edgeDefinitions) {
-			if (edgeDefintion.getCollection() == collectionName) {
+			if (edgeDefintion.getCollection().equals(collectionName)) {
 				return edgeDefintion;
 			}
 		}
