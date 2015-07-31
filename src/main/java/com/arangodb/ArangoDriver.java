@@ -27,7 +27,6 @@ import com.arangodb.entity.AdminLogEntity;
 import com.arangodb.entity.AqlFunctionsEntity;
 import com.arangodb.entity.ArangoUnixTime;
 import com.arangodb.entity.ArangoVersion;
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BatchResponseEntity;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
@@ -1879,9 +1878,10 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(String documentHandle, Class<T> clazz) throws ArangoException {
-		if (clazz.getName() == BaseDocument.class.getName()) {
-			return documentDriver.getDocument(getDefaultDatabase(), documentHandle, clazz, null, null);
-		}
+		// if (clazz.getName() == BaseDocument.class.getName()) {
+		// return documentDriver.getDocument(getDefaultDatabase(),
+		// documentHandle, clazz, null, null);
+		// }
 		return documentDriver.getDocument(getDefaultDatabase(), documentHandle, clazz, null, null);
 	}
 
