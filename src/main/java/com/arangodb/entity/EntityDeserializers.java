@@ -612,15 +612,12 @@ public class EntityDeserializers {
 			Class<?> clazz = getParameterized();
 			if (clazz != null) {
 				entity.entity = context.deserialize(obj, clazz);
-				// if
-				// (clazz.getName().equalsIgnoreCase(BaseDocument.class.getName()))
-				// {
-				// iterate all key/value pairs of the jsonObject and
-				// determine its class(String, Number, Boolean, HashMap,
-				// List)
-				// ((BaseDocument)
-				// entity.entity).setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
-				// }
+				if (clazz.getName().equalsIgnoreCase(BaseDocument.class.getName())) {
+					// iterate all key/value pairs of the jsonObject and
+					// determine its class(String, Number, Boolean, HashMap,
+					// List)
+					((BaseDocument) entity.entity).setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
+				}
 			}
 
 			return entity;
@@ -936,8 +933,8 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class StatisticsDescriptionEntityDeserializer implements
-			JsonDeserializer<StatisticsDescriptionEntity> {
+	public static class StatisticsDescriptionEntityDeserializer
+			implements JsonDeserializer<StatisticsDescriptionEntity> {
 		Type cutsTypes = new TypeToken<BigDecimal[]>() {
 		}.getType();
 
@@ -1307,8 +1304,10 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public ReplicationInventoryEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-				throws JsonParseException {
+		public ReplicationInventoryEntity deserialize(
+			JsonElement json,
+			Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1332,8 +1331,8 @@ public class EntityDeserializers {
 							col.parameter.version = parameters.getAsJsonPrimitive("version").getAsInt();
 						}
 						if (parameters.has("type")) {
-							col.parameter.type = CollectionType.valueOf(parameters.getAsJsonPrimitive("type")
-									.getAsInt());
+							col.parameter.type = CollectionType
+									.valueOf(parameters.getAsJsonPrimitive("type").getAsInt());
 						}
 						if (parameters.has("cid")) {
 							col.parameter.cid = parameters.getAsJsonPrimitive("cid").getAsLong();
@@ -1461,8 +1460,8 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class ReplicationLoggerConfigEntityDeserializer implements
-			JsonDeserializer<ReplicationLoggerConfigEntity> {
+	public static class ReplicationLoggerConfigEntityDeserializer
+			implements JsonDeserializer<ReplicationLoggerConfigEntity> {
 		@Override
 		public ReplicationLoggerConfigEntity deserialize(
 			JsonElement json,
@@ -1493,8 +1492,8 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class ReplicationApplierConfigEntityDeserializer implements
-			JsonDeserializer<ReplicationApplierConfigEntity> {
+	public static class ReplicationApplierConfigEntityDeserializer
+			implements JsonDeserializer<ReplicationApplierConfigEntity> {
 		@Override
 		public ReplicationApplierConfigEntity deserialize(
 			JsonElement json,
@@ -1621,8 +1620,8 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class ReplicationApplierStateEntityDeserializer implements
-			JsonDeserializer<ReplicationApplierStateEntity> {
+	public static class ReplicationApplierStateEntityDeserializer
+			implements JsonDeserializer<ReplicationApplierStateEntity> {
 		@Override
 		public ReplicationApplierStateEntity deserialize(
 			JsonElement json,
@@ -1658,8 +1657,8 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class ReplicationLoggerStateEntityDeserializer implements
-			JsonDeserializer<ReplicationLoggerStateEntity> {
+	public static class ReplicationLoggerStateEntityDeserializer
+			implements JsonDeserializer<ReplicationLoggerStateEntity> {
 		private Type clientsType = new TypeToken<List<Client>>() {
 		}.getType();
 
@@ -1694,8 +1693,8 @@ public class EntityDeserializers {
 		}
 	}
 
-	public static class ReplicationLoggerStateEntityClientDeserializer implements
-			JsonDeserializer<ReplicationLoggerStateEntity.Client> {
+	public static class ReplicationLoggerStateEntityClientDeserializer
+			implements JsonDeserializer<ReplicationLoggerStateEntity.Client> {
 		@Override
 		public ReplicationLoggerStateEntity.Client deserialize(
 			JsonElement json,
