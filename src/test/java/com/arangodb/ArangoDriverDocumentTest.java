@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EntityFactory;
@@ -78,8 +79,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		// configure Gson to use our instance creator whenever documents of
 		// TestInterface are requested
 		testInstanceCreator = new TestInterfaceInstanceCreator();
-		EntityFactory.configure(EntityFactory.getGsonBuilder().registerTypeAdapter(TestInterface.class,
-			testInstanceCreator));
+		EntityFactory.configure(
+			EntityFactory.getGsonBuilder().registerTypeAdapter(TestInterface.class, testInstanceCreator));
 
 		logger.debug("--");
 
@@ -258,12 +259,12 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	@Test
 	public void test_getDocuments() throws ArangoException {
 		// create document
-		DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName, new TestComplexEntity01(
-				"test-user1", "test-user1-desc", 21), true, false);
-		DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName, new TestComplexEntity01(
-				"test-user2", "test-user2-desc", 22), true, false);
-		DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName, new TestComplexEntity01(
-				"test-user3", "test-user3-desc", 23), true, false);
+		DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName,
+			new TestComplexEntity01("test-user1", "test-user1-desc", 21), true, false);
+		DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName,
+			new TestComplexEntity01("test-user2", "test-user2-desc", 22), true, false);
+		DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName,
+			new TestComplexEntity01("test-user3", "test-user3-desc", 23), true, false);
 		assertThat(doc1, is(notNullValue()));
 		assertThat(doc2, is(notNullValue()));
 		assertThat(doc3, is(notNullValue()));
@@ -280,8 +281,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 			prefix = "/_api/document/";
 		}
 
-		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(), prefix
-				+ doc3.getDocumentHandle());
+		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(),
+			prefix + doc3.getDocumentHandle());
 
 		assertTrue(documents.containsAll(list));
 	}
@@ -290,12 +291,12 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	public void test_getDocuments_handle() throws ArangoException {
 
 		// create document
-		DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName, new TestComplexEntity01(
-				"test-user1", "test-user1-desc", 21), true, false);
-		DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName, new TestComplexEntity01(
-				"test-user2", "test-user2-desc", 22), true, false);
-		DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName, new TestComplexEntity01(
-				"test-user3", "test-user3-desc", 23), true, false);
+		DocumentEntity<TestComplexEntity01> doc1 = driver.createDocument(collectionName,
+			new TestComplexEntity01("test-user1", "test-user1-desc", 21), true, false);
+		DocumentEntity<TestComplexEntity01> doc2 = driver.createDocument(collectionName,
+			new TestComplexEntity01("test-user2", "test-user2-desc", 22), true, false);
+		DocumentEntity<TestComplexEntity01> doc3 = driver.createDocument(collectionName,
+			new TestComplexEntity01("test-user3", "test-user3-desc", 23), true, false);
 		assertThat(doc1, is(notNullValue()));
 		assertThat(doc2, is(notNullValue()));
 		assertThat(doc3, is(notNullValue()));
@@ -312,8 +313,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 			prefix = "";
 		}
 
-		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(), prefix
-				+ doc3.getDocumentHandle());
+		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(),
+			prefix + doc3.getDocumentHandle());
 
 		assertTrue(documents.containsAll(list));
 	}
@@ -340,8 +341,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	@Test
 	public void test_get_document_with_instance_creator() throws ArangoException {
 		// save an instance of TestInterfaceImpl with null as "name"
-		DocumentEntity<TestInterfaceImpl> doc = driver.createDocument(collectionName, new TestInterfaceImpl(null),
-			null, false);
+		DocumentEntity<TestInterfaceImpl> doc = driver.createDocument(collectionName, new TestInterfaceImpl(null), null,
+			false);
 
 		assertThat(doc.getDocumentKey(), is(notNullValue()));
 		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
@@ -470,8 +471,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	@Test
 	public void test_check_document_doc_not_found() throws ArangoException {
 
-		DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
-			new TestComplexEntity02(1, 2, 3), null, null);
+		driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3), null, null);
 
 		try {
 			driver.checkDocument(collectionName, 1);
@@ -486,8 +486,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	public void test_delete() throws ArangoException {
 		DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
 			new TestComplexEntity02(1, 2, 3));
-		DocumentEntity a = driver.deleteDocument(doc.getDocumentHandle());
-
+		driver.deleteDocument(doc.getDocumentHandle());
 	}
 
 	@Test
@@ -500,4 +499,25 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		}
 	}
 
+	@Test
+	public void test_BaseDocumentProperties() throws ArangoException {
+		// create a document
+		BaseDocument myObject = new BaseDocument();
+		myObject.setDocumentKey("myKey");
+		myObject.addAttribute("a", "Foo");
+		myObject.addAttribute("b", 42);
+		driver.createDocument(collectionName, myObject);
+
+		// read a document
+		DocumentEntity<BaseDocument> myDocument = null;
+		BaseDocument myObject2 = null;
+		myDocument = driver.getDocument(collectionName, "myKey", BaseDocument.class);
+		myObject2 = myDocument.getEntity();
+
+		assertThat(myObject2.getProperties().get("a"), is(notNullValue()));
+		assertThat((String) myObject2.getProperties().get("a"), is("Foo"));
+		assertThat(myObject2.getProperties().get("b"), is(notNullValue()));
+		assertThat((Double) myObject2.getProperties().get("b"), is(42.0));
+		assertThat(myObject2.getProperties().get("c"), is(nullValue()));
+	}
 }
