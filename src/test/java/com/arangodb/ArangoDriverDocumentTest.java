@@ -103,6 +103,24 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(doc.getDocumentKey(), is(notNullValue()));
 		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
 		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getEntity(), is(notNullValue()));
+
+	}
+
+	@Test
+	public void test_create_normal_with_document_attributes() throws ArangoException {
+
+		// 適当にドキュメントを作る
+		TestComplexEntity03 value = new TestComplexEntity03("user-" + 9999, "説明:" + 9999, 9999);
+		DocumentEntity<TestComplexEntity03> doc = driver.createDocument(collectionName, value, null, false);
+
+		assertThat(doc.getDocumentKey(), is(notNullValue()));
+		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
+		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getEntity(), is(notNullValue()));
+		assertThat(doc.getEntity().getDocumentHandle(), is(notNullValue()));
+		assertThat(doc.getEntity().getDocumentKey(), is(notNullValue()));
+		assertThat(doc.getEntity().getDocumentRevision(), is(notNullValue()));
 
 	}
 
@@ -181,12 +199,72 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		value.setUser(null);
 		value.setDesc("UpdatedDescription");
 		value.setAge(15);
+
+		String id = doc.getDocumentHandle();
+		String key = doc.getDocumentKey();
+		Long rev = doc.getDocumentRevision();
+
 		DocumentEntity<TestComplexEntity01> doc2 = driver.replaceDocument(doc.getDocumentHandle(), value, null, null,
 			null);
+
+		assertThat(doc2.getDocumentHandle(), is(id));
+		assertThat(doc2.getDocumentKey(), is(key));
+		assertThat(doc2.getDocumentRevision(), is(not(rev)));
+		Long rev2 = doc2.getDocumentRevision();
+
 		assertThat(doc2.getStatusCode(), is(202));
 		// Get
 		DocumentEntity<TestComplexEntity01> doc3 = driver.getDocument(doc2.getDocumentHandle(),
 			TestComplexEntity01.class);
+		assertThat(doc3.getStatusCode(), is(200));
+		assertThat(doc3.getEntity(), is(notNullValue()));
+		assertThat(doc3.getEntity().getUser(), is(nullValue()));
+		assertThat(doc3.getEntity().getDesc(), is("UpdatedDescription"));
+		assertThat(doc3.getEntity().getAge(), is(15));
+
+		assertThat(doc3.getDocumentHandle(), is(id));
+		assertThat(doc3.getDocumentKey(), is(key));
+		assertThat(doc3.getDocumentRevision(), is(not(rev)));
+		assertThat(doc3.getDocumentRevision(), is(rev2));
+	}
+
+	@Test
+	public void test_replace_with_document_attributes() throws ArangoException {
+
+		TestComplexEntity03 value = new TestComplexEntity03("test-user", "test user", 22);
+
+		// Create Document
+		DocumentEntity<TestComplexEntity03> doc = driver.createDocument(collectionName, value, true, false);
+		assertThat(doc, is(notNullValue()));
+		value.setUser(null);
+		value.setDesc("UpdatedDescription");
+		value.setAge(15);
+
+		String id = doc.getDocumentHandle();
+		String key = doc.getDocumentKey();
+		Long rev = doc.getDocumentRevision();
+
+		DocumentEntity<TestComplexEntity03> doc2 = driver.replaceDocument(doc.getDocumentHandle(), value, null, null,
+			null);
+		TestComplexEntity03 ent = doc2.getEntity();
+
+		assertThat(ent.getDocumentHandle(), is(id));
+		assertThat(ent.getDocumentKey(), is(key));
+		assertThat(ent.getDocumentRevision(), is(not(rev)));
+		Long rev2 = ent.getDocumentRevision();
+
+		assertThat(doc2.getStatusCode(), is(202));
+		// Get
+		DocumentEntity<TestComplexEntity03> doc3 = driver.getDocument(doc2.getDocumentHandle(),
+			TestComplexEntity03.class);
+
+		ent = doc3.getEntity();
+
+		assertThat(ent.getDocumentHandle(), is(id));
+		assertThat(ent.getDocumentKey(), is(key));
+		assertThat(ent.getDocumentRevision(), is(not(rev)));
+		assertThat(ent.getDocumentRevision(), is(rev2));
+
 		assertThat(doc3.getStatusCode(), is(200));
 		assertThat(doc3.getEntity(), is(notNullValue()));
 		assertThat(doc3.getEntity().getUser(), is(nullValue()));
@@ -249,6 +327,50 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(doc4.getStatusCode(), is(202));
 		DocumentEntity<TestComplexEntity01> doc5 = driver.getDocument(doc2.getDocumentHandle(),
 			TestComplexEntity01.class);
+		assertThat(doc5.getStatusCode(), is(200));
+		assertThat(doc5.getEntity(), is(notNullValue()));
+		assertThat(doc5.getEntity().getUser(), is(nullValue())); // update
+		assertThat(doc5.getEntity().getDesc(), is("UpdatedDescription"));
+		assertThat(doc5.getEntity().getAge(), is(15));
+	}
+
+	@Test
+	public void test_partial_update_with_document_attributes() throws ArangoException {
+		TestComplexEntity03 value = new TestComplexEntity03("test-user", "test user", 22);
+
+		// Create Document
+		DocumentEntity<TestComplexEntity03> doc = driver.createDocument(collectionName, value, true, false);
+		assertThat(doc, is(notNullValue()));
+
+		// PartialUpdate
+		value.setUser(null);
+		value.setDesc("UpdatedDescription");
+		value.setAge(15);
+		DocumentEntity<TestComplexEntity03> doc2 = driver.updateDocument(doc.getDocumentHandle(), value, null, null,
+			null, null);
+		assertThat(doc2.getStatusCode(), is(202));
+
+		TestComplexEntity03 en1 = doc2.getEntity();
+		assertThat(en1.getDocumentHandle(), is(notNullValue()));
+		assertThat(en1.getDocumentKey(), is(notNullValue()));
+		Long rev1 = en1.getDocumentRevision();
+		assertThat(rev1, is(notNullValue()));
+
+		// Get
+		DocumentEntity<TestComplexEntity03> doc3 = driver.getDocument(doc2.getDocumentHandle(),
+			TestComplexEntity03.class);
+		assertThat(doc3.getStatusCode(), is(200));
+		assertThat(doc3.getEntity(), is(notNullValue()));
+		assertThat(doc3.getEntity().getUser(), is("test-user")); // not update
+		assertThat(doc3.getEntity().getDesc(), is("UpdatedDescription"));
+		assertThat(doc3.getEntity().getAge(), is(15));
+		assertThat(doc3.getDocumentRevision(), is(rev1));
+
+		DocumentEntity<TestComplexEntity03> doc4 = driver.updateDocument(doc.getDocumentHandle(), value, null, null,
+			null, false);
+		assertThat(doc4.getStatusCode(), is(202));
+		DocumentEntity<TestComplexEntity03> doc5 = driver.getDocument(doc2.getDocumentHandle(),
+			TestComplexEntity03.class);
 		assertThat(doc5.getStatusCode(), is(200));
 		assertThat(doc5.getEntity(), is(notNullValue()));
 		assertThat(doc5.getEntity().getUser(), is(nullValue())); // update

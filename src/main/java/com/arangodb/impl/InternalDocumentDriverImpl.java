@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentsEntity;
@@ -60,20 +61,24 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		} else if (documentKey != null) {
 			JsonElement elem = EntityFactory.toJsonElement(value, false);
 			if (elem.isJsonObject()) {
-				elem.getAsJsonObject().addProperty("_key", documentKey);
+				elem.getAsJsonObject().addProperty(BaseDocument.KEY, documentKey);
 			}
 			body = EntityFactory.toJsonString(elem);
 		} else {
 			body = EntityFactory.toJsonString(value);
 		}
 
-		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(database, "/_api/document"),
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/document"),
 			new MapBuilder().put("collection", collectionName).put("createCollection", createCollection)
-					.put("waitForSync", waitForSync).get(), body);
+					.put("waitForSync", waitForSync).get(),
+			body);
 
 		@SuppressWarnings("unchecked")
 		DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
+
+		annotationHandler.updateDocumentAttributes(value, result.getDocumentRevision(), result.getDocumentHandle(),
+			result.getDocumentKey());
+
 		result.setEntity(value);
 		return result;
 	}
@@ -113,12 +118,14 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(database, "/_api/document", documentHandle),
-			new MapBuilder().put("rev", rev).put("policy", policy == null ? null : policy.name())
-					.put("waitForSync", waitForSync).get(), EntityFactory.toJsonString(value));
+			createEndpointUrl(database, "/_api/document", documentHandle), new MapBuilder().put("rev", rev)
+					.put("policy", policy == null ? null : policy.name()).put("waitForSync", waitForSync).get(),
+			EntityFactory.toJsonString(value));
 
-		return createEntity(res, DocumentEntity.class);
-
+		DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
+		annotationHandler.updateDocumentRev(value, result.getDocumentRevision());
+		result.setEntity(value);
+		return result;
 	}
 
 	@Override
@@ -132,16 +139,17 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		Boolean keepNull) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
-		HttpResponseEntity res = httpManager.doPatch(
-			createEndpointUrl(database, "/_api/document", documentHandle),
+		HttpResponseEntity res = httpManager.doPatch(createEndpointUrl(database, "/_api/document", documentHandle),
 			new MapBuilder().put("rev", rev).put("policy", policy == null ? null : policy.name())
 					.put("waitForSync", waitForSync).put("keepNull", keepNull).get(),
 			EntityFactory.toJsonString(value, keepNull != null && !keepNull));
 
 		@SuppressWarnings("unchecked")
-		DocumentEntity<T> entity = createEntity(res, DocumentEntity.class);
-		return entity;
-
+		DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
+		annotationHandler.updateDocumentAttributes(value, result.getDocumentRevision(), result.getDocumentHandle(),
+			result.getDocumentKey());
+		result.setEntity(value);
+		return result;
 	}
 
 	private static final String API_DOCUMENT_PREFIX = "/_api/document/";
@@ -150,8 +158,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	public List<String> getDocuments(String database, String collectionName, boolean handleConvert)
 			throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/document"), new MapBuilder(
-				"collection", collectionName).get());
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/document"),
+			new MapBuilder("collection", collectionName).get());
 
 		DocumentsEntity entity = createEntity(res, DocumentsEntity.class);
 		List<String> documents = CollectionUtils.safety(entity.getDocuments());
@@ -171,8 +179,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	@Override
 	public long checkDocument(String database, String documentHandle) throws ArangoException {
 		validateDocumentHandle(documentHandle);
-		HttpResponseEntity res = httpManager
-				.doHead(createEndpointUrl(database, "/_api/document", documentHandle), null);
+		HttpResponseEntity res = httpManager.doHead(createEndpointUrl(database, "/_api/document", documentHandle),
+			null);
 
 		DefaultEntity entity = createEntity(res, DefaultEntity.class);
 		return entity.getEtag();
@@ -205,8 +213,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 
 		validateDocumentHandle(documentHandle);
 		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/document", documentHandle),
-			new MapBuilder().put("rev", rev)
-					.put("policy", policy == null ? null : policy.name().toLowerCase(Locale.US)).get());
+			new MapBuilder().put("rev", rev).put("policy", policy == null ? null : policy.name().toLowerCase(Locale.US))
+					.get());
 
 		try {
 			DocumentEntity<?> entity = createEntity(res, DocumentEntity.class);

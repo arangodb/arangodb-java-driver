@@ -1,217 +1,236 @@
 package com.arangodb.entity;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by gschwab on 1/14/15.
  */
 public class BaseDocument extends BaseEntity implements DocumentHolder {
 
-    public static final String REV = "_rev";
+	public static final String REV = "_rev";
 
-    public static final String KEY = "_key";
+	public static final String KEY = "_key";
 
-    /**
-     * the documents revision number
-     */
-    @SerializedName("_rev")
-    long documentRevision;
+	public static final String ID = "_ID";
 
-    /**
-     * the document handle
-     */
-    @SerializedName("_id")
-    String documentHandle;
+	public static final String FROM = "_from";
 
-    /**
-     * the document key
-     */
-    @SerializedName("_key")
-    String documentKey;
+	public static final String TO = "_to";
 
-    /**
-     * the map containing the key value pairs
-     */
-    Map<String, Object> properties = new HashMap<String, Object>();
+	/**
+	 * the documents revision number
+	 */
+	@SerializedName(REV)
+	long documentRevision;
 
-    /**
-     * create an empty BaseDocument
-     */
-    public BaseDocument() {
-        this.init();
-    }
+	/**
+	 * the document handle
+	 */
+	@SerializedName(ID)
+	String documentHandle;
 
-    /**
-     * create an empty BaseDocument with a given key
-     *
-     * @param documentKey the unique key of the document
-     */
-    public BaseDocument(String documentKey) {
-        this.init();
-        this.documentKey = documentKey;
-    }
+	/**
+	 * the document key
+	 */
+	@SerializedName(KEY)
+	String documentKey;
 
-//    /**
-//     * @param keyValues a set of key/value pairs containing the attributes for the document.
-//     *                  The length has to be even and each even entry has to be of type String.
-//     *                  If not an empty document will be created
-//     */
-//    public BaseDocument(Object ...keyValues) {
-//        this(null, keyValues);
-//    }
-//
-//    /**
-//     * create a BaseDocument with a given key and attributes defined in keyValues
-//     *
-//     * @param documentKey the unique key of the document
-//     * @param keyValues a set of key/value pairs containing the attributes for the document.
-//     *                  The length has to be even and each even entry has to be of type String.
-//     *                  If not an empty document will be created
-//     */
-//    public BaseDocument(String documentKey, Object ...keyValues) {
-//        this.init();
-//        if (documentKey != null) {
-//            this.documentKey = documentKey;
-//        }
-//        if (checkKeyValues(keyValues)) {
-//            for (int i = 0; i < keyValues.length; i = i+2) {
-//                if (keyValues[i] == REV) {
-//                    this.documentRevision = (Long) keyValues[i+1];
-//                } else if (keyValues[i] == KEY && documentKey == null) {
-//                    this.documentKey = (String) keyValues[i+1];
-//                } else {
-//                    this.addAttribute((String) keyValues[i], keyValues[i + 1]);
-//                }
-//            }
-//        }
-//    }
+	/**
+	 * the map containing the key value pairs
+	 */
+	Map<String, Object> properties = new HashMap<String, Object>();
 
-    /**
-     * create an BaseDocument with given attributes
-     *
-     * @param properties the attributes (key/value) of the document to be created
-     */
-    public BaseDocument(Map<String, Object> properties) {
-        this(null, properties);
-    }
+	/**
+	 * create an empty BaseDocument
+	 */
+	public BaseDocument() {
+		this.init();
+	}
 
-    /**
-     * create an BaseDocument with given key and attributes
-     *
-     * @param documentKey the unique key of the document
-     * @param properties the attributes (key/value) of the document to be created
-     */
-    public BaseDocument(String documentKey, Map<String, Object> properties) {
-        this.init();
-        if (documentKey != null) {
-            this.documentKey = documentKey;
-        }
-        if (properties.containsKey(REV)) {
-            this.documentRevision = (Long) properties.get(REV);
-            properties.remove(REV);
-        }
-        if (properties.containsKey(KEY)) {
-            if (documentKey == null) {
-                this.documentKey = (String) properties.get(KEY);
-            }
-            properties.remove(KEY);
-        }
-        this.properties = properties;
-    }
+	/**
+	 * create an empty BaseDocument with a given key
+	 *
+	 * @param documentKey
+	 *            the unique key of the document
+	 */
+	public BaseDocument(String documentKey) {
+		this.init();
+		this.documentKey = documentKey;
+	}
 
-    private void init () {
-        //this.properties = new HashMap<String, Object>();
-    }
+	// /**
+	// * @param keyValues a set of key/value pairs containing the attributes for
+	// the document.
+	// * The length has to be even and each even entry has to be of type String.
+	// * If not an empty document will be created
+	// */
+	// public BaseDocument(Object ...keyValues) {
+	// this(null, keyValues);
+	// }
+	//
+	// /**
+	// * create a BaseDocument with a given key and attributes defined in
+	// keyValues
+	// *
+	// * @param documentKey the unique key of the document
+	// * @param keyValues a set of key/value pairs containing the attributes for
+	// the document.
+	// * The length has to be even and each even entry has to be of type String.
+	// * If not an empty document will be created
+	// */
+	// public BaseDocument(String documentKey, Object ...keyValues) {
+	// this.init();
+	// if (documentKey != null) {
+	// this.documentKey = documentKey;
+	// }
+	// if (checkKeyValues(keyValues)) {
+	// for (int i = 0; i < keyValues.length; i = i+2) {
+	// if (keyValues[i] == REV) {
+	// this.documentRevision = (Long) keyValues[i+1];
+	// } else if (keyValues[i] == KEY && documentKey == null) {
+	// this.documentKey = (String) keyValues[i+1];
+	// } else {
+	// this.addAttribute((String) keyValues[i], keyValues[i + 1]);
+	// }
+	// }
+	// }
+	// }
 
-    @Override
-    public long getDocumentRevision() {
-        return this.documentRevision;
-    }
+	/**
+	 * create an BaseDocument with given attributes
+	 *
+	 * @param properties
+	 *            the attributes (key/value) of the document to be created
+	 */
+	public BaseDocument(Map<String, Object> properties) {
+		this(null, properties);
+	}
 
-    @Override
-    public String getDocumentHandle() {
-        return this.documentHandle;
-    }
+	/**
+	 * create an BaseDocument with given key and attributes
+	 *
+	 * @param documentKey
+	 *            the unique key of the document
+	 * @param properties
+	 *            the attributes (key/value) of the document to be created
+	 */
+	public BaseDocument(String documentKey, Map<String, Object> properties) {
+		this.init();
+		if (documentKey != null) {
+			this.documentKey = documentKey;
+		}
+		if (properties.containsKey(REV)) {
+			this.documentRevision = (Long) properties.get(REV);
+			properties.remove(REV);
+		}
+		if (properties.containsKey(KEY)) {
+			if (documentKey == null) {
+				this.documentKey = (String) properties.get(KEY);
+			}
+			properties.remove(KEY);
+		}
+		this.properties = properties;
+	}
 
-    @Override
-    public String getDocumentKey() {
-        return this.documentKey;
-    }
+	private void init() {
+		// this.properties = new HashMap<String, Object>();
+	}
 
-    @Override
-    public void setDocumentRevision(long documentRevision) {
-        this.documentRevision = documentRevision;
-    }
+	@Override
+	public long getDocumentRevision() {
+		return this.documentRevision;
+	}
 
-    @Override
-    public void setDocumentHandle(String documentHandle) {
-        this.documentHandle = documentHandle;
-    }
+	@Override
+	public String getDocumentHandle() {
+		return this.documentHandle;
+	}
 
-    @Override
-    public void setDocumentKey(String documentKey) {
-        this.documentKey = documentKey;
-    }
+	@Override
+	public String getDocumentKey() {
+		return this.documentKey;
+	}
 
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
+	@Override
+	public void setDocumentRevision(long documentRevision) {
+		this.documentRevision = documentRevision;
+	}
 
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
-    }
+	@Override
+	public void setDocumentHandle(String documentHandle) {
+		this.documentHandle = documentHandle;
+	}
 
+	@Override
+	public void setDocumentKey(String documentKey) {
+		this.documentKey = documentKey;
+	}
 
-    /**
-     * add an attribute to the document. If the key already exists, the value of the attribute will be replaced,
-     *
-     * @param key the key of the attribute
-     * @param value the value of the attribute
-     */
-    public void addAttribute(String key, Object value) {
-        this.properties.put(key, value);
-    }
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
 
-    /**
-     * update the value of the attribute with the given key
-     *
-     * @param key the key of the attribute
-     * @param value the value of the attribute ti replace the old value
-     */
-    public void updateAttribute (String key, Object value) {
-        if (this.properties.containsKey(key)) {
-            this.properties.put(key, value);
-        }
-    }
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
+	}
 
-    /**
-     * get a single attribute of the document
-     *
-     * @param key the key of the attribute
-     * @return value of the attribute key
-     */
-    public Object getAttribute(String key) {
-        return this.properties.get(key);
-    }
+	/**
+	 * add an attribute to the document. If the key already exists, the value of
+	 * the attribute will be replaced,
+	 *
+	 * @param key
+	 *            the key of the attribute
+	 * @param value
+	 *            the value of the attribute
+	 */
+	public void addAttribute(String key, Object value) {
+		this.properties.put(key, value);
+	}
 
-//    /**
-//     * check the list if it is suitable
-//     *
-//     * @param keyValues
-//     * @return true, if the list has an even number and is an alternating sequence of instances of String and Object.
-//     */
-//    private boolean checkKeyValues(Object... keyValues) {
-//        if (keyValues.length %2 != 0) {
-//            return false;
-//        }
-//        for (int i = 0; i < keyValues.length; i = i+2) {
-//            if (! (keyValues[i] instanceof String)) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
+	/**
+	 * update the value of the attribute with the given key
+	 *
+	 * @param key
+	 *            the key of the attribute
+	 * @param value
+	 *            the value of the attribute ti replace the old value
+	 */
+	public void updateAttribute(String key, Object value) {
+		if (this.properties.containsKey(key)) {
+			this.properties.put(key, value);
+		}
+	}
+
+	/**
+	 * get a single attribute of the document
+	 *
+	 * @param key
+	 *            the key of the attribute
+	 * @return value of the attribute key
+	 */
+	public Object getAttribute(String key) {
+		return this.properties.get(key);
+	}
+
+	// /**
+	// * check the list if it is suitable
+	// *
+	// * @param keyValues
+	// * @return true, if the list has an even number and is an alternating
+	// sequence of instances of String and Object.
+	// */
+	// private boolean checkKeyValues(Object... keyValues) {
+	// if (keyValues.length %2 != 0) {
+	// return false;
+	// }
+	// for (int i = 0; i < keyValues.length; i = i+2) {
+	// if (! (keyValues[i] instanceof String)) {
+	// return false;
+	// }
+	// }
+	// return true;
+	// }
 }

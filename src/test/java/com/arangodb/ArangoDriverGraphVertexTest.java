@@ -74,6 +74,28 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		assertThat(document.getEntity().getUser(), is("Homer"));
 		assertThat(document.getEntity().getDesc(), is("Simpson"));
 		assertThat(document.getEntity().getAge(), is(38));
+	}
+
+	@Test
+	public void test_create_vertex_with_document_attributes() throws ArangoException {
+
+		VertexEntity<TestComplexEntity03> vertex = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
+			new TestComplexEntity03("Homer", "Simpson", 38), true);
+
+		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
+		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentKey(), is(notNullValue()));
+		assertThat(vertex.getEntity(), isA(TestComplexEntity03.class));
+
+		assertThat(vertex.getEntity().getDocumentHandle(), is(notNullValue()));
+		assertThat(vertex.getEntity().getDocumentKey(), is(notNullValue()));
+		assertThat(vertex.getEntity().getDocumentRevision(), is(notNullValue()));
+
+		DocumentEntity<TestComplexEntity03> document = driver.getDocument(vertex.getDocumentHandle(),
+			TestComplexEntity03.class);
+		assertThat(document.getEntity().getUser(), is("Homer"));
+		assertThat(document.getEntity().getDesc(), is("Simpson"));
+		assertThat(document.getEntity().getAge(), is(38));
 
 	}
 
@@ -279,8 +301,8 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		assertEquals(4, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 
-		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, new TestComplexEntity01(
-				"Homer", null, null), null, aqlQueryOptions);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class,
+			new TestComplexEntity01("Homer", null, null), null, aqlQueryOptions);
 		assertEquals(1, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 
@@ -303,4 +325,73 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 
 	}
 
+	@Test
+	public void test_replace_vertex_with_document_attributes() throws ArangoException {
+
+		VertexEntity<TestComplexEntity03> vertex = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
+			new TestComplexEntity03("Homer", "Simpson", 38), true);
+
+		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
+		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentKey(), is(notNullValue()));
+		TestComplexEntity03 en1 = vertex.getEntity();
+		assertThat(en1, isA(TestComplexEntity03.class));
+
+		assertThat(en1.getDocumentHandle(), is(notNullValue()));
+		assertThat(en1.getDocumentKey(), is(notNullValue()));
+		assertThat(en1.getDocumentRevision(), is(notNullValue()));
+		Long rev = en1.getDocumentRevision();
+
+		en1.setUser("Tim");
+
+		DocumentEntity<TestComplexEntity03> document2 = driver.graphReplaceVertex(GRAPH_NAME, "from1-1",
+			en1.getDocumentKey(), en1);
+		assertThat(document2.getEntity().getUser(), is("Tim"));
+		assertThat(document2.getEntity().getDesc(), is("Simpson"));
+		assertThat(document2.getEntity().getAge(), is(38));
+		TestComplexEntity03 en2 = document2.getEntity();
+		assertThat(en2.getDocumentHandle(), is(notNullValue()));
+		assertThat(en2.getDocumentKey(), is(notNullValue()));
+		assertThat(en2.getDocumentRevision(), is(notNullValue()));
+		assertThat(en2.getDocumentRevision(), is(not(rev)));
+		Long rev2 = en2.getDocumentRevision();
+
+		DocumentEntity<TestComplexEntity03> document = driver.getDocument(vertex.getDocumentHandle(),
+			TestComplexEntity03.class);
+		assertThat(document.getEntity().getUser(), is("Tim"));
+		assertThat(document.getEntity().getDesc(), is("Simpson"));
+		assertThat(document.getEntity().getAge(), is(38));
+		assertThat(document.getDocumentRevision(), is(rev2));
+	}
+
+	@Test
+	public void test_update_vertex_with_document_attributes() throws ArangoException {
+
+		VertexEntity<TestComplexEntity03> vertex = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
+			new TestComplexEntity03("Homer", "Simpson", 38), true);
+
+		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
+		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentKey(), is(notNullValue()));
+		Long rev = vertex.getDocumentRevision();
+
+		TestComplexEntity03 en1 = new TestComplexEntity03("Tim", null, null);
+
+		DocumentEntity<TestComplexEntity03> document2 = driver.graphUpdateVertex(GRAPH_NAME, "from1-1",
+			vertex.getDocumentKey(), en1, true);
+		assertThat(document2.getEntity().getUser(), is("Tim"));
+		TestComplexEntity03 en2 = document2.getEntity();
+		assertThat(en2.getDocumentHandle(), is(notNullValue()));
+		assertThat(en2.getDocumentKey(), is(notNullValue()));
+		assertThat(en2.getDocumentRevision(), is(notNullValue()));
+		assertThat(en2.getDocumentRevision(), is(not(rev)));
+		Long rev2 = en2.getDocumentRevision();
+
+		DocumentEntity<TestComplexEntity03> document = driver.getDocument(vertex.getDocumentHandle(),
+			TestComplexEntity03.class);
+		assertThat(document.getEntity().getUser(), is("Tim"));
+		assertThat(document.getEntity().getDesc(), is("Simpson"));
+		assertThat(document.getEntity().getAge(), is(38));
+		assertThat(document.getDocumentRevision(), is(rev2));
+	}
 }

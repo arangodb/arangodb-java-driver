@@ -28,10 +28,12 @@ class BaseArangoDriverImpl extends BaseArangoDriver implements BaseDriverInterfa
 
 	protected ArangoConfigure configure;
 	protected HttpManager httpManager;
+	protected AnnotationHandler annotationHandler;
 
 	BaseArangoDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		this.configure = configure;
 		this.httpManager = httpManager;
+		this.annotationHandler = new AnnotationHandler();
 	}
 
 	@Override

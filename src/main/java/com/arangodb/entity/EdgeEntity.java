@@ -25,9 +25,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class EdgeEntity<T> extends DocumentEntity<T> {
 
-	@SerializedName("_from")
+	@SerializedName(BaseDocument.FROM)
 	String fromVertexHandle;
-	@SerializedName("_to")
+	@SerializedName(BaseDocument.TO)
 	String toVertexHandle;
 
 	public String getFromVertexHandle() {
