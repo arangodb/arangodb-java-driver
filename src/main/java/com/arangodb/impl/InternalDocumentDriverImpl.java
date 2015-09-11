@@ -19,6 +19,8 @@ package com.arangodb.impl;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
@@ -153,6 +155,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	private static final String API_DOCUMENT_PREFIX = "/_api/document/";
+	private static final Pattern pattern = Pattern.compile("^/_db/.*/_api/document/(.*)$");
 
 	@Override
 	public List<String> getDocuments(String database, String collectionName, boolean handleConvert)
@@ -170,6 +173,11 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 				String d = lit.next();
 				if (d.startsWith(API_DOCUMENT_PREFIX)) {
 					lit.set(d.substring(API_DOCUMENT_PREFIX.length()));
+				} else {
+					Matcher matcher = pattern.matcher(d);
+					if (matcher.find()) {
+						lit.set(matcher.group(1));
+					}
 				}
 			}
 		}
