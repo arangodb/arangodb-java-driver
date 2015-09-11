@@ -36,37 +36,80 @@ import com.arangodb.util.StringJoinTest;
 		StringJoinTest.class,
 
 		// Drivers Test
-		ArangoConfigureTest.class, ArangoDriverAuthTest.class, NegativeTest.class,
+		ArangoConfigureTest.class,
+
+		ArangoDriverAuthTest.class,
+
+		NegativeTest.class,
 
 		PrimitiveDocumentTest.class,
 
 		ArangoBaseParameterTest.class,
 
-		ArangoDriverDatabaseTest.class, ArangoDriverDatabaseAndUserTest.class,
+		ArangoDriverDatabaseTest.class,
+
+		ArangoDriverDatabaseAndUserTest.class,
 
 		ArangoDriverBatchTest.class,
+
 		ArangoDriverAsyncTest.class,
+
 		ArangoDriverDocumentTest.class,
+
 		ArangoDriverAqlfunctionsTest.class,
+
 		ArangoDriverDocumentKeyTest.class,
+
 		ArangoDriverCollectionTest.class,
+
 		ArangoDriverDocumentCursorEntityTest.class,
+
 		ArangoDriverDocumentCursorTest.class,
+
 		ArangoDriverCursorTest.class,
+
 		ArangoDriverCursorResultSetTest.class,
 
 		ArangoDriverIndexTest.class,
+
 		ArangoDriverAdminTest.class,
+
 		ArangoDriverSimpleTest.class,
+
 		ArangoDriverImportTest.class,
 		// ArangoDriverSimpleGeoTest.class,
 		// ArangoDriverKeyValueTest.class,
-		ArangoDriverGraphTest.class, ArangoDriverGraphVertexTest.class, ArangoDriverGraphVertexReplaceTest.class,
-		ArangoDriverGraphVertexUpdateTest.class, ArangoDriverGraphEdgeCreateTest.class,
-		ArangoDriverGraphEdgeGetTest.class, ArangoDriverGraphEdgeDeleteTest.class,
-		ArangoDriverGraphEdgesGetCursorTest.class, ArangoDriverGraphEdgeReplaceTest.class,
-		ArangoDriverTransactionTest.class, ArangoDriverThreadSafeTest.class, ArangoDriverReplicationTest.class,
-		ArangoDriverReplicationTestScenario1.class, ArangoDriverTraversalTest.class
+
+		ArangoDriverGraphTest.class,
+
+		ArangoDriverGraphVertexTest.class,
+
+		ArangoDriverGraphVertexReplaceTest.class,
+
+		ArangoDriverGraphVertexUpdateTest.class,
+
+		ArangoDriverGraphEdgeCreateTest.class,
+
+		ArangoDriverGraphEdgeGetTest.class,
+
+		ArangoDriverGraphEdgeDeleteTest.class,
+
+		ArangoDriverGraphEdgesGetCursorTest.class,
+
+		ArangoDriverGraphEdgeReplaceTest.class,
+
+		ArangoDriverTransactionTest.class,
+
+		ArangoDriverThreadSafeTest.class,
+
+		ArangoDriverReplicationTest.class,
+
+		ArangoDriverReplicationTestScenario1.class,
+
+		ArangoDriverTraversalTest.class,
+
+		// since ArangoDB 2.7
+		ArangoDriverQueryCacheTest.class
 
 })
 public class ArangoTestSuite {

@@ -2003,6 +2003,34 @@ public class EntityDeserializers {
 		}
 	}
 
+	public static class QueryCachePropertiesEntityDeserializer implements JsonDeserializer<QueryCachePropertiesEntity> {
+
+		@Override
+		public QueryCachePropertiesEntity deserialize(
+			JsonElement json,
+			Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			JsonObject obj = json.getAsJsonObject();
+			QueryCachePropertiesEntity entity = deserializeBaseParameter(obj, new QueryCachePropertiesEntity());
+
+			if (obj.has("mode")) {
+				entity.setMode(obj.getAsJsonPrimitive("mode").getAsString());
+			}
+
+			if (obj.has("maxResults")) {
+				entity.setMaxResults(obj.getAsJsonPrimitive("maxResults").getAsLong());
+			}
+
+			return entity;
+		}
+
+	}
+
 	private static JsonObject getFirstResultAsJsonObject(JsonObject obj) {
 		if (obj.has("result")) {
 			if (obj.get("result").isJsonArray()) {

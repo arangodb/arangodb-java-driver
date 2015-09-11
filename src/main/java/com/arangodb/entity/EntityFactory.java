@@ -50,8 +50,7 @@ public class EntityFactory {
 	private static Gson gsonNull;
 
 	public static GsonBuilder getGsonBuilder() {
-		return new GsonBuilder()
-				.addSerializationExclusionStrategy(new ExcludeExclusionStrategy(true))
+		return new GsonBuilder().addSerializationExclusionStrategy(new ExcludeExclusionStrategy(true))
 				.addDeserializationExclusionStrategy(new ExcludeExclusionStrategy(false))
 				.setFieldNamingStrategy(new ArangoFieldNamingStrategy())
 				.registerTypeAdapter(CollectionStatus.class, new CollectionStatusTypeAdapter())
@@ -114,7 +113,9 @@ public class EntityFactory {
 				.registerTypeAdapter(VertexEntity.class, new EntityDeserializers.VertexEntityDeserializer())
 				.registerTypeAdapter(EdgeEntity.class, new EntityDeserializers.EdgeEntityDeserializer())
 				.registerTypeAdapter(TraversalEntity.class, new EntityDeserializers.TraversalEntityDeserializer())
-				.registerTypeAdapter(ShortestPathEntity.class, new EntityDeserializers.ShortestPathEntityDeserializer());
+				.registerTypeAdapter(ShortestPathEntity.class, new EntityDeserializers.ShortestPathEntityDeserializer())
+				.registerTypeAdapter(QueryCachePropertiesEntity.class,
+					new EntityDeserializers.QueryCachePropertiesEntityDeserializer());
 	}
 
 	static {

@@ -32,7 +32,9 @@ public class ImplFactory {
 		return new InternalCursorDriverImpl(configure, httpManager);
 	}
 
-	public static InternalCollectionDriverImpl createCollectionDriver(ArangoConfigure configure, HttpManager httpManager) {
+	public static InternalCollectionDriverImpl createCollectionDriver(
+		ArangoConfigure configure,
+		HttpManager httpManager) {
 		return new InternalCollectionDriverImpl(configure, httpManager);
 	}
 
@@ -44,7 +46,9 @@ public class ImplFactory {
 		return new InternalJobsDriverImpl(configure, httpManager);
 	}
 
-	public static InternalTransactionDriver createTransactionDriver(ArangoConfigure configure, HttpManager httpManager) {
+	public static InternalTransactionDriver createTransactionDriver(
+		ArangoConfigure configure,
+		HttpManager httpManager) {
 		return new InternalTransactionDriverImpl(configure, httpManager);
 	}
 
@@ -113,8 +117,16 @@ public class ImplFactory {
 		return new InternalEdgeDriverImpl(configure, cursorDriver, httpManager);
 	}
 
-	public static InternalTraversalDriverImpl createTraversalDriver(ArangoConfigure configure, HttpManager httpManager) {
+	public static InternalTraversalDriverImpl createTraversalDriver(
+		ArangoConfigure configure,
+		HttpManager httpManager) {
 		return new InternalTraversalDriverImpl(configure, httpManager);
+	}
+
+	public static InternalQueryCacheDriverImpl createQueryCacheDriver(
+		ArangoConfigure configure,
+		HttpManager httpManager) {
+		return new InternalQueryCacheDriverImpl(configure, httpManager);
 	}
 
 }

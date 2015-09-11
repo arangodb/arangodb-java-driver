@@ -51,6 +51,7 @@ import com.arangodb.entity.IndexesEntity;
 import com.arangodb.entity.JobsEntity;
 import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.Policy;
+import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.ReplicationApplierConfigEntity;
 import com.arangodb.entity.ReplicationApplierStateEntity;
 import com.arangodb.entity.ReplicationInventoryEntity;
@@ -121,6 +122,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	private InternalEdgeDriver edgeDriver;
 	private InternalTransactionDriver transactionDriver;
 	private InternalTraversalDriver traversalDriver;
+	private InternalQueryCacheDriver queryCacheDriver;
 
 	private String database;
 
@@ -176,6 +178,7 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
 			this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
 			this.traversalDriver = ImplFactory.createTraversalDriver(configure, httpManager);
+			this.queryCacheDriver = ImplFactory.createQueryCacheDriver(configure, httpManager);
 		} else {
 			this.transactionDriver = (InternalTransactionDriver) Proxy.newProxyInstance(
 				InternalTransactionDriver.class.getClassLoader(), new Class<?>[] { InternalTransactionDriver.class },
@@ -222,6 +225,9 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.traversalDriver = (InternalTraversalDriver) Proxy.newProxyInstance(
 				InternalTraversalDriver.class.getClassLoader(), new Class<?>[] { InternalTraversalDriver.class },
 				new InvocationHandlerImpl(this.traversalDriver));
+			this.queryCacheDriver = (InternalQueryCacheDriver) Proxy.newProxyInstance(
+				InternalQueryCacheDriver.class.getClassLoader(), new Class<?>[] { InternalQueryCacheDriver.class },
+				new InvocationHandlerImpl(this.queryCacheDriver));
 		}
 	}
 
@@ -5483,5 +5489,37 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<E> edgeClazz) throws ArangoException {
 
 		return this.traversalDriver.getTraversal(getDefaultDatabase(), traversalQueryOptions, vertexClazz, edgeClazz);
+	}
+
+	/**
+	 * Clears the AQL query cache (since ArangoDB 2.7)
+	 *
+	 * @return DefaultEntity
+	 * @throws ArangoException
+	 */
+	public DefaultEntity deleteQueryCache() throws ArangoException {
+		return queryCacheDriver.deleteQueryCache();
+	}
+
+	/**
+	 * Returns the global configuration for the AQL query cache (since ArangoDB
+	 * 2.7)
+	 *
+	 * @return QueryCachePropertiesEntity
+	 * @throws ArangoException
+	 */
+	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoException {
+		return queryCacheDriver.getQueryCacheProperties();
+	}
+
+	/**
+	 * Changes the configuration for the AQL query cache (since ArangoDB 2.7)
+	 *
+	 * @return QueryCachePropertiesEntity
+	 * @throws ArangoException
+	 */
+	public QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties)
+			throws ArangoException {
+		return queryCacheDriver.setQueryCacheProperties(properties);
 	}
 }
