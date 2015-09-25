@@ -69,7 +69,7 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 	 * @return a ShortestPathEntity object
 	 * @throws ArangoException
 	 */
-	public <V, E> ShortestPathEntity<V, E> getShortesPath(
+	public <V, E> ShortestPathEntity<V, E> getShortestPath(
 		String database,
 		String graphName,
 		Object startVertexExample,

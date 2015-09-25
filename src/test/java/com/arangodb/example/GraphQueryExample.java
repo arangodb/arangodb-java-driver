@@ -101,13 +101,13 @@ public class GraphQueryExample {
 			}
 
 			// path A -> F
-			ShortestPathEntity<Person, Knows> shortestPath = driver.graphGetShortesPath(GRAPH_NAME, new Person("A"),
+			ShortestPathEntity<Person, Knows> shortestPath = driver.graphGetShortestPath(GRAPH_NAME, new Person("A"),
 				new Person("F"), new ShortestPathOptions().setDirection(Direction.OUTBOUND), Person.class, Knows.class);
 
 			printShortestPath(shortestPath);
 
 			// path F -> A (empty result)
-			shortestPath = driver.graphGetShortesPath(GRAPH_NAME, new Person("F"), new Person("A"),
+			shortestPath = driver.graphGetShortestPath(GRAPH_NAME, new Person("F"), new Person("A"),
 				new ShortestPathOptions().setDirection(Direction.OUTBOUND), Person.class, Knows.class);
 
 			printShortestPath(shortestPath);

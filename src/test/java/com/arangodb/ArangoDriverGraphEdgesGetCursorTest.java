@@ -308,7 +308,7 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 	}
 
 	@Test
-	public void shortesPathTest() throws ArangoException {
+	public void shortestPathTest() throws ArangoException {
 
 		TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
 		TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
@@ -323,7 +323,7 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		shortestPathOptions.setDirection(Direction.OUTBOUND);
 
 		//
-		ShortestPathEntity<TestComplexEntity01, TestComplexEntity02> entity = driver.graphGetShortesPath(GRAPH_NAME,
+		ShortestPathEntity<TestComplexEntity01, TestComplexEntity02> entity = driver.graphGetShortestPath(GRAPH_NAME,
 			vertex1.getDocumentHandle(), vertex2.getDocumentHandle(), shortestPathOptions, TestComplexEntity01.class,
 			TestComplexEntity02.class);
 
