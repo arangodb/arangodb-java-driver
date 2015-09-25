@@ -430,4 +430,6 @@ see 2.4.4
 	* createEdge takes graphName but needs database name
 * ArangoDB 2.6 support
 
+## since 2.6.8
+* fixed GRAPH_EDGES() 2.6-incompatibility
  
