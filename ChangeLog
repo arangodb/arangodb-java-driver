@@ -1,3 +1,82 @@
+v2.6.9 (2015-??-??)
+---------------------------
+* add support API: /_api/query-cache/properties (AQL query tracking properties: setQueryTrackingProperties(), getQueryTrackingProperties())
+* add support API: /_api/query-cache (delete AQL query cache: deleteQueryCache())
+* add support API: /_api/query/current (currently running AQL queries: getCurrentlyRunningQueries())
+* add support API: /_api/query/slow (slow AQL queries: getSlowQueries(), deleteSlowQueries())
+* add support API: /_api/query (kill AQL queries: killQuery())
+
+v2.6.8 (2015-09-25)
+---------------------------
+* fixed GRAPH_EDGES() 2.6-incompatibility
+ 
+v2.5.6 (2015-07-04)
+---------------------------
+* fixed issue #19
+	* createEdge takes graphName but needs database name
+* ArangoDB 2.6 support
+
+v2.5.5 (2015-05-23)
+---------------------------
+* updated driver.getTraversal(...);
+	* removed VisitedEntity (Traversal) 
+    * added TraversalQueryOptions to avoid too many parameters
+* added an examples for Transaction API 
+	(see src/test/java/com/arangodb/example/TransactionExample.java)
+* fixed issue #17
+	* Changed TransactionEntity.ReadWriteCollections to a static class
+
+v2.5.4 (2015-05-03)
+---------------------------
+* fixed issue #12
+    * added auto reconnection when connection breaks
+    * added fallback server endpoints
+* added new cursor implementation for AQL queries
+    * DocumentCursor<T> executeDocumentQuery(...)
+    * VertexCursor<T> executeVertexQuery(...)
+    * EdgeCursor<T> executeEdgeQuery(...)
+* added new cursor implementation for simple queries
+    * DocumentCursor<T> executeSimpleAllDocuments(...)
+    * DocumentCursor<T> executeSimpleByExampleDocuments(...)
+    * DocumentCursor<T> executeSimpleRangeWithDocuments(...)
+    * DocumentCursor<T> executeSimpleFulltextWithDocuments(...)
+* added some examples for AQL queries 
+	(see src/test/java/com/arangodb/example)
+
+v2.5.3 (2015-03-29)
+---------------------------
+* fixed issue #9
+	* added method to driver.getTraversal(...);
+
+v2.5.0
+---------------------------
+Added support for sparse indexes
+
+v2.4.4
+---------------------------
+* fixed issue #5
+  * added method to driver.createGraph(GraphEntity g); 
+* fixed issue #6
+* fixed issue #7 
+
+v2.4.3
+---------------------------
+* Fixed a graph bug: when retrieving a graph via the driver, "from" and "to" were emtpy. This is fixed now. 
+* GraphEntity has been changed, so that edge definitions are stored in an EdgeDefinitionsEntity. 
+* Some additional methods in GraphEntity:
+  * public EdgeDefinitionsEntity getEdgeDefinitionsEntity()
+  * public void setEdgeDefinitionsEntity(EdgeDefinitionsEntity edgeDefinitionsEntity)
+* Some additional methods in EdgeDefinitionsEntity:
+  * public int getSize()
+  * public EdgeDefinitionEntity getEdgeDefinition(String collectionName)
+
+v2.4.2
+---------------------------
+Fixed issue#2
+
+v2.4.1
+---------------------------
+httpclient version 4.3.6
 
 v1.4.1(2014-02-04)
 ---------------------------

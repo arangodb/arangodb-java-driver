@@ -7,11 +7,11 @@
 
 This library is a Java driver for ArangoDB.
 
-Supported version: ArangoDB-2.4.x, ArangoDB 2.5.x and ArangoDB 2.6.x
+Supported version: ArangoDB 2.6.x and ArangoDB 2.7.x
 
 # Required
 
-* [ArangoDB](https://github.com/arangodb/arangodb) version 2.4.x, 2.5.x or 2.6.x
+* [ArangoDB](https://github.com/arangodb/arangodb) version 2.6.x or 2.7.x
 * Java 1.6 later
 
 # Basics
@@ -366,70 +366,4 @@ Now an edge can be created to set a relation between vertices
       null);
 ``` 
 
-# What's new in 2.4 / 2.5
-
-## since 2.4.1
-httpclient version 4.3.6
-
-## since 2.4.2
-Fixed issue#2
-
-## since 2.4.3
-* Fixed a graph bug: when retrieving a graph via the driver, "from" and "to" were emtpy. This is fixed now. 
-* GraphEntity has been changed, so that edge definitions are stored in an EdgeDefinitionsEntity. 
-* Some additional methods in GraphEntity:
-  * public EdgeDefinitionsEntity getEdgeDefinitionsEntity()
-  * public void setEdgeDefinitionsEntity(EdgeDefinitionsEntity edgeDefinitionsEntity)
-* Some additional methods in EdgeDefinitionsEntity:
-  * public int getSize()
-  * public EdgeDefinitionEntity getEdgeDefinition(String collectionName)
-
-## since 2.4.4
-* fixed issue #5
-  * added method to driver.createGraph(GraphEntity g); 
-* fixed issue #6
-* fixed issue #7 
-
-## since 2.5.0
-Added support for sparse indexes
-
-## since 2.5.1
-see 2.4.4
-
-## since 2.5.3
-* fixed issue #9
-	* added method to driver.getTraversal(...);
-	
-## since 2.5.4
-* fixed issue #12
-    * added auto reconnection when connection breaks
-    * added fallback server endpoints
-* added new cursor implementation for AQL queries
-    * DocumentCursor<T> executeDocumentQuery(...)
-    * VertexCursor<T> executeVertexQuery(...)
-    * EdgeCursor<T> executeEdgeQuery(...)
-* added new cursor implementation for simple queries
-    * DocumentCursor<T> executeSimpleAllDocuments(...)
-    * DocumentCursor<T> executeSimpleByExampleDocuments(...)
-    * DocumentCursor<T> executeSimpleRangeWithDocuments(...)
-    * DocumentCursor<T> executeSimpleFulltextWithDocuments(...)
-* added some examples for AQL queries 
-	(see src/test/java/com/arangodb/example)
-
-## since 2.5.5
-* updated driver.getTraversal(...);
-	* removed VisitedEntity (Traversal) 
-    * added TraversalQueryOptions to avoid too many parameters
-* added an examples for Transaction API 
-	(see src/test/java/com/arangodb/example/TransactionExample.java)
-* fixed issue #17
-	* Changed TransactionEntity.ReadWriteCollections to a static class
-
-## since 2.5.6
-* fixed issue #19
-	* createEdge takes graphName but needs database name
-* ArangoDB 2.6 support
-
-## since 2.6.8
-* fixed GRAPH_EDGES() 2.6-incompatibility
- 
+[ChangeLog](https://github.com/arangodb/arangodb-java-driver/blob/master/ChangeLog)
