@@ -28,6 +28,8 @@ import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EntityFactory;
+import com.arangodb.entity.QueriesResultEntity;
+import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
@@ -150,8 +152,8 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 
 		String query = "for i in graph_shortest_path(@graphName, @startVertexExample, @endVertexExample, @options) return i";
 
-		Map<String, Object> options = shortestPathOptions == null ? new MapBuilder().get() : shortestPathOptions
-				.toMap();
+		Map<String, Object> options = shortestPathOptions == null ? new MapBuilder().get()
+				: shortestPathOptions.toMap();
 
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
 				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
@@ -212,6 +214,52 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
 		return rs;
 
+	}
+
+	@Override
+	public QueryTrackingPropertiesEntity getQueryTrackingProperties(String database) throws ArangoException {
+
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/query/properties"), null, null);
+
+		return createEntity(res, QueryTrackingPropertiesEntity.class);
+	}
+
+	@Override
+	public QueryTrackingPropertiesEntity setQueryTrackingProperties(
+		String database,
+		QueryTrackingPropertiesEntity properties) throws ArangoException {
+		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/query/properties"), null,
+			EntityFactory.toJsonString(properties));
+
+		return createEntity(res, QueryTrackingPropertiesEntity.class);
+	}
+
+	@Override
+	public QueriesResultEntity getCurrentlyRunningQueries(String database) throws ArangoException {
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/query/current"), null, null);
+
+		return createEntity(res, QueriesResultEntity.class);
+	}
+
+	@Override
+	public QueriesResultEntity getSlowQueries(String database) throws ArangoException {
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/query/slow"), null, null);
+
+		return createEntity(res, QueriesResultEntity.class);
+	}
+
+	@Override
+	public DefaultEntity deleteSlowQueries(String database) throws ArangoException {
+		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/query/slow"), null, null);
+
+		return createEntity(res, DefaultEntity.class);
+	}
+
+	@Override
+	public DefaultEntity killQuery(String database, String id) throws ArangoException {
+		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/query", id), null, null);
+
+		return createEntity(res, DefaultEntity.class);
 	}
 
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.QueriesResultEntity;
+import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.impl.BaseDriverInterface;
 import com.arangodb.util.AqlQueryOptions;
@@ -107,4 +109,17 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 		Class<T> clazz,
 		Boolean calcCount,
 		Integer batchSize) throws ArangoException;
+
+	QueryTrackingPropertiesEntity getQueryTrackingProperties(String database) throws ArangoException;
+
+	QueryTrackingPropertiesEntity setQueryTrackingProperties(String database, QueryTrackingPropertiesEntity properties)
+			throws ArangoException;
+
+	QueriesResultEntity getCurrentlyRunningQueries(String database) throws ArangoException;
+
+	QueriesResultEntity getSlowQueries(String database) throws ArangoException;
+
+	DefaultEntity deleteSlowQueries(String database) throws ArangoException;
+
+	DefaultEntity killQuery(String database, String id) throws ArangoException;
 }

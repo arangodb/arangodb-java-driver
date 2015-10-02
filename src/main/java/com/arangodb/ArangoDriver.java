@@ -51,7 +51,9 @@ import com.arangodb.entity.IndexesEntity;
 import com.arangodb.entity.JobsEntity;
 import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.Policy;
+import com.arangodb.entity.QueriesResultEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.ReplicationApplierConfigEntity;
 import com.arangodb.entity.ReplicationApplierStateEntity;
 import com.arangodb.entity.ReplicationInventoryEntity;
@@ -5522,4 +5524,70 @@ public class ArangoDriver extends BaseArangoDriver {
 			throws ArangoException {
 		return queryCacheDriver.setQueryCacheProperties(properties);
 	}
+
+	/**
+	 * Returns the configuration for the AQL query tracking
+	 * 
+	 * @return the configuration
+	 * @throws ArangoException
+	 */
+	public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoException {
+		return this.cursorDriver.getQueryTrackingProperties(getDefaultDatabase());
+	}
+
+	/**
+	 * Changes the configuration for the AQL query tracking
+	 * 
+	 * @param properties
+	 *            the configuration
+	 * @return the configuration
+	 * @throws ArangoException
+	 */
+	public QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties)
+			throws ArangoException {
+		return this.cursorDriver.setQueryTrackingProperties(getDefaultDatabase(), properties);
+	}
+
+	/**
+	 * Returns a list of currently running AQL queries
+	 * 
+	 * @return a list of currently running AQL queries
+	 * @throws ArangoException
+	 */
+	public QueriesResultEntity getCurrentlyRunningQueries() throws ArangoException {
+		return this.cursorDriver.getCurrentlyRunningQueries(getDefaultDatabase());
+	}
+
+	/**
+	 * Returns a list of slow running AQL queries
+	 * 
+	 * @return a list of slow running AQL queries
+	 * @throws ArangoException
+	 */
+	public QueriesResultEntity getSlowQueries() throws ArangoException {
+		return this.cursorDriver.getSlowQueries(getDefaultDatabase());
+	}
+
+	/**
+	 * Clears the list of slow AQL queries
+	 * 
+	 * @return
+	 * @throws ArangoException
+	 */
+	public DefaultEntity deleteSlowQueries() throws ArangoException {
+		return this.cursorDriver.deleteSlowQueries(getDefaultDatabase());
+	}
+
+	/**
+	 * Kills an AQL query
+	 * 
+	 * @param id
+	 *            the identifier of a query
+	 * @return
+	 * @throws ArangoException
+	 */
+	public DefaultEntity killQuery(String id) throws ArangoException {
+		return this.cursorDriver.killQuery(getDefaultDatabase(), id);
+	}
+
 }
