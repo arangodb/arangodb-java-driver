@@ -155,6 +155,7 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 	@Test
 	public void test_withCache() throws ArangoException {
 		if (isMinimumVersion(VERSION_2_7)) {
+			// start caching
 			QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
 			properties.setMode("on");
 			driver.setQueryCacheProperties(properties);
@@ -162,14 +163,16 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 			String query = "FOR t IN unit_test_query_test FILTER t.age >= @age SORT t.age RETURN t";
 			Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
 
+			// set caching to true for the query
 			AqlQueryOptions aqlQueryOptions = getAqlQueryOptions(true, 5, null);
 			aqlQueryOptions.setCache(true);
 
+			// query
 			DocumentCursor<TestComplexEntity01> rs = driver.executeDocumentQuery(query, bindVars, aqlQueryOptions,
 				TestComplexEntity01.class);
 
+			// query the cached value
 			rs = driver.executeDocumentQuery(query, bindVars, aqlQueryOptions, TestComplexEntity01.class);
-
 			assertThat(rs.isCached(), is(true));
 		}
 	}
