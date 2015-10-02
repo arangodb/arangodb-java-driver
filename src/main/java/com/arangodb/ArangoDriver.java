@@ -5073,7 +5073,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public CursorEntity<PlainEdgeEntity> graphGetEdges(String graphName) throws ArangoException {
 
 		validateCollectionName(graphName);
-		String query = "for i in graph_edges(@graphName, null) return i";
+		String query = "for i in graph_edges(@graphName, null, { includeData: true }) return i";
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
 
 		CursorEntity<PlainEdgeEntity> result = this.executeQuery(query, bindVars, PlainEdgeEntity.class, true, 20);
@@ -5240,7 +5240,7 @@ public class ArangoDriver extends BaseArangoDriver {
 			throws ArangoException {
 
 		validateCollectionName(graphName);
-		String query = "for i in graph_edges(@graphName, @vertexDocumentHandle) return i";
+		String query = "for i in graph_edges(@graphName, @vertexDocumentHandle, { includeData: true }) return i";
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
 				.put("vertexDocumentHandle", vertexDocumentHandle).get();
 
@@ -5282,7 +5282,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> CursorEntity<T> graphGetEdgesByExampleObject(String graphName, Class<T> clazz, Object vertexExample)
 			throws ArangoException {
 		validateCollectionName(graphName);
-		String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+		String query = "for i in graph_edges(@graphName, @vertexExample, { includeData: true }) return i";
 
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
 				.get();
@@ -5312,7 +5312,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<T> clazz,
 		Map<String, Object> vertexExample) throws ArangoException {
 		validateCollectionName(graphName);
-		String query = "for i in graph_edges(@graphName, @vertexExample) return i";
+		String query = "for i in graph_edges(@graphName, @vertexExample, { includeData: true }) return i";
 
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
 				.get();
@@ -5322,7 +5322,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		return result;
 	}
 
-	public <V, E> ShortestPathEntity<V, E> graphGetShortesPath(
+	public <V, E> ShortestPathEntity<V, E> graphGetShortestPath(
 		String graphName,
 		Object startVertexExample,
 		Object endVertexExample,
@@ -5334,7 +5334,7 @@ public class ArangoDriver extends BaseArangoDriver {
 			shortestPathOptions = new ShortestPathOptions();
 		}
 
-		return cursorDriver.getShortesPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
+		return cursorDriver.getShortestPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
 			shortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass);
 	}
 

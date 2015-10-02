@@ -14,7 +14,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 
 	public static final String KEY = "_key";
 
-	public static final String ID = "_ID";
+	public static final String ID = "_id";
 
 	public static final String FROM = "_from";
 

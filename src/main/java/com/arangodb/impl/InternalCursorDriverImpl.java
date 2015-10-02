@@ -138,7 +138,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <V, E> ShortestPathEntity<V, E> getShortesPath(
+	public <V, E> ShortestPathEntity<V, E> getShortestPath(
 		String database,
 		String graphName,
 		Object startVertexExample,
