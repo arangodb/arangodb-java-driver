@@ -115,7 +115,12 @@ public class EntityFactory {
 				.registerTypeAdapter(TraversalEntity.class, new EntityDeserializers.TraversalEntityDeserializer())
 				.registerTypeAdapter(ShortestPathEntity.class, new EntityDeserializers.ShortestPathEntityDeserializer())
 				.registerTypeAdapter(QueryCachePropertiesEntity.class,
-					new EntityDeserializers.QueryCachePropertiesEntityDeserializer());
+					new EntityDeserializers.QueryCachePropertiesEntityDeserializer())
+				.registerTypeAdapter(QueriesResultEntity.class,
+					new EntityDeserializers.QueriesResultEntityDeserializer())
+				.registerTypeAdapter(QueryTrackingPropertiesEntity.class,
+					new EntityDeserializers.QueryTrackingPropertiesEntityDeserializer())
+				.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	}
 
 	static {

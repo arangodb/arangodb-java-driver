@@ -18,6 +18,8 @@ package com.arangodb.entity;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +59,8 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 public class EntityDeserializers {
+
+	private static final String ALT_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	private static class ClassHolder {
 		private Class<?>[] clazz;
@@ -2024,6 +2028,93 @@ public class EntityDeserializers {
 
 			if (obj.has("maxResults")) {
 				entity.setMaxResults(obj.getAsJsonPrimitive("maxResults").getAsLong());
+			}
+
+			return entity;
+		}
+
+	}
+
+	public static class QueriesResultEntityDeserializer implements JsonDeserializer<QueriesResultEntity> {
+
+		@Override
+		public QueriesResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			JsonArray array = json.getAsJsonArray();
+			Iterator<JsonElement> iterator = array.iterator();
+			List<QueryEntity> queries = new ArrayList<QueryEntity>();
+			while (iterator.hasNext()) {
+				JsonElement element = iterator.next();
+				JsonObject obj = element.getAsJsonObject();
+				QueryEntity entity = new QueryEntity();
+
+				if (obj.has("id")) {
+					entity.setId(obj.getAsJsonPrimitive("id").getAsString());
+				}
+
+				if (obj.has("query")) {
+					entity.setQuery(obj.getAsJsonPrimitive("query").getAsString());
+				}
+
+				if (obj.has("started")) {
+					String str = obj.getAsJsonPrimitive("started").getAsString();
+
+					SimpleDateFormat sdf = new SimpleDateFormat(ALT_DATE_TIME_FORMAT);
+					try {
+						entity.setStarted(sdf.parse(str));
+					} catch (ParseException e) {
+					}
+				}
+
+				if (obj.has("runTime")) {
+					entity.setRunTime(obj.getAsJsonPrimitive("runTime").getAsDouble());
+				}
+
+			}
+
+			return new QueriesResultEntity(queries);
+		}
+	}
+
+	public static class QueryTrackingPropertiesEntityDeserializer
+			implements JsonDeserializer<QueryTrackingPropertiesEntity> {
+
+		@Override
+		public QueryTrackingPropertiesEntity deserialize(
+			JsonElement json,
+			Type typeOfT,
+			JsonDeserializationContext context) throws JsonParseException {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			JsonObject obj = json.getAsJsonObject();
+			QueryTrackingPropertiesEntity entity = deserializeBaseParameter(obj, new QueryTrackingPropertiesEntity());
+
+			if (obj.has("enabled")) {
+				entity.setEnabled(obj.getAsJsonPrimitive("enabled").getAsBoolean());
+			}
+
+			if (obj.has("trackSlowQueries")) {
+				entity.setTrackSlowQueries(obj.getAsJsonPrimitive("trackSlowQueries").getAsBoolean());
+			}
+
+			if (obj.has("maxSlowQueries")) {
+				entity.setMaxSlowQueries(obj.getAsJsonPrimitive("maxSlowQueries").getAsLong());
+			}
+
+			if (obj.has("slowQueryThreshold")) {
+				entity.setSlowQueryThreshold(obj.getAsJsonPrimitive("slowQueryThreshold").getAsLong());
+			}
+
+			if (obj.has("maxQueryStringLength")) {
+				entity.setMaxQueryStringLength(obj.getAsJsonPrimitive("maxQueryStringLength").getAsLong());
 			}
 
 			return entity;
