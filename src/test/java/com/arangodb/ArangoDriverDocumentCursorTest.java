@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.util.AqlQueryOptions;
@@ -36,6 +38,8 @@ import com.arangodb.util.MapBuilder;
  *
  */
 public class ArangoDriverDocumentCursorTest extends BaseTest {
+
+	private static Logger logger = LoggerFactory.getLogger(ArangoDriverDocumentCursorTest.class);
 
 	public ArangoDriverDocumentCursorTest(ArangoConfigure configure, ArangoDriver driver) {
 		super(configure, driver);
@@ -69,7 +73,8 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 	public void test1_WithIterator() throws ArangoException {
 
 		// String query =
-		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@ order by t.age";
+		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@ order by
+		// t.age";
 		String query = "FOR t IN unit_test_query_test FILTER t.age >= @age SORT t.age RETURN t";
 		Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
 
@@ -322,7 +327,7 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 			assertThat(get1, is(user));
 
 			for (Object obj : list) {
-				System.out.println("value " + obj);
+				logger.debug("value " + obj);
 			}
 			count++;
 		}

@@ -139,7 +139,7 @@ public class ArangoConfigure {
 			in = getClass().getResourceAsStream(propertyPath);
 			if (in != null) {
 
-				logger.info("load property: file={}", propertyPath);
+				logger.debug("load property: file={}", propertyPath);
 
 				Properties prop = new Properties();
 				prop.load(in);

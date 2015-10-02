@@ -90,8 +90,6 @@ public class ArangoDriverReplicationTestScenario1 {
 
 		// replication: master[db=repl_scenario_test1] -> slave[db=_system]
 
-		System.out.println("----------------------------------------");
-
 		// create database in master
 		try {
 			masterDriver.deleteDatabase(database);
@@ -134,12 +132,11 @@ public class ArangoDriverReplicationTestScenario1 {
 		// [Slave] sync
 		ReplicationSyncEntity syncResult = slaveDriver.syncReplication(masterConfigure.getEndpoint(), database, "root",
 			null, null);
-		System.out.println(syncResult.getLastLogTick());
 
 		Thread.sleep(3000L);
 
-		slaveDriver.setReplicationApplierConfig(masterConfigure.getEndpoint(), database, "root", null, null, null,
-			null, null, true, true);
+		slaveDriver.setReplicationApplierConfig(masterConfigure.getEndpoint(), database, "root", null, null, null, null,
+			null, true, true);
 
 		// [Slave] turn on replication applier
 		slaveDriver.startReplicationApplier(syncResult.getLastLogTick());
@@ -262,8 +259,6 @@ public class ArangoDriverReplicationTestScenario1 {
 		assertThat(state2.getClients().get(0).getServerId(), is(slaveDriver.getReplicationServerId()));
 		assertThat(state2.getClients().get(0).getLastServedTick(), is(0L));
 		assertThat(state2.getClients().get(0).getTime(), is(notNullValue()));
-
-		System.out.println(state2.getClients().get(0).getTime());
 
 		// [Slave] applier state
 		ReplicationApplierStateEntity state3 = slaveDriver.getReplicationApplierState();

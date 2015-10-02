@@ -31,6 +31,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentResultEntity;
@@ -48,6 +50,8 @@ import com.arangodb.util.TestUtils;
 public class ArangoDriverSimpleTest extends BaseTest {
 
 	// TODO: 404 test each example.
+
+	private static Logger logger = LoggerFactory.getLogger(ArangoDriverSimpleTest.class);
 
 	public ArangoDriverSimpleTest(ArangoConfigure configure, ArangoDriver driver) {
 		super(configure, driver);
@@ -122,8 +126,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_simple_all_with_doc_deprecated() throws ArangoException {
 
-		CursorResultSet<DocumentEntity<TestComplexEntity01>> rs = driver.executeSimpleAllWithDocumentResultSet(
-			COLLECTION_NAME, 0, 0, TestComplexEntity01.class);
+		CursorResultSet<DocumentEntity<TestComplexEntity01>> rs = driver
+				.executeSimpleAllWithDocumentResultSet(COLLECTION_NAME, 0, 0, TestComplexEntity01.class);
 		int count = 0;
 		int ageCount = 0;
 		while (rs.hasNext()) {
@@ -246,7 +250,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 		// no suitable index known
 		try {
-			driver.executeSimpleRangeWithDocuments(COLLECTION_NAME, "age", 5, 30, null, 0, 0, TestComplexEntity01.class);
+			driver.executeSimpleRangeWithDocuments(COLLECTION_NAME, "age", 5, 30, null, 0, 0,
+				TestComplexEntity01.class);
 			fail("request should fail");
 		} catch (ArangoException e) {
 			assertThat(e.getErrorNumber(), is(1209));
@@ -260,7 +265,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 		// no suitable index known
 		try {
-			driver.executeSimpleRangeWithResultSet(COLLECTION_NAME, "age", 5, 30, null, 0, 0, TestComplexEntity01.class);
+			driver.executeSimpleRangeWithResultSet(COLLECTION_NAME, "age", 5, 30, null, 0, 0,
+				TestComplexEntity01.class);
 			fail("request should fail");
 		} catch (ArangoException e) {
 			assertThat(e.getErrorNumber(), is(1209));
@@ -276,8 +282,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		driver.createIndex(COLLECTION_NAME, IndexType.SKIPLIST, false, "age");
 
 		{
-			DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(
-				COLLECTION_NAME, "age", 5, 30, null, 0, 0, TestComplexEntity01.class);
+			DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(COLLECTION_NAME,
+				"age", 5, 30, null, 0, 0, TestComplexEntity01.class);
 			Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
 
 			int count = 0;
@@ -291,8 +297,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		}
 
 		{
-			DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(
-				COLLECTION_NAME, "age", 5, 30, true, 0, 0, TestComplexEntity01.class);
+			DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(COLLECTION_NAME,
+				"age", 5, 30, true, 0, 0, TestComplexEntity01.class);
 			Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
 
 			int count = 0;
@@ -430,8 +436,8 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(0));
 
 		// Get Replaced Document
-		DocumentCursor<Map> documentCursor = driver.executeSimpleByExampleDocuments(COLLECTION_NAME, new MapBuilder()
-				.put("abc", "xxx").get(), 0, 0, Map.class);
+		DocumentCursor<Map> documentCursor = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
+			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
 
 		List<DocumentEntity<Map>> list = documentCursor.asList();
 
@@ -628,7 +634,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 		// Load Station data
 		List<Station> stations = TestUtils.readStations();
-		System.out.println(stations);
+		logger.debug(stations.toString());
 
 	}
 

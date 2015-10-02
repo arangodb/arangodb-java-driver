@@ -106,9 +106,6 @@ public class ArangoDriverDocumentKeyTest {
 		assertThat(doc2.getEntity().get("s1"), is(nullValue())); // s1 is not
 																	// contains.
 		assertThat((String) doc2.getEntity().get("_key"), is("s1"));
-
-		System.out.println(doc2.getEntity());
-
 	}
 
 	@Test
