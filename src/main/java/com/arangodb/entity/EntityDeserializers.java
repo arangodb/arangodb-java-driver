@@ -560,6 +560,10 @@ public class EntityDeserializers {
 				entity.cursorId = obj.getAsJsonPrimitive("id").getAsLong();
 			}
 
+			if (obj.has("cached")) {
+				entity.cached = obj.getAsJsonPrimitive("cached").getAsBoolean();
+			}
+
 			if (obj.has("bindVars")) {
 				entity.bindVars = context.deserialize(obj.get("bindVars"), bindVarsType);
 			}

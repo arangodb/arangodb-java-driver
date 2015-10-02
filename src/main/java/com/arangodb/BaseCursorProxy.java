@@ -127,4 +127,17 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 		return baseCursor.getEntity().getCursorId();
 	}
 
+	/**
+	 * a boolean flag indicating whether the query result was served from the
+	 * query cache or not. If the query result is served from the query cache,
+	 * the extra return attribute will not contain any stats sub-attribute and
+	 * no profile sub-attribute. (since ArangoDB 2.7)
+	 * 
+	 * @return true, if the result is cached
+	 * 
+	 */
+	public boolean isCached() {
+		return baseCursor.getEntity().isCached();
+	}
+
 }

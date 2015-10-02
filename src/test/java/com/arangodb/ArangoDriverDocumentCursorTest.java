@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
 
@@ -149,6 +150,28 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 		}
 		assertThat(count, is(10));
 
+	}
+
+	@Test
+	public void test_withCache() throws ArangoException {
+		if (isMinimumVersion(VERSION_2_7)) {
+			QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
+			properties.setMode("on");
+			driver.setQueryCacheProperties(properties);
+
+			String query = "FOR t IN unit_test_query_test FILTER t.age >= @age SORT t.age RETURN t";
+			Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
+
+			AqlQueryOptions aqlQueryOptions = getAqlQueryOptions(true, 5, null);
+			aqlQueryOptions.setCache(true);
+
+			DocumentCursor<TestComplexEntity01> rs = driver.executeDocumentQuery(query, bindVars, aqlQueryOptions,
+				TestComplexEntity01.class);
+
+			rs = driver.executeDocumentQuery(query, bindVars, aqlQueryOptions, TestComplexEntity01.class);
+
+			assertThat(rs.isCached(), is(true));
+		}
 	}
 
 	@Test

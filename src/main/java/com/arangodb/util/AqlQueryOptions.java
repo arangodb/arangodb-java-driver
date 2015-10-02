@@ -7,6 +7,7 @@ public class AqlQueryOptions implements OptionsInterface {
 	private Boolean count;
 	private Integer batchSize;
 	private Boolean fullCount;
+	private Boolean cache;
 	private Integer ttl;
 
 	/**
@@ -124,6 +125,33 @@ public class AqlQueryOptions implements OptionsInterface {
 		return this;
 	}
 
+	/**
+	 * flag to determine whether the AQL query cache shall be used. If set to
+	 * false, then any query cache lookup will be skipped for the query. If set
+	 * to true, it will lead to the query cache being checked for the query if
+	 * the query cache mode is either on or demand. (since ArangoDB 2.7)
+	 * 
+	 * @return boolean flag
+	 */
+	public Boolean getCache() {
+		return fullCount;
+	}
+
+	/**
+	 * flag to determine whether the AQL query cache shall be used. If set to
+	 * false, then any query cache lookup will be skipped for the query. If set
+	 * to true, it will lead to the query cache being checked for the query if
+	 * the query cache mode is either on or demand. (since ArangoDB 2.7)
+	 * 
+	 * @param cache
+	 *            boolean flag
+	 * @return this
+	 */
+	public AqlQueryOptions setCache(Boolean cache) {
+		this.cache = cache;
+		return this;
+	}
+
 	@Override
 	public Map<String, Object> toMap() {
 		MapBuilder mp = new MapBuilder();
@@ -135,6 +163,9 @@ public class AqlQueryOptions implements OptionsInterface {
 		}
 		if (ttl != null) {
 			mp.put("ttl", ttl);
+		}
+		if (cache != null) {
+			mp.put("cache", cache);
 		}
 
 		MapBuilder optionsMp = new MapBuilder();

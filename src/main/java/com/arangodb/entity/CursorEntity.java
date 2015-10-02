@@ -53,6 +53,14 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 	long cursorId = -1;
 
 	/**
+	 * a boolean flag indicating whether the query result was served from the
+	 * query cache or not. If the query result is served from the query cache,
+	 * the extra return attribute will not contain any stats sub-attribute and
+	 * no profile sub-attribute. (since ArangoDB 2.7)
+	 */
+	boolean cached = false;
+
+	/**
 	 * A list of bind variables returned by the query
 	 */
 	List<String> bindVars;
@@ -186,6 +194,14 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 
 	public void setExtra(Map<String, Object> extra) {
 		this.extra = extra;
+	}
+
+	public boolean isCached() {
+		return cached;
+	}
+
+	public void setCached(boolean cached) {
+		this.cached = cached;
 	}
 
 }
