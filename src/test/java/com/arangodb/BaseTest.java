@@ -37,8 +37,11 @@ public abstract class BaseTest {
 
 	protected static final String VERSION_2_7 = "2.7";
 
-	protected static ArangoConfigure configure;
 	protected static final String DATABASE_NAME = "unitTestDatabase";
+
+	protected static ArangoConfigure configure;
+
+	protected ArangoDriver driver;
 
 	// Suite.classを使った場合、Parametersがテストクラスの数だけ最初に一気に連続で呼ばれる。
 	// そのため、単純にクラス変数にconfigureを保持すると、AfterClassの時に別のテストケースのものを終了してしまう。
@@ -81,8 +84,6 @@ public abstract class BaseTest {
 		result.add(new Object[] { configure, driverMDB });
 		return result;
 	}
-
-	protected ArangoDriver driver;
 
 	public BaseTest(ArangoConfigure configure, ArangoDriver driver) {
 		this.driver = driver;
