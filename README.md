@@ -366,4 +366,9 @@ Now an edge can be created to set a relation between vertices
       null);
 ``` 
 
-[ChangeLog](https://github.com/arangodb/arangodb-java-driver/blob/master/ChangeLog)
+# Learn more
+* [ArangoDB](https://www.arangodb.com/)
+* [ChangeLog](https://github.com/arangodb/arangodb-java-driver/blob/master/ChangeLog)
+* [Examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example)
+* [Tutorial](https://www.arangodb.com/tutorial-java/)
+
