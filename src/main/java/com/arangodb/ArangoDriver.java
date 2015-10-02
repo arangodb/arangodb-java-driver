@@ -5549,7 +5549,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Returns a list of currently running AQL queries
+	 * Returns a list of currently running AQL queries of the default database
 	 * 
 	 * @return a list of currently running AQL queries
 	 * @throws ArangoException
@@ -5559,7 +5559,19 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Returns a list of slow running AQL queries
+	 * Returns a list of currently running AQL queries of a database
+	 * 
+	 * @param database
+	 *            the database name or null
+	 * @return a list of currently running AQL queries
+	 * @throws ArangoException
+	 */
+	public QueriesResultEntity getCurrentlyRunningQueries(String database) throws ArangoException {
+		return this.cursorDriver.getCurrentlyRunningQueries(database);
+	}
+
+	/**
+	 * Returns a list of slow running AQL queries of the default database
 	 * 
 	 * @return a list of slow running AQL queries
 	 * @throws ArangoException
@@ -5569,13 +5581,37 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Clears the list of slow AQL queries
+	 * Returns a list of slow running AQL queries of a database
+	 * 
+	 * @param database
+	 *            the database name or null
+	 * @return a list of slow running AQL queries
+	 * @throws ArangoException
+	 */
+	public QueriesResultEntity getSlowQueries(String database) throws ArangoException {
+		return this.cursorDriver.getSlowQueries(database);
+	}
+
+	/**
+	 * Clears the list of slow AQL queries of the default database
 	 * 
 	 * @return
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteSlowQueries() throws ArangoException {
 		return this.cursorDriver.deleteSlowQueries(getDefaultDatabase());
+	}
+
+	/**
+	 * Clears the list of slow AQL queries of the default database
+	 * 
+	 * @param database
+	 *            the database name or null
+	 * @return
+	 * @throws ArangoException
+	 */
+	public DefaultEntity deleteSlowQueries(String database) throws ArangoException {
+		return this.cursorDriver.deleteSlowQueries(database);
 	}
 
 	/**
@@ -5588,6 +5624,20 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DefaultEntity killQuery(String id) throws ArangoException {
 		return this.cursorDriver.killQuery(getDefaultDatabase(), id);
+	}
+
+	/**
+	 * Kills an AQL query
+	 * 
+	 * @param id
+	 *            the identifier of a query
+	 * @param database
+	 *            the database name or null
+	 * @return
+	 * @throws ArangoException
+	 */
+	public DefaultEntity killQuery(String database, String id) throws ArangoException {
+		return this.cursorDriver.killQuery(database, id);
 	}
 
 }

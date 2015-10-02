@@ -108,10 +108,13 @@ import com.arangodb.util.StringJoinTest;
 
 		ArangoDriverTraversalTest.class,
 
+		ArangoDriverQueryTest.class,
+
 		// since ArangoDB 2.7
 		ArangoDriverQueryCacheTest.class
 
 })
+
 public class ArangoTestSuite {
 
 }

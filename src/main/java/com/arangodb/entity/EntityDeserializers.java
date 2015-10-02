@@ -2055,6 +2055,7 @@ public class EntityDeserializers {
 
 				if (obj.has("id")) {
 					entity.setId(obj.getAsJsonPrimitive("id").getAsString());
+					queries.add(entity);
 				}
 
 				if (obj.has("query")) {
