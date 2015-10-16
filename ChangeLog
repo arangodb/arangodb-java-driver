@@ -1,10 +1,15 @@
-v2.6.9 (2015-??-??)
+v2.6.9 (2015-10-16)
 ---------------------------
 * add support API: /_api/query-cache/properties (AQL query tracking properties: setQueryTrackingProperties(), getQueryTrackingProperties())
 * add support API: /_api/query-cache (delete AQL query cache: deleteQueryCache())
 * add support API: /_api/query/current (currently running AQL queries: getCurrentlyRunningQueries())
 * add support API: /_api/query/slow (slow AQL queries: getSlowQueries(), deleteSlowQueries())
 * add support API: /_api/query (kill AQL queries: killQuery())
+* added: boolean exists(long collectionId, long documentId)
+* added: boolean exists(String collectionName, long documentId) 
+* added: boolean exists(long collectionId, String documentKey) throws ArangoException {
+* added: boolean exists(String collectionName, String documentKey)
+* added: boolean exists(String documentHandle)
 
 v2.6.8 (2015-09-25)
 ---------------------------
