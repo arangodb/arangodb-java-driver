@@ -596,6 +596,16 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	}
 
 	@Test
+	public void test_check_document_doc_not_exists() throws ArangoException {
+
+		driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3), null, null);
+
+		boolean b = driver.exists(collectionName, 1);
+
+		assertThat(b, is(false));
+	}
+
+	@Test
 	public void test_delete() throws ArangoException {
 		DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
 			new TestComplexEntity02(1, 2, 3));

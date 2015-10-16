@@ -1735,6 +1735,97 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
+	 * The exists method determines whether a document exists given its
+	 * identifier. Instead of returning the found document or an error, this
+	 * method will return either true or false. It can thus be used for easy
+	 * existence checks.
+	 *
+	 * @param collectionId
+	 *            The collection id.
+	 * @param documentId
+	 *            The document id
+	 * @return true, if the document exists
+	 * @throws ArangoException
+	 */
+	public boolean exists(long collectionId, long documentId) throws ArangoException {
+		return exists(createDocumentHandle(collectionId, String.valueOf(documentId)));
+	}
+
+	/**
+	 * The exists method determines whether a document exists given its
+	 * identifier. Instead of returning the found document or an error, this
+	 * method will return either true or false. It can thus be used for easy
+	 * existence checks.
+	 *
+	 * @param collectionName
+	 *            The collection name.
+	 * @param documentId
+	 *            The document id
+	 * @return true, if the document exists
+	 * @throws ArangoException
+	 */
+	public boolean exists(String collectionName, long documentId) throws ArangoException {
+		return exists(createDocumentHandle(collectionName, String.valueOf(documentId)));
+	}
+
+	/**
+	 * The exists method determines whether a document exists given its
+	 * identifier. Instead of returning the found document or an error, this
+	 * method will return either true or false. It can thus be used for easy
+	 * existence checks.
+	 *
+	 * @param collectionId
+	 *            The collection id.
+	 * @param documentKey
+	 *            The document key
+	 * @return true, if the document exists
+	 * @throws ArangoException
+	 */
+	public boolean exists(long collectionId, String documentKey) throws ArangoException {
+		return exists(createDocumentHandle(collectionId, documentKey));
+	}
+
+	/**
+	 * The exists method determines whether a document exists given its
+	 * identifier. Instead of returning the found document or an error, this
+	 * method will return either true or false. It can thus be used for easy
+	 * existence checks.
+	 *
+	 * @param collectionName
+	 *            The collection name.
+	 * @param documentKey
+	 *            The document key
+	 * @return true, if the document exists
+	 * @throws ArangoException
+	 */
+	public boolean exists(String collectionName, String documentKey) throws ArangoException {
+		return exists(createDocumentHandle(collectionName, documentKey));
+	}
+
+	/**
+	 * The exists method determines whether a document exists given its
+	 * identifier. Instead of returning the found document or an error, this
+	 * method will return either true or false. It can thus be used for easy
+	 * existence checks.
+	 *
+	 * @param documentHandle
+	 *            The document handle
+	 * @return true, if the document exists
+	 * @throws ArangoException
+	 */
+	public boolean exists(String documentHandle) throws ArangoException {
+		try {
+			documentDriver.checkDocument(getDefaultDatabase(), documentHandle);
+		} catch (ArangoException e) {
+			if (e.getCode() == ErrorNums.ERROR_HTTP_NOT_FOUND) {
+				return false;
+			}
+			throw e;
+		}
+		return true;
+	}
+
+	/**
 	 * This method returns the current revision of a document.
 	 *
 	 * @param collectionId
