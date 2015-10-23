@@ -27,27 +27,36 @@ import java.util.Map;
  */
 public class CollectionsEntity extends BaseEntity {
 
-  /**
-   * The list of collections
-   */
-  List<CollectionEntity> collections;
+	/**
+	 * The list of collections
+	 */
+	List<CollectionEntity> collections;
 
-  /**
-   * A map containing the collection names as keys and the collections as values
-   */
-  Map<String, CollectionEntity> names;
-  
-  public List<CollectionEntity> getCollections() {
-    return collections;
-  }
-  public Map<String, CollectionEntity> getNames() {
-    return names;
-  }
-  public void setCollections(List<CollectionEntity> collections) {
-    this.collections = collections;
-  }
-  public void setNames(Map<String, CollectionEntity> names) {
-    this.names = names;
-  }
-  
+	/**
+	 * A map containing the collection names as keys and the collections as
+	 * values
+	 */
+	Map<String, CollectionEntity> names;
+
+	public List<CollectionEntity> getCollections() {
+		return collections;
+	}
+
+	public Map<String, CollectionEntity> getNames() {
+		return names;
+	}
+
+	public void setCollections(List<CollectionEntity> collections) {
+		this.collections = collections;
+	}
+
+	public void setNames(Map<String, CollectionEntity> names) {
+		this.names = names;
+	}
+
+	@Override
+	public String toString() {
+		return "CollectionsEntity [collections=" + collections + "]";
+	}
+
 }

@@ -159,4 +159,11 @@ public abstract class BaseEntity implements Serializable {
 	public void setRequestId(String requestId) {
 		this.requestId = requestId;
 	}
+
+	@Override
+	public String toString() {
+		return "BaseEntity [error=" + error + ", code=" + code + ", errorNumber=" + errorNumber + ", errorMessage="
+				+ errorMessage + ", statusCode=" + statusCode + ", etag=" + etag + ", requestId=" + requestId + "]";
+	}
+
 }

@@ -16,8 +16,6 @@
 
 package com.arangodb.entity;
 
-
-
 /**
  * The generic document entity
  *
@@ -26,59 +24,65 @@ package com.arangodb.entity;
  */
 public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 
-  /**
-   * the documents revision number
-   */
-  long documentRevision;
+	/**
+	 * the documents revision number
+	 */
+	long documentRevision;
 
-  /**
-   * the document handle
-   */
-  String documentHandle;
+	/**
+	 * the document handle
+	 */
+	String documentHandle;
 
-  /**
-   * the document key
-   */
-  String documentKey;
+	/**
+	 * the document key
+	 */
+	String documentKey;
 
-  /**
-   * The entity representation of the requested document.
-   */
-  T entity;
-  
-  public DocumentEntity() {
-  }
+	/**
+	 * The entity representation of the requested document.
+	 */
+	T entity;
 
-  public long getDocumentRevision() {
-    return documentRevision;
-  }
+	public DocumentEntity() {
+	}
 
-  public String getDocumentHandle() {
-    return documentHandle;
-  }
+	public long getDocumentRevision() {
+		return documentRevision;
+	}
 
-  public T getEntity() {
-    return entity;
-  }
+	public String getDocumentHandle() {
+		return documentHandle;
+	}
 
-  public void setDocumentRevision(long documentRevision) {
-    this.documentRevision = documentRevision;
-  }
+	public T getEntity() {
+		return entity;
+	}
 
-  public void setDocumentHandle(String documentHandle) {
-    this.documentHandle = documentHandle;
-  }
+	public void setDocumentRevision(long documentRevision) {
+		this.documentRevision = documentRevision;
+	}
 
-  public void setEntity(T entity) {
-    this.entity = entity;
-  }
+	public void setDocumentHandle(String documentHandle) {
+		this.documentHandle = documentHandle;
+	}
 
-  public String getDocumentKey() {
-    return documentKey;
-  }
+	public void setEntity(T entity) {
+		this.entity = entity;
+	}
 
-  public void setDocumentKey(String documentKey) {
-    this.documentKey = documentKey;
-  }
-  
+	public String getDocumentKey() {
+		return documentKey;
+	}
+
+	public void setDocumentKey(String documentKey) {
+		this.documentKey = documentKey;
+	}
+
+	@Override
+	public String toString() {
+		return "DocumentEntity [documentRevision=" + documentRevision + ", documentHandle=" + documentHandle
+				+ ", documentKey=" + documentKey + ", entity=" + entity + "]";
+	}
+
 }

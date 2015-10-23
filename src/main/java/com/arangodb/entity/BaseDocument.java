@@ -215,6 +215,12 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 		return this.properties.get(key);
 	}
 
+	@Override
+	public String toString() {
+		return "BaseDocument [documentRevision=" + documentRevision + ", documentHandle=" + documentHandle
+				+ ", documentKey=" + documentKey + ", properties=" + properties + "]";
+	}
+
 	// /**
 	// * check the list if it is suitable
 	// *
@@ -233,4 +239,5 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	// }
 	// return true;
 	// }
+
 }
