@@ -16,6 +16,7 @@
 
 package com.arangodb.example.document;
 
+import com.arangodb.entity.BaseDocument;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -29,14 +30,14 @@ import com.google.gson.annotations.SerializedName;
  */
 public class DocumentPerson {
 
-	@SerializedName("_id")
+	@SerializedName(BaseDocument.ID)
 	private String documentHandle;
 
-	@SerializedName("_key")
+	@SerializedName(BaseDocument.KEY)
 	private String documentKey;
 
-	@SerializedName("_rev")
-	private long documentRevision;
+	@SerializedName(BaseDocument.REV)
+	private Long documentRevision;
 
 	private String name;
 
@@ -94,11 +95,11 @@ public class DocumentPerson {
 		this.documentKey = documentKey;
 	}
 
-	public long getDocumentRevision() {
+	public Long getDocumentRevision() {
 		return documentRevision;
 	}
 
-	public void setDocumentRevision(long documentRevision) {
+	public void setDocumentRevision(Long documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 

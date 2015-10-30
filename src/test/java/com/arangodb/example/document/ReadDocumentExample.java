@@ -124,6 +124,7 @@ public class ReadDocumentExample extends BaseExample {
 
 		System.out.println("2. read document as HashMap object:");
 		try {
+			@SuppressWarnings("rawtypes")
 			DocumentEntity<HashMap> entity = arangoDriver.getDocument(COLLECTION_NAME, KEY1, HashMap.class);
 
 			Assert.assertNotNull(entity);
