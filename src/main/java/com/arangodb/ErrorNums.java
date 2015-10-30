@@ -30,6 +30,7 @@ public class ErrorNums {
 	public static final int ERROR_IP_ADDRESS_INVALID = 25;
 	public static final int ERROR_LEGEND_NOT_IN_WAL_FILE = 26;
 	public static final int ERROR_FILE_EXISTS = 27;
+	public static final int ERROR_LOCKED = 28;
 	public static final int ERROR_HTTP_BAD_PARAMETER = 400;
 	public static final int ERROR_HTTP_UNAUTHORIZED = 401;
 	public static final int ERROR_HTTP_FORBIDDEN = 403;
@@ -71,7 +72,6 @@ public class ErrorNums {
 	public static final int ERROR_ARANGO_ILLEGAL_NAME = 1208;
 	public static final int ERROR_ARANGO_NO_INDEX = 1209;
 	public static final int ERROR_ARANGO_UNIQUE_CONSTRAINT_VIOLATED = 1210;
-	public static final int ERROR_ARANGO_GEO_INDEX_VIOLATED = 1211;
 	public static final int ERROR_ARANGO_INDEX_NOT_FOUND = 1212;
 	public static final int ERROR_ARANGO_CROSS_COLLECTION_REQUEST = 1213;
 	public static final int ERROR_ARANGO_INDEX_HANDLE_BAD = 1214;
@@ -96,6 +96,8 @@ public class ErrorNums {
 	public static final int ERROR_ARANGO_INDEX_DOCUMENT_ATTRIBUTE_MISSING = 1234;
 	public static final int ERROR_ARANGO_INDEX_CREATION_FAILED = 1235;
 	public static final int ERROR_ARANGO_WRITE_THROTTLE_TIMEOUT = 1236;
+	public static final int ERROR_ARANGO_COLLECTION_TYPE_MISMATCH = 1237;
+	public static final int ERROR_ARANGO_COLLECTION_NOT_LOADED = 1238;
 	public static final int ERROR_ARANGO_DATAFILE_FULL = 1300;
 	public static final int ERROR_ARANGO_EMPTY_DATADIR = 1301;
 	public static final int ERROR_REPLICATION_NO_RESPONSE = 1400;
@@ -107,11 +109,11 @@ public class ErrorNums {
 	public static final int ERROR_REPLICATION_UNEXPECTED_MARKER = 1406;
 	public static final int ERROR_REPLICATION_INVALID_APPLIER_STATE = 1407;
 	public static final int ERROR_REPLICATION_UNEXPECTED_TRANSACTION = 1408;
-	public static final int ERROR_REPLICATION_INVALID_LOGGER_CONFIGURATION = 1409;
 	public static final int ERROR_REPLICATION_INVALID_APPLIER_CONFIGURATION = 1410;
 	public static final int ERROR_REPLICATION_RUNNING = 1411;
 	public static final int ERROR_REPLICATION_APPLIER_STOPPED = 1412;
 	public static final int ERROR_REPLICATION_NO_START_TICK = 1413;
+	public static final int ERROR_REPLICATION_START_TICK_NOT_PRESENT = 1414;
 	public static final int ERROR_CLUSTER_NO_AGENCY = 1450;
 	public static final int ERROR_CLUSTER_NO_COORDINATOR_HEADER = 1451;
 	public static final int ERROR_CLUSTER_COULD_NOT_LOCK_PLAN = 1452;
@@ -172,6 +174,7 @@ public class ErrorNums {
 	public static final int ERROR_QUERY_EXCEPTION_OPTIONS = 1576;
 	public static final int ERROR_QUERY_COLLECTION_USED_IN_EXPRESSION = 1577;
 	public static final int ERROR_QUERY_DISALLOWED_DYNAMIC_CALL = 1578;
+	public static final int ERROR_QUERY_ACCESS_AFTER_MODIFICATION = 1579;
 	public static final int ERROR_QUERY_FUNCTION_INVALID_NAME = 1580;
 	public static final int ERROR_QUERY_FUNCTION_INVALID_CODE = 1581;
 	public static final int ERROR_QUERY_FUNCTION_NOT_FOUND = 1582;
@@ -180,6 +183,7 @@ public class ErrorNums {
 	public static final int ERROR_QUERY_NOT_FOUND = 1591;
 	public static final int ERROR_QUERY_IN_USE = 1592;
 	public static final int ERROR_CURSOR_NOT_FOUND = 1600;
+	public static final int ERROR_CURSOR_BUSY = 1601;
 	public static final int ERROR_TRANSACTION_INTERNAL = 1650;
 	public static final int ERROR_TRANSACTION_NESTED = 1651;
 	public static final int ERROR_TRANSACTION_UNREGISTERED_COLLECTION = 1652;
@@ -225,7 +229,7 @@ public class ErrorNums {
 	public static final int ERROR_GRAPH_NOT_IN_ORPHAN_COLLECTION = 1928;
 	public static final int ERROR_GRAPH_COLLECTION_USED_IN_EDGE_DEF = 1929;
 	public static final int ERROR_GRAPH_EDGE_COLLECTION_NOT_USED = 1930;
-	public static final int ERROR_GRAPH_NO_AN_ARANGO_COLLECTION = 1931;
+	public static final int ERROR_GRAPH_NOT_AN_ARANGO_COLLECTION = 1931;
 	public static final int ERROR_GRAPH_NO_GRAPH_COLLECTION = 1932;
 	public static final int ERROR_GRAPH_INVALID_EXAMPLE_ARRAY_OBJECT_STRING = 1933;
 	public static final int ERROR_GRAPH_INVALID_EXAMPLE_ARRAY_OBJECT = 1934;
@@ -233,6 +237,7 @@ public class ErrorNums {
 	public static final int ERROR_GRAPH_INVALID_PARAMETER = 1936;
 	public static final int ERROR_GRAPH_INVALID_ID = 1937;
 	public static final int ERROR_GRAPH_COLLECTION_USED_IN_ORPHANS = 1938;
+	public static final int ERROR_GRAPH_EDGE_COL_DOES_NOT_EXIST = 1939;
 	public static final int ERROR_SESSION_UNKNOWN = 1950;
 	public static final int ERROR_SESSION_EXPIRED = 1951;
 	public static final int SIMPLE_CLIENT_UNKNOWN_ERROR = 2000;
@@ -250,6 +255,19 @@ public class ErrorNums {
 	public static final int ERROR_NO_FOXX_FOUND = 3008;
 	public static final int ERROR_APP_NOT_FOUND = 3009;
 	public static final int ERROR_APP_NEEDS_CONFIGURATION = 3010;
+	public static final int ERROR_MODULE_NOT_FOUND = 3100;
+	public static final int ERROR_MODULE_SYNTAX_ERROR = 3101;
+	public static final int ERROR_MODULE_BAD_WRAPPER = 3102;
+	public static final int ERROR_MODULE_FAILURE = 3103;
+	public static final int ERROR_MODULE_UNKNOWN_FILE_TYPE = 3110;
+	public static final int ERROR_MODULE_PATH_MUST_BE_ABSOLUTE = 3111;
+	public static final int ERROR_MODULE_CAN_NOT_ESCAPE = 3112;
+	public static final int ERROR_MODULE_DRIVE_LETTER = 3113;
+	public static final int ERROR_MODULE_BAD_MODULE_ORIGIN = 3120;
+	public static final int ERROR_MODULE_BAD_PACKAGE_ORIGIN = 3121;
+	public static final int ERROR_MODULE_DOCUMENT_IS_EMPTY = 3125;
+	public static final int ERROR_MODULE_MAIN_NOT_READABLE = 3130;
+	public static final int ERROR_MODULE_MAIN_NOT_JS = 3131;
 	public static final int RESULT_ELEMENT_EXISTS = 10000;
 	public static final int RESULT_ELEMENT_NOT_FOUND = 10001;
 	public static final int ERROR_APP_ALREADY_EXISTS = 20000;
