@@ -5254,6 +5254,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		GraphEdgesOptions graphEdgesOptions,
 		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
+		if (graphEdgesOptions == null) {
+			graphEdgesOptions = new GraphEdgesOptions();
+		}
+
 		validateCollectionName(graphName);
 
 		String query = "for i in graph_edges(@graphName, @vertexExample, @options) return i";
