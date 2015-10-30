@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.arangodb.example.ExamplesTestSuite;
 import com.arangodb.util.StringJoinTest;
 
 /**
@@ -111,7 +112,10 @@ import com.arangodb.util.StringJoinTest;
 		ArangoDriverQueryTest.class,
 
 		// since ArangoDB 2.7
-		ArangoDriverQueryCacheTest.class
+		ArangoDriverQueryCacheTest.class,
+
+		// examples
+		ExamplesTestSuite.class
 
 })
 
