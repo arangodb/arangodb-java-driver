@@ -1,6 +1,26 @@
+/*
+ * Copyright (C) 2015 ArangoDB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.arangodb.example.document;
 
 import java.util.HashMap;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
@@ -21,16 +41,25 @@ public class CreateDocumentExample extends BaseExample {
 
 	private static final String KEY4 = "key4";
 
-	public static void main(String[] args) {
+	public ArangoDriver arangoDriver;
+
+	@Before
+	public void _before() {
+		removeTestDatabase(DATABASE_NAME);
+
+		arangoDriver = getArangoDriver(getConfiguration());
+		createDatabase(arangoDriver, DATABASE_NAME);
+		createCollection(arangoDriver, COLLECTION_NAME);
+	}
+
+	@Test
+	public void createAndDeleteDocuments() {
 		//
 		// You can find the ArangoDB Web interface here:
 		// http://127.0.0.1:8529/
 		//
 		// change the log level to "debug" in /src/test/resource/logback.xml to
 		// see the HTTP communication
-
-		ArangoDriver arangoDriver = createDatabase(DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
 
 		//
 		printHeadline("create documents");
@@ -50,6 +79,12 @@ public class CreateDocumentExample extends BaseExample {
 			// arangoDriver.createDocument(COLLECTION_NAME, KEY1,
 			// myBaseDocument);
 
+			Assert.assertNotNull(entity);
+			Assert.assertNotNull(entity.getDocumentKey());
+			Assert.assertNotNull(entity.getDocumentHandle());
+			Assert.assertNotNull(entity.getDocumentRevision());
+			Assert.assertNotNull(entity.getEntity());
+
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
 			System.out.println("Id: " + entity.getDocumentHandle());
@@ -67,7 +102,7 @@ public class CreateDocumentExample extends BaseExample {
 
 			// printEntity(entity);
 		} catch (ArangoException e) {
-			System.out.println("Failed to create document. " + e.getMessage());
+			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 		System.out.println("2. create a document by a HashMap object:");
@@ -82,6 +117,12 @@ public class CreateDocumentExample extends BaseExample {
 			DocumentEntity<HashMap<String, Object>> entity = arangoDriver.createDocument(COLLECTION_NAME, myHashMap);
 			// or DocumentEntity<HashMap<String, Object>> entity =
 			// arangoDriver.createDocument(COLLECTION_NAME, KEY2, myHashMap);
+
+			Assert.assertNotNull(entity);
+			Assert.assertNotNull(entity.getDocumentKey());
+			Assert.assertNotNull(entity.getDocumentHandle());
+			Assert.assertNotNull(entity.getDocumentRevision());
+			Assert.assertNotNull(entity.getEntity());
 
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
@@ -100,13 +141,19 @@ public class CreateDocumentExample extends BaseExample {
 
 			// printEntity(entity);
 		} catch (ArangoException e) {
-			System.out.println("Failed to create document. " + e.getMessage());
+			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 		System.out.println("3. create a document by an object:");
 		SimplePerson mySimplePerson = new SimplePerson("Angela", "female", 42);
 		try {
 			DocumentEntity<SimplePerson> entity = arangoDriver.createDocument(COLLECTION_NAME, KEY3, mySimplePerson);
+
+			Assert.assertNotNull(entity);
+			Assert.assertNotNull(entity.getDocumentKey());
+			Assert.assertNotNull(entity.getDocumentHandle());
+			Assert.assertNotNull(entity.getDocumentRevision());
+			Assert.assertNotNull(entity.getEntity());
 
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
@@ -121,7 +168,7 @@ public class CreateDocumentExample extends BaseExample {
 
 			// printEntity(entity);
 		} catch (ArangoException e) {
-			System.out.println("Failed to create document. " + e.getMessage());
+			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 		System.out.println("4. create a document by an object with document attributes:");
@@ -129,6 +176,12 @@ public class CreateDocumentExample extends BaseExample {
 		try {
 			DocumentEntity<DocumentPerson> entity = arangoDriver.createDocument(COLLECTION_NAME, KEY4,
 				myDocumentPerson);
+
+			Assert.assertNotNull(entity);
+			Assert.assertNotNull(entity.getDocumentKey());
+			Assert.assertNotNull(entity.getDocumentHandle());
+			Assert.assertNotNull(entity.getDocumentRevision());
+			Assert.assertNotNull(entity.getEntity());
 
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
@@ -147,7 +200,7 @@ public class CreateDocumentExample extends BaseExample {
 
 			// printEntity(entity);
 		} catch (ArangoException e) {
-			System.out.println("Failed to create document. " + e.getMessage());
+			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 	}
