@@ -1,3 +1,9 @@
+v2.7.0 (????-??-??)
+---------------------------
+* added document examples in src/test/java/com/arangodb/example/document/
+* added graph examples in src/test/java/com/arangodb/example/document/
+
+
 v2.6.9 (2015-10-16)
 ---------------------------
 * add support API: /_api/query-cache/properties (AQL query tracking properties: setQueryTrackingProperties(), getQueryTrackingProperties())
