@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.arangodb.bench.BenchmarkImport;
 import com.arangodb.example.document.DocumentExamplesTestSuite;
 import com.arangodb.example.graph.GraphExamplesTestSuite;
 
@@ -32,11 +33,13 @@ import com.arangodb.example.graph.GraphExamplesTestSuite;
 @RunWith(Suite.class)
 @SuiteClasses({
 
-		TransactionExample.class,
-
 		DocumentExamplesTestSuite.class,
 
-		GraphExamplesTestSuite.class
+		GraphExamplesTestSuite.class,
+
+		BenchmarkImport.class,
+
+		TransactionExample.class
 
 })
 

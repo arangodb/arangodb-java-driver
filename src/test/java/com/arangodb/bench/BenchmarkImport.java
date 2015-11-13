@@ -18,95 +18,82 @@ package com.arangodb.bench;
 
 import java.util.List;
 
-import com.arangodb.ArangoConfigure;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.Station;
+import com.arangodb.example.document.BaseExample;
 import com.arangodb.util.TestUtils;
 
 /**
+ * Import a list of objects
+ * 
+ * 1. Import the data with importDocuments()
+ * 
+ * 2. Import the data with createDocument()
+ * 
  * @author tamtam180 - kirscheless at gmail.com
+ * @author a-brandt
  *
  */
-public class BenchmarkImport {
+public class BenchmarkImport extends BaseExample {
 
-	final static String COLLECTION_NAME = "bench-test";
+	private static final String DATABASE_NAME = "BenchmarkImport";
 
-	public static void main(String[] args) throws Exception {
+	private static final String COLLECTION_NAME = "BenchmarkImportCollection";
+
+	public ArangoDriver arangoDriver;
+
+	@Before
+	public void _before() {
+		removeTestDatabase(DATABASE_NAME);
+
+		arangoDriver = getArangoDriver(getConfiguration());
+		createDatabase(arangoDriver, DATABASE_NAME);
+	}
+
+	@Test
+	public void BenchmarkImportTest() throws Exception {
 
 		final int max = 10;
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.init();
 
+		//
+		printHeadline("read example data");
+		//
+
+		List<Station> stations = TestUtils.readStations();
+
+		// truncate collection
 		try {
-
-			ArangoDriver driver = new ArangoDriver(configure);
-			List<Station> stations = TestUtils.readStations();
-
-			// truncate collection
-			try {
-				driver.truncateCollection(COLLECTION_NAME);
-			} catch (ArangoException e) {
-			}
-
-			// Bench import
-			BenchLogic logic1 = new BenchImport(driver);
-			BenchLogic logic2 = new BenchDocument(driver);
-
-			// Bench create document
-			long time1 = 0, time2 = 0;
-			for (int i = 0; i < max; i++) {
-				time1 += logic1.bench(stations);
-				time2 += logic2.bench(stations);
-			}
-
-			System.out.println("import:" + time1);
-			System.out.println("document:" + time2);
-
-		} finally {
-			configure.shutdown();
+			arangoDriver.truncateCollection(COLLECTION_NAME);
+		} catch (ArangoException e) {
 		}
 
-	}
+		// create importer
+		AbstractBenchmarkImporter logic1 = new ImportDocumentBenchmarkImporter(arangoDriver, COLLECTION_NAME);
+		AbstractBenchmarkImporter logic2 = new SingleDocumentBenchmarkImporter(arangoDriver, COLLECTION_NAME);
 
-	static private abstract class BenchLogic {
-		protected ArangoDriver driver;
+		//
+		printHeadline("import data");
+		//
 
-		public BenchLogic(ArangoDriver driver) {
-			this.driver = driver;
+		// Bench import and create document
+		long time1 = 0, time2 = 0;
+		for (int i = 0; i < max; i++) {
+			time1 += logic1.bench(stations);
+			time2 += logic2.bench(stations);
 		}
 
-		abstract protected void execute(List<?> values) throws Exception;
+		//
+		printHeadline("results");
+		//
+		System.out.println("importDocuments(): " + time1 + " ms");
+		System.out.println("createDocument():  " + time2 + " ms");
 
-		public long bench(List<?> values) throws Exception {
-			long t = System.currentTimeMillis();
-			execute(values);
-			return System.currentTimeMillis() - t;
-		}
-	}
-
-	static class BenchImport extends BenchLogic {
-		public BenchImport(ArangoDriver driver) {
-			super(driver);
-		}
-
-		@Override
-		protected void execute(List<?> values) throws Exception {
-			driver.importDocuments(COLLECTION_NAME, true, values);
-		}
-	}
-
-	static class BenchDocument extends BenchLogic {
-		public BenchDocument(ArangoDriver driver) {
-			super(driver);
-		}
-
-		@Override
-		protected void execute(List<?> values) throws Exception {
-			for (Object value : values) {
-				driver.createDocument("bench-test", value, true, false);
-			}
-		}
+		Assert.assertTrue(time1 < time2);
 	}
 
 }
