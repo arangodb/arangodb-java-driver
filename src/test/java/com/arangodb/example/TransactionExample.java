@@ -19,18 +19,27 @@ package com.arangodb.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.TransactionEntity;
+import com.arangodb.example.document.BaseExample;
 
 /**
- * Using ArangoDb transaction functions.
+ * Using a server-side transaction function.
+ * 
+ * see https://docs.arangodb.com/Transactions/TransactionInvocation.html
  * 
  * @author a-brandt
  */
-public class TransactionExample {
+public class TransactionExample extends BaseExample {
+
+	private static final String DATABASE_NAME = "TransactionExample";
 
 	private static final String COLLECTION_NAME = "transactionCollection";
 
@@ -40,53 +49,64 @@ public class TransactionExample {
 	// increment counter 10 times
 	private static final int NUMBER_UPDATES = 10;
 
-	public static void main(String[] args) {
+	public ArangoDriver arangoDriver;
+
+	public static ArangoConfigure configuration;
+
+	@Before
+	public void _before() {
+		removeTestDatabase(DATABASE_NAME);
+
+		configuration = getConfiguration();
+		arangoDriver = getArangoDriver(configuration);
+		createDatabase(arangoDriver, DATABASE_NAME);
+	}
+
+	@Test
+	public void transactionExample() throws ArangoException {
 		List<NoTransactionThread> noTransactionThreadslist = new ArrayList<NoTransactionThread>();
 		List<TransactionThread> transactionThreadslist = new ArrayList<TransactionThread>();
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.init();
+		myCounter entity = new myCounter();
+		entity.setCount(0L);
+		DocumentEntity<myCounter> documentEntity1 = arangoDriver.createDocument(COLLECTION_NAME, entity, true, null);
+		DocumentEntity<myCounter> documentEntity2 = arangoDriver.createDocument(COLLECTION_NAME, entity, true, null);
 
-		ArangoDriver driver = new ArangoDriver(configure);
-		try {
-			myCounter entity = new myCounter();
-			entity.setCount(0L);
-			DocumentEntity<myCounter> documentEntity1 = driver.createDocument(COLLECTION_NAME, entity, true, null);
-			DocumentEntity<myCounter> documentEntity2 = driver.createDocument(COLLECTION_NAME, entity, true, null);
-
-			// start threads without transaction
-			for (int i = 0; i < NUMBER_THREADS; i++) {
-				NoTransactionThread s = new NoTransactionThread(documentEntity1.getDocumentHandle());
-				noTransactionThreadslist.add(s);
-				s.start();
-			}
-			joinThreads(noTransactionThreadslist);
-
-			// random values
-			documentEntity1 = driver.getDocument(documentEntity1.getDocumentHandle(), myCounter.class);
-			System.out.println("no transaction count = " + documentEntity1.getEntity().getCount());
-
-			// start threads with ArangoDB transaction
-			for (int i = 0; i < NUMBER_THREADS; i++) {
-				TransactionThread s = new TransactionThread(documentEntity2.getDocumentHandle());
-				transactionThreadslist.add(s);
-				s.start();
-			}
-			joinThreads(transactionThreadslist);
-
-			documentEntity2 = driver.getDocument(documentEntity2.getDocumentHandle(), myCounter.class);
-
-			// result should be NUMBER_THREADS * NUMBER_UPDATES = 100
-			System.out.println("transaction count = " + documentEntity2.getEntity().getCount());
-
-		} catch (ArangoException e) {
-			e.printStackTrace();
-		} finally {
-			configure.shutdown();
+		// start threads without transaction
+		for (int i = 0; i < NUMBER_THREADS; i++) {
+			NoTransactionThread s = new NoTransactionThread(documentEntity1.getDocumentHandle());
+			noTransactionThreadslist.add(s);
+			s.start();
 		}
+		joinThreads(noTransactionThreadslist);
 
+		documentEntity1 = arangoDriver.getDocument(documentEntity1.getDocumentHandle(), myCounter.class);
+
+		// result should be NUMBER_THREADS * NUMBER_UPDATES = 100 but has random
+		// values
+		System.out.println("no transaction result: count = " + documentEntity1.getEntity().getCount() + " != "
+				+ NUMBER_THREADS * NUMBER_UPDATES);
+		Assert.assertTrue(documentEntity1.getEntity().getCount() != NUMBER_THREADS * NUMBER_UPDATES);
+
+		// start threads with ArangoDB transaction
+		for (int i = 0; i < NUMBER_THREADS; i++) {
+			TransactionThread s = new TransactionThread(documentEntity2.getDocumentHandle());
+			transactionThreadslist.add(s);
+			s.start();
+		}
+		joinThreads(transactionThreadslist);
+
+		documentEntity2 = arangoDriver.getDocument(documentEntity2.getDocumentHandle(), myCounter.class);
+
+		// result should be NUMBER_THREADS * NUMBER_UPDATES = 100
+		System.out.println("with transaction result: count = " + documentEntity2.getEntity().getCount());
+		Assert.assertEquals(NUMBER_THREADS * NUMBER_UPDATES, documentEntity2.getEntity().getCount().intValue());
 	}
 
+	/**
+	 * Example without transaction function
+	 * 
+	 */
 	public static class NoTransactionThread extends Thread {
 
 		private String documentHandle;
@@ -96,10 +116,7 @@ public class TransactionExample {
 		}
 
 		public void run() {
-			ArangoConfigure configure = new ArangoConfigure();
-			configure.init();
-
-			ArangoDriver driver = new ArangoDriver(configure);
+			ArangoDriver driver = new ArangoDriver(configuration, DATABASE_NAME);
 
 			try {
 				;
@@ -116,12 +133,14 @@ public class TransactionExample {
 				}
 			} catch (ArangoException e) {
 				e.printStackTrace();
-			} finally {
-				configure.shutdown();
 			}
 		}
 	}
 
+	/**
+	 * Example with transaction function
+	 * 
+	 */
 	public static class TransactionThread extends Thread {
 
 		private String documentHandle;
@@ -132,10 +151,7 @@ public class TransactionExample {
 		}
 
 		public void run() {
-			ArangoConfigure configure = new ArangoConfigure();
-			configure.init();
-
-			ArangoDriver driver = new ArangoDriver(configure);
+			ArangoDriver driver = new ArangoDriver(configuration, DATABASE_NAME);
 
 			TransactionEntity transaction = buildTransaction(driver);
 			try {
@@ -148,8 +164,6 @@ public class TransactionExample {
 				}
 			} catch (ArangoException e) {
 				e.printStackTrace();
-			} finally {
-				configure.shutdown();
 			}
 		}
 	}
@@ -186,11 +200,18 @@ public class TransactionExample {
 
 	}
 
+	/**
+	 * Build the server side function to update a value transactional.
+	 * 
+	 * @param driver
+	 *            the ArangoDB driver
+	 * @return a transaction entity
+	 */
 	private static TransactionEntity buildTransaction(ArangoDriver driver) {
 
 		// create action function
 		String action = "function (id) {"
-		// use internal database functions
+				// use internal database functions
 				+ " var db = require('internal').db;"
 				// get the document
 				+ "a = db._document(id); "

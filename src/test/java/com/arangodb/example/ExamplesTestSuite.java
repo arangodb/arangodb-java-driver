@@ -24,13 +24,15 @@ import com.arangodb.example.document.DocumentExamplesTestSuite;
 import com.arangodb.example.graph.GraphExamplesTestSuite;
 
 /**
- * Starts all unit tests
+ * Start all examples (unit tests) in example directory
  * 
  * @author a-brandt
  *
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+
+		TransactionExample.class,
 
 		DocumentExamplesTestSuite.class,
 
