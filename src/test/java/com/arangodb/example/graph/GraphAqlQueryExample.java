@@ -160,7 +160,7 @@ public class GraphAqlQueryExample extends BaseExample {
 		Assert.assertEquals(new Long(2L), shortestPath.getDistance());
 
 		//
-		printHeadline("get shortest path (epmty)");
+		printHeadline("get shortest path (empty)");
 		//
 
 		// path Frauke -> Anton (empty result)
