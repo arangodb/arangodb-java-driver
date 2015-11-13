@@ -170,144 +170,14 @@ public abstract class BaseArangoDriver {
 	}
 
 	/**
-	 * Creates an entity object
-	 * 
-	 * @param res
-	 *            the response of the database
-	 * @param clazz
-	 *            the class of the entity object
-	 * @param pclazz
-	 *            the class of the object wrapped in the entity object
-	 * @param validate
-	 *            true for validation
-	 * @return the result entity object of class T (T extends BaseEntity)
-	 * @throws ArangoException
-	 */
-	protected <T extends BaseEntity> T createEntity(
-		HttpResponseEntity res,
-		Class<T> clazz,
-		Class<?>[] pclazz,
-		boolean validate) throws ArangoException {
-		if (res == null) {
-			return null;
-		}
-		boolean isDocumentEntity = false;
-		boolean requestSuccessful = true;
-		// the following was added to ensure, that attributes with a key like
-		// "error", "code", "errorNum"
-		// and "etag" will be serialized, when no error was thrown by the
-		// database
-		if (clazz == DocumentEntity.class) {
-			isDocumentEntity = true;
-		}
-		int statusCode = res.getStatusCode();
-		if (statusCode >= 400) {
-			requestSuccessful = false;
-			DefaultEntity defaultEntity = new DefaultEntity();
-			if (res.getText() != null && !res.getText().equalsIgnoreCase("") && statusCode != 500) {
-				JsonParser jsonParser = new JsonParser();
-				JsonElement jsonElement = jsonParser.parse(res.getText());
-				JsonObject jsonObject = jsonElement.getAsJsonObject();
-				JsonElement errorMessage = jsonObject.get("errorMessage");
-				defaultEntity.setErrorMessage(errorMessage.getAsString());
-				JsonElement errorNumber = jsonObject.get("errorNum");
-				defaultEntity.setErrorNumber(errorNumber.getAsInt());
-			} else {
-				String statusPhrase = "";
-				switch (statusCode) {
-				case 400:
-					statusPhrase = "Bad Request";
-					break;
-				case 401:
-					statusPhrase = "Unauthorized";
-					break;
-				case 403:
-					statusPhrase = "Forbidden";
-					break;
-				case 404:
-					statusPhrase = "Not Found";
-					break;
-				case 405:
-					statusPhrase = "Method Not Allowed";
-					break;
-				case 406:
-					statusPhrase = "Not Acceptable";
-					break;
-				case 407:
-					statusPhrase = "Proxy Authentication Required";
-					break;
-				case 408:
-					statusPhrase = "Request Time-out";
-					break;
-				case 409:
-					statusPhrase = "Conflict";
-					break;
-				case 500:
-					statusPhrase = "Internal Server Error";
-					break;
-				default:
-					statusPhrase = "unknown error";
-					break;
-				}
-
-				defaultEntity.setErrorMessage(statusPhrase);
-				if (statusCode == 500) {
-					defaultEntity.setErrorMessage(statusPhrase + ": " + res.getText());
-				}
-			}
-
-			defaultEntity.setCode(statusCode);
-			defaultEntity.setStatusCode(statusCode);
-			defaultEntity.setError(true);
-			ArangoException arangoException = new ArangoException(defaultEntity);
-			arangoException.setCode(statusCode);
-			throw arangoException;
-		}
-
-		try {
-			EntityDeserializers.setParameterized(pclazz);
-
-			T entity = createEntityImpl(res, clazz);
-			if (entity == null) {
-				Class<?> c = MissingInstanceCreater.getMissingClass(clazz);
-				entity = ReflectionUtils.newInstance(c);
-			} else if (res.isBatchRepsonse()) {
-				try {
-					entity = clazz.newInstance();
-				} catch (Exception e) {
-					throw new ArangoException(e);
-				}
-			}
-			setStatusCode(res, entity);
-			if (validate) {
-				validate(res, entity);
-			}
-
-			if (isDocumentEntity && requestSuccessful) {
-				entity.setCode(statusCode);
-				entity.setErrorMessage(null);
-				entity.setError(false);
-				entity.setErrorNumber(0);
-			}
-
-			return entity;
-		} finally {
-			EntityDeserializers.removeParameterized();
-		}
-	}
-	
-	/**
-	 * Gets the raw JSON string with results, from the Http response
+	 * Checks the Http response for database or server errors
 	 * @param res the response of the database
 	 * @return
-	 * @throws ArangoException
+	 * @throws ArangoException if any error happened
 	 */
-	protected String getJSONResponseText(HttpResponseEntity res) throws ArangoException {
-		if (res == null) {
-			return null;
-		}
+	private int checkServerErrors(HttpResponseEntity res) throws ArangoException {
 		int statusCode = res.getStatusCode();
-		if (statusCode >= 400) {
+		if (statusCode >= 400) {	// always throws ArangoException
 			DefaultEntity defaultEntity = new DefaultEntity();
 			if (res.getText() != null && !res.getText().equalsIgnoreCase("") && statusCode != 500) {
 				JsonParser jsonParser = new JsonParser();
@@ -369,6 +239,88 @@ public abstract class BaseArangoDriver {
 			throw arangoException;
 		}
 		
+		return statusCode;
+	}
+	/**
+	 * Creates an entity object
+	 * 
+	 * @param res
+	 *            the response of the database
+	 * @param clazz
+	 *            the class of the entity object
+	 * @param pclazz
+	 *            the class of the object wrapped in the entity object
+	 * @param validate
+	 *            true for validation
+	 * @return the result entity object of class T (T extends BaseEntity)
+	 * @throws ArangoException
+	 */
+	protected <T extends BaseEntity> T createEntity(
+		HttpResponseEntity res,
+		Class<T> clazz,
+		Class<?>[] pclazz,
+		boolean validate) throws ArangoException {
+		if (res == null) {
+			return null;
+		}
+		boolean isDocumentEntity = false;
+		//boolean requestSuccessful = true;
+		
+		// the following was added to ensure, that attributes with a key like
+		// "error", "code", "errorNum"
+		// and "etag" will be serialized, when no error was thrown by the
+		// database
+		if (clazz == DocumentEntity.class) {
+			isDocumentEntity = true;
+		}
+		
+		int statusCode=checkServerErrors(res);
+		
+		try {
+			EntityDeserializers.setParameterized(pclazz);
+
+			T entity = createEntityImpl(res, clazz);
+			if (entity == null) {
+				Class<?> c = MissingInstanceCreater.getMissingClass(clazz);
+				entity = ReflectionUtils.newInstance(c);
+			} else if (res.isBatchRepsonse()) {
+				try {
+					entity = clazz.newInstance();
+				} catch (Exception e) {
+					throw new ArangoException(e);
+				}
+			}
+			setStatusCode(res, entity);
+			if (validate) {
+				validate(res, entity);
+			}
+
+			if (isDocumentEntity) {		//  && requestSuccessful	NOTE: no need for this, an exception is always thrown
+				entity.setCode(statusCode);
+				entity.setErrorMessage(null);
+				entity.setError(false);
+				entity.setErrorNumber(0);
+			}
+
+			return entity;
+		} finally {
+			EntityDeserializers.removeParameterized();
+		}
+	}
+	
+	/**
+	 * Gets the raw JSON string with results, from the Http response
+	 * @param res the response of the database
+	 * @return A valid JSON string with the results
+	 * @throws ArangoException
+	 */
+	protected String getJSONResponseText(HttpResponseEntity res) throws ArangoException {
+		if (res == null) {
+			return null;
+		}
+
+		checkServerErrors(res);
+
 		// no errors, return results as a JSON string
 		JsonParser jsonParser = new JsonParser();
 		JsonElement jsonElement = jsonParser.parse(res.getText());
