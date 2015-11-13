@@ -75,6 +75,7 @@ import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
 import com.arangodb.http.HttpManager;
+import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationHandlerImpl;
 import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
@@ -2468,6 +2469,27 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		return cursorDriver.executeAqlQuery(getDefaultDatabase(), query, bindVars, aqlQueryOptions, clazz);
 	}
+
+	/**
+	 * Executes an AQL query and returns the raw JSON response
+	 * @param query an AQL query as string
+	 * @param bindVars a map containing all bind variables,
+	 * @param aqlQueryOptions AQL query options
+	 * @return
+	 * @throws ArangoException
+	 */
+	public HttpResponseEntity executeAqlQueryJSON(
+			String query,
+			Map<String, Object> bindVars,
+			AqlQueryOptions aqlQueryOptions
+			) throws ArangoException {
+
+			if (aqlQueryOptions == null) {
+				aqlQueryOptions = getDefaultAqlQueryOptions();
+			}
+
+			return cursorDriver.executeAqlQueryJSON(getDefaultDatabase(), query, bindVars, aqlQueryOptions);
+		}
 
 	/**
 	 * This method executes an AQL query and returns a DocumentCursorResult
