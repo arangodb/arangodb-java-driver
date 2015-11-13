@@ -55,13 +55,13 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 	}
 
 	@Override
-	public HttpResponseEntity executeAqlQueryJSON(
+	public String executeAqlQueryJSON(
 			String database,
 			String query,
 			Map<String, Object> bindVars,
 			AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
-			return getCursor(database, query, bindVars, aqlQueryOptions);
+			return getJSONResponseText(getCursor(database, query, bindVars, aqlQueryOptions));
 		}
 
 	@SuppressWarnings("unchecked")

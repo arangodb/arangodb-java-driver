@@ -8,7 +8,6 @@ import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.QueriesResultEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.ShortestPathEntity;
-import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.impl.BaseDriverInterface;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.ShortestPathOptions;
@@ -42,7 +41,7 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 		Class<T> clazz) throws ArangoException;
 
 	// return the raw JSON response from server
-	HttpResponseEntity executeAqlQueryJSON(
+	String executeAqlQueryJSON(
 			String database,
 			String query,
 			Map<String, Object> bindVars,

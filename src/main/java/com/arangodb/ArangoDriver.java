@@ -75,7 +75,6 @@ import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
 import com.arangodb.http.HttpManager;
-import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationHandlerImpl;
 import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
@@ -2478,7 +2477,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return
 	 * @throws ArangoException
 	 */
-	public HttpResponseEntity executeAqlQueryJSON(
+	public String executeAqlQueryJSON(
 			String query,
 			Map<String, Object> bindVars,
 			AqlQueryOptions aqlQueryOptions

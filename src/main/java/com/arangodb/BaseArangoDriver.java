@@ -295,6 +295,87 @@ public abstract class BaseArangoDriver {
 			EntityDeserializers.removeParameterized();
 		}
 	}
+	
+	/**
+	 * Gets the raw JSON string with results, from the Http response
+	 * @param res the response of the database
+	 * @return
+	 * @throws ArangoException
+	 */
+	protected String getJSONResponseText(HttpResponseEntity res) throws ArangoException {
+		if (res == null) {
+			return null;
+		}
+		int statusCode = res.getStatusCode();
+		if (statusCode >= 400) {
+			DefaultEntity defaultEntity = new DefaultEntity();
+			if (res.getText() != null && !res.getText().equalsIgnoreCase("") && statusCode != 500) {
+				JsonParser jsonParser = new JsonParser();
+				JsonElement jsonElement = jsonParser.parse(res.getText());
+				JsonObject jsonObject = jsonElement.getAsJsonObject();
+				JsonElement errorMessage = jsonObject.get("errorMessage");
+				defaultEntity.setErrorMessage(errorMessage.getAsString());
+				JsonElement errorNumber = jsonObject.get("errorNum");
+				defaultEntity.setErrorNumber(errorNumber.getAsInt());
+			} else {
+				String statusPhrase = "";
+				switch (statusCode) {
+				case 400:
+					statusPhrase = "Bad Request";
+					break;
+				case 401:
+					statusPhrase = "Unauthorized";
+					break;
+				case 403:
+					statusPhrase = "Forbidden";
+					break;
+				case 404:
+					statusPhrase = "Not Found";
+					break;
+				case 405:
+					statusPhrase = "Method Not Allowed";
+					break;
+				case 406:
+					statusPhrase = "Not Acceptable";
+					break;
+				case 407:
+					statusPhrase = "Proxy Authentication Required";
+					break;
+				case 408:
+					statusPhrase = "Request Time-out";
+					break;
+				case 409:
+					statusPhrase = "Conflict";
+					break;
+				case 500:
+					statusPhrase = "Internal Server Error";
+					break;
+				default:
+					statusPhrase = "unknown error";
+					break;
+				}
+
+				defaultEntity.setErrorMessage(statusPhrase);
+				if (statusCode == 500) {
+					defaultEntity.setErrorMessage(statusPhrase + ": " + res.getText());
+				}
+			}
+
+			defaultEntity.setCode(statusCode);
+			defaultEntity.setStatusCode(statusCode);
+			defaultEntity.setError(true);
+			ArangoException arangoException = new ArangoException(defaultEntity);
+			arangoException.setCode(statusCode);
+			throw arangoException;
+		}
+		
+		// no errors, return results as a JSON string
+		JsonParser jsonParser = new JsonParser();
+		JsonElement jsonElement = jsonParser.parse(res.getText());
+		JsonObject jsonObject = jsonElement.getAsJsonObject();
+		JsonElement result = jsonObject.get("result");
+		return result.toString();
+	}
 
 	protected <T> T createEntity(String str, Class<T> clazz, Class<?>... pclazz) throws ArangoException {
 		try {
