@@ -2474,7 +2474,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param query an AQL query as string
 	 * @param bindVars a map containing all bind variables,
 	 * @param aqlQueryOptions AQL query options
-	 * @return
+	 * @return A JSON string with the results from server
 	 * @throws ArangoException
 	 */
 	public String executeAqlQueryJSON(

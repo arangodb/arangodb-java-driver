@@ -172,7 +172,7 @@ public abstract class BaseArangoDriver {
 	/**
 	 * Checks the Http response for database or server errors
 	 * @param res the response of the database
-	 * @return
+	 * @return The Http status code
 	 * @throws ArangoException if any error happened
 	 */
 	private int checkServerErrors(HttpResponseEntity res) throws ArangoException {
