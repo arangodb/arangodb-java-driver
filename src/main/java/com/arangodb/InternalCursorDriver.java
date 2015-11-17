@@ -40,6 +40,13 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 		AqlQueryOptions aqlQueryOptions,
 		Class<T> clazz) throws ArangoException;
 
+	// return the raw JSON response from server
+	String executeAqlQueryJSON(
+			String database,
+			String query,
+			Map<String, Object> bindVars,
+			AqlQueryOptions aqlQueryOptions) throws ArangoException;
+
 	// request a cursor with DocumentEntity
 	<T, S extends DocumentEntity<T>> DocumentCursorResult<T, S> executeBaseCursorQuery(
 		String database,

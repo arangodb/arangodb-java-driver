@@ -170,39 +170,14 @@ public abstract class BaseArangoDriver {
 	}
 
 	/**
-	 * Creates an entity object
-	 * 
-	 * @param res
-	 *            the response of the database
-	 * @param clazz
-	 *            the class of the entity object
-	 * @param pclazz
-	 *            the class of the object wrapped in the entity object
-	 * @param validate
-	 *            true for validation
-	 * @return the result entity object of class T (T extends BaseEntity)
-	 * @throws ArangoException
+	 * Checks the Http response for database or server errors
+	 * @param res the response of the database
+	 * @return The Http status code
+	 * @throws ArangoException if any error happened
 	 */
-	protected <T extends BaseEntity> T createEntity(
-		HttpResponseEntity res,
-		Class<T> clazz,
-		Class<?>[] pclazz,
-		boolean validate) throws ArangoException {
-		if (res == null) {
-			return null;
-		}
-		boolean isDocumentEntity = false;
-		boolean requestSuccessful = true;
-		// the following was added to ensure, that attributes with a key like
-		// "error", "code", "errorNum"
-		// and "etag" will be serialized, when no error was thrown by the
-		// database
-		if (clazz == DocumentEntity.class) {
-			isDocumentEntity = true;
-		}
+	private int checkServerErrors(HttpResponseEntity res) throws ArangoException {
 		int statusCode = res.getStatusCode();
-		if (statusCode >= 400) {
-			requestSuccessful = false;
+		if (statusCode >= 400) {	// always throws ArangoException
 			DefaultEntity defaultEntity = new DefaultEntity();
 			if (res.getText() != null && !res.getText().equalsIgnoreCase("") && statusCode != 500) {
 				JsonParser jsonParser = new JsonParser();
@@ -263,7 +238,44 @@ public abstract class BaseArangoDriver {
 			arangoException.setCode(statusCode);
 			throw arangoException;
 		}
-
+		
+		return statusCode;
+	}
+	/**
+	 * Creates an entity object
+	 * 
+	 * @param res
+	 *            the response of the database
+	 * @param clazz
+	 *            the class of the entity object
+	 * @param pclazz
+	 *            the class of the object wrapped in the entity object
+	 * @param validate
+	 *            true for validation
+	 * @return the result entity object of class T (T extends BaseEntity)
+	 * @throws ArangoException
+	 */
+	protected <T extends BaseEntity> T createEntity(
+		HttpResponseEntity res,
+		Class<T> clazz,
+		Class<?>[] pclazz,
+		boolean validate) throws ArangoException {
+		if (res == null) {
+			return null;
+		}
+		boolean isDocumentEntity = false;
+		//boolean requestSuccessful = true;
+		
+		// the following was added to ensure, that attributes with a key like
+		// "error", "code", "errorNum"
+		// and "etag" will be serialized, when no error was thrown by the
+		// database
+		if (clazz == DocumentEntity.class) {
+			isDocumentEntity = true;
+		}
+		
+		int statusCode=checkServerErrors(res);
+		
 		try {
 			EntityDeserializers.setParameterized(pclazz);
 
@@ -283,7 +295,7 @@ public abstract class BaseArangoDriver {
 				validate(res, entity);
 			}
 
-			if (isDocumentEntity && requestSuccessful) {
+			if (isDocumentEntity) {		//  && requestSuccessful	NOTE: no need for this, an exception is always thrown
 				entity.setCode(statusCode);
 				entity.setErrorMessage(null);
 				entity.setError(false);
@@ -294,6 +306,27 @@ public abstract class BaseArangoDriver {
 		} finally {
 			EntityDeserializers.removeParameterized();
 		}
+	}
+	
+	/**
+	 * Gets the raw JSON string with results, from the Http response
+	 * @param res the response of the database
+	 * @return A valid JSON string with the results
+	 * @throws ArangoException
+	 */
+	protected String getJSONResponseText(HttpResponseEntity res) throws ArangoException {
+		if (res == null) {
+			return null;
+		}
+
+		checkServerErrors(res);
+
+		// no errors, return results as a JSON string
+		JsonParser jsonParser = new JsonParser();
+		JsonElement jsonElement = jsonParser.parse(res.getText());
+		JsonObject jsonObject = jsonElement.getAsJsonObject();
+		JsonElement result = jsonObject.get("result");
+		return result.toString();
 	}
 
 	protected <T> T createEntity(String str, Class<T> clazz, Class<?>... pclazz) throws ArangoException {
