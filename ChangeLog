@@ -1,4 +1,4 @@
-v2.7.0 (????-??-??)
+v2.7.0 (2015-11-20)
 ---------------------------
 * added document examples in src/test/java/com/arangodb/example/document/
 * added graph examples in src/test/java/com/arangodb/example/document/
