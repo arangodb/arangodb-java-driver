@@ -23,10 +23,24 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.ssl.SSLContexts;
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.arangodb.entity.ArangoVersion;
 
 /**
  * UnitTest for ArangoConfigure.
@@ -35,6 +49,20 @@ import org.junit.Test;
  * 
  */
 public class ArangoConfigureTest {
+
+	private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
+
+	/**
+	 * a SSL trust store
+	 * 
+	 * create the trust store for the self signed certificate: keytool -import
+	 * -alias "my arangodb server cert" -file UnitTests/server.pem -keystore
+	 * example.truststore
+	 * 
+	 * https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/
+	 * apache/http/conn/ssl/SSLSocketFactory.html
+	 */
+	private static final String SSL_TRUSTSTORE = "/example.truststore";
 
 	@Test
 	public void load_from_property_file() {
@@ -127,6 +155,28 @@ public class ArangoConfigureTest {
 
 		configure.shutdown();
 
+	}
+
+	@Test
+	public void sslWithSelfSignedCertificateTest() throws ArangoException, KeyManagementException,
+			NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, URISyntaxException {
+
+		// create a sslContext for the self signed certificate
+		URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
+		SSLContext sslContext = SSLContexts.custom()
+				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
+
+		ArangoConfigure configuration = new ArangoConfigure();
+		configuration.setArangoHost(new ArangoHost("localhost", 8530));
+		configuration.setUseSsl(true);
+		configuration.setSslContext(sslContext);
+		configuration.init();
+
+		ArangoDriver arangoDriver = new ArangoDriver(configuration);
+
+		ArangoVersion version = arangoDriver.getVersion();
+
+		Assert.assertNotNull(version);
 	}
 
 }

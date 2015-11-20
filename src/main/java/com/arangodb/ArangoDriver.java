@@ -2471,24 +2471,25 @@ public class ArangoDriver extends BaseArangoDriver {
 
 	/**
 	 * Executes an AQL query and returns the raw JSON response
-	 * @param query an AQL query as string
-	 * @param bindVars a map containing all bind variables,
-	 * @param aqlQueryOptions AQL query options
+	 * 
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param aqlQueryOptions
+	 *            AQL query options
 	 * @return A JSON string with the results from server
 	 * @throws ArangoException
 	 */
-	public String executeAqlQueryJSON(
-			String query,
-			Map<String, Object> bindVars,
-			AqlQueryOptions aqlQueryOptions
-			) throws ArangoException {
+	public String executeAqlQueryJSON(String query, Map<String, Object> bindVars, AqlQueryOptions aqlQueryOptions)
+			throws ArangoException {
 
-			if (aqlQueryOptions == null) {
-				aqlQueryOptions = getDefaultAqlQueryOptions();
-			}
-
-			return cursorDriver.executeAqlQueryJSON(getDefaultDatabase(), query, bindVars, aqlQueryOptions);
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
 		}
+
+		return cursorDriver.executeAqlQueryJSON(getDefaultDatabase(), query, bindVars, aqlQueryOptions);
+	}
 
 	/**
 	 * This method executes an AQL query and returns a DocumentCursorResult
@@ -5756,4 +5757,12 @@ public class ArangoDriver extends BaseArangoDriver {
 		return this.cursorDriver.killQuery(database, id);
 	}
 
+	/**
+	 * Returns the HTTP manager of the driver
+	 * 
+	 * @return httpManager
+	 */
+	public HttpManager getHttpManager() {
+		return httpManager;
+	}
 }

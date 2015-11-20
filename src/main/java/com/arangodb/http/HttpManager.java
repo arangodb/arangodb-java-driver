@@ -49,7 +49,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
@@ -62,6 +67,7 @@ import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,9 +101,7 @@ public class HttpManager {
 	private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
 
 	public static enum HttpMode {
-		SYNC,
-		ASYNC,
-		FIREANDFORGET
+		SYNC, ASYNC, FIREANDFORGET
 	}
 
 	public HttpManager(ArangoConfigure configure) {
@@ -109,8 +113,23 @@ public class HttpManager {
 	}
 
 	public void init() {
+		// socket factory for HTTP
+		ConnectionSocketFactory plainsf = new PlainConnectionSocketFactory();
+
+		// socket factory for HTTPS
+		SSLConnectionSocketFactory sslsf = null;
+		if (configure.getSslContext() != null) {
+			sslsf = new SSLConnectionSocketFactory(configure.getSslContext());
+		} else {
+			sslsf = new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
+		}
+
+		// register socket factories
+		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create()
+				.register("http", plainsf).register("https", sslsf).build();
+
 		// ConnectionManager
-		cm = new PoolingHttpClientConnectionManager();
+		cm = new PoolingHttpClientConnectionManager(r);
 		cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
 		cm.setMaxTotal(configure.getMaxTotalConnection());
 
@@ -137,7 +156,8 @@ public class HttpManager {
 			@Override
 			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
 				// Honor 'keep-alive' header
-				HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+				HeaderElementIterator it = new BasicHeaderElementIterator(
+						response.headerIterator(HTTP.CONN_KEEP_ALIVE));
 				while (it.hasNext()) {
 					HeaderElement he = it.nextElement();
 					String param = he.getName();
@@ -281,8 +301,11 @@ public class HttpManager {
 		return doPostPutPatch(RequestType.POST, url, headers, params, body, entity);
 	}
 
-	public HttpResponseEntity doPut(String url, Map<String, Object> headers, Map<String, Object> params, String bodyText)
-			throws ArangoException {
+	public HttpResponseEntity doPut(
+		String url,
+		Map<String, Object> headers,
+		Map<String, Object> params,
+		String bodyText) throws ArangoException {
 		return doPostPutPatch(RequestType.PUT, url, headers, params, bodyText, null);
 	}
 
@@ -365,19 +388,19 @@ public class HttpManager {
 	 * @return the response of the request
 	 * @throws ArangoException
 	 */
-	private HttpResponseEntity executeInternal(String baseUrl, HttpRequestEntity requestEntity) throws ArangoException,
-			SocketException {
+	private HttpResponseEntity executeInternal(String baseUrl, HttpRequestEntity requestEntity)
+			throws ArangoException, SocketException {
 
 		String url = buildUrl(baseUrl, requestEntity);
 
 		if (logger.isDebugEnabled()) {
 			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
 					|| requestEntity.type == RequestType.PATCH) {
-				logger.debug("[REQ]http-{}: url={}, headers={}, body={}", new Object[] { requestEntity.type, url,
-						requestEntity.headers, requestEntity.bodyText });
+				logger.debug("[REQ]http-{}: url={}, headers={}, body={}",
+					new Object[] { requestEntity.type, url, requestEntity.headers, requestEntity.bodyText });
 			} else {
-				logger.debug("[REQ]http-{}: url={}, headers={}", new Object[] { requestEntity.type, url,
-						requestEntity.headers });
+				logger.debug("[REQ]http-{}: url={}, headers={}",
+					new Object[] { requestEntity.type, url, requestEntity.headers });
 			}
 		}
 

@@ -23,6 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.arangodb.bench.BenchmarkImport;
 import com.arangodb.example.document.DocumentExamplesTestSuite;
 import com.arangodb.example.graph.GraphExamplesTestSuite;
+import com.arangodb.example.ssl.SslExample;
 
 /**
  * Start all examples (unit tests) in example directory
@@ -39,7 +40,9 @@ import com.arangodb.example.graph.GraphExamplesTestSuite;
 
 		BenchmarkImport.class,
 
-		TransactionExample.class
+		TransactionExample.class,
+
+		SslExample.class
 
 })
 

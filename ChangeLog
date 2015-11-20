@@ -2,6 +2,8 @@ v2.7.0 (????-??-??)
 ---------------------------
 * added document examples in src/test/java/com/arangodb/example/document/
 * added graph examples in src/test/java/com/arangodb/example/document/
+* new function executeAqlQueryJSON(): Executes an AQL query and returns the raw JSON response as a String
+* initial support of HTTPS connections. Examples src/test/java/com/arangodb/example/ssl/
 
 
 v2.6.9 (2015-10-16)

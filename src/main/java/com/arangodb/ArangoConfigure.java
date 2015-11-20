@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.net.ssl.SSLContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,48 +54,54 @@ public class ArangoConfigure {
 	/** default property file */
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
-	List<ArangoHost> arangoHosts;
-	int currentArangoHost;
+	private List<ArangoHost> arangoHosts;
+	private int currentArangoHost;
 
 	/** connection timeout(ms) */
-	int connectionTimeout = -1;
+	private int connectionTimeout = -1;
 	/** socket read timeout(ms) */
-	int timeout = -1;
+	private int timeout = -1;
 
 	/** max connection per configure */
-	int maxTotalConnection;
+	private int maxTotalConnection;
 	/** max connection per host */
-	int maxPerConnection;
+	private int maxPerConnection;
 
 	/** Basic auth user */
-	String user;
+	private String user;
 	/** Basic auth password */
-	String password;
+	private String password;
 
 	/** proxy-host */
-	String proxyHost;
+	private String proxyHost;
 	/** proxy-port */
-	int proxyPort;
+	private int proxyPort;
 
 	/** http retry count */
-	int retryCount = 3;
+	private int retryCount = 3;
 
 	/**
 	 * number of connect retries (0 means infinite)
 	 */
-	int connectRetryCount = 3;
+	private int connectRetryCount = 3;
 
 	/**
 	 * milliseconds
 	 */
-	int connectRetryWait = 1000;
+	private int connectRetryWait = 1000;
 
 	/** Default Database */
 	String defaultDatabase;
 
-	boolean enableCURLLogger = false;
+	private boolean enableCURLLogger = false;
 
-	boolean staleConnectionCheck = false;
+	private boolean staleConnectionCheck = false;
+
+	private boolean useSsl = false;
+
+	private SSLContext sslContext = null;
+
+	private String sslTrustStore = null;
 
 	/**
 	 * the default ArangoDB cursor batch size
@@ -247,6 +255,16 @@ public class ArangoConfigure {
 					setBatchSize(Integer.parseInt(batchSize));
 				}
 
+				String useSsl = prop.getProperty("useSsl");
+				if (useSsl != null) {
+					setUseSsl(Boolean.parseBoolean(useSsl));
+				}
+
+				String sslTrustStore = prop.getProperty("sslTrustStore");
+				if (sslTrustStore != null) {
+					setSslTrustStore(sslTrustStore);
+				}
+
 			}
 		} catch (IOException e) {
 			logger.warn("load property error", e);
@@ -285,13 +303,13 @@ public class ArangoConfigure {
 	public String getBaseUrl() {
 		ArangoHost currentHost = getCurrentHost();
 
-		return "http://" + currentHost.getHost() + ":" + currentHost.getPort();
+		return (useSsl ? "https://" : "http://") + currentHost.getHost() + ":" + currentHost.getPort();
 	}
 
 	public String getEndpoint() {
 		ArangoHost currentHost = getCurrentHost();
 
-		return "tcp://" + currentHost.getHost() + ":" + currentHost.getPort();
+		return (useSsl ? "ssl://" : "tcp://") + currentHost.getHost() + ":" + currentHost.getPort();
 	}
 
 	private ArangoHost getCurrentHost() {
@@ -583,6 +601,50 @@ public class ArangoConfigure {
 
 	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
+	}
+
+	public boolean getUseSsl() {
+		return useSsl;
+	}
+
+	/**
+	 * Configure the client to use HTTPS or HTTP
+	 * 
+	 * @param useSsl
+	 *            set true to use HTTPS (default false)
+	 */
+	public void setUseSsl(boolean useSsl) {
+		this.useSsl = useSsl;
+	}
+
+	public SSLContext getSslContext() {
+		return sslContext;
+	}
+
+	/**
+	 * Set SSL contest for HTTPS connections.
+	 * 
+	 * (do not use setSslTrustStore() together with setSslContext())
+	 * 
+	 * @param sslContext
+	 */
+	public void setSslContext(SSLContext sslContext) {
+		this.sslContext = sslContext;
+	}
+
+	public String getSslTrustStore() {
+		return sslTrustStore;
+	}
+
+	/**
+	 * Set file name of trust store
+	 * 
+	 * (do not use setSslTrustStore() together with setSslContext())
+	 * 
+	 * @param sslTrustStore
+	 */
+	public void setSslTrustStore(String sslTrustStore) {
+		this.sslTrustStore = sslTrustStore;
 	}
 
 }
