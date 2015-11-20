@@ -31,7 +31,7 @@ ${ARANGOD} \
     --configuration none \
     --server.endpoint tcp://127.0.0.1:8529 \
     --server.endpoint ssl://127.0.0.1:8530 \
-    --server.keyfile UnitTests/server.pem \
+    --server.keyfile ./server.pem \
     --javascript.app-path ${ARANGODB_DIR}/js/apps \
     --javascript.startup-directory ${ARANGODB_DIR}/js \
     --server.disable-authentication false &
