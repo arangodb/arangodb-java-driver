@@ -77,7 +77,6 @@ The driver is configured with some default values:
 <tr><th>defaultDatabase</th><td>default database</td><td></td></tr>
 <tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
 <tr><th>useSsl</th><td>use HTTPS connection</td><td>false</td></tr>
-<tr><th>sslTrustStore</th><td>path to a trust-store</td><td>false</td></tr>
 
 </table>
 
