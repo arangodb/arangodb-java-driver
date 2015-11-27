@@ -166,9 +166,7 @@ public class ArangoConfigureTest {
 		SSLContext sslContext = SSLContexts.custom()
 				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
-		ArangoConfigure configuration = new ArangoConfigure();
-		configuration.setArangoHost(new ArangoHost("localhost", 8530));
-		configuration.setUseSsl(true);
+		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		configuration.setSslContext(sslContext);
 		configuration.init();
 
