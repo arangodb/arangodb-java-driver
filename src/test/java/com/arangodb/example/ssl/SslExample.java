@@ -76,7 +76,8 @@ public class SslExample {
 	public void httpTest() throws ArangoException {
 
 		ArangoConfigure configuration = new ArangoConfigure();
-		configuration.setArangoHost(new ArangoHost("localhost", 8529));
+		// get host and port from arangodb.properties
+		// configuration.setArangoHost(new ArangoHost("localhost", 8529));
 		configuration.init();
 
 		ArangoDriver arangoDriver = new ArangoDriver(configuration);
@@ -110,9 +111,7 @@ public class SslExample {
 		SSLContext sslContext = SSLContexts.custom()
 				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
-		ArangoConfigure configuration = new ArangoConfigure();
-		configuration.setArangoHost(new ArangoHost("localhost", 8530));
-		configuration.setUseSsl(true);
+		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		configuration.setSslContext(sslContext);
 		configuration.init();
 
@@ -124,9 +123,7 @@ public class SslExample {
 
 	@Test
 	public void sslHandshakeExceptionTest() {
-		ArangoConfigure configuration = new ArangoConfigure();
-		configuration.setArangoHost(new ArangoHost("localhost", 8530));
-		configuration.setUseSsl(true);
+		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		configuration.init();
 
 		ArangoDriver arangoDriver = new ArangoDriver(configuration);
@@ -152,10 +149,9 @@ public class SslExample {
 		SSLContext sslContext = SSLContexts.custom()
 				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
-		ArangoConfigure configuration = new ArangoConfigure();
+		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		// 127.0.0.1 is the wrong name
-		configuration.setArangoHost(new ArangoHost("127.0.0.1", 8530));
-		configuration.setUseSsl(true);
+		configuration.getArangoHost().setHost("127.0.0.1");
 		configuration.setSslContext(sslContext);
 		configuration.init();
 
