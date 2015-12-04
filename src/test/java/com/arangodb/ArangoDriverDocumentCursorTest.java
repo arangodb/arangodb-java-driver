@@ -32,6 +32,7 @@ import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
+import com.arangodb.util.TestUtils;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -154,7 +155,7 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 
 	@Test
 	public void test_withCache() throws ArangoException {
-		if (isMinimumVersion(VERSION_2_7)) {
+		if (isMinimumVersion(TestUtils.VERSION_2_7)) {
 			// start caching
 			QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
 			properties.setMode("on");

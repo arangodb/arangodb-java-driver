@@ -33,7 +33,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 		CreateVerticesAndEdgesExample.class,
 
-		GraphAqlQueryExample.class
+		GraphAqlQueryExample.class,
+
+		GraphAqlTraversalQueryExample.class
 
 })
 

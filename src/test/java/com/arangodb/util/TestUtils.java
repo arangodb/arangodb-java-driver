@@ -30,6 +30,10 @@ import com.arangodb.Station;
  */
 public class TestUtils {
 
+	public static final String VERSION_2_7 = "2.7";
+
+	public static final String VERSION_2_8 = "2.8";
+
 	public static List<Station> readStations() throws IOException {
 
 		ArrayList<Station> stations = new ArrayList<Station>(1000);
@@ -48,6 +52,45 @@ public class TestUtils {
 
 		return stations;
 
+	}
+
+	public static int compareVersion(String version1, String version2) {
+		String[] v1s = version1.split("\\.");
+		String[] v2s = version2.split("\\.");
+
+		int minLength = Math.min(v1s.length, v2s.length);
+		int i = 0;
+		for (; i < minLength; i++) {
+			int i1 = getIntegerValueOfString(v1s[i]);
+			int i2 = getIntegerValueOfString(v2s[i]);
+			if (i1 > i2)
+				return 1;
+			else if (i1 < i2)
+				return -1;
+		}
+		int sum1 = 0;
+		for (int j = 0; j < v1s.length; j++) {
+			sum1 += getIntegerValueOfString(v1s[j]);
+		}
+		int sum2 = 0;
+		for (int j = 0; j < v2s.length; j++) {
+			sum2 += getIntegerValueOfString(v2s[j]);
+		}
+		if (sum1 == sum2)
+			return 0;
+		return v1s.length > v2s.length ? 1 : -1;
+	}
+
+	private static int getIntegerValueOfString(String str) {
+		try {
+			return Integer.valueOf(str);
+		} catch (NumberFormatException e) {
+			if (str.contains("-")) {
+				str = str.substring(0, str.indexOf('-'));
+				return Integer.valueOf(str);
+			}
+		}
+		return 0;
 	}
 
 }

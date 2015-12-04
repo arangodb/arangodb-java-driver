@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.util.TestUtils;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -41,7 +42,7 @@ public class ArangoDriverQueryCacheTest extends BaseTest {
 
 	@Test
 	public void test_deleteQueryCache() throws ArangoException {
-		if (isMinimumVersion(VERSION_2_7)) {
+		if (isMinimumVersion(TestUtils.VERSION_2_7)) {
 			DefaultEntity ret = driver.deleteQueryCache();
 			assertEquals(200, ret.getStatusCode());
 			assertEquals(200, ret.getCode());
@@ -51,7 +52,7 @@ public class ArangoDriverQueryCacheTest extends BaseTest {
 
 	@Test
 	public void test_getQueryCacheProperties() throws ArangoException {
-		if (isMinimumVersion(VERSION_2_7)) {
+		if (isMinimumVersion(TestUtils.VERSION_2_7)) {
 			QueryCachePropertiesEntity ret = driver.getQueryCacheProperties();
 			assertEquals(200, ret.getStatusCode());
 			assertNotNull(ret.getMode());
@@ -64,7 +65,7 @@ public class ArangoDriverQueryCacheTest extends BaseTest {
 		String on = "on";
 		String off = "off";
 
-		if (isMinimumVersion(VERSION_2_7)) {
+		if (isMinimumVersion(TestUtils.VERSION_2_7)) {
 			QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
 			properties.setMode(on);
 			properties.setMaxResults(100L);

@@ -24,12 +24,14 @@ import org.junit.Assert;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
+import com.arangodb.entity.ArangoVersion;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.GraphEntity;
+import com.arangodb.util.TestUtils;
 
 public class BaseExample {
 
@@ -152,6 +154,12 @@ public class BaseExample {
 		GraphEntity createGraph = arangoDriver.createGraph(grapName, edgeDefinitions, null, true);
 		Assert.assertNotNull(createGraph);
 		Assert.assertEquals(grapName, createGraph.getName());
+	}
+
+	public boolean isMinimumVersion(ArangoDriver arangoDriver, String version) throws ArangoException {
+		ArangoVersion ver = arangoDriver.getVersion();
+		int b = TestUtils.compareVersion(ver.getVersion(), version);
+		return b > -1;
 	}
 
 }
