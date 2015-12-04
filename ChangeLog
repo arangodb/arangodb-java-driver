@@ -1,3 +1,7 @@
+c2.7.1 (????-??-??)
+---------------------------
+* added examples for new AQL traversal functions (since ArangoDB 2.8)
+
 v2.7.0 (2015-11-20)
 ---------------------------
 * added document examples in src/test/java/com/arangodb/example/document/
