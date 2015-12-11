@@ -35,7 +35,13 @@ import org.junit.runners.Suite.SuiteClasses;
 
 		GraphAqlQueryExample.class,
 
-		GraphAqlTraversalQueryExample.class
+		GraphAqlTraversalQueryExample.class,
+
+		GetVerticesAndEdgesExample.class,
+
+		DeleteVerticesAndEdgesExample.class,
+
+		UpdateAndReplaceVertexExample.class
 
 })
 

@@ -32,9 +32,8 @@ import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.GraphEntity;
 
 /**
- * AQL example with new cursor implementation
+ * Create graph example
  * 
- * @author tamtam180 - kirscheless at gmail.com
  * @author a-brandt
  *
  */

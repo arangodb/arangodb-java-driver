@@ -32,7 +32,7 @@ import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.TestUtils;
 
 /**
- * AQL example with new cursor implementation
+ * traversal example (since ArangoDB 2.8)
  * 
  * @author a-brandt
  *

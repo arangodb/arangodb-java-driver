@@ -26,9 +26,8 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.marker.VertexEntity;
 
 /**
- * AQL example with new cursor implementation
+ * AQL example creating vertices and edges
  * 
- * @author tamtam180 - kirscheless at gmail.com
  * @author a-brandt
  *
  */

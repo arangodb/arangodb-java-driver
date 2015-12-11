@@ -16,7 +16,10 @@
 
 package com.arangodb.example.graph;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,6 +27,7 @@ import org.junit.Test;
 
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
+import com.arangodb.CursorResult;
 import com.arangodb.Direction;
 import com.arangodb.EdgeCursor;
 import com.arangodb.VertexCursor;
@@ -173,6 +177,40 @@ public class GraphAqlQueryExample extends BaseExample {
 		// no path found (distance = -1)
 		Assert.assertEquals(new Long(-1), shortestPath.getDistance());
 
+		//
+		printHeadline("get all vertex document handles by AQL query");
+		//
+
+		String query = "for i in graph_vertices(@graphName , null, null) return i._id";
+		Map<String, Object> bindVars = new HashMap<String, Object>();
+		bindVars.put("graphName", GRAPH_NAME);
+
+		CursorResult<String> cursor = arangoDriver.executeAqlQuery(query, bindVars, null, String.class);
+		Assert.assertNotNull(cursor);
+		List<String> list = cursor.asList();
+		count = 0;
+		for (String str : list) {
+			System.out.printf("%d\t%20s%n", ++count, str);
+		}
+		Assert.assertEquals(6, list.size());
+
+		//
+		printHeadline("get vertex documents by AQL query and filter");
+		//
+
+		query = "for i in graph_vertices(@graphName , null, null) filter i.name != @name return i";
+		bindVars = new HashMap<String, Object>();
+		bindVars.put("graphName", GRAPH_NAME);
+		bindVars.put("name", "Boris");
+
+		CursorResult<Person> cursor2 = arangoDriver.executeAqlQuery(query, bindVars, null, Person.class);
+		Assert.assertNotNull(cursor2);
+		List<Person> list2 = cursor2.asList();
+		count = 0;
+		for (Person person : list2) {
+			System.out.printf("%d\t%20s\t%s%n", ++count, person.getDocumentHandle(), person.getName());
+		}
+		Assert.assertEquals(5, list2.size());
 	}
 
 	private void printShortestPath(ShortestPathEntity<Person, Knows> shortestPath) {
