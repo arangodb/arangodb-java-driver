@@ -66,11 +66,11 @@ public class GraphAqlTraversalQueryExample extends BaseExample {
 				"To get started we select the full graph; for better overview we only return the vertex ids:");
 			//
 
-			String queryString = "FOR v IN 0..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' RETURN v._key";
+			String queryString = "FOR v IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' RETURN v._key";
 			CursorResult<String> cursor = executeAndPrintResultKeys(queryString);
 			Assert.assertEquals(10, cursor.getCount());
 
-			queryString = "FOR v IN 0..3 OUTBOUND 'circles/A' edges RETURN v._key";
+			queryString = "FOR v IN 1..3 OUTBOUND 'circles/A' edges RETURN v._key";
 			cursor = executeAndPrintResultKeys(queryString);
 			Assert.assertEquals(10, cursor.getCount());
 
@@ -111,17 +111,17 @@ public class GraphAqlTraversalQueryExample extends BaseExample {
 			printHeadline("Comparing OUTBOUND / INBOUND / ANY:");
 			//
 
-			queryString = "FOR v IN 0..3 OUTBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
+			queryString = "FOR v IN 1..3 OUTBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
 			cursor = executeAndPrintResultKeys(queryString);
 			Assert.assertEquals(1, cursor.getCount());
 
-			queryString = "FOR v IN 0..3 INBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
+			queryString = "FOR v IN 1..3 INBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
 			cursor = executeAndPrintResultKeys(queryString);
 			Assert.assertEquals(2, cursor.getCount());
 
-			queryString = "FOR v IN 0..3 ANY 'circles/E' GRAPH 'traversalGraph' return v._key";
+			queryString = "FOR v IN 1..3 ANY 'circles/E' GRAPH 'traversalGraph' return v._key";
 			cursor = executeAndPrintResultKeys(queryString);
-			Assert.assertEquals(14, cursor.getCount());
+			Assert.assertEquals(6, cursor.getCount());
 		}
 	}
 
