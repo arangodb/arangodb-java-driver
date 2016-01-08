@@ -1,6 +1,8 @@
 c2.7.1 (????-??-??)
 ---------------------------
 * added examples for new AQL traversal functions (since ArangoDB 2.8)
+* added AQL warnings to CursorResult<?> (hasWarning() and getWarnings())
+  
 
 v2.7.0 (2015-11-20)
 ---------------------------
