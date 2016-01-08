@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.WarningEntity;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -172,6 +173,24 @@ public class CursorResult<T> implements Iterable<T> {
 			throw new UnsupportedOperationException("remove is not supported!");
 		}
 
+	}
+
+	/**
+	 * Returns true, if there are AQL warnings
+	 * 
+	 * @return true, if there are AQL warnings
+	 */
+	public boolean hasWarning() {
+		return entity.hasWarnings();
+	}
+
+	/**
+	 * Returns a list of AQL warnings (code and message)
+	 * 
+	 * @return list of AQL warnings
+	 */
+	public List<WarningEntity> getWarnings() {
+		return entity.getWarnings();
 	}
 
 }

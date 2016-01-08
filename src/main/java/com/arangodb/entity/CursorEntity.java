@@ -75,6 +75,11 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 	 */
 	List<? extends T> results;
 
+	/**
+	 * A list of warnings
+	 */
+	List<WarningEntity> warnings;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
@@ -204,4 +209,15 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 		this.cached = cached;
 	}
 
+	public List<WarningEntity> getWarnings() {
+		return warnings;
+	}
+
+	public void setWarnings(List<WarningEntity> warnings) {
+		this.warnings = warnings;
+	}
+
+	public boolean hasWarnings() {
+		return CollectionUtils.isNotEmpty(this.warnings);
+	}
 }

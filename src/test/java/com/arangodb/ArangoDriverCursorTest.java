@@ -22,12 +22,15 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.WarningEntity;
 import com.arangodb.util.MapBuilder;
 
 /**
@@ -44,8 +47,9 @@ public class ArangoDriverCursorTest extends BaseTest {
 	public void test_validateQuery() throws ArangoException {
 
 		CursorEntity<?> entity = driver.validateQuery(
-		// "SELECT t FROM unit_test_cursor t WHERE t.name == @name@ && t.age >= @age@"
-				"FOR t IN unit_test_cursor FILTER t.name == @name && t.age >= @age RETURN t");
+			// "SELECT t FROM unit_test_cursor t WHERE t.name == @name@ && t.age
+			// >= @age@"
+			"FOR t IN unit_test_cursor FILTER t.name == @name && t.age >= @age RETURN t");
 
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.getBindVars().size(), is(2));
@@ -60,8 +64,8 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// =じゃなくて==じゃないとダメ。文法間違いエラー
 		try {
 			driver.validateQuery(
-			// "SELECT t FROM unit_test_cursor t WHERE t.name = @name@"
-			"FOR t IN unit_test_cursor FILTER t.name = @name@");
+				// "SELECT t FROM unit_test_cursor t WHERE t.name = @name@"
+				"FOR t IN unit_test_cursor FILTER t.name = @name@");
 
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(400));
@@ -258,4 +262,23 @@ public class ArangoDriverCursorTest extends BaseTest {
 			assertThat(entity.getAge(), is(10));
 		}
 	}
+
+	@Test
+	public void test_warning() throws ArangoException {
+		String collectionName = "unit_test_query_test";
+		try {
+			driver.createCollection(collectionName);
+		} catch (ArangoException e) {
+		}
+		driver.truncateCollection(collectionName);
+
+		String query = "return _users + 1";
+		Map<String, Object> bindVars = new HashMap<String, Object>();
+		CursorResult<Map> cursor = driver.executeAqlQuery(query, bindVars, null, Map.class);
+		assertThat(cursor.hasWarning(), is(true));
+
+		List<WarningEntity> warnings = cursor.getWarnings();
+		assertThat(warnings.size(), is(1));
+	}
+
 }

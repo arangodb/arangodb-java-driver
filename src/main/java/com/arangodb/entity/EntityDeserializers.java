@@ -568,6 +568,7 @@ public class EntityDeserializers {
 				entity.bindVars = context.deserialize(obj.get("bindVars"), bindVarsType);
 			}
 
+			entity.warnings = new ArrayList<WarningEntity>();
 			if (obj.has("extra")) {
 				entity.extra = context.deserialize(obj.get("extra"), extraType);
 
@@ -585,6 +586,24 @@ public class EntityDeserializers {
 						}
 					}
 				}
+				if (entity.extra.containsKey("warnings")) {
+					Object object = entity.extra.get("warnings");
+					if (object instanceof List<?>) {
+						List<?> l = (List<?>) entity.extra.get("warnings");
+						for (Object o : l) {
+							if (o instanceof Map<?, ?>) {
+								Map<?, ?> m = (Map<?, ?>) o;
+								if (m.containsKey("code") && m.get("code") instanceof Double && m.containsKey("message")
+										&& m.get("message") instanceof String) {
+									Long code = ((Double) m.get("code")).longValue();
+									String message = (String) m.get("message");
+									entity.warnings.add(new WarningEntity(code, message));
+								}
+							}
+						}
+					}
+				}
+
 			}
 
 			return entity;
