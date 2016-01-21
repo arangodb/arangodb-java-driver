@@ -45,9 +45,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 		SimplePersonAqlQueryWithLimitExample.class,
 
-		AqlQueryWithSpecialReturnTypesExample.class
+		AqlQueryWithSpecialReturnTypesExample.class,
 
-})
+		RawDocumentExample.class })
 
 public class DocumentExamplesTestSuite {
 

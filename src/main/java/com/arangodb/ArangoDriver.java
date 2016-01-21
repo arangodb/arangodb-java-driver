@@ -5765,4 +5765,51 @@ public class ArangoDriver extends BaseArangoDriver {
 	public HttpManager getHttpManager() {
 		return httpManager;
 	}
+
+	/**
+	 * Creates a document in the collection defined by the collection's name
+	 *
+	 * @param collectionName
+	 *            The name of the collection
+	 * @param rawJsonString
+	 *            A string containing a JSON object
+	 * @param createCollection
+	 *            if set to true the collection is created if it does not exist
+	 * @param waitForSync
+	 *            if set to true the response is returned when the server has
+	 *            finished.
+	 * @return DocumentEntity<String>
+	 * @throws ArangoException
+	 */
+	public DocumentEntity<String> createDocumentRaw(
+		String collectionName,
+		String rawJsonString,
+		Boolean createCollection,
+		Boolean waitForSync) throws ArangoException {
+		return documentDriver.createDocumentRaw(getDefaultDatabase(), collectionName, rawJsonString, createCollection,
+			waitForSync);
+	}
+
+	/**
+	 * Returns the document as a JSON string. Note that the
+	 * *ifNoneMatchRevision* and *ifMatchRevision* can not be used at the same
+	 * time, one of these two has to be null.
+	 *
+	 * @param documentHandle
+	 *            The document handle
+	 * @param ifNoneMatchRevision
+	 *            if set the document is only returned id it has a different
+	 *            revision.
+	 * @param ifMatchRevision
+	 *            if set the document is only returned id it has the same
+	 *            revision.
+	 * @return a String
+	 * @throws ArangoException
+	 */
+	public String getDocumentRaw(String documentHandle, Long ifNoneMatchRevision, Long ifMatchRevision)
+			throws ArangoException {
+		return documentDriver.getDocumentRaw(getDefaultDatabase(), documentHandle, ifNoneMatchRevision,
+			ifMatchRevision);
+	}
+
 }

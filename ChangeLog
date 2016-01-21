@@ -1,8 +1,9 @@
-c2.7.1 (????-??-??)
+v2.7.1 (2016-01-21)
 ---------------------------
 * added examples for new AQL traversal functions (since ArangoDB 2.8)
 * added AQL warnings to CursorResult<?> (hasWarning() and getWarnings())
-  
+* added createDocumentRaw(...) and getDocumentRaw(...). Examples src/test/java/com/arangodb/example/document/RawDocumentExample.java
+* Updated dependencies gson (2.5), httpclient (4.5.1) and slf4j-api (1.7.13)
 
 v2.7.0 (2015-11-20)
 ---------------------------

@@ -100,11 +100,10 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	public DocumentEntity<String> createDocumentRaw(
 		String database,
 		String collectionName,
-		String documentKey,
-		String rawJsonString,
+		String rawJsonObjectString,
 		Boolean createCollection,
 		Boolean waitForSync) throws ArangoException {
-		return _createDocument(database, collectionName, documentKey, rawJsonString, createCollection, waitForSync,
+		return _createDocument(database, collectionName, null, rawJsonObjectString, createCollection, waitForSync,
 			true);
 	}
 
@@ -213,6 +212,18 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 			entity = new DocumentEntity<T>();
 		}
 		return entity;
+	}
+
+	@Override
+	public String getDocumentRaw(String database, String documentHandle, Long ifNoneMatchRevision, Long ifMatchRevision)
+			throws ArangoException {
+
+		validateDocumentHandle(documentHandle);
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/document", documentHandle),
+			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision).get(),
+			null);
+
+		return res.getText();
 	}
 
 	@Override

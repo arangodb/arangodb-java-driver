@@ -21,7 +21,6 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 	DocumentEntity<String> createDocumentRaw(
 		String database,
 		String collectionName,
-		String documentKey,
 		String rawJsonString,
 		Boolean createCollection,
 		Boolean waitForSync) throws ArangoException;
@@ -53,6 +52,9 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		Class<T> clazz,
 		Long ifNoneMatchRevision,
 		Long ifMatchRevision) throws ArangoException;
+
+	String getDocumentRaw(String database, String documentHandle, Long ifNoneMatchRevision, Long ifMatchRevision)
+			throws ArangoException;
 
 	DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev, Policy policy)
 			throws ArangoException;
