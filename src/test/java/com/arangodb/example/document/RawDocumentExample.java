@@ -16,6 +16,9 @@
 
 package com.arangodb.example.document;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.json.JSONML;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -24,6 +27,7 @@ import org.junit.Test;
 
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
+import com.arangodb.CursorRawResult;
 import com.arangodb.entity.DocumentEntity;
 
 public class RawDocumentExample extends BaseExample {
@@ -139,6 +143,26 @@ public class RawDocumentExample extends BaseExample {
 			System.out.println("XML value: " + JSONML.toString(jsonObject2));
 		} catch (ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
+		}
+
+		//
+		printHeadline("get query results");
+		//
+
+		String queryString = "FOR t IN " + COLLECTION_NAME + " FILTER t.cook_time == \"3 hours\" RETURN t";
+		System.out.println(queryString);
+		HashMap<String, Object> bindVars = new HashMap<String, Object>();
+
+		try {
+			CursorRawResult cursor = arangoDriver.executeAqlQueryRaw(queryString, bindVars, null);
+			Assert.assertNotNull(cursor);
+			Iterator<String> iter = cursor.iterator();
+			while (iter.hasNext()) {
+				JSONObject jsonObject2 = new JSONObject(iter.next());
+				System.out.println("XML value: " + JSONML.toString(jsonObject2));
+			}
+		} catch (ArangoException e) {
+			Assert.fail("Failed to query documents. " + e.getMessage());
 		}
 
 	}

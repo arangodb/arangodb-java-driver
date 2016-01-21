@@ -5812,4 +5812,30 @@ public class ArangoDriver extends BaseArangoDriver {
 			ifMatchRevision);
 	}
 
+	/**
+	 * This method executes an AQL query and returns a CursorRawResult.
+	 * 
+	 * Use CursorRawResult.iterator() to get the raw JSON strings.
+	 *
+	 * @param query
+	 *            an AQL query as string
+	 * @param bindVars
+	 *            a map containing all bind variables,
+	 * @param aqlQueryOptions
+	 *            AQL query options
+	 * @return CursorRawResult
+	 * @throws ArangoException
+	 */
+	public CursorRawResult executeAqlQueryRaw(
+		String query,
+		Map<String, Object> bindVars,
+		AqlQueryOptions aqlQueryOptions) throws ArangoException {
+
+		if (aqlQueryOptions == null) {
+			aqlQueryOptions = getDefaultAqlQueryOptions();
+		}
+
+		return cursorDriver.executeAqlQueryRaw(getDefaultDatabase(), query, bindVars, aqlQueryOptions);
+	}
+
 }

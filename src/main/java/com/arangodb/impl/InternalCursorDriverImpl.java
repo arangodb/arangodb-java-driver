@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
+import com.arangodb.CursorRawResult;
 import com.arangodb.CursorResult;
 import com.arangodb.CursorResultSet;
 import com.arangodb.DocumentCursorResult;
@@ -36,6 +37,7 @@ import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
+import com.google.gson.JsonObject;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -56,13 +58,13 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 
 	@Override
 	public String executeAqlQueryJSON(
-			String database,
-			String query,
-			Map<String, Object> bindVars,
-			AqlQueryOptions aqlQueryOptions) throws ArangoException {
+		String database,
+		String query,
+		Map<String, Object> bindVars,
+		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
-			return getJSONResponseText(getCursor(database, query, bindVars, aqlQueryOptions));
-		}
+		return getJSONResponseText(getCursor(database, query, bindVars, aqlQueryOptions));
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -144,6 +146,19 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		CursorEntity<T> entity = executeCursorEntityQuery(database, query, bindVars, aqlQueryOptions, clazz);
 
 		return new CursorResult<T>(database, this, entity, clazz);
+	}
+
+	@Override
+	public CursorRawResult executeAqlQueryRaw(
+		String database,
+		String query,
+		Map<String, Object> bindVars,
+		AqlQueryOptions aqlQueryOptions) throws ArangoException {
+
+		CursorEntity<JsonObject> entity = executeCursorEntityQuery(database, query, bindVars, aqlQueryOptions,
+			JsonObject.class);
+
+		return new CursorRawResult(database, this, entity);
 	}
 
 	@SuppressWarnings("unchecked")
