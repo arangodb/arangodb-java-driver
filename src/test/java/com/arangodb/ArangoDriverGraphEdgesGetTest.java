@@ -51,6 +51,7 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_getEdges_All() throws ArangoException {
 		GraphEntity graph = this.createTestGraph();
@@ -66,6 +67,7 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_getEdges_Vertex() throws ArangoException {
 		VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
@@ -91,6 +93,7 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		assertThat(cursor.getCount(), is(1));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_GetEdgesByExampleObject() throws ArangoException {
 		TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
@@ -126,6 +129,7 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_GetEdgesByExampleMap() throws ArangoException {
 		TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);

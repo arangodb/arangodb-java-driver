@@ -84,6 +84,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		slaveConfigure.shutdown();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	@Ignore
 	public void test_scienario() throws ArangoException, InterruptedException {

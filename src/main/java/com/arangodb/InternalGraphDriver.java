@@ -35,6 +35,7 @@ import com.arangodb.entity.GraphsEntity;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.impl.BaseDriverInterface;
 
+@SuppressWarnings("deprecation")
 public interface InternalGraphDriver extends BaseDriverInterface {
 
 	/**

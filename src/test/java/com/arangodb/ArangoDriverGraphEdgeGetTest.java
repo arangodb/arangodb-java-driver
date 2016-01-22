@@ -51,8 +51,8 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
 		EdgeEntity<?> edge1 = driver.graphCreateEdge(this.graphName, this.edgeCollectionName, null,
 			v1.getDocumentHandle(), v2.getDocumentHandle(), null, null);
 
-		EdgeEntity<?> edge2 = driver
-				.graphGetEdge(this.graphName, this.edgeCollectionName, edge1.getDocumentKey(), null);
+		EdgeEntity<?> edge2 = driver.graphGetEdge(this.graphName, this.edgeCollectionName, edge1.getDocumentKey(),
+			null);
 		assertThat(edge2.getCode(), is(200));
 		assertThat(edge2.isError(), is(false));
 
@@ -116,11 +116,11 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
 		VertexEntity<TestComplexEntity01> v2 = driver.graphCreateVertex(this.graphName, "to1-1",
 			new TestComplexEntity01("v2-user", "desc2", 12), null);
 
-		EdgeEntity<?> edge1 = driver.graphCreateEdge(this.graphName, this.edgeCollectionName, null,
-			v1.getDocumentHandle(), v2.getDocumentHandle(), null, null);
+		driver.graphCreateEdge(this.graphName, this.edgeCollectionName, null, v1.getDocumentHandle(),
+			v2.getDocumentHandle(), null, null);
 
 		try {
-			EdgeEntity<?> edge2 = driver.graphGetEdge(this.graphName, this.edgeCollectionName, "xx", null);
+			driver.graphGetEdge(this.graphName, this.edgeCollectionName, "xx", null);
 			fail();
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -174,8 +174,8 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
 
 		try {
 			Long rev = edge1.getDocumentRevision() + 1;
-			EdgeEntity<TestComplexEntity02> edge2 = driver.graphGetEdge(this.graphName, this.edgeCollectionName,
-				edge1.getDocumentKey(), TestComplexEntity02.class, rev, null);
+			driver.graphGetEdge(this.graphName, this.edgeCollectionName, edge1.getDocumentKey(),
+				TestComplexEntity02.class, rev, null);
 			fail();
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(412));
@@ -281,8 +281,8 @@ public class ArangoDriverGraphEdgeGetTest extends BaseGraphTest {
 
 		try {
 			Long rev = edge1.getDocumentRevision() + 1;
-			EdgeEntity<TestComplexEntity02> edge2 = driver.graphGetEdge(this.graphName, this.edgeCollectionName,
-				edge1.getDocumentKey(), TestComplexEntity02.class, rev, null);
+			driver.graphGetEdge(this.graphName, this.edgeCollectionName, edge1.getDocumentKey(),
+				TestComplexEntity02.class, rev, null);
 			fail();
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(412));

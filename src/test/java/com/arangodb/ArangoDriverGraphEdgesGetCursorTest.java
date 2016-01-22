@@ -273,7 +273,6 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		Integer batchSize = 10;
 		Boolean count = true;
 		Boolean fullCount = true;
-		Integer ttl = null;
 
 		// get outbound vertices of vertex1 (the should be 2)
 		String query = "for i in graph_edges(@graphName, @vertex, @options) return i";

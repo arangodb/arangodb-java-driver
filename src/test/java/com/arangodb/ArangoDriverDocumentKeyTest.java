@@ -71,12 +71,15 @@ public class ArangoDriverDocumentKeyTest {
 	}
 
 	private static class DocumentKeyTestEntity2 {
+		@SuppressWarnings("unused")
 		public String S1;
+		@SuppressWarnings("unused")
 		public String S2;
 		@DocumentKey
 		public Integer X;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void test_document_key_string() throws ArangoException {
 

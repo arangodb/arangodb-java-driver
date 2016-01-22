@@ -60,7 +60,7 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 			body += "Content-Type: application/x-arango-batchpart" + newline;
 			body += "Content-Id: " + bp.getId() + newline + newline;
 			body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline;
-			body += "Host: " + this.configure.getHost() + newline + newline;
+			body += "Host: " + this.configure.getArangoHost().getHost() + newline + newline;
 			body += bp.getBody() == null ? "" : bp.getBody() + newline + newline;
 			resolver.put(bp.getId(), bp.getInvocationObject());
 		}

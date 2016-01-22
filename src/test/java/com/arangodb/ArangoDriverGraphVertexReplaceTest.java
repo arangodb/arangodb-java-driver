@@ -123,9 +123,8 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
-		Long rev = vertex.getDocumentRevision();
-		VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
-			this.collectionName, v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3));
+		VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName, this.collectionName,
+			v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3));
 		assertThat(updatedVertex.getCode(), is(202));
 		assertThat(updatedVertex.isError(), is(false));
 
@@ -191,8 +190,8 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
 		// replace
 		Long rev = vertex.getDocumentRevision();
-		VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
-			this.collectionName, v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3), true, rev, null);
+		VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName, this.collectionName,
+			v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3), true, rev, null);
 		assertThat(updatedVertex.getCode(), is(200));
 		assertThat(updatedVertex.isError(), is(false));
 

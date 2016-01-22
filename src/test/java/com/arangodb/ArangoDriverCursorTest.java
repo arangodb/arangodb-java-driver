@@ -79,6 +79,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 	public void test_validateQuery_400_2() throws ArangoException {
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQuery() throws ArangoException {
 
@@ -112,6 +113,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQuery_2() throws ArangoException {
 
@@ -179,6 +181,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQueryFullCount() throws ArangoException {
 
@@ -213,6 +216,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQueryUniqueResult() throws ArangoException {
 
@@ -274,6 +278,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 		String query = "return _users + 1";
 		Map<String, Object> bindVars = new HashMap<String, Object>();
+		@SuppressWarnings("rawtypes")
 		CursorResult<Map> cursor = driver.executeAqlQuery(query, bindVars, null, Map.class);
 		assertThat(cursor.hasWarning(), is(true));
 

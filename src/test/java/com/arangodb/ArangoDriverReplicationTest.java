@@ -156,7 +156,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 					switch (entity.getType()) {
 					case DOCUMENT_UPSERT:
 					case EDGE_UPSERT:
-						int x = upsertCount.getAndIncrement();
+						upsertCount.getAndIncrement();
 						assertThat(entity.getTick(), is(not(0L)));
 						assertThat(entity.getKey(), is(not(nullValue())));
 						assertThat(entity.getRev(), is(not(0L)));
@@ -221,7 +221,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 					switch (entity.getType()) {
 					case DOCUMENT_UPSERT:
 					case EDGE_UPSERT:
-						int x = upsertCount.getAndIncrement();
+						upsertCount.getAndIncrement();
 						assertThat(entity.getTick(), is((0L)));
 						assertThat(entity.getKey(), is(not(nullValue())));
 						assertThat(entity.getRev(), is(not(0L)));

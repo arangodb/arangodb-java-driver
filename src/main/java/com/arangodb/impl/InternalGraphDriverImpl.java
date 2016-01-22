@@ -50,6 +50,7 @@ import com.google.gson.JsonObject;
  * @author gschwab
  * @author a-brandt
  */
+@SuppressWarnings("deprecation")
 public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		implements com.arangodb.InternalGraphDriver {
 

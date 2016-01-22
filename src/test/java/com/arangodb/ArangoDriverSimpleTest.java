@@ -106,6 +106,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(count, is(100));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_simple_all_deprecated() throws ArangoException {
 
@@ -123,6 +124,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(count, is(100));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_simple_all_with_doc_deprecated() throws ArangoException {
 
@@ -167,6 +169,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(count, is(10));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_example_by_deprecated() throws ArangoException {
 
@@ -185,6 +188,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_example_by_with_doc_deprecated() throws ArangoException {
 
@@ -260,6 +264,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_range_no_skiplist_deprecated() throws ArangoException {
 
@@ -313,6 +318,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_range_deprecated() throws ArangoException {
 
@@ -349,6 +355,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test_range_with_doc_deprecated() throws ArangoException {
 
@@ -423,6 +430,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void test_replace_by_example() throws ArangoException {
 
@@ -450,6 +458,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
 	@Test
 	public void test_replace_by_example_with_limit() throws ArangoException {
 
@@ -475,6 +484,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
 	@Test
 	public void test_update_by_example() throws ArangoException {
 
@@ -505,6 +515,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
 	@Test
 	public void test_update_by_example_with_limit() throws ArangoException {
 
@@ -535,6 +546,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
+	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
 	@Test
 	public void test_update_by_example_with_keepnull() throws ArangoException {
 
