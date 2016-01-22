@@ -1,4 +1,4 @@
-v2.7.2 (2016-XX-XX)
+v2.7.2 (2016-01-22)
 ---------------------------
 * added executeAqlQueryRaw(...). Example src/test/java/com/arangodb/example/document/RawDocumentExample.java
 
