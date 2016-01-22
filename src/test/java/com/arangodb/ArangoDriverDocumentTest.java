@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -618,7 +619,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 			driver.deleteDocument(collectionName, 1);
 			fail();
 		} catch (ArangoException e) {
-			assertThat(e.getCode(), is(404));
+			assertThat(e.getCode(), is(ErrorNums.ERROR_HTTP_NOT_FOUND));
 		}
 	}
 
@@ -643,4 +644,57 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat((Double) myObject2.getProperties().get("b"), is(42.0));
 		assertThat(myObject2.getProperties().get("c"), is(nullValue()));
 	}
+
+	@Test
+	public void createRawDocument() throws ArangoException {
+		String jsonString = "{\"test\":123}";
+		logger.debug("jsonString before: " + jsonString);
+		DocumentEntity<String> entity = driver.createDocumentRaw(collectionName, jsonString, true, false);
+		Assert.assertNotNull(entity);
+		Assert.assertNotNull(entity.getDocumentHandle());
+		Assert.assertNotNull(entity.getDocumentKey());
+		Assert.assertNotNull(entity.getDocumentRevision());
+		String documentHandle = entity.getDocumentHandle();
+
+		String str = driver.getDocumentRaw(documentHandle, null, null);
+		Assert.assertNotNull(str);
+		Assert.assertTrue(str.contains("\"test\":123"));
+		// this string has "_id", "_key" and "_rev" attributes:
+		logger.debug("jsonString after: " + str);
+	}
+
+	@Test
+	public void createRawDocumentWithKey() throws ArangoException {
+		String key = "key1";
+		String jsonString = "{\"_key\":\"" + key + "\",\"test\":123}";
+		logger.debug("jsonString before: " + jsonString);
+		DocumentEntity<String> entity = driver.createDocumentRaw(collectionName, jsonString, true, false);
+		Assert.assertNotNull(entity);
+		Assert.assertNotNull(entity.getDocumentHandle());
+		Assert.assertNotNull(entity.getDocumentKey());
+		Assert.assertNotNull(entity.getDocumentRevision());
+		Assert.assertEquals(collectionName + "/" + key, entity.getDocumentHandle());
+		Assert.assertEquals(key, entity.getDocumentKey());
+		String documentHandle = entity.getDocumentHandle();
+
+		String str = driver.getDocumentRaw(documentHandle, null, null);
+		Assert.assertNotNull(str);
+		Assert.assertTrue(str.contains("\"test\":123"));
+		Assert.assertTrue(str.contains("\"_key\":\"" + key + "\""));
+		Assert.assertTrue(str.contains("\"_id\":\"" + collectionName + "/" + key + "\""));
+		logger.debug("jsonString after: " + str);
+	}
+
+	@Test
+	public void createRawDocumentFails() throws ArangoException {
+		try {
+			String jsonString = "no JSON";
+			driver.createDocumentRaw(collectionName, jsonString, true, false);
+			fail();
+		} catch (ArangoException e) {
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_BAD_PARAMETER, e.getCode());
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_CORRUPTED_JSON, e.getErrorNumber());
+		}
+	}
+
 }
