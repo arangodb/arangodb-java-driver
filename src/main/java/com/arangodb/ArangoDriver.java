@@ -5795,6 +5795,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * *ifNoneMatchRevision* and *ifMatchRevision* can not be used at the same
 	 * time, one of these two has to be null.
 	 *
+	 * Throws ArangoException if the requested document is not available.
+	 *
 	 * @param documentHandle
 	 *            The document handle
 	 * @param ifNoneMatchRevision

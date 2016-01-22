@@ -697,4 +697,14 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		}
 	}
 
+	@Test
+	public void getRawDocumentFails() throws ArangoException {
+		try {
+			driver.getDocumentRaw(collectionName + "/notfound", null, null);
+			fail();
+		} catch (ArangoException e) {
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getErrorNumber());
+		}
+	}
 }

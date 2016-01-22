@@ -223,6 +223,16 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 			new MapBuilder().put("If-None-Match", ifNoneMatchRevision, true).put("If-Match", ifMatchRevision).get(),
 			null);
 
+		if (res.getStatusCode() >= 400) {
+			BaseDocument entity = new BaseDocument();
+			entity.setError(true);
+			entity.setCode(res.getStatusCode());
+			entity.setStatusCode(res.getStatusCode());
+			entity.setErrorNumber(res.getStatusCode());
+			entity.setErrorMessage(res.getText());
+			throw new ArangoException(entity);
+		}
+
 		return res.getText();
 	}
 

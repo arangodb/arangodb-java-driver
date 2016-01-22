@@ -28,6 +28,7 @@ import org.junit.Test;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorRawResult;
+import com.arangodb.ErrorNums;
 import com.arangodb.entity.DocumentEntity;
 
 public class RawDocumentExample extends BaseExample {
@@ -112,6 +113,17 @@ public class RawDocumentExample extends BaseExample {
 			System.out.println("value: " + str);
 		} catch (ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
+		}
+
+		//
+		printHeadline("read wrong document");
+		//
+
+		try {
+			arangoDriver.getDocumentRaw(COLLECTION_NAME + "/unknown", null, null);
+			Assert.fail("This should fail");
+		} catch (ArangoException e) {
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
 		}
 
 		//
