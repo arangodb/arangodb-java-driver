@@ -158,9 +158,9 @@
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18.1</version>
+				<version>2.19.1</version>
 				<configuration>
-					<forkMode>never</forkMode>
+					<forkCount>0</forkCount>
 					<includes>
 						<include>com/arangodb/ArangoTestSuite.java</include>
 					</includes>
@@ -197,7 +197,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<commons-collections4.version>4.0</commons-collections4.version>
+		<commons-collections4.version>4.1</commons-collections4.version>
 		<gson.version>2.5</gson.version>
 		<httpclient.version>4.5.1</httpclient.version>
 		<slf4j-api.version>1.7.13</slf4j-api.version>
