@@ -18,7 +18,6 @@ package com.arangodb.impl;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.InternalCursorDriver;
-import com.arangodb.InternalKVSDriver;
 import com.arangodb.InternalTransactionDriver;
 import com.arangodb.http.HttpManager;
 
@@ -50,10 +49,6 @@ public class ImplFactory {
 		ArangoConfigure configure,
 		HttpManager httpManager) {
 		return new InternalTransactionDriverImpl(configure, httpManager);
-	}
-
-	public static InternalKVSDriver createKVSDriver(ArangoConfigure configure, HttpManager httpManager) {
-		return new InternalKVSDriverImpl(configure, httpManager);
 	}
 
 	public static InternalSimpleDriverImpl createSimpleDriver(
