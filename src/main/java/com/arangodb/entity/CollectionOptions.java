@@ -6,8 +6,10 @@ import java.util.List;
  *
  * Convenience object for collection creation.
  *
- * @see com.arangodb.entity.CollectionEntity author fbartels -
- *      f.bartels@triagens.de
+ * @see com.arangodb.entity.CollectionEntity
+ * 
+ * @author Florian Bartels
+ * 
  */
 public class CollectionOptions {
 

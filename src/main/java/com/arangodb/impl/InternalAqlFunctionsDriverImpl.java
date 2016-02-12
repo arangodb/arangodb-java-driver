@@ -26,11 +26,11 @@ import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
 
 /**
- * @author Florian Bartels - f.bartels@triagens.de
+ * @author Florian Bartels
  *
  */
-public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl implements
-		com.arangodb.InternalAqlFunctionsDriver {
+public class InternalAqlFunctionsDriverImpl extends BaseArangoDriverImpl
+		implements com.arangodb.InternalAqlFunctionsDriver {
 
 	InternalAqlFunctionsDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, httpManager);

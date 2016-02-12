@@ -34,7 +34,7 @@ import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationObject;
 
 /**
- * @author Florian Bartels -- f.bartels@triagens.de
+ * @author Florian Bartels
  *
  */
 public class InternalBatchDriverImpl extends BaseArangoDriverImpl {

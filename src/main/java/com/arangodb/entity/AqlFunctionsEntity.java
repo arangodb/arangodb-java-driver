@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * An entity wrapping a list of AQL functions
  *
- * @author Florian Bartels - f.bartels@triagens.de
+ * @author Florian Bartels
  *
  */
 public class AqlFunctionsEntity extends BaseEntity {
