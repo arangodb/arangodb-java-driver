@@ -67,18 +67,9 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 		}
 		param.put("search", text);
 
-		// 実行
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/log"), param.get());
 
-		// 結果変換
-		try {
-			AdminLogEntity entity = createEntity(res, AdminLogEntity.class);
-			return entity;
-		} catch (ArangoException e) {
-			throw e;
-			// return null;
-		}
-
+		return createEntity(res, AdminLogEntity.class);
 	}
 
 	@Override
@@ -86,12 +77,7 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/statistics"));
 
-		try {
-			return createEntity(res, StatisticsEntity.class);
-		} catch (ArangoException e) {
-			throw e;
-		}
-
+		return createEntity(res, StatisticsEntity.class);
 	}
 
 	@Override
@@ -99,12 +85,7 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/statistics-description"));
 
-		try {
-			return createEntity(res, StatisticsDescriptionEntity.class);
-		} catch (ArangoException e) {
-			throw e;
-		}
-
+		return createEntity(res, StatisticsDescriptionEntity.class);
 	}
 
 	/**
@@ -112,26 +93,32 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	 * 
 	 * @return a ArangoVersion object
 	 * @throws ArangoException
-	 * @see <a
-	 *      href="http://www.arangodb.com/manuals/current/HttpMisc.html#HttpMiscVersion">HttpMiscVersion
-	 *      documentation</a>
+	 * @see <a href=
+	 *      "http://www.arangodb.com/manuals/current/HttpMisc.html#HttpMiscVersion">
+	 *      HttpMiscVersion documentation</a>
 	 */
 	@Override
 	public ArangoVersion getVersion() throws ArangoException {
+
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_api/version"));
+
 		return createEntity(res, ArangoVersion.class);
 	}
 
 	@Override
 	public ArangoUnixTime getTime() throws ArangoException {
+
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/time"));
+
 		return createEntity(res, ArangoUnixTime.class);
 	}
 
 	@Override
 	public DefaultEntity reloadRouting() throws ArangoException {
+
 		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, "/_admin/routing/reload"), null,
 			(String) null);
+
 		return createEntity(res, DefaultEntity.class, null, false);
 	}
 
@@ -141,7 +128,6 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_admin/execute"), null, jsCode);
 
 		return createEntity(res, DefaultEntity.class);
-
 	}
 
 }

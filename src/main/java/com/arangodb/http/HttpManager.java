@@ -526,6 +526,7 @@ public class HttpManager {
 
 			return responseEntity;
 		} catch (SocketException ex) {
+			// catch SocketException before IOException
 			throw ex;
 		} catch (ClientProtocolException e) {
 			throw new ArangoException(e);

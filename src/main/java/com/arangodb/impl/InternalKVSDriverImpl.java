@@ -50,27 +50,20 @@ public class InternalKVSDriverImpl extends BaseArangoDriverImpl implements com.a
 		// TODO Sanitize Key
 
 		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(database, "/_api/key", collectionName, "/", key),
-			new MapBuilder()
-					.put("x-voc-expires",
-						expiredDate == null ? null : DateUtils.format(expiredDate, "yyyy-MM-dd'T'HH:mm:ss'Z'"))
-					.put("x-voc-extended", attributes == null ? null : EntityFactory.toJsonString(attributes)).get(),
-			null, EntityFactory.toJsonString(value));
+		HttpResponseEntity res = httpManager
+				.doPost(
+					createEndpointUrl(database, "/_api/key", collectionName, "/",
+						key),
+					new MapBuilder()
+							.put("x-voc-expires",
+								expiredDate == null ? null : DateUtils.format(expiredDate, "yyyy-MM-dd'T'HH:mm:ss'Z'"))
+							.put("x-voc-extended", attributes == null ? null : EntityFactory.toJsonString(attributes))
+							.get(),
+					null, EntityFactory.toJsonString(value));
 
-		try {
-			KeyValueEntity entity = createEntity(res, KeyValueEntity.class);
-			setKeyValueHeader(res, entity);
-			return entity;
-		} catch (ArangoException e) {
-			// if (HttpManager.is404Error(e)) { // コレクションが存在しないか、キーが既に存在する。
-			// if (mode == null || mode == Mode.RETURN_NULL) {
-			// return null;
-			// }
-			// }
-			throw e;
-		}
-
+		KeyValueEntity entity = createEntity(res, KeyValueEntity.class);
+		setKeyValueHeader(res, entity);
+		return entity;
 	}
 
 	@Override
@@ -86,27 +79,20 @@ public class InternalKVSDriverImpl extends BaseArangoDriverImpl implements com.a
 		// TODO Sanitize Key
 
 		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(database, "/_api/key", collectionName, "/", key),
-			new MapBuilder()
-					.put("x-voc-expires",
-						expiredDate == null ? null : DateUtils.format(expiredDate, "yyyy-MM-dd'T'HH:mm:ss'Z'"))
-					.put("x-voc-extended", attributes == null ? null : EntityFactory.toJsonString(attributes)).get(),
-			null, EntityFactory.toJsonString(value));
+		HttpResponseEntity res = httpManager
+				.doPut(
+					createEndpointUrl(database, "/_api/key", collectionName, "/",
+						key),
+					new MapBuilder()
+							.put("x-voc-expires",
+								expiredDate == null ? null : DateUtils.format(expiredDate, "yyyy-MM-dd'T'HH:mm:ss'Z'"))
+							.put("x-voc-extended", attributes == null ? null : EntityFactory.toJsonString(attributes))
+							.get(),
+					null, EntityFactory.toJsonString(value));
 
-		try {
-			KeyValueEntity entity = createEntity(res, KeyValueEntity.class);
-			setKeyValueHeader(res, entity);
-			return entity;
-		} catch (ArangoException e) {
-			// if (HttpManager.is404Error(e)) { // コレクションが存在しないか、キーが既に存在する。
-			// if (mode == null || mode == Mode.RETURN_NULL) {
-			// return null;
-			// }
-			// }
-			throw e;
-		}
-
+		KeyValueEntity entity = createEntity(res, KeyValueEntity.class);
+		setKeyValueHeader(res, entity);
+		return entity;
 	}
 
 }

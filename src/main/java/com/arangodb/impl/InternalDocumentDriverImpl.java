@@ -245,13 +245,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 			new MapBuilder().put("rev", rev).put("policy", policy == null ? null : policy.name().toLowerCase(Locale.US))
 					.get());
 
-		try {
-			DocumentEntity<?> entity = createEntity(res, DocumentEntity.class);
-			return entity;
-		} catch (ArangoException e) {
-			throw e;
-		}
-
+		DocumentEntity<?> entity = createEntity(res, DocumentEntity.class);
+		return entity;
 	}
 
 }
