@@ -37,7 +37,9 @@ import com.arangodb.util.ReflectionUtils;
 import com.arangodb.util.StringUtils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -92,9 +94,9 @@ public abstract class BaseArangoDriver {
 	 * @param database
 	 * @param allowNull
 	 * @throws ArangoException
-	 * @see <a
-	 *      href="http://www.arangodb.com/manuals/current/NamingConventions.html#DatabaseNames">DatabaseNames
-	 *      documentation</a>
+	 * @see <a href=
+	 *      "http://www.arangodb.com/manuals/current/NamingConventions.html#DatabaseNames">
+	 *      DatabaseNames documentation</a>
 	 */
 	protected void validateDatabaseName(String database, boolean allowNull) throws ArangoException {
 		boolean valid = false;
@@ -171,13 +173,17 @@ public abstract class BaseArangoDriver {
 
 	/**
 	 * Checks the Http response for database or server errors
-	 * @param res the response of the database
+	 * 
+	 * @param res
+	 *            the response of the database
 	 * @return The Http status code
-	 * @throws ArangoException if any error happened
+	 * @throws ArangoException
+	 *             if any error happened
 	 */
 	private int checkServerErrors(HttpResponseEntity res) throws ArangoException {
 		int statusCode = res.getStatusCode();
-		if (statusCode >= 400) {	// always throws ArangoException
+
+		if (statusCode >= 400) { // always throws ArangoException
 			DefaultEntity defaultEntity = new DefaultEntity();
 			if (res.getText() != null && !res.getText().equalsIgnoreCase("") && statusCode != 500) {
 				JsonParser jsonParser = new JsonParser();
@@ -238,9 +244,10 @@ public abstract class BaseArangoDriver {
 			arangoException.setCode(statusCode);
 			throw arangoException;
 		}
-		
+
 		return statusCode;
 	}
+
 	/**
 	 * Creates an entity object
 	 * 
@@ -264,8 +271,8 @@ public abstract class BaseArangoDriver {
 			return null;
 		}
 		boolean isDocumentEntity = false;
-		//boolean requestSuccessful = true;
-		
+		// boolean requestSuccessful = true;
+
 		// the following was added to ensure, that attributes with a key like
 		// "error", "code", "errorNum"
 		// and "etag" will be serialized, when no error was thrown by the
@@ -273,9 +280,9 @@ public abstract class BaseArangoDriver {
 		if (clazz == DocumentEntity.class) {
 			isDocumentEntity = true;
 		}
-		
-		int statusCode=checkServerErrors(res);
-		
+
+		int statusCode = checkServerErrors(res);
+
 		try {
 			EntityDeserializers.setParameterized(pclazz);
 
@@ -295,7 +302,8 @@ public abstract class BaseArangoDriver {
 				validate(res, entity);
 			}
 
-			if (isDocumentEntity) {		//  && requestSuccessful	NOTE: no need for this, an exception is always thrown
+			if (isDocumentEntity) { // && requestSuccessful NOTE: no need for
+									// this, an exception is always thrown
 				entity.setCode(statusCode);
 				entity.setErrorMessage(null);
 				entity.setError(false);
@@ -307,10 +315,12 @@ public abstract class BaseArangoDriver {
 			EntityDeserializers.removeParameterized();
 		}
 	}
-	
+
 	/**
 	 * Gets the raw JSON string with results, from the Http response
-	 * @param res the response of the database
+	 * 
+	 * @param res
+	 *            the response of the database
 	 * @return A valid JSON string with the results
 	 * @throws ArangoException
 	 */
@@ -396,15 +406,22 @@ public abstract class BaseArangoDriver {
 	@SuppressWarnings("unchecked")
 	protected <T> T createEntityImpl(HttpResponseEntity res, Class<T> type) throws ArangoException {
 		if (res.isJsonResponse()) {
-			T entity = EntityFactory.createEntity(res.getText(), type);
-			return entity;
+			try {
+				return EntityFactory.createEntity(res.getText(), type);
+			} catch (JsonSyntaxException e) {
+				throw new ArangoException("got JsonSyntaxException while creating entity", e);
+			} catch (JsonParseException e) {
+				throw new ArangoException("got JsonParseException while creating entity", e);
+			}
 		}
 		if (res.isDumpResponse() && StreamEntity.class.isAssignableFrom(type)) {
 			return (T) new StreamEntity(res.getStream());
 		}
+		if (res.getText() != null && res.getText().length() > 0) {
+			throw new ArangoException("expected JSON result from server but got: " + res.getText());
+		}
+
 		return null;
-		// throw new IllegalStateException("unknown response content-type:" +
-		// res.getContentType());
 	}
 
 	protected String createEndpointUrl(String database, Object... paths) throws ArangoException {
