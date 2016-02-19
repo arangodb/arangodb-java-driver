@@ -26,13 +26,8 @@ import org.apache.http.HttpEntity;
  */
 public class HttpRequestEntity {
 
-	public static enum RequestType {
-		GET,
-		POST,
-		PUT,
-		DELETE,
-		HEAD,
-		PATCH
+	public enum RequestType {
+		GET, POST, PUT, DELETE, HEAD, PATCH
 	}
 
 	public Map<String, Object> headers;

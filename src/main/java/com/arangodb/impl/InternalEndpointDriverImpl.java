@@ -36,14 +36,14 @@ import com.google.gson.reflect.TypeToken;
  */
 public class InternalEndpointDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalEndpointDriver {
 
+	private static final String API_ENDPOINT = "/_api/endpoint";
+
 	InternalEndpointDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, httpManager);
 	}
 
 	@Override
 	public BooleanResultEntity createEndpoint(String endpoint, String... databases) throws ArangoException {
-
-		// TODO: validate endpoint
 
 		// validate databases
 		if (databases != null) {
@@ -52,11 +52,10 @@ public class InternalEndpointDriverImpl extends BaseArangoDriverImpl implements 
 			}
 		}
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, "/_api/endpoint"), null,
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, API_ENDPOINT), null,
 			EntityFactory.toJsonString(new MapBuilder().put("endpoint", endpoint).put("databases", databases).get()));
 
 		return createEntity(res, BooleanResultEntity.class);
-
 	}
 
 	@Override
@@ -64,23 +63,19 @@ public class InternalEndpointDriverImpl extends BaseArangoDriverImpl implements 
 
 		Type type = new TypeToken<List<Endpoint>>() {
 		}.getType();
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_api/endpoint"));
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, API_ENDPOINT));
 
 		// because it is not include common-attribute.
 		return EntityFactory.createEntity(res.getText(), type);
-
 	}
 
 	@Override
 	public BooleanResultEntity deleteEndpoint(String endpoint) throws ArangoException {
 
-		// TODO: validate endpoint
-
-		HttpResponseEntity res = httpManager.doDelete(
-			createEndpointUrl(null, "/_api/endpoint", StringUtils.encodeUrl(endpoint)), null);
+		HttpResponseEntity res = httpManager
+				.doDelete(createEndpointUrl(null, API_ENDPOINT, StringUtils.encodeUrl(endpoint)), null);
 
 		return createEntity(res, BooleanResultEntity.class);
-
 	}
 
 }

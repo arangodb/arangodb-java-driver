@@ -95,16 +95,16 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 			if (line.indexOf("Content-Type:") != -1
 					&& line.indexOf("Content-Type: application/x-arango-batchpart") == -1) {
 				String ct = line.replaceAll("Content-Type: ", "");
-				batchResponseEntity.httpResponseEntity.setContentType(ct);
+				batchResponseEntity.getHttpResponseEntity().setContentType(ct);
 				continue;
 			}
 			if (line.indexOf("Etag") != -1) {
 				String etag = line.split(" ")[1].replaceAll("\"", "").trim();
-				batchResponseEntity.httpResponseEntity.setEtag(Long.parseLong(etag));
+				batchResponseEntity.getHttpResponseEntity().setEtag(Long.parseLong(etag));
 				continue;
 			}
 			if (line.indexOf("HTTP/1.1") != -1) {
-				batchResponseEntity.httpResponseEntity.setStatusCode(Integer.valueOf(line.split(" ")[1]));
+				batchResponseEntity.getHttpResponseEntity().setStatusCode(Integer.valueOf(line.split(" ")[1]));
 				continue;
 			}
 			if (line.indexOf("Content-Length") != -1) {
@@ -114,11 +114,11 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 			}
 			if (line.indexOf("--" + delimiter) != -1 && resolver.get(currentId) != null) {
 				fetchText = false;
-				if (!batchResponseEntity.httpResponseEntity.isDumpResponse()) {
-					batchResponseEntity.httpResponseEntity.setText(t);
+				if (!batchResponseEntity.getHttpResponseEntity().isDumpResponse()) {
+					batchResponseEntity.getHttpResponseEntity().setText(t);
 				} else {
 					InputStream is = new ByteArrayInputStream(t.getBytes());
-					batchResponseEntity.httpResponseEntity.setStream(is);
+					batchResponseEntity.getHttpResponseEntity().setStream(is);
 				}
 				continue;
 			}

@@ -50,8 +50,7 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 	public StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password)
 			throws ArangoException {
 		HttpResponseEntity res = httpManager.doGet(
-			createEndpointUrl(null, "/_api/database", currentUserAccessableOnly ? "user" : null), null, null, username,
-			password);
+			createDatabaseEndpointUrl(null, currentUserAccessableOnly ? "user" : null), null, null, username, password);
 		return createEntity(res, StringsResultEntity.class);
 
 	}
@@ -67,7 +66,7 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 			body.put("users", users);
 		}
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, "/_api/database"), null,
+		HttpResponseEntity res = httpManager.doPost(createDatabaseEndpointUrl(null), null,
 			EntityFactory.toJsonString(body));
 
 		return createEntity(res, BooleanResultEntity.class);
@@ -82,7 +81,7 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 		TreeMap<String, Object> body = new TreeMap<String, Object>();
 		body.put("name", database);
 
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(null, "/_api/database", database), null);
+		HttpResponseEntity res = httpManager.doDelete(createDatabaseEndpointUrl(null, database), null);
 
 		return createEntity(res, BooleanResultEntity.class);
 

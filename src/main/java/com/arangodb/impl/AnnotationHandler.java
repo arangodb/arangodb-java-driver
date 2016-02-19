@@ -31,10 +31,6 @@ public class AnnotationHandler {
 		class2DocumentAttributes = new HashMap<Class<?>, DocumentAttributes>();
 	}
 
-	public AnnotationHandler() {
-		// nothing todo here
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public synchronized void updateDocumentAttributes(Object o, long rev, String id, String key) {
 		if (o != null) {
@@ -91,7 +87,7 @@ public class AnnotationHandler {
 			try {
 				field.setAccessible(true);
 				field.set(o, value);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				logger.error("could not update document attribute of class " + value.getClass().getCanonicalName(), e);
 			}
 		}
@@ -121,17 +117,20 @@ public class AnnotationHandler {
 
 			Annotation[] annotations = field.getAnnotations();
 			for (Annotation annotation : annotations) {
-
-				if (annotation instanceof SerializedName) {
-					SerializedName sn = (SerializedName) annotation;
-
-					if (value.equals(sn.value())) {
-						return field;
-					}
+				if (value.equals(getAnnotaionValue(annotation))) {
+					return field;
 				}
 			}
 		}
 
+		return null;
+	}
+
+	private String getAnnotaionValue(Annotation annotation) {
+		if (annotation instanceof SerializedName) {
+			SerializedName sn = (SerializedName) annotation;
+			return sn.value();
+		}
 		return null;
 	}
 

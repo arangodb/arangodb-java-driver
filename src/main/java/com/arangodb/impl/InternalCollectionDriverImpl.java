@@ -40,22 +40,18 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 	@Override
 	public CollectionEntity createCollection(String database, String name, CollectionOptions collectionOptions)
 			throws ArangoException {
-		if (collectionOptions == null) {
-			collectionOptions = new CollectionOptions();
+		CollectionOptions co = collectionOptions;
+
+		if (co == null) {
+			co = new CollectionOptions();
 		}
-		HttpResponseEntity res = httpManager
-				.doPost(createEndpointUrl(database, "/_api/collection"), null, EntityFactory
-						.toJsonString(
-							new MapBuilder().put("name", name).put("waitForSync", collectionOptions.getWaitForSync())
-									.put("doCompact", collectionOptions.getDoCompact())
-									.put("journalSize", collectionOptions.getJournalSize())
-									.put("isSystem", collectionOptions.getIsSystem())
-									.put("isVolatile", collectionOptions.getIsVolatile())
-									.put("keyOptions", collectionOptions.getKeyOptions())
-									.put("numberOfShards", collectionOptions.getNumberOfShards()).put("shardKeys",
-										collectionOptions.getShardKeys())
-						.put("type", collectionOptions.getType() == null ? null : collectionOptions.getType().getType())
-						.get()));
+		HttpResponseEntity res = httpManager.doPost(createCollectionEndpointUrl(database), null,
+			EntityFactory.toJsonString(new MapBuilder().put("name", name).put("waitForSync", co.getWaitForSync())
+					.put("doCompact", co.getDoCompact()).put("journalSize", co.getJournalSize())
+					.put("isSystem", co.getIsSystem()).put("isVolatile", co.getIsVolatile())
+					.put("keyOptions", co.getKeyOptions()).put("numberOfShards", co.getNumberOfShards())
+					.put("shardKeys", co.getShardKeys())
+					.put("type", co.getType() == null ? null : co.getType().getType()).get()));
 
 		return createEntity(res, CollectionEntity.class);
 
@@ -65,7 +61,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 	public CollectionEntity getCollection(String database, String name) throws ArangoException {
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection", name), null);
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database, name), null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -75,8 +71,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection", name, "/revision"),
-			null);
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database, name, "/revision"), null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -86,8 +81,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection", name, "/properties"),
-			null);
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database, name, "/properties"), null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -97,8 +91,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection", name, "/count"),
-			null);
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database, name, "/count"), null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -108,8 +101,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection", name, "/figures"),
-			null);
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database, name, "/figures"), null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -119,7 +111,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 			throws ArangoException {
 
 		validateCollectionName(name);
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection", name, "/checksum"),
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database, name, "/checksum"),
 			new MapBuilder().put("withRevisions", withRevisions).put("withData", withData).get());
 
 		return createEntity(res, CollectionEntity.class);
@@ -129,7 +121,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 	@Override
 	public CollectionsEntity getCollections(String database, Boolean excludeSystem) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/collection"), null,
+		HttpResponseEntity res = httpManager.doGet(createCollectionEndpointUrl(database), null,
 			new MapBuilder().put("excludeSystem", excludeSystem).get());
 
 		return createEntity(res, CollectionsEntity.class);
@@ -140,7 +132,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 	public CollectionEntity loadCollection(String database, String name, Boolean count) throws ArangoException {
 
 		validateCollectionName(name);
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/collection", name, "/load"), null,
+		HttpResponseEntity res = httpManager.doPut(createCollectionEndpointUrl(database, name, "/load"), null,
 			EntityFactory.toJsonString(new MapBuilder("count", count).get()));
 
 		return createEntity(res, CollectionEntity.class);
@@ -152,8 +144,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/collection/", name, "/unload"),
-			null, null);
+		HttpResponseEntity res = httpManager.doPut(createCollectionEndpointUrl(database, name, "/unload"), null, null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -163,8 +154,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/collection", name, "/truncate"),
-			null, null);
+		HttpResponseEntity res = httpManager.doPut(createCollectionEndpointUrl(database, name, "/truncate"), null,
+			null);
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -177,8 +168,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 		Long journalSize) throws ArangoException {
 
 		validateCollectionName(name);
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/collection", name, "/properties"),
-			null, EntityFactory.toJsonString(
+		HttpResponseEntity res = httpManager.doPut(createCollectionEndpointUrl(database, name, "/properties"), null,
+			EntityFactory.toJsonString(
 				new MapBuilder().put("waitForSync", newWaitForSync).put("journalSize", journalSize).get()));
 
 		return createEntity(res, CollectionEntity.class);
@@ -189,8 +180,8 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(newName);
 
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/collection", name, "/rename"),
-			null, EntityFactory.toJsonString(new MapBuilder("name", newName).get()));
+		HttpResponseEntity res = httpManager.doPut(createCollectionEndpointUrl(database, name, "/rename"), null,
+			EntityFactory.toJsonString(new MapBuilder("name", newName).get()));
 
 		return createEntity(res, CollectionEntity.class);
 	}
@@ -200,7 +191,7 @@ public class InternalCollectionDriverImpl extends BaseArangoDriverImpl
 
 		validateCollectionName(name);
 
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/collection", name), null);
+		HttpResponseEntity res = httpManager.doDelete(createCollectionEndpointUrl(database, name), null);
 
 		return createEntity(res, CollectionEntity.class);
 	}

@@ -16,50 +16,46 @@
 
 package com.arangodb.entity;
 
-import java.io.Serializable;
-
 /**
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class FilterCondition implements Serializable {
+public class FilterCondition {
 
-  String key;
-  Object value;
-  String compare;
-  
-  public FilterCondition() {
-    
-  }
-  
-  public FilterCondition(String key, Object value, String compare) {
-    this.key = key;
-    this.value = value;
-    this.compare = compare;
-  }
+	private String key;
 
-  public String getKey() {
-    return key;
-  }
+	private Object value;
 
-  public Object getValue() {
-    return value;
-  }
+	private String compare;
 
-  public String getCompare() {
-    return compare;
-  }
+	public FilterCondition(String key, Object value, String compare) {
+		this.key = key;
+		this.value = value;
+		this.compare = compare;
+	}
 
-  public void setKey(String key) {
-    this.key = key;
-  }
+	public String getKey() {
+		return key;
+	}
 
-  public void setValue(Object value) {
-    this.value = value;
-  }
+	public Object getValue() {
+		return value;
+	}
 
-  public void setCompare(String compare) {
-    this.compare = compare;
-  }
-  
+	public String getCompare() {
+		return compare;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public void setCompare(String compare) {
+		this.compare = compare;
+	}
+
 }
