@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.arangodb.Direction;
 
-public class ShortestPathOptions implements OptionsInterface {
+public class ShortestPathOptions extends AbstractOptions implements OptionsInterface {
 
 	private Direction direction;
 	private List<String> edgeCollectionRestriction;
@@ -203,30 +203,16 @@ public class ShortestPathOptions implements OptionsInterface {
 	@Override
 	public Map<String, Object> toMap() {
 		MapBuilder mp = new MapBuilder();
-		if (direction != null) {
-			mp.put("direction", direction.toString().toLowerCase());
-		}
-		if (CollectionUtils.isNotEmpty(edgeCollectionRestriction)) {
-			mp.put("edgeCollectionRestriction", edgeCollectionRestriction);
-		}
-		if (CollectionUtils.isNotEmpty(startVertexCollectionRestriction)) {
-			mp.put("startVertexCollectionRestriction", startVertexCollectionRestriction);
-		}
-		if (CollectionUtils.isNotEmpty(endVertexCollectionRestriction)) {
-			mp.put("endVertexCollectionRestriction", endVertexCollectionRestriction);
-		}
-		if (edgeExamples != null) {
-			mp.put("edgeExamples", edgeExamples);
-		}
-		if (algorithm != null) {
-			mp.put("algorithm", algorithm);
-		}
-		if (weight != null) {
-			mp.put("weight", weight);
-		}
-		if (defaultWeight != null) {
-			mp.put("defaultWeight", defaultWeight);
-		}
+
+		putAttributeToLower(mp, "direction", direction);
+		putAttributeCollection(mp, "edgeCollectionRestriction", edgeCollectionRestriction);
+		putAttributeCollection(mp, "startVertexCollectionRestriction", startVertexCollectionRestriction);
+		putAttributeCollection(mp, "endVertexCollectionRestriction", endVertexCollectionRestriction);
+		putAttribute(mp, "edgeExamples", edgeExamples);
+		putAttribute(mp, "algorithm", algorithm);
+		putAttribute(mp, "weight", weight);
+		putAttribute(mp, "defaultWeight", defaultWeight);
+
 		if (includeData != null) {
 			mp.put("includeData", includeData);
 			MapBuilder mp2 = new MapBuilder();

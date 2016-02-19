@@ -39,15 +39,15 @@ import com.arangodb.http.InvocationObject;
  */
 public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
+	private static String newline = System.getProperty("line.separator");
+
+	private String delimiter = "dlmtrMLTPRT";
+
+	private BatchResponseListEntity batchResponseListEntity;
+
 	InternalBatchDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, httpManager);
 	}
-
-	public static String newline = System.getProperty("line.separator");
-
-	public String delimiter = "dlmtrMLTPRT";
-
-	private BatchResponseListEntity batchResponseListEntity;
 
 	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
 
@@ -122,16 +122,16 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 				}
 				continue;
 			}
-			if (fetchText == true && !line.equals(newline)) {
+			if (fetchText && !line.equals(newline)) {
 				t += line;
 			}
 		}
 		if (batchResponseEntity.getHttpResponseEntity() != null) {
 			batchResponseEntityList.add(batchResponseEntity);
 		}
-		BatchResponseListEntity batchResponseListEntity = new BatchResponseListEntity();
-		batchResponseListEntity.setBatchResponseEntities(batchResponseEntityList);
-		this.batchResponseListEntity = batchResponseListEntity;
+		BatchResponseListEntity batchResponseListEntityTmp = new BatchResponseListEntity();
+		batchResponseListEntityTmp.setBatchResponseEntities(batchResponseEntityList);
+		this.batchResponseListEntity = batchResponseListEntityTmp;
 		return createEntity(res, DefaultEntity.class, null, false);
 	}
 

@@ -25,12 +25,14 @@ import com.arangodb.entity.ReplicationDumpRecord;
  */
 public class DumpHandlerAdapter<T> implements DumpHandler<T> {
 
-  public boolean head(ReplicationDumpHeader header) {
-    return true;
-  }
+	@Override
+	public boolean head(ReplicationDumpHeader header) {
+		return true;
+	}
 
-  public boolean handle(ReplicationDumpRecord<T> entity) {
-    return false;
-  }
+	@Override
+	public boolean handle(ReplicationDumpRecord<T> entity) {
+		return false;
+	}
 
 }

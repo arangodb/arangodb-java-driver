@@ -27,6 +27,11 @@ import com.arangodb.http.HttpManager;
  *
  */
 public class ImplFactory {
+
+	private ImplFactory() {
+		// this is a helper class
+	}
+
 	public static InternalCursorDriverImpl createCursorDriver(ArangoConfigure configure, HttpManager httpManager) {
 		return new InternalCursorDriverImpl(configure, httpManager);
 	}

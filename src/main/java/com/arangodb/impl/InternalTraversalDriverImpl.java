@@ -45,14 +45,13 @@ public class InternalTraversalDriverImpl extends BaseArangoDriverImpl implements
 		Class<V> vertexClazz,
 		Class<E> edgeClazz) throws ArangoException {
 
-		if (traversalQueryOptions == null) {
-			traversalQueryOptions = new TraversalQueryOptions();
-		}
+		TraversalQueryOptions options = (traversalQueryOptions != null) ? traversalQueryOptions
+				: new TraversalQueryOptions();
 
-		String body = EntityFactory.toJsonString(traversalQueryOptions.toMap());
+		String body = EntityFactory.toJsonString(options.toMap());
 
-		HttpResponseEntity response = httpManager
-				.doPost(createEndpointUrl(databaseName, "/_api/traversal"), null, body);
+		HttpResponseEntity response = httpManager.doPost(createEndpointUrl(databaseName, "/_api/traversal"), null,
+			body);
 
 		return createEntity(response, TraversalEntity.class, vertexClazz, edgeClazz);
 	}

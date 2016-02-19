@@ -32,13 +32,28 @@ import com.google.gson.JsonParseException;
  */
 public class DateUtils {
 
-	static class TripleKey<T, U, V> implements Serializable {
+	private static TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
+
+	private static ThreadLocal<LocalFormat> dateFormats = new ThreadLocal<LocalFormat>() {
+		@Override
+		protected LocalFormat initialValue() {
+			return new LocalFormat();
+		}
+	};
+
+	private DateUtils() {
+		// this is a helper class
+	}
+
+	static class TripleKey<T extends Serializable, U extends Serializable, V extends Serializable>
+			implements Serializable {
 		private static final long serialVersionUID = 2612228100559578823L;
 		private T first;
 		private U second;
 		private V third;
 
 		public TripleKey() {
+			// do nothing here
 		}
 
 		public TripleKey(T first, U second, V third) {
@@ -125,21 +140,11 @@ public class DateUtils {
 
 	}
 
-	private static ThreadLocal<LocalFormat> dateFormats = new ThreadLocal<LocalFormat>() {
-		@Override
-		protected LocalFormat initialValue() {
-			return new LocalFormat();
-		}
-	};
-
-	private static TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
-
 	public static Date parse(String text, String format) throws ParseException {
 
 		SimpleDateFormat dateFormat = dateFormats.get().getDateFormat(format, Locale.US, utcTimeZone);
-		Date date = dateFormat.parse(text);
-		return date;
 
+		return dateFormat.parse(text);
 	}
 
 	/**
@@ -161,9 +166,8 @@ public class DateUtils {
 	public static String format(Date date, String format) {
 
 		SimpleDateFormat dateFormat = dateFormats.get().getDateFormat(format, Locale.US, TimeZone.getDefault());
-		String text = dateFormat.format(date);
-		return text;
 
+		return dateFormat.format(date);
 	}
 
 }

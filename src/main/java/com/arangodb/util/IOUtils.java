@@ -23,44 +23,56 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class IOUtils {
 
-  public static String toString(InputStream input) throws IOException {
-    return toString(input, "utf-8");
-  }
-  
-  public static String toString(InputStream input, String encode) throws IOException {
-    
-    InputStreamReader in;
-    try {
-      
-      StringBuilder buffer = new StringBuilder(8012);
-      
-      in = new InputStreamReader(new BufferedInputStream(input), encode);
-      char[] cbuf = new char[8012];
-      int len;
-      while ((len = in.read(cbuf)) != -1) {
-        buffer.append(cbuf, 0, len);
-      }
-      
-      return buffer.toString();
-      
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    } finally {
-      close(input);
-    }
-  }
-  
-  public static void close(Closeable input) {
-    try {
-      input.close();
-    } catch (IOException e) {
-    }
-  }
-  
+	private static Logger logger = LoggerFactory.getLogger(IOUtils.class);
+
+	private IOUtils() {
+		// this is a helper class
+	}
+
+	public static String toString(InputStream input) throws IOException {
+		return toString(input, "utf-8");
+	}
+
+	public static String toString(InputStream input, String encode) throws IOException {
+
+		InputStreamReader in;
+		try {
+
+			StringBuilder buffer = new StringBuilder(8012);
+
+			in = new InputStreamReader(new BufferedInputStream(input), encode);
+			char[] cbuf = new char[8012];
+			int len;
+			while ((len = in.read(cbuf)) != -1) {
+				buffer.append(cbuf, 0, len);
+			}
+
+			return buffer.toString();
+
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		} finally {
+			close(input);
+		}
+	}
+
+	public static void close(Closeable input) {
+		if (input != null) {
+			try {
+				input.close();
+			} catch (IOException e) {
+				logger.error("could not close a file", e);
+			}
+		}
+	}
+
 }

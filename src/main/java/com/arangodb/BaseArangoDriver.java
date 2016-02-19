@@ -95,7 +95,7 @@ public abstract class BaseArangoDriver {
 	 * @param allowNull
 	 * @throws ArangoException
 	 * @see <a href=
-	 *      "http://www.arangodb.com/manuals/current/NamingConventions.html#DatabaseNames">
+	 *      "https://docs.arangodb.com/NamingConventions/DatabaseNames.html">
 	 *      DatabaseNames documentation</a>
 	 */
 	protected void validateDatabaseName(String database, boolean allowNull) throws ArangoException {
@@ -425,9 +425,6 @@ public abstract class BaseArangoDriver {
 	}
 
 	protected String createEndpointUrl(String database, Object... paths) throws ArangoException {
-
-		// FIXME: Very very foolish implement.
-
 		List<String> list = new ArrayList<String>();
 
 		if (database != null) {
@@ -443,4 +440,31 @@ public abstract class BaseArangoDriver {
 		return StringUtils.join(false, list);
 	}
 
+	protected String createEndpointUrl(String database, String str, Object... paths) throws ArangoException {
+		if (paths == null) {
+			return createEndpointUrl(database, paths);
+		}
+		Object[] newPaths = new Object[paths.length + 1];
+		newPaths[0] = str;
+		for (int i = 0; i < paths.length; i++) {
+			newPaths[i + 1] = paths[i];
+		}
+		return createEndpointUrl(database, newPaths);
+	}
+
+	protected String createUserEndpointUrl(String database, Object... paths) throws ArangoException {
+		return createEndpointUrl(database, "/_api/user", paths);
+	}
+
+	protected String createJobEndpointUrl(String database, Object... paths) throws ArangoException {
+		return createEndpointUrl(database, "/_api/job", paths);
+	}
+
+	protected String createIndexEndpointUrl(String database, Object... paths) throws ArangoException {
+		return createEndpointUrl(database, "/_api/index", paths);
+	}
+
+	protected String createGharialEndpointUrl(String database, Object... paths) throws ArangoException {
+		return createEndpointUrl(database, "/_api/gharial", paths);
+	}
 }

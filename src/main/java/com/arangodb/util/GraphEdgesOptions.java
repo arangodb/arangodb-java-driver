@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.arangodb.Direction;
 
-public class GraphEdgesOptions implements OptionsInterface {
+public class GraphEdgesOptions extends AbstractOptions implements OptionsInterface {
 
 	private Direction direction;
 	private List<String> edgeCollectionRestriction;
@@ -239,36 +239,17 @@ public class GraphEdgesOptions implements OptionsInterface {
 	@Override
 	public Map<String, Object> toMap() {
 		MapBuilder mp = new MapBuilder();
-		if (direction != null) {
-			mp.put("direction", direction.toString().toLowerCase());
-		}
-		if (CollectionUtils.isNotEmpty(edgeCollectionRestriction)) {
-			mp.put("edgeCollectionRestriction", edgeCollectionRestriction);
-		}
-		if (CollectionUtils.isNotEmpty(startVertexCollectionRestriction)) {
-			mp.put("startVertexCollectionRestriction", startVertexCollectionRestriction);
-		}
-		if (CollectionUtils.isNotEmpty(endVertexCollectionRestriction)) {
-			mp.put("endVertexCollectionRestriction", endVertexCollectionRestriction);
-		}
-		if (edgeExamples != null) {
-			mp.put("edgeExamples", edgeExamples);
-		}
-		if (neighborExamples != null) {
-			mp.put("neighborExamples", neighborExamples);
-		}
-		if (minDepth != null) {
-			mp.put("minDepth", minDepth);
-		}
-		if (maxDepth != null) {
-			mp.put("maxDepth", maxDepth);
-		}
-		if (maxIterations != null) {
-			mp.put("maxIterations", maxIterations);
-		}
-		if (includeData != null) {
-			mp.put("includeData", includeData);
-		}
+
+		putAttributeToLower(mp, "direction", direction);
+		putAttributeCollection(mp, "edgeCollectionRestriction", edgeCollectionRestriction);
+		putAttributeCollection(mp, "startVertexCollectionRestriction", startVertexCollectionRestriction);
+		putAttributeCollection(mp, "endVertexCollectionRestriction", endVertexCollectionRestriction);
+		putAttribute(mp, "edgeExamples", edgeExamples);
+		putAttribute(mp, "neighborExamples", neighborExamples);
+		putAttribute(mp, "minDepth", minDepth);
+		putAttribute(mp, "maxDepth", maxDepth);
+		putAttribute(mp, "maxIterations", maxIterations);
+		putAttribute(mp, "includeData", includeData);
 
 		return mp.get();
 	}

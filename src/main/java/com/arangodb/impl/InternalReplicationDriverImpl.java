@@ -46,8 +46,8 @@ import com.arangodb.util.MapBuilder;
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
-public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implements
-		com.arangodb.InternalReplicationDriver {
+public class InternalReplicationDriverImpl extends BaseArangoDriverImpl
+		implements com.arangodb.InternalReplicationDriver {
 
 	InternalReplicationDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, httpManager);
@@ -76,8 +76,7 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 		Class<T> clazz,
 		DumpHandler<T> handler) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(
-			createEndpointUrl(database, "/_api/replication/dump"),
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/replication/dump"),
 			new MapBuilder().put("collection", collectionName).put("from", from).put("to", to)
 					.put("chunkSize", chunkSize).put("ticks", ticks).get());
 
@@ -96,9 +95,7 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 				cont = handler.handle(createEntity(line, ReplicationDumpRecord.class, clazz));
 			}
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e); // not arnago-exception: because
-											// encoding error is cause of
-											// system.
+			throw new ArangoException("got UnsupportedEncodingException for utf-8", e);
 		} catch (IOException e) {
 			throw new ArangoException(e);
 		} finally {
@@ -109,7 +106,7 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 
 	@Override
 	public ReplicationSyncEntity syncReplication(
-		String _database,
+		String localDatabase,
 		String endpoint,
 		String database,
 		String username,
@@ -117,14 +114,9 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 		RestrictType restrictType,
 		String... restrictCollections) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(_database, "/_api/replication/sync"),
-			null,
-			EntityFactory.toJsonString(new MapBuilder()
-					.put("endpoint", endpoint)
-					.put("database", database)
-					.put("username", username)
-					.put("password", password)
+		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(localDatabase, "/_api/replication/sync"), null,
+			EntityFactory.toJsonString(new MapBuilder().put("endpoint", endpoint).put("database", database)
+					.put("username", username).put("password", password)
 					.put("restrictType", restrictType == null ? null : restrictType.name().toLowerCase(Locale.US))
 					.put("restrictCollections",
 						restrictCollections == null || restrictCollections.length == 0 ? null : restrictCollections)
@@ -191,12 +183,10 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 		Long maxEvents,
 		Long maxEventsSize) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPut(
-			createEndpointUrl(database, "/_api/replication/logger-config"),
-			null,
-			EntityFactory.toJsonString(new MapBuilder().put("autoStart", autoStart)
-					.put("logRemoteChanges", logRemoteChanges).put("maxEvents", maxEvents)
-					.put("maxEventsSize", maxEventsSize).get()));
+		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/replication/logger-config"), null,
+			EntityFactory
+					.toJsonString(new MapBuilder().put("autoStart", autoStart).put("logRemoteChanges", logRemoteChanges)
+							.put("maxEvents", maxEvents).put("maxEventsSize", maxEventsSize).get()));
 
 		return createEntity(res, ReplicationLoggerConfigEntity.class);
 
@@ -222,7 +212,7 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 
 	@Override
 	public ReplicationApplierConfigEntity setReplicationApplierConfig(
-		String _database,
+		String localDatabase,
 		String endpoint,
 		String database,
 		String username,
@@ -246,7 +236,7 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl implemen
 		bodyParam.setAutoStart(autoStart);
 		bodyParam.setAdaptivePolling(adaptivePolling);
 
-		return setReplicationApplierConfig(_database, bodyParam);
+		return setReplicationApplierConfig(localDatabase, bodyParam);
 
 	}
 

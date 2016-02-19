@@ -9,7 +9,7 @@ import com.arangodb.InternalTraversalDriver.Order;
 import com.arangodb.InternalTraversalDriver.Strategy;
 import com.arangodb.InternalTraversalDriver.Uniqueness;
 
-public class TraversalQueryOptions implements OptionsInterface {
+public class TraversalQueryOptions extends AbstractOptions implements OptionsInterface {
 
 	// (optional) name of the graph that contains the edges. Either
 	// edgeCollection or graphName has to be given. In case both values are set
@@ -347,63 +347,34 @@ public class TraversalQueryOptions implements OptionsInterface {
 	public Map<String, Object> toMap() {
 		Map<String, Object> object = new HashMap<String, Object>();
 
-		if (graphName != null) {
-			object.put("graphName", graphName);
-		}
-		if (edgeCollection != null) {
-			object.put("edgeCollection", edgeCollection);
-		}
-		if (startVertex != null) {
-			object.put("startVertex", startVertex);
-		}
-		if (filter != null) {
-			object.put("filter", filter);
-		}
-		if (minDepth != null) {
-			object.put("minDepth", minDepth);
-		}
-		if (maxDepth != null) {
-			object.put("maxDepth", maxDepth);
-		}
-		if (visitor != null) {
-			object.put("visitor", visitor);
-		}
-		if (direction != null) {
-			object.put("direction", direction.toString().toLowerCase());
-		}
-		if (init != null) {
-			object.put("init", init);
-		}
-		if (expander != null) {
-			object.put("expander", expander);
-		}
-		if (sort != null) {
-			object.put("sort", sort);
-		}
-		if (strategy != null) {
-			object.put("strategy", strategy.toString().toLowerCase());
-		}
-		if (order != null) {
-			object.put("order", order.toString().toLowerCase());
-		}
-		if (itemOrder != null) {
-			object.put("itemOrder", itemOrder.toString().toLowerCase());
-		}
+		putAttribute(object, "graphName", graphName);
+		putAttribute(object, "edgeCollection", edgeCollection);
+		putAttribute(object, "startVertex", startVertex);
+		putAttribute(object, "filter", filter);
+
+		putAttribute(object, "minDepth", minDepth);
+		putAttribute(object, "maxDepth", maxDepth);
+		putAttribute(object, "visitor", visitor);
+		putAttributeToLower(object, "direction", direction);
+
+		putAttribute(object, "init", init);
+		putAttribute(object, "expander", expander);
+		putAttribute(object, "sort", sort);
+
+		putAttributeToLower(object, "strategy", strategy);
+		putAttributeToLower(object, "order", order);
+		putAttributeToLower(object, "itemOrder", itemOrder);
+
 		if (verticesUniqueness != null || edgesUniqueness != null) {
 			Map<String, Object> uniqueness = new HashMap<String, Object>();
 
-			if (verticesUniqueness != null) {
-				uniqueness.put("vertices", verticesUniqueness.toString().toLowerCase());
-			}
-			if (edgesUniqueness != null) {
-				uniqueness.put("edges", edgesUniqueness.toString().toLowerCase());
-			}
+			putAttributeToLower(uniqueness, "vertices", verticesUniqueness);
+			putAttributeToLower(uniqueness, "edges", edgesUniqueness);
 
 			object.put("uniqueness", uniqueness);
 		}
-		if (maxIterations != null) {
-			object.put("maxIterations", maxIterations);
-		}
+
+		putAttribute(object, "maxIterations", maxIterations);
 
 		return object;
 	}

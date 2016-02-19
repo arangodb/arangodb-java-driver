@@ -18,11 +18,11 @@ public class AnnotationHandler {
 	private static Logger logger = LoggerFactory.getLogger(AnnotationHandler.class);
 
 	static class DocumentAttributes {
-		public Field rev;
-		public Field id;
-		public Field key;
-		public Field from;
-		public Field to;
+		public Field rev; // NOSONAR
+		public Field id; // NOSONAR
+		public Field key; // NOSONAR
+		public Field from; // NOSONAR
+		public Field to; // NOSONAR
 	}
 
 	static Map<Class<?>, DocumentAttributes> class2DocumentAttributes;
@@ -32,56 +32,57 @@ public class AnnotationHandler {
 	}
 
 	public AnnotationHandler() {
+		// nothing todo here
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public synchronized void updateDocumentAttributes(Object o, long rev, String id, String key) {
-		if (o == null) {
-
-		} else if (o instanceof java.util.Map) {
-			java.util.Map m = (java.util.Map) o;
-			m.put(BaseDocument.ID, id);
-			m.put(BaseDocument.KEY, key);
-			m.put(BaseDocument.REV, rev);
-		} else {
-			DocumentAttributes documentAttributes = getDocumentAttributes(o);
-			setAttribute(documentAttributes.id, o, id);
-			setAttribute(documentAttributes.key, o, key);
-			setAttribute(documentAttributes.rev, o, rev);
+		if (o != null) {
+			if (o instanceof java.util.Map) {
+				java.util.Map m = (java.util.Map) o;
+				m.put(BaseDocument.ID, id);
+				m.put(BaseDocument.KEY, key);
+				m.put(BaseDocument.REV, rev);
+			} else {
+				DocumentAttributes documentAttributes = getDocumentAttributes(o);
+				setAttribute(documentAttributes.id, o, id);
+				setAttribute(documentAttributes.key, o, key);
+				setAttribute(documentAttributes.rev, o, rev);
+			}
 		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public synchronized void updateDocumentRev(Object o, long rev) {
-		if (o == null) {
-
-		} else if (o instanceof java.util.Map) {
-			java.util.Map m = (java.util.Map) o;
-			m.put(BaseDocument.REV, rev);
-		} else {
-			DocumentAttributes documentAttributes = getDocumentAttributes(o);
-			setAttribute(documentAttributes.rev, o, rev);
+		if (o != null) {
+			if (o instanceof java.util.Map) {
+				java.util.Map m = (java.util.Map) o;
+				m.put(BaseDocument.REV, rev);
+			} else {
+				DocumentAttributes documentAttributes = getDocumentAttributes(o);
+				setAttribute(documentAttributes.rev, o, rev);
+			}
 		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public synchronized void updateEdgeAttributes(Object o, long rev, String id, String key, String from, String to) {
-		if (o == null) {
-
-		} else if (o instanceof java.util.Map) {
-			java.util.Map m = (java.util.Map) o;
-			m.put(BaseDocument.ID, id);
-			m.put(BaseDocument.KEY, key);
-			m.put(BaseDocument.REV, rev);
-			m.put(BaseDocument.FROM, from);
-			m.put(BaseDocument.TO, to);
-		} else {
-			DocumentAttributes documentAttributes = getDocumentAttributes(o);
-			setAttribute(documentAttributes.id, o, id);
-			setAttribute(documentAttributes.key, o, key);
-			setAttribute(documentAttributes.rev, o, rev);
-			setAttribute(documentAttributes.from, o, from);
-			setAttribute(documentAttributes.to, o, to);
+		if (o != null) {
+			if (o instanceof java.util.Map) {
+				java.util.Map m = (java.util.Map) o;
+				m.put(BaseDocument.ID, id);
+				m.put(BaseDocument.KEY, key);
+				m.put(BaseDocument.REV, rev);
+				m.put(BaseDocument.FROM, from);
+				m.put(BaseDocument.TO, to);
+			} else {
+				DocumentAttributes documentAttributes = getDocumentAttributes(o);
+				setAttribute(documentAttributes.id, o, id);
+				setAttribute(documentAttributes.key, o, key);
+				setAttribute(documentAttributes.rev, o, rev);
+				setAttribute(documentAttributes.from, o, from);
+				setAttribute(documentAttributes.to, o, to);
+			}
 		}
 	}
 

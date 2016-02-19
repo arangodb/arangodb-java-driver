@@ -35,6 +35,13 @@ import com.arangodb.util.MapBuilder;
 public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 		implements com.arangodb.InternalIndexDriver {
 
+	private static final String SIZE = "size";
+	private static final String FIELDS = "fields";
+	private static final String SPARSE = "sparse";
+	private static final String UNIQUE = "unique";
+	private static final String TYPE = "type";
+	private static final String COLLECTION = "collection";
+
 	InternalIndexDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, null, httpManager);
 	}
@@ -59,10 +66,10 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 		}
 
 		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"),
-			new MapBuilder("collection", collectionName).get(),
-			EntityFactory.toJsonString(new MapBuilder().put("type", type.name().toLowerCase(Locale.US))
-					.put("unique", unique).put("sparse", sparse).put("fields", fields).get()));
+		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
+			new MapBuilder(COLLECTION, collectionName).get(),
+			EntityFactory.toJsonString(new MapBuilder().put(TYPE, type.name().toLowerCase(Locale.US))
+					.put(UNIQUE, unique).put(SPARSE, sparse).put(FIELDS, fields).get()));
 
 		return createEntity(res, IndexEntity.class);
 	}
@@ -82,9 +89,9 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		validateCollectionName(collectionName);
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"),
-			new MapBuilder("collection", collectionName).get(), EntityFactory.toJsonString(
-				new MapBuilder().put("type", IndexType.CAP.name().toLowerCase(Locale.US)).put("size", size).get()));
+		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
+			new MapBuilder(COLLECTION, collectionName).get(), EntityFactory.toJsonString(
+				new MapBuilder().put(TYPE, IndexType.CAP.name().toLowerCase(Locale.US)).put(SIZE, size).get()));
 
 		return createEntity(res, IndexEntity.class);
 	}
@@ -95,9 +102,9 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		validateCollectionName(collectionName);
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"),
-			new MapBuilder("collection", collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
-					.put("type", IndexType.CAP.name().toLowerCase(Locale.US)).put("byteSize", byteSize).get()));
+		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
+			new MapBuilder(COLLECTION, collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
+					.put(TYPE, IndexType.CAP.name().toLowerCase(Locale.US)).put("byteSize", byteSize).get()));
 
 		return createEntity(res, IndexEntity.class);
 	}
@@ -108,10 +115,10 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		validateCollectionName(collectionName);
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/index"),
-			new MapBuilder("collection", collectionName).get(),
-			EntityFactory.toJsonString(new MapBuilder().put("type", IndexType.FULLTEXT.name().toLowerCase(Locale.US))
-					.put("minLength", minLength).put("fields", fields).get()));
+		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
+			new MapBuilder(COLLECTION, collectionName).get(),
+			EntityFactory.toJsonString(new MapBuilder().put(TYPE, IndexType.FULLTEXT.name().toLowerCase(Locale.US))
+					.put("minLength", minLength).put(FIELDS, fields).get()));
 
 		return createEntity(res, IndexEntity.class);
 	}
@@ -121,7 +128,7 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		validateDocumentHandle(indexHandle);
 
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/index", indexHandle), null);
+		HttpResponseEntity res = httpManager.doDelete(createIndexEndpointUrl(database, indexHandle), null);
 
 		return createEntity(res, IndexEntity.class);
 	}
@@ -131,7 +138,7 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		validateDocumentHandle(indexHandle);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/index", indexHandle));
+		HttpResponseEntity res = httpManager.doGet(createIndexEndpointUrl(database, indexHandle));
 
 		return createEntity(res, IndexEntity.class);
 	}
@@ -141,8 +148,8 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		validateCollectionName(collectionName);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/index"),
-			new MapBuilder("collection", collectionName).get());
+		HttpResponseEntity res = httpManager.doGet(createIndexEndpointUrl(database),
+			new MapBuilder(COLLECTION, collectionName).get());
 
 		return createEntity(res, IndexesEntity.class);
 	}

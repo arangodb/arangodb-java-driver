@@ -24,6 +24,10 @@ import com.arangodb.ArangoException;
  */
 public class ReflectionUtils {
 
+	private ReflectionUtils() {
+		// this is a helper class
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> T newInstance(Class<?> clazz) throws ArangoException {
 		try {

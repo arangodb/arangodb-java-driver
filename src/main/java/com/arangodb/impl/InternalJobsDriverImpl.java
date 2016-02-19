@@ -37,31 +37,30 @@ public class InternalJobsDriverImpl extends BaseArangoDriverImpl implements com.
 
 	@Override
 	public List<String> getJobs(String database, JobsEntity.JobState jobState, int count) throws ArangoException {
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/job", jobState.getName()),
+		HttpResponseEntity res = httpManager.doGet(createJobEndpointUrl(database, jobState.getName()),
 			new MapBuilder().put("count", count).get());
 		return createEntity(res, JobsEntity.class).getJobs();
 	}
 
 	@Override
 	public List<String> getJobs(String database, JobsEntity.JobState jobState) throws ArangoException {
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/job", jobState.getName()));
+		HttpResponseEntity res = httpManager.doGet(createJobEndpointUrl(database, jobState.getName()));
 		return createEntity(res, JobsEntity.class).getJobs();
 	}
 
 	@Override
 	public void deleteAllJobs(String database) throws ArangoException {
-		httpManager.doDelete(createEndpointUrl(database, "/_api/job", "all"), null);
+		httpManager.doDelete(createJobEndpointUrl(database, "all"), null);
 	}
 
 	@Override
-	public void deleteJobById(String database, String JobId) throws ArangoException {
-		httpManager.doDelete(createEndpointUrl(database, "/_api/job", JobId), null);
+	public void deleteJobById(String database, String jobId) throws ArangoException {
+		httpManager.doDelete(createJobEndpointUrl(database, jobId), null);
 	}
 
 	@Override
 	public void deleteExpiredJobs(String database, int timeStamp) throws ArangoException {
-		httpManager.doDelete(createEndpointUrl(database, "/_api/job", "expired"),
-			new MapBuilder().put("stamp", timeStamp).get());
+		httpManager.doDelete(createJobEndpointUrl(database, "expired"), new MapBuilder().put("stamp", timeStamp).get());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,8 +71,8 @@ public class InternalJobsDriverImpl extends BaseArangoDriverImpl implements com.
 			throw new ArangoException("No result for JobId.");
 		}
 		this.getHttpManager().getJobs().remove(jobId);
-		this.getHttpManager().setPreDefinedResponse(
-			httpManager.doPut(createEndpointUrl(database, "/_api/job", jobId), null, null));
+		this.getHttpManager()
+				.setPreDefinedResponse(httpManager.doPut(createJobEndpointUrl(database, jobId), null, null));
 		T result;
 		try {
 			result = (T) io.getMethod().invoke(io.getArangoDriver(), io.getArgs());

@@ -28,19 +28,23 @@ import com.arangodb.CursorResultSet;
  */
 public class ResultSetUtils {
 
-  public static <T> List<T> toList(CursorResultSet<T> rs) throws ArangoException {
-    
-    if (rs == null) {
-      return new ArrayList<T>(0);
-    }
-    
-    ArrayList<T> result = new ArrayList<T>(rs.getTotalCount());
-    while (rs.hasNext()) {
-      result.add(rs.next());
-    }
-    
-    return result;
-    
-  }
-  
+	private ResultSetUtils() {
+		// this is a helper class
+	}
+
+	public static <T> List<T> toList(CursorResultSet<T> rs) throws ArangoException {
+
+		if (rs == null) {
+			return new ArrayList<T>(0);
+		}
+
+		ArrayList<T> result = new ArrayList<T>(rs.getTotalCount());
+		while (rs.hasNext()) {
+			result.add(rs.next());
+		}
+
+		return result;
+
+	}
+
 }

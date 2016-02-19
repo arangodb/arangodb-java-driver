@@ -26,6 +26,10 @@ import com.google.gson.JsonPrimitive;
  */
 public class JsonUtils {
 
+	private JsonUtils() {
+		// this is a helper class
+	}
+
 	public static int[] toArray(JsonArray array) {
 		int len = array.size();
 		int[] iarray = new int[len];
