@@ -42,7 +42,7 @@ public class HttpResponseEntity {
 	 * @since 1.4.0
 	 */
 	public boolean isJsonResponse() {
-		return contentType != null && contentType.startsWith("application/json");
+		return (contentType != null && contentType.startsWith("application/json"));
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class HttpResponseEntity {
 	 * @since 1.4.0
 	 */
 	public boolean isDumpResponse() {
-		return contentType != null && contentType.startsWith("application/x-arango-dump");
+		return (contentType != null && contentType.startsWith("application/x-arango-dump"));
 	}
 
 	/**
@@ -62,11 +62,11 @@ public class HttpResponseEntity {
 	 * @since 1.4.0
 	 */
 	public boolean isTextResponse() {
-		return contentType != null && contentType.startsWith("text/plain");
+		return (contentType != null && contentType.startsWith("text/plain"));
 	}
 
 	public boolean isBatchRepsonse() {
-		return requestId != null;
+		return (requestId != null);
 	}
 
 	public int getStatusCode() {

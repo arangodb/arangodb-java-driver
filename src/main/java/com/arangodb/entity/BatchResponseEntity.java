@@ -31,12 +31,12 @@ public class BatchResponseEntity extends BaseEntity {
 	 * The context of the function call, this is used to to process the server
 	 * response to an api entity.
 	 */
-	private InvocationObject invocationObject;
+	InvocationObject invocationObject;
 
 	/**
 	 * The http response of the batch part.
 	 */
-	private HttpResponseEntity httpResponseEntity;
+	public HttpResponseEntity httpResponseEntity;
 
 	public BatchResponseEntity(InvocationObject invocationObject) {
 		this.invocationObject = invocationObject;

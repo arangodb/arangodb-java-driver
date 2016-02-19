@@ -30,66 +30,54 @@ import java.util.TreeMap;
  */
 public abstract class BaseMapEntity<K, V> extends BaseEntity implements Map<K, V> {
 
-	private final TreeMap<K, V> innerMap = new TreeMap<K, V>();
+  private final TreeMap<K, V> innerMap = new TreeMap<K, V>();
 
-	@Override
-	public int size() {
-		return innerMap.size();
-	}
+  public int size() {
+    return innerMap.size();
+  }
 
-	@Override
-	public boolean isEmpty() {
-		return innerMap.isEmpty();
-	}
+  public boolean isEmpty() {
+    return innerMap.isEmpty();
+  }
 
-	@Override
-	public boolean containsKey(Object key) {
-		return innerMap.containsKey(key);
-	}
+  public boolean containsKey(Object key) {
+    return innerMap.containsKey(key);
+  }
 
-	@Override
-	public boolean containsValue(Object value) {
-		return innerMap.containsValue(value);
-	}
+  public boolean containsValue(Object value) {
+    return innerMap.containsValue(value);
+  }
 
-	@Override
-	public V get(Object key) {
-		return innerMap.get(key);
-	}
+  public V get(Object key) {
+    return innerMap.get(key);
+  }
 
-	@Override
-	public V put(K key, V value) {
-		return innerMap.put(key, value);
-	}
+  public V put(K key, V value) {
+    return innerMap.put(key, value);
+  }
 
-	@Override
-	public V remove(Object key) {
-		return innerMap.remove(key);
-	}
+  public V remove(Object key) {
+    return innerMap.remove(key);
+  }
 
-	@Override
-	public void putAll(Map<? extends K, ? extends V> t) {
-		innerMap.putAll(t);
-	}
+  public void putAll(Map<? extends K, ? extends V> t) {
+    innerMap.putAll(t);
+  }
 
-	@Override
-	public void clear() {
-		innerMap.clear();
-	}
+  public void clear() {
+    innerMap.clear();
+  }
 
-	@Override
-	public Set<K> keySet() {
-		return innerMap.keySet();
-	}
+  public Set<K> keySet() {
+    return innerMap.keySet();
+  }
 
-	@Override
-	public Collection<V> values() {
-		return innerMap.values();
-	}
+  public Collection<V> values() {
+    return innerMap.values();
+  }
 
-	@Override
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
-		return innerMap.entrySet();
-	}
-
+  public Set<java.util.Map.Entry<K, V>> entrySet() {
+    return innerMap.entrySet();
+  }
+  
 }

@@ -467,21 +467,4 @@ public abstract class BaseArangoDriver {
 	protected String createGharialEndpointUrl(String database, Object... paths) throws ArangoException {
 		return createEndpointUrl(database, "/_api/gharial", paths);
 	}
-
-	protected String createDocumentEndpointUrl(String database, Object... paths) throws ArangoException {
-		return createEndpointUrl(database, "/_api/document", paths);
-	}
-
-	protected String createDatabaseEndpointUrl(String database, Object... paths) throws ArangoException {
-		return createEndpointUrl(database, "/_api/database", paths);
-	}
-
-	protected String createCursorEndpointUrl(String database, Object... paths) throws ArangoException {
-		return createEndpointUrl(database, "/_api/cursor", paths);
-	}
-
-	protected String createCollectionEndpointUrl(String database, Object... paths) throws ArangoException {
-		return createEndpointUrl(database, "/_api/collection", paths);
-	}
-
 }

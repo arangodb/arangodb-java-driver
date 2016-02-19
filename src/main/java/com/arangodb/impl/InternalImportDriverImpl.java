@@ -28,9 +28,9 @@ import com.arangodb.util.MapBuilder;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
- * @see <a href=
- *      "https://docs.arangodb.com/HttpBulkImports/ImportingSelfContained.html">
- *      HttpBulkImports documentation</a>
+ * @see <a
+ *      href="https://docs.arangodb.com/HttpBulkImports/ImportingSelfContained.html">HttpBulkImports
+ *      documentation</a>
  */
 public class InternalImportDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalImportDriver {
 
@@ -46,13 +46,24 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 		Collection<?> values) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(database, "/_api/import"), new MapBuilder().put("collection", collection)
-					.put("createCollection", createCollection).put("type", "array").get(),
-			EntityFactory.toJsonString(values));
+			createEndpointUrl(database, "/_api/import"),
+			new MapBuilder().put("collection", collection).put("createCollection", createCollection)
+					.put("type", "array").get(), EntityFactory.toJsonString(values));
 
 		return createEntity(res, ImportResultEntity.class);
 
 	}
+
+	// public void importDocuments(String collection, Boolean createCollection,
+	// Iterator<?> itr) throws ArangoException {
+	//
+	// HttpResponseEntity res = httpManager.doPost(
+	// baseUrl + "/_api/import",
+	// new MapBuilder().put("collection", collection).put("createCollection",
+	// createCollection).put("type", "documents").get(),
+	// EntityFactory.toJsonSequenceEntity(itr));
+	//
+	// }
 
 	@Override
 	public ImportResultEntity importDocumentsByHeaderValues(

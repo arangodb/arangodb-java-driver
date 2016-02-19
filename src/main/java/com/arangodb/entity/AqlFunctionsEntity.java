@@ -31,6 +31,9 @@ public class AqlFunctionsEntity extends BaseEntity {
 	 */
 	Map<String, String> aqlFunctions;
 
+	public AqlFunctionsEntity() {
+	}
+
 	AqlFunctionsEntity(Map<String, String> aqlfunctions) {
 		this.aqlFunctions = aqlfunctions;
 	}

@@ -276,7 +276,5 @@ public class ErrorNums {
 	public static final int ERROR_QUEUE_UNKNOWN = 21002;
 	public static final int ERROR_QUEUE_FULL = 21003;
 
-	private ErrorNums() {
-		// this is a helper class
-	}
 }
+

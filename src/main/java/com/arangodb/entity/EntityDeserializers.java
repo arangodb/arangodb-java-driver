@@ -48,6 +48,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 
@@ -113,10 +114,6 @@ public class EntityDeserializers {
 	}
 
 	private static ThreadLocal<ClassHolder> parameterizedBridger = new ThreadLocal<ClassHolder>();
-
-	private EntityDeserializers() {
-		// this is helper class
-	}
 
 	public static void setParameterized(Class<?>... clazz) {
 		parameterizedBridger.set(new ClassHolder(clazz));
@@ -189,12 +186,17 @@ public class EntityDeserializers {
 		if (obj.has("_key")) {
 			entity.setDocumentKey(obj.getAsJsonPrimitive("_key").getAsString());
 		}
+		if (true) {
+
+		}
+
 		return entity;
 	}
 
 	public static class DefaultEntityDeserializer implements JsonDeserializer<DefaultEntity> {
 		@Override
-		public DefaultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DefaultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 			if (json.isJsonNull()) {
 				return null;
 			}
@@ -204,7 +206,8 @@ public class EntityDeserializers {
 
 	public static class VersionDeserializer implements JsonDeserializer<ArangoVersion> {
 		@Override
-		public ArangoVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ArangoVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -227,7 +230,8 @@ public class EntityDeserializers {
 
 	public static class ArangoUnixTimeDeserializer implements JsonDeserializer<ArangoUnixTime> {
 		@Override
-		public ArangoUnixTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ArangoUnixTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -252,7 +256,8 @@ public class EntityDeserializers {
 
 	public static class FiguresDeserializer implements JsonDeserializer<Figures> {
 		@Override
-		public Figures deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public Figures deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -328,7 +333,8 @@ public class EntityDeserializers {
 
 	public static class CollectionKeyOptionDeserializer implements JsonDeserializer<CollectionKeyOption> {
 		@Override
-		public CollectionKeyOption deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CollectionKeyOption deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -359,7 +365,8 @@ public class EntityDeserializers {
 
 	public static class CollectionEntityDeserializer implements JsonDeserializer<CollectionEntity> {
 		@Override
-		public CollectionEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CollectionEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -435,7 +442,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public CollectionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CollectionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -458,7 +466,8 @@ public class EntityDeserializers {
 	public static class AqlfunctionsEntityDeserializer implements JsonDeserializer<AqlFunctionsEntity> {
 
 		@Override
-		public AqlFunctionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public AqlFunctionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -479,7 +488,8 @@ public class EntityDeserializers {
 	public static class JobsEntityDeserializer implements JsonDeserializer<JobsEntity> {
 
 		@Override
-		public JobsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public JobsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -504,7 +514,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public CursorEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CursorEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -561,15 +572,17 @@ public class EntityDeserializers {
 			if (obj.has("extra")) {
 				entity.extra = context.deserialize(obj.get("extra"), extraType);
 
-				if (entity.extra.containsKey("stats") && entity.extra.get("stats") instanceof Map<?, ?>) {
-					Map<?, ?> m = (Map<?, ?>) entity.extra.get("stats");
-					if (m.containsKey("fullCount")) {
-						try {
-							if (m.get("fullCount") instanceof Double) {
-								Double v = (Double) m.get("fullCount");
-								entity.fullCount = v.intValue();
+				if (entity.extra.containsKey("stats")) {
+					if (entity.extra.get("stats") instanceof Map<?, ?>) {
+						Map<?, ?> m = (Map<?, ?>) entity.extra.get("stats");
+						if (m.containsKey("fullCount")) {
+							try {
+								if (m.get("fullCount") instanceof Double) {
+									Double v = (Double) m.get("fullCount");
+									entity.fullCount = v.intValue();
+								}
+							} catch (Exception e) {
 							}
-						} catch (Exception e) {
 						}
 					}
 				}
@@ -600,7 +613,8 @@ public class EntityDeserializers {
 	public static class DocumentEntityDeserializer implements JsonDeserializer<DocumentEntity<?>> {
 
 		@Override
-		public DocumentEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DocumentEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return new DocumentEntity<Object>();
@@ -615,6 +629,9 @@ public class EntityDeserializers {
 			}
 
 			JsonObject obj = json.getAsJsonObject();
+			// DocumentEntity<Object> entity = deserializeBaseParameter(obj, new
+			// DocumentEntity<Object>());
+			// deserializeDocumentParameter(obj, entity);
 			DocumentEntity<Object> entity = new DocumentEntity<Object>();
 			deserializeDocumentParameter(obj, entity);
 
@@ -643,10 +660,6 @@ public class EntityDeserializers {
 				add("_key");
 			}
 		};
-
-		private DeserializeSingleEntry() {
-			// this is a helper class
-		}
 
 		/**
 		 * desirializes any jsonElement
@@ -716,7 +729,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public DocumentsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DocumentsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -739,7 +753,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public IndexEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public IndexEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -804,7 +819,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public IndexesEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public IndexesEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -828,7 +844,8 @@ public class EntityDeserializers {
 
 	public static class AdminLogEntryEntityDeserializer implements JsonDeserializer<AdminLogEntity> {
 		@Override
-		public AdminLogEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public AdminLogEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -870,7 +887,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public StatisticsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public StatisticsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -917,7 +935,7 @@ public class EntityDeserializers {
 					cli.httpConnections = client.getAsJsonPrimitive("httpConnections").getAsInt();
 				}
 				for (Entry<String, JsonElement> ent : client.entrySet()) {
-					if (!"httpConnections".equals(ent.getKey())) {
+					if (!ent.getKey().equals("httpConnections")) {
 						JsonObject f = ent.getValue().getAsJsonObject();
 						FigureValue fv = new FigureValue();
 						fv.sum = f.getAsJsonPrimitive("sum").getAsDouble();
@@ -951,7 +969,7 @@ public class EntityDeserializers {
 		public StatisticsDescriptionEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1004,7 +1022,8 @@ public class EntityDeserializers {
 	public static class ScalarExampleEntityDeserializer implements JsonDeserializer<ScalarExampleEntity<?>> {
 
 		@Override
-		public ScalarExampleEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ScalarExampleEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1025,7 +1044,8 @@ public class EntityDeserializers {
 	public static class SimpleByResultEntityDeserializer implements JsonDeserializer<SimpleByResultEntity> {
 
 		@Override
-		public SimpleByResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public SimpleByResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1054,7 +1074,8 @@ public class EntityDeserializers {
 	public static class TransactionResultEntityDeserializer implements JsonDeserializer<TransactionResultEntity> {
 
 		@Override
-		public TransactionResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public TransactionResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1067,11 +1088,11 @@ public class EntityDeserializers {
 				if (obj.get("result") instanceof JsonObject) {
 					entity.setResult(obj.get("result"));
 				} else if (obj.getAsJsonPrimitive("result").isBoolean()) {
-					entity.setResult(obj.getAsJsonPrimitive("result").getAsBoolean());
+					entity.setResult((obj.getAsJsonPrimitive("result").getAsBoolean()));
 				} else if (obj.getAsJsonPrimitive("result").isNumber()) {
 					entity.setResult(obj.getAsJsonPrimitive("result").getAsNumber());
 				} else if (obj.getAsJsonPrimitive("result").isString()) {
-					entity.setResult(obj.getAsJsonPrimitive("result").getAsString());
+					entity.setResult((obj.getAsJsonPrimitive("result").getAsString()));
 				}
 			}
 
@@ -1083,7 +1104,8 @@ public class EntityDeserializers {
 	public static class UserEntityDeserializer implements JsonDeserializer<UserEntity> {
 
 		@Override
-		public UserEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public UserEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1127,7 +1149,8 @@ public class EntityDeserializers {
 
 	public static class ImportResultEntityDeserializer implements JsonDeserializer<ImportResultEntity> {
 		@Override
-		public ImportResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ImportResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1154,7 +1177,8 @@ public class EntityDeserializers {
 
 	public static class DatabaseEntityDeserializer implements JsonDeserializer<DatabaseEntity> {
 		@Override
-		public DatabaseEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DatabaseEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1188,7 +1212,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public StringsResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public StringsResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1207,7 +1232,8 @@ public class EntityDeserializers {
 
 	public static class BooleanResultEntityDeserializer implements JsonDeserializer<BooleanResultEntity> {
 		@Override
-		public BooleanResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public BooleanResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1229,7 +1255,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public Endpoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public Endpoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1250,7 +1277,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public DocumentResultEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DocumentResultEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1279,7 +1307,8 @@ public class EntityDeserializers {
 
 	public static class ReplicationStateDeserializer implements JsonDeserializer<ReplicationState> {
 		@Override
-		public ReplicationState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ReplicationState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1305,7 +1334,7 @@ public class EntityDeserializers {
 		public ReplicationInventoryEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1380,10 +1409,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public ReplicationDumpRecord<?> deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+		public ReplicationDumpRecord<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1418,7 +1445,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public ReplicationSyncEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ReplicationSyncEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1443,7 +1471,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public MapAsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public MapAsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1464,7 +1493,7 @@ public class EntityDeserializers {
 		public ReplicationLoggerConfigEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1496,7 +1525,7 @@ public class EntityDeserializers {
 		public ReplicationApplierConfigEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1551,7 +1580,8 @@ public class EntityDeserializers {
 
 	public static class ReplicationApplierStateDeserializer implements JsonDeserializer<ReplicationApplierState> {
 		@Override
-		public ReplicationApplierState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ReplicationApplierState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1589,13 +1619,13 @@ public class EntityDeserializers {
 				JsonObject lastError = obj.getAsJsonObject("lastError");
 				state.lastError = new LastError();
 				if (lastError.has("time")) {
-					state.lastError.setTime(DateUtils.parse(lastError.getAsJsonPrimitive("time").getAsString()));
+					state.lastError.time = DateUtils.parse(lastError.getAsJsonPrimitive("time").getAsString());
 				}
 				if (lastError.has("errorNum")) {
-					state.lastError.setErrorNum(lastError.getAsJsonPrimitive("errorNum").getAsInt());
+					state.lastError.errorNum = lastError.getAsJsonPrimitive("errorNum").getAsInt();
 				}
 				if (lastError.has("errorMessage")) {
-					state.lastError.setErrorMessage(lastError.getAsJsonPrimitive("errorMessage").getAsString());
+					state.lastError.errorMessage = lastError.getAsJsonPrimitive("errorMessage").getAsString();
 				}
 			}
 
@@ -1623,7 +1653,7 @@ public class EntityDeserializers {
 		public ReplicationApplierStateEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1663,7 +1693,7 @@ public class EntityDeserializers {
 		public ReplicationLoggerStateEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1696,7 +1726,7 @@ public class EntityDeserializers {
 		public ReplicationLoggerStateEntity.Client deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1723,7 +1753,8 @@ public class EntityDeserializers {
 
 	public static class GraphEntityDeserializer implements JsonDeserializer<GraphEntity> {
 		@Override
-		public GraphEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public GraphEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1742,7 +1773,7 @@ public class EntityDeserializers {
 			if (graph.has("orphanCollections")) {
 				JsonArray orphanCollections = graph.getAsJsonArray("orphanCollections");
 				entity.orphanCollections = new ArrayList<String>();
-				if (orphanCollections != null) {
+				if (!orphanCollections.equals(null)) {
 					entity.orphanCollections = new ArrayList<String>(orphanCollections.size());
 					for (int i = 0, imax = orphanCollections.size(); i < imax; i++) {
 						String orphanCollection = orphanCollections.get(i).getAsString();
@@ -1755,7 +1786,9 @@ public class EntityDeserializers {
 			if (graph.has("edgeDefinitions")) {
 				JsonArray edgeDefinitions = graph.getAsJsonArray("edgeDefinitions");
 				entity.edgeDefinitionsEntity = new EdgeDefinitionsEntity();
-				if (edgeDefinitions != null) {
+				// EdgeDefinitionsEntity edgeDefinitionsEntity = new
+				// EdgeDefinitionsEntity();
+				if (!edgeDefinitions.equals(null)) {
 					for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
 						EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
 						JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
@@ -1800,7 +1833,8 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public GraphsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public GraphsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1820,7 +1854,8 @@ public class EntityDeserializers {
 
 	public static class DeleteEntityDeserializer implements JsonDeserializer<DeletedEntity> {
 		@Override
-		public DeletedEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DeletedEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1843,7 +1878,8 @@ public class EntityDeserializers {
 
 	public static class VertexEntityDeserializer implements JsonDeserializer<VertexEntity<?>> {
 		@Override
-		public VertexEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public VertexEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1866,7 +1902,8 @@ public class EntityDeserializers {
 
 	public static class EdgeEntityDeserializer implements JsonDeserializer<EdgeEntity<?>> {
 		@Override
-		public EdgeEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public EdgeEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1898,7 +1935,8 @@ public class EntityDeserializers {
 
 	public static class TraversalEntityDeserializer implements JsonDeserializer<TraversalEntity<?, ?>> {
 		@Override
-		public TraversalEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public TraversalEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1936,10 +1974,8 @@ public class EntityDeserializers {
 
 	public static class ShortestPathEntityDeserializer implements JsonDeserializer<ShortestPathEntity<?, ?>> {
 		@Override
-		public ShortestPathEntity<?, ?> deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+		public ShortestPathEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -1975,7 +2011,7 @@ public class EntityDeserializers {
 				if (result.has("paths")) {
 					// old version < 2.6
 					JsonArray paths = result.getAsJsonArray("paths");
-					if (paths != null && paths.size() > 0) {
+					if (!paths.equals(null) && paths.size() > 0) {
 						JsonObject path = paths.get(0).getAsJsonObject();
 
 						if (path.has("edges")) {
@@ -2000,7 +2036,7 @@ public class EntityDeserializers {
 		public QueryCachePropertiesEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -2025,7 +2061,8 @@ public class EntityDeserializers {
 	public static class QueriesResultEntityDeserializer implements JsonDeserializer<QueriesResultEntity> {
 
 		@Override
-		public QueriesResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public QueriesResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+				throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -2075,7 +2112,7 @@ public class EntityDeserializers {
 		public QueryTrackingPropertiesEntity deserialize(
 			JsonElement json,
 			Type typeOfT,
-			JsonDeserializationContext context) {
+			JsonDeserializationContext context) throws JsonParseException {
 
 			if (json.isJsonNull()) {
 				return null;
@@ -2135,7 +2172,7 @@ public class EntityDeserializers {
 		Class<?> edgeClazz) {
 		List<PathEntity<Object, Object>> pathEntities = new ArrayList<PathEntity<Object, Object>>();
 		JsonArray paths = visited.getAsJsonArray("paths");
-		if (paths != null) {
+		if (!paths.equals(null)) {
 			for (int i = 0, imax = paths.size(); i < imax; i++) {
 				JsonObject path = paths.get(i).getAsJsonObject();
 				PathEntity<Object, Object> pathEntity = new PathEntity<Object, Object>();
@@ -2158,7 +2195,7 @@ public class EntityDeserializers {
 		JsonDeserializationContext context,
 		JsonArray vertices) {
 		List<VertexEntity<Object>> list = new ArrayList<VertexEntity<Object>>();
-		if (vertices != null) {
+		if (!vertices.equals(null)) {
 			for (int i = 0, imax = vertices.size(); i < imax; i++) {
 				JsonObject vertex = vertices.get(i).getAsJsonObject();
 				VertexEntity<Object> ve = getVertex(context, vertex, vertexClazz);
@@ -2187,7 +2224,7 @@ public class EntityDeserializers {
 		JsonDeserializationContext context,
 		JsonArray edges) {
 		List<EdgeEntity<Object>> list = new ArrayList<EdgeEntity<Object>>();
-		if (edges != null) {
+		if (!edges.equals(null)) {
 			for (int i = 0, imax = edges.size(); i < imax; i++) {
 				JsonObject edge = edges.get(i).getAsJsonObject();
 				EdgeEntity<Object> ve = deserializeBaseParameter(edge, new EdgeEntity<Object>());

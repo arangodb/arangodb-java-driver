@@ -100,7 +100,7 @@ public class HttpManager {
 
 	private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
 
-	public enum HttpMode {
+	public static enum HttpMode {
 		SYNC, ASYNC, FIREANDFORGET
 	}
 
@@ -117,7 +117,7 @@ public class HttpManager {
 		ConnectionSocketFactory plainsf = new PlainConnectionSocketFactory();
 
 		// socket factory for HTTPS
-		SSLConnectionSocketFactory sslsf;
+		SSLConnectionSocketFactory sslsf = null;
 		if (configure.getSslContext() != null) {
 			sslsf = new SSLConnectionSocketFactory(configure.getSslContext());
 		} else {
@@ -162,16 +162,15 @@ public class HttpManager {
 					HeaderElement he = it.nextElement();
 					String param = he.getName();
 					String value = he.getValue();
-					if (value != null && "timeout".equalsIgnoreCase(param)) {
+					if (value != null && param.equalsIgnoreCase("timeout")) {
 						try {
 							return Long.parseLong(value) * 1000;
-						} catch (NumberFormatException ex) {
-							logger.debug("wrong value in HTTP header.", ex);
+						} catch (NumberFormatException ignore) {
 						}
 					}
 				}
 				// otherwise keep alive for 30 seconds
-				return 30L * 1000L;
+				return 30 * 1000;
 			}
 
 		};
@@ -190,6 +189,16 @@ public class HttpManager {
 
 		// Client
 		client = builder.build();
+
+		// Basic Auth
+		// if (configure.getUser() != null && configure.getPassword() != null) {
+		// AuthScope scope = AuthScope.ANY; // TODO
+		// this.credentials = new
+		// UsernamePasswordCredentials(configure.getUser(),
+		// configure.getPassword());
+		// client.getCredentialsProvider().setCredentials(scope, credentials);
+		// }
+
 	}
 
 	public void destroy() {
@@ -395,7 +404,7 @@ public class HttpManager {
 			}
 		}
 
-		HttpRequestBase request;
+		HttpRequestBase request = null;
 		switch (requestEntity.type) {
 		case GET:
 			request = new HttpGet(url);
@@ -421,8 +430,6 @@ public class HttpManager {
 		case DELETE:
 			request = new HttpDelete(url);
 			break;
-		default:
-			throw new ArangoException("request type not supported");
 		}
 
 		// common-header
@@ -457,11 +464,11 @@ public class HttpManager {
 		} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
 			request.addHeader("x-arango-async", "true");
 		}
-
+		// CURL/httpie Logger
 		if (configure.isEnableCURLLogger()) {
 			CURLLogger.log(url, requestEntity, userAgent, credentials);
 		}
-		HttpResponse response;
+		HttpResponse response = null;
 		if (preDefinedResponse != null) {
 			return preDefinedResponse;
 		}
@@ -597,7 +604,6 @@ public class HttpManager {
 	}
 
 	public void setCurrentObject(InvocationObject currentObject) {
-		// do nothing here
 	}
 
 	public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {
@@ -618,7 +624,7 @@ public class HttpManager {
 	}
 
 	public String getLastJobId() {
-		return jobIds.isEmpty() ? null : jobIds.get(jobIds.size() - 1);
+		return jobIds.size() == 0 ? null : jobIds.get(jobIds.size() - 1);
 	}
 
 	public void resetJobs() {

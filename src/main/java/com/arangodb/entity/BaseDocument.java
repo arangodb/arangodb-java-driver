@@ -61,6 +61,44 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 		this.documentKey = documentKey;
 	}
 
+	// /**
+	// * @param keyValues a set of key/value pairs containing the attributes for
+	// the document.
+	// * The length has to be even and each even entry has to be of type String.
+	// * If not an empty document will be created
+	// */
+	// public BaseDocument(Object ...keyValues) {
+	// this(null, keyValues);
+	// }
+	//
+	// /**
+	// * create a BaseDocument with a given key and attributes defined in
+	// keyValues
+	// *
+	// * @param documentKey the unique key of the document
+	// * @param keyValues a set of key/value pairs containing the attributes for
+	// the document.
+	// * The length has to be even and each even entry has to be of type String.
+	// * If not an empty document will be created
+	// */
+	// public BaseDocument(String documentKey, Object ...keyValues) {
+	// this.init();
+	// if (documentKey != null) {
+	// this.documentKey = documentKey;
+	// }
+	// if (checkKeyValues(keyValues)) {
+	// for (int i = 0; i < keyValues.length; i = i+2) {
+	// if (keyValues[i] == REV) {
+	// this.documentRevision = (Long) keyValues[i+1];
+	// } else if (keyValues[i] == KEY && documentKey == null) {
+	// this.documentKey = (String) keyValues[i+1];
+	// } else {
+	// this.addAttribute((String) keyValues[i], keyValues[i + 1]);
+	// }
+	// }
+	// }
+	// }
+
 	/**
 	 * create an BaseDocument with given attributes
 	 *
@@ -182,5 +220,24 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 		return "BaseDocument [documentRevision=" + documentRevision + ", documentHandle=" + documentHandle
 				+ ", documentKey=" + documentKey + ", properties=" + properties + "]";
 	}
+
+	// /**
+	// * check the list if it is suitable
+	// *
+	// * @param keyValues
+	// * @return true, if the list has an even number and is an alternating
+	// sequence of instances of String and Object.
+	// */
+	// private boolean checkKeyValues(Object... keyValues) {
+	// if (keyValues.length %2 != 0) {
+	// return false;
+	// }
+	// for (int i = 0; i < keyValues.length; i = i+2) {
+	// if (! (keyValues[i] instanceof String)) {
+	// return false;
+	// }
+	// }
+	// return true;
+	// }
 
 }

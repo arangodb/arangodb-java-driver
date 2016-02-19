@@ -28,13 +28,8 @@ import com.arangodb.entity.DocumentEntity;
 public class MissingInstanceCreater {
 
 	private static HashMap<Class<?>, Class<? extends BaseEntity>> mapping = new HashMap<Class<?>, Class<? extends BaseEntity>>();
-
 	static {
 		mapping.put(VertexEntity.class, DocumentEntity.class);
-	}
-
-	private MissingInstanceCreater() {
-		// this is a helper class
 	}
 
 	@SuppressWarnings("unchecked")

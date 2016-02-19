@@ -122,7 +122,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public GraphEntity getGraph(String databaseName, String graphName) throws ArangoException {
-
+		validateCollectionName(graphName); // ??
 		HttpResponseEntity res = httpManager.doGet(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName)), new MapBuilder().get(), null);
 		return createEntity(res, GraphEntity.class);
@@ -132,7 +132,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@Override
 	public DeletedEntity deleteGraph(String databaseName, String graphName, Boolean dropCollections)
 			throws ArangoException {
-
+		validateCollectionName(graphName); // ??
 		HttpResponseEntity res = httpManager.doDelete(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName)), new MapBuilder().get(),
 			new MapBuilder().put("dropCollections", dropCollections).get());
@@ -425,7 +425,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doGet(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
+			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true)
+					.get(),
 			new MapBuilder().get());
 
 		return createEntity(res, VertexEntity.class, clazz);
@@ -447,7 +448,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doPut(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
+			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true)
+					.get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(vertex));
 
 		VertexEntity<T> result = createEntity(res, VertexEntity.class, vertex.getClass());
@@ -476,7 +478,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doPatch(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
+			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true)
+					.get(),
 			new MapBuilder().put("keepNull", keepNull).put(WAIT_FOR_SYNC, waitForSync).get(),
 			EntityFactory.toJsonString(vertex, keepNull != null && !keepNull));
 
@@ -503,7 +506,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doDelete(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
+			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true)
+					.get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get());
 
 		return createEntity(res, DeletedEntity.class);
@@ -571,7 +575,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doGet(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
+			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true)
+					.get(),
 			new MapBuilder().get());
 
 		return createEntity(res, EdgeEntity.class, clazz);
@@ -591,7 +596,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doDelete(
 			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
+			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true)
+					.get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get());
 
 		return createEntity(res, DeletedEntity.class);
@@ -614,7 +620,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doPut(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
+			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true)
+					.get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
 			value == null ? null : EntityFactory.toJsonString(value));
 
@@ -644,7 +651,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		HttpResponseEntity res = httpManager.doPatch(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
-			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
+			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true)
+					.get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
 			value == null ? null : EntityFactory.toJsonString(value));
 

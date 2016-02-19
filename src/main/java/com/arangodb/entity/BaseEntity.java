@@ -74,7 +74,7 @@ public abstract class BaseEntity implements Serializable {
 	 * @return boolean
 	 */
 	public boolean isNotModified() {
-		return statusCode == 304;
+		return statusCode == 304; // HttpStatus.SC_NOT_MODIFIED;
 	}
 
 	/**
@@ -85,6 +85,15 @@ public abstract class BaseEntity implements Serializable {
 	public boolean isUnauthorized() {
 		return statusCode == 401;
 	}
+
+	// /**
+	// * If the requested resource has not been modified it returns true
+	// *
+	// * @return boolean
+	// */
+	// public boolean isNotFound() {
+	// return statusCode == 404;
+	// }
 
 	/**
 	 * If this is the response of a batch request it returns true

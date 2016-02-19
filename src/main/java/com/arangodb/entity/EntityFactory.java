@@ -127,10 +127,6 @@ public class EntityFactory {
 		configure(getGsonBuilder());
 	}
 
-	private EntityFactory() {
-		// this is a helper class
-	}
-
 	/**
 	 * Configures instances of Gson used by this factory.
 	 * 
@@ -170,7 +166,7 @@ public class EntityFactory {
 		return new JsonSequenceEntity(itr, gson);
 	}
 
-	public static String toImportHeaderValues(Collection<? extends Collection<?>> headerValues) {
+	public static <T> String toImportHeaderValues(Collection<? extends Collection<?>> headerValues) {
 		StringWriter writer = new StringWriter();
 		for (Collection<?> array : headerValues) {
 			gson.toJson(array, writer);

@@ -90,21 +90,23 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		map.put("query", query);
 		map.put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars);
 
-		return httpManager.doPost(createCursorEndpointUrl(database), null, EntityFactory.toJsonString(map));
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/cursor"), null,
+			EntityFactory.toJsonString(map));
+		return res;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> CursorEntity<T> continueQuery(String database, long cursorId, Class<?>... clazz) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPut(createCursorEndpointUrl(database, cursorId), null, null);
+		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/cursor", cursorId), null, null);
 
 		return createEntity(res, CursorEntity.class, clazz);
 	}
 
 	@Override
 	public DefaultEntity finishQuery(String database, long cursorId) throws ArangoException {
-		HttpResponseEntity res = httpManager.doDelete(createCursorEndpointUrl(database, cursorId), null);
+		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(database, "/_api/cursor/", cursorId), null);
 
 		try {
 			return createEntity(res, DefaultEntity.class);
@@ -218,8 +220,9 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		Boolean fullCount) throws ArangoException {
 
 		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
+		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+		return rs;
 
-		return new CursorResultSet<T>(database, this, entity, clazz);
 	}
 
 	@Deprecated
@@ -233,8 +236,9 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		Integer batchSize) throws ArangoException {
 
 		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
+		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
+		return rs;
 
-		return new CursorResultSet<T>(database, this, entity, clazz);
 	}
 
 	@Override

@@ -27,54 +27,46 @@ import java.util.TreeMap;
  */
 public enum CollectionStatus {
 
-	/**
-	 * initial state of a new collection
-	 */
-	NEW_BORN_COLLECTION(1),
+  /**
+   * initial state of a new collection
+   */
+  NEW_BORN_COLLECTION(1),
 
-	/**
-	 * collection is not in memory
-	 */
-	UNLOADED(2),
+  /**
+   * collection is not in memory
+   */
+  UNLOADED(2),
 
-	/**
-	 * collection is in memory
-	 */
-	LOADED(3),
+  /**
+   * collection is in memory
+   */
+  LOADED(3),
 
-	/**
-	 * temporary state of a collection in the process of being unloaded
-	 */
-	IN_THE_PROCESS_OF_BEING_UNLOADED(4),
+  /**
+   * temporary state of a collection in the process of being unloaded
+   */
+  IN_THE_PROCESS_OF_BEING_UNLOADED(4),
 
-	/**
-	 * deleted state
-	 */
-	DELETED(5);
-
-	private static class Holder implements Serializable {
-
-		private static final long serialVersionUID = -7016368432042468015L;
-
-		private static TreeMap<Integer, CollectionStatus> lookupMap = new TreeMap<Integer, CollectionStatus>();
-
-		private Holder() {
-			// this is a helper class
-		}
-	}
-
-	private final int status;
-
-	private CollectionStatus(int status) {
-		this.status = status;
-		Holder.lookupMap.put(status, this);
-	}
-
-	public int status() {
-		return status;
-	}
-
-	public static CollectionStatus valueOf(int status) {
-		return Holder.lookupMap.get(status);
-	}
+  /**
+   * deleted state
+   */
+  DELETED(5)
+  ;
+  
+  private static class Holder implements Serializable {
+    private static final long serialVersionUID = -7016368432042468015L;
+    private static TreeMap<Integer, CollectionStatus> lookupMap = new TreeMap<Integer, CollectionStatus>();
+  }
+  
+  private final int status;
+  private CollectionStatus(int status) {
+    this.status = status;
+    Holder.lookupMap.put(status, this);
+  }
+  public int status() {
+    return status;
+  }
+  public static CollectionStatus valueOf(int status) {
+    return Holder.lookupMap.get(status);
+  }
 }

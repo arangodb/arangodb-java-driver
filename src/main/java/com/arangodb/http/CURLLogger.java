@@ -32,15 +32,10 @@ public class CURLLogger {
 
 	private static Logger logger = LoggerFactory.getLogger(CURLLogger.class);
 
-	private static final boolean LOG_AGENT = false;
-
-	private CURLLogger() {
-		// this is a helper class
-	}
-
 	public static void log(String url, HttpRequestEntity requestEntity, String userAgent, Credentials credencials) {
 
-		boolean includeBody = getIncludeBody(requestEntity);
+		boolean includeBody = (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT || requestEntity.type == RequestType.PATCH)
+				&& (requestEntity.bodyText != null && requestEntity.bodyText.length() != 0);
 
 		StringBuilder buffer = new StringBuilder();
 
@@ -66,9 +61,7 @@ public class CURLLogger {
 		}
 
 		// user-agent
-		if (LOG_AGENT) {
-			buffer.append(" -A '").append(userAgent).append("'");
-		}
+		// buffer.append(" -A '").append(userAgent).append("'");
 
 		if (includeBody) {
 			buffer.append(" -d @-");
@@ -84,19 +77,7 @@ public class CURLLogger {
 		}
 
 		logger.debug("[CURL]{}", buffer);
-	}
 
-	private static boolean getIncludeBody(HttpRequestEntity requestEntity) {
-		return isTypeWithBody(requestEntity) && hasBody(requestEntity);
-	}
-
-	private static boolean isTypeWithBody(HttpRequestEntity requestEntity) {
-		return requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
-				|| requestEntity.type == RequestType.PATCH;
-	}
-
-	private static boolean hasBody(HttpRequestEntity requestEntity) {
-		return requestEntity.bodyText != null && requestEntity.bodyText.length() != 0;
 	}
 
 }

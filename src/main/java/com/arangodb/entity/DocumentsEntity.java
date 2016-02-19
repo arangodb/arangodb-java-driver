@@ -34,7 +34,6 @@ public class DocumentsEntity extends BaseEntity implements Iterable<String> {
 	 */
 	List<String> documents;
 
-	@Override
 	public Iterator<String> iterator() {
 		return CollectionUtils.safetyIterator(documents);
 	}
