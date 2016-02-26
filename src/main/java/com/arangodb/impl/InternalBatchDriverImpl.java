@@ -51,26 +51,26 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
 
-		StringBuilder body = new StringBuilder();
+		String body = "";
 
 		Map<String, InvocationObject> resolver = new HashMap<String, InvocationObject>();
 
 		for (BatchPart bp : callStack) {
-			body.append("--").append(delimiter).append(newline);
-			body.append("Content-Type: application/x-arango-batchpart").append(newline);
-			body.append("Content-Id: ").append(bp.getId()).append(newline).append(newline);
-			body.append(bp.getMethod()).append(" ").append(bp.getUrl()).append(" ").append("HTTP/1.1").append(newline);
-			body.append("Host: ").append(this.configure.getArangoHost().getHost()).append(newline).append(newline);
-			body.append(bp.getBody() == null ? "" : bp.getBody()).append(newline).append(newline);
+			body += "--" + delimiter + newline;
+			body += "Content-Type: application/x-arango-batchpart" + newline;
+			body += "Content-Id: " + bp.getId() + newline + newline;
+			body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline;
+			body += "Host: " + this.configure.getArangoHost().getHost() + newline + newline;
+			body += bp.getBody() == null ? "" : bp.getBody() + newline + newline;
 			resolver.put(bp.getId(), bp.getInvocationObject());
 		}
-		body.append("--").append(delimiter).append("--");
+		body += "--" + delimiter + "--";
 
 		Map<String, Object> headers = new HashMap<String, Object>();
 		headers.put("Content-Type", "multipart/form-data; boundary=" + delimiter);
 
 		HttpResponseEntity res = httpManager.doPostWithHeaders(createEndpointUrl(defaultDataBase, "/_api/batch"), null,
-			null, headers, body.toString());
+			null, headers, body);
 
 		String data = res.getText();
 		res.setContentType("application/json");
