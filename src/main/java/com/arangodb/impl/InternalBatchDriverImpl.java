@@ -41,7 +41,9 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 	private static String newline = System.getProperty("line.separator");
 
-	private String delimiter = "dlmtrMLTPRT";
+	private static final String BOUNDARY = "dlmtrMLTPRT";
+
+	private static final String DELIMITER = "--" + BOUNDARY;
 
 	private BatchResponseListEntity batchResponseListEntity;
 
@@ -51,91 +53,111 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
 
-		String body = "";
+		StringBuilder sb = new StringBuilder();
 
 		Map<String, InvocationObject> resolver = new HashMap<String, InvocationObject>();
 
 		for (BatchPart bp : callStack) {
-			body += "--" + delimiter + newline;
-			body += "Content-Type: application/x-arango-batchpart" + newline;
-			body += "Content-Id: " + bp.getId() + newline + newline;
-			body += bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline;
-			body += "Host: " + this.configure.getArangoHost().getHost() + newline + newline;
-			body += bp.getBody() == null ? "" : bp.getBody() + newline + newline;
+			addBatchPart(sb, bp);
 			resolver.put(bp.getId(), bp.getInvocationObject());
 		}
-		body += "--" + delimiter + "--";
+
+		sb.append(DELIMITER + "--");
 
 		Map<String, Object> headers = new HashMap<String, Object>();
-		headers.put("Content-Type", "multipart/form-data; boundary=" + delimiter);
+		headers.put("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
 
 		HttpResponseEntity res = httpManager.doPostWithHeaders(createEndpointUrl(defaultDataBase, "/_api/batch"), null,
-			null, headers, body);
+			null, headers, sb.toString());
 
 		String data = res.getText();
 		res.setContentType("application/json");
-		String currentId = null;
-		Boolean fetchText = false;
 		res.setText("");
-		List<BatchResponseEntity> batchResponseEntityList = new ArrayList<BatchResponseEntity>();
-		BatchResponseEntity batchResponseEntity = new BatchResponseEntity(null);
-		String t = null;
-		for (String line : data.split(newline)) {
-			line.trim();
-			line.replaceAll("\r", "");
-			if (line.indexOf("Content-Id") != -1) {
-				if (currentId != null) {
-					batchResponseEntityList.add(batchResponseEntity);
-				}
-				currentId = line.split(" ")[1].trim();
-				batchResponseEntity = new BatchResponseEntity(resolver.get(currentId));
-				batchResponseEntity.setRequestId(currentId);
-				continue;
-			}
-			if (line.indexOf("Content-Type:") != -1
-					&& line.indexOf("Content-Type: application/x-arango-batchpart") == -1) {
-				String ct = line.replaceAll("Content-Type: ", "");
-				batchResponseEntity.httpResponseEntity.setContentType(ct);
-				continue;
-			}
-			if (line.indexOf("Etag") != -1) {
-				String etag = line.split(" ")[1].replaceAll("\"", "").trim();
-				batchResponseEntity.httpResponseEntity.setEtag(Long.parseLong(etag));
-				continue;
-			}
-			if (line.indexOf("HTTP/1.1") != -1) {
-				batchResponseEntity.httpResponseEntity.setStatusCode(Integer.valueOf(line.split(" ")[1]));
-				continue;
-			}
-			if (line.indexOf("Content-Length") != -1) {
-				fetchText = true;
-				t = "";
-				continue;
-			}
-			if (line.indexOf("--" + delimiter) != -1 && resolver.get(currentId) != null) {
-				fetchText = false;
-				if (!batchResponseEntity.httpResponseEntity.isDumpResponse()) {
-					batchResponseEntity.httpResponseEntity.setText(t);
-				} else {
-					InputStream is = new ByteArrayInputStream(t.getBytes());
-					batchResponseEntity.httpResponseEntity.setStream(is);
-				}
-				continue;
-			}
-			if (fetchText && !line.equals(newline)) {
-				t += line;
-			}
-		}
-		if (batchResponseEntity.getHttpResponseEntity() != null) {
-			batchResponseEntityList.add(batchResponseEntity);
-		}
-		BatchResponseListEntity batchResponseListEntityTmp = new BatchResponseListEntity();
-		batchResponseListEntityTmp.setBatchResponseEntities(batchResponseEntityList);
-		this.batchResponseListEntity = batchResponseListEntityTmp;
+		List<BatchResponseEntity> batchResponseEntityList = handleResponse(resolver, data);
+		batchResponseListEntity = new BatchResponseListEntity();
+		batchResponseListEntity.setBatchResponseEntities(batchResponseEntityList);
 		return createEntity(res, DefaultEntity.class, null, false);
 	}
 
 	public BatchResponseListEntity getBatchResponseListEntity() {
 		return batchResponseListEntity;
+	}
+
+	private List<BatchResponseEntity> handleResponse(Map<String, InvocationObject> resolver, String data) {
+		String currentId = null;
+		Boolean fetchText = false;
+		List<BatchResponseEntity> batchResponseEntityList = new ArrayList<BatchResponseEntity>();
+		BatchResponseEntity batchResponseEntity = new BatchResponseEntity(null);
+		StringBuilder sb = new StringBuilder();
+		for (String line : data.split(newline)) {
+			line.trim();
+			line.replaceAll("\r", "");
+			if (line.indexOf("Content-Id") != -1) {
+				addBatchResponseEntity(currentId, batchResponseEntityList, batchResponseEntity);
+				currentId = line.split(" ")[1].trim();
+				batchResponseEntity = new BatchResponseEntity(resolver.get(currentId));
+				batchResponseEntity.setRequestId(currentId);
+			} else if (isContentTypeLine(line)) {
+				String ct = line.replaceAll("Content-Type: ", "");
+				batchResponseEntity.httpResponseEntity.setContentType(ct);
+			} else if (line.indexOf("Etag") != -1) {
+				String etag = line.split(" ")[1].replaceAll("\"", "").trim();
+				batchResponseEntity.httpResponseEntity.setEtag(Long.parseLong(etag));
+			} else if (line.indexOf("HTTP/1.1") != -1) {
+				batchResponseEntity.httpResponseEntity.setStatusCode(Integer.valueOf(line.split(" ")[1]));
+			} else if (line.indexOf("Content-Length") != -1) {
+				fetchText = true;
+				sb.setLength(0);
+			} else if (isDelimiterLine(resolver, currentId, line)) {
+				fetchText = false;
+				copyResponseToEntity(batchResponseEntity, sb);
+			} else if (canFetchLine(fetchText, line)) {
+				sb.append(line);
+			}
+		}
+		if (batchResponseEntity.getHttpResponseEntity() != null) {
+			batchResponseEntityList.add(batchResponseEntity);
+		}
+		return batchResponseEntityList;
+	}
+
+	private void copyResponseToEntity(BatchResponseEntity batchResponseEntity, StringBuilder sb) {
+		if (!batchResponseEntity.httpResponseEntity.isDumpResponse()) {
+			batchResponseEntity.httpResponseEntity.setText(sb.toString());
+		} else {
+			InputStream is = new ByteArrayInputStream(sb.toString().getBytes());
+			batchResponseEntity.httpResponseEntity.setStream(is);
+		}
+	}
+
+	private boolean isDelimiterLine(Map<String, InvocationObject> resolver, String currentId, String line) {
+		return line.indexOf(DELIMITER) != -1 && resolver.get(currentId) != null;
+	}
+
+	private boolean canFetchLine(Boolean fetchText, String line) {
+		return fetchText && !line.equals(newline);
+	}
+
+	private boolean isContentTypeLine(String line) {
+		return line.indexOf("Content-Type:") != -1
+				&& line.indexOf("Content-Type: application/x-arango-batchpart") == -1;
+	}
+
+	private void addBatchResponseEntity(
+		String currentId,
+		List<BatchResponseEntity> batchResponseEntityList,
+		BatchResponseEntity batchResponseEntity) {
+		if (currentId != null) {
+			batchResponseEntityList.add(batchResponseEntity);
+		}
+	}
+
+	private void addBatchPart(StringBuilder sb, BatchPart bp) {
+		sb.append(DELIMITER + newline);
+		sb.append("Content-Type: application/x-arango-batchpart" + newline);
+		sb.append("Content-Id: " + bp.getId() + newline + newline);
+		sb.append(bp.getMethod() + " " + bp.getUrl() + " " + "HTTP/1.1" + newline);
+		sb.append("Host: " + this.configure.getArangoHost().getHost() + newline + newline);
+		sb.append(bp.getBody() == null ? "" : bp.getBody() + newline + newline);
 	}
 }
