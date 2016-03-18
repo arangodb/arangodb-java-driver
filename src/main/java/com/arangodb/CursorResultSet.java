@@ -27,84 +27,89 @@ import com.arangodb.entity.CursorEntity;
  */
 public class CursorResultSet<T> implements Iterable<T> {
 
-  private String database;
-  private transient InternalCursorDriver cursorDriver;
-  private transient Class<?>[] clazz;
-  private transient CursorEntity<T> entity;
-  private transient int pos;
-  private int totalCount;
-  private transient Iterator<T> itr;
-  
-  public CursorResultSet(String database, InternalCursorDriver cursorDriver, CursorEntity<T> entity, Class<?> ...clazz) {
-    this.database = database;
-    this.cursorDriver = cursorDriver;
-    this.clazz = clazz;
-    this.entity = entity;
-    this.totalCount = entity == null ? 0 : entity.getCount();
-    this.pos = 0;
-    this.itr = new CursorIterator();
-  }
+	private String database;
+	private InternalCursorDriver cursorDriver;
+	private Class<?>[] clazz;
+	private CursorEntity<T> entity;
+	private int pos;
+	private int totalCount;
+	private Iterator<T> itr;
 
-  public Iterator<T> iterator() {
-    return new CursorIterator();
-  }
-  
-  public boolean hasNext() {
-    return itr.hasNext();
-  }
-  
-  public T next() {
-    return itr.next();
-  }
-  
-  public void close() throws ArangoException {
-    long cursorId = entity.getCursorId();
-    cursorDriver.finishQuery(database, cursorId);
-  }
-  
-  public int getTotalCount() {
-    return totalCount;
-  }
-  
-  private void updateEntity() throws ArangoException {
-    long cursorId = entity.getCursorId();
-    this.entity = cursorDriver.continueQuery(database, cursorId, this.clazz);
-    this.pos = 0;
-  }
-  
-  public class CursorIterator implements Iterator<T> {
+	public CursorResultSet(String database, InternalCursorDriver cursorDriver, CursorEntity<T> entity,
+		Class<?>... clazz) {
+		this.database = database;
+		this.cursorDriver = cursorDriver;
+		this.clazz = clazz;
+		this.entity = entity;
+		this.totalCount = entity == null ? 0 : entity.getCount();
+		this.pos = 0;
+		this.itr = new CursorIterator();
+	}
 
-    public boolean hasNext() {
-      if (entity == null) {
-        return false;
-      }
-      if (pos < entity.size()) {
-        return true;
-      }
-      if (entity.hasMore()) {
-        return true;
-      }
-      return false;
-    }
+	@Override
+	public Iterator<T> iterator() {
+		return new CursorIterator();
+	}
 
-    public T next() {
-      if (hasNext()) {
-        if (pos >= entity.size()) {
-          try {
-            updateEntity();
-          } catch (ArangoException e) {
-            throw new IllegalStateException(e);
-          }
-        }
-        return entity.get(pos++);
-      }
-      throw new NoSuchElementException();
-    }
+	public boolean hasNext() {
+		return itr.hasNext();
+	}
 
-    public void remove() {
-      throw new UnsupportedOperationException("remove does not support!!");
-    }
-    
-  }
-  
+	public T next() {
+		return itr.next();
+	}
+
+	public void close() throws ArangoException {
+		long cursorId = entity.getCursorId();
+		cursorDriver.finishQuery(database, cursorId);
+	}
+
+	public int getTotalCount() {
+		return totalCount;
+	}
+
+	public void updateEntity() throws ArangoException {
+		long cursorId = entity.getCursorId();
+		this.entity = cursorDriver.continueQuery(database, cursorId, this.clazz);
+		this.pos = 0;
+	}
+
+	public class CursorIterator implements Iterator<T> {
+
+		@Override
+		public boolean hasNext() {
+			if (entity == null) {
+				return false;
+			}
+			if (pos < entity.size()) {
+				return true;
+			}
+			if (entity.hasMore()) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public T next() {
+			if (hasNext()) {
+				if (pos >= entity.size()) {
+					try {
+						updateEntity();
+					} catch (ArangoException e) {
+						throw new IllegalStateException(e);
+					}
+				}
+				return entity.get(pos++);
+			}
+			throw new NoSuchElementException();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("remove does not support!!");
+		}
+
+	}
+
 }

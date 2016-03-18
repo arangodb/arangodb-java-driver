@@ -7,8 +7,8 @@ import com.arangodb.http.HttpManager;
  */
 public interface BaseDriverInterface {
 
+	public HttpManager getHttpManager();
 
-  public HttpManager getHttpManager();
+	public void setHttpManager(HttpManager httpManager);
 
-  public void setHttpManager(HttpManager httpManager);
 }
