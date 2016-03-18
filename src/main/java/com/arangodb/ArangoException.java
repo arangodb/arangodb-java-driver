@@ -24,10 +24,11 @@ import com.arangodb.entity.BaseEntity;
  */
 public class ArangoException extends Exception {
 
-	protected BaseEntity entity;
+	protected final BaseEntity entity;
 
 	public ArangoException() {
 		super();
+		this.entity = null;
 	}
 
 	public ArangoException(BaseEntity entity) {
@@ -37,14 +38,17 @@ public class ArangoException extends Exception {
 
 	public ArangoException(String message, Throwable cause) {
 		super(message, cause);
+		this.entity = null;
 	}
 
 	public ArangoException(String message) {
 		super(message);
+		this.entity = null;
 	}
 
 	public ArangoException(Throwable cause) {
 		super(cause);
+		this.entity = null;
 	}
 
 	public int getErrorNumber() {
@@ -64,19 +68,18 @@ public class ArangoException extends Exception {
 	}
 
 	public boolean isUnauthorized() {
-		return (entity != null && entity.isUnauthorized());
+		return entity != null && entity.isUnauthorized();
 	}
 
-	// public boolean isNotFound() {
-	// return (entity != null && entity.isNotFound());
-	// }
-
 	public void setCode(int code) {
-		entity.setCode(code);
+		if (entity != null) {
+			entity.setCode(code);
+		}
 	}
 
 	public void setErrorNumber(int errorNumber) {
-		entity.setErrorNumber(errorNumber);
+		if (entity != null) {
+			entity.setErrorNumber(errorNumber);
+		}
 	}
-
 }

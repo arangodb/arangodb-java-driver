@@ -103,6 +103,8 @@ import com.arangodb.util.TraversalQueryOptions;
  */
 public class ArangoDriver extends BaseArangoDriver {
 
+	private static final String GRAPH_NAME = "graphName";
+	private static final String VERTEX_EXAMPLE = "vertexExample";
 	private ArangoConfigure configure;
 	private BatchHttpManager httpManager;
 
@@ -450,8 +452,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		}
 		List<BatchPart> callStack = this.httpManager.getCallStack();
 		this.cancelBatchMode();
-		DefaultEntity result = this.batchDriver.executeBatch(callStack, this.getDefaultDatabase());
-		return result;
+		return this.batchDriver.executeBatch(callStack, this.getDefaultDatabase());
 	}
 
 	/**
@@ -1977,10 +1978,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> getDocument(String documentHandle, Class<T> clazz) throws ArangoException {
-		// if (clazz.getName() == BaseDocument.class.getName()) {
-		// return documentDriver.getDocument(getDefaultDatabase(),
-		// documentHandle, clazz, null, null);
-		// }
 		return documentDriver.getDocument(getDefaultDatabase(), documentHandle, clazz, null, null);
 	}
 
@@ -2431,13 +2428,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		AqlQueryOptions aqlQueryOptions,
 		Class<T> clazz) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
 		@SuppressWarnings("unchecked")
 		DocumentCursorResult<T, DocumentEntity<T>> baseCursor = cursorDriver.executeBaseCursorQuery(
-			getDefaultDatabase(), query, bindVars, aqlQueryOptions, DocumentEntity.class, clazz);
+			getDefaultDatabase(), query, bindVars, getAqlQueryOptions(aqlQueryOptions), DocumentEntity.class, clazz);
 		return new DocumentCursor<T>(baseCursor);
 	}
 
@@ -2462,11 +2455,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		AqlQueryOptions aqlQueryOptions,
 		Class<T> clazz) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
-		return cursorDriver.executeAqlQuery(getDefaultDatabase(), query, bindVars, aqlQueryOptions, clazz);
+		return cursorDriver.executeAqlQuery(getDefaultDatabase(), query, bindVars, getAqlQueryOptions(aqlQueryOptions),
+			clazz);
 	}
 
 	/**
@@ -2484,11 +2474,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	public String executeAqlQueryJSON(String query, Map<String, Object> bindVars, AqlQueryOptions aqlQueryOptions)
 			throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
-		return cursorDriver.executeAqlQueryJSON(getDefaultDatabase(), query, bindVars, aqlQueryOptions);
+		return cursorDriver.executeAqlQueryJSON(getDefaultDatabase(), query, bindVars,
+			getAqlQueryOptions(aqlQueryOptions));
 	}
 
 	/**
@@ -2513,12 +2500,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<S> classDocumentEntity,
 		Class<T> clazz) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
-		return cursorDriver.executeBaseCursorQuery(getDefaultDatabase(), query, bindVars, aqlQueryOptions,
-			classDocumentEntity, clazz);
+		return cursorDriver.executeBaseCursorQuery(getDefaultDatabase(), query, bindVars,
+			getAqlQueryOptions(aqlQueryOptions), classDocumentEntity, clazz);
 	}
 
 	/**
@@ -5187,11 +5170,9 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, null, { includeData: true }) return i";
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).get();
+		Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName).get();
 
-		CursorEntity<PlainEdgeEntity> result = this.executeQuery(query, bindVars, PlainEdgeEntity.class, true, 20);
-
-		return result;
+		return this.executeQuery(query, bindVars, PlainEdgeEntity.class, true, 20);
 	}
 
 	/**
@@ -5214,13 +5195,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		AqlQueryOptions aqlQueryOptions,
 		Class<T> clazz) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
 		@SuppressWarnings("unchecked")
 		DocumentCursorResult<T, EdgeEntity<T>> baseCursor = cursorDriver.executeBaseCursorQuery(getDefaultDatabase(),
-			query, bindVars, aqlQueryOptions, EdgeEntity.class, clazz);
+			query, bindVars, getAqlQueryOptions(aqlQueryOptions), EdgeEntity.class, clazz);
 		return new EdgeCursor<T>(baseCursor);
 	}
 
@@ -5244,13 +5221,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		AqlQueryOptions aqlQueryOptions,
 		Class<T> clazz) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
 		@SuppressWarnings("unchecked")
 		DocumentCursorResult<T, VertexEntity<T>> baseCursor = cursorDriver.executeBaseCursorQuery(getDefaultDatabase(),
-			query, bindVars, aqlQueryOptions, VertexEntity.class, clazz);
+			query, bindVars, getAqlQueryOptions(aqlQueryOptions), VertexEntity.class, clazz);
 		return new VertexCursor<T>(baseCursor);
 	}
 
@@ -5276,22 +5249,24 @@ public class ArangoDriver extends BaseArangoDriver {
 		GraphEdgesOptions graphEdgesOptions,
 		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
-		if (graphEdgesOptions == null) {
-			graphEdgesOptions = new GraphEdgesOptions();
+		GraphEdgesOptions tmpGraphEdgesOptions = graphEdgesOptions;
+		if (tmpGraphEdgesOptions == null) {
+			tmpGraphEdgesOptions = new GraphEdgesOptions();
 		}
 
 		validateCollectionName(graphName);
 
 		String query = "for i in graph_edges(@graphName, @vertexExample, @options) return i";
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
-				.put("vertexExample", JsonUtils.convertNullToMap(vertexExample))
-				.put("options", JsonUtils.convertNullToMap(graphEdgesOptions)).get();
+		Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName)
+				.put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample))
+				.put("options", JsonUtils.convertNullToMap(tmpGraphEdgesOptions)).get();
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions().setCount(true);
+		AqlQueryOptions tmpAqlQueryOptions = aqlQueryOptions;
+		if (tmpAqlQueryOptions == null) {
+			tmpAqlQueryOptions = getDefaultAqlQueryOptions().setCount(true);
 		}
 
-		return executeEdgeQuery(query, bindVars, aqlQueryOptions, clazz);
+		return executeEdgeQuery(query, bindVars, tmpAqlQueryOptions, clazz);
 	}
 
 	/**
@@ -5320,8 +5295,8 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		String query = "for i in graph_vertices(@graphName , @vertexExample, @options) return i";
 
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
-				.put("vertexExample", JsonUtils.convertNullToMap(vertexExample))
+		Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName)
+				.put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample))
 				.put("options", JsonUtils.convertNullToMap(graphVerticesOptions)).get();
 
 		return executeVertexQuery(query, bindVars, aqlQueryOptions, clazz);
@@ -5358,7 +5333,7 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, @vertexDocumentHandle, { includeData: true }) return i";
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
+		Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName)
 				.put("vertexDocumentHandle", vertexDocumentHandle).get();
 
 		return this.executeQuery(query, bindVars, clazz, true, 20);
@@ -5398,12 +5373,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, @vertexExample, { includeData: true }) return i";
 
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+		Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName).put(VERTEX_EXAMPLE, vertexExample)
 				.get();
 
-		CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
-
-		return result;
+		return this.executeQuery(query, bindVars, clazz, true, 20);
 	}
 
 	/**
@@ -5428,12 +5401,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		validateCollectionName(graphName);
 		String query = "for i in graph_edges(@graphName, @vertexExample, { includeData: true }) return i";
 
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName).put("vertexExample", vertexExample)
+		Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName).put(VERTEX_EXAMPLE, vertexExample)
 				.get();
 
-		CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20, null);
-
-		return result;
+		return this.executeQuery(query, bindVars, clazz, true, 20, null);
 	}
 
 	public <V, E> ShortestPathEntity<V, E> graphGetShortestPath(
@@ -5444,51 +5415,14 @@ public class ArangoDriver extends BaseArangoDriver {
 		Class<V> vertexClass,
 		Class<E> edgeClass) throws ArangoException {
 
-		if (shortestPathOptions == null) {
-			shortestPathOptions = new ShortestPathOptions();
+		ShortestPathOptions tmpShortestPathOptions = shortestPathOptions;
+		if (tmpShortestPathOptions == null) {
+			tmpShortestPathOptions = new ShortestPathOptions();
 		}
 
 		return cursorDriver.getShortestPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
-			shortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass);
+			tmpShortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass);
 	}
-
-	// public <T, S> CursorEntity<EdgeEntity<T>> graphGetEdgesByExampleObject1(
-	// String graphName,
-	// Class<T> clazzT,
-	// S vertexExample) throws ArangoException {
-	// validateCollectionName(graphName);
-	// String query =
-	// "for i in graph_edges(@graphName, @vertexExample) return i";
-	//
-	// Map<String, Object> bindVars = new MapBuilder().put("graphName",
-	// graphName).put("vertexExample", vertexExample)
-	// .get();
-	//
-	// CursorEntity<EdgeEntity<T>> result = this.executeQuery(query, bindVars,
-	// EdgeEntity<T>.class, true, 20);
-	//
-	// return null;
-	// }
-
-	// public <T> CursorEntity<EdgeEntity<T>> graphGetEdgesWithData(
-	// String graphName,
-	// Class<T> clazz,
-	// String vertexDocumentHandle,
-	// int i) throws ArangoException {
-	//
-	// validateCollectionName(graphName);
-	// String query =
-	// "for i in graph_edges(@graphName, @vertexDocumentHandle) return i";
-	// Map<String, Object> bindVars = new MapBuilder().put("graphName",
-	// graphName)
-	// .put("vertexDocumentHandle", vertexDocumentHandle).get();
-	//
-	// CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true,
-	// 20);
-	//
-	// return (CursorEntity<EdgeEntity<T>>) result;
-	//
-	// }
 
 	/**
 	 * Creates an AQL Function
@@ -5830,11 +5764,14 @@ public class ArangoDriver extends BaseArangoDriver {
 		Map<String, Object> bindVars,
 		AqlQueryOptions aqlQueryOptions) throws ArangoException {
 
-		if (aqlQueryOptions == null) {
-			aqlQueryOptions = getDefaultAqlQueryOptions();
-		}
-
-		return cursorDriver.executeAqlQueryRaw(getDefaultDatabase(), query, bindVars, aqlQueryOptions);
+		return cursorDriver.executeAqlQueryRaw(getDefaultDatabase(), query, bindVars,
+			getAqlQueryOptions(aqlQueryOptions));
 	}
 
+	private AqlQueryOptions getAqlQueryOptions(AqlQueryOptions aqlQueryOptions) {
+		if (aqlQueryOptions == null) {
+			return getDefaultAqlQueryOptions();
+		}
+		return aqlQueryOptions;
+	}
 }
