@@ -150,23 +150,7 @@ public class HttpManager {
 
 			@Override
 			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-				// Honor 'keep-alive' header
-				HeaderElementIterator it = new BasicHeaderElementIterator(
-						response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-				while (it.hasNext()) {
-					HeaderElement he = it.nextElement();
-					String param = he.getName();
-					String value = he.getValue();
-					if (value != null && "timeout".equalsIgnoreCase(param)) {
-						try {
-							return Long.parseLong(value) * 1000L;
-						} catch (NumberFormatException ignore) {
-							// ignore this exception
-						}
-					}
-				}
-				// otherwise keep alive for 30 seconds
-				return 30L * 1000L;
+				return HttpManager.this.getKeepAliveDuration(response);
 			}
 
 		};
@@ -176,25 +160,38 @@ public class HttpManager {
 		builder.setRetryHandler(new DefaultHttpRequestRetryHandler(configure.getRetryCount(), false));
 
 		// Proxy
+		addProxyToBuilder(builder);
+
+		// Client
+		client = builder.build();
+	}
+
+	private long getKeepAliveDuration(HttpResponse response) {
+		// Honor 'keep-alive' header
+		HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+		while (it.hasNext()) {
+			HeaderElement he = it.nextElement();
+			String param = he.getName();
+			String value = he.getValue();
+			if (value != null && "timeout".equalsIgnoreCase(param)) {
+				try {
+					return Long.parseLong(value) * 1000L;
+				} catch (NumberFormatException ignore) {
+					// ignore this exception
+				}
+			}
+		}
+		// otherwise keep alive for 30 seconds
+		return 30L * 1000L;
+	}
+
+	private void addProxyToBuilder(HttpClientBuilder builder) {
 		if (configure.getProxyHost() != null && configure.getProxyPort() != 0) {
 			HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
 
 			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
 			builder.setRoutePlanner(routePlanner);
 		}
-
-		// Client
-		client = builder.build();
-
-		// Basic Auth
-		// if (configure.getUser() != null && configure.getPassword() != null) {
-		// AuthScope scope = AuthScope.ANY; // TODO
-		// this.credentials = new
-		// UsernamePasswordCredentials(configure.getUser(),
-		// configure.getPassword());
-		// client.getCredentialsProvider().setCredentials(scope, credentials);
-		// }
-
 	}
 
 	public void destroy() {
@@ -389,17 +386,142 @@ public class HttpManager {
 
 		String url = buildUrl(baseUrl, requestEntity);
 
-		if (logger.isDebugEnabled()) {
-			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
-					|| requestEntity.type == RequestType.PATCH) {
-				logger.debug("[REQ]http-{}: url={}, headers={}, body={}",
-					new Object[] { requestEntity.type, url, requestEntity.headers, requestEntity.bodyText });
-			} else {
-				logger.debug("[REQ]http-{}: url={}, headers={}",
-					new Object[] { requestEntity.type, url, requestEntity.headers });
+		logRequest(requestEntity, url);
+
+		HttpRequestBase request = buildHttpRequestBase(requestEntity, url);
+
+		// common-header
+		String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)";
+		request.setHeader("User-Agent", userAgent);
+
+		addOptionalHeaders(requestEntity, request);
+
+		addHttpModeHeader(request);
+
+		// Basic Auth
+		Credentials credentials = addCredentials(requestEntity, request);
+
+		// CURL/HTTP Logger
+		if (configure.isEnableCURLLogger()) {
+			CURLLogger.log(url, requestEntity, credentials);
+		}
+
+		HttpResponseEntity responseEntity = null;
+		if (preDefinedResponse != null) {
+			responseEntity = preDefinedResponse;
+		} else {
+			HttpResponse response = executeRequest(request);
+			if (response != null) {
+				try {
+					responseEntity = buildHttpResponseEntity(requestEntity, response);
+				} catch (IOException e) {
+					throw new ArangoException(e);
+				}
+
+				if (this.getHttpMode().equals(HttpMode.ASYNC)) {
+					Map<String, String> map = responseEntity.getHeaders();
+					this.addJob(map.get("X-Arango-Async-Id"), this.getCurrentObject());
+				} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
+					responseEntity = null;
+				}
 			}
 		}
 
+		return responseEntity;
+	}
+
+	private HttpResponse executeRequest(HttpRequestBase request) throws SocketException, ArangoException {
+		try {
+			return client.execute(request);
+		} catch (SocketException ex) {
+			// catch SocketException before IOException
+			throw ex;
+		} catch (ClientProtocolException e) {
+			throw new ArangoException(e);
+		} catch (IOException e) {
+			throw new ArangoException(e);
+		}
+	}
+
+	private HttpResponseEntity buildHttpResponseEntity(HttpRequestEntity requestEntity, HttpResponse response)
+			throws IOException {
+		HttpResponseEntity responseEntity = new HttpResponseEntity();
+
+		// http status
+		StatusLine status = response.getStatusLine();
+		responseEntity.statusCode = status.getStatusCode();
+		responseEntity.statusPhrase = status.getReasonPhrase();
+
+		logger.debug("[RES]http-{}: statusCode={}", requestEntity.type, responseEntity.statusCode);
+
+		// ヘッダの処理
+		// // TODO etag特殊処理は削除する。
+		Header etagHeader = response.getLastHeader("etag");
+		if (etagHeader != null) {
+			responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
+		}
+		// ヘッダをMapに変換する
+		responseEntity.headers = new TreeMap<String, String>();
+		for (Header header : response.getAllHeaders()) {
+			responseEntity.headers.put(header.getName(), header.getValue());
+		}
+
+		// レスポンスの取得
+		HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			Header contentType = entity.getContentType();
+			if (contentType != null) {
+				responseEntity.contentType = contentType.getValue();
+				if (responseEntity.isDumpResponse()) {
+					responseEntity.stream = entity.getContent();
+					logger.debug("[RES]http-{}: stream, {}", requestEntity.type, contentType.getValue());
+				}
+			}
+			// Close stream in this method.
+			if (responseEntity.stream == null) {
+				responseEntity.text = IOUtils.toString(entity.getContent());
+				logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
+			}
+		}
+		return responseEntity;
+	}
+
+	private void addHttpModeHeader(HttpRequestBase request) {
+		if (this.getHttpMode().equals(HttpMode.ASYNC)) {
+			request.addHeader("x-arango-async", "store");
+		} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
+			request.addHeader("x-arango-async", "true");
+		}
+	}
+
+	private Credentials addCredentials(HttpRequestEntity requestEntity, HttpRequestBase request)
+			throws ArangoException {
+		Credentials credentials = null;
+		if (requestEntity.username != null && requestEntity.password != null) {
+			credentials = new UsernamePasswordCredentials(requestEntity.username, requestEntity.password);
+		} else if (configure.getUser() != null && configure.getPassword() != null) {
+			credentials = new UsernamePasswordCredentials(configure.getUser(), configure.getPassword());
+		}
+		if (credentials != null) {
+			BasicScheme basicScheme = new BasicScheme();
+			try {
+				request.addHeader(basicScheme.authenticate(credentials, request, null));
+			} catch (AuthenticationException e) {
+				throw new ArangoException(e);
+			}
+		}
+		return credentials;
+	}
+
+	private void addOptionalHeaders(HttpRequestEntity requestEntity, HttpRequestBase request) {
+		if (requestEntity.headers != null) {
+			for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
+				request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
+			}
+		}
+	}
+
+	private HttpRequestBase buildHttpRequestBase(HttpRequestEntity requestEntity, String url) {
 		HttpRequestBase request;
 		switch (requestEntity.type) {
 		case POST:
@@ -428,107 +550,19 @@ public class HttpManager {
 			request = new HttpGet(url);
 			break;
 		}
+		return request;
+	}
 
-		// common-header
-		String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)";
-		request.setHeader("User-Agent", userAgent);
-
-		// optinal-headers
-		if (requestEntity.headers != null) {
-			for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
-				request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
+	private void logRequest(HttpRequestEntity requestEntity, String url) {
+		if (logger.isDebugEnabled()) {
+			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
+					|| requestEntity.type == RequestType.PATCH) {
+				logger.debug("[REQ]http-{}: url={}, headers={}, body={}",
+					new Object[] { requestEntity.type, url, requestEntity.headers, requestEntity.bodyText });
+			} else {
+				logger.debug("[REQ]http-{}: url={}, headers={}",
+					new Object[] { requestEntity.type, url, requestEntity.headers });
 			}
-		}
-
-		// Basic Auth
-		Credentials credentials = null;
-		if (requestEntity.username != null && requestEntity.password != null) {
-			credentials = new UsernamePasswordCredentials(requestEntity.username, requestEntity.password);
-		} else if (configure.getUser() != null && configure.getPassword() != null) {
-			credentials = new UsernamePasswordCredentials(configure.getUser(), configure.getPassword());
-		}
-		if (credentials != null) {
-			BasicScheme basicScheme = new BasicScheme();
-			try {
-				request.addHeader(basicScheme.authenticate(credentials, request, null));
-			} catch (AuthenticationException e) {
-				throw new ArangoException(e);
-			}
-		}
-
-		if (this.getHttpMode().equals(HttpMode.ASYNC)) {
-			request.addHeader("x-arango-async", "store");
-		} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
-			request.addHeader("x-arango-async", "true");
-		}
-		// CURL/httpie Logger
-		if (configure.isEnableCURLLogger()) {
-			CURLLogger.log(url, requestEntity, userAgent, credentials);
-		}
-		HttpResponse response;
-		if (preDefinedResponse != null) {
-			return preDefinedResponse;
-		}
-		try {
-			response = client.execute(request);
-			if (response == null) {
-				return null;
-			}
-
-			HttpResponseEntity responseEntity = new HttpResponseEntity();
-
-			// http status
-			StatusLine status = response.getStatusLine();
-			responseEntity.statusCode = status.getStatusCode();
-			responseEntity.statusPhrase = status.getReasonPhrase();
-
-			logger.debug("[RES]http-{}: statusCode={}", requestEntity.type, responseEntity.statusCode);
-
-			// ヘッダの処理
-			// // TODO etag特殊処理は削除する。
-			Header etagHeader = response.getLastHeader("etag");
-			if (etagHeader != null) {
-				responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
-			}
-			// ヘッダをMapに変換する
-			responseEntity.headers = new TreeMap<String, String>();
-			for (Header header : response.getAllHeaders()) {
-				responseEntity.headers.put(header.getName(), header.getValue());
-			}
-
-			// レスポンスの取得
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				Header contentType = entity.getContentType();
-				if (contentType != null) {
-					responseEntity.contentType = contentType.getValue();
-					if (responseEntity.isDumpResponse()) {
-						responseEntity.stream = entity.getContent();
-						logger.debug("[RES]http-{}: stream, {}", requestEntity.type, contentType.getValue());
-					}
-				}
-				// Close stream in this method.
-				if (responseEntity.stream == null) {
-					responseEntity.text = IOUtils.toString(entity.getContent());
-					logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
-				}
-			}
-
-			if (this.getHttpMode().equals(HttpMode.ASYNC)) {
-				Map<String, String> map = responseEntity.getHeaders();
-				this.addJob(map.get("X-Arango-Async-Id"), this.getCurrentObject());
-			} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
-				return null;
-			}
-
-			return responseEntity;
-		} catch (SocketException ex) {
-			// catch SocketException before IOException
-			throw ex;
-		} catch (ClientProtocolException e) {
-			throw new ArangoException(e);
-		} catch (IOException e) {
-			throw new ArangoException(e);
 		}
 	}
 
@@ -597,10 +631,12 @@ public class HttpManager {
 	}
 
 	public InvocationObject getCurrentObject() {
+		// do nothing here (used in BatchHttpManager)
 		return null;
 	}
 
 	public void setCurrentObject(InvocationObject currentObject) {
+		// do nothing here (used in BatchHttpManager)
 	}
 
 	public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {

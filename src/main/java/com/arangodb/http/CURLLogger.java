@@ -37,7 +37,7 @@ public class CURLLogger {
 		// this is a helper class
 	}
 
-	public static void log(String url, HttpRequestEntity requestEntity, String userAgent, Credentials credencials) {
+	public static void log(String url, HttpRequestEntity requestEntity, Credentials credencials) {
 
 		boolean includeBody = (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
 				|| requestEntity.type == RequestType.PATCH) && StringUtils.isNotEmpty(requestEntity.bodyText);
@@ -64,9 +64,6 @@ public class CURLLogger {
 			buffer.append(" -u ").append(credencials.getUserPrincipal().getName()).append(":")
 					.append(credencials.getPassword());
 		}
-
-		// user-agent
-		// buffer.append(" -A '").append(userAgent).append("'");
 
 		if (includeBody) {
 			buffer.append(" -d @-");
