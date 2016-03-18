@@ -15,11 +15,11 @@ public class BatchHttpManager extends HttpManager {
 
 	private InvocationObject currentObject;
 
+	private boolean batchModeActive = false;
+
 	public BatchHttpManager(ArangoConfigure configure) {
 		super(configure);
 	}
-
-	public boolean batchModeActive = false;
 
 	@Override
 	public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {

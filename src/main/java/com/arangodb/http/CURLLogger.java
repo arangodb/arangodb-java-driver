@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.http.HttpRequestEntity.RequestType;
+import com.arangodb.util.StringUtils;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -32,10 +33,14 @@ public class CURLLogger {
 
 	private static Logger logger = LoggerFactory.getLogger(CURLLogger.class);
 
+	private CURLLogger() {
+		// this is a helper class
+	}
+
 	public static void log(String url, HttpRequestEntity requestEntity, String userAgent, Credentials credencials) {
 
-		boolean includeBody = (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT || requestEntity.type == RequestType.PATCH)
-				&& (requestEntity.bodyText != null && requestEntity.bodyText.length() != 0);
+		boolean includeBody = (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
+				|| requestEntity.type == RequestType.PATCH) && StringUtils.isNotEmpty(requestEntity.bodyText);
 
 		StringBuilder buffer = new StringBuilder();
 
@@ -48,7 +53,7 @@ public class CURLLogger {
 		buffer.append(" --dump -");
 
 		// header
-		if (requestEntity.headers != null && !requestEntity.headers.isEmpty()) {
+		if (requestEntity.hasHeaders()) {
 			for (Entry<String, Object> header : requestEntity.headers.entrySet()) {
 				buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
 			}

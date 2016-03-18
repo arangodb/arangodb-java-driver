@@ -100,7 +100,7 @@ public class HttpManager {
 
 	private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
 
-	public static enum HttpMode {
+	public enum HttpMode {
 		SYNC, ASYNC, FIREANDFORGET
 	}
 
@@ -117,12 +117,7 @@ public class HttpManager {
 		ConnectionSocketFactory plainsf = new PlainConnectionSocketFactory();
 
 		// socket factory for HTTPS
-		SSLConnectionSocketFactory sslsf = null;
-		if (configure.getSslContext() != null) {
-			sslsf = new SSLConnectionSocketFactory(configure.getSslContext());
-		} else {
-			sslsf = new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
-		}
+		SSLConnectionSocketFactory sslsf = initSSLConnectionSocketFactory();
 
 		// register socket factories
 		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create()
@@ -162,15 +157,16 @@ public class HttpManager {
 					HeaderElement he = it.nextElement();
 					String param = he.getName();
 					String value = he.getValue();
-					if (value != null && param.equalsIgnoreCase("timeout")) {
+					if (value != null && "timeout".equalsIgnoreCase(param)) {
 						try {
-							return Long.parseLong(value) * 1000;
+							return Long.parseLong(value) * 1000L;
 						} catch (NumberFormatException ignore) {
+							// ignore this exception
 						}
 					}
 				}
 				// otherwise keep alive for 30 seconds
-				return 30 * 1000;
+				return 30L * 1000L;
 			}
 
 		};
@@ -404,11 +400,8 @@ public class HttpManager {
 			}
 		}
 
-		HttpRequestBase request = null;
+		HttpRequestBase request;
 		switch (requestEntity.type) {
-		case GET:
-			request = new HttpGet(url);
-			break;
 		case POST:
 			HttpPost post = new HttpPost(url);
 			configureBodyParams(requestEntity, post);
@@ -429,6 +422,10 @@ public class HttpManager {
 			break;
 		case DELETE:
 			request = new HttpDelete(url);
+			break;
+		case GET:
+		default:
+			request = new HttpGet(url);
 			break;
 		}
 
@@ -468,7 +465,7 @@ public class HttpManager {
 		if (configure.isEnableCURLLogger()) {
 			CURLLogger.log(url, requestEntity, userAgent, credentials);
 		}
-		HttpResponse response = null;
+		HttpResponse response;
 		if (preDefinedResponse != null) {
 			return preDefinedResponse;
 		}
@@ -624,7 +621,7 @@ public class HttpManager {
 	}
 
 	public String getLastJobId() {
-		return jobIds.size() == 0 ? null : jobIds.get(jobIds.size() - 1);
+		return jobIds.isEmpty() ? null : jobIds.get(jobIds.size() - 1);
 	}
 
 	public void resetJobs() {
@@ -632,4 +629,15 @@ public class HttpManager {
 		this.jobs.clear();
 
 	}
+
+	private SSLConnectionSocketFactory initSSLConnectionSocketFactory() {
+		SSLConnectionSocketFactory sslsf;
+		if (configure.getSslContext() != null) {
+			sslsf = new SSLConnectionSocketFactory(configure.getSslContext());
+		} else {
+			sslsf = new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
+		}
+		return sslsf;
+	}
+
 }

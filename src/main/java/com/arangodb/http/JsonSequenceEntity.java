@@ -43,40 +43,40 @@ public class JsonSequenceEntity extends AbstractHttpEntity {
 		setContentType("binary/octet-stream");
 	}
 
+	@Override
 	public boolean isRepeatable() {
 		return false;
 	}
 
+	@Override
 	public long getContentLength() {
 		return -1;
 	}
 
-	public InputStream getContent() throws IOException, IllegalStateException {
+	@Override
+	public InputStream getContent() throws IOException {
 		throw new IllegalStateException("cannot support this method.");
 	}
 
+	@Override
 	public boolean isStreaming() {
 		return true;
 	}
 
+	@Override
 	public void writeTo(OutputStream outstream) throws IOException {
 
 		if (outstream == null) {
 			throw new IllegalArgumentException("Output stream may not be null");
 		}
 
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new OutputStreamWriter(outstream, "UTF-8"));
-			while (it.hasNext()) {
-				Object value = it.next();
-				gson.toJson(value, writer);
-				writer.newLine();
-			}
-			writer.flush();
-		} finally {
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outstream, "UTF-8"));
+		while (it.hasNext()) {
+			Object value = it.next();
+			gson.toJson(value, writer);
+			writer.newLine();
 		}
-
+		writer.flush();
 	}
 
 }

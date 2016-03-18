@@ -26,13 +26,8 @@ import org.apache.http.HttpEntity;
  */
 public class HttpRequestEntity {
 
-	public static enum RequestType {
-		GET,
-		POST,
-		PUT,
-		DELETE,
-		HEAD,
-		PATCH
+	public enum RequestType {
+		GET, POST, PUT, DELETE, HEAD, PATCH
 	}
 
 	public Map<String, Object> headers;
@@ -43,5 +38,73 @@ public class HttpRequestEntity {
 	public String password;
 	public String bodyText;
 	public HttpEntity entity;
+
+	public Map<String, Object> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, Object> headers) {
+		this.headers = headers;
+	}
+
+	public boolean hasHeaders() {
+		return headers != null && !headers.isEmpty();
+	}
+
+	public RequestType getType() {
+		return type;
+	}
+
+	public void setType(RequestType type) {
+		this.type = type;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public Map<String, Object> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, Object> parameters) {
+		this.parameters = parameters;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getBodyText() {
+		return bodyText;
+	}
+
+	public void setBodyText(String bodyText) {
+		this.bodyText = bodyText;
+	}
+
+	public HttpEntity getEntity() {
+		return entity;
+	}
+
+	public void setEntity(HttpEntity entity) {
+		this.entity = entity;
+	}
 
 }
