@@ -90,9 +90,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		map.put("query", query);
 		map.put("bindVars", bindVars == null ? Collections.emptyMap() : bindVars);
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/cursor"), null,
-			EntityFactory.toJsonString(map));
-		return res;
+		return httpManager.doPost(createEndpointUrl(database, "/_api/cursor"), null, EntityFactory.toJsonString(map));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -220,9 +218,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		Boolean fullCount) throws ArangoException {
 
 		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, fullCount);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
-		return rs;
-
+		return new CursorResultSet<T>(database, this, entity, clazz);
 	}
 
 	@Deprecated
@@ -236,9 +232,7 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		Integer batchSize) throws ArangoException {
 
 		CursorEntity<T> entity = executeQuery(database, query, bindVars, clazz, calcCount, batchSize, false);
-		CursorResultSet<T> rs = new CursorResultSet<T>(database, this, entity, clazz);
-		return rs;
-
+		return new CursorResultSet<T>(database, this, entity, clazz);
 	}
 
 	@Override
