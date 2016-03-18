@@ -32,6 +32,10 @@ public class MissingInstanceCreater {
 		mapping.put(VertexEntity.class, DocumentEntity.class);
 	}
 
+	private MissingInstanceCreater() {
+		// this is a helper class
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T extends BaseEntity> Class<?> getMissingClass(Class<T> clazz) {
 		Class<T> c = (Class<T>) mapping.get(clazz);

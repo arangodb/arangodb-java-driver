@@ -32,7 +32,7 @@ public class AnnotationHandler {
 	}
 
 	public AnnotationHandler() {
-		// nothing todo here
+		// do nothing here
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -91,7 +91,7 @@ public class AnnotationHandler {
 			try {
 				field.setAccessible(true);
 				field.set(o, value);
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				logger.error("could not update document attribute of class " + value.getClass().getCanonicalName(), e);
 			}
 		}
@@ -122,12 +122,8 @@ public class AnnotationHandler {
 			Annotation[] annotations = field.getAnnotations();
 			for (Annotation annotation : annotations) {
 
-				if (annotation instanceof SerializedName) {
-					SerializedName sn = (SerializedName) annotation;
-
-					if (value.equals(sn.value())) {
-						return field;
-					}
+				if (annotation instanceof SerializedName && value.equals(((SerializedName) annotation).value())) {
+					return field;
 				}
 			}
 		}

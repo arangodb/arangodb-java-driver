@@ -173,20 +173,24 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		List<String> documents = CollectionUtils.safety(entity.getDocuments());
 
 		if (handleConvert && !documents.isEmpty()) {
-			ListIterator<String> lit = documents.listIterator();
-			while (lit.hasNext()) {
-				String d = lit.next();
-				if (d.startsWith(API_DOCUMENT_PREFIX)) {
-					lit.set(d.substring(API_DOCUMENT_PREFIX.length()));
-				} else {
-					Matcher matcher = pattern.matcher(d);
-					if (matcher.find()) {
-						lit.set(matcher.group(1));
-					}
+			updateDocumentHandles(documents);
+		}
+		return documents;
+	}
+
+	private void updateDocumentHandles(List<String> documents) {
+		ListIterator<String> lit = documents.listIterator();
+		while (lit.hasNext()) {
+			String d = lit.next();
+			if (d.startsWith(API_DOCUMENT_PREFIX)) {
+				lit.set(d.substring(API_DOCUMENT_PREFIX.length()));
+			} else {
+				Matcher matcher = pattern.matcher(d);
+				if (matcher.find()) {
+					lit.set(matcher.group(1));
 				}
 			}
 		}
-		return documents;
 	}
 
 	@Override
