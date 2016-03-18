@@ -42,7 +42,7 @@ public class HttpResponseEntity {
 	 * @since 1.4.0
 	 */
 	public boolean isJsonResponse() {
-		return (contentType != null && contentType.startsWith("application/json"));
+		return contentType != null && contentType.startsWith("application/json");
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class HttpResponseEntity {
 	 * @since 1.4.0
 	 */
 	public boolean isDumpResponse() {
-		return (contentType != null && contentType.startsWith("application/x-arango-dump"));
+		return contentType != null && contentType.startsWith("application/x-arango-dump");
 	}
 
 	/**
@@ -62,11 +62,11 @@ public class HttpResponseEntity {
 	 * @since 1.4.0
 	 */
 	public boolean isTextResponse() {
-		return (contentType != null && contentType.startsWith("text/plain"));
+		return contentType != null && contentType.startsWith("text/plain");
 	}
 
 	public boolean isBatchRepsonse() {
-		return (requestId != null);
+		return requestId != null;
 	}
 
 	public int getStatusCode() {
@@ -131,5 +131,50 @@ public class HttpResponseEntity {
 
 	public void setRequestId(String requestId) {
 		this.requestId = requestId;
+	}
+
+	public String createStatusPhrase() {
+		String result;
+		switch (statusCode) {
+		case 400:
+			result = "Bad Request";
+			break;
+		case 401:
+			result = "Unauthorized";
+			break;
+		case 403:
+			result = "Forbidden";
+			break;
+		case 404:
+			result = "Not Found";
+			break;
+		case 405:
+			result = "Method Not Allowed";
+			break;
+		case 406:
+			result = "Not Acceptable";
+			break;
+		case 407:
+			result = "Proxy Authentication Required";
+			break;
+		case 408:
+			result = "Request Time-out";
+			break;
+		case 409:
+			result = "Conflict";
+			break;
+		case 500:
+			result = "Internal Server Error";
+			break;
+		default:
+			result = "unknown error";
+			break;
+		}
+
+		if (statusCode == 500) {
+			return result + ": " + getText();
+		}
+
+		return result;
 	}
 }

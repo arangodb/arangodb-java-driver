@@ -49,18 +49,6 @@ public abstract class BaseArangoDriver {
 
 	private static final Pattern databaseNamePattern = Pattern.compile("^[a-zA-Z][a-zA-Z0-9\\-_]{0,63}$");
 
-	// protected String createDocumentHandle(long collectionId, long documentId)
-	// {
-	// // validateCollectionNameは不要
-	// return collectionId + "/" + documentId;
-	// }
-	//
-	// protected String createDocumentHandle(String collectionName, long
-	// documentId) throws ArangoException {
-	// validateCollectionName(collectionName);
-	// return collectionName + "/" + documentId;
-	// }
-
 	protected String createDocumentHandle(long collectionId, String documentKey) {
 		return collectionId + "/" + documentKey;
 	}
@@ -106,7 +94,7 @@ public abstract class BaseArangoDriver {
 			}
 		} else {
 			valid = databaseNamePattern.matcher(database).matches();
-			if (database.equals("_system")) {
+			if ("_system".equals(database)) {
 				valid = true;
 			}
 		}
@@ -185,7 +173,7 @@ public abstract class BaseArangoDriver {
 
 		if (statusCode >= 400) { // always throws ArangoException
 			DefaultEntity defaultEntity = new DefaultEntity();
-			if (res.getText() != null && !res.getText().equalsIgnoreCase("") && statusCode != 500) {
+			if (res.getText() != null && !"".equals(res.getText()) && statusCode != 500) {
 				JsonParser jsonParser = new JsonParser();
 				JsonElement jsonElement = jsonParser.parse(res.getText());
 				JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -194,47 +182,7 @@ public abstract class BaseArangoDriver {
 				JsonElement errorNumber = jsonObject.get("errorNum");
 				defaultEntity.setErrorNumber(errorNumber.getAsInt());
 			} else {
-				String statusPhrase = "";
-				switch (statusCode) {
-				case 400:
-					statusPhrase = "Bad Request";
-					break;
-				case 401:
-					statusPhrase = "Unauthorized";
-					break;
-				case 403:
-					statusPhrase = "Forbidden";
-					break;
-				case 404:
-					statusPhrase = "Not Found";
-					break;
-				case 405:
-					statusPhrase = "Method Not Allowed";
-					break;
-				case 406:
-					statusPhrase = "Not Acceptable";
-					break;
-				case 407:
-					statusPhrase = "Proxy Authentication Required";
-					break;
-				case 408:
-					statusPhrase = "Request Time-out";
-					break;
-				case 409:
-					statusPhrase = "Conflict";
-					break;
-				case 500:
-					statusPhrase = "Internal Server Error";
-					break;
-				default:
-					statusPhrase = "unknown error";
-					break;
-				}
-
-				defaultEntity.setErrorMessage(statusPhrase);
-				if (statusCode == 500) {
-					defaultEntity.setErrorMessage(statusPhrase + ": " + res.getText());
-				}
+				defaultEntity.setErrorMessage(res.createStatusPhrase());
 			}
 
 			defaultEntity.setCode(statusCode);
@@ -271,7 +219,6 @@ public abstract class BaseArangoDriver {
 			return null;
 		}
 		boolean isDocumentEntity = false;
-		// boolean requestSuccessful = true;
 
 		// the following was added to ensure, that attributes with a key like
 		// "error", "code", "errorNum"
@@ -286,17 +233,8 @@ public abstract class BaseArangoDriver {
 		try {
 			EntityDeserializers.setParameterized(pclazz);
 
-			T entity = createEntityImpl(res, clazz);
-			if (entity == null) {
-				Class<?> c = MissingInstanceCreater.getMissingClass(clazz);
-				entity = ReflectionUtils.newInstance(c);
-			} else if (res.isBatchRepsonse()) {
-				try {
-					entity = clazz.newInstance();
-				} catch (Exception e) {
-					throw new ArangoException(e);
-				}
-			}
+			T entity = createEntityWithFallback(res, clazz);
+
 			setStatusCode(res, entity);
 			if (validate) {
 				validate(res, entity);
@@ -314,6 +252,22 @@ public abstract class BaseArangoDriver {
 		} finally {
 			EntityDeserializers.removeParameterized();
 		}
+	}
+
+	private <T extends BaseEntity> T createEntityWithFallback(HttpResponseEntity res, Class<T> clazz)
+			throws ArangoException {
+		T entity = createEntityImpl(res, clazz);
+		if (entity == null) {
+			Class<?> c = MissingInstanceCreater.getMissingClass(clazz);
+			entity = ReflectionUtils.newInstance(c);
+		} else if (res.isBatchRepsonse()) {
+			try {
+				entity = clazz.newInstance();
+			} catch (Exception e) {
+				throw new ArangoException(e);
+			}
+		}
+		return entity;
 	}
 
 	/**
@@ -371,57 +325,58 @@ public abstract class BaseArangoDriver {
 
 	protected void validate(HttpResponseEntity res, BaseEntity entity) throws ArangoException {
 
-		if (entity != null) {
-			if (entity.isError()) {
-				throw new ArangoException(entity);
-			}
+		if (entity != null && entity.isError()) {
+			throw new ArangoException(entity);
 		}
 
 		// Custom Error
 		if (res.getStatusCode() >= 400) {
 
+			BaseEntity tmpEntity = entity;
+			if (tmpEntity == null) {
+				tmpEntity = new DefaultEntity();
+			}
+
 			if (res.isTextResponse()) {
-				// entity.setErrorNumber(0);
-				entity.setErrorNumber(res.getStatusCode());
-				entity.setErrorMessage(res.getText());
+				tmpEntity.setErrorNumber(res.getStatusCode());
+				tmpEntity.setErrorMessage(res.getText());
 			} else {
-				entity.setErrorNumber(res.getStatusCode());
-				entity.setErrorMessage(res.getStatusPhrase());
+				tmpEntity.setErrorNumber(res.getStatusCode());
+				tmpEntity.setErrorMessage(res.getStatusPhrase());
 			}
 
 			switch (res.getStatusCode()) {
 			case 401:
-				entity.setErrorMessage("Unauthorized");
+				tmpEntity.setErrorMessage("Unauthorized");
 				break;
 			case 403:
-				entity.setErrorMessage("Forbidden");
+				tmpEntity.setErrorMessage("Forbidden");
 				break;
 			default:
 			}
 
-			throw new ArangoException(entity);
+			throw new ArangoException(tmpEntity);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T> T createEntityImpl(HttpResponseEntity res, Class<T> type) throws ArangoException {
+		T result = null;
 		if (res.isJsonResponse()) {
 			try {
-				return EntityFactory.createEntity(res.getText(), type);
+				result = EntityFactory.createEntity(res.getText(), type);
 			} catch (JsonSyntaxException e) {
 				throw new ArangoException("got JsonSyntaxException while creating entity", e);
 			} catch (JsonParseException e) {
 				throw new ArangoException("got JsonParseException while creating entity", e);
 			}
-		}
-		if (res.isDumpResponse() && StreamEntity.class.isAssignableFrom(type)) {
-			return (T) new StreamEntity(res.getStream());
-		}
-		if (res.getText() != null && res.getText().length() > 0) {
+		} else if (res.isDumpResponse() && StreamEntity.class.isAssignableFrom(type)) {
+			result = (T) new StreamEntity(res.getStream());
+		} else if (StringUtils.isNotEmpty(res.getText())) {
 			throw new ArangoException("expected JSON result from server but got: " + res.getText());
 		}
 
-		return null;
+		return result;
 	}
 
 	protected String createEndpointUrl(String database, Object... paths) throws ArangoException {

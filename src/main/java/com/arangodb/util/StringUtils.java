@@ -47,6 +47,14 @@ public class StringUtils {
 		return null;
 	}
 
+	public static boolean isNotEmpty(String str) {
+		return str != null && str.length() > 0;
+	}
+
+	public static boolean isEmpty(String str) {
+		return str == null || str.length() == 0;
+	}
+
 	public static boolean isCurlyBracketStart(String text) {
 
 		if (text == null || "".equals(text)) {
