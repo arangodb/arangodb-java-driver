@@ -32,6 +32,7 @@ public class WarningEntity {
 	String message;
 
 	public WarningEntity() {
+		// do nothing here
 	}
 
 	public WarningEntity(Long code, String message) {

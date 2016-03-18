@@ -68,6 +68,7 @@ public class CollectionOptions {
 	private List<String> shardKeys;
 
 	public CollectionOptions() {
+		// do nothing here
 	}
 
 	public Boolean getWaitForSync() {
