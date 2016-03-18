@@ -25,25 +25,25 @@ import java.io.InputStream;
  */
 public class StreamEntity extends BaseEntity {
 
-  public StreamEntity() {
+	/**
+	 * Input stream.
+	 */
+	InputStream stream;
 
-  }
+	public StreamEntity() {
+		// do nothing here
+	}
 
-  public StreamEntity(InputStream stream) {
-    this.stream = stream;
-  }
+	public StreamEntity(InputStream stream) {
+		this.stream = stream;
+	}
 
-  /**
-   * Input stream.
-   */
-  InputStream stream;
+	public InputStream getStream() {
+		return stream;
+	}
 
-  public InputStream getStream() {
-    return stream;
-  }
-
-  public void setStream(InputStream stream) {
-    this.stream = stream;
-  }
+	public void setStream(InputStream stream) {
+		this.stream = stream;
+	}
 
 }

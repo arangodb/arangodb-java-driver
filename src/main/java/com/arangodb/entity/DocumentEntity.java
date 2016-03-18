@@ -45,12 +45,15 @@ public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 	T entity;
 
 	public DocumentEntity() {
+		// do nothing here
 	}
 
+	@Override
 	public long getDocumentRevision() {
 		return documentRevision;
 	}
 
+	@Override
 	public String getDocumentHandle() {
 		return documentHandle;
 	}
@@ -59,10 +62,12 @@ public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 		return entity;
 	}
 
+	@Override
 	public void setDocumentRevision(long documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 
+	@Override
 	public void setDocumentHandle(String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
@@ -71,10 +76,12 @@ public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 		this.entity = entity;
 	}
 
+	@Override
 	public String getDocumentKey() {
 		return documentKey;
 	}
 
+	@Override
 	public void setDocumentKey(String documentKey) {
 		this.documentKey = documentKey;
 	}
