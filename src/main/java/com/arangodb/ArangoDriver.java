@@ -5361,10 +5361,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
 				.put("vertexDocumentHandle", vertexDocumentHandle).get();
 
-		CursorEntity<T> result = this.executeQuery(query, bindVars, clazz, true, 20);
-
-		return result;
-
+		return this.executeQuery(query, bindVars, clazz, true, 20);
 	}
 
 	/**

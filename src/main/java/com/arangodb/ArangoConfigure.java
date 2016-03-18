@@ -47,7 +47,7 @@ public class ArangoConfigure {
 	private static final int DEFAULT_PORT = 8529;
 
 	/** default */
-	private static final int DEFAULT_MAX_PER_CONNECTION = 20; // 2;
+	private static final int DEFAULT_MAX_PER_CONNECTION = 20;
 	/** default maximum conections */
 	private static final int DEFAULT_MAX_CONNECTION = 20;
 
@@ -146,125 +146,9 @@ public class ArangoConfigure {
 		try {
 			in = getClass().getResourceAsStream(propertyPath);
 			if (in != null) {
-
 				logger.debug("load property: file={}", propertyPath);
 
-				Properties prop = new Properties();
-				prop.load(in);
-
-				//
-				String port = prop.getProperty("port");
-				if (port != null) {
-					arangoHosts.get(0).setPort(Integer.parseInt(port));
-				}
-
-				String host = prop.getProperty("host");
-				if (host != null) {
-					arangoHosts.get(0).setHost(host);
-				}
-
-				String arangoHost = prop.getProperty("arangoHost");
-				if (arangoHost != null) {
-					ArangoHost ah = parseArangoHost(arangoHost);
-					if (ah != null) {
-						arangoHosts.get(0).setHost(ah.getHost());
-						arangoHosts.get(0).setPort(ah.getPort());
-					}
-				}
-
-				String fallbackArangoHost = prop.getProperty("fallbackArangoHost");
-				if (fallbackArangoHost != null) {
-					ArangoHost ah = parseArangoHost(fallbackArangoHost);
-					if (ah != null) {
-						addFallbackArangoHost(ah);
-					}
-				}
-
-				String timeout = prop.getProperty("timeout");
-				if (timeout != null) {
-					setTimeout(Integer.parseInt(timeout));
-				}
-
-				String connectionTimeout = prop.getProperty("connectionTimeout");
-				if (connectionTimeout != null) {
-					setConnectionTimeout(Integer.parseInt(connectionTimeout));
-				}
-
-				String proxyHost = prop.getProperty("proxy.host");
-				if (proxyHost != null) {
-					setProxyHost(proxyHost);
-				}
-
-				String proxyPort = prop.getProperty("proxy.port");
-				if (proxyPort != null) {
-					setProxyPort(Integer.parseInt(proxyPort));
-				}
-
-				String maxPerConnection = prop.getProperty("maxPerConnection");
-				if (maxPerConnection != null) {
-					setMaxPerConnection(Integer.parseInt(maxPerConnection));
-				}
-
-				String maxTotalConnection = prop.getProperty("maxTotalConnection");
-				if (maxTotalConnection != null) {
-					setMaxTotalConnection(Integer.parseInt(maxTotalConnection));
-				}
-
-				String retryCount = prop.getProperty("retryCount");
-				if (retryCount != null) {
-					setRetryCount(Integer.parseInt(retryCount));
-				}
-
-				String connnectRetryCount = prop.getProperty("connnectRetryCount");
-				if (connnectRetryCount != null) {
-					setConnectRetryCount(Integer.parseInt(connnectRetryCount));
-				}
-
-				String connectRetryWait = prop.getProperty("connectRetryWait");
-				if (connectRetryWait != null) {
-					setConnectRetryWait(Integer.parseInt(connectRetryWait));
-				}
-
-				String user = prop.getProperty("user");
-				if (user != null) {
-					setUser(user);
-				}
-
-				String password = prop.getProperty("password");
-				if (password != null) {
-					setPassword(password);
-				}
-
-				String defaultDatabase = prop.getProperty("defaultDatabase");
-				if (defaultDatabase != null) {
-					setDefaultDatabase(defaultDatabase);
-				}
-
-				String enableCURLLogger = prop.getProperty("enableCURLLogger");
-				if (enableCURLLogger != null) {
-					setEnableCURLLogger(Boolean.parseBoolean(enableCURLLogger));
-				}
-
-				String staleConnectionCheck = prop.getProperty("staleConnectionCheck");
-				if (staleConnectionCheck != null) {
-					setStaleConnectionCheck(Boolean.parseBoolean(staleConnectionCheck));
-				}
-
-				String batchSize = prop.getProperty("batchSize");
-				if (batchSize != null) {
-					setBatchSize(Integer.parseInt(batchSize));
-				}
-
-				String useSsl = prop.getProperty("useSsl");
-				if (useSsl != null) {
-					setUseSsl(Boolean.parseBoolean(useSsl));
-				}
-
-				String sslTrustStore = prop.getProperty("sslTrustStore");
-				if (sslTrustStore != null) {
-					setSslTrustStore(sslTrustStore);
-				}
-
+				loadProperties(in);
 			}
 		} catch (IOException e) {
 			logger.warn("load property error", e);
@@ -272,6 +156,125 @@ public class ArangoConfigure {
 			if (in != null) {
 				IOUtils.close(in);
 			}
+		}
+	}
+
+	private void loadProperties(InputStream in) throws IOException {
+
+		Properties prop = new Properties();
+		prop.load(in);
+
+		//
+		String port = prop.getProperty("port");
+		if (port != null) {
+			arangoHosts.get(0).setPort(Integer.parseInt(port));
+		}
+
+		String host = prop.getProperty("host");
+		if (host != null) {
+			arangoHosts.get(0).setHost(host);
+		}
+
+		String arangoHost = prop.getProperty("arangoHost");
+		if (arangoHost != null) {
+			ArangoHost ah = parseArangoHost(arangoHost);
+			if (ah != null) {
+				arangoHosts.get(0).setHost(ah.getHost());
+				arangoHosts.get(0).setPort(ah.getPort());
+			}
+		}
+
+		String fallbackArangoHost = prop.getProperty("fallbackArangoHost");
+		if (fallbackArangoHost != null) {
+			ArangoHost ah = parseArangoHost(fallbackArangoHost);
+			if (ah != null) {
+				addFallbackArangoHost(ah);
+			}
+		}
+
+		String timeoutProperty = prop.getProperty("timeout");
+		if (timeoutProperty != null) {
+			setTimeout(Integer.parseInt(timeoutProperty));
+		}
+
+		String connectionTimeoutProperty = prop.getProperty("connectionTimeout");
+		if (connectionTimeoutProperty != null) {
+			setConnectionTimeout(Integer.parseInt(connectionTimeoutProperty));
+		}
+
+		String proxyHostProperty = prop.getProperty("proxy.host");
+		if (proxyHostProperty != null) {
+			setProxyHost(proxyHostProperty);
+		}
+
+		String proxyPortProperty = prop.getProperty("proxy.port");
+		if (proxyPortProperty != null) {
+			setProxyPort(Integer.parseInt(proxyPortProperty));
+		}
+
+		String maxPerConnectionProperty = prop.getProperty("maxPerConnection");
+		if (maxPerConnectionProperty != null) {
+			setMaxPerConnection(Integer.parseInt(maxPerConnectionProperty));
+		}
+
+		String maxTotalConnectionProperty = prop.getProperty("maxTotalConnection");
+		if (maxTotalConnectionProperty != null) {
+			setMaxTotalConnection(Integer.parseInt(maxTotalConnectionProperty));
+		}
+
+		String retryCountProperty = prop.getProperty("retryCount");
+		if (retryCountProperty != null) {
+			setRetryCount(Integer.parseInt(retryCountProperty));
+		}
+
+		String connnectRetryCount = prop.getProperty("connnectRetryCount");
+		if (connnectRetryCount != null) {
+			setConnectRetryCount(Integer.parseInt(connnectRetryCount));
+		}
+
+		String connectRetryWaitProperty = prop.getProperty("connectRetryWait");
+		if (connectRetryWaitProperty != null) {
+			setConnectRetryWait(Integer.parseInt(connectRetryWaitProperty));
+		}
+
+		String userProperty = prop.getProperty("user");
+		if (userProperty != null) {
+			setUser(userProperty);
+		}
+
+		String passwordProperty = prop.getProperty("password");
+		if (passwordProperty != null) {
+			setPassword(passwordProperty);
+		}
+
+		String defaultDatabaseProperty = prop.getProperty("defaultDatabase");
+		if (defaultDatabaseProperty != null) {
+			setDefaultDatabase(defaultDatabaseProperty);
+		}
+
+		String enableCURLLoggerProperty = prop.getProperty("enableCURLLogger");
+		if (enableCURLLoggerProperty != null) {
+			setEnableCURLLogger(Boolean.parseBoolean(enableCURLLoggerProperty));
+		}
+
+		String staleConnectionCheckProperty = prop.getProperty("staleConnectionCheck");
+		if (staleConnectionCheckProperty != null) {
+			setStaleConnectionCheck(Boolean.parseBoolean(staleConnectionCheckProperty));
+		}
+
+		String batchSizeProperty = prop.getProperty("batchSize");
+		if (batchSizeProperty != null) {
+			setBatchSize(Integer.parseInt(batchSizeProperty));
+		}
+
+		String useSslProperty = prop.getProperty("useSsl");
+		if (useSslProperty != null) {
+			setUseSsl(Boolean.parseBoolean(useSslProperty));
+		}
+
+		String sslTrustStoreProperty = prop.getProperty("sslTrustStore");
+		if (sslTrustStoreProperty != null) {
+			setSslTrustStore(sslTrustStoreProperty);
 		}
 	}
 
