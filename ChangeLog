@@ -1,4 +1,4 @@
-v2.7.3 (2016-XX-XX)
+v2.7.3 (2016-03-25)
 ---------------------------
 * batch driver performance fix
 * fixed issue #33 (typo in ArangoDriver.executeAqlQueryWithDocumentCursorResutl method)   
