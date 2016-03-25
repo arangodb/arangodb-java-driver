@@ -20,8 +20,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -52,9 +54,9 @@ public class ArangoDriverAdminTest extends BaseTest {
 	public void test_version() throws ArangoException {
 
 		ArangoVersion version = driver.getVersion();
-		assertThat(version.getServer(), is("arango"));
-		assertThat(version.getVersion(), startsWith("2."));
-
+		assertEquals("arango", version.getServer());
+		assertNotNull(version.getVersion());
+		assertTrue(version.getVersion().startsWith("2.") || version.getVersion().startsWith("3."));
 	}
 
 	@Test
