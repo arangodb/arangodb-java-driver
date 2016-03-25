@@ -2487,13 +2487,16 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            a map containing all bind variables,
 	 * @param aqlQueryOptions
 	 *            AQL query options
+	 * @param classDocumentEntity
+	 *            the class the expected class is wrapped in (the class has to
+	 *            extend DocumentEntity)
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
 	 * @return DocumentCursorResult<T, S>
 	 * @throws ArangoException
 	 */
-	public <T, S extends DocumentEntity<T>> DocumentCursorResult<T, S> executeAqlQueryWithDocumentCursorResutl(
+	public <T, S extends DocumentEntity<T>> DocumentCursorResult<T, S> executeAqlQueryWithDocumentCursorResult(
 		String query,
 		Map<String, Object> bindVars,
 		AqlQueryOptions aqlQueryOptions,
