@@ -242,7 +242,7 @@ E.g. get all Simpsons aged 3 or older in ascending order:
     DocumentCursor<MyObject> documentCursor = arangoDriver.executeDocumentQuery(
       query, bindVars, driver.getDefaultAqlQueryOptions(), MyObject.class);
     
-    while (DocumentEntity<MyObject> documentEntity : documentCursor.asList()) {
+    for (DocumentEntity<MyObject> documentEntity : documentCursor.asList()) {
       MyObject obj = documentEntity.getEntity();
       System.out.println(obj.getName());
     }
