@@ -23,29 +23,36 @@ package com.arangodb.entity;
  *
  */
 public enum CollectionType {
-  /**
-   * Document collection type
-   */
-  DOCUMENT(2),
+	/**
+	 * Document collection type
+	 */
+	DOCUMENT(2),
 
-  /**
-   * Edge collection type, used for graphs
-   */
-  EDGE(3);
-  private final int type;
-  private CollectionType(int type) {
-    this.type = type;
-  }
-  public int getType() {
-    return type;
-  }
-  public static CollectionType valueOf(int type) {
-    switch (type) {
-    case 2:
-      return DOCUMENT;
-    case 3:
-      return EDGE;
-    }
-    return null;
-  }
+	/**
+	 * Edge collection type, used for graphs
+	 */
+	EDGE(3);
+
+	private final int type;
+
+	private CollectionType(int type) {
+		this.type = type;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public static CollectionType valueOf(int type) {
+		CollectionType result = null;
+		
+		if (type == 2) {
+			result = DOCUMENT;
+		}
+		else if (type == 3) {
+			result = EDGE;
+		}
+
+		return result;
+	}
 }

@@ -30,9 +30,8 @@ public class JobsEntity extends BaseEntity {
 	/**
 	 * The enumeration containing the job state
 	 */
-	public static enum JobState {
-		DONE,
-		PENDING;
+	public enum JobState {
+		DONE, PENDING;
 		public java.lang.String getName() {
 			if (this == DONE) {
 				return "done";
@@ -44,17 +43,17 @@ public class JobsEntity extends BaseEntity {
 		}
 	}
 
-	List<String> jobs;
+	private List<String> jobs;
+
+	public JobsEntity(List<String> jobs) {
+		this.jobs = jobs;
+	}
 
 	public List<String> getJobs() {
 		return jobs;
 	}
 
 	public void setJobs(List<String> jobs) {
-		this.jobs = jobs;
-	}
-
-	public JobsEntity(List<String> jobs) {
 		this.jobs = jobs;
 	}
 }
