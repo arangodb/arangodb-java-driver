@@ -32,9 +32,10 @@ public class AqlFunctionsEntity extends BaseEntity {
 	Map<String, String> aqlFunctions;
 
 	public AqlFunctionsEntity() {
+		// needed for ReflectionUtils
 	}
 
-	AqlFunctionsEntity(Map<String, String> aqlfunctions) {
+	public AqlFunctionsEntity(Map<String, String> aqlfunctions) {
 		this.aqlFunctions = aqlfunctions;
 	}
 
