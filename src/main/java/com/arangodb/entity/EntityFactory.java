@@ -49,6 +49,10 @@ public class EntityFactory {
 	private static Gson gson;
 	private static Gson gsonNull;
 
+	private EntityFactory() {
+		// this is a helper class
+	}
+
 	public static GsonBuilder getGsonBuilder() {
 		return new GsonBuilder().addSerializationExclusionStrategy(new ExcludeExclusionStrategy(true))
 				.addDeserializationExclusionStrategy(new ExcludeExclusionStrategy(false))
@@ -166,7 +170,7 @@ public class EntityFactory {
 		return new JsonSequenceEntity(itr, gson);
 	}
 
-	public static <T> String toImportHeaderValues(Collection<? extends Collection<?>> headerValues) {
+	public static String toImportHeaderValues(Collection<? extends Collection<?>> headerValues) {
 		StringWriter writer = new StringWriter();
 		for (Collection<?> array : headerValues) {
 			gson.toJson(array, writer);
