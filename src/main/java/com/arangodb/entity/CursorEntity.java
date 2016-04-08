@@ -73,17 +73,16 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 	/**
 	 * A list of objects containing the results
 	 */
-	List<? extends T> results;
+	List<T> results;
 
 	/**
 	 * A list of warnings
 	 */
 	List<WarningEntity> warnings;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<T> iterator() {
-		return (Iterator<T>) CollectionUtils.safetyIterator(results);
+		return CollectionUtils.safetyIterator(results);
 	}
 
 	/**
@@ -121,7 +120,7 @@ public class CursorEntity<T> extends BaseEntity implements Iterable<T> {
 	 * 
 	 * @return list of DocumentEntity objects
 	 */
-	public List<? extends T> getResults() {
+	public List<T> getResults() {
 		return results;
 	}
 
