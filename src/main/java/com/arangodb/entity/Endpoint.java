@@ -30,12 +30,12 @@ public class Endpoint implements Serializable {
 	/**
 	 * The endpoint address as string
 	 */
-	String endpoint;
+	private String endpoint;
 
 	/**
 	 * The list of databases available at this endpoint as string
 	 */
-	List<String> databases;
+	private List<String> databases;
 
 	public String getEndpoint() {
 		return endpoint;

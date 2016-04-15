@@ -113,6 +113,62 @@ public class EntityDeserializers {
 
 	private static final String ALT_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+	private static final String DO_COMPACT = "doCompact";
+
+	private static final String CHECKSUM = "checksum";
+
+	private static final String KEY_OPTIONS = "keyOptions";
+
+	private static final String TYPE = "type";
+
+	private static final String FIGURES = "figures";
+
+	private static final String REVISION = "revision";
+
+	private static final String JOURNAL_SIZE = "journalSize";
+
+	private static final String IS_VOLATILE = "isVolatile";
+
+	private static final String IS_SYSTEM = "isSystem";
+
+	private static final String WAIT_FOR_SYNC = "waitForSync";
+
+	private static final String STATUS = "status";
+
+	private static final String ID = "id";
+
+	private static final String NAME = "name";
+
+	private static final String EXTRA = "extra";
+
+	private static final String ACTIVE = "active";
+
+	private static final String COLLECTIONS = "collections";
+
+	private static final String LAST_ERROR = "lastError";
+
+	private static final String LAST_AVAILABLE_CONTINUOUS_TICK = "lastAvailableContinuousTick";
+
+	private static final String LAST_PROCESSED_CONTINUOUS_TICK = "lastProcessedContinuousTick";
+
+	private static final String LAST_APPLIED_CONTINUOUS_TICK = "lastAppliedContinuousTick";
+
+	private static final String INDEXES = "indexes";
+
+	private static final String EDGES = "edges";
+
+	private static final String STATE = "state";
+
+	private static final String FILE_SIZE = "fileSize";
+
+	private static final String UPDATED = "updated";
+
+	private static final String REPLACED = "replaced";
+
+	private static final String DELETED = "deleted";
+
+	private static final String MESSAGE = "message";
+
 	private static Logger logger = LoggerFactory.getLogger(EntityDeserializers.class);
 
 	private static class ClassHolder {
@@ -326,25 +382,25 @@ public class EntityDeserializers {
 			if (obj.has("datafiles")) {
 				JsonObject datafiles = obj.getAsJsonObject("datafiles");
 				entity.datafileCount = datafiles.getAsJsonPrimitive(COUNT).getAsLong();
-				entity.datafileFileSize = datafiles.getAsJsonPrimitive("fileSize").getAsLong();
+				entity.datafileFileSize = datafiles.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
 			if (obj.has("journals")) {
 				JsonObject journals = obj.getAsJsonObject("journals");
 				entity.journalsCount = journals.getAsJsonPrimitive(COUNT).getAsLong();
-				entity.journalsFileSize = journals.getAsJsonPrimitive("fileSize").getAsLong();
+				entity.journalsFileSize = journals.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
 			if (obj.has("compactors")) {
 				JsonObject compactors = obj.getAsJsonObject("compactors");
 				entity.compactorsCount = compactors.getAsJsonPrimitive(COUNT).getAsLong();
-				entity.compactorsFileSize = compactors.getAsJsonPrimitive("fileSize").getAsLong();
+				entity.compactorsFileSize = compactors.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
 			if (obj.has("shapefiles")) {
 				JsonObject shapefiles = obj.getAsJsonObject("shapefiles");
 				entity.shapefilesCount = shapefiles.getAsJsonPrimitive(COUNT).getAsLong();
-				entity.shapefilesFileSize = shapefiles.getAsJsonPrimitive("fileSize").getAsLong();
+				entity.shapefilesFileSize = shapefiles.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
 			if (obj.has("shapes")) {
@@ -357,8 +413,8 @@ public class EntityDeserializers {
 				entity.attributesCount = attributes.getAsJsonPrimitive(COUNT).getAsLong();
 			}
 
-			if (obj.has("indexes")) {
-				JsonObject indexes = obj.getAsJsonObject("indexes");
+			if (obj.has(INDEXES)) {
+				JsonObject indexes = obj.getAsJsonObject(INDEXES);
 				entity.indexesCount = indexes.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.indexesSize = indexes.getAsJsonPrimitive(SIZE).getAsLong();
 			}
@@ -407,6 +463,7 @@ public class EntityDeserializers {
 	}
 
 	public static class CollectionEntityDeserializer implements JsonDeserializer<CollectionEntity> {
+
 		@Override
 		public CollectionEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
@@ -417,60 +474,60 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			CollectionEntity entity = deserializeBaseParameter(obj, new CollectionEntity());
 
-			if (obj.has("name")) {
-				entity.name = obj.getAsJsonPrimitive("name").getAsString();
+			if (obj.has(NAME)) {
+				entity.name = obj.getAsJsonPrimitive(NAME).getAsString();
 			}
 
-			if (obj.has("id")) {
-				entity.id = obj.getAsJsonPrimitive("id").getAsLong();
+			if (obj.has(ID)) {
+				entity.id = obj.getAsJsonPrimitive(ID).getAsLong();
 			}
 
-			if (obj.has("status")) {
-				entity.status = context.deserialize(obj.get("status"), CollectionStatus.class);
+			if (obj.has(STATUS)) {
+				entity.status = context.deserialize(obj.get(STATUS), CollectionStatus.class);
 			}
 
-			if (obj.has("waitForSync")) {
-				entity.waitForSync = obj.getAsJsonPrimitive("waitForSync").getAsBoolean();
+			if (obj.has(WAIT_FOR_SYNC)) {
+				entity.waitForSync = obj.getAsJsonPrimitive(WAIT_FOR_SYNC).getAsBoolean();
 			}
 
-			if (obj.has("isSystem")) {
-				entity.isSystem = obj.getAsJsonPrimitive("isSystem").getAsBoolean();
+			if (obj.has(IS_SYSTEM)) {
+				entity.isSystem = obj.getAsJsonPrimitive(IS_SYSTEM).getAsBoolean();
 			}
 
-			if (obj.has("isVolatile")) {
-				entity.isVolatile = obj.getAsJsonPrimitive("isVolatile").getAsBoolean();
+			if (obj.has(IS_VOLATILE)) {
+				entity.isVolatile = obj.getAsJsonPrimitive(IS_VOLATILE).getAsBoolean();
 			}
 
-			if (obj.has("journalSize")) {
-				entity.journalSize = obj.getAsJsonPrimitive("journalSize").getAsLong();
+			if (obj.has(JOURNAL_SIZE)) {
+				entity.journalSize = obj.getAsJsonPrimitive(JOURNAL_SIZE).getAsLong();
 			}
 
 			if (obj.has(COUNT)) {
 				entity.count = obj.getAsJsonPrimitive(COUNT).getAsLong();
 			}
 
-			if (obj.has("revision")) {
-				entity.revision = obj.getAsJsonPrimitive("revision").getAsLong();
+			if (obj.has(REVISION)) {
+				entity.revision = obj.getAsJsonPrimitive(REVISION).getAsLong();
 			}
 
-			if (obj.has("figures")) {
-				entity.figures = context.deserialize(obj.get("figures"), Figures.class);
+			if (obj.has(FIGURES)) {
+				entity.figures = context.deserialize(obj.get(FIGURES), Figures.class);
 			}
 
-			if (obj.has("type")) {
-				entity.type = CollectionType.valueOf(obj.getAsJsonPrimitive("type").getAsInt());
+			if (obj.has(TYPE)) {
+				entity.type = CollectionType.valueOf(obj.getAsJsonPrimitive(TYPE).getAsInt());
 			}
 
-			if (obj.has("keyOptions")) {
-				entity.keyOptions = context.deserialize(obj.get("keyOptions"), CollectionKeyOption.class);
+			if (obj.has(KEY_OPTIONS)) {
+				entity.keyOptions = context.deserialize(obj.get(KEY_OPTIONS), CollectionKeyOption.class);
 			}
 
-			if (obj.has("checksum")) {
-				entity.checksum = obj.getAsJsonPrimitive("checksum").getAsLong();
+			if (obj.has(CHECKSUM)) {
+				entity.checksum = obj.getAsJsonPrimitive(CHECKSUM).getAsLong();
 			}
 
-			if (obj.has("doCompact")) {
-				entity.doCompact = obj.getAsJsonPrimitive("doCompact").getAsBoolean();
+			if (obj.has(DO_COMPACT)) {
+				entity.doCompact = obj.getAsJsonPrimitive(DO_COMPACT).getAsBoolean();
 			}
 
 			return entity;
@@ -493,8 +550,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			CollectionsEntity entity = deserializeBaseParameter(obj, new CollectionsEntity());
 
-			if (obj.has("collections")) {
-				entity.collections = context.deserialize(obj.get("collections"), collectionsType);
+			if (obj.has(COLLECTIONS)) {
+				entity.collections = context.deserialize(obj.get(COLLECTIONS), collectionsType);
 			}
 			if (obj.has("names")) {
 				entity.names = context.deserialize(obj.get("names"), namesType);
@@ -580,8 +637,8 @@ public class EntityDeserializers {
 				entity.count = obj.getAsJsonPrimitive(COUNT).getAsInt();
 			}
 
-			if (obj.has("id")) {
-				entity.cursorId = obj.getAsJsonPrimitive("id").getAsLong();
+			if (obj.has(ID)) {
+				entity.cursorId = obj.getAsJsonPrimitive(ID).getAsLong();
 			}
 
 			if (obj.has("cached")) {
@@ -593,8 +650,8 @@ public class EntityDeserializers {
 			}
 
 			entity.warnings = new ArrayList<WarningEntity>();
-			if (obj.has("extra")) {
-				entity.extra = context.deserialize(obj.get("extra"), extraType);
+			if (obj.has(EXTRA)) {
+				entity.extra = context.deserialize(obj.get(EXTRA), extraType);
 				getFullCount(entity);
 				getWarnings(entity);
 			}
@@ -638,10 +695,10 @@ public class EntityDeserializers {
 			for (Object o : l) {
 				if (o instanceof Map<?, ?>) {
 					Map<?, ?> m = (Map<?, ?>) o;
-					if (m.containsKey(CODE) && m.get(CODE) instanceof Double && m.containsKey("message")
-							&& m.get("message") instanceof String) {
+					if (m.containsKey(CODE) && m.get(CODE) instanceof Double && m.containsKey(MESSAGE)
+							&& m.get(MESSAGE) instanceof String) {
 						Long code = ((Double) m.get(CODE)).longValue();
-						String message = (String) m.get("message");
+						String message = (String) m.get(MESSAGE);
 						entity.warnings.add(new WarningEntity(code, message));
 					}
 				}
@@ -814,8 +871,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			IndexEntity entity = deserializeBaseParameter(obj, new IndexEntity());
 
-			if (obj.has("id")) {
-				entity.id = obj.getAsJsonPrimitive("id").getAsString();
+			if (obj.has(ID)) {
+				entity.id = obj.getAsJsonPrimitive(ID).getAsString();
 			}
 
 			if (obj.has("type")) {
@@ -879,8 +936,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			IndexesEntity entity = deserializeBaseParameter(obj, new IndexesEntity());
 
-			if (obj.has("indexes")) {
-				entity.indexes = context.deserialize(obj.get("indexes"), indexesType);
+			if (obj.has(INDEXES)) {
+				entity.indexes = context.deserialize(obj.get(INDEXES), indexesType);
 			}
 
 			if (obj.has("identifiers")) {
@@ -945,6 +1002,51 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			StatisticsEntity entity = deserializeBaseParameter(obj, new StatisticsEntity());
 
+			deserializeSystem(obj, entity);
+
+			deserializeClient(context, obj, entity);
+
+			deserializeServer(obj, entity);
+
+			return entity;
+
+		}
+
+		private void deserializeServer(JsonObject obj, StatisticsEntity entity) {
+			if (obj.has(SERVER)) {
+				JsonObject svr = obj.getAsJsonObject(SERVER);
+				entity.server = new StatisticsEntity.Server();
+
+				if (svr.has("uptime")) {
+					entity.server.uptime = svr.getAsJsonPrimitive("uptime").getAsDouble();
+				}
+			}
+		}
+
+		private void deserializeClient(JsonDeserializationContext context, JsonObject obj, StatisticsEntity entity) {
+			if (obj.has("client")) {
+				StatisticsEntity.Client cli = new StatisticsEntity.Client();
+				cli.figures = new TreeMap<String, StatisticsEntity.FigureValue>();
+				entity.client = cli;
+
+				JsonObject client = obj.getAsJsonObject("client");
+				if (client.has("httpConnections")) {
+					cli.httpConnections = client.getAsJsonPrimitive("httpConnections").getAsInt();
+				}
+				for (Entry<String, JsonElement> ent : client.entrySet()) {
+					if (!"httpConnections".equals(ent.getKey())) {
+						JsonObject f = ent.getValue().getAsJsonObject();
+						FigureValue fv = new FigureValue();
+						fv.sum = f.getAsJsonPrimitive("sum").getAsDouble();
+						fv.count = f.getAsJsonPrimitive(COUNT).getAsLong();
+						fv.counts = context.deserialize(f.getAsJsonArray("counts"), countsType);
+						cli.figures.put(ent.getKey(), fv);
+					}
+				}
+			}
+		}
+
+		private void deserializeSystem(JsonObject obj, StatisticsEntity entity) {
 			if (obj.has("system")) {
 				StatisticsEntity.System sys = new StatisticsEntity.System();
 				entity.system = sys;
@@ -972,39 +1074,6 @@ public class EntityDeserializers {
 					sys.virtualSize = system.getAsJsonPrimitive("virtualSize").getAsLong();
 				}
 			}
-
-			if (obj.has("client")) {
-				StatisticsEntity.Client cli = new StatisticsEntity.Client();
-				cli.figures = new TreeMap<String, StatisticsEntity.FigureValue>();
-				entity.client = cli;
-
-				JsonObject client = obj.getAsJsonObject("client");
-				if (client.has("httpConnections")) {
-					cli.httpConnections = client.getAsJsonPrimitive("httpConnections").getAsInt();
-				}
-				for (Entry<String, JsonElement> ent : client.entrySet()) {
-					if (!"httpConnections".equals(ent.getKey())) {
-						JsonObject f = ent.getValue().getAsJsonObject();
-						FigureValue fv = new FigureValue();
-						fv.sum = f.getAsJsonPrimitive("sum").getAsDouble();
-						fv.count = f.getAsJsonPrimitive(COUNT).getAsLong();
-						fv.counts = context.deserialize(f.getAsJsonArray("counts"), countsType);
-						cli.figures.put(ent.getKey(), fv);
-					}
-				}
-			}
-
-			if (obj.has(SERVER)) {
-				JsonObject svr = obj.getAsJsonObject(SERVER);
-				entity.server = new StatisticsEntity.Server();
-
-				if (svr.has("uptime")) {
-					entity.server.uptime = svr.getAsJsonPrimitive("uptime").getAsDouble();
-				}
-			}
-
-			return entity;
-
 		}
 	}
 
@@ -1041,8 +1110,8 @@ public class EntityDeserializers {
 				}
 			}
 
-			if (obj.has("figures")) {
-				JsonArray figures = obj.getAsJsonArray("figures");
+			if (obj.has(FIGURES)) {
+				JsonArray figures = obj.getAsJsonArray(FIGURES);
 				entity.figures = new ArrayList<StatisticsDescriptionEntity.Figure>(figures.size());
 				for (int i = 0, imax = figures.size(); i < imax; i++) {
 					JsonObject f = figures.get(i).getAsJsonObject();
@@ -1100,16 +1169,16 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			SimpleByResultEntity entity = deserializeBaseParameter(obj, new SimpleByResultEntity());
 
-			if (obj.has("deleted")) {
-				entity.count = entity.deleted = obj.getAsJsonPrimitive("deleted").getAsInt();
+			if (obj.has(DELETED)) {
+				entity.count = entity.deleted = obj.getAsJsonPrimitive(DELETED).getAsInt();
 			}
 
-			if (obj.has("replaced")) {
-				entity.count = entity.replaced = obj.getAsJsonPrimitive("replaced").getAsInt();
+			if (obj.has(REPLACED)) {
+				entity.count = entity.replaced = obj.getAsJsonPrimitive(REPLACED).getAsInt();
 			}
 
-			if (obj.has("updated")) {
-				entity.count = entity.updated = obj.getAsJsonPrimitive("updated").getAsInt();
+			if (obj.has(UPDATED)) {
+				entity.count = entity.updated = obj.getAsJsonPrimitive(UPDATED).getAsInt();
 			}
 
 			return entity;
@@ -1167,18 +1236,18 @@ public class EntityDeserializers {
 				entity.password = obj.getAsJsonPrimitive(PASSWORD).getAsString();
 			}
 
-			if (obj.has("active")) {
-				entity.active = obj.getAsJsonPrimitive("active").getAsBoolean();
+			if (obj.has(ACTIVE)) {
+				entity.active = obj.getAsJsonPrimitive(ACTIVE).getAsBoolean();
 			} else if (obj.has("authData")) {
 				// for simple/all requsts
 				JsonObject authData = obj.getAsJsonObject("authData");
-				if (authData.has("active")) {
-					entity.active = authData.getAsJsonPrimitive("active").getAsBoolean();
+				if (authData.has(ACTIVE)) {
+					entity.active = authData.getAsJsonPrimitive(ACTIVE).getAsBoolean();
 				}
 			}
 
-			if (obj.has("extra")) {
-				entity.extra = context.deserialize(obj.getAsJsonObject("extra"), Map.class);
+			if (obj.has(EXTRA)) {
+				entity.extra = context.deserialize(obj.getAsJsonObject(EXTRA), Map.class);
 			} else if (obj.has("userData")) {
 				// for simple/all requsts
 				entity.extra = context.deserialize(obj.getAsJsonObject("userData"), Map.class);
@@ -1234,14 +1303,14 @@ public class EntityDeserializers {
 				if (result.has("name")) {
 					entity.name = result.getAsJsonPrimitive("name").getAsString();
 				}
-				if (result.has("id")) {
-					entity.id = result.getAsJsonPrimitive("id").getAsString();
+				if (result.has(ID)) {
+					entity.id = result.getAsJsonPrimitive(ID).getAsString();
 				}
 				if (result.has("path")) {
 					entity.path = result.getAsJsonPrimitive("path").getAsString();
 				}
-				if (result.has("isSystem")) {
-					entity.isSystem = result.getAsJsonPrimitive("isSystem").getAsBoolean();
+				if (result.has(IS_SYSTEM)) {
+					entity.isSystem = result.getAsJsonPrimitive(IS_SYSTEM).getAsBoolean();
 				}
 			}
 
@@ -1294,6 +1363,7 @@ public class EntityDeserializers {
 		Type databasesType = new TypeToken<List<String>>() {
 		}.getType();
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Endpoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
@@ -1304,8 +1374,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 
 			Endpoint entity = new Endpoint();
-			entity.databases = context.deserialize(obj.getAsJsonArray("databases"), databasesType);
-			entity.endpoint = obj.getAsJsonPrimitive("endpoint").getAsString();
+			entity.setDatabases((List<String>) context.deserialize(obj.getAsJsonArray("databases"), databasesType));
+			entity.setEndpoint(obj.getAsJsonPrimitive("endpoint").getAsString());
 
 			return entity;
 		}
@@ -1364,6 +1434,7 @@ public class EntityDeserializers {
 	}
 
 	public static class ReplicationInventoryEntityDeserializer implements JsonDeserializer<ReplicationInventoryEntity> {
+
 		private Type indexesType = new TypeToken<List<IndexEntity>>() {
 		}.getType();
 
@@ -1380,8 +1451,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			ReplicationInventoryEntity entity = deserializeBaseParameter(obj, new ReplicationInventoryEntity());
 
-			if (obj.has("collections")) {
-				JsonArray collections = obj.getAsJsonArray("collections");
+			if (obj.has(COLLECTIONS)) {
+				JsonArray collections = obj.getAsJsonArray(COLLECTIONS);
 				entity.collections = new ArrayList<ReplicationInventoryEntity.Collection>(collections.size());
 				for (int i = 0, imax = collections.size(); i < imax; i++) {
 					JsonObject elem = collections.get(i).getAsJsonObject();
@@ -1392,16 +1463,16 @@ public class EntityDeserializers {
 						addCollectionParameters(col, parameters);
 					}
 
-					if (elem.has("indexes")) {
-						col.indexes = context.deserialize(elem.getAsJsonArray("indexes"), indexesType);
+					if (elem.has(INDEXES)) {
+						col.indexes = context.deserialize(elem.getAsJsonArray(INDEXES), indexesType);
 					}
 
 					entity.collections.add(col);
 				}
 			}
 
-			if (obj.has("state")) {
-				entity.state = context.deserialize(obj.getAsJsonObject("state"), ReplicationState.class);
+			if (obj.has(STATE)) {
+				entity.state = context.deserialize(obj.getAsJsonObject(STATE), ReplicationState.class);
 			}
 
 			if (obj.has("tick")) {
@@ -1422,11 +1493,11 @@ public class EntityDeserializers {
 			if (parameters.has("cid")) {
 				col.parameter.cid = parameters.getAsJsonPrimitive("cid").getAsLong();
 			}
-			if (parameters.has("deleted")) {
-				col.parameter.deleted = parameters.getAsJsonPrimitive("deleted").getAsBoolean();
+			if (parameters.has(DELETED)) {
+				col.parameter.deleted = parameters.getAsJsonPrimitive(DELETED).getAsBoolean();
 			}
-			if (parameters.has("doCompact")) {
-				col.parameter.doCompact = parameters.getAsJsonPrimitive("doCompact").getAsBoolean();
+			if (parameters.has(DO_COMPACT)) {
+				col.parameter.doCompact = parameters.getAsJsonPrimitive(DO_COMPACT).getAsBoolean();
 			}
 			if (parameters.has("maximalSize")) {
 				col.parameter.maximalSize = parameters.getAsJsonPrimitive("maximalSize").getAsLong();
@@ -1434,11 +1505,11 @@ public class EntityDeserializers {
 			if (parameters.has("name")) {
 				col.parameter.name = parameters.getAsJsonPrimitive("name").getAsString();
 			}
-			if (parameters.has("isVolatile")) {
-				col.parameter.isVolatile = parameters.getAsJsonPrimitive("isVolatile").getAsBoolean();
+			if (parameters.has(IS_VOLATILE)) {
+				col.parameter.isVolatile = parameters.getAsJsonPrimitive(IS_VOLATILE).getAsBoolean();
 			}
-			if (parameters.has("waitForSync")) {
-				col.parameter.waitForSync = parameters.getAsJsonPrimitive("waitForSync").getAsBoolean();
+			if (parameters.has(WAIT_FOR_SYNC)) {
+				col.parameter.waitForSync = parameters.getAsJsonPrimitive(WAIT_FOR_SYNC).getAsBoolean();
 			}
 		}
 	}
@@ -1495,8 +1566,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			ReplicationSyncEntity entity = deserializeBaseParameter(obj, new ReplicationSyncEntity());
 
-			if (obj.has("collections")) {
-				entity.collections = context.deserialize(obj.getAsJsonArray("collections"), collectionsType);
+			if (obj.has(COLLECTIONS)) {
+				entity.collections = context.deserialize(obj.getAsJsonArray(COLLECTIONS), collectionsType);
 			}
 			if (obj.has("lastLogTick")) {
 				entity.lastLogTick = obj.getAsJsonPrimitive("lastLogTick").getAsLong();
@@ -1619,6 +1690,7 @@ public class EntityDeserializers {
 	}
 
 	public static class ReplicationApplierStateDeserializer implements JsonDeserializer<ReplicationApplierState> {
+
 		@Override
 		public ReplicationApplierState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
@@ -1632,15 +1704,9 @@ public class EntityDeserializers {
 			if (obj.has("running")) {
 				state.running = obj.getAsJsonPrimitive("running").getAsBoolean();
 			}
-			if (obj.has("lastAppliedContinuousTick") && !obj.get("lastAppliedContinuousTick").isJsonNull()) {
-				state.lastAppliedContinuousTick = obj.getAsJsonPrimitive("lastAppliedContinuousTick").getAsLong();
-			}
-			if (obj.has("lastProcessedContinuousTick") && !obj.get("lastProcessedContinuousTick").isJsonNull()) {
-				state.lastProcessedContinuousTick = obj.getAsJsonPrimitive("lastProcessedContinuousTick").getAsLong();
-			}
-			if (obj.has("lastAvailableContinuousTick") && !obj.get("lastAvailableContinuousTick").isJsonNull()) {
-				state.lastAvailableContinuousTick = obj.getAsJsonPrimitive("lastAvailableContinuousTick").getAsLong();
-			}
+
+			deserializeTicks(obj, state);
+
 			if (obj.has("time")) {
 				state.time = DateUtils.parse(obj.getAsJsonPrimitive("time").getAsString());
 			}
@@ -1654,8 +1720,44 @@ public class EntityDeserializers {
 				state.totalEvents = obj.getAsJsonPrimitive("totalEvents").getAsLong();
 			}
 
-			if (obj.has("lastError") && !obj.get("lastError").isJsonNull()) {
-				JsonObject lastError = obj.getAsJsonObject("lastError");
+			deserializeLastError(obj, state);
+
+			deserializeProgress(obj, state);
+
+			return state;
+		}
+
+		private void deserializeTicks(JsonObject obj, ReplicationApplierState state) {
+			if (obj.has(LAST_APPLIED_CONTINUOUS_TICK) && !obj.get(LAST_APPLIED_CONTINUOUS_TICK).isJsonNull()) {
+				state.lastAppliedContinuousTick = obj.getAsJsonPrimitive(LAST_APPLIED_CONTINUOUS_TICK).getAsLong();
+			}
+			if (obj.has(LAST_PROCESSED_CONTINUOUS_TICK) && !obj.get(LAST_PROCESSED_CONTINUOUS_TICK).isJsonNull()) {
+				state.lastProcessedContinuousTick = obj.getAsJsonPrimitive(LAST_PROCESSED_CONTINUOUS_TICK).getAsLong();
+			}
+			if (obj.has(LAST_AVAILABLE_CONTINUOUS_TICK) && !obj.get(LAST_AVAILABLE_CONTINUOUS_TICK).isJsonNull()) {
+				state.lastAvailableContinuousTick = obj.getAsJsonPrimitive(LAST_AVAILABLE_CONTINUOUS_TICK).getAsLong();
+			}
+		}
+
+		private void deserializeProgress(JsonObject obj, ReplicationApplierState state) {
+			if (obj.has("progress")) {
+				JsonObject progress = obj.getAsJsonObject("progress");
+				state.progress = new Progress();
+				if (progress.has("failedConnects")) {
+					state.progress.failedConnects = progress.getAsJsonPrimitive("failedConnects").getAsLong();
+				}
+				if (progress.has(MESSAGE)) {
+					state.progress.message = progress.getAsJsonPrimitive(MESSAGE).getAsString();
+				}
+				if (progress.has("time")) {
+					state.progress.time = DateUtils.parse(progress.getAsJsonPrimitive("time").getAsString());
+				}
+			}
+		}
+
+		private void deserializeLastError(JsonObject obj, ReplicationApplierState state) {
+			if (obj.has(LAST_ERROR) && !obj.get(LAST_ERROR).isJsonNull()) {
+				JsonObject lastError = obj.getAsJsonObject(LAST_ERROR);
 				state.lastError = new LastError();
 				if (lastError.has("time")) {
 					state.lastError.setTime(DateUtils.parse(lastError.getAsJsonPrimitive("time").getAsString()));
@@ -1667,22 +1769,6 @@ public class EntityDeserializers {
 					state.lastError.setErrorMessage(lastError.getAsJsonPrimitive(ERROR_MESSAGE).getAsString());
 				}
 			}
-
-			if (obj.has("progress")) {
-				JsonObject progress = obj.getAsJsonObject("progress");
-				state.progress = new Progress();
-				if (progress.has("failedConnects")) {
-					state.progress.failedConnects = progress.getAsJsonPrimitive("failedConnects").getAsLong();
-				}
-				if (progress.has("message")) {
-					state.progress.message = progress.getAsJsonPrimitive("message").getAsString();
-				}
-				if (progress.has("time")) {
-					state.progress.time = DateUtils.parse(progress.getAsJsonPrimitive("time").getAsString());
-				}
-			}
-
-			return state;
 		}
 	}
 
@@ -1715,8 +1801,8 @@ public class EntityDeserializers {
 				entity.serverId = server.getAsJsonPrimitive("serverId").getAsString();
 			}
 
-			if (obj.has("state")) {
-				entity.state = context.deserialize(obj.get("state"), ReplicationApplierState.class);
+			if (obj.has(STATE)) {
+				entity.state = context.deserialize(obj.get(STATE), ReplicationApplierState.class);
 			}
 
 			return entity;
@@ -1741,8 +1827,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			ReplicationLoggerStateEntity entity = deserializeBaseParameter(obj, new ReplicationLoggerStateEntity());
 
-			if (obj.has("state")) {
-				entity.state = context.deserialize(obj.get("state"), ReplicationState.class);
+			if (obj.has(STATE)) {
+				entity.state = context.deserialize(obj.get(STATE), ReplicationState.class);
 			}
 
 			if (obj.has(SERVER)) {
@@ -1902,8 +1988,8 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			DeletedEntity entity = deserializeBaseParameter(obj, new DeletedEntity());
 
-			if (obj.has("deleted")) {
-				entity.deleted = obj.getAsJsonPrimitive("deleted").getAsBoolean();
+			if (obj.has(DELETED)) {
+				entity.deleted = obj.getAsJsonPrimitive(DELETED).getAsBoolean();
 			}
 			if (obj.has("removed")) {
 				entity.deleted = obj.getAsJsonPrimitive("removed").getAsBoolean();
@@ -1970,6 +2056,7 @@ public class EntityDeserializers {
 	}
 
 	public static class TraversalEntityDeserializer implements JsonDeserializer<TraversalEntity<?, ?>> {
+
 		@Override
 		public TraversalEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
@@ -2016,8 +2103,8 @@ public class EntityDeserializers {
 					JsonObject path = paths.get(i).getAsJsonObject();
 					PathEntity<Object, Object> pathEntity = new PathEntity<Object, Object>();
 
-					if (path.has("edges")) {
-						pathEntity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray("edges")));
+					if (path.has(EDGES)) {
+						pathEntity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray(EDGES)));
 					}
 					if (path.has(VERTICES)) {
 						pathEntity.setVertices(getVertices(vertexClazz, context, path.getAsJsonArray(VERTICES)));
@@ -2061,9 +2148,9 @@ public class EntityDeserializers {
 				} else {
 					entity.setDistance(-1L);
 				}
-				if (result.has("edges")) {
+				if (result.has(EDGES)) {
 					// new version >= 2.6
-					entity.setEdges(getEdges(edgeClazz, context, result.getAsJsonArray("edges")));
+					entity.setEdges(getEdges(edgeClazz, context, result.getAsJsonArray(EDGES)));
 				}
 				if (result.has(VERTICES)) {
 					// new version >= 2.6
@@ -2090,8 +2177,8 @@ public class EntityDeserializers {
 			if (paths != null && paths.size() > 0) {
 				JsonObject path = paths.get(0).getAsJsonObject();
 
-				if (path.has("edges")) {
-					entity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray("edges")));
+				if (path.has(EDGES)) {
+					entity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray(EDGES)));
 				}
 				if (path.has(VERTICES)) {
 					entity.setVertices(getVertices(vertexClazz, context, path.getAsJsonArray(VERTICES)));
@@ -2145,8 +2232,8 @@ public class EntityDeserializers {
 				JsonObject obj = element.getAsJsonObject();
 				QueryEntity entity = new QueryEntity();
 
-				if (obj.has("id")) {
-					entity.setId(obj.getAsJsonPrimitive("id").getAsString());
+				if (obj.has(ID)) {
+					entity.setId(obj.getAsJsonPrimitive(ID).getAsString());
 					queries.add(entity);
 				}
 
