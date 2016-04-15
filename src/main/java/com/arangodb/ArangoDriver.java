@@ -162,79 +162,6 @@ public class ArangoDriver extends BaseArangoDriver {
 		this.createModuleDrivers(false);
 	}
 
-	private void createModuleDrivers(boolean createProxys) {
-		if (!createProxys) {
-			this.cursorDriver = ImplFactory.createCursorDriver(configure, this.httpManager);
-			this.batchDriver = ImplFactory.createBatchDriver(configure, this.httpManager);
-			this.collectionDriver = ImplFactory.createCollectionDriver(configure, this.httpManager);
-			this.documentDriver = ImplFactory.createDocumentDriver(configure, this.httpManager);
-			this.indexDriver = ImplFactory.createIndexDriver(configure, this.httpManager);
-			this.adminDriver = ImplFactory.createAdminDriver(configure, this.httpManager);
-			this.aqlFunctionsDriver = ImplFactory.createAqlFunctionsDriver(configure, this.httpManager);
-			this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver, this.httpManager);
-			this.usersDriver = ImplFactory.createUsersDriver(configure, this.httpManager);
-			this.importDriver = ImplFactory.createImportDriver(configure, this.httpManager);
-			this.databaseDriver = ImplFactory.createDatabaseDriver(configure, this.httpManager);
-			this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
-			this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
-			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
-			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, this.httpManager);
-			this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
-			this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
-			this.traversalDriver = ImplFactory.createTraversalDriver(configure, httpManager);
-			this.queryCacheDriver = ImplFactory.createQueryCacheDriver(configure, httpManager);
-		} else {
-			this.transactionDriver = (InternalTransactionDriver) Proxy.newProxyInstance(
-				InternalTransactionDriver.class.getClassLoader(), new Class<?>[] { InternalTransactionDriver.class },
-				new InvocationHandlerImpl(this.transactionDriver));
-			this.jobsDriver = (InternalJobsDriver) Proxy.newProxyInstance(InternalJobsDriver.class.getClassLoader(),
-				new Class<?>[] { InternalJobsDriver.class }, new InvocationHandlerImpl(this.jobsDriver));
-			this.cursorDriver = (InternalCursorDriver) Proxy.newProxyInstance(
-				InternalCursorDriver.class.getClassLoader(), new Class<?>[] { InternalCursorDriver.class },
-				new InvocationHandlerImpl(this.cursorDriver));
-			this.collectionDriver = (InternalCollectionDriver) Proxy.newProxyInstance(
-				InternalCollectionDriver.class.getClassLoader(), new Class<?>[] { InternalCollectionDriver.class },
-				new InvocationHandlerImpl(this.collectionDriver));
-			this.documentDriver = (InternalDocumentDriver) Proxy.newProxyInstance(
-				InternalDocumentDriver.class.getClassLoader(), new Class<?>[] { InternalDocumentDriver.class },
-				new InvocationHandlerImpl(this.documentDriver));
-			this.indexDriver = (InternalIndexDriver) Proxy.newProxyInstance(InternalIndexDriver.class.getClassLoader(),
-				new Class<?>[] { InternalIndexDriver.class }, new InvocationHandlerImpl(this.indexDriver));
-			this.adminDriver = (InternalAdminDriver) Proxy.newProxyInstance(InternalAdminDriver.class.getClassLoader(),
-				new Class<?>[] { InternalAdminDriver.class }, new InvocationHandlerImpl(this.adminDriver));
-			this.aqlFunctionsDriver = (InternalAqlFunctionsDriver) Proxy.newProxyInstance(
-				InternalAqlFunctionsDriver.class.getClassLoader(), new Class<?>[] { InternalAqlFunctionsDriver.class },
-				new InvocationHandlerImpl(this.aqlFunctionsDriver));
-			this.simpleDriver = (InternalSimpleDriver) Proxy.newProxyInstance(
-				InternalSimpleDriver.class.getClassLoader(), new Class<?>[] { InternalSimpleDriver.class },
-				new InvocationHandlerImpl(this.simpleDriver));
-			this.usersDriver = (InternalUsersDriver) Proxy.newProxyInstance(InternalUsersDriver.class.getClassLoader(),
-				new Class<?>[] { InternalUsersDriver.class }, new InvocationHandlerImpl(this.usersDriver));
-			this.importDriver = (InternalImportDriver) Proxy.newProxyInstance(
-				InternalImportDriver.class.getClassLoader(), new Class<?>[] { InternalImportDriver.class },
-				new InvocationHandlerImpl(this.importDriver));
-			this.databaseDriver = (InternalDatabaseDriver) Proxy.newProxyInstance(
-				InternalDatabaseDriver.class.getClassLoader(), new Class<?>[] { InternalDatabaseDriver.class },
-				new InvocationHandlerImpl(this.databaseDriver));
-			this.endpointDriver = (InternalEndpointDriver) Proxy.newProxyInstance(
-				InternalEndpointDriver.class.getClassLoader(), new Class<?>[] { InternalEndpointDriver.class },
-				new InvocationHandlerImpl(this.endpointDriver));
-			this.replicationDriver = (InternalReplicationDriver) Proxy.newProxyInstance(
-				InternalReplicationDriver.class.getClassLoader(), new Class<?>[] { InternalReplicationDriver.class },
-				new InvocationHandlerImpl(this.replicationDriver));
-			this.graphDriver = (InternalGraphDriver) Proxy.newProxyInstance(InternalGraphDriver.class.getClassLoader(),
-				new Class<?>[] { InternalGraphDriver.class }, new InvocationHandlerImpl(this.graphDriver));
-			this.edgeDriver = (InternalEdgeDriver) Proxy.newProxyInstance(InternalEdgeDriver.class.getClassLoader(),
-				new Class<?>[] { InternalEdgeDriver.class }, new InvocationHandlerImpl(this.edgeDriver));
-			this.traversalDriver = (InternalTraversalDriver) Proxy.newProxyInstance(
-				InternalTraversalDriver.class.getClassLoader(), new Class<?>[] { InternalTraversalDriver.class },
-				new InvocationHandlerImpl(this.traversalDriver));
-			this.queryCacheDriver = (InternalQueryCacheDriver) Proxy.newProxyInstance(
-				InternalQueryCacheDriver.class.getClassLoader(), new Class<?>[] { InternalQueryCacheDriver.class },
-				new InvocationHandlerImpl(this.queryCacheDriver));
-		}
-	}
-
 	/**
 	 * This method enables batch execution. Until 'cancelBatchMode' or
 	 * 'executeBatch' is called every other call is stacked and will be either
@@ -5769,6 +5696,148 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		return cursorDriver.executeAqlQueryRaw(getDefaultDatabase(), query, bindVars,
 			getAqlQueryOptions(aqlQueryOptions));
+	}
+
+	/**
+	 * This method replaces the content of the document defined by
+	 * documentHandle. This method offers a parameter rev (revision). If the
+	 * revision of the document on the server does not match the given revision
+	 * the policy parameter is used. If it is set to *last* the operation is
+	 * performed anyway. if it is set to *error* an error is thrown.
+	 *
+	 * @param documentHandle
+	 *            The document's handle.
+	 * @param rawJsonString
+	 *            A string containing a JSON object
+	 * @param rev
+	 *            the desired revision.
+	 * @param policy
+	 *            The update policy
+	 * @param waitForSync
+	 *            if set to true the response is returned when the server has
+	 *            finished.
+	 * @return DocumentEntity<String>
+	 * @throws ArangoException
+	 */
+	public DocumentEntity<String> replaceDocumentRaw(
+		String documentHandle,
+		String rawJsonString,
+		Long rev,
+		Policy policy,
+		Boolean waitForSync) throws ArangoException {
+		return documentDriver.replaceDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, policy,
+			waitForSync);
+	}
+
+	/**
+	 * This method updates a document defined by documentHandle. This method
+	 * offers a parameter rev (revision). If the revision of the document on the
+	 * server does not match the given revision the policy parameter is used. If
+	 * it is set to *last* the operation is performed anyway. if it is set to
+	 * *error* an error is thrown.
+	 *
+	 * @param documentHandle
+	 *            The document handle.
+	 * @param rawJsonString
+	 *            A string containing a JSON object
+	 * @param rev
+	 *            The desired revision
+	 * @param policy
+	 *            The update policy
+	 * @param waitForSync
+	 *            if set to true the response is returned when the server has
+	 *            finished.
+	 * @param keepNull
+	 *            If true null values are kept.
+	 * @return DocumentEntity<String>
+	 * @throws ArangoException
+	 */
+	public DocumentEntity<String> updateDocumentRaw(
+		String documentHandle,
+		String rawJsonString,
+		Long rev,
+		Policy policy,
+		Boolean waitForSync,
+		Boolean keepNull) throws ArangoException {
+		return documentDriver.updateDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, policy,
+			waitForSync, keepNull);
+	}
+
+	//
+	// private functions
+	//
+
+	private void createModuleDrivers(boolean createProxys) {
+		if (!createProxys) {
+			this.cursorDriver = ImplFactory.createCursorDriver(configure, this.httpManager);
+			this.batchDriver = ImplFactory.createBatchDriver(configure, this.httpManager);
+			this.collectionDriver = ImplFactory.createCollectionDriver(configure, this.httpManager);
+			this.documentDriver = ImplFactory.createDocumentDriver(configure, this.httpManager);
+			this.indexDriver = ImplFactory.createIndexDriver(configure, this.httpManager);
+			this.adminDriver = ImplFactory.createAdminDriver(configure, this.httpManager);
+			this.aqlFunctionsDriver = ImplFactory.createAqlFunctionsDriver(configure, this.httpManager);
+			this.simpleDriver = ImplFactory.createSimpleDriver(configure, cursorDriver, this.httpManager);
+			this.usersDriver = ImplFactory.createUsersDriver(configure, this.httpManager);
+			this.importDriver = ImplFactory.createImportDriver(configure, this.httpManager);
+			this.databaseDriver = ImplFactory.createDatabaseDriver(configure, this.httpManager);
+			this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
+			this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
+			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
+			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, this.httpManager);
+			this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
+			this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
+			this.traversalDriver = ImplFactory.createTraversalDriver(configure, httpManager);
+			this.queryCacheDriver = ImplFactory.createQueryCacheDriver(configure, httpManager);
+		} else {
+			this.transactionDriver = (InternalTransactionDriver) Proxy.newProxyInstance(
+				InternalTransactionDriver.class.getClassLoader(), new Class<?>[] { InternalTransactionDriver.class },
+				new InvocationHandlerImpl(this.transactionDriver));
+			this.jobsDriver = (InternalJobsDriver) Proxy.newProxyInstance(InternalJobsDriver.class.getClassLoader(),
+				new Class<?>[] { InternalJobsDriver.class }, new InvocationHandlerImpl(this.jobsDriver));
+			this.cursorDriver = (InternalCursorDriver) Proxy.newProxyInstance(
+				InternalCursorDriver.class.getClassLoader(), new Class<?>[] { InternalCursorDriver.class },
+				new InvocationHandlerImpl(this.cursorDriver));
+			this.collectionDriver = (InternalCollectionDriver) Proxy.newProxyInstance(
+				InternalCollectionDriver.class.getClassLoader(), new Class<?>[] { InternalCollectionDriver.class },
+				new InvocationHandlerImpl(this.collectionDriver));
+			this.documentDriver = (InternalDocumentDriver) Proxy.newProxyInstance(
+				InternalDocumentDriver.class.getClassLoader(), new Class<?>[] { InternalDocumentDriver.class },
+				new InvocationHandlerImpl(this.documentDriver));
+			this.indexDriver = (InternalIndexDriver) Proxy.newProxyInstance(InternalIndexDriver.class.getClassLoader(),
+				new Class<?>[] { InternalIndexDriver.class }, new InvocationHandlerImpl(this.indexDriver));
+			this.adminDriver = (InternalAdminDriver) Proxy.newProxyInstance(InternalAdminDriver.class.getClassLoader(),
+				new Class<?>[] { InternalAdminDriver.class }, new InvocationHandlerImpl(this.adminDriver));
+			this.aqlFunctionsDriver = (InternalAqlFunctionsDriver) Proxy.newProxyInstance(
+				InternalAqlFunctionsDriver.class.getClassLoader(), new Class<?>[] { InternalAqlFunctionsDriver.class },
+				new InvocationHandlerImpl(this.aqlFunctionsDriver));
+			this.simpleDriver = (InternalSimpleDriver) Proxy.newProxyInstance(
+				InternalSimpleDriver.class.getClassLoader(), new Class<?>[] { InternalSimpleDriver.class },
+				new InvocationHandlerImpl(this.simpleDriver));
+			this.usersDriver = (InternalUsersDriver) Proxy.newProxyInstance(InternalUsersDriver.class.getClassLoader(),
+				new Class<?>[] { InternalUsersDriver.class }, new InvocationHandlerImpl(this.usersDriver));
+			this.importDriver = (InternalImportDriver) Proxy.newProxyInstance(
+				InternalImportDriver.class.getClassLoader(), new Class<?>[] { InternalImportDriver.class },
+				new InvocationHandlerImpl(this.importDriver));
+			this.databaseDriver = (InternalDatabaseDriver) Proxy.newProxyInstance(
+				InternalDatabaseDriver.class.getClassLoader(), new Class<?>[] { InternalDatabaseDriver.class },
+				new InvocationHandlerImpl(this.databaseDriver));
+			this.endpointDriver = (InternalEndpointDriver) Proxy.newProxyInstance(
+				InternalEndpointDriver.class.getClassLoader(), new Class<?>[] { InternalEndpointDriver.class },
+				new InvocationHandlerImpl(this.endpointDriver));
+			this.replicationDriver = (InternalReplicationDriver) Proxy.newProxyInstance(
+				InternalReplicationDriver.class.getClassLoader(), new Class<?>[] { InternalReplicationDriver.class },
+				new InvocationHandlerImpl(this.replicationDriver));
+			this.graphDriver = (InternalGraphDriver) Proxy.newProxyInstance(InternalGraphDriver.class.getClassLoader(),
+				new Class<?>[] { InternalGraphDriver.class }, new InvocationHandlerImpl(this.graphDriver));
+			this.edgeDriver = (InternalEdgeDriver) Proxy.newProxyInstance(InternalEdgeDriver.class.getClassLoader(),
+				new Class<?>[] { InternalEdgeDriver.class }, new InvocationHandlerImpl(this.edgeDriver));
+			this.traversalDriver = (InternalTraversalDriver) Proxy.newProxyInstance(
+				InternalTraversalDriver.class.getClassLoader(), new Class<?>[] { InternalTraversalDriver.class },
+				new InvocationHandlerImpl(this.traversalDriver));
+			this.queryCacheDriver = (InternalQueryCacheDriver) Proxy.newProxyInstance(
+				InternalQueryCacheDriver.class.getClassLoader(), new Class<?>[] { InternalQueryCacheDriver.class },
+				new InvocationHandlerImpl(this.queryCacheDriver));
+		}
 	}
 
 	private AqlQueryOptions getAqlQueryOptions(AqlQueryOptions aqlQueryOptions) {

@@ -33,10 +33,27 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		Policy policy,
 		Boolean waitForSync) throws ArangoException;
 
+	DocumentEntity<String> replaceDocumentRaw(
+		String database,
+		String documentHandle,
+		String rawJsonString,
+		Long rev,
+		Policy policy,
+		Boolean waitForSync) throws ArangoException;
+
 	<T> DocumentEntity<T> updateDocument(
 		String database,
 		String documentHandle,
 		T value,
+		Long rev,
+		Policy policy,
+		Boolean waitForSync,
+		Boolean keepNull) throws ArangoException;
+
+	DocumentEntity<String> updateDocumentRaw(
+		String database,
+		String documentHandle,
+		String rawJsonString,
 		Long rev,
 		Policy policy,
 		Boolean waitForSync,

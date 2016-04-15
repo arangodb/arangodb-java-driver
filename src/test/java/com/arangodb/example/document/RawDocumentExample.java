@@ -127,6 +127,40 @@ public class RawDocumentExample extends BaseExample {
 		}
 
 		//
+		printHeadline("update attributes of a document");
+		//
+
+		x = "{\"test\":1234}";
+		try {
+			DocumentEntity<String> updateDocumentRaw = arangoDriver.updateDocumentRaw(documentHandle2, x, null, null,
+				false, true);
+			// print new document revision
+			System.out.println("rev: " + updateDocumentRaw.getDocumentRevision());
+			// show request result (you have to use getDocumentRaw to get
+			// all attributes of the changed object):
+			System.out.println("value: " + updateDocumentRaw.getEntity());
+		} catch (ArangoException e) {
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
+		}
+
+		//
+		printHeadline("replace a document");
+		//
+
+		x = "{\"hund\":321,\"katze\":321,\"maus\":777}";
+		try {
+			DocumentEntity<String> replaceDocumentRaw = arangoDriver.replaceDocumentRaw(documentHandle2, x, null, null,
+				false);
+			// print new document revision
+			System.out.println("rev: " + replaceDocumentRaw.getDocumentRevision());
+			// show request result (you have to use getDocumentRaw to get
+			// all attributes of the replaced object):
+			System.out.println("value: " + replaceDocumentRaw.getEntity());
+		} catch (ArangoException e) {
+			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
+		}
+
+		//
 		printHeadline("using org.json.JSONML to save a xml file");
 		//
 		String string = "<recipe name=\"bread\" prep_time=\"5 mins\" cook_time=\"3 hours\"> <title>Basic bread</title> <ingredient amount=\"8\" unit=\"dL\">Flour</ingredient> <ingredient amount=\"10\" unit=\"grams\">Yeast</ingredient> <ingredient amount=\"4\" unit=\"dL\" state=\"warm\">Water</ingredient> <ingredient amount=\"1\" unit=\"teaspoon\">Salt</ingredient> <instructions> <step>Mix all ingredients together.</step> <step>Knead thoroughly.</step> <step>Cover with a cloth, and leave for one hour in warm room.</step> <step>Knead again.</step> <step>Place in a bread baking tin.</step> <step>Cover with a cloth, and leave for one hour in warm room.</step> <step>Bake in the oven at 180(degrees)C for 30 minutes.</step> </instructions> </recipe> ";

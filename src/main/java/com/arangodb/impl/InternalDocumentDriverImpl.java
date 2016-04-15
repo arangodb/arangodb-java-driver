@@ -139,6 +139,27 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
+	public DocumentEntity<String> replaceDocumentRaw(
+		String database,
+		String documentHandle,
+		String rawJsonString,
+		Long rev,
+		Policy policy,
+		Boolean waitForSync) throws ArangoException {
+
+		validateDocumentHandle(documentHandle);
+		HttpResponseEntity res = httpManager.doPut(
+			createDocumentEndpointUrl(database, documentHandle), new MapBuilder().put("rev", rev)
+					.put(POLICY, policy == null ? null : policy.name()).put(WAIT_FOR_SYNC, waitForSync).get(),
+			rawJsonString);
+
+		@SuppressWarnings("unchecked")
+		DocumentEntity<String> result = createEntity(res, DocumentEntity.class);
+		result.setEntity(rawJsonString);
+		return result;
+	}
+
+	@Override
 	public <T> DocumentEntity<T> updateDocument(
 		String database,
 		String documentHandle,
@@ -159,6 +180,28 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		annotationHandler.updateDocumentAttributes(value, result.getDocumentRevision(), result.getDocumentHandle(),
 			result.getDocumentKey());
 		result.setEntity(value);
+		return result;
+	}
+
+	@Override
+	public DocumentEntity<String> updateDocumentRaw(
+		String database,
+		String documentHandle,
+		String rawJsonString,
+		Long rev,
+		Policy policy,
+		Boolean waitForSync,
+		Boolean keepNull) throws ArangoException {
+
+		validateDocumentHandle(documentHandle);
+		HttpResponseEntity res = httpManager.doPatch(createDocumentEndpointUrl(database, documentHandle),
+			new MapBuilder().put("rev", rev).put(POLICY, policy == null ? null : policy.name())
+					.put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
+			rawJsonString);
+
+		@SuppressWarnings("unchecked")
+		DocumentEntity<String> result = createEntity(res, DocumentEntity.class);
+		result.setEntity(rawJsonString);
 		return result;
 	}
 
