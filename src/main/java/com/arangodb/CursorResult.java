@@ -31,10 +31,10 @@ import com.arangodb.entity.WarningEntity;
 public class CursorResult<T> implements Iterable<T> {
 
 	private String database;
-	private transient InternalCursorDriver cursorDriver;
-	private transient Class<?>[] clazz;
-	private transient CursorEntity<T> entity;
-	private transient int pos;
+	private InternalCursorDriver cursorDriver;
+	private Class<?>[] clazz;
+	private CursorEntity<T> entity;
+	private int pos;
 	private int count;
 	private CursorIterator iter;
 

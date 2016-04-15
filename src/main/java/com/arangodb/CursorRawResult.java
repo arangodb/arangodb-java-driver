@@ -32,9 +32,9 @@ import com.google.gson.JsonObject;
 public class CursorRawResult implements Iterable<String> {
 
 	private String database;
-	private transient InternalCursorDriver cursorDriver;
-	private transient CursorEntity<JsonObject> entity;
-	private transient int pos;
+	private InternalCursorDriver cursorDriver;
+	private CursorEntity<JsonObject> entity;
+	private int pos;
 	private int count;
 	private CursorIterator iter;
 
