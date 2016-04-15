@@ -7,11 +7,11 @@
 
 This library is a Java driver for ArangoDB.
 
-Supported version: ArangoDB 2.6.x, ArangoDB 2.7.x and ArangoDB 2.8.x
+Supported version: ArangoDB 2.7.x and ArangoDB 2.8.x
 
 # Required
 
-* [ArangoDB](https://github.com/arangodb/arangodb) version 2.6.x or 2.7.x
+* [ArangoDB](https://github.com/arangodb/arangodb) version 2.7.x or 2.8.x
 * Java 1.6 later
 
 # Basics
@@ -367,6 +367,10 @@ Now an edge can be created to set a relation between vertices
       null,
       null);
 ``` 
+# Compile java driver
+```
+	mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
+```	
 
 # Learn more
 * [ArangoDB](https://www.arangodb.com/)
