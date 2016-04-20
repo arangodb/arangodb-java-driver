@@ -289,7 +289,7 @@ If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Auth
 
 
 #Graphs
-This driver supports the new [graph api](https://docs.arangodb.com/HttpGharial/README.html).
+This driver supports the new [graph api](https://docs.arangodb.com/HttpGharial/index.html).
 
 Some of the basic graph operations are described in the following:
 
