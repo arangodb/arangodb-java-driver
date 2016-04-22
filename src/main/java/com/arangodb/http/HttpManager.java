@@ -26,8 +26,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -38,8 +36,6 @@ import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
@@ -49,25 +45,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeaderElementIterator;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,8 +75,8 @@ public class HttpManager {
 
 	private static Logger logger = LoggerFactory.getLogger(HttpManager.class);
 
-	private PoolingHttpClientConnectionManager cm;
-	private CloseableHttpClient client;
+	private PoolingClientConnectionManager cm;
+	private DefaultHttpClient client;
 
 	private ArangoConfigure configure;
 
@@ -113,85 +101,33 @@ public class HttpManager {
 	}
 
 	public void init() {
-		// socket factory for HTTP
-		ConnectionSocketFactory plainsf = new PlainConnectionSocketFactory();
-
-		// socket factory for HTTPS
-		SSLConnectionSocketFactory sslsf = initSSLConnectionSocketFactory();
-
-		// register socket factories
-		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create()
-				.register("http", plainsf).register("https", sslsf).build();
-
 		// ConnectionManager
-		cm = new PoolingHttpClientConnectionManager(r);
+		cm = new PoolingClientConnectionManager();
 		cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
 		cm.setMaxTotal(configure.getMaxTotalConnection());
 
-		Builder custom = RequestConfig.custom();
-
-		// RequestConfig
+		// Params
+		HttpParams params = new BasicHttpParams();
 		if (configure.getConnectionTimeout() >= 0) {
-			custom.setConnectTimeout(configure.getConnectionTimeout());
+			HttpConnectionParams.setConnectionTimeout(params, configure.getConnectionTimeout());
 		}
 		if (configure.getTimeout() >= 0) {
-			custom.setConnectionRequestTimeout(configure.getTimeout());
-			custom.setSocketTimeout(configure.getTimeout());
+			HttpConnectionParams.setSoTimeout(params, configure.getTimeout());
 		}
-		custom.setStaleConnectionCheckEnabled(configure.isStaleConnectionCheck());
 
-		RequestConfig requestConfig = custom.build();
-
-		HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig);
-		builder.setConnectionManager(cm);
-
-		// KeepAlive Strategy
-		ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
-
-			@Override
-			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-				return HttpManager.this.getKeepAliveDuration(response);
-			}
-
-		};
-		builder.setKeepAliveStrategy(keepAliveStrategy);
-
-		// Retry Handler
-		builder.setRetryHandler(new DefaultHttpRequestRetryHandler(configure.getRetryCount(), false));
-
-		// Proxy
-		addProxyToBuilder(builder);
+		HttpConnectionParams.setStaleCheckingEnabled(params, configure.isStaleConnectionCheck());
 
 		// Client
-		client = builder.build();
-	}
+		client = new DefaultHttpClient(cm, params);
 
-	private long getKeepAliveDuration(HttpResponse response) {
-		// Honor 'keep-alive' header
-		HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-		while (it.hasNext()) {
-			HeaderElement he = it.nextElement();
-			String param = he.getName();
-			String value = he.getValue();
-			if (value != null && "timeout".equalsIgnoreCase(param)) {
-				try {
-					return Long.parseLong(value) * 1000L;
-				} catch (NumberFormatException ignore) {
-					// ignore this exception
-				}
-			}
-		}
-		// otherwise keep alive for 30 seconds
-		return 30L * 1000L;
-	}
-
-	private void addProxyToBuilder(HttpClientBuilder builder) {
+		// Proxy
 		if (configure.getProxyHost() != null && configure.getProxyPort() != 0) {
 			HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
-
-			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-			builder.setRoutePlanner(routePlanner);
+			client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
+
+		// Retry Handler
+		client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configure.getRetryCount(), false));
 	}
 
 	public void destroy() {
@@ -626,7 +562,7 @@ public class HttpManager {
 		return res.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED;
 	}
 
-	public CloseableHttpClient getClient() {
+	public DefaultHttpClient getClient() {
 		return client;
 	}
 
@@ -664,16 +600,6 @@ public class HttpManager {
 		this.jobIds = new ArrayList<String>();
 		this.jobs.clear();
 
-	}
-
-	private SSLConnectionSocketFactory initSSLConnectionSocketFactory() {
-		SSLConnectionSocketFactory sslsf;
-		if (configure.getSslContext() != null) {
-			sslsf = new SSLConnectionSocketFactory(configure.getSslContext());
-		} else {
-			sslsf = new SSLConnectionSocketFactory(SSLContexts.createSystemDefault());
-		}
-		return sslsf;
 	}
 
 }

@@ -19,10 +19,10 @@ package com.arangodb.sandbox;
 import java.io.ByteArrayInputStream;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -35,8 +35,7 @@ public class PostChunkTest {
 	 */
 	public static void main(String[] args) throws Exception {
 
-		HttpClientBuilder builder = HttpClientBuilder.create();
-		CloseableHttpClient client = builder.build();
+		HttpClient client = new DefaultHttpClient();
 
 		HttpPost post = new HttpPost(
 				"http://localhost:8529/_api/import?collection=test1&createCollection=true&type=documents");

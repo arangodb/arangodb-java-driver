@@ -26,13 +26,13 @@ To add the driver to your project with maven, add the following code to your pom
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>2.7.4</version>
+    <version>2.6.10</version>
   </dependency>
 	....
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 2.7.5-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
+If you want to test with a snapshot version (e.g. 2.6.11-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
@@ -76,7 +76,6 @@ The driver is configured with some default values:
 <tr><th>retryCount</th><td>http retry count</td><td>3</td></tr>
 <tr><th>defaultDatabase</th><td>default database</td><td></td></tr>
 <tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
-<tr><th>useSsl</th><td>use HTTPS connection</td><td>false</td></tr>
 
 </table>
 
@@ -378,6 +377,5 @@ Now an edge can be created to set a relation between vertices
 * [Examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example)
 * [Document examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/document)
 * [Graph examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/graph)
-* [HTTPS examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/ssl)
 * [Tutorial](https://www.arangodb.com/tutorial-java/)
 

@@ -23,25 +23,11 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-
-import javax.net.ssl.SSLContext;
 
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.ssl.SSLContexts;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.arangodb.entity.ArangoVersion;
 
 /**
  * UnitTest for ArangoConfigure.
@@ -156,26 +142,6 @@ public class ArangoConfigureTest {
 
 		configure.shutdown();
 
-	}
-
-	@Test
-	public void sslWithSelfSignedCertificateTest() throws ArangoException, KeyManagementException,
-			NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, URISyntaxException {
-
-		// create a sslContext for the self signed certificate
-		URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
-		SSLContext sslContext = SSLContexts.custom()
-				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
-
-		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
-		configuration.setSslContext(sslContext);
-		configuration.init();
-
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
-
-		ArangoVersion version = arangoDriver.getVersion();
-
-		Assert.assertNotNull(version);
 	}
 
 }
