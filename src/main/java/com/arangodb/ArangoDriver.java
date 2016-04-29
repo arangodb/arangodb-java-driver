@@ -5452,7 +5452,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Do a graph traversal.
 	 * 
-	 * See API documatation of Traversals
+	 * See API documentation of Traversals
 	 * 
 	 * @param traversalQueryOptions
 	 *            the traversal options
