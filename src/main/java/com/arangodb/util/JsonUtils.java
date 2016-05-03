@@ -18,6 +18,8 @@ package com.arangodb.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 /**
@@ -77,4 +79,22 @@ public class JsonUtils {
 		}
 		return o;
 	}
+
+	public static String convertBaseDocumentToJson(JsonObject jsonObject) {
+		JsonObject result = jsonObject.getAsJsonObject("properties");
+
+		JsonElement keyObject = jsonObject.get("_key");
+		if ((null != keyObject) && (JsonNull.class != keyObject.getClass())) {
+			result.add("_key", jsonObject.get("_key"));
+		}
+		JsonElement handleObject = jsonObject.get("_id");
+		if ((null != handleObject) && (JsonNull.class != handleObject.getClass())) {
+			result.add("_id", jsonObject.get("_id"));
+		}
+		// JsonElement revisionObject = jsonObject.get("documentRevision");
+		// result.add("_rev", revisionObject);
+
+		return result.toString();
+	}
+
 }

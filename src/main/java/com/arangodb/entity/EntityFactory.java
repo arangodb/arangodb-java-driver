@@ -28,15 +28,16 @@ import com.arangodb.entity.CollectionEntity.Figures;
 import com.arangodb.entity.EntityDeserializers.CollectionKeyOptionDeserializer;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.JsonSequenceEntity;
+import com.arangodb.util.BaseDocumentCollection;
+import com.arangodb.util.JsonUtils;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
@@ -181,28 +182,39 @@ public class EntityFactory {
 	}
 
 	public static <T> String toJsonString(T obj, boolean includeNullValue) {
-		if (obj != null && obj.getClass().equals(BaseDocument.class)) {
+		if (obj != null && ((obj instanceof BaseDocument) || (obj instanceof BaseDocumentCollection))) {
 			String tmp = includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
+
 			JsonParser jsonParser = new JsonParser();
 			JsonElement jsonElement = jsonParser.parse(tmp);
-			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			JsonObject result = jsonObject.getAsJsonObject("properties");
-			JsonElement keyObject = jsonObject.get("_key");
-			if (keyObject != null && keyObject.getClass() != JsonNull.class) {
-				result.add("_key", jsonObject.get("_key"));
+
+			if (jsonElement.isJsonArray()) {
+				JsonArray jsonArray = jsonElement.getAsJsonArray();
+
+				StringBuilder builder = new StringBuilder();
+				builder.append("[");
+				if (0 != jsonArray.size()) {
+
+					builder.append(JsonUtils.convertBaseDocumentToJson(jsonArray.get(0).getAsJsonObject()));
+					for (int i = 1; i < jsonArray.size(); ++i) {
+						builder.append(",");
+						builder.append(JsonUtils.convertBaseDocumentToJson(jsonArray.get(0).getAsJsonObject()));
+					}
+
+				}
+				builder.append("]");
+
+				return builder.toString();
+			} else {
+				return JsonUtils.convertBaseDocumentToJson(jsonElement.getAsJsonObject());
 			}
-			JsonElement handleObject = jsonObject.get("_id");
-			if (handleObject != null && handleObject.getClass() != JsonNull.class) {
-				result.add("_id", jsonObject.get("_id"));
-			}
-			// JsonElement revisionValue = jsonObject.get("documentRevision");
-			// result.add("_rev", revisionValue);
-			return result.toString();
 		}
+
 		return includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
 	}
 
 	/**
+	 * @param <T>
 	 * @param obj
 	 * @param includeNullValue
 	 * @return a JsonElement object
@@ -217,7 +229,7 @@ public class EntityFactory {
 	 * @since 1.4.0
 	 */
 	private static class ExcludeExclusionStrategy implements ExclusionStrategy {
-		private boolean serialize;
+		private final boolean serialize;
 
 		public ExcludeExclusionStrategy(boolean serialize) {
 			this.serialize = serialize;
@@ -226,10 +238,7 @@ public class EntityFactory {
 		@Override
 		public boolean shouldSkipField(FieldAttributes f) {
 			Exclude annotation = f.getAnnotation(Exclude.class);
-			if (annotation != null && (serialize ? annotation.serialize() : annotation.deserialize())) {
-				return true;
-			}
-			return false;
+			return annotation != null && (serialize ? annotation.serialize() : annotation.deserialize());
 		}
 
 		@Override
