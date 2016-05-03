@@ -28,7 +28,7 @@ import com.arangodb.entity.CollectionEntity.Figures;
 import com.arangodb.entity.EntityDeserializers.CollectionKeyOptionDeserializer;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.JsonSequenceEntity;
-import com.arangodb.util.BaseDocumentCollection;
+import com.arangodb.util.CollectionUtils;
 import com.arangodb.util.JsonUtils;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -182,7 +182,8 @@ public class EntityFactory {
 	}
 
 	public static <T> String toJsonString(T obj, boolean includeNullValue) {
-		if (obj != null && ((obj instanceof BaseDocument) || (obj instanceof BaseDocumentCollection))) {
+		if (obj != null && ((obj instanceof BaseDocument) || ((obj instanceof Collection) &&
+				CollectionUtils.checkElementsType((Collection) obj, BaseDocument.class)))) {
 			String tmp = includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
 
 			JsonParser jsonParser = new JsonParser();
@@ -198,7 +199,7 @@ public class EntityFactory {
 					builder.append(JsonUtils.convertBaseDocumentToJson(jsonArray.get(0).getAsJsonObject()));
 					for (int i = 1; i < jsonArray.size(); ++i) {
 						builder.append(",");
-						builder.append(JsonUtils.convertBaseDocumentToJson(jsonArray.get(0).getAsJsonObject()));
+						builder.append(JsonUtils.convertBaseDocumentToJson(jsonArray.get(i).getAsJsonObject()));
 					}
 
 				}
