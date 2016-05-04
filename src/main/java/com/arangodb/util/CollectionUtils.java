@@ -92,7 +92,7 @@ public class CollectionUtils {
 
 	public static boolean checkElementsType(Collection<?> collection, Class<?> clazz) {
 		for (Object element : collection) {
-			if (!(element.getClass().isAssignableFrom(clazz))) {
+			if (!(clazz.isAssignableFrom(element.getClass()))) {
 				return false;
 			}
 		}
