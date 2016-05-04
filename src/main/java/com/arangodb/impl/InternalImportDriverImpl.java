@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.http.HttpManager;
@@ -47,8 +48,8 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 
 		HttpResponseEntity res = httpManager.doPost(
 			createEndpointUrl(database, "/_api/import"), new MapBuilder().put("collection", collection)
-					.put("createCollection", createCollection).put("type", "array").get(),
-			EntityFactory.toJsonString(values));
+					.put("createCollection", createCollection).put("type", "list").get(),
+			EntityFactory.toJsonString((Collection<BaseDocument>) values));
 
 		return createEntity(res, ImportResultEntity.class);
 

@@ -90,4 +90,14 @@ public class CollectionUtils {
 		return coll != null && !coll.isEmpty();
 	}
 
+	public static boolean checkElementsType(Collection<?> collection, Class<?> clazz) {
+		for (Object element : collection) {
+			if (!(clazz.isAssignableFrom(element.getClass()))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }
