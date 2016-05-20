@@ -71,7 +71,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 			driver.createCollection(COLLECTION_NAME);
 		} catch (ArangoException e) {
 		}
-		driver.truncateCollection(COLLECTION_NAME);
 
 		// add some test data
 		for (int i = 0; i < 100; i++) {
@@ -105,52 +104,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(count, is(100));
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_simple_all_deprecated() throws ArangoException {
-
-		CursorResultSet<TestComplexEntity01> rs = driver.executeSimpleAllWithResultSet(COLLECTION_NAME, 0, 0,
-			TestComplexEntity01.class);
-		int count = 0;
-		while (rs.hasNext()) {
-			TestComplexEntity01 entity = rs.next();
-			count++;
-
-			assertThat(entity, is(notNullValue()));
-		}
-		rs.close();
-
-		assertThat(count, is(100));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_simple_all_with_doc_deprecated() throws ArangoException {
-
-		CursorResultSet<DocumentEntity<TestComplexEntity01>> rs = driver
-				.executeSimpleAllWithDocumentResultSet(COLLECTION_NAME, 0, 0, TestComplexEntity01.class);
-		int count = 0;
-		int ageCount = 0;
-		while (rs.hasNext()) {
-			DocumentEntity<TestComplexEntity01> doc = rs.next();
-			count++;
-
-			assertThat(doc, is(notNullValue()));
-			assertThat(doc.getDocumentHandle(), startsWith(COLLECTION_NAME));
-			assertThat(doc.getDocumentKey(), is(notNullValue()));
-			assertThat(doc.getDocumentRevision(), is(not(0L)));
-
-			if (doc.getEntity().getAge() != 0) {
-				ageCount++;
-			}
-		}
-		rs.close();
-
-		assertThat(count, is(100));
-		assertThat(ageCount, is(99));
-
-	}
-
 	@Test
 	public void test_example_by() throws ArangoException {
 
@@ -166,48 +119,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 			assertThat(entity.getUser(), is("user_6"));
 		}
 		assertThat(count, is(10));
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_example_by_deprecated() throws ArangoException {
-
-		CursorResultSet<TestComplexEntity01> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
-			new MapBuilder().put("user", "user_6").get(), 0, 0, TestComplexEntity01.class);
-		int count = 0;
-		while (rs.hasNext()) {
-			TestComplexEntity01 entity = rs.next();
-			count++;
-
-			assertThat(entity.getUser(), is("user_6"));
-		}
-		rs.close();
-
-		assertThat(count, is(10));
-
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_example_by_with_doc_deprecated() throws ArangoException {
-
-		CursorResultSet<DocumentEntity<TestComplexEntity01>> rs = driver.executeSimpleByExampleWithDocumentResusltSet(
-			COLLECTION_NAME, new MapBuilder().put("user", "user_6").get(), 0, 0, TestComplexEntity01.class);
-		int count = 0;
-		while (rs.hasNext()) {
-			DocumentEntity<TestComplexEntity01> doc = rs.next();
-			count++;
-
-			assertThat(doc.getDocumentHandle(), startsWith(COLLECTION_NAME));
-			assertThat(doc.getDocumentKey(), is(notNullValue()));
-			assertThat(doc.getDocumentRevision(), is(not(0L)));
-
-			assertThat(doc.getEntity().getUser(), is("user_6"));
-		}
-		rs.close();
-
-		assertThat(count, is(10));
-
 	}
 
 	@Test
@@ -263,22 +174,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_range_no_skiplist_deprecated() throws ArangoException {
-
-		// no suitable index known
-		try {
-			driver.executeSimpleRangeWithResultSet(COLLECTION_NAME, "age", 5, 30, null, 0, 0,
-				TestComplexEntity01.class);
-			fail("request should fail");
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(1209));
-			assertThat(e.getCode(), is(404));
-		}
-
-	}
-
 	@Test
 	public void test_range() throws ArangoException {
 
@@ -312,90 +207,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 				assertThat(entity, is(notNullValue()));
 			}
 
-			assertThat(count, is(26));
-		}
-
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_range_deprecated() throws ArangoException {
-
-		// create skip-list
-		driver.createIndex(COLLECTION_NAME, IndexType.SKIPLIST, false, "age");
-
-		{
-			CursorResultSet<TestComplexEntity01> rs = driver.executeSimpleRangeWithResultSet(COLLECTION_NAME, "age", 5,
-				30, null, 0, 0, TestComplexEntity01.class);
-
-			int count = 0;
-			while (rs.hasNext()) {
-				TestComplexEntity01 entity = rs.next();
-				count++;
-				assertThat(entity, is(notNullValue()));
-			}
-			rs.close();
-			assertThat(count, is(25));
-		}
-
-		{
-			CursorResultSet<TestComplexEntity01> rs = driver.executeSimpleRangeWithResultSet(COLLECTION_NAME, "age", 5,
-				30, true, 0, 0, TestComplexEntity01.class);
-
-			int count = 0;
-			while (rs.hasNext()) {
-				TestComplexEntity01 entity = rs.next();
-				count++;
-				assertThat(entity, is(notNullValue()));
-			}
-			rs.close();
-			assertThat(count, is(26));
-		}
-
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void test_range_with_doc_deprecated() throws ArangoException {
-
-		// create skip-list
-		driver.createIndex(COLLECTION_NAME, IndexType.SKIPLIST, false, "age");
-
-		{
-			CursorResultSet<DocumentEntity<TestComplexEntity01>> rs = driver.executeSimpleRangeWithDocumentResultSet(
-				COLLECTION_NAME, "age", 5, 30, null, 0, 0, TestComplexEntity01.class);
-
-			int count = 0;
-			while (rs.hasNext()) {
-				DocumentEntity<TestComplexEntity01> doc = rs.next();
-				count++;
-				assertThat(doc, is(notNullValue()));
-				assertThat(doc.getDocumentHandle(), startsWith(COLLECTION_NAME));
-				assertThat(doc.getDocumentKey(), is(notNullValue()));
-				assertThat(doc.getDocumentRevision(), is(not(0L)));
-				assertThat(doc.getEntity(), is(notNullValue()));
-				assertThat(doc.getEntity().getAge(), is(not(0)));
-			}
-			rs.close();
-			assertThat(count, is(25));
-		}
-
-		{
-			CursorResultSet<DocumentEntity<TestComplexEntity01>> rs = driver.executeSimpleRangeWithDocumentResultSet(
-				COLLECTION_NAME, "age", 5, 30, true, 0, 0, TestComplexEntity01.class);
-
-			int count = 0;
-			while (rs.hasNext()) {
-				DocumentEntity<TestComplexEntity01> doc = rs.next();
-				count++;
-				assertThat(doc, is(notNullValue()));
-				assertThat(doc.getDocumentHandle(), startsWith(COLLECTION_NAME));
-				assertThat(doc.getDocumentKey(), is(notNullValue()));
-				assertThat(doc.getDocumentRevision(), is(not(0L)));
-				assertThat(doc.getEntity(), is(notNullValue()));
-				assertThat(doc.getEntity().getAge(), is(not(0)));
-			}
-			rs.close();
 			assertThat(count, is(26));
 		}
 

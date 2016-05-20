@@ -401,16 +401,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		List<String> documents = driver.getDocuments(collectionName);
 		assertEquals(3, documents.size());
 
-		String prefix;
-		if (documents.get(0).startsWith("/_db/")) {
-			// since ArangoDB 2.6
-			prefix = "/_db/" + DATABASE_NAME + "/_api/document/";
-		} else {
-			prefix = "/_api/document/";
-		}
-
-		List<String> list = Arrays.asList(prefix + doc1.getDocumentHandle(), prefix + doc2.getDocumentHandle(),
-			prefix + doc3.getDocumentHandle());
+		List<String> list = Arrays.asList(doc1.getDocumentHandle(), doc2.getDocumentHandle(), doc3.getDocumentHandle());
 
 		assertTrue(documents.containsAll(list));
 	}

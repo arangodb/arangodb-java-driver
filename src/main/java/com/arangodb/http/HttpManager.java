@@ -52,7 +52,6 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -62,8 +61,8 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -88,7 +87,7 @@ public class HttpManager {
 
 	private static Logger logger = LoggerFactory.getLogger(HttpManager.class);
 
-	private HttpClientConnectionManager cm;
+	private PoolingHttpClientConnectionManager cm;
 	private CloseableHttpClient client;
 
 	private ArangoConfigure configure;
@@ -125,10 +124,9 @@ public class HttpManager {
 				.register("http", plainsf).register("https", sslsf).build();
 
 		// ConnectionManager
-		// cm = new PoolingHttpClientConnectionManager(r);
-		cm = new BasicHttpClientConnectionManager(r);
-		// cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
-		// cm.setMaxTotal(configure.getMaxTotalConnection());
+		cm = new PoolingHttpClientConnectionManager(r);
+		cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
+		cm.setMaxTotal(configure.getMaxTotalConnection());
 
 		Builder custom = RequestConfig.custom();
 

@@ -3110,48 +3110,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param clazz
 	 *            the expected class, the result from the server request is
 	 *            deserialized to an instance of this class.
-	 * @return a CursorEntity object
-	 * @throws ArangoException
-	 * @deprecated As of release 2.5.4, replaced by
-	 *             {@link #executeSimpleRangeWithDocuments(String, String, Object, Object, Boolean, int, int, Class)}
-	 */
-	@Deprecated
-	public <T> CursorEntity<T> executeSimpleRange(
-		String collectionName,
-		String attribute,
-		Object left,
-		Object right,
-		Boolean closed,
-		int skip,
-		int limit,
-		Class<T> clazz) throws ArangoException {
-		return simpleDriver.executeSimpleRange(getDefaultDatabase(), collectionName, attribute, left, right, closed,
-			skip, limit, clazz);
-	}
-
-	/**
-	 * This will find all documents within a given range. In order to execute a
-	 * range query, a skip-list index on the queried attribute must be present.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param attribute
-	 *            The attribute path to check.
-	 * @param left
-	 *            The lower bound
-	 * @param right
-	 *            The upper bound
-	 * @param closed
-	 *            If true, use interval including left and right, otherwise
-	 *            exclude right, but include left.
-	 * @param skip
-	 *            The number of documents to skip in the query.
-	 * @param limit
-	 *            The maximal amount of documents to return. The skip is applied
-	 *            before the limit restriction.
-	 * @param clazz
-	 *            the expected class, the result from the server request is
-	 *            deserialized to an instance of this class.
 	 * @return DocumentCursor<T>
 	 * @throws ArangoException
 	 */

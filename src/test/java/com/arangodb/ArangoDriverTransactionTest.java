@@ -32,6 +32,8 @@ import com.arangodb.entity.TransactionResultEntity;
  */
 public class ArangoDriverTransactionTest extends BaseTest {
 
+	private static final String SOME_COLLECTION = "someCollection";
+
 	public class ParamObject {
 		private String a = "a";
 
@@ -70,15 +72,13 @@ public class ArangoDriverTransactionTest extends BaseTest {
 
 	@Before
 	public void setup() throws ArangoException {
-		TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "desc:" + 9999, 9999);
-		driver.createDocument("someCollection", value, true, false);
 		try {
-			driver.deleteCollection("someCollection");
+			driver.deleteCollection(SOME_COLLECTION);
 		} catch (ArangoException e) {
 
 		}
 		try {
-			driver.createCollection("someCollection");
+			driver.createCollection(SOME_COLLECTION);
 		} catch (ArangoException e) {
 
 		}
@@ -87,7 +87,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 	@After
 	public void teardown() throws ArangoException {
 		try {
-			driver.deleteCollection("someCollection");
+			driver.deleteCollection(SOME_COLLECTION);
 		} catch (ArangoException e) {
 
 		}
@@ -107,7 +107,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 
 		transaction = driver.createTransaction("function (params) {" + "var db = require('internal').db;"
 				+ "return db.someCollection.all().toArray()[0];" + "}");
-		transaction.addReadCollection("someCollection");
+		transaction.addReadCollection(SOME_COLLECTION);
 		result = driver.executeTransaction(transaction);
 
 		assertThat(result.getStatusCode(), is(200));

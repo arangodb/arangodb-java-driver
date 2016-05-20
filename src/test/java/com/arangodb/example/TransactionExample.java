@@ -60,6 +60,11 @@ public class TransactionExample extends BaseExample {
 		configuration = getConfiguration();
 		arangoDriver = getArangoDriver(configuration);
 		createDatabase(arangoDriver, DATABASE_NAME);
+
+		try {
+			arangoDriver.createCollection(COLLECTION_NAME);
+		} catch (Exception ex) {
+		}
 	}
 
 	@Test
