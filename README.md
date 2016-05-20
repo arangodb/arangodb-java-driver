@@ -41,7 +41,7 @@ ArangoDB 2.7.x and ArangoDB 2.8.x:
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>3.0.0</version>
+    <version>2.7.4</version>
   </dependency>
 	....
 </dependencies>
