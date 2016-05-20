@@ -3,7 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
-VERSION=2.8.7
+VERSION=3.0.0
 NAME=ArangoDB-$VERSION
 
 if [ ! -d "$DIR/$NAME" ]; then
@@ -34,7 +34,7 @@ ${ARANGOD} \
     --server.keyfile ./server.pem \
     --javascript.app-path ${ARANGODB_DIR}/js/apps \
     --javascript.startup-directory ${ARANGODB_DIR}/js \
-    --server.disable-authentication false &
+    --server.authentication=true &
 
 sleep 2
 
