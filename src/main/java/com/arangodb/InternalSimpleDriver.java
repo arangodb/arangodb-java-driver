@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentResultEntity;
 import com.arangodb.entity.ScalarExampleEntity;
 import com.arangodb.entity.SimpleByResultEntity;
 import com.arangodb.impl.BaseDriverInterface;
@@ -239,9 +238,4 @@ public interface InternalSimpleDriver extends BaseDriverInterface {
 		String index,
 		Class<T> clazz) throws ArangoException;
 
-	<T> DocumentResultEntity<T> executeSimpleFirst(String database, String collectionName, Integer count, Class<T> clazz)
-			throws ArangoException;
-
-	<T> DocumentResultEntity<T> executeSimpleLast(String database, String collectionName, Integer count, Class<T> clazz)
-			throws ArangoException;
 }

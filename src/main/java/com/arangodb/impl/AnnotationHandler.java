@@ -73,15 +73,23 @@ public class AnnotationHandler {
 				m.put(BaseDocument.ID, id);
 				m.put(BaseDocument.KEY, key);
 				m.put(BaseDocument.REV, rev);
-				m.put(BaseDocument.FROM, from);
-				m.put(BaseDocument.TO, to);
+				if (from != null) {
+					m.put(BaseDocument.FROM, from);
+				}
+				if (to != null) {
+					m.put(BaseDocument.TO, to);
+				}
 			} else {
 				DocumentAttributes documentAttributes = getDocumentAttributes(o);
 				setAttribute(documentAttributes.id, o, id);
 				setAttribute(documentAttributes.key, o, key);
 				setAttribute(documentAttributes.rev, o, rev);
-				setAttribute(documentAttributes.from, o, from);
-				setAttribute(documentAttributes.to, o, to);
+				if (from != null) {
+					setAttribute(documentAttributes.from, o, from);
+				}
+				if (to != null) {
+					setAttribute(documentAttributes.to, o, to);
+				}
 			}
 		}
 	}

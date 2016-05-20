@@ -346,59 +346,6 @@ public class ArangoDriverIndexTest extends BaseTest {
 	}
 
 	@Test
-	public void test_create_cap_index() throws ArangoException {
-
-		IndexEntity entity = driver.createCappedIndex(collectionName, 10);
-
-		assertThat(entity, is(notNullValue()));
-		assertThat(entity.getCode(), is(201));
-		assertThat(entity.isError(), is(false));
-		assertThat(entity.isNewlyCreated(), is(true));
-		assertThat(entity.getSize(), is(10));
-		assertThat(entity.getId(), is(notNullValue()));
-		assertThat(entity.getType(), is(IndexType.CAP));
-
-		// 確認 ピンポイントで取得
-		IndexEntity entity2 = driver.getIndex(entity.getId());
-		assertThat(entity2.getCode(), is(200));
-		assertThat(entity2.isError(), is(false));
-		assertThat(entity2.isNewlyCreated(), is(false));
-		assertThat(entity2.getSize(), is(10));
-		assertThat(entity2.getId(), is(entity.getId()));
-		assertThat(entity2.getType(), is(IndexType.CAP));
-
-		// 確認 インデックス一覧を取得
-		IndexesEntity indexes = driver.getIndexes(collectionName);
-		assertThat(indexes.getCode(), is(200));
-		assertThat(indexes.isError(), is(false));
-		assertThat(indexes.getIndexes().size(), is(2));
-
-		String pkHandle = col1.getName() + "/0";
-		IndexEntity pk = indexes.getIdentifiers().get(pkHandle);
-		assertThat(pk.getType(), is(IndexType.PRIMARY));
-		assertThat(pk.getFields().size(), is(1));
-		assertThat(pk.getFields().get(0), is("_key"));
-
-		IndexEntity idx1 = indexes.getIdentifiers().get(entity.getId());
-		assertThat(idx1.getType(), is(IndexType.CAP));
-		assertThat(idx1.getFields(), is(nullValue()));
-		assertThat(idx1.getSize(), is(10));
-
-	}
-
-	@Test
-	public void test_create_cap_index_404() throws ArangoException {
-
-		try {
-			driver.createCappedIndex(collectionName404, 10);
-			fail("例外が飛ばないといけない");
-		} catch (ArangoException e) {
-			assertThat(e.getErrorNumber(), is(1203));
-		}
-
-	}
-
-	@Test
 	public void test_getIndexes() throws ArangoException {
 
 		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
@@ -414,8 +361,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(indexes.getIndexes().get(0).getFields().get(0), is("_key"));
 		assertThat(indexes.getIndexes().get(1).getType(), is(IndexType.HASH));
 		assertThat(indexes.getIndexes().get(1).getFields().size(), is(2));
-		assertThat(indexes.getIndexes().get(1).getFields().get(0), is("name"));
-		assertThat(indexes.getIndexes().get(1).getFields().get(1), is("age"));
+		assertThat(indexes.getIndexes().get(1).getFields().get(1), is("name"));
+		assertThat(indexes.getIndexes().get(1).getFields().get(0), is("age"));
 
 		String id1 = indexes.getIndexes().get(0).getId();
 		String id2 = indexes.getIndexes().get(1).getId();
@@ -426,8 +373,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(indexes.getIdentifiers().get(id1).getFields().get(0), is("_key"));
 		assertThat(indexes.getIdentifiers().get(id2).getType(), is(IndexType.HASH));
 		assertThat(indexes.getIdentifiers().get(id2).getFields().size(), is(2));
-		assertThat(indexes.getIdentifiers().get(id2).getFields().get(0), is("name"));
-		assertThat(indexes.getIdentifiers().get(id2).getFields().get(1), is("age"));
+		assertThat(indexes.getIdentifiers().get(id2).getFields().get(1), is("name"));
+		assertThat(indexes.getIdentifiers().get(id2).getFields().get(0), is("age"));
 
 	}
 

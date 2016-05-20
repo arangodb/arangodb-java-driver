@@ -751,12 +751,15 @@ public class EntityDeserializers {
 			Class<?> clazz = getParameterized();
 			if (clazz != null) {
 				entity.entity = context.deserialize(obj, clazz);
-				if (clazz.getName().equalsIgnoreCase(BaseDocument.class.getName())) {
-					// iterate all key/value pairs of the jsonObject and
-					// determine its class(String, Number, Boolean, HashMap,
-					// List)
-					((BaseDocument) entity.entity).setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
-				}
+				// if
+				// (clazz.getName().equalsIgnoreCase(BaseDocument.class.getName()))
+				// {
+				// // iterate all key/value pairs of the jsonObject and
+				// // determine its class(String, Number, Boolean, HashMap,
+				// // List)
+				// ((BaseDocument)
+				// entity.entity).setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
+				// }
 			}
 
 			return entity;

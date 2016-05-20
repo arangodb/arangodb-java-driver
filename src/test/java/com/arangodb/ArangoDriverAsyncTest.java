@@ -52,6 +52,10 @@ public class ArangoDriverAsyncTest extends BaseTest {
 			} catch (ArangoException e) {
 			}
 			try {
+				driver.createCollection(col);
+			} catch (ArangoException e) {
+			}
+			try {
 				driver.stopAsyncMode();
 			} catch (ArangoException e) {
 

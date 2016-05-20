@@ -38,7 +38,6 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DeletedEntity;
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentResultEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.Endpoint;
@@ -123,7 +122,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	private InternalEndpointDriver endpointDriver;
 	private InternalReplicationDriver replicationDriver;
 	private InternalGraphDriver graphDriver;
-	private InternalEdgeDriver edgeDriver;
 	private InternalTransactionDriver transactionDriver;
 	private InternalTraversalDriver traversalDriver;
 	private InternalQueryCacheDriver queryCacheDriver;
@@ -2607,62 +2605,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * This method creates a capped index for a collection.
-	 *
-	 * @param collectionId
-	 *            The collection id.
-	 * @param size
-	 *            the maximum amount of documents
-	 * @return IndexEntity
-	 * @throws ArangoException
-	 */
-	public IndexEntity createCappedIndex(long collectionId, int size) throws ArangoException {
-		return createCappedIndex(String.valueOf(collectionId), size);
-	}
-
-	/**
-	 * This method creates a capped index for a collection.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param size
-	 *            the maximum amount of documents
-	 * @return IndexEntity
-	 * @throws ArangoException
-	 */
-	public IndexEntity createCappedIndex(String collectionName, int size) throws ArangoException {
-		return indexDriver.createCappedIndex(getDefaultDatabase(), collectionName, size);
-	}
-
-	/**
-	 * This method creates a capped index for a collection.
-	 *
-	 * @param collectionId
-	 *            The collection id.
-	 * @param byteSize
-	 *            the maximum size of the document data in bytes
-	 * @return IndexEntity
-	 * @throws ArangoException
-	 */
-	public IndexEntity createCappedByDocumentSizeIndex(long collectionId, int byteSize) throws ArangoException {
-		return createCappedByDocumentSizeIndex(String.valueOf(collectionId), byteSize);
-	}
-
-	/**
-	 * This method creates a capped index for a collection.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param byteSize
-	 *            the maximum size of the document data in bytes
-	 * @return IndexEntity
-	 * @throws ArangoException
-	 */
-	public IndexEntity createCappedByDocumentSizeIndex(String collectionName, int byteSize) throws ArangoException {
-		return indexDriver.createCappedByDocumentSizeIndex(getDefaultDatabase(), collectionName, byteSize);
-	}
-
-	/**
 	 * This method creates a full text index for a collection.
 	 *
 	 * @param collectionId
@@ -3661,46 +3603,6 @@ public class ArangoDriver extends BaseArangoDriver {
 		Integer limit) throws ArangoException {
 		return simpleDriver.executeSimpleUpdateByExample(getDefaultDatabase(), collectionName, example, newValue,
 			keepNull, waitForSync, limit);
-	}
-
-	/**
-	 * This will return the first document(s) from the collection, in the order
-	 * of insertion/update time.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param count
-	 *            the number of documents to return at most. Specifiying count
-	 *            is optional. If it is not specified, it defaults to 1.
-	 * @param clazz
-	 *            the expected class, the result from the server request is
-	 *            deserialized to an instance of this class.
-	 * @return <T> DocumentResultEntity<T>
-	 * @throws ArangoException
-	 */
-	public <T> DocumentResultEntity<T> executeSimpleFirst(String collectionName, Integer count, Class<T> clazz)
-			throws ArangoException {
-		return simpleDriver.executeSimpleFirst(getDefaultDatabase(), collectionName, count, clazz);
-	}
-
-	/**
-	 * This will return the last document(s) from the collection, in the order
-	 * of insertion/update time.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param count
-	 *            the number of documents to return at most. Specifiying count
-	 *            is optional. If it is not specified, it defaults to 1.
-	 * @param clazz
-	 *            the expected class, the result from the server request is
-	 *            deserialized to an instance of this class.
-	 * @return <T> DocumentResultEntity<T>
-	 * @throws ArangoException
-	 */
-	public <T> DocumentResultEntity<T> executeSimpleLast(String collectionName, Integer count, Class<T> clazz)
-			throws ArangoException {
-		return simpleDriver.executeSimpleLast(getDefaultDatabase(), collectionName, count, clazz);
 	}
 
 	/**
@@ -4818,8 +4720,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Stores a new edge with the information contained within the body into the
-	 * given collection.
+	 * Stores a new edge with no further information into the given collection.
 	 * 
 	 * @param graphName
 	 *            The name of the graph.
@@ -4972,15 +4873,26 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the collection containing edge to replace.
 	 * @param key
 	 *            The key of the edge to replace.
+	 * @param fromHandle
+	 *            Document handle of vertex, where the edge comes from. (can be
+	 *            null if value contains "_from" attribute)
+	 * @param toHandle
+	 *            Document handle of vertex, where the edge goes to. (can be
+	 *            null if value contains "_to" attribute)
 	 * @param value
 	 *            The object to replace the existing edge.
 	 * @return a EdgeEntity object
 	 * @throws ArangoException
 	 */
-	public <T> EdgeEntity<T> graphReplaceEdge(String graphName, String edgeCollectionName, String key, T value)
-			throws ArangoException {
-		return graphDriver.replaceEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, value, null, null,
-			null);
+	public <T> EdgeEntity<T> graphReplaceEdge(
+		String graphName,
+		String edgeCollectionName,
+		String key,
+		String fromHandle,
+		String toHandle,
+		T value) throws ArangoException {
+		return graphDriver.replaceEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, fromHandle, toHandle,
+			value, null, null, null);
 	}
 
 	/**
@@ -4993,8 +4905,15 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the collection containing edge to replace.
 	 * @param key
 	 *            The key of the edge to replace.
+	 * @param fromHandle
+	 *            Document handle of vertex, where the edge comes from. (can be
+	 *            null if value contains "_from" attribute)
+	 * @param toHandle
+	 *            Document handle of vertex, where the edge goes to. (can be
+	 *            null if value contains "_to" attribute)
 	 * @param value
-	 *            The object to replace the existing edge.
+	 *            The object to replace the existing edge. Since ArangoDB 3.X
+	 *            the replacement should contain "_from" and "_to".
 	 * @param waitForSync
 	 *            Wait for sync.
 	 * @param ifMatchRevision
@@ -5010,12 +4929,14 @@ public class ArangoDriver extends BaseArangoDriver {
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean waitForSync,
 		Long ifMatchRevision,
 		Long ifNoneMatchRevision) throws ArangoException {
-		return graphDriver.replaceEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, value, waitForSync,
-			ifMatchRevision, ifNoneMatchRevision);
+		return graphDriver.replaceEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, fromHandle, toHandle,
+			value, waitForSync, ifMatchRevision, ifNoneMatchRevision);
 	}
 
 	/**
@@ -5029,6 +4950,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the collection containing edge to update.
 	 * @param key
 	 *            The key of the edge to update.
+	 * @param fromHandle
+	 *            Document handle of vertex, where the edge comes from. (can be
+	 *            null if value contains "_from" attribute)
+	 * @param toHandle
+	 *            Document handle of vertex, where the edge goes to. (can be
+	 *            null if value contains "_to" attribute)
 	 * @param value
 	 *            The object to update the existing edge.
 	 * @param keepNull
@@ -5039,10 +4966,12 @@ public class ArangoDriver extends BaseArangoDriver {
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean keepNull) throws ArangoException {
-		return graphDriver.updateEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, value, null, keepNull,
-			null, null);
+		return graphDriver.updateEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, fromHandle, toHandle,
+			value, null, keepNull, null, null);
 	}
 
 	/**
@@ -5058,6 +4987,12 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The key of the edge to update.
 	 * @param value
 	 *            The object to update the existing edge.
+	 * @param fromHandle
+	 *            Document handle of vertex, where the edge comes from. (can be
+	 *            null if value contains "_from" attribute)
+	 * @param toHandle
+	 *            Document handle of vertex, where the edge goes to. (can be
+	 *            null if value contains "_to" attribute)
 	 * @param waitForSync
 	 *            Wait for sync.
 	 * @param keepNull
@@ -5074,13 +5009,15 @@ public class ArangoDriver extends BaseArangoDriver {
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean waitForSync,
 		Boolean keepNull,
 		Long ifMatchRevision,
 		Long ifNoneMatchRevision) throws ArangoException {
-		return graphDriver.updateEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, value, waitForSync,
-			keepNull, ifMatchRevision, ifNoneMatchRevision);
+		return graphDriver.updateEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, fromHandle, toHandle,
+			value, waitForSync, keepNull, ifMatchRevision, ifNoneMatchRevision);
 	}
 
 	// Some methods not using the graph api
@@ -5420,39 +5357,9 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Create an edge in an edge collection.
-	 *
-	 * @param collectionName
-	 *            name of the edge collection
-	 * @param object
-	 *            the edge object
-	 * @param from
-	 *            id of document 'from'
-	 * @param to
-	 *            id of document 'to'
-	 * @param createCollection
-	 *            if true, the collection will be created if it does not exists
-	 * @param waitForSync
-	 *            wait for sync
-	 * @return the new created EdgeEntity object
-	 * @throws ArangoException
-	 */
-	public <T> EdgeEntity<T> createEdge(
-		String collectionName,
-		T object,
-		String from,
-		String to,
-		Boolean createCollection,
-		Boolean waitForSync) throws ArangoException {
-
-		return this.edgeDriver.createEdge(getDefaultDatabase(), collectionName, object, from, to, createCollection,
-			waitForSync);
-	}
-
-	/**
 	 * Do a graph traversal.
 	 * 
-	 * See API documatation of Traversals
+	 * See API documentation of Traversals
 	 * 
 	 * @param traversalQueryOptions
 	 *            the traversal options
@@ -5783,7 +5690,6 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.endpointDriver = ImplFactory.createEndpointDriver(configure, this.httpManager);
 			this.replicationDriver = ImplFactory.createReplicationDriver(configure, this.httpManager);
 			this.graphDriver = ImplFactory.createGraphDriver(configure, cursorDriver, this.httpManager);
-			this.edgeDriver = ImplFactory.createEdgeDriver(configure, cursorDriver, this.httpManager);
 			this.jobsDriver = ImplFactory.createJobsDriver(configure, this.httpManager);
 			this.transactionDriver = ImplFactory.createTransactionDriver(configure, this.httpManager);
 			this.traversalDriver = ImplFactory.createTraversalDriver(configure, httpManager);
@@ -5829,8 +5735,6 @@ public class ArangoDriver extends BaseArangoDriver {
 				new InvocationHandlerImpl(this.replicationDriver));
 			this.graphDriver = (InternalGraphDriver) Proxy.newProxyInstance(InternalGraphDriver.class.getClassLoader(),
 				new Class<?>[] { InternalGraphDriver.class }, new InvocationHandlerImpl(this.graphDriver));
-			this.edgeDriver = (InternalEdgeDriver) Proxy.newProxyInstance(InternalEdgeDriver.class.getClassLoader(),
-				new Class<?>[] { InternalEdgeDriver.class }, new InvocationHandlerImpl(this.edgeDriver));
 			this.traversalDriver = (InternalTraversalDriver) Proxy.newProxyInstance(
 				InternalTraversalDriver.class.getClassLoader(), new Class<?>[] { InternalTraversalDriver.class },
 				new InvocationHandlerImpl(this.traversalDriver));

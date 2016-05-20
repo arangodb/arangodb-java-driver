@@ -72,6 +72,16 @@ public class ArangoDriverTransactionTest extends BaseTest {
 	public void setup() throws ArangoException {
 		TestComplexEntity01 value = new TestComplexEntity01("user-" + 9999, "desc:" + 9999, 9999);
 		driver.createDocument("someCollection", value, true, false);
+		try {
+			driver.deleteCollection("someCollection");
+		} catch (ArangoException e) {
+
+		}
+		try {
+			driver.createCollection("someCollection");
+		} catch (ArangoException e) {
+
+		}
 	}
 
 	@After

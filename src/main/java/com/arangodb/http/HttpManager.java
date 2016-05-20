@@ -52,6 +52,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -61,8 +62,8 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -87,7 +88,7 @@ public class HttpManager {
 
 	private static Logger logger = LoggerFactory.getLogger(HttpManager.class);
 
-	private PoolingHttpClientConnectionManager cm;
+	private HttpClientConnectionManager cm;
 	private CloseableHttpClient client;
 
 	private ArangoConfigure configure;
@@ -124,9 +125,10 @@ public class HttpManager {
 				.register("http", plainsf).register("https", sslsf).build();
 
 		// ConnectionManager
-		cm = new PoolingHttpClientConnectionManager(r);
-		cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
-		cm.setMaxTotal(configure.getMaxTotalConnection());
+		// cm = new PoolingHttpClientConnectionManager(r);
+		cm = new BasicHttpClientConnectionManager(r);
+		// cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
+		// cm.setMaxTotal(configure.getMaxTotalConnection());
 
 		Builder custom = RequestConfig.custom();
 
@@ -452,7 +454,9 @@ public class HttpManager {
 		responseEntity.statusCode = status.getStatusCode();
 		responseEntity.statusPhrase = status.getReasonPhrase();
 
-		logger.debug("[RES]http-{}: statusCode={}", requestEntity.type, responseEntity.statusCode);
+		if (logger.isDebugEnabled()) {
+			logger.debug("[RES]http-{}: statusCode={}", requestEntity.type, responseEntity.statusCode);
+		}
 
 		// ヘッダの処理
 		// // TODO etag特殊処理は削除する。
@@ -474,13 +478,17 @@ public class HttpManager {
 				responseEntity.contentType = contentType.getValue();
 				if (responseEntity.isDumpResponse()) {
 					responseEntity.stream = entity.getContent();
-					logger.debug("[RES]http-{}: stream, {}", requestEntity.type, contentType.getValue());
+					if (logger.isDebugEnabled()) {
+						logger.debug("[RES]http-{}: stream, {}", requestEntity.type, contentType.getValue());
+					}
 				}
 			}
 			// Close stream in this method.
 			if (responseEntity.stream == null) {
 				responseEntity.text = IOUtils.toString(entity.getContent());
-				logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
+				if (logger.isDebugEnabled()) {
+					logger.debug("[RES]http-{}: text={}", requestEntity.type, responseEntity.text);
+				}
 			}
 		}
 		return responseEntity;

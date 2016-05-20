@@ -52,6 +52,12 @@ public class ArangoDriverBatchTest extends BaseTest {
 			driver.deleteCollection(colName);
 		} catch (ArangoException e) {
 		}
+		try {
+			driver.createCollection(colName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@After

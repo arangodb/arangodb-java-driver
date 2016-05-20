@@ -25,14 +25,13 @@ import java.util.regex.Pattern;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentsEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.Policy;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
-import com.arangodb.util.CollectionUtils;
 import com.arangodb.util.MapBuilder;
 import com.google.gson.JsonElement;
 
@@ -209,16 +208,28 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	public List<String> getDocuments(String database, String collectionName, boolean handleConvert)
 			throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createDocumentEndpointUrl(database),
-			new MapBuilder("collection", collectionName).get());
+		// HttpResponseEntity res =
+		// httpManager.doGet(createDocumentEndpointUrl(database),
+		// new MapBuilder("collection", collectionName).get());
 
-		DocumentsEntity entity = createEntity(res, DocumentsEntity.class);
-		List<String> documents = CollectionUtils.safety(entity.getDocuments());
+		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/simple/all-keys"), null,
+			EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).get()));
 
-		if (handleConvert && !documents.isEmpty()) {
-			updateDocumentHandles(documents);
-		}
-		return documents;
+		@SuppressWarnings("unchecked")
+		CursorEntity<String> tmp = createEntity(res, CursorEntity.class, String.class);
+
+		return tmp.getResults();
+		//
+		//
+		// DocumentResultEntity entity = createEntity(res,
+		// DocumentResultEntity.class);
+		// List<String> documents =
+		// CollectionUtils.safety(entity.getDocuments());
+		//
+		// if (handleConvert && !documents.isEmpty()) {
+		// updateDocumentHandles(documents);
+		// }
+		// return documents;
 	}
 
 	private void updateDocumentHandles(List<String> documents) {

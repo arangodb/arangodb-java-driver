@@ -55,7 +55,8 @@ public class NegativeTest extends BaseTest {
 
 		// TODO Create configure of common test.
 		HttpResponseEntity res = httpManager.doGet("http://" + configure.getArangoHost().getHost() + ":"
-				+ configure.getArangoHost().getPort() + "/_api/collections", null);
+				+ configure.getArangoHost().getPort() + "/_api/collections",
+			null);
 
 		DefaultEntity entity = EntityFactory.createEntity(res.getText(), DefaultEntity.class);
 		assertThat(entity.isError(), is(true));
@@ -85,6 +86,11 @@ public class NegativeTest extends BaseTest {
 		configure.init();
 		ArangoDriver driver = new ArangoDriver(configure);
 
+		try {
+			driver.createCollection("unit_test_issue35");
+		} catch (ArangoException e) {
+		}
+
 		TestComplex value = new TestComplex();
 		value.setName("A\"A'@:///A");
 
@@ -103,6 +109,11 @@ public class NegativeTest extends BaseTest {
 		ArangoConfigure configure = new ArangoConfigure();
 		configure.init();
 		ArangoDriver driver = new ArangoDriver(configure);
+
+		try {
+			driver.createCollection("unit_test_issue35");
+		} catch (ArangoException e) {
+		}
 
 		try {
 			String value = "AAA";

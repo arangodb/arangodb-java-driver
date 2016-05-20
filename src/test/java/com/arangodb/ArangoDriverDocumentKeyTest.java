@@ -60,6 +60,10 @@ public class ArangoDriverDocumentKeyTest {
 			driver.deleteCollection("unit_test_arango_001");
 		} catch (ArangoException e) {
 		}
+		try {
+			driver.createCollection("unit_test_arango_001");
+		} catch (ArangoException e) {
+		}
 
 	}
 

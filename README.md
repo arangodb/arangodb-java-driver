@@ -7,11 +7,13 @@
 
 This library is a Java driver for ArangoDB.
 
-Supported version: ArangoDB 2.7.x and ArangoDB 2.8.x
+Supported version: ArangoDB 3.0.X 
+
+(Use ```arangodb-java-driver 2.7.4``` for ArangoDB 2.7.x and ArangoDB 2.8.x)
 
 # Required
 
-* [ArangoDB](https://github.com/arangodb/arangodb) version 2.7.x or 2.8.x
+* [ArangoDB](https://github.com/arangodb/arangodb) version 3.0.X
 * Java 1.6 later
 
 # Basics
@@ -21,18 +23,31 @@ Supported version: ArangoDB 2.7.x and ArangoDB 2.8.x
 To add the driver to your project with maven, add the following code to your pom.xml
 (please use a driver with a version number compatible to your ArangoDB server's version):
 
+ArangoDB 3.0.X
 ```XML
 <dependencies>
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>2.7.4</version>
+    <version>3.0.0</version>
   </dependency>
 	....
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 2.7.5-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
+ArangoDB 2.7.x and ArangoDB 2.8.x:
+```XML
+<dependencies>
+  <dependency>
+    <groupId>com.arangodb</groupId>
+    <artifactId>arangodb-java-driver</artifactId>
+    <version>3.0.0</version>
+  </dependency>
+	....
+</dependencies>
+```
+
+If you want to test with a snapshot version (e.g. 3.0.0-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
@@ -77,12 +92,6 @@ The driver is configured with some default values:
 <tr><th>defaultDatabase</th><td>default database</td><td></td></tr>
 <tr><th>enableCURLLogger</th><td>logging flag by curl format for debug</td><td>false</td></tr>
 <tr><th>useSsl</th><td>use HTTPS connection</td><td>false</td></tr>
-
-</table>
-
-Since 2.5.4 you can configure a default and a fallback database:
-
-<table>
 <tr><th>property-key</th><th>description</th><th>default value</th></tr>
 <tr><th>arangoHost</th><td>ArangoDB host and port </td><td>127.0.0.1:8529</td></tr>
 <tr><th>fallbackArangoHost</th><td>fallback ArangoDB host and port </td><td></td></tr>

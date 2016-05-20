@@ -531,22 +531,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		T value,
 		Boolean waitForSync) throws ArangoException {
 
-		JsonObject obj;
-		if (value == null) {
-			obj = new JsonObject();
-		} else {
-			JsonElement elem = EntityFactory.toJsonElement(value, false);
-			if (elem.isJsonObject()) {
-				obj = elem.getAsJsonObject();
-			} else {
-				throw new IllegalArgumentException("value need object type(not support array, primitive, etc..).");
-			}
-		}
-		if (key != null) {
-			obj.addProperty("_key", key);
-		}
-		obj.addProperty("_from", fromHandle);
-		obj.addProperty("_to", toHandle);
+		JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPost(
@@ -564,6 +549,30 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		entity.setFromVertexHandle(fromHandle);
 		entity.setToVertexHandle(toHandle);
 		return entity;
+	}
+
+	private <T> JsonObject valueToEdgeJsonObject(String key, String fromHandle, String toHandle, T value) {
+		JsonObject obj;
+		if (value == null) {
+			obj = new JsonObject();
+		} else {
+			JsonElement elem = EntityFactory.toJsonElement(value, false);
+			if (elem.isJsonObject()) {
+				obj = elem.getAsJsonObject();
+			} else {
+				throw new IllegalArgumentException("value need object type(not support array, primitive, etc..).");
+			}
+		}
+		if (key != null) {
+			obj.addProperty("_key", key);
+		}
+		if (fromHandle != null) {
+			obj.addProperty("_from", fromHandle);
+		}
+		if (toHandle != null) {
+			obj.addProperty("_to", toHandle);
+		}
+		return obj;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -615,25 +624,35 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean waitForSync,
 		Long ifMatchRevision,
 		Long ifNoneMatchRevision) throws ArangoException {
+
+		JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPut(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
-			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
-			value == null ? null : EntityFactory.toJsonString(value));
+			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(obj));
 
 		EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
 		if (value != null) {
 			entity.setEntity(value);
-			annotationHandler.updateDocumentAttributes(entity.getEntity(), entity.getDocumentRevision(),
-				entity.getDocumentHandle(), entity.getDocumentKey());
+			annotationHandler.updateEdgeAttributes(entity.getEntity(), entity.getDocumentRevision(),
+				entity.getDocumentHandle(), entity.getDocumentKey(), fromHandle, toHandle);
 		}
+		if (fromHandle != null) {
+			entity.setFromVertexHandle(fromHandle);
+		}
+		if (toHandle != null) {
+			entity.setToVertexHandle(toHandle);
+		}
+
 		return entity;
 	}
 
@@ -644,11 +663,15 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean waitForSync,
 		Boolean keepNull,
 		Long ifMatchRevision,
 		Long ifNoneMatchRevision) throws ArangoException {
+
+		JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
 		HttpResponseEntity res = httpManager.doPatch(
@@ -656,14 +679,22 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
-			value == null ? null : EntityFactory.toJsonString(value));
+			EntityFactory.toJsonString(obj));
 
 		EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
 		if (value != null) {
 			entity.setEntity(value);
-			annotationHandler.updateDocumentAttributes(entity.getEntity(), entity.getDocumentRevision(),
-				entity.getDocumentHandle(), entity.getDocumentKey());
+			annotationHandler.updateEdgeAttributes(entity.getEntity(), entity.getDocumentRevision(),
+				entity.getDocumentHandle(), entity.getDocumentKey(), fromHandle, toHandle);
 		}
+
+		if (fromHandle != null) {
+			entity.setFromVertexHandle(fromHandle);
+		}
+		if (toHandle != null) {
+			entity.setToVertexHandle(toHandle);
+		}
+
 		return entity;
 	}
 

@@ -158,7 +158,7 @@ public class BaseDocumentTest extends BaseGraphTest {
 		assertThat(v1DB.getDocumentRevision(), is(not(0L)));
 		assertThat(v1DB.getDocumentKey(), is(notNullValue()));
 		Map<String, Object> dbProperties = v1DB.getEntity().getProperties();
-		dbProperties.get(key1);
+		Object x = dbProperties.get(key1);
 
 		assertThat((String) v1DB.getEntity().getProperties().get(key1), is(val1));
 		assertThat((Double) v1DB.getEntity().getProperties().get(key2), is(val2));

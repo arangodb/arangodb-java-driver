@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -38,6 +39,15 @@ public class PrimitiveDocumentTest extends BaseTest {
 
 	public PrimitiveDocumentTest(ArangoConfigure configure, ArangoDriver driver) {
 		super(configure, driver);
+	}
+
+	@Before
+	public void setUp() {
+		try {
+			driver.createCollection("unit_test_primitive");
+		} catch (ArangoException e) {
+		}
+
 	}
 
 	@Test

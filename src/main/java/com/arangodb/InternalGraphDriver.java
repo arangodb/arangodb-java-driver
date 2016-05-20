@@ -415,6 +415,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param graphName
 	 * @param edgeCollectionName
 	 * @param key
+	 * @param fromHandle
+	 * @param toHandle
 	 * @param value
 	 * @param waitForSync
 	 * @param ifMatchRevision
@@ -427,6 +429,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean waitForSync,
 		Long ifMatchRevision,
@@ -441,6 +445,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @param graphName
 	 * @param edgeCollectionName
 	 * @param key
+	 * @param fromHandle
+	 * @param toHandle
 	 * @param value
 	 * @param waitForSync
 	 * @param keepNull
@@ -454,6 +460,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String graphName,
 		String edgeCollectionName,
 		String key,
+		String fromHandle,
+		String toHandle,
 		T value,
 		Boolean waitForSync,
 		Boolean keepNull,

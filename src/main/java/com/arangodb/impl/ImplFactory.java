@@ -110,13 +110,6 @@ public class ImplFactory {
 		return new InternalGraphDriverImpl(configure, cursorDriver, httpManager);
 	}
 
-	public static InternalEdgeDriverImpl createEdgeDriver(
-		ArangoConfigure configure,
-		InternalCursorDriver cursorDriver,
-		HttpManager httpManager) {
-		return new InternalEdgeDriverImpl(configure, cursorDriver, httpManager);
-	}
-
 	public static InternalTraversalDriverImpl createTraversalDriver(
 		ArangoConfigure configure,
 		HttpManager httpManager) {

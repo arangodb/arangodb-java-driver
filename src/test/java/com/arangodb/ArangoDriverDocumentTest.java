@@ -176,6 +176,11 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	@Test
 	public void test_create_404_insert() throws ArangoException {
 
+		try {
+			driver.createCollection(collectionName404);
+		} catch (ArangoException e) {
+		}
+
 		TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 		// 存在しないコレクションに追加しようとする
 		DocumentEntity<TestComplexEntity01> res = driver.createDocument(collectionName404, value, true, true);

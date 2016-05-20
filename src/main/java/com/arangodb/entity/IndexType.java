@@ -20,16 +20,15 @@ package com.arangodb.entity;
  * Index Type.
  * 
  * @author tamtam180 - kirscheless at gmail.com
- * @see <a
- *      href="http://www.arangodb.com/manuals/current/HttpIndex.html#HttpIndexIntro">HttpIndexIntro</a>
+ * @see <a href=
+ *      "http://www.arangodb.com/manuals/current/HttpIndex.html#HttpIndexIntro">
+ *      HttpIndexIntro</a>
  */
 public enum IndexType {
 	/** Primary Index */
 	PRIMARY,
 	/** Edge Index */
 	EDGE,
-	/** Cap Index */
-	CAP,
 	/** Geo Index */
 	GEO,
 	/** Hash Index */

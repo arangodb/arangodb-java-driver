@@ -26,7 +26,6 @@ import com.arangodb.DocumentCursorResult;
 import com.arangodb.InternalCursorDriver;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.DocumentResultEntity;
 import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.ScalarExampleEntity;
 import com.arangodb.entity.SimpleByResultEntity;
@@ -431,40 +430,6 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		HttpResponseEntity res = getSimpleFulltext(database, collectionName, attribute, query, skip, limit, index);
 		return responseToDocumentCursor(database, clazz, res);
-	}
-
-	// ----- first --------------------
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> DocumentResultEntity<T> executeSimpleFirst(
-		String database,
-		String collectionName,
-		Integer count,
-		Class<T> clazz) throws ArangoException {
-
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/simple/first"), null,
-			EntityFactory.toJsonString(new MapBuilder().put(COLLECTION, collectionName).put("count", count).get()));
-
-		return createEntity(res, DocumentResultEntity.class, clazz);
-	}
-
-	// ----- last --------------------
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> DocumentResultEntity<T> executeSimpleLast(
-		String database,
-		String collectionName,
-		Integer count,
-		Class<T> clazz) throws ArangoException {
-
-		validateCollectionName(collectionName);
-		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/simple/last"), null,
-			EntityFactory.toJsonString(new MapBuilder().put(COLLECTION, collectionName).put("count", count).get()));
-
-		return createEntity(res, DocumentResultEntity.class, clazz);
 	}
 
 	// ----- private functions

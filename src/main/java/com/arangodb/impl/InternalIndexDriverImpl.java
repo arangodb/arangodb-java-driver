@@ -61,9 +61,6 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 		if (type == IndexType.EDGE) {
 			throw new IllegalArgumentException("cannot create edge index.");
 		}
-		if (type == IndexType.CAP) {
-			throw new IllegalArgumentException("cannot create cap index. use createCappedIndex.");
-		}
 
 		validateCollectionName(collectionName);
 		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
@@ -82,31 +79,6 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 		boolean unique,
 		String... fields) throws ArangoException {
 		return createIndex(database, collectionName, type, unique, false, fields);
-	}
-
-	@Override
-	public IndexEntity createCappedIndex(String database, String collectionName, int size) throws ArangoException {
-
-		validateCollectionName(collectionName);
-
-		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
-			new MapBuilder(COLLECTION, collectionName).get(), EntityFactory.toJsonString(
-				new MapBuilder().put(TYPE, IndexType.CAP.name().toLowerCase(Locale.US)).put(SIZE, size).get()));
-
-		return createEntity(res, IndexEntity.class);
-	}
-
-	@Override
-	public IndexEntity createCappedByDocumentSizeIndex(String database, String collectionName, int byteSize)
-			throws ArangoException {
-
-		validateCollectionName(collectionName);
-
-		HttpResponseEntity res = httpManager.doPost(createIndexEndpointUrl(database),
-			new MapBuilder(COLLECTION, collectionName).get(), EntityFactory.toJsonString(new MapBuilder()
-					.put(TYPE, IndexType.CAP.name().toLowerCase(Locale.US)).put("byteSize", byteSize).get()));
-
-		return createEntity(res, IndexEntity.class);
 	}
 
 	@Override

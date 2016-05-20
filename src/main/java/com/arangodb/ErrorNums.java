@@ -25,12 +25,10 @@ public class ErrorNums {
 	public static final int ERROR_CANNOT_CREATE_TEMP_FILE = 20;
 	public static final int ERROR_REQUEST_CANCELED = 21;
 	public static final int ERROR_DEBUG = 22;
-	public static final int ERROR_AID_NOT_FOUND = 23;
-	public static final int ERROR_LEGEND_INCOMPLETE = 24;
 	public static final int ERROR_IP_ADDRESS_INVALID = 25;
-	public static final int ERROR_LEGEND_NOT_IN_WAL_FILE = 26;
 	public static final int ERROR_FILE_EXISTS = 27;
 	public static final int ERROR_LOCKED = 28;
+	public static final int ERROR_DEADLOCK = 29;
 	public static final int ERROR_HTTP_BAD_PARAMETER = 400;
 	public static final int ERROR_HTTP_UNAUTHORIZED = 401;
 	public static final int ERROR_HTTP_FORBIDDEN = 403;
@@ -41,7 +39,6 @@ public class ErrorNums {
 	public static final int ERROR_HTTP_CORRUPTED_JSON = 600;
 	public static final int ERROR_HTTP_SUPERFLUOUS_SUFFICES = 601;
 	public static final int ERROR_ARANGO_ILLEGAL_STATE = 1000;
-	public static final int ERROR_ARANGO_SHAPER_FAILED = 1001;
 	public static final int ERROR_ARANGO_DATAFILE_SEALED = 1002;
 	public static final int ERROR_ARANGO_UNKNOWN_COLLECTION_TYPE = 1003;
 	public static final int ERROR_ARANGO_READ_ONLY = 1004;
@@ -75,12 +72,11 @@ public class ErrorNums {
 	public static final int ERROR_ARANGO_INDEX_NOT_FOUND = 1212;
 	public static final int ERROR_ARANGO_CROSS_COLLECTION_REQUEST = 1213;
 	public static final int ERROR_ARANGO_INDEX_HANDLE_BAD = 1214;
-	public static final int ERROR_ARANGO_CAP_CONSTRAINT_ALREADY_DEFINED = 1215;
 	public static final int ERROR_ARANGO_DOCUMENT_TOO_LARGE = 1216;
 	public static final int ERROR_ARANGO_COLLECTION_NOT_UNLOADED = 1217;
 	public static final int ERROR_ARANGO_COLLECTION_TYPE_INVALID = 1218;
 	public static final int ERROR_ARANGO_VALIDATION_FAILED = 1219;
-	public static final int ERROR_ARANGO_PARSER_FAILED = 1220;
+	public static final int ERROR_ARANGO_ATTRIBUTE_PARSER_FAILED = 1220;
 	public static final int ERROR_ARANGO_DOCUMENT_KEY_BAD = 1221;
 	public static final int ERROR_ARANGO_DOCUMENT_KEY_UNEXPECTED = 1222;
 	public static final int ERROR_ARANGO_DATADIR_NOT_WRITABLE = 1224;
@@ -98,6 +94,7 @@ public class ErrorNums {
 	public static final int ERROR_ARANGO_WRITE_THROTTLE_TIMEOUT = 1236;
 	public static final int ERROR_ARANGO_COLLECTION_TYPE_MISMATCH = 1237;
 	public static final int ERROR_ARANGO_COLLECTION_NOT_LOADED = 1238;
+	public static final int ERROR_ARANGO_DOCUMENT_REV_BAD = 1239;
 	public static final int ERROR_ARANGO_DATAFILE_FULL = 1300;
 	public static final int ERROR_ARANGO_EMPTY_DATADIR = 1301;
 	public static final int ERROR_REPLICATION_NO_RESPONSE = 1400;
@@ -141,6 +138,9 @@ public class ErrorNums {
 	public static final int ERROR_CLUSTER_AQL_COMMUNICATION = 1474;
 	public static final int ERROR_ARANGO_DOCUMENT_NOT_FOUND_OR_SHARDING_ATTRIBUTES_CHANGED = 1475;
 	public static final int ERROR_CLUSTER_COULD_NOT_DETERMINE_ID = 1476;
+	public static final int ERROR_CLUSTER_ONLY_ON_DBSERVER = 1477;
+	public static final int ERROR_CLUSTER_BACKEND_UNAVAILABLE = 1478;
+	public static final int ERROR_CLUSTER_UNKNOWN_CALLBACK_ENDPOINT = 1479;
 	public static final int ERROR_QUERY_KILLED = 1500;
 	public static final int ERROR_QUERY_PARSE = 1501;
 	public static final int ERROR_QUERY_EMPTY = 1502;
@@ -169,7 +169,7 @@ public class ErrorNums {
 	public static final int ERROR_QUERY_FULLTEXT_INDEX_MISSING = 1571;
 	public static final int ERROR_QUERY_INVALID_DATE_VALUE = 1572;
 	public static final int ERROR_QUERY_MULTI_MODIFY = 1573;
-	public static final int ERROR_QUERY_MODIFY_IN_SUBQUERY = 1574;
+	public static final int ERROR_QUERY_INVALID_AGGREGATE_EXPRESSION = 1574;
 	public static final int ERROR_QUERY_COMPILE_TIME_OPTIONS = 1575;
 	public static final int ERROR_QUERY_EXCEPTION_OPTIONS = 1576;
 	public static final int ERROR_QUERY_COLLECTION_USED_IN_EXPRESSION = 1577;
@@ -238,6 +238,7 @@ public class ErrorNums {
 	public static final int ERROR_GRAPH_INVALID_ID = 1937;
 	public static final int ERROR_GRAPH_COLLECTION_USED_IN_ORPHANS = 1938;
 	public static final int ERROR_GRAPH_EDGE_COL_DOES_NOT_EXIST = 1939;
+	public static final int ERROR_GRAPH_EMPTY = 1940;
 	public static final int ERROR_SESSION_UNKNOWN = 1950;
 	public static final int ERROR_SESSION_EXPIRED = 1951;
 	public static final int SIMPLE_CLIENT_UNKNOWN_ERROR = 2000;
@@ -246,37 +247,18 @@ public class ErrorNums {
 	public static final int SIMPLE_CLIENT_COULD_NOT_READ = 2003;
 	public static final int ERROR_MALFORMED_MANIFEST_FILE = 3000;
 	public static final int ERROR_INVALID_APPLICATION_MANIFEST = 3001;
-	public static final int ERROR_MANIFEST_FILE_ATTRIBUTE_MISSING = 3002;
-	public static final int ERROR_CANNOT_EXTRACT_APPLICATION_ROOT = 3003;
 	public static final int ERROR_INVALID_FOXX_OPTIONS = 3004;
-	public static final int ERROR_FAILED_TO_EXECUTE_SCRIPT = 3005;
-	public static final int ERROR_SYNTAX_ERROR_IN_SCRIPT = 3006;
 	public static final int ERROR_INVALID_MOUNTPOINT = 3007;
-	public static final int ERROR_NO_FOXX_FOUND = 3008;
 	public static final int ERROR_APP_NOT_FOUND = 3009;
 	public static final int ERROR_APP_NEEDS_CONFIGURATION = 3010;
 	public static final int ERROR_MODULE_NOT_FOUND = 3100;
-	public static final int ERROR_MODULE_SYNTAX_ERROR = 3101;
-	public static final int ERROR_MODULE_BAD_WRAPPER = 3102;
 	public static final int ERROR_MODULE_FAILURE = 3103;
-	public static final int ERROR_MODULE_UNKNOWN_FILE_TYPE = 3110;
-	public static final int ERROR_MODULE_PATH_MUST_BE_ABSOLUTE = 3111;
-	public static final int ERROR_MODULE_CAN_NOT_ESCAPE = 3112;
-	public static final int ERROR_MODULE_DRIVE_LETTER = 3113;
-	public static final int ERROR_MODULE_BAD_MODULE_ORIGIN = 3120;
-	public static final int ERROR_MODULE_BAD_PACKAGE_ORIGIN = 3121;
-	public static final int ERROR_MODULE_DOCUMENT_IS_EMPTY = 3125;
-	public static final int ERROR_MODULE_MAIN_NOT_READABLE = 3130;
-	public static final int ERROR_MODULE_MAIN_NOT_JS = 3131;
 	public static final int RESULT_ELEMENT_EXISTS = 10000;
 	public static final int RESULT_ELEMENT_NOT_FOUND = 10001;
-	public static final int ERROR_APP_ALREADY_EXISTS = 20000;
 	public static final int ERROR_QUEUE_ALREADY_EXISTS = 21000;
 	public static final int ERROR_DISPATCHER_IS_STOPPING = 21001;
 	public static final int ERROR_QUEUE_UNKNOWN = 21002;
 	public static final int ERROR_QUEUE_FULL = 21003;
 
-	private ErrorNums() {
-		// this is a helper class
-	}
 }
+
