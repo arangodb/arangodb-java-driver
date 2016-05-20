@@ -19,6 +19,7 @@ package com.arangodb.impl;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,10 +127,15 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		Boolean waitForSync) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
-		HttpResponseEntity res = httpManager.doPut(
-			createDocumentEndpointUrl(database, documentHandle), new MapBuilder().put("rev", rev)
-					.put(POLICY, policy == null ? null : policy.name()).put(WAIT_FOR_SYNC, waitForSync).get(),
-			EntityFactory.toJsonString(value));
+
+		Map<String, Object> header = null;
+		if (rev != null) {
+			MapBuilder mapBuilder = new MapBuilder().put("If-Match", rev);
+			header = mapBuilder.get();
+		}
+
+		HttpResponseEntity res = httpManager.doPut(createDocumentEndpointUrl(database, documentHandle), header,
+			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(value));
 
 		DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
 		annotationHandler.updateDocumentRev(value, result.getDocumentRevision());
