@@ -59,6 +59,7 @@ public class EntityFactory {
 				.setFieldNamingStrategy(new ArangoFieldNamingStrategy())
 				.registerTypeAdapter(CollectionStatus.class, new CollectionStatusTypeAdapter())
 				.registerTypeAdapter(CollectionEntity.class, new EntityDeserializers.CollectionEntityDeserializer())
+				.registerTypeAdapter(CollectionsEntity.class, new EntityDeserializers.CollectionsEntityDeserializer())
 				.registerTypeAdapter(DocumentEntity.class, new EntityDeserializers.DocumentEntityDeserializer())
 				.registerTypeAdapter(DocumentsEntity.class, new EntityDeserializers.DocumentsEntityDeserializer())
 				.registerTypeAdapter(AqlFunctionsEntity.class, new EntityDeserializers.AqlfunctionsEntityDeserializer())

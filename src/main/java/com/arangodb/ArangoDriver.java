@@ -1611,53 +1611,13 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * This method returns all document handles from a collection.
 	 *
-	 * @param collectionId
-	 *            The collection id.
-	 * @return List<String> - The list of document handles
-	 * @throws ArangoException
-	 */
-	public List<String> getDocuments(long collectionId) throws ArangoException {
-		return getDocuments(String.valueOf(collectionId), false);
-	}
-
-	/**
-	 * This method returns all document handles from a collection.
-	 *
 	 * @param collectionName
 	 *            The collection name.
 	 * @return List<String> - The list of document handles
 	 * @throws ArangoException
 	 */
 	public List<String> getDocuments(String collectionName) throws ArangoException {
-		return documentDriver.getDocuments(getDefaultDatabase(), collectionName, false);
-	}
-
-	/**
-	 * This method returns all document handles from a collection.
-	 *
-	 * @param collectionId
-	 *            The collection id.
-	 * @param handleConvert
-	 *            if set to true only the document identifiers are returned
-	 * @return List<String> - The list of document handles
-	 * @throws ArangoException
-	 */
-	public List<String> getDocuments(long collectionId, boolean handleConvert) throws ArangoException {
-		return getDocuments(String.valueOf(collectionId), handleConvert);
-	}
-
-	/**
-	 * This method returns all document handles from a collection.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param handleConvert
-	 *            if set to true only the document identifiers are returned
-	 * @return List<String> - The list of document handles
-	 * @throws ArangoException
-	 */
-	public List<String> getDocuments(String collectionName, boolean handleConvert) throws ArangoException {
-		return documentDriver.getDocuments(getDefaultDatabase(), collectionName, handleConvert);
+		return documentDriver.getDocuments(getDefaultDatabase(), collectionName);
 	}
 
 	/**
@@ -3713,16 +3673,13 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param collection
 	 *            the collection as a string
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param values
 	 *            a list of Objects that will be stored as documents
 	 * @return ImportResultEntity
 	 * @throws ArangoException
 	 */
-	public ImportResultEntity importDocuments(String collection, Boolean createCollection, Collection<?> values)
-			throws ArangoException {
-		return importDriver.importDocuments(getDefaultDatabase(), collection, createCollection, values);
+	public ImportResultEntity importDocuments(String collection, Collection<?> values) throws ArangoException {
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values);
 	}
 
 	/**
@@ -3730,8 +3687,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param collection
 	 *            the collection as a string
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param headerValues
 	 *            a list of lists that will be stored as documents
 	 * @return ImportResultEntity
@@ -3739,10 +3694,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public ImportResultEntity importDocumentsByHeaderValues(
 		String collection,
-		Boolean createCollection,
 		Collection<? extends Collection<?>> headerValues) throws ArangoException {
-		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, createCollection,
-			headerValues);
+		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues);
 	}
 
 	/**

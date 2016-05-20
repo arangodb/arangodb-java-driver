@@ -430,7 +430,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(doc3, is(notNullValue()));
 
 		// get documents
-		List<String> documents = driver.getDocuments(collectionName, true);
+		List<String> documents = driver.getDocuments(collectionName);
 		assertEquals(3, documents.size());
 
 		List<String> list = Arrays.asList(doc1.getDocumentHandle(), doc2.getDocumentHandle(), doc3.getDocumentHandle());

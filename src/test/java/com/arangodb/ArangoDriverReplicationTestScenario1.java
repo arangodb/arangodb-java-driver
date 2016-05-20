@@ -153,7 +153,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		for (int i = 10; i < 300; i++) {
 			values.add(new MapBuilder().put("my-key" + i, 1234567).get());
 		}
-		ImportResultEntity importResult = masterDriver.importDocuments(collectionName1, false, values);
+		ImportResultEntity importResult = masterDriver.importDocuments(collectionName1, values);
 		assertThat(importResult.getCreated(), is(290));
 
 		// wait

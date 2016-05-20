@@ -18,7 +18,12 @@ public class ImportDocumentBenchmarkImporter extends AbstractBenchmarkImporter {
 
 	@Override
 	protected void execute(List<?> values) throws Exception {
-		driver.importDocuments(collectionName, true, values);
+		try {
+			driver.createCollection(collectionName);
+		} catch (Exception ex) {
+		}
+
+		driver.importDocuments(collectionName, values);
 	}
 
 }

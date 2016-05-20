@@ -537,9 +537,8 @@ public class EntityDeserializers {
 	public static class CollectionsEntityDeserializer implements JsonDeserializer<CollectionsEntity> {
 		private Type collectionsType = new TypeToken<List<CollectionEntity>>() {
 		}.getType();
-		private Type namesType = new TypeToken<Map<String, CollectionEntity>>() {
-		}.getType();
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public CollectionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
@@ -550,11 +549,10 @@ public class EntityDeserializers {
 			JsonObject obj = json.getAsJsonObject();
 			CollectionsEntity entity = deserializeBaseParameter(obj, new CollectionsEntity());
 
-			if (obj.has(COLLECTIONS)) {
-				entity.collections = context.deserialize(obj.get(COLLECTIONS), collectionsType);
-			}
-			if (obj.has("names")) {
-				entity.names = context.deserialize(obj.get("names"), namesType);
+			if (obj.has(RESULT)) {
+				entity.setCollections((List<CollectionEntity>) context.deserialize(obj.get(RESULT), collectionsType));
+			} else {
+				entity.setCollections(new ArrayList<CollectionEntity>());
 			}
 
 			return entity;

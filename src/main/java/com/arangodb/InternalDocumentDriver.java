@@ -59,7 +59,7 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		Boolean waitForSync,
 		Boolean keepNull) throws ArangoException;
 
-	List<String> getDocuments(String database, String collectionName, boolean handleConvert) throws ArangoException;
+	List<String> getDocuments(String database, String collectionName) throws ArangoException;
 
 	long checkDocument(String database, String documentHandle) throws ArangoException;
 

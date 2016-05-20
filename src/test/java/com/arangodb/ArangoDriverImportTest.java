@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.ImportResultEntity;
@@ -37,15 +38,29 @@ import com.arangodb.util.TestUtils;
 @SuppressWarnings("unchecked")
 public class ArangoDriverImportTest extends BaseTest {
 
+	private static final String UT_IMPORT_TEST = "ut-import-test";
+
 	public ArangoDriverImportTest(ArangoConfigure configure, ArangoDriver driver) {
 		super(configure, driver);
+	}
+
+	@Before
+	public void setUp() {
+		try {
+			driver.deleteCollection(UT_IMPORT_TEST);
+		} catch (ArangoException e) {
+		}
+		try {
+			driver.createCollection(UT_IMPORT_TEST);
+		} catch (ArangoException e) {
+		}
 	}
 
 	@Test
 	public void test_import_documents() throws ArangoException, IOException {
 
 		List<Station> stations = TestUtils.readStations();
-		ImportResultEntity result = driver.importDocuments("ut-import-test", true, stations);
+		ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, stations);
 
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
@@ -59,13 +74,13 @@ public class ArangoDriverImportTest extends BaseTest {
 	public void test_import_documents_404() throws ArangoException, IOException {
 
 		try {
-			driver.deleteCollection("ut-import-test");
+			driver.deleteCollection(UT_IMPORT_TEST);
 		} catch (ArangoException e) {
 		}
 
 		List<Station> stations = TestUtils.readStations();
 		try {
-			driver.importDocuments("ut-import-test", false, stations);
+			driver.importDocuments(UT_IMPORT_TEST, stations);
 			fail();
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -82,7 +97,7 @@ public class ArangoDriverImportTest extends BaseTest {
 		values.add(Arrays.asList("Joe", "Public", 42, "male"));
 		values.add(Arrays.asList("Jane", "Doe", 31, "female"));
 
-		ImportResultEntity result = driver.importDocumentsByHeaderValues("ut-import-test", true, values);
+		ImportResultEntity result = driver.importDocumentsByHeaderValues(UT_IMPORT_TEST, values);
 
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
@@ -100,7 +115,7 @@ public class ArangoDriverImportTest extends BaseTest {
 		values.add(Arrays.asList("Joe", "Public", 42, "male", 10)); // error
 		values.add(Arrays.asList("Jane", "Doe", 31, "female"));
 
-		ImportResultEntity result = driver.importDocumentsByHeaderValues("ut-import-test", true, values);
+		ImportResultEntity result = driver.importDocumentsByHeaderValues(UT_IMPORT_TEST, values);
 
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
@@ -114,7 +129,7 @@ public class ArangoDriverImportTest extends BaseTest {
 	public void test_import_xsv_404() throws ArangoException, IOException {
 
 		try {
-			driver.deleteCollection("ut-import-test");
+			driver.deleteCollection(UT_IMPORT_TEST);
 		} catch (ArangoException e) {
 		}
 
@@ -124,7 +139,7 @@ public class ArangoDriverImportTest extends BaseTest {
 		values.add(Arrays.asList("Jane", "Doe", 31, "female"));
 
 		try {
-			driver.importDocuments("ut-import-test", false, values);
+			driver.importDocuments(UT_IMPORT_TEST, values);
 			fail();
 		} catch (ArangoException e) {
 			assertThat(e.getCode(), is(404));

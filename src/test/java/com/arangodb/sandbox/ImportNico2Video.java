@@ -44,7 +44,7 @@ public class ImportNico2Video {
 		File file = new File("0000.dat.gz");
 		LineIterator itr = new LineIterator(
 				new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)), "utf-8")));
-		client.importRawJsonDocuments("nico", true, itr, 10);
+		client.importRawJsonDocuments("nico", itr, 10);
 		LineIterator.closeQuietly(itr);
 		configure.shutdown();
 

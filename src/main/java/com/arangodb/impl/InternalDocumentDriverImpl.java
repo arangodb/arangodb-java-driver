@@ -205,31 +205,14 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public List<String> getDocuments(String database, String collectionName, boolean handleConvert)
-			throws ArangoException {
-
-		// HttpResponseEntity res =
-		// httpManager.doGet(createDocumentEndpointUrl(database),
-		// new MapBuilder("collection", collectionName).get());
-
+	public List<String> getDocuments(String database, String collectionName) throws ArangoException {
 		HttpResponseEntity res = httpManager.doPut(createEndpointUrl(database, "/_api/simple/all-keys"), null,
-			EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).get()));
+			EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).put("type", "id").get()));
 
 		@SuppressWarnings("unchecked")
 		CursorEntity<String> tmp = createEntity(res, CursorEntity.class, String.class);
 
 		return tmp.getResults();
-		//
-		//
-		// DocumentResultEntity entity = createEntity(res,
-		// DocumentResultEntity.class);
-		// List<String> documents =
-		// CollectionUtils.safety(entity.getDocuments());
-		//
-		// if (handleConvert && !documents.isEmpty()) {
-		// updateDocumentHandles(documents);
-		// }
-		// return documents;
 	}
 
 	private void updateDocumentHandles(List<String> documents) {

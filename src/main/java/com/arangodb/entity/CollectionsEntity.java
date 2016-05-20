@@ -16,8 +16,11 @@
 
 package com.arangodb.entity;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.arangodb.util.CollectionUtils;
 
 /**
  * A entity representing a list of ArangoDB collections
@@ -30,28 +33,26 @@ public class CollectionsEntity extends BaseEntity {
 	/**
 	 * The list of collections
 	 */
-	List<CollectionEntity> collections;
-
-	/**
-	 * A map containing the collection names as keys and the collections as
-	 * values
-	 */
-	Map<String, CollectionEntity> names;
+	private List<CollectionEntity> collections;
 
 	public List<CollectionEntity> getCollections() {
 		return collections;
 	}
 
 	public Map<String, CollectionEntity> getNames() {
+		Map<String, CollectionEntity> names = new HashMap<String, CollectionEntity>();
+
+		if (CollectionUtils.isNotEmpty(collections)) {
+			for (CollectionEntity collectionEntity : collections) {
+				names.put(collectionEntity.getName(), collectionEntity);
+			}
+		}
+
 		return names;
 	}
 
 	public void setCollections(List<CollectionEntity> collections) {
 		this.collections = collections;
-	}
-
-	public void setNames(Map<String, CollectionEntity> names) {
-		this.names = names;
 	}
 
 	@Override

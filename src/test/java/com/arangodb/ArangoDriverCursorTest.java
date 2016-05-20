@@ -278,8 +278,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 		String query = "return _users + 1";
 		Map<String, Object> bindVars = new HashMap<String, Object>();
-		@SuppressWarnings("rawtypes")
-		CursorResult<Map> cursor = driver.executeAqlQuery(query, bindVars, null, Map.class);
+		CursorResult<Long> cursor = driver.executeAqlQuery(query, bindVars, null, Long.class);
 		assertThat(cursor.hasWarning(), is(true));
 
 		List<WarningEntity> warnings = cursor.getWarnings();

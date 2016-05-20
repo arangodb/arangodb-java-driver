@@ -36,22 +36,16 @@ public class ArangoClient {
 		driver = new ArangoDriver(configure);
 	}
 
-	private void importDocumentsImpl(
-		String collectionName,
-		boolean createCollection,
-		List<String> values,
-		ImportResultEntity total) throws ArangoException {
-		ImportResultEntity result = driver.importDocuments(collectionName, createCollection, values);
+	private void importDocumentsImpl(String collectionName, List<String> values, ImportResultEntity total)
+			throws ArangoException {
+		ImportResultEntity result = driver.importDocuments(collectionName, values);
 		total.setCreated(total.getCreated() + result.getCreated());
 		total.setErrors(total.getErrors() + result.getErrors());
 		total.setEmpty(total.getEmpty() + result.getEmpty());
 	}
 
-	public ImportResultEntity importRawJsonDocuments(
-		String collectionName,
-		boolean createCollection,
-		Iterator<String> itr,
-		int bufferCount) throws ArangoException {
+	public ImportResultEntity importRawJsonDocuments(String collectionName, Iterator<String> itr, int bufferCount)
+			throws ArangoException {
 
 		int tmpBufferCount = bufferCount;
 		if (tmpBufferCount <= 0) {
@@ -64,12 +58,12 @@ public class ArangoClient {
 		while (itr.hasNext()) {
 			buffers.add(itr.next());
 			if (buffers.size() % tmpBufferCount == 0) {
-				importDocumentsImpl(collectionName, createCollection, buffers, total);
+				importDocumentsImpl(collectionName, buffers, total);
 				buffers.clear();
 			}
 		}
 		if (!buffers.isEmpty()) {
-			importDocumentsImpl(collectionName, createCollection, buffers, total);
+			importDocumentsImpl(collectionName, buffers, total);
 		}
 
 		return total;
