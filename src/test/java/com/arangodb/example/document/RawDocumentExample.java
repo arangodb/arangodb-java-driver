@@ -133,8 +133,8 @@ public class RawDocumentExample extends BaseExample {
 
 		x = "{\"test\":1234}";
 		try {
-			final DocumentEntity<String> updateDocumentRaw = driver.updateDocumentRaw(documentHandle2, x, null, null,
-				false, true);
+			final DocumentEntity<String> updateDocumentRaw = driver.updateDocumentRaw(documentHandle2, x, null, false,
+				true);
 			// print new document revision
 			System.out.println("rev: " + updateDocumentRaw.getDocumentRevision());
 			// show request result (you have to use getDocumentRaw to get
@@ -150,7 +150,7 @@ public class RawDocumentExample extends BaseExample {
 
 		x = "{\"hund\":321,\"katze\":321,\"maus\":777}";
 		try {
-			final DocumentEntity<String> replaceDocumentRaw = driver.replaceDocumentRaw(documentHandle2, x, null, null,
+			final DocumentEntity<String> replaceDocumentRaw = driver.replaceDocumentRaw(documentHandle2, x, null,
 				false);
 			// print new document revision
 			System.out.println("rev: " + replaceDocumentRaw.getDocumentRevision());

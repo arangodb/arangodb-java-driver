@@ -18,7 +18,6 @@ package com.arangodb.impl;
 
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +29,6 @@ import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.EntityFactory;
-import com.arangodb.entity.Policy;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.MapBuilder;
@@ -116,19 +114,13 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String documentHandle,
 		final T value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
 
-		Map<String, Object> header = null;
-		if (rev != null) {
-			final MapBuilder mapBuilder = new MapBuilder().put("If-Match", rev);
-			header = mapBuilder.get();
-		}
-
-		final HttpResponseEntity res = httpManager.doPut(createDocumentEndpointUrl(database, documentHandle), header,
-			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(value));
+		final HttpResponseEntity res = httpManager.doPut(createDocumentEndpointUrl(database, documentHandle),
+			createRevisionCheckHeader(rev), new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
+			EntityFactory.toJsonString(value));
 
 		final DocumentEntity<T> result = createEntity(res, DocumentEntity.class);
 		annotationHandler.updateDocumentRev(value, result.getDocumentRevision());
@@ -142,14 +134,11 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String documentHandle,
 		final String rawJsonString,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
-		final HttpResponseEntity res = httpManager.doPut(
-			createDocumentEndpointUrl(database, documentHandle), new MapBuilder().put("rev", rev)
-					.put(POLICY, policy == null ? null : policy.name()).put(WAIT_FOR_SYNC, waitForSync).get(),
-			rawJsonString);
+		final HttpResponseEntity res = httpManager.doPut(createDocumentEndpointUrl(database, documentHandle),
+			createRevisionCheckHeader(rev), new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), rawJsonString);
 
 		@SuppressWarnings("unchecked")
 		final DocumentEntity<String> result = createEntity(res, DocumentEntity.class);
@@ -163,14 +152,13 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String documentHandle,
 		final T value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
 		final HttpResponseEntity res = httpManager.doPatch(createDocumentEndpointUrl(database, documentHandle),
-			new MapBuilder().put("rev", rev).put(POLICY, policy == null ? null : policy.name())
-					.put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
+			createRevisionCheckHeader(rev),
+			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
 			EntityFactory.toJsonString(value, keepNull != null && !keepNull));
 
 		@SuppressWarnings("unchecked")
@@ -187,15 +175,13 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String documentHandle,
 		final String rawJsonString,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
 		final HttpResponseEntity res = httpManager.doPatch(createDocumentEndpointUrl(database, documentHandle),
-			new MapBuilder().put("rev", rev).put(POLICY, policy == null ? null : policy.name())
-					.put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
-			rawJsonString);
+			createRevisionCheckHeader(rev),
+			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(), rawJsonString);
 
 		@SuppressWarnings("unchecked")
 		final DocumentEntity<String> result = createEntity(res, DocumentEntity.class);
@@ -285,18 +271,21 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public DocumentEntity<?> deleteDocument(
-		final String database,
-		final String documentHandle,
-		final Long rev,
-		final Policy policy) throws ArangoException {
+	public DocumentEntity<?> deleteDocument(final String database, final String documentHandle, final Long rev)
+			throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
 		final HttpResponseEntity res = httpManager.doDelete(createDocumentEndpointUrl(database, documentHandle),
-			new MapBuilder().put("rev", rev).put(POLICY, policy == null ? null : policy.name().toLowerCase(Locale.US))
-					.get());
-
+			createRevisionCheckHeader(rev), null);
 		return createEntity(res, DocumentEntity.class);
 	}
 
+	private Map<String, Object> createRevisionCheckHeader(final Long rev) {
+		Map<String, Object> header = null;
+		if (rev != null) {
+			final MapBuilder mapBuilder = new MapBuilder().put("If-Match", rev);
+			header = mapBuilder.get();
+		}
+		return header;
+	}
 }

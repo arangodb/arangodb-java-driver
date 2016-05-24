@@ -49,7 +49,6 @@ import com.arangodb.entity.IndexType;
 import com.arangodb.entity.IndexesEntity;
 import com.arangodb.entity.JobsEntity;
 import com.arangodb.entity.PlainEdgeEntity;
-import com.arangodb.entity.Policy;
 import com.arangodb.entity.QueriesResultEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
@@ -1007,7 +1006,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> replaceDocument(final long collectionId, final long documentId, final Object value)
 			throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null, null);
+		return replaceDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null);
 	}
 
 	/**
@@ -1024,8 +1023,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> DocumentEntity<T> replaceDocument(final String collectionName, final long documentId, final T value)
 			throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
-			null);
+		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null);
 	}
 
 	/**
@@ -1042,7 +1040,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> DocumentEntity<T> replaceDocument(final long collectionId, final String documentKey, final T value)
 			throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionId, documentKey), value, null, null, null);
+		return replaceDocument(createDocumentHandle(collectionId, documentKey), value, null, null);
 	}
 
 	/**
@@ -1059,7 +1057,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> DocumentEntity<T> replaceDocument(final String collectionName, final String documentKey, final T value)
 			throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionName, documentKey), value, null, null, null);
+		return replaceDocument(createDocumentHandle(collectionName, documentKey), value, null, null);
 	}
 
 	/**
@@ -1074,15 +1072,14 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> replaceDocument(final String documentHandle, final T value) throws ArangoException {
-		return documentDriver.replaceDocument(getDefaultDatabase(), documentHandle, value, null, null, null);
+		return documentDriver.replaceDocument(getDefaultDatabase(), documentHandle, value, null, null);
 	}
 
 	/**
 	 * This method replaces the content of the document defined by documentId.
 	 * This method offers a parameter rev (revision). If the revision of the
-	 * document on the server does not match the given revision the policy
-	 * parameter is used. If it is set to *last* the operation is performed
-	 * anyway. if it is set to *error* an error is thrown.
+	 * document on the server does not match the given revision an error is
+	 * thrown.
 	 *
 	 * @param collectionId
 	 *            The collection's id.
@@ -1092,8 +1089,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the new attributes of the document.
 	 * @param rev
 	 *            the desired revision.
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1105,18 +1100,15 @@ public class ArangoDriver extends BaseArangoDriver {
 		final long documentId,
 		final T value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, rev, policy,
-			waitForSync);
+		return replaceDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, rev, waitForSync);
 	}
 
 	/**
 	 * This method replaces the content of the document defined by documentId.
 	 * This method offers a parameter rev (revision). If the revision of the
-	 * document on the server does not match the given revision the policy
-	 * parameter is used. If it is set to *last* the operation is performed
-	 * anyway. if it is set to *error* an error is thrown.
+	 * document on the server does not match the given revision an error is
+	 * thrown.
 	 *
 	 * @param collectionName
 	 *            The collection's name.
@@ -1126,8 +1118,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the new attributes of the document.
 	 * @param rev
 	 *            the desired revision.
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1139,18 +1129,16 @@ public class ArangoDriver extends BaseArangoDriver {
 		final long documentId,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev, policy,
+		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev,
 			waitForSync);
 	}
 
 	/**
 	 * This method replaces the content of the document defined by documentKey.
 	 * This method offers a parameter rev (revision). If the revision of the
-	 * document on the server does not match the given revision the policy
-	 * parameter is used. If it is set to *last* the operation is performed
-	 * anyway. if it is set to *error* an error is thrown.
+	 * document on the server does not match the given revision an error is
+	 * thrown.
 	 *
 	 * @param collectionId
 	 *            The collection's id.
@@ -1160,8 +1148,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the new attributes of the document.
 	 * @param rev
 	 *            the desired revision.
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1173,17 +1159,15 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentKey,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionId, documentKey), value, rev, policy, waitForSync);
+		return replaceDocument(createDocumentHandle(collectionId, documentKey), value, rev, waitForSync);
 	}
 
 	/**
 	 * This method replaces the content of the document defined by documentKey.
 	 * This method offers a parameter rev (revision). If the revision of the
-	 * document on the server does not match the given revision the policy
-	 * parameter is used. If it is set to *last* the operation is performed
-	 * anyway. if it is set to *error* an error is thrown.
+	 * document on the server does not match the given revision an error is
+	 * thrown.
 	 *
 	 * @param collectionName
 	 *            The collection's name.
@@ -1193,8 +1177,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the new attributes of the document.
 	 * @param rev
 	 *            the desired revision.
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1206,17 +1188,15 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentKey,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionName, documentKey), value, rev, policy, waitForSync);
+		return replaceDocument(createDocumentHandle(collectionName, documentKey), value, rev, waitForSync);
 	}
 
 	/**
 	 * This method replaces the content of the document defined by
 	 * documentHandle. This method offers a parameter rev (revision). If the
 	 * revision of the document on the server does not match the given revision
-	 * the policy parameter is used. If it is set to *last* the operation is
-	 * performed anyway. if it is set to *error* an error is thrown.
+	 * an error is thrown.
 	 *
 	 * @param documentHandle
 	 *            The document's handle.
@@ -1224,8 +1204,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the new attributes of the document.
 	 * @param rev
 	 *            the desired revision.
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1236,9 +1214,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentHandle,
 		final T value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
-		return documentDriver.replaceDocument(getDefaultDatabase(), documentHandle, value, rev, policy, waitForSync);
+		return documentDriver.replaceDocument(getDefaultDatabase(), documentHandle, value, rev, waitForSync);
 	}
 
 	/**
@@ -1255,8 +1232,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> updateDocument(final long collectionId, final long documentId, final Object value)
 			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null, null,
-			null);
+		return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null, null);
 	}
 
 	/**
@@ -1273,7 +1249,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> updateDocument(final String collectionName, final long documentId, final Object value)
 			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null, null,
+		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
 			null);
 	}
 
@@ -1291,7 +1267,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> updateDocument(final long collectionId, final String documentKey, final Object value)
 			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionId, documentKey), value, null, null, null, null);
+		return updateDocument(createDocumentHandle(collectionId, documentKey), value, null, null, null);
 	}
 
 	/**
@@ -1308,7 +1284,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> updateDocument(final String collectionName, final String documentKey, final Object value)
 			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, documentKey), value, null, null, null, null);
+		return updateDocument(createDocumentHandle(collectionName, documentKey), value, null, null, null);
 	}
 
 	/**
@@ -1322,7 +1298,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public <T> DocumentEntity<T> updateDocument(final String documentHandle, final T value) throws ArangoException {
-		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, null, null, null, null);
+		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, null, null, null);
 	}
 
 	/**
@@ -1344,7 +1320,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final long documentId,
 		final Object value,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null, null,
+		return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, null, null,
 			keepNull);
 	}
 
@@ -1367,7 +1343,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final long documentId,
 		final Object value,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null, null,
+		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
 			keepNull);
 	}
 
@@ -1390,7 +1366,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentKey,
 		final Object value,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionId, documentKey), value, null, null, null, keepNull);
+		return updateDocument(createDocumentHandle(collectionId, documentKey), value, null, null, keepNull);
 	}
 
 	/**
@@ -1412,7 +1388,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentKey,
 		final Object value,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, documentKey), value, null, null, null, keepNull);
+		return updateDocument(createDocumentHandle(collectionName, documentKey), value, null, null, keepNull);
 	}
 
 	/**
@@ -1429,15 +1405,13 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> DocumentEntity<T> updateDocument(final String documentHandle, final T value, final Boolean keepNull)
 			throws ArangoException {
-		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, null, null, null, keepNull);
+		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, null, null, keepNull);
 	}
 
 	/**
 	 * This method updates a document defined by documentId. This method offers
 	 * a parameter rev (revision). If the revision of the document on the server
-	 * does not match the given revision the policy parameter is used. If it is
-	 * set to *last* the operation is performed anyway. if it is set to *error*
-	 * an error is thrown.
+	 * does not match the given revision an error is thrown.
 	 *
 	 * @param collectionId
 	 *            The collection id.
@@ -1447,8 +1421,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the documents attributes
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1462,19 +1434,16 @@ public class ArangoDriver extends BaseArangoDriver {
 		final long documentId,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, rev, policy,
-			waitForSync, keepNull);
+		return updateDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), value, rev, waitForSync,
+			keepNull);
 	}
 
 	/**
 	 * This method updates a document defined by documentId. This method offers
 	 * a parameter rev (revision). If the revision of the document on the server
-	 * does not match the given revision the policy parameter is used. If it is
-	 * set to *last* the operation is performed anyway. if it is set to *error*
-	 * an error is thrown.
+	 * does not match the given revision an error is thrown.
 	 *
 	 * @param collectionName
 	 *            The collection name.
@@ -1484,8 +1453,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the documents attributes
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1499,19 +1466,16 @@ public class ArangoDriver extends BaseArangoDriver {
 		final long documentId,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev, policy,
-			waitForSync, keepNull);
+		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev, waitForSync,
+			keepNull);
 	}
 
 	/**
 	 * This method updates a document defined by documentKey. This method offers
 	 * a parameter rev (revision). If the revision of the document on the server
-	 * does not match the given revision the policy parameter is used. If it is
-	 * set to *last* the operation is performed anyway. if it is set to *error*
-	 * an error is thrown.
+	 * does not match the given revision an error is thrown.
 	 *
 	 * @param collectionId
 	 *            The collection id.
@@ -1521,8 +1485,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the documents attributes
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1536,19 +1498,15 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentKey,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionId, documentKey), value, rev, policy, waitForSync,
-			keepNull);
+		return updateDocument(createDocumentHandle(collectionId, documentKey), value, rev, waitForSync, keepNull);
 	}
 
 	/**
 	 * This method updates a document defined by documentKey. This method offers
 	 * a parameter rev (revision). If the revision of the document on the server
-	 * does not match the given revision the policy parameter is used. If it is
-	 * set to *last* the operation is performed anyway. if it is set to *error*
-	 * an error is thrown.
+	 * does not match the given revision an error is thrown.
 	 *
 	 * @param collectionName
 	 *            The collection name.
@@ -1558,8 +1516,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the documents attributes
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1573,19 +1529,15 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentKey,
 		final Object value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, documentKey), value, rev, policy, waitForSync,
-			keepNull);
+		return updateDocument(createDocumentHandle(collectionName, documentKey), value, rev, waitForSync, keepNull);
 	}
 
 	/**
 	 * This method updates a document defined by documentHandle. This method
 	 * offers a parameter rev (revision). If the revision of the document on the
-	 * server does not match the given revision the policy parameter is used. If
-	 * it is set to *last* the operation is performed anyway. if it is set to
-	 * *error* an error is thrown.
+	 * server does not match the given revision an error is thrown.
 	 *
 	 * @param documentHandle
 	 *            The document handle.
@@ -1593,8 +1545,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            An object containing the documents attributes
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -1607,11 +1557,9 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentHandle,
 		final T value,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
-		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, rev, policy, waitForSync,
-			keepNull);
+		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, rev, waitForSync, keepNull);
 	}
 
 	/**
@@ -1913,7 +1861,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(final long collectionId, final long documentId) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), null, null);
+		return deleteDocument(createDocumentHandle(collectionId, String.valueOf(documentId)));
 	}
 
 	/**
@@ -1927,7 +1875,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(final String collectionName, final long documentId) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), null, null);
+		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)));
 	}
 
 	/**
@@ -1941,7 +1889,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(final long collectionId, final String documentKey) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionId, documentKey), null, null);
+		return deleteDocument(createDocumentHandle(collectionId, documentKey));
 	}
 
 	/**
@@ -1956,7 +1904,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> deleteDocument(final String collectionName, final String documentKey)
 			throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionName, documentKey), null, null);
+		return deleteDocument(createDocumentHandle(collectionName, documentKey));
 	}
 
 	/**
@@ -1968,15 +1916,13 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DocumentEntity<?> deleteDocument(final String documentHandle) throws ArangoException {
-		return documentDriver.deleteDocument(getDefaultDatabase(), documentHandle, null, null);
+		return documentDriver.deleteDocument(getDefaultDatabase(), documentHandle, null);
 	}
 
 	/**
 	 * Deletes a document from the database. This method offers a parameter rev
 	 * (revision). If the revision of the document on the server does not match
-	 * the given revision the policy parameter is used. If it is set to *last*
-	 * the operation is performed anyway. if it is set to *error* an error is
-	 * thrown.
+	 * the given revision an error is thrown.
 	 *
 	 * @param collectionId
 	 *            The collection id.
@@ -1984,25 +1930,18 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The document id.
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(
-		final long collectionId,
-		final long documentId,
-		final Long rev,
-		final Policy policy) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), rev, policy);
+	public DocumentEntity<?> deleteDocument(final long collectionId, final long documentId, final Long rev)
+			throws ArangoException {
+		return deleteDocument(createDocumentHandle(collectionId, String.valueOf(documentId)), rev);
 	}
 
 	/**
 	 * Deletes a document from the database. This method offers a parameter rev
 	 * (revision). If the revision of the document on the server does not match
-	 * the given revision the policy parameter is used. If it is set to *last*
-	 * the operation is performed anyway. if it is set to *error* an error is
-	 * thrown.
+	 * the given revision an error is thrown.
 	 *
 	 * @param collectionName
 	 *            The collection name.
@@ -2010,25 +1949,18 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The document id.
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(
-		final String collectionName,
-		final long documentId,
-		final Long rev,
-		final Policy policy) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), rev, policy);
+	public DocumentEntity<?> deleteDocument(final String collectionName, final long documentId, final Long rev)
+			throws ArangoException {
+		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), rev);
 	}
 
 	/**
 	 * Deletes a document from the database. This method offers a parameter rev
 	 * (revision). If the revision of the document on the server does not match
-	 * the given revision the policy parameter is used. If it is set to *last*
-	 * the operation is performed anyway. if it is set to *error* an error is
-	 * thrown.
+	 * the given revision an error is thrown.
 	 *
 	 * @param collectionId
 	 *            The collection id.
@@ -2036,25 +1968,18 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The document key.
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(
-		final long collectionId,
-		final String documentKey,
-		final Long rev,
-		final Policy policy) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionId, documentKey), rev, policy);
+	public DocumentEntity<?> deleteDocument(final long collectionId, final String documentKey, final Long rev)
+			throws ArangoException {
+		return deleteDocument(createDocumentHandle(collectionId, documentKey), rev);
 	}
 
 	/**
 	 * Deletes a document from the database. This method offers a parameter rev
 	 * (revision). If the revision of the document on the server does not match
-	 * the given revision the policy parameter is used. If it is set to *last*
-	 * the operation is performed anyway. if it is set to *error* an error is
-	 * thrown.
+	 * the given revision an error is thrown.
 	 *
 	 * @param collectionName
 	 *            The collection name.
@@ -2062,38 +1987,28 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The document key.
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(
-		final String collectionName,
-		final String documentKey,
-		final Long rev,
-		final Policy policy) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionName, documentKey), rev, policy);
+	public DocumentEntity<?> deleteDocument(final String collectionName, final String documentKey, final Long rev)
+			throws ArangoException {
+		return deleteDocument(createDocumentHandle(collectionName, documentKey), rev);
 	}
 
 	/**
 	 * Deletes a document from the database. This method offers a parameter rev
 	 * (revision). If the revision of the document on the server does not match
-	 * the given revision the policy parameter is used. If it is set to *last*
-	 * the operation is performed anyway. if it is set to *error* an error is
-	 * thrown.
+	 * the given revision an error is thrown.
 	 *
 	 * @param documentHandle
 	 *            The document handle.
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(final String documentHandle, final Long rev, final Policy policy)
-			throws ArangoException {
-		return documentDriver.deleteDocument(getDefaultDatabase(), documentHandle, rev, policy);
+	public DocumentEntity<?> deleteDocument(final String documentHandle, final Long rev) throws ArangoException {
+		return documentDriver.deleteDocument(getDefaultDatabase(), documentHandle, rev);
 	}
 
 	/**
@@ -5610,8 +5525,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * This method replaces the content of the document defined by
 	 * documentHandle. This method offers a parameter rev (revision). If the
 	 * revision of the document on the server does not match the given revision
-	 * the policy parameter is used. If it is set to *last* the operation is
-	 * performed anyway. if it is set to *error* an error is thrown.
+	 * an error is thrown.
 	 *
 	 * @param documentHandle
 	 *            The document's handle.
@@ -5619,8 +5533,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            A string containing a JSON object
 	 * @param rev
 	 *            the desired revision.
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -5631,18 +5543,14 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentHandle,
 		final String rawJsonString,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync) throws ArangoException {
-		return documentDriver.replaceDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, policy,
-			waitForSync);
+		return documentDriver.replaceDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, waitForSync);
 	}
 
 	/**
 	 * This method updates a document defined by documentHandle. This method
 	 * offers a parameter rev (revision). If the revision of the document on the
-	 * server does not match the given revision the policy parameter is used. If
-	 * it is set to *last* the operation is performed anyway. if it is set to
-	 * *error* an error is thrown.
+	 * server does not match the given revision an error is thrown.
 	 *
 	 * @param documentHandle
 	 *            The document handle.
@@ -5650,8 +5558,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            A string containing a JSON object
 	 * @param rev
 	 *            The desired revision
-	 * @param policy
-	 *            The update policy
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -5664,11 +5570,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String documentHandle,
 		final String rawJsonString,
 		final Long rev,
-		final Policy policy,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
-		return documentDriver.updateDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, policy,
-			waitForSync, keepNull);
+		return documentDriver.updateDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, waitForSync,
+			keepNull);
 	}
 
 	//

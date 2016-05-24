@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.Policy;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -89,7 +88,7 @@ public class ArangoDriverThreadSafeTest {
 								assertThat(ret2.getEntity().getAge(), is(value.getAge()));
 
 								// ドキュメントを削除する
-								final DocumentEntity<?> ret3 = driver.deleteDocument(_id, null, Policy.LAST);
+								final DocumentEntity<?> ret3 = driver.deleteDocument(_id);
 								assertThat(ret3.getDocumentHandle(), is(_id));
 								assertThat(ret3.getDocumentRevision(), is(_rev));
 

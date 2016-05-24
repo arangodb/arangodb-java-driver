@@ -194,7 +194,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		// ------------------------------------------------------------
 		// [Master] replace document
 		masterDriver.replaceDocument(doc2.getDocumentHandle(), new MapBuilder().put("updatedKey", "あいうえお").get(), null,
-			null, null);
+			null);
 
 		// wait
 		TimeUnit.SECONDS.sleep(2);
@@ -213,7 +213,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		// ------------------------------------------------------------
 		// [Master] update document
 		masterDriver.updateDocument(doc2.getDocumentHandle(), new MapBuilder().put("updatedKey2", "ABCDE").get(), null,
-			null, null, null);
+			null, null);
 
 		// wait
 		TimeUnit.SECONDS.sleep(2);

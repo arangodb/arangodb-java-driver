@@ -3,7 +3,6 @@ package com.arangodb;
 import java.util.List;
 
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.Policy;
 import com.arangodb.impl.BaseDriverInterface;
 
 /**
@@ -28,7 +27,6 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String documentHandle,
 		T value,
 		Long rev,
-		Policy policy,
 		Boolean waitForSync) throws ArangoException;
 
 	DocumentEntity<String> replaceDocumentRaw(
@@ -36,7 +34,6 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String documentHandle,
 		String rawJsonString,
 		Long rev,
-		Policy policy,
 		Boolean waitForSync) throws ArangoException;
 
 	<T> DocumentEntity<T> updateDocument(
@@ -44,7 +41,6 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String documentHandle,
 		T value,
 		Long rev,
-		Policy policy,
 		Boolean waitForSync,
 		Boolean keepNull) throws ArangoException;
 
@@ -53,7 +49,6 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String documentHandle,
 		String rawJsonString,
 		Long rev,
-		Policy policy,
 		Boolean waitForSync,
 		Boolean keepNull) throws ArangoException;
 
@@ -71,6 +66,5 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 	String getDocumentRaw(String database, String documentHandle, Long ifNoneMatchRevision, Long ifMatchRevision)
 			throws ArangoException;
 
-	DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev, Policy policy)
-			throws ArangoException;
+	DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev) throws ArangoException;
 }

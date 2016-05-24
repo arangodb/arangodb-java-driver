@@ -26,7 +26,6 @@ import org.junit.Test;
 import com.arangodb.ArangoException;
 import com.arangodb.ErrorNums;
 import com.arangodb.entity.DocumentEntity;
-import com.arangodb.entity.Policy;
 
 public class ReplaceAndUpdateDocumentExample extends BaseExample {
 
@@ -149,7 +148,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		try {
 			final DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
 			// wrong revision
-			driver.replaceDocument(documentHandleExample, dp, 22L, Policy.ERROR, true);
+			driver.replaceDocument(documentHandleExample, dp, 22L, true);
 			Assert.fail("replaceDocument should fail here!");
 		} catch (final ArangoException e) {
 			Assert.assertEquals(ErrorNums.ERROR_ARANGO_CONFLICT, e.getErrorNumber());
@@ -158,7 +157,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		try {
 			final DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
 			// current revision
-			driver.replaceDocument(documentHandleExample, dp, revision, Policy.ERROR, true);
+			driver.replaceDocument(documentHandleExample, dp, revision, true);
 		} catch (final ArangoException e) {
 			Assert.fail("Failed to replace document. " + e.getMessage());
 		}
