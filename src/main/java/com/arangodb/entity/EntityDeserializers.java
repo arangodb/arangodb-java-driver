@@ -172,10 +172,10 @@ public class EntityDeserializers {
 	private static Logger logger = LoggerFactory.getLogger(EntityDeserializers.class);
 
 	private static class ClassHolder {
-		private Class<?>[] clazz;
+		private final Class<?>[] clazz;
 		private int idx;
 
-		ClassHolder(Class<?>... clazz) {
+		ClassHolder(final Class<?>... clazz) {
 			this.clazz = clazz;
 			this.idx = 0;
 		}
@@ -228,7 +228,7 @@ public class EntityDeserializers {
 		// this is a helper class
 	}
 
-	public static void setParameterized(Class<?>... clazz) {
+	public static void setParameterized(final Class<?>... clazz) {
 		parameterizedBridger.set(new ClassHolder(clazz));
 	}
 
@@ -237,7 +237,7 @@ public class EntityDeserializers {
 	}
 
 	private static Class<?> getParameterized() {
-		ClassHolder holder = parameterizedBridger.get();
+		final ClassHolder holder = parameterizedBridger.get();
 		if (holder == null) {
 			return null;
 		}
@@ -245,7 +245,7 @@ public class EntityDeserializers {
 	}
 
 	private static boolean hasNextParameterized() {
-		ClassHolder holder = parameterizedBridger.get();
+		final ClassHolder holder = parameterizedBridger.get();
 		if (holder == null) {
 			return false;
 		}
@@ -253,14 +253,14 @@ public class EntityDeserializers {
 	}
 
 	private static Class<?> nextParameterized() {
-		ClassHolder holder = parameterizedBridger.get();
+		final ClassHolder holder = parameterizedBridger.get();
 		if (holder == null) {
 			return null;
 		}
 		return holder.next();
 	}
 
-	private static <T extends BaseEntity> T deserializeBaseParameter(JsonObject obj, T entity) {
+	private static <T extends BaseEntity> T deserializeBaseParameter(final JsonObject obj, final T entity) {
 		if (obj.has(ERROR) && obj.getAsJsonPrimitive(ERROR).isBoolean()) {
 			entity.error = obj.getAsJsonPrimitive(ERROR).getAsBoolean();
 		}
@@ -280,7 +280,7 @@ public class EntityDeserializers {
 		return entity;
 	}
 
-	private static <T extends DocumentHolder> T deserializeDocumentParameter(JsonObject obj, T entity) {
+	private static <T extends DocumentHolder> T deserializeDocumentParameter(final JsonObject obj, final T entity) {
 
 		if (obj.has("_rev")) {
 			entity.setDocumentRevision(obj.getAsJsonPrimitive("_rev").getAsLong());
@@ -297,7 +297,10 @@ public class EntityDeserializers {
 
 	public static class DefaultEntityDeserializer implements JsonDeserializer<DefaultEntity> {
 		@Override
-		public DefaultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DefaultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 			if (json.isJsonNull()) {
 				return null;
 			}
@@ -308,14 +311,17 @@ public class EntityDeserializers {
 	public static class VersionDeserializer implements JsonDeserializer<ArangoVersion> {
 
 		@Override
-		public ArangoVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ArangoVersion deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ArangoVersion entity = deserializeBaseParameter(obj, new ArangoVersion());
+			final JsonObject obj = json.getAsJsonObject();
+			final ArangoVersion entity = deserializeBaseParameter(obj, new ArangoVersion());
 
 			if (obj.has(SERVER)) {
 				entity.server = obj.getAsJsonPrimitive(SERVER).getAsString();
@@ -331,21 +337,24 @@ public class EntityDeserializers {
 
 	public static class ArangoUnixTimeDeserializer implements JsonDeserializer<ArangoUnixTime> {
 		@Override
-		public ArangoUnixTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ArangoUnixTime deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ArangoUnixTime entity = deserializeBaseParameter(obj, new ArangoUnixTime());
+			final JsonObject obj = json.getAsJsonObject();
+			final ArangoUnixTime entity = deserializeBaseParameter(obj, new ArangoUnixTime());
 
 			if (obj.has("time")) {
 				entity.time = obj.getAsJsonPrimitive("time").getAsDouble();
-				String time = obj.getAsJsonPrimitive("time").getAsString(); // 実際はdoubleだけど精度の問題が心配なので文字列で処理する。
+				final String time = obj.getAsJsonPrimitive("time").getAsString(); // 実際はdoubleだけど精度の問題が心配なので文字列で処理する。
 				entity.second = (int) entity.time;
 
-				int pos = time.indexOf('.');
+				final int pos = time.indexOf('.');
 				entity.microsecond = (pos >= 0 && pos + 1 != time.length()) ? Integer.parseInt(time.substring(pos + 1))
 						: 0;
 			}
@@ -357,64 +366,51 @@ public class EntityDeserializers {
 	public static class FiguresDeserializer implements JsonDeserializer<Figures> {
 
 		@Override
-		public Figures deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public Figures deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			Figures entity = new Figures();
+			final JsonObject obj = json.getAsJsonObject();
+			final Figures entity = new Figures();
 
 			if (obj.has(ALIVE)) {
-				JsonObject alive = obj.getAsJsonObject(ALIVE);
+				final JsonObject alive = obj.getAsJsonObject(ALIVE);
 				entity.aliveCount = alive.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.aliveSize = alive.getAsJsonPrimitive(SIZE).getAsLong();
 			}
 
 			if (obj.has("dead")) {
-				JsonObject dead = obj.getAsJsonObject("dead");
+				final JsonObject dead = obj.getAsJsonObject("dead");
 				entity.deadCount = dead.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.deadSize = dead.getAsJsonPrimitive(SIZE).getAsLong();
 				entity.deadDeletion = dead.getAsJsonPrimitive("deletion").getAsLong();
 			}
 
 			if (obj.has("datafiles")) {
-				JsonObject datafiles = obj.getAsJsonObject("datafiles");
+				final JsonObject datafiles = obj.getAsJsonObject("datafiles");
 				entity.datafileCount = datafiles.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.datafileFileSize = datafiles.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
 			if (obj.has("journals")) {
-				JsonObject journals = obj.getAsJsonObject("journals");
+				final JsonObject journals = obj.getAsJsonObject("journals");
 				entity.journalsCount = journals.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.journalsFileSize = journals.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
 			if (obj.has("compactors")) {
-				JsonObject compactors = obj.getAsJsonObject("compactors");
+				final JsonObject compactors = obj.getAsJsonObject("compactors");
 				entity.compactorsCount = compactors.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.compactorsFileSize = compactors.getAsJsonPrimitive(FILE_SIZE).getAsLong();
 			}
 
-			if (obj.has("shapefiles")) {
-				JsonObject shapefiles = obj.getAsJsonObject("shapefiles");
-				entity.shapefilesCount = shapefiles.getAsJsonPrimitive(COUNT).getAsLong();
-				entity.shapefilesFileSize = shapefiles.getAsJsonPrimitive(FILE_SIZE).getAsLong();
-			}
-
-			if (obj.has("shapes")) {
-				JsonObject shapes = obj.getAsJsonObject("shapes");
-				entity.shapesCount = shapes.getAsJsonPrimitive(COUNT).getAsLong();
-			}
-
-			if (obj.has("attributes")) {
-				JsonObject attributes = obj.getAsJsonObject("attributes");
-				entity.attributesCount = attributes.getAsJsonPrimitive(COUNT).getAsLong();
-			}
-
 			if (obj.has(INDEXES)) {
-				JsonObject indexes = obj.getAsJsonObject(INDEXES);
+				final JsonObject indexes = obj.getAsJsonObject(INDEXES);
 				entity.indexesCount = indexes.getAsJsonPrimitive(COUNT).getAsLong();
 				entity.indexesSize = indexes.getAsJsonPrimitive(SIZE).getAsLong();
 			}
@@ -433,14 +429,17 @@ public class EntityDeserializers {
 
 	public static class CollectionKeyOptionDeserializer implements JsonDeserializer<CollectionKeyOption> {
 		@Override
-		public CollectionKeyOption deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CollectionKeyOption deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			CollectionKeyOption entity = new CollectionKeyOption();
+			final JsonObject obj = json.getAsJsonObject();
+			final CollectionKeyOption entity = new CollectionKeyOption();
 
 			if (obj.has("type")) {
 				entity.type = obj.getAsJsonPrimitive("type").getAsString();
@@ -465,14 +464,17 @@ public class EntityDeserializers {
 	public static class CollectionEntityDeserializer implements JsonDeserializer<CollectionEntity> {
 
 		@Override
-		public CollectionEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CollectionEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			CollectionEntity entity = deserializeBaseParameter(obj, new CollectionEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final CollectionEntity entity = deserializeBaseParameter(obj, new CollectionEntity());
 
 			if (obj.has(NAME)) {
 				entity.name = obj.getAsJsonPrimitive(NAME).getAsString();
@@ -535,19 +537,22 @@ public class EntityDeserializers {
 	}
 
 	public static class CollectionsEntityDeserializer implements JsonDeserializer<CollectionsEntity> {
-		private Type collectionsType = new TypeToken<List<CollectionEntity>>() {
+		private final Type collectionsType = new TypeToken<List<CollectionEntity>>() {
 		}.getType();
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public CollectionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CollectionsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			CollectionsEntity entity = deserializeBaseParameter(obj, new CollectionsEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final CollectionsEntity entity = deserializeBaseParameter(obj, new CollectionsEntity());
 
 			if (obj.has(RESULT)) {
 				entity.setCollections((List<CollectionEntity>) context.deserialize(obj.get(RESULT), collectionsType));
@@ -562,18 +567,21 @@ public class EntityDeserializers {
 	public static class AqlfunctionsEntityDeserializer implements JsonDeserializer<AqlFunctionsEntity> {
 
 		@Override
-		public AqlFunctionsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public AqlFunctionsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonArray obj = json.getAsJsonArray();
-			Iterator<JsonElement> iterator = obj.iterator();
-			Map<String, String> functions = new HashMap<String, String>();
+			final JsonArray obj = json.getAsJsonArray();
+			final Iterator<JsonElement> iterator = obj.iterator();
+			final Map<String, String> functions = new HashMap<String, String>();
 			while (iterator.hasNext()) {
-				JsonElement e = iterator.next();
-				JsonObject o = e.getAsJsonObject();
+				final JsonElement e = iterator.next();
+				final JsonObject o = e.getAsJsonObject();
 				functions.put(o.get("name").getAsString(), o.get(CODE).getAsString());
 			}
 			return new AqlFunctionsEntity(functions);
@@ -583,17 +591,20 @@ public class EntityDeserializers {
 	public static class JobsEntityDeserializer implements JsonDeserializer<JobsEntity> {
 
 		@Override
-		public JobsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public JobsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonArray obj = json.getAsJsonArray();
-			Iterator<JsonElement> iterator = obj.iterator();
-			List<String> jobs = new ArrayList<String>();
+			final JsonArray obj = json.getAsJsonArray();
+			final Iterator<JsonElement> iterator = obj.iterator();
+			final List<String> jobs = new ArrayList<String>();
 			while (iterator.hasNext()) {
-				JsonElement e = iterator.next();
+				final JsonElement e = iterator.next();
 				jobs.add(e.getAsString());
 			}
 			return new JobsEntity(jobs);
@@ -602,24 +613,27 @@ public class EntityDeserializers {
 
 	public static class CursorEntityDeserializer implements JsonDeserializer<CursorEntity<?>> {
 
-		private Type bindVarsType = new TypeToken<List<String>>() {
+		private final Type bindVarsType = new TypeToken<List<String>>() {
 		}.getType();
 
-		private Type extraType = new TypeToken<Map<String, Object>>() {
+		private final Type extraType = new TypeToken<Map<String, Object>>() {
 		}.getType();
 
 		@Override
-		public CursorEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public CursorEntity<?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			CursorEntity<Object> entity = deserializeBaseParameter(obj, new CursorEntity<Object>());
+			final JsonObject obj = json.getAsJsonObject();
+			final CursorEntity<Object> entity = deserializeBaseParameter(obj, new CursorEntity<Object>());
 
 			if (obj.has(RESULT)) {
-				JsonArray array = obj.getAsJsonArray(RESULT);
+				final JsonArray array = obj.getAsJsonArray(RESULT);
 				if (array == null || array.isJsonNull() || array.size() == 0) {
 					entity.results = Collections.emptyList();
 				} else {
@@ -658,16 +672,16 @@ public class EntityDeserializers {
 		}
 
 		private void getResultObjects(
-			JsonDeserializationContext context,
-			CursorEntity<Object> entity,
-			JsonArray array) {
-			Class<?> clazz = getParameterized();
-			boolean withDocument = DocumentEntity.class.isAssignableFrom(clazz);
+			final JsonDeserializationContext context,
+			final CursorEntity<Object> entity,
+			final JsonArray array) {
+			final Class<?> clazz = getParameterized();
+			final boolean withDocument = DocumentEntity.class.isAssignableFrom(clazz);
 			if (withDocument) {
 				nextParameterized();
 			}
 			try {
-				List<Object> list = new ArrayList<Object>(array.size());
+				final List<Object> list = new ArrayList<Object>(array.size());
 				for (int i = 0, imax = array.size(); i < imax; i++) {
 					list.add(context.deserialize(array.get(i), clazz));
 				}
@@ -679,42 +693,42 @@ public class EntityDeserializers {
 			}
 		}
 
-		private void getWarnings(CursorEntity<Object> entity) {
+		private void getWarnings(final CursorEntity<Object> entity) {
 			if (entity.extra.containsKey(WARNINGS)) {
-				Object object = entity.extra.get(WARNINGS);
+				final Object object = entity.extra.get(WARNINGS);
 				if (object instanceof List<?>) {
-					List<?> l = (List<?>) entity.extra.get(WARNINGS);
+					final List<?> l = (List<?>) entity.extra.get(WARNINGS);
 					getWarningsFromList(entity, l);
 				}
 			}
 		}
 
-		private void getWarningsFromList(CursorEntity<Object> entity, List<?> l) {
-			for (Object o : l) {
+		private void getWarningsFromList(final CursorEntity<Object> entity, final List<?> l) {
+			for (final Object o : l) {
 				if (o instanceof Map<?, ?>) {
-					Map<?, ?> m = (Map<?, ?>) o;
+					final Map<?, ?> m = (Map<?, ?>) o;
 					if (m.containsKey(CODE) && m.get(CODE) instanceof Double && m.containsKey(MESSAGE)
 							&& m.get(MESSAGE) instanceof String) {
-						Long code = ((Double) m.get(CODE)).longValue();
-						String message = (String) m.get(MESSAGE);
+						final Long code = ((Double) m.get(CODE)).longValue();
+						final String message = (String) m.get(MESSAGE);
 						entity.warnings.add(new WarningEntity(code, message));
 					}
 				}
 			}
 		}
 
-		private void getFullCount(CursorEntity<Object> entity) {
+		private void getFullCount(final CursorEntity<Object> entity) {
 			if (entity.extra.containsKey("stats") && entity.extra.get("stats") instanceof Map<?, ?>) {
-				Map<?, ?> m = (Map<?, ?>) entity.extra.get("stats");
+				final Map<?, ?> m = (Map<?, ?>) entity.extra.get("stats");
 				if (m.containsKey("fullCount") && m.get("fullCount") instanceof Double) {
-					Double v = (Double) m.get("fullCount");
+					final Double v = (Double) m.get("fullCount");
 					entity.fullCount = v.intValue();
 				}
 			}
 		}
 
 		private Class<?> backParameterized() {
-			ClassHolder holder = parameterizedBridger.get();
+			final ClassHolder holder = parameterizedBridger.get();
 			if (holder == null) {
 				return null;
 			}
@@ -726,7 +740,10 @@ public class EntityDeserializers {
 	public static class DocumentEntityDeserializer implements JsonDeserializer<DocumentEntity<?>> {
 
 		@Override
-		public DocumentEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DocumentEntity<?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return new DocumentEntity<Object>();
@@ -740,13 +757,13 @@ public class EntityDeserializers {
 				return new DocumentEntity<Object>();
 			}
 
-			JsonObject obj = json.getAsJsonObject();
+			final JsonObject obj = json.getAsJsonObject();
 
-			DocumentEntity<Object> entity = new DocumentEntity<Object>();
+			final DocumentEntity<Object> entity = new DocumentEntity<Object>();
 			deserializeDocumentParameter(obj, entity);
 
 			// 他のフィールドはリフレクションで。 (TODO: Annotationのサポートと上記パラメータを弾く)
-			Class<?> clazz = getParameterized();
+			final Class<?> clazz = getParameterized();
 			if (clazz != null) {
 				entity.entity = context.deserialize(obj, clazz);
 
@@ -776,7 +793,7 @@ public class EntityDeserializers {
 		 * @param jsonElement
 		 * @return a object
 		 */
-		public static Object deserializeJsonElement(JsonElement jsonElement) {
+		public static Object deserializeJsonElement(final JsonElement jsonElement) {
 			if (jsonElement.getClass() == JsonPrimitive.class) {
 				return deserializeJsonPrimitive((JsonPrimitive) jsonElement);
 			} else if (jsonElement.getClass() == JsonArray.class) {
@@ -794,10 +811,10 @@ public class EntityDeserializers {
 		 *            a jsonObject
 		 * @return the deserialized jsonObject
 		 */
-		private static Map<String, Object> deserializeJsonObject(JsonObject jsonObject) {
-			Map<String, Object> result = new HashMap<String, Object>();
-			Set<Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
-			for (Map.Entry<String, JsonElement> entry : entrySet) {
+		private static Map<String, Object> deserializeJsonObject(final JsonObject jsonObject) {
+			final Map<String, Object> result = new HashMap<String, Object>();
+			final Set<Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+			for (final Map.Entry<String, JsonElement> entry : entrySet) {
 				if (!nonProperties.contains(entry.getKey())) {
 					result.put(entry.getKey(), deserializeJsonElement(jsonObject.get(entry.getKey())));
 				}
@@ -805,9 +822,9 @@ public class EntityDeserializers {
 			return result;
 		}
 
-		private static List<Object> deserializeJsonArray(JsonArray jsonArray) {
-			List<Object> tmpObjectList = new ArrayList<Object>();
-			Iterator<JsonElement> iterator = jsonArray.iterator();
+		private static List<Object> deserializeJsonArray(final JsonArray jsonArray) {
+			final List<Object> tmpObjectList = new ArrayList<Object>();
+			final Iterator<JsonElement> iterator = jsonArray.iterator();
 			while (iterator.hasNext()) {
 				tmpObjectList.add(deserializeJsonElement(iterator.next()));
 			}
@@ -820,7 +837,7 @@ public class EntityDeserializers {
 		 * @param jsonPrimitive
 		 * @return null|String|Double|Boolean
 		 */
-		private static Object deserializeJsonPrimitive(JsonPrimitive jsonPrimitive) {
+		private static Object deserializeJsonPrimitive(final JsonPrimitive jsonPrimitive) {
 			if (jsonPrimitive.isBoolean()) {
 				return jsonPrimitive.getAsBoolean();
 			} else if (jsonPrimitive.isNumber()) {
@@ -834,18 +851,21 @@ public class EntityDeserializers {
 	}
 
 	public static class DocumentsEntityDeserializer implements JsonDeserializer<DocumentsEntity> {
-		private Type documentsType = new TypeToken<List<String>>() {
+		private final Type documentsType = new TypeToken<List<String>>() {
 		}.getType();
 
 		@Override
-		public DocumentsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DocumentsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			DocumentsEntity entity = deserializeBaseParameter(obj, new DocumentsEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final DocumentsEntity entity = deserializeBaseParameter(obj, new DocumentsEntity());
 
 			if (obj.has("documents")) {
 				entity.documents = context.deserialize(obj.get("documents"), documentsType);
@@ -857,25 +877,28 @@ public class EntityDeserializers {
 	}
 
 	public static class IndexEntityDeserializer implements JsonDeserializer<IndexEntity> {
-		private Type fieldsType = new TypeToken<List<String>>() {
+		private final Type fieldsType = new TypeToken<List<String>>() {
 		}.getType();
 
 		@Override
-		public IndexEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public IndexEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			IndexEntity entity = deserializeBaseParameter(obj, new IndexEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final IndexEntity entity = deserializeBaseParameter(obj, new IndexEntity());
 
 			if (obj.has(ID)) {
 				entity.id = obj.getAsJsonPrimitive(ID).getAsString();
 			}
 
 			if (obj.has("type")) {
-				String type = obj.getAsJsonPrimitive("type").getAsString().toUpperCase(Locale.US);
+				final String type = obj.getAsJsonPrimitive("type").getAsString().toUpperCase(Locale.US);
 				if (type.startsWith(IndexType.GEO.name())) {
 					entity.type = IndexType.GEO;
 				} else {
@@ -920,20 +943,23 @@ public class EntityDeserializers {
 	}
 
 	public static class IndexesEntityDeserializer implements JsonDeserializer<IndexesEntity> {
-		private Type indexesType = new TypeToken<List<IndexEntity>>() {
+		private final Type indexesType = new TypeToken<List<IndexEntity>>() {
 		}.getType();
-		private Type identifiersType = new TypeToken<Map<String, IndexEntity>>() {
+		private final Type identifiersType = new TypeToken<Map<String, IndexEntity>>() {
 		}.getType();
 
 		@Override
-		public IndexesEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public IndexesEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			IndexesEntity entity = deserializeBaseParameter(obj, new IndexesEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final IndexesEntity entity = deserializeBaseParameter(obj, new IndexesEntity());
 
 			if (obj.has(INDEXES)) {
 				entity.indexes = context.deserialize(obj.get(INDEXES), indexesType);
@@ -950,19 +976,22 @@ public class EntityDeserializers {
 
 	public static class AdminLogEntryEntityDeserializer implements JsonDeserializer<AdminLogEntity> {
 		@Override
-		public AdminLogEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public AdminLogEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			AdminLogEntity entity = deserializeBaseParameter(obj, new AdminLogEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final AdminLogEntity entity = deserializeBaseParameter(obj, new AdminLogEntity());
 			// 全ての要素は必ずあることが前提なのでhasチェックはしない
-			int[] lids = context.deserialize(obj.getAsJsonArray("lid"), int[].class);
-			int[] levels = context.deserialize(obj.getAsJsonArray("level"), int[].class);
-			long[] timestamps = context.deserialize(obj.getAsJsonArray("timestamp"), long[].class);
-			String[] texts = context.deserialize(obj.getAsJsonArray("text"), String[].class);
+			final int[] lids = context.deserialize(obj.getAsJsonArray("lid"), int[].class);
+			final int[] levels = context.deserialize(obj.getAsJsonArray("level"), int[].class);
+			final long[] timestamps = context.deserialize(obj.getAsJsonArray("timestamp"), long[].class);
+			final String[] texts = context.deserialize(obj.getAsJsonArray("text"), String[].class);
 
 			// 配列のサイズが全て同じであること
 			if (lids.length != levels.length || lids.length != timestamps.length || lids.length != texts.length) {
@@ -971,7 +1000,7 @@ public class EntityDeserializers {
 
 			entity.logs = new ArrayList<AdminLogEntity.LogEntry>(lids.length);
 			for (int i = 0; i < lids.length; i++) {
-				AdminLogEntity.LogEntry entry = new AdminLogEntity.LogEntry();
+				final AdminLogEntity.LogEntry entry = new AdminLogEntity.LogEntry();
 				entry.lid = lids[i];
 				entry.level = levels[i];
 				entry.timestamp = new Date(timestamps[i] * 1000L);
@@ -992,14 +1021,17 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public StatisticsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public StatisticsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			StatisticsEntity entity = deserializeBaseParameter(obj, new StatisticsEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final StatisticsEntity entity = deserializeBaseParameter(obj, new StatisticsEntity());
 
 			deserializeSystem(obj, entity);
 
@@ -1011,9 +1043,9 @@ public class EntityDeserializers {
 
 		}
 
-		private void deserializeServer(JsonObject obj, StatisticsEntity entity) {
+		private void deserializeServer(final JsonObject obj, final StatisticsEntity entity) {
 			if (obj.has(SERVER)) {
-				JsonObject svr = obj.getAsJsonObject(SERVER);
+				final JsonObject svr = obj.getAsJsonObject(SERVER);
 				entity.server = new StatisticsEntity.Server();
 
 				if (svr.has("uptime")) {
@@ -1022,20 +1054,23 @@ public class EntityDeserializers {
 			}
 		}
 
-		private void deserializeClient(JsonDeserializationContext context, JsonObject obj, StatisticsEntity entity) {
+		private void deserializeClient(
+			final JsonDeserializationContext context,
+			final JsonObject obj,
+			final StatisticsEntity entity) {
 			if (obj.has("client")) {
-				StatisticsEntity.Client cli = new StatisticsEntity.Client();
+				final StatisticsEntity.Client cli = new StatisticsEntity.Client();
 				cli.figures = new TreeMap<String, StatisticsEntity.FigureValue>();
 				entity.client = cli;
 
-				JsonObject client = obj.getAsJsonObject("client");
+				final JsonObject client = obj.getAsJsonObject("client");
 				if (client.has("httpConnections")) {
 					cli.httpConnections = client.getAsJsonPrimitive("httpConnections").getAsInt();
 				}
-				for (Entry<String, JsonElement> ent : client.entrySet()) {
+				for (final Entry<String, JsonElement> ent : client.entrySet()) {
 					if (!"httpConnections".equals(ent.getKey())) {
-						JsonObject f = ent.getValue().getAsJsonObject();
-						FigureValue fv = new FigureValue();
+						final JsonObject f = ent.getValue().getAsJsonObject();
+						final FigureValue fv = new FigureValue();
 						fv.sum = f.getAsJsonPrimitive("sum").getAsDouble();
 						fv.count = f.getAsJsonPrimitive(COUNT).getAsLong();
 						fv.counts = context.deserialize(f.getAsJsonArray("counts"), countsType);
@@ -1045,12 +1080,12 @@ public class EntityDeserializers {
 			}
 		}
 
-		private void deserializeSystem(JsonObject obj, StatisticsEntity entity) {
+		private void deserializeSystem(final JsonObject obj, final StatisticsEntity entity) {
 			if (obj.has("system")) {
-				StatisticsEntity.System sys = new StatisticsEntity.System();
+				final StatisticsEntity.System sys = new StatisticsEntity.System();
 				entity.system = sys;
 
-				JsonObject system = obj.getAsJsonObject("system");
+				final JsonObject system = obj.getAsJsonObject("system");
 				if (system.has("minorPageFaults")) {
 					sys.minorPageFaults = system.getAsJsonPrimitive("minorPageFaults").getAsLong();
 				}
@@ -1083,24 +1118,24 @@ public class EntityDeserializers {
 
 		@Override
 		public StatisticsDescriptionEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			StatisticsDescriptionEntity entity = deserializeBaseParameter(obj, new StatisticsDescriptionEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final StatisticsDescriptionEntity entity = deserializeBaseParameter(obj, new StatisticsDescriptionEntity());
 
 			if (obj.has("groups")) {
-				JsonArray groups = obj.getAsJsonArray("groups");
+				final JsonArray groups = obj.getAsJsonArray("groups");
 				entity.groups = new ArrayList<StatisticsDescriptionEntity.Group>(groups.size());
 				for (int i = 0, imax = groups.size(); i < imax; i++) {
-					JsonObject g = groups.get(i).getAsJsonObject();
+					final JsonObject g = groups.get(i).getAsJsonObject();
 
-					Group group = new Group();
+					final Group group = new Group();
 					group.group = g.getAsJsonPrimitive("group").getAsString();
 					group.name = g.getAsJsonPrimitive("name").getAsString();
 					group.description = g.getAsJsonPrimitive("description").getAsString();
@@ -1110,12 +1145,12 @@ public class EntityDeserializers {
 			}
 
 			if (obj.has(FIGURES)) {
-				JsonArray figures = obj.getAsJsonArray(FIGURES);
+				final JsonArray figures = obj.getAsJsonArray(FIGURES);
 				entity.figures = new ArrayList<StatisticsDescriptionEntity.Figure>(figures.size());
 				for (int i = 0, imax = figures.size(); i < imax; i++) {
-					JsonObject f = figures.get(i).getAsJsonObject();
+					final JsonObject f = figures.get(i).getAsJsonObject();
 
-					Figure figure = new Figure();
+					final Figure figure = new Figure();
 					figure.group = f.getAsJsonPrimitive("group").getAsString();
 					figure.identifier = f.getAsJsonPrimitive("identifier").getAsString();
 					figure.name = f.getAsJsonPrimitive("name").getAsString();
@@ -1138,14 +1173,17 @@ public class EntityDeserializers {
 	public static class ScalarExampleEntityDeserializer implements JsonDeserializer<ScalarExampleEntity<?>> {
 
 		@Override
-		public ScalarExampleEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ScalarExampleEntity<?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ScalarExampleEntity<?> entity = deserializeBaseParameter(obj, new ScalarExampleEntity<Object>());
+			final JsonObject obj = json.getAsJsonObject();
+			final ScalarExampleEntity<?> entity = deserializeBaseParameter(obj, new ScalarExampleEntity<Object>());
 
 			if (obj.has("document")) {
 				entity.document = context.deserialize(obj.get("document"), DocumentEntity.class);
@@ -1159,14 +1197,17 @@ public class EntityDeserializers {
 	public static class SimpleByResultEntityDeserializer implements JsonDeserializer<SimpleByResultEntity> {
 
 		@Override
-		public SimpleByResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public SimpleByResultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			SimpleByResultEntity entity = deserializeBaseParameter(obj, new SimpleByResultEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final SimpleByResultEntity entity = deserializeBaseParameter(obj, new SimpleByResultEntity());
 
 			if (obj.has(DELETED)) {
 				entity.count = entity.deleted = obj.getAsJsonPrimitive(DELETED).getAsInt();
@@ -1188,14 +1229,17 @@ public class EntityDeserializers {
 	public static class TransactionResultEntityDeserializer implements JsonDeserializer<TransactionResultEntity> {
 
 		@Override
-		public TransactionResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public TransactionResultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			TransactionResultEntity entity = deserializeBaseParameter(obj, new TransactionResultEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final TransactionResultEntity entity = deserializeBaseParameter(obj, new TransactionResultEntity());
 
 			if (obj.has(RESULT)) { // MEMO:
 				if (obj.get(RESULT) instanceof JsonObject) {
@@ -1217,14 +1261,17 @@ public class EntityDeserializers {
 	public static class UserEntityDeserializer implements JsonDeserializer<UserEntity> {
 
 		@Override
-		public UserEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public UserEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			UserEntity entity = deserializeBaseParameter(obj, new UserEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final UserEntity entity = deserializeBaseParameter(obj, new UserEntity());
 
 			if (obj.has("user")) { // MEMO:
 				// RequestはusernameなのにResponseは何故userなのか。。
@@ -1239,7 +1286,7 @@ public class EntityDeserializers {
 				entity.active = obj.getAsJsonPrimitive(ACTIVE).getAsBoolean();
 			} else if (obj.has("authData")) {
 				// for simple/all requsts
-				JsonObject authData = obj.getAsJsonObject("authData");
+				final JsonObject authData = obj.getAsJsonObject("authData");
 				if (authData.has(ACTIVE)) {
 					entity.active = authData.getAsJsonPrimitive(ACTIVE).getAsBoolean();
 				}
@@ -1261,14 +1308,17 @@ public class EntityDeserializers {
 
 	public static class ImportResultEntityDeserializer implements JsonDeserializer<ImportResultEntity> {
 		@Override
-		public ImportResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ImportResultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ImportResultEntity entity = deserializeBaseParameter(obj, new ImportResultEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ImportResultEntity entity = deserializeBaseParameter(obj, new ImportResultEntity());
 
 			if (obj.has("created")) {
 				entity.created = obj.getAsJsonPrimitive("created").getAsInt();
@@ -1288,17 +1338,20 @@ public class EntityDeserializers {
 
 	public static class DatabaseEntityDeserializer implements JsonDeserializer<DatabaseEntity> {
 		@Override
-		public DatabaseEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DatabaseEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			DatabaseEntity entity = deserializeBaseParameter(obj, new DatabaseEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final DatabaseEntity entity = deserializeBaseParameter(obj, new DatabaseEntity());
 
 			if (obj.has(RESULT)) {
-				JsonObject result = obj.getAsJsonObject(RESULT);
+				final JsonObject result = obj.getAsJsonObject(RESULT);
 				if (result.has("name")) {
 					entity.name = result.getAsJsonPrimitive("name").getAsString();
 				}
@@ -1322,14 +1375,17 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public StringsResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public StringsResultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			StringsResultEntity entity = deserializeBaseParameter(obj, new StringsResultEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final StringsResultEntity entity = deserializeBaseParameter(obj, new StringsResultEntity());
 
 			if (obj.has(RESULT)) {
 				entity.result = context.deserialize(obj.get(RESULT), resultType);
@@ -1341,14 +1397,17 @@ public class EntityDeserializers {
 
 	public static class BooleanResultEntityDeserializer implements JsonDeserializer<BooleanResultEntity> {
 		@Override
-		public BooleanResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public BooleanResultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			BooleanResultEntity entity = deserializeBaseParameter(obj, new BooleanResultEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final BooleanResultEntity entity = deserializeBaseParameter(obj, new BooleanResultEntity());
 
 			if (obj.has(RESULT)) {
 				entity.result = obj.getAsJsonPrimitive(RESULT).getAsBoolean();
@@ -1364,15 +1423,18 @@ public class EntityDeserializers {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public Endpoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public Endpoint deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
+			final JsonObject obj = json.getAsJsonObject();
 
-			Endpoint entity = new Endpoint();
+			final Endpoint entity = new Endpoint();
 			entity.setDatabases((List<String>) context.deserialize(obj.getAsJsonArray("databases"), databasesType));
 			entity.setEndpoint(obj.getAsJsonPrimitive("endpoint").getAsString());
 
@@ -1385,22 +1447,26 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public DocumentResultEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DocumentResultEntity<?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			DocumentResultEntity<Object> entity = deserializeBaseParameter(obj, new DocumentResultEntity<Object>());
+			final JsonObject obj = json.getAsJsonObject();
+			final DocumentResultEntity<Object> entity = deserializeBaseParameter(obj,
+				new DocumentResultEntity<Object>());
 
 			if (obj.has(RESULT)) {
-				JsonElement resultElem = obj.get(RESULT);
+				final JsonElement resultElem = obj.get(RESULT);
 				if (resultElem.isJsonArray()) {
 					entity.result = context.deserialize(resultElem, documentsType);
 				} else if (resultElem.isJsonObject()) {
-					DocumentEntity<Object> doc = context.deserialize(resultElem, DocumentEntity.class);
-					List<DocumentEntity<Object>> list = new ArrayList<DocumentEntity<Object>>(1);
+					final DocumentEntity<Object> doc = context.deserialize(resultElem, DocumentEntity.class);
+					final List<DocumentEntity<Object>> list = new ArrayList<DocumentEntity<Object>>(1);
 					list.add(doc);
 					entity.result = list;
 				} else {
@@ -1414,14 +1480,17 @@ public class EntityDeserializers {
 
 	public static class ReplicationStateDeserializer implements JsonDeserializer<ReplicationState> {
 		@Override
-		public ReplicationState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ReplicationState deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationState entity = new ReplicationState();
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationState entity = new ReplicationState();
 
 			entity.running = obj.getAsJsonPrimitive("running").getAsBoolean();
 			entity.lastLogTick = obj.getAsJsonPrimitive("lastLogTick").getAsLong();
@@ -1434,31 +1503,31 @@ public class EntityDeserializers {
 
 	public static class ReplicationInventoryEntityDeserializer implements JsonDeserializer<ReplicationInventoryEntity> {
 
-		private Type indexesType = new TypeToken<List<IndexEntity>>() {
+		private final Type indexesType = new TypeToken<List<IndexEntity>>() {
 		}.getType();
 
 		@Override
 		public ReplicationInventoryEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationInventoryEntity entity = deserializeBaseParameter(obj, new ReplicationInventoryEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationInventoryEntity entity = deserializeBaseParameter(obj, new ReplicationInventoryEntity());
 
 			if (obj.has(COLLECTIONS)) {
-				JsonArray collections = obj.getAsJsonArray(COLLECTIONS);
+				final JsonArray collections = obj.getAsJsonArray(COLLECTIONS);
 				entity.collections = new ArrayList<ReplicationInventoryEntity.Collection>(collections.size());
 				for (int i = 0, imax = collections.size(); i < imax; i++) {
-					JsonObject elem = collections.get(i).getAsJsonObject();
-					Collection col = new Collection();
+					final JsonObject elem = collections.get(i).getAsJsonObject();
+					final Collection col = new Collection();
 
 					if (elem.has("parameters")) {
-						JsonObject parameters = elem.getAsJsonObject("parameters");
+						final JsonObject parameters = elem.getAsJsonObject("parameters");
 						addCollectionParameters(col, parameters);
 					}
 
@@ -1481,7 +1550,7 @@ public class EntityDeserializers {
 			return entity;
 		}
 
-		private void addCollectionParameters(Collection col, JsonObject parameters) {
+		private void addCollectionParameters(final Collection col, final JsonObject parameters) {
 			col.parameter = new CollectionParameter();
 			if (parameters.has(VERSION)) {
 				col.parameter.version = parameters.getAsJsonPrimitive(VERSION).getAsInt();
@@ -1519,22 +1588,22 @@ public class EntityDeserializers {
 
 		@Override
 		public ReplicationDumpRecord<?> deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationDumpRecord<DocumentEntity<Object>> entity = new ReplicationDumpRecord<DocumentEntity<Object>>();
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationDumpRecord<DocumentEntity<Object>> entity = new ReplicationDumpRecord<DocumentEntity<Object>>();
 
 			if (obj.has("tick")) {
 				entity.tick = obj.getAsJsonPrimitive("tick").getAsLong();
 			}
 			if (obj.has("type")) {
-				int type = obj.getAsJsonPrimitive("type").getAsInt();
+				final int type = obj.getAsJsonPrimitive("type").getAsInt();
 				entity.type = ReplicationEventType.valueOf(type);
 			}
 			if (obj.has("key")) {
@@ -1556,14 +1625,17 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public ReplicationSyncEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ReplicationSyncEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationSyncEntity entity = deserializeBaseParameter(obj, new ReplicationSyncEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationSyncEntity entity = deserializeBaseParameter(obj, new ReplicationSyncEntity());
 
 			if (obj.has(COLLECTIONS)) {
 				entity.collections = context.deserialize(obj.getAsJsonArray(COLLECTIONS), collectionsType);
@@ -1581,14 +1653,17 @@ public class EntityDeserializers {
 		}.getType();
 
 		@Override
-		public MapAsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public MapAsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			MapAsEntity entity = deserializeBaseParameter(obj, new MapAsEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final MapAsEntity entity = deserializeBaseParameter(obj, new MapAsEntity());
 
 			entity.map = context.deserialize(obj, mapType);
 
@@ -1600,16 +1675,17 @@ public class EntityDeserializers {
 			implements JsonDeserializer<ReplicationLoggerConfigEntity> {
 		@Override
 		public ReplicationLoggerConfigEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationLoggerConfigEntity entity = deserializeBaseParameter(obj, new ReplicationLoggerConfigEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationLoggerConfigEntity entity = deserializeBaseParameter(obj,
+				new ReplicationLoggerConfigEntity());
 
 			if (obj.has(AUTO_START)) {
 				entity.autoStart = obj.getAsJsonPrimitive(AUTO_START).getAsBoolean();
@@ -1633,16 +1709,17 @@ public class EntityDeserializers {
 
 		@Override
 		public ReplicationApplierConfigEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationApplierConfigEntity entity = deserializeBaseParameter(obj, new ReplicationApplierConfigEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationApplierConfigEntity entity = deserializeBaseParameter(obj,
+				new ReplicationApplierConfigEntity());
 
 			if (obj.has(ENDPOINT)) {
 				entity.endpoint = obj.getAsJsonPrimitive(ENDPOINT).getAsString();
@@ -1691,14 +1768,17 @@ public class EntityDeserializers {
 	public static class ReplicationApplierStateDeserializer implements JsonDeserializer<ReplicationApplierState> {
 
 		@Override
-		public ReplicationApplierState deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public ReplicationApplierState deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationApplierState state = new ReplicationApplierState();
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationApplierState state = new ReplicationApplierState();
 
 			if (obj.has("running")) {
 				state.running = obj.getAsJsonPrimitive("running").getAsBoolean();
@@ -1726,7 +1806,7 @@ public class EntityDeserializers {
 			return state;
 		}
 
-		private void deserializeTicks(JsonObject obj, ReplicationApplierState state) {
+		private void deserializeTicks(final JsonObject obj, final ReplicationApplierState state) {
 			if (obj.has(LAST_APPLIED_CONTINUOUS_TICK) && !obj.get(LAST_APPLIED_CONTINUOUS_TICK).isJsonNull()) {
 				state.lastAppliedContinuousTick = obj.getAsJsonPrimitive(LAST_APPLIED_CONTINUOUS_TICK).getAsLong();
 			}
@@ -1738,9 +1818,9 @@ public class EntityDeserializers {
 			}
 		}
 
-		private void deserializeProgress(JsonObject obj, ReplicationApplierState state) {
+		private void deserializeProgress(final JsonObject obj, final ReplicationApplierState state) {
 			if (obj.has("progress")) {
-				JsonObject progress = obj.getAsJsonObject("progress");
+				final JsonObject progress = obj.getAsJsonObject("progress");
 				state.progress = new Progress();
 				if (progress.has("failedConnects")) {
 					state.progress.failedConnects = progress.getAsJsonPrimitive("failedConnects").getAsLong();
@@ -1754,9 +1834,9 @@ public class EntityDeserializers {
 			}
 		}
 
-		private void deserializeLastError(JsonObject obj, ReplicationApplierState state) {
+		private void deserializeLastError(final JsonObject obj, final ReplicationApplierState state) {
 			if (obj.has(LAST_ERROR) && !obj.get(LAST_ERROR).isJsonNull()) {
-				JsonObject lastError = obj.getAsJsonObject(LAST_ERROR);
+				final JsonObject lastError = obj.getAsJsonObject(LAST_ERROR);
 				state.lastError = new LastError();
 				if (lastError.has("time")) {
 					state.lastError.setTime(DateUtils.parse(lastError.getAsJsonPrimitive("time").getAsString()));
@@ -1775,16 +1855,17 @@ public class EntityDeserializers {
 			implements JsonDeserializer<ReplicationApplierStateEntity> {
 		@Override
 		public ReplicationApplierStateEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationApplierStateEntity entity = deserializeBaseParameter(obj, new ReplicationApplierStateEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationApplierStateEntity entity = deserializeBaseParameter(obj,
+				new ReplicationApplierStateEntity());
 
 			if (obj.has(ENDPOINT)) {
 				entity.endpoint = obj.getAsJsonPrimitive(ENDPOINT).getAsString();
@@ -1795,7 +1876,7 @@ public class EntityDeserializers {
 			}
 
 			if (obj.has(SERVER)) {
-				JsonObject server = obj.getAsJsonObject(SERVER);
+				final JsonObject server = obj.getAsJsonObject(SERVER);
 				entity.serverVersion = server.getAsJsonPrimitive(VERSION).getAsString();
 				entity.serverId = server.getAsJsonPrimitive("serverId").getAsString();
 			}
@@ -1810,28 +1891,29 @@ public class EntityDeserializers {
 
 	public static class ReplicationLoggerStateEntityDeserializer
 			implements JsonDeserializer<ReplicationLoggerStateEntity> {
-		private Type clientsType = new TypeToken<List<Client>>() {
+		private final Type clientsType = new TypeToken<List<Client>>() {
 		}.getType();
 
 		@Override
 		public ReplicationLoggerStateEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ReplicationLoggerStateEntity entity = deserializeBaseParameter(obj, new ReplicationLoggerStateEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final ReplicationLoggerStateEntity entity = deserializeBaseParameter(obj,
+				new ReplicationLoggerStateEntity());
 
 			if (obj.has(STATE)) {
 				entity.state = context.deserialize(obj.get(STATE), ReplicationState.class);
 			}
 
 			if (obj.has(SERVER)) {
-				JsonObject server = obj.getAsJsonObject(SERVER);
+				final JsonObject server = obj.getAsJsonObject(SERVER);
 				entity.serverVersion = server.getAsJsonPrimitive(VERSION).getAsString();
 				entity.serverId = server.getAsJsonPrimitive("serverId").getAsString();
 			}
@@ -1848,16 +1930,16 @@ public class EntityDeserializers {
 			implements JsonDeserializer<ReplicationLoggerStateEntity.Client> {
 		@Override
 		public ReplicationLoggerStateEntity.Client deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			Client client = new Client();
+			final JsonObject obj = json.getAsJsonObject();
+			final Client client = new Client();
 
 			if (obj.has("serverId")) {
 				client.serverId = obj.getAsJsonPrimitive("serverId").getAsString();
@@ -1877,16 +1959,19 @@ public class EntityDeserializers {
 
 	public static class GraphEntityDeserializer implements JsonDeserializer<GraphEntity> {
 		@Override
-		public GraphEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public GraphEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			GraphEntity entity = deserializeBaseParameter(obj, new GraphEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final GraphEntity entity = deserializeBaseParameter(obj, new GraphEntity());
 
-			JsonObject graph = obj.has("graph") ? obj.getAsJsonObject("graph") : obj;
+			final JsonObject graph = obj.has("graph") ? obj.getAsJsonObject("graph") : obj;
 			deserializeDocumentParameter(graph, entity);
 
 			if (graph.has("name")) {
@@ -1894,12 +1979,12 @@ public class EntityDeserializers {
 			}
 
 			if (graph.has("orphanCollections")) {
-				JsonArray orphanCollections = graph.getAsJsonArray("orphanCollections");
+				final JsonArray orphanCollections = graph.getAsJsonArray("orphanCollections");
 				entity.orphanCollections = new ArrayList<String>();
 				if (orphanCollections != null) {
 					entity.orphanCollections = new ArrayList<String>(orphanCollections.size());
 					for (int i = 0, imax = orphanCollections.size(); i < imax; i++) {
-						String orphanCollection = orphanCollections.get(i).getAsString();
+						final String orphanCollection = orphanCollections.get(i).getAsString();
 
 						entity.orphanCollections.add(orphanCollection);
 					}
@@ -1907,7 +1992,7 @@ public class EntityDeserializers {
 			}
 
 			if (graph.has("edgeDefinitions")) {
-				JsonArray edgeDefinitions = graph.getAsJsonArray("edgeDefinitions");
+				final JsonArray edgeDefinitions = graph.getAsJsonArray("edgeDefinitions");
 				entity.edgeDefinitionsEntity = new EdgeDefinitionsEntity();
 				if (edgeDefinitions != null) {
 					addEdgeDefinitions(entity, edgeDefinitions);
@@ -1918,32 +2003,32 @@ public class EntityDeserializers {
 
 		}
 
-		private void addEdgeDefinitions(GraphEntity entity, JsonArray edgeDefinitions) {
+		private void addEdgeDefinitions(final GraphEntity entity, final JsonArray edgeDefinitions) {
 			for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
-				EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
-				JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
+				final EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
+				final JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
 				if (edgeDefinition.has("collection")) {
 					edgeDefinitionEntity.setCollection(edgeDefinition.get("collection").getAsString());
 				}
 				if (edgeDefinition.has("from")) {
-					List<String> from = new ArrayList<String>();
-					JsonElement fromElem = edgeDefinition.get("from");
-					JsonArray fromArray = fromElem.getAsJsonArray();
-					Iterator<JsonElement> iterator = fromArray.iterator();
+					final List<String> from = new ArrayList<String>();
+					final JsonElement fromElem = edgeDefinition.get("from");
+					final JsonArray fromArray = fromElem.getAsJsonArray();
+					final Iterator<JsonElement> iterator = fromArray.iterator();
 					while (iterator.hasNext()) {
-						JsonElement e = iterator.next();
+						final JsonElement e = iterator.next();
 						from.add(e.getAsString());
 					}
 
 					edgeDefinitionEntity.setFrom(from);
 				}
 				if (edgeDefinition.has("to")) {
-					List<String> to = new ArrayList<String>();
-					JsonElement toElem = edgeDefinition.get("to");
-					JsonArray toArray = toElem.getAsJsonArray();
-					Iterator<JsonElement> iterator = toArray.iterator();
+					final List<String> to = new ArrayList<String>();
+					final JsonElement toElem = edgeDefinition.get("to");
+					final JsonArray toArray = toElem.getAsJsonArray();
+					final Iterator<JsonElement> iterator = toArray.iterator();
 					while (iterator.hasNext()) {
-						JsonElement e = iterator.next();
+						final JsonElement e = iterator.next();
 						to.add(e.getAsString());
 					}
 					edgeDefinitionEntity.setTo(to);
@@ -1954,18 +2039,21 @@ public class EntityDeserializers {
 	}
 
 	public static class GraphsEntityDeserializer implements JsonDeserializer<GraphsEntity> {
-		private Type graphsType = new TypeToken<List<GraphEntity>>() {
+		private final Type graphsType = new TypeToken<List<GraphEntity>>() {
 		}.getType();
 
 		@Override
-		public GraphsEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public GraphsEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			GraphsEntity entity = deserializeBaseParameter(obj, new GraphsEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final GraphsEntity entity = deserializeBaseParameter(obj, new GraphsEntity());
 
 			if (obj.has("graphs")) {
 				entity.graphs = context.deserialize(obj.get("graphs"), graphsType);
@@ -1978,14 +2066,17 @@ public class EntityDeserializers {
 
 	public static class DeleteEntityDeserializer implements JsonDeserializer<DeletedEntity> {
 		@Override
-		public DeletedEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public DeletedEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			DeletedEntity entity = deserializeBaseParameter(obj, new DeletedEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final DeletedEntity entity = deserializeBaseParameter(obj, new DeletedEntity());
 
 			if (obj.has(DELETED)) {
 				entity.deleted = obj.getAsJsonPrimitive(DELETED).getAsBoolean();
@@ -2001,19 +2092,22 @@ public class EntityDeserializers {
 
 	public static class VertexEntityDeserializer implements JsonDeserializer<VertexEntity<?>> {
 		@Override
-		public VertexEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public VertexEntity<?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			VertexEntity<Object> entity = deserializeBaseParameter(obj, new VertexEntity<Object>());
+			final JsonObject obj = json.getAsJsonObject();
+			final VertexEntity<Object> entity = deserializeBaseParameter(obj, new VertexEntity<Object>());
 
-			JsonObject vertex = obj.has("vertex") ? obj.getAsJsonObject("vertex") : obj;
+			final JsonObject vertex = obj.has("vertex") ? obj.getAsJsonObject("vertex") : obj;
 			deserializeDocumentParameter(vertex, entity);
 
-			Class<?> clazz = getParameterized();
+			final Class<?> clazz = getParameterized();
 			if (clazz != null) {
 				entity.setEntity(context.deserialize(vertex, clazz));
 			}
@@ -2024,16 +2118,19 @@ public class EntityDeserializers {
 
 	public static class EdgeEntityDeserializer implements JsonDeserializer<EdgeEntity<?>> {
 		@Override
-		public EdgeEntity<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public EdgeEntity<?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			EdgeEntity<Object> entity = deserializeBaseParameter(obj, new EdgeEntity<Object>());
+			final JsonObject obj = json.getAsJsonObject();
+			final EdgeEntity<Object> entity = deserializeBaseParameter(obj, new EdgeEntity<Object>());
 
-			JsonObject edge = obj.has("edge") ? obj.getAsJsonObject("edge") : obj;
+			final JsonObject edge = obj.has("edge") ? obj.getAsJsonObject("edge") : obj;
 			deserializeDocumentParameter(edge, entity);
 
 			if (edge.has("_from")) {
@@ -2044,7 +2141,7 @@ public class EntityDeserializers {
 			}
 
 			// 他のフィールドはリフレクションで。 (TODO: Annotationのサポートと上記パラメータを弾く)
-			Class<?> clazz = getParameterized();
+			final Class<?> clazz = getParameterized();
 			if (clazz != null) {
 				entity.entity = context.deserialize(edge, clazz);
 			}
@@ -2057,22 +2154,25 @@ public class EntityDeserializers {
 	public static class TraversalEntityDeserializer implements JsonDeserializer<TraversalEntity<?, ?>> {
 
 		@Override
-		public TraversalEntity<?, ?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public TraversalEntity<?, ?> deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			TraversalEntity<Object, Object> entity = deserializeBaseParameter(obj,
+			final JsonObject obj = json.getAsJsonObject();
+			final TraversalEntity<Object, Object> entity = deserializeBaseParameter(obj,
 				new TraversalEntity<Object, Object>());
 			deserializeBaseParameter(obj, entity);
 
-			JsonObject result = getFirstResultAsJsonObject(obj);
+			final JsonObject result = getFirstResultAsJsonObject(obj);
 			if (result != null && result.getAsJsonObject().has("visited")) {
-				JsonObject visited = result.getAsJsonObject().getAsJsonObject("visited");
+				final JsonObject visited = result.getAsJsonObject().getAsJsonObject("visited");
 
-				Class<?> vertexClazz = getParameterized();
+				final Class<?> vertexClazz = getParameterized();
 				Class<?> edgeClazz = null;
 
 				if (hasNextParameterized()) {
@@ -2091,16 +2191,16 @@ public class EntityDeserializers {
 		}
 
 		private List<PathEntity<Object, Object>> getPaths(
-			JsonDeserializationContext context,
-			JsonObject visited,
-			Class<?> vertexClazz,
-			Class<?> edgeClazz) {
-			List<PathEntity<Object, Object>> pathEntities = new ArrayList<PathEntity<Object, Object>>();
-			JsonArray paths = visited.getAsJsonArray(PATHS);
+			final JsonDeserializationContext context,
+			final JsonObject visited,
+			final Class<?> vertexClazz,
+			final Class<?> edgeClazz) {
+			final List<PathEntity<Object, Object>> pathEntities = new ArrayList<PathEntity<Object, Object>>();
+			final JsonArray paths = visited.getAsJsonArray(PATHS);
 			if (paths != null) {
 				for (int i = 0, imax = paths.size(); i < imax; i++) {
-					JsonObject path = paths.get(i).getAsJsonObject();
-					PathEntity<Object, Object> pathEntity = new PathEntity<Object, Object>();
+					final JsonObject path = paths.get(i).getAsJsonObject();
+					final PathEntity<Object, Object> pathEntity = new PathEntity<Object, Object>();
 
 					if (path.has(EDGES)) {
 						pathEntity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray(EDGES)));
@@ -2120,22 +2220,22 @@ public class EntityDeserializers {
 	public static class ShortestPathEntityDeserializer implements JsonDeserializer<ShortestPathEntity<?, ?>> {
 		@Override
 		public ShortestPathEntity<?, ?> deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			ShortestPathEntity<Object, Object> entity = deserializeBaseParameter(obj,
+			final JsonObject obj = json.getAsJsonObject();
+			final ShortestPathEntity<Object, Object> entity = deserializeBaseParameter(obj,
 				new ShortestPathEntity<Object, Object>());
 			deserializeBaseParameter(obj, entity);
 
-			JsonObject result = getFirstResultAsJsonObject(obj);
+			final JsonObject result = getFirstResultAsJsonObject(obj);
 			if (result != null) {
-				Class<?> vertexClazz = getParameterized();
+				final Class<?> vertexClazz = getParameterized();
 				Class<?> edgeClazz = null;
 
 				if (hasNextParameterized()) {
@@ -2167,14 +2267,14 @@ public class EntityDeserializers {
 		}
 
 		private void addOldPath(
-			JsonDeserializationContext context,
-			ShortestPathEntity<Object, Object> entity,
-			JsonObject result,
-			Class<?> vertexClazz,
-			Class<?> edgeClazz) {
-			JsonArray paths = result.getAsJsonArray(PATHS);
+			final JsonDeserializationContext context,
+			final ShortestPathEntity<Object, Object> entity,
+			final JsonObject result,
+			final Class<?> vertexClazz,
+			final Class<?> edgeClazz) {
+			final JsonArray paths = result.getAsJsonArray(PATHS);
 			if (paths != null && paths.size() > 0) {
-				JsonObject path = paths.get(0).getAsJsonObject();
+				final JsonObject path = paths.get(0).getAsJsonObject();
 
 				if (path.has(EDGES)) {
 					entity.setEdges(getEdges(edgeClazz, context, path.getAsJsonArray(EDGES)));
@@ -2190,16 +2290,16 @@ public class EntityDeserializers {
 
 		@Override
 		public QueryCachePropertiesEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			QueryCachePropertiesEntity entity = deserializeBaseParameter(obj, new QueryCachePropertiesEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final QueryCachePropertiesEntity entity = deserializeBaseParameter(obj, new QueryCachePropertiesEntity());
 
 			if (obj.has("mode")) {
 				entity.setMode(obj.getAsJsonPrimitive("mode").getAsString());
@@ -2217,19 +2317,22 @@ public class EntityDeserializers {
 	public static class QueriesResultEntityDeserializer implements JsonDeserializer<QueriesResultEntity> {
 
 		@Override
-		public QueriesResultEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+		public QueriesResultEntity deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonArray array = json.getAsJsonArray();
-			Iterator<JsonElement> iterator = array.iterator();
-			List<QueryEntity> queries = new ArrayList<QueryEntity>();
+			final JsonArray array = json.getAsJsonArray();
+			final Iterator<JsonElement> iterator = array.iterator();
+			final List<QueryEntity> queries = new ArrayList<QueryEntity>();
 			while (iterator.hasNext()) {
-				JsonElement element = iterator.next();
-				JsonObject obj = element.getAsJsonObject();
-				QueryEntity entity = new QueryEntity();
+				final JsonElement element = iterator.next();
+				final JsonObject obj = element.getAsJsonObject();
+				final QueryEntity entity = new QueryEntity();
 
 				if (obj.has(ID)) {
 					entity.setId(obj.getAsJsonPrimitive(ID).getAsString());
@@ -2241,12 +2344,12 @@ public class EntityDeserializers {
 				}
 
 				if (obj.has("started")) {
-					String str = obj.getAsJsonPrimitive("started").getAsString();
+					final String str = obj.getAsJsonPrimitive("started").getAsString();
 
-					SimpleDateFormat sdf = new SimpleDateFormat(ALT_DATE_TIME_FORMAT);
+					final SimpleDateFormat sdf = new SimpleDateFormat(ALT_DATE_TIME_FORMAT);
 					try {
 						entity.setStarted(sdf.parse(str));
-					} catch (ParseException e) {
+					} catch (final ParseException e) {
 						logger.debug("got ParseException for date string: " + str);
 					}
 				}
@@ -2266,16 +2369,17 @@ public class EntityDeserializers {
 
 		@Override
 		public QueryTrackingPropertiesEntity deserialize(
-			JsonElement json,
-			Type typeOfT,
-			JsonDeserializationContext context) {
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
 
 			if (json.isJsonNull()) {
 				return null;
 			}
 
-			JsonObject obj = json.getAsJsonObject();
-			QueryTrackingPropertiesEntity entity = deserializeBaseParameter(obj, new QueryTrackingPropertiesEntity());
+			final JsonObject obj = json.getAsJsonObject();
+			final QueryTrackingPropertiesEntity entity = deserializeBaseParameter(obj,
+				new QueryTrackingPropertiesEntity());
 
 			if (obj.has("enabled")) {
 				entity.setEnabled(obj.getAsJsonPrimitive("enabled").getAsBoolean());
@@ -2302,7 +2406,7 @@ public class EntityDeserializers {
 
 	}
 
-	private static JsonObject getFirstResultAsJsonObject(JsonObject obj) {
+	private static JsonObject getFirstResultAsJsonObject(final JsonObject obj) {
 		if (obj.has(RESULT)) {
 			if (obj.get(RESULT).isJsonArray()) {
 				return getElementAsJsonObject(obj.getAsJsonArray(RESULT));
@@ -2313,9 +2417,9 @@ public class EntityDeserializers {
 		return null;
 	}
 
-	private static JsonObject getElementAsJsonObject(JsonArray arr) {
+	private static JsonObject getElementAsJsonObject(final JsonArray arr) {
 		if (arr != null && arr.size() > 0) {
-			JsonElement jsonElement = arr.get(0);
+			final JsonElement jsonElement = arr.get(0);
 			if (jsonElement.isJsonObject()) {
 				return jsonElement.getAsJsonObject();
 			}
@@ -2324,14 +2428,14 @@ public class EntityDeserializers {
 	}
 
 	private static List<VertexEntity<Object>> getVertices(
-		Class<?> vertexClazz,
-		JsonDeserializationContext context,
-		JsonArray vertices) {
-		List<VertexEntity<Object>> list = new ArrayList<VertexEntity<Object>>();
+		final Class<?> vertexClazz,
+		final JsonDeserializationContext context,
+		final JsonArray vertices) {
+		final List<VertexEntity<Object>> list = new ArrayList<VertexEntity<Object>>();
 		if (vertices != null) {
 			for (int i = 0, imax = vertices.size(); i < imax; i++) {
-				JsonObject vertex = vertices.get(i).getAsJsonObject();
-				VertexEntity<Object> ve = getVertex(context, vertex, vertexClazz);
+				final JsonObject vertex = vertices.get(i).getAsJsonObject();
+				final VertexEntity<Object> ve = getVertex(context, vertex, vertexClazz);
 				list.add(ve);
 			}
 		}
@@ -2339,10 +2443,10 @@ public class EntityDeserializers {
 	}
 
 	private static VertexEntity<Object> getVertex(
-		JsonDeserializationContext context,
-		JsonObject vertex,
-		Class<?> vertexClazz) {
-		VertexEntity<Object> ve = deserializeBaseParameter(vertex, new VertexEntity<Object>());
+		final JsonDeserializationContext context,
+		final JsonObject vertex,
+		final Class<?> vertexClazz) {
+		final VertexEntity<Object> ve = deserializeBaseParameter(vertex, new VertexEntity<Object>());
 		deserializeDocumentParameter(vertex, ve);
 		if (vertexClazz != null) {
 			ve.setEntity(context.deserialize(vertex, vertexClazz));
@@ -2353,14 +2457,14 @@ public class EntityDeserializers {
 	}
 
 	private static List<EdgeEntity<Object>> getEdges(
-		Class<?> edgeClazz,
-		JsonDeserializationContext context,
-		JsonArray edges) {
-		List<EdgeEntity<Object>> list = new ArrayList<EdgeEntity<Object>>();
+		final Class<?> edgeClazz,
+		final JsonDeserializationContext context,
+		final JsonArray edges) {
+		final List<EdgeEntity<Object>> list = new ArrayList<EdgeEntity<Object>>();
 		if (edges != null) {
 			for (int i = 0, imax = edges.size(); i < imax; i++) {
-				JsonObject edge = edges.get(i).getAsJsonObject();
-				EdgeEntity<Object> ve = deserializeBaseParameter(edge, new EdgeEntity<Object>());
+				final JsonObject edge = edges.get(i).getAsJsonObject();
+				final EdgeEntity<Object> ve = deserializeBaseParameter(edge, new EdgeEntity<Object>());
 				deserializeDocumentParameter(edge, ve);
 				if (edgeClazz != null) {
 					ve.setEntity(context.deserialize(edge, edgeClazz));

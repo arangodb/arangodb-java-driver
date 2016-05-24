@@ -127,15 +127,15 @@ public class CollectionEntity extends BaseEntity {
 		return checksum;
 	}
 
-	public void setIsSystem(Boolean isSystem) {
+	public void setIsSystem(final Boolean isSystem) {
 		this.isSystem = isSystem;
 	}
 
-	public void setIsVolatile(Boolean isVolatile) {
+	public void setIsVolatile(final Boolean isVolatile) {
 		this.isVolatile = isVolatile;
 	}
 
-	public void setChecksum(long checksum) {
+	public void setChecksum(final long checksum) {
 		this.checksum = checksum;
 	}
 
@@ -167,47 +167,47 @@ public class CollectionEntity extends BaseEntity {
 		return keyOptions;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setId(long id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 
-	public void setType(CollectionType type) {
+	public void setType(final CollectionType type) {
 		this.type = type;
 	}
 
-	public void setStatus(CollectionStatus status) {
+	public void setStatus(final CollectionStatus status) {
 		this.status = status;
 	}
 
-	public void setWaitForSync(Boolean waitForSync) {
+	public void setWaitForSync(final Boolean waitForSync) {
 		this.waitForSync = waitForSync;
 	}
 
-	public void setSystem(Boolean isSystem) {
+	public void setSystem(final Boolean isSystem) {
 		this.isSystem = isSystem;
 	}
 
-	public void setVolatile(Boolean isVolatile) {
+	public void setVolatile(final Boolean isVolatile) {
 		this.isVolatile = isVolatile;
 	}
 
-	public void setJournalSize(long journalSize) {
+	public void setJournalSize(final long journalSize) {
 		this.journalSize = journalSize;
 	}
 
-	public void setCount(long count) {
+	public void setCount(final long count) {
 		this.count = count;
 	}
 
-	public void setFigures(Figures figures) {
+	public void setFigures(final Figures figures) {
 		this.figures = figures;
 	}
 
-	public void setKeyOptions(CollectionKeyOption keyOptions) {
+	public void setKeyOptions(final CollectionKeyOption keyOptions) {
 		this.keyOptions = keyOptions;
 	}
 
@@ -215,7 +215,7 @@ public class CollectionEntity extends BaseEntity {
 		return revision;
 	}
 
-	public void setRevision(long revision) {
+	public void setRevision(final long revision) {
 		this.revision = revision;
 	}
 
@@ -223,7 +223,7 @@ public class CollectionEntity extends BaseEntity {
 		return doCompact;
 	}
 
-	public void setDoCompact(Boolean doCompact) {
+	public void setDoCompact(final Boolean doCompact) {
 		this.doCompact = doCompact;
 	}
 
@@ -296,37 +296,6 @@ public class CollectionEntity extends BaseEntity {
 		long compactorsFileSize;
 
 		/**
-		 * The number of shape files. This value is deprecated and kept for
-		 * compatibility reasons only. The value will always be 0 since ArangoDB
-		 * 2.0 and higher. *figures.shapefiles.fileSize: The total filesize of
-		 * the shape files. This value is deprecated and kept for compatibility
-		 * reasons only. The value will always be 0 in ArangoDB 2.0 and higher.
-		 */
-		long shapefilesCount;
-
-		/**
-		 * The total size of all shapes (in bytes). This includes shapes that
-		 * are not in use anymore. Shapes that are contained in the write-ahead
-		 * log only are not reported in this figure.
-		 */
-		long shapefilesFileSize;
-
-		/**
-		 * The total number of shapes used in the collection. This includes
-		 * shapes that are not in use anymore. Shapes that are contained in the
-		 * write-ahead log only are not reported in this figure.
-		 */
-		long shapesCount;
-
-		/**
-		 * The total number of attributes used in the collection. Note: the
-		 * value includes data of attributes that are not in use anymore.
-		 * Attributes that are contained in the write-ahead log only are not
-		 * reported in this figure.
-		 */
-		long attributesCount;
-
-		/**
 		 * The total number of indexes defined for the collection, including the
 		 * pre-defined indexes (e.g. primary index).
 		 */
@@ -394,87 +363,55 @@ public class CollectionEntity extends BaseEntity {
 			return compactorsFileSize;
 		}
 
-		public long getShapefilesCount() {
-			return shapefilesCount;
-		}
-
-		public long getShapefilesFileSize() {
-			return shapefilesFileSize;
-		}
-
-		public long getShapesCount() {
-			return shapesCount;
-		}
-
-		public long getAttributesCount() {
-			return attributesCount;
-		}
-
-		public void setAliveCount(long aliveCount) {
+		public void setAliveCount(final long aliveCount) {
 			this.aliveCount = aliveCount;
 		}
 
-		public void setAliveSize(long aliveSize) {
+		public void setAliveSize(final long aliveSize) {
 			this.aliveSize = aliveSize;
 		}
 
-		public void setDeadCount(long deadCount) {
+		public void setDeadCount(final long deadCount) {
 			this.deadCount = deadCount;
 		}
 
-		public void setDeadSize(long deadSize) {
+		public void setDeadSize(final long deadSize) {
 			this.deadSize = deadSize;
 		}
 
-		public void setDeadDeletion(long deadDeletion) {
+		public void setDeadDeletion(final long deadDeletion) {
 			this.deadDeletion = deadDeletion;
 		}
 
-		public void setDatafileCount(long datafileCount) {
+		public void setDatafileCount(final long datafileCount) {
 			this.datafileCount = datafileCount;
 		}
 
-		public void setDatafileFileSize(long datafileFileSize) {
+		public void setDatafileFileSize(final long datafileFileSize) {
 			this.datafileFileSize = datafileFileSize;
 		}
 
-		public void setJournalsCount(long journalsCount) {
+		public void setJournalsCount(final long journalsCount) {
 			this.journalsCount = journalsCount;
 		}
 
-		public void setJournalsFileSize(long journalsFileSize) {
+		public void setJournalsFileSize(final long journalsFileSize) {
 			this.journalsFileSize = journalsFileSize;
 		}
 
-		public void setCompactorsCount(long compactorsCount) {
+		public void setCompactorsCount(final long compactorsCount) {
 			this.compactorsCount = compactorsCount;
 		}
 
-		public void setCompactorsFileSize(long compactorsFileSize) {
+		public void setCompactorsFileSize(final long compactorsFileSize) {
 			this.compactorsFileSize = compactorsFileSize;
-		}
-
-		public void setShapefilesCount(long shapefilesCount) {
-			this.shapefilesCount = shapefilesCount;
-		}
-
-		public void setShapefilesFileSize(long shapefilesFileSize) {
-			this.shapefilesFileSize = shapefilesFileSize;
-		}
-
-		public void setShapesCount(long shapesCount) {
-			this.shapesCount = shapesCount;
-		}
-
-		public void setAttributesCount(long attributesCount) {
-			this.attributesCount = attributesCount;
 		}
 
 		public long getIndexesCount() {
 			return indexesCount;
 		}
 
-		public void setIndexesCount(long indexesCount) {
+		public void setIndexesCount(final long indexesCount) {
 			this.indexesCount = indexesCount;
 		}
 
@@ -482,7 +419,7 @@ public class CollectionEntity extends BaseEntity {
 			return indexesSize;
 		}
 
-		public void setIndexesSize(long indexesSize) {
+		public void setIndexesSize(final long indexesSize) {
 			this.indexesSize = indexesSize;
 		}
 
@@ -490,7 +427,7 @@ public class CollectionEntity extends BaseEntity {
 			return lastTick;
 		}
 
-		public void setLastTick(long lastTick) {
+		public void setLastTick(final long lastTick) {
 			this.lastTick = lastTick;
 		}
 
@@ -498,7 +435,7 @@ public class CollectionEntity extends BaseEntity {
 			return uncollectedLogfileEntries;
 		}
 
-		public void setUncollectedLogfileEntries(long uncollectedLogfileEntries) {
+		public void setUncollectedLogfileEntries(final long uncollectedLogfileEntries) {
 			this.uncollectedLogfileEntries = uncollectedLogfileEntries;
 		}
 
@@ -508,9 +445,7 @@ public class CollectionEntity extends BaseEntity {
 					+ ", deadSize=" + deadSize + ", deadDeletion=" + deadDeletion + ", datafileCount=" + datafileCount
 					+ ", datafileFileSize=" + datafileFileSize + ", journalsCount=" + journalsCount
 					+ ", journalsFileSize=" + journalsFileSize + ", compactorsCount=" + compactorsCount
-					+ ", compactorsFileSize=" + compactorsFileSize + ", shapefilesCount=" + shapefilesCount
-					+ ", shapefilesFileSize=" + shapefilesFileSize + ", shapesCount=" + shapesCount
-					+ ", attributesCount=" + attributesCount + ", indexesCount=" + indexesCount + ", indexesSize="
+					+ ", compactorsFileSize=" + compactorsFileSize + ", indexesCount=" + indexesCount + ", indexesSize="
 					+ indexesSize + ", lastTick=" + lastTick + ", uncollectedLogfileEntries="
 					+ uncollectedLogfileEntries + "]";
 		}
