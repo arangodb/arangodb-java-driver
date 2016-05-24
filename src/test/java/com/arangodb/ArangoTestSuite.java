@@ -16,6 +16,8 @@
 
 package com.arangodb;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -121,4 +123,15 @@ import com.arangodb.util.StringJoinTest;
 
 public class ArangoTestSuite {
 
+	@BeforeClass
+	public static void setup() {
+		BaseTest.__setup();
+		BaseTest.MANAGE_SETUP = false;
+	}
+
+	@AfterClass
+	public static void shutdown() {
+		BaseTest.MANAGE_SETUP = true;
+		BaseTest.__shutdown();
+	}
 }

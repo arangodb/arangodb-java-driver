@@ -30,33 +30,37 @@ public abstract class BaseTest {
 
 	protected static final String DATABASE_NAME = "unitTestDatabase";
 
+	protected static boolean MANAGE_SETUP = true;
 	protected static ArangoConfigure configure;
 	protected static ArangoDriver driver;
 
 	@BeforeClass
 	public static void __setup() {
-		final ArangoConfigure configure = new ArangoConfigure();
-		configure.setConnectRetryCount(2);
-		configure.init();
-		final ArangoDriver driver = new ArangoDriver(configure);
+		if (MANAGE_SETUP) {
+			final ArangoConfigure configure = new ArangoConfigure();
+			configure.setConnectRetryCount(2);
+			configure.init();
+			final ArangoDriver driver = new ArangoDriver(configure);
 
+			BaseTest.driver = driver;
+			BaseTest.configure = configure;
+		}
 		try {
 			driver.createDatabase(DATABASE_NAME);
 		} catch (final ArangoException e) {
 		}
 		driver.setDefaultDatabase(DATABASE_NAME);
-
-		BaseTest.driver = driver;
-		BaseTest.configure = configure;
 	}
 
 	@AfterClass
 	public static void __shutdown() {
-		try {
-			driver.deleteDatabase(DATABASE_NAME);
-		} catch (final ArangoException e) {
+		if (MANAGE_SETUP) {
+			try {
+				driver.deleteDatabase(DATABASE_NAME);
+			} catch (final ArangoException e) {
+			}
+			configure.shutdown();
 		}
-		configure.shutdown();
 	}
 
 	protected boolean isMinimumVersion(final String version) throws ArangoException {
