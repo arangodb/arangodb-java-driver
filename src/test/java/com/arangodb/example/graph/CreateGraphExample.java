@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionOptions;
@@ -46,14 +44,6 @@ public class CreateGraphExample extends BaseExample {
 	private static final String GRAPH_NAME = "example_graph1";
 	private static final String EDGE_COLLECTION_NAME = "edgeColl1";
 	private static final String VERTEXT_COLLECTION_NAME = "vertexColl1";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public CreateGraphExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

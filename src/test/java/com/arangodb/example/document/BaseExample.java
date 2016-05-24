@@ -18,7 +18,6 @@ package com.arangodb.example.document;
 
 import org.junit.Assert;
 
-import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.BaseTest;
@@ -29,14 +28,6 @@ public class BaseExample extends BaseTest {
 
 	protected static final String FEMALE = "female";
 	protected static final String MALE = "male";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public BaseExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	protected void removeTestDatabase(final String name) {
 		try {

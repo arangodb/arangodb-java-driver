@@ -52,10 +52,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	private static Logger logger = LoggerFactory.getLogger(ArangoDriverSimpleTest.class);
 
-	public ArangoDriverSimpleTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	private static final String COLLECTION_NAME = "unit_test_simple_test";
 	private static final String COLLECTION_NAME_400 = "unit_test_simple_test_400";
 
@@ -65,23 +61,23 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		// create test collection
 		try {
 			driver.deleteCollection(COLLECTION_NAME);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.createCollection(COLLECTION_NAME);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// add some test data
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
 			driver.createDocument(COLLECTION_NAME, value, null, null);
 		}
 
 		// delete second test collection
 		try {
 			driver.deleteCollection(COLLECTION_NAME_400);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 	}
@@ -89,14 +85,14 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_simple_all() throws ArangoException {
 
-		DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleAllDocuments(COLLECTION_NAME, 0, 0,
-			TestComplexEntity01.class);
+		final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleAllDocuments(COLLECTION_NAME, 0,
+			0, TestComplexEntity01.class);
 
-		Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
+		final Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
 
 		int count = 0;
 		while (iterator.hasNext()) {
-			TestComplexEntity01 entity = iterator.next().getEntity();
+			final TestComplexEntity01 entity = iterator.next().getEntity();
 			count++;
 			assertThat(entity, is(notNullValue()));
 		}
@@ -107,14 +103,14 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_example_by() throws ArangoException {
 
-		DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
-			new MapBuilder().put("user", "user_6").get(), 0, 0, TestComplexEntity01.class);
+		final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleByExampleDocuments(
+			COLLECTION_NAME, new MapBuilder().put("user", "user_6").get(), 0, 0, TestComplexEntity01.class);
 
-		Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
+		final Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
 
 		int count = 0;
 		while (iterator.hasNext()) {
-			TestComplexEntity01 entity = iterator.next().getEntity();
+			final TestComplexEntity01 entity = iterator.next().getEntity();
 			count++;
 			assertThat(entity.getUser(), is("user_6"));
 		}
@@ -124,10 +120,10 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_first_example() throws ArangoException {
 
-		ScalarExampleEntity<TestComplexEntity01> entity = driver.executeSimpleFirstExample(COLLECTION_NAME,
+		final ScalarExampleEntity<TestComplexEntity01> entity = driver.executeSimpleFirstExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_5").put("desc", "desc5").get(), TestComplexEntity01.class);
 
-		DocumentEntity<TestComplexEntity01> doc = entity.getDocument();
+		final DocumentEntity<TestComplexEntity01> doc = entity.getDocument();
 
 		assertThat(entity.getStatusCode(), is(200));
 		assertThat(doc.getDocumentRevision(), is(not(0L)));
@@ -142,11 +138,11 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_any() throws ArangoException {
 
-		ScalarExampleEntity<TestComplexEntity01> entity = driver.executeSimpleAny(COLLECTION_NAME,
+		final ScalarExampleEntity<TestComplexEntity01> entity = driver.executeSimpleAny(COLLECTION_NAME,
 			TestComplexEntity01.class);
 
 		for (int i = 0; i < 30; i++) {
-			DocumentEntity<TestComplexEntity01> doc = entity.getDocument();
+			final DocumentEntity<TestComplexEntity01> doc = entity.getDocument();
 
 			assertThat(entity.getStatusCode(), is(200));
 			assertThat(doc.getDocumentRevision(), is(not(0L)));
@@ -167,7 +163,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 			driver.executeSimpleRangeWithDocuments(COLLECTION_NAME, "age", 5, 30, null, 0, 0,
 				TestComplexEntity01.class);
 			fail("request should fail");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(1209));
 			assertThat(e.getCode(), is(404));
 		}
@@ -181,13 +177,13 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		driver.createIndex(COLLECTION_NAME, IndexType.SKIPLIST, false, "age");
 
 		{
-			DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(COLLECTION_NAME,
-				"age", 5, 30, null, 0, 0, TestComplexEntity01.class);
-			Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
+			final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(
+				COLLECTION_NAME, "age", 5, 30, null, 0, 0, TestComplexEntity01.class);
+			final Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
 
 			int count = 0;
 			while (iterator.hasNext()) {
-				TestComplexEntity01 entity = iterator.next().getEntity();
+				final TestComplexEntity01 entity = iterator.next().getEntity();
 				count++;
 				assertThat(entity, is(notNullValue()));
 			}
@@ -196,13 +192,13 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		}
 
 		{
-			DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(COLLECTION_NAME,
-				"age", 5, 30, true, 0, 0, TestComplexEntity01.class);
-			Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
+			final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleRangeWithDocuments(
+				COLLECTION_NAME, "age", 5, 30, true, 0, 0, TestComplexEntity01.class);
+			final Iterator<DocumentEntity<TestComplexEntity01>> iterator = documentCursor.iterator();
 
 			int count = 0;
 			while (iterator.hasNext()) {
-				TestComplexEntity01 entity = iterator.next().getEntity();
+				final TestComplexEntity01 entity = iterator.next().getEntity();
 				count++;
 				assertThat(entity, is(notNullValue()));
 			}
@@ -215,7 +211,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_remove_by_example() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleRemoveByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleRemoveByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(), null, null);
 
 		assertThat(entity.getCode(), is(200));
@@ -229,7 +225,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_remove_by_example_with_limit() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleRemoveByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleRemoveByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(), null, 5);
 
 		assertThat(entity.getCode(), is(200));
@@ -244,7 +240,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_replace_by_example() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleReplaceByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleReplaceByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(), new MapBuilder().put("abc", "xxx").get(), null, null);
 
 		assertThat(entity.getCode(), is(200));
@@ -254,14 +250,14 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(0));
 
 		// Get Replaced Document
-		DocumentCursor<Map> documentCursor = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
+		final DocumentCursor<Map> documentCursor = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
 
-		List<DocumentEntity<Map>> list = documentCursor.asList();
+		final List<DocumentEntity<Map>> list = documentCursor.asList();
 
 		assertThat(list.size(), is(10));
-		for (DocumentEntity<Map> docuemntEntity : list) {
-			Map<?, ?> map = docuemntEntity.getEntity();
+		for (final DocumentEntity<Map> docuemntEntity : list) {
+			final Map<?, ?> map = docuemntEntity.getEntity();
 			assertThat(map.size(), is(4)); // _id, _rev, _key and "abc"
 			assertThat((String) map.get("abc"), is("xxx"));
 		}
@@ -272,7 +268,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_replace_by_example_with_limit() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleReplaceByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleReplaceByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(), new MapBuilder().put("abc", "xxx").get(), null, 3);
 
 		assertThat(entity.getCode(), is(200));
@@ -282,12 +278,12 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(0));
 
 		// Get Replaced Document
-		CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
-		List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = ResultSetUtils.toList(rs);
 
 		assertThat(list.size(), is(3));
-		for (Map<String, ?> map : list) {
+		for (final Map<String, ?> map : list) {
 			assertThat(map.size(), is(4)); // _id, _rev, _key and "abc"
 			assertThat((String) map.get("abc"), is("xxx"));
 		}
@@ -298,7 +294,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_update_by_example() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleUpdateByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleUpdateByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(), new MapBuilder().put("abc", "xxx").put("age", 999).get(),
 			null, null, null);
 
@@ -309,12 +305,12 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(10));
 
 		// Get Replaced Document
-		CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
-		List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = ResultSetUtils.toList(rs);
 
 		assertThat(list.size(), is(10));
-		for (Map<String, ?> map : list) {
+		for (final Map<String, ?> map : list) {
 			assertThat(map.size(), is(7)); // _id, _rev, _key and "user",
 			// "desc", "age", "abc"
 			assertThat((String) map.get("user"), is("user_3"));
@@ -329,7 +325,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_update_by_example_with_limit() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleUpdateByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleUpdateByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(), new MapBuilder().put("abc", "xxx").put("age", 999).get(),
 			null, null, 3);
 
@@ -340,12 +336,12 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(3));
 
 		// Get Replaced Document
-		CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
 			new MapBuilder().put("age", 999).get(), 0, 0, Map.class);
-		List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = ResultSetUtils.toList(rs);
 
 		assertThat(list.size(), is(3));
-		for (Map<String, ?> map : list) {
+		for (final Map<String, ?> map : list) {
 			assertThat(map.size(), is(7)); // _id, _rev, _key and "user",
 			// "desc", "age", "abc"
 			assertThat((String) map.get("user"), is("user_3"));
@@ -360,7 +356,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	@Test
 	public void test_update_by_example_with_keepnull() throws ArangoException {
 
-		SimpleByResultEntity entity = driver.executeSimpleUpdateByExample(COLLECTION_NAME,
+		final SimpleByResultEntity entity = driver.executeSimpleUpdateByExample(COLLECTION_NAME,
 			new MapBuilder().put("user", "user_3").get(),
 			new MapBuilder(false).put("abc", "xxx").put("age", 999).put("user", null).get(), false, null, null);
 
@@ -371,12 +367,12 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(10));
 
 		// Get Replaced Document
-		CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
-		List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = ResultSetUtils.toList(rs);
 
 		assertThat(list.size(), is(10));
-		for (Map<String, ?> map : list) {
+		for (final Map<String, ?> map : list) {
 			assertThat(map.size(), is(6)); // _id, _rev, _key and "desc", "age",
 			// "abc"
 			assertThat(map.get("user"), is(nullValue()));
@@ -402,9 +398,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx2", "this text also contains a word", 10),
 			null, null);
 
-		DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleFulltextWithDocuments(COLLECTION_NAME,
-			"desc", "word", 0, 0, null, TestComplexEntity01.class);
-		List<DocumentEntity<TestComplexEntity01>> list = documentCursor.asList();
+		final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleFulltextWithDocuments(
+			COLLECTION_NAME, "desc", "word", 0, 0, null, TestComplexEntity01.class);
+		final List<DocumentEntity<TestComplexEntity01>> list = documentCursor.asList();
 
 		assertThat(list.size(), is(2));
 		assertThat(list.get(0).getEntity().getUser(), is("xxx1"));
@@ -430,9 +426,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx2", "this text also contains a word", 10),
 			null, null);
 
-		DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleFulltextWithDocuments(COLLECTION_NAME,
-			"desc", "word", 0, 0, null, TestComplexEntity01.class);
-		List<DocumentEntity<TestComplexEntity01>> list = documentCursor.asList();
+		final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleFulltextWithDocuments(
+			COLLECTION_NAME, "desc", "word", 0, 0, null, TestComplexEntity01.class);
+		final List<DocumentEntity<TestComplexEntity01>> list = documentCursor.asList();
 
 		assertThat(list.size(), is(2));
 		assertThat(list.get(0).getDocumentHandle(), startsWith(COLLECTION_NAME));
@@ -455,7 +451,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 	public void test_geo() throws ArangoException, IOException {
 
 		// Load Station data
-		List<Station> stations = TestUtils.readStations();
+		final List<Station> stations = TestUtils.readStations();
 		logger.debug(stations.toString());
 
 	}

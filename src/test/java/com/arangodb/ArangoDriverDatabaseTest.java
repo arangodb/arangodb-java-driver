@@ -25,7 +25,6 @@ import static org.junit.Assert.fail;
 import java.util.Collections;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.BooleanResultEntity;
@@ -45,15 +44,6 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 			"repl_scenario_test1", // other test case
 			"unitTestDatabase", // other test case
 	};
-
-	public ArangoDriverDatabaseTest(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
-
-	@Before
-	public void before() {
-
-	}
 
 	@AfterClass
 	public static void _afterClass() {

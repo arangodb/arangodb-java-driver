@@ -23,8 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.Station;
 import com.arangodb.example.document.BaseExample;
@@ -45,14 +43,6 @@ public class BenchmarkImport extends BaseExample {
 
 	private static final String DATABASE_NAME = "BenchmarkImport";
 	private static final String COLLECTION_NAME = "BenchmarkImportCollection";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public BenchmarkImport(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

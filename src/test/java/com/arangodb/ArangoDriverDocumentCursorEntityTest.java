@@ -39,10 +39,6 @@ import com.arangodb.util.MapBuilder;
  */
 public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
-	public ArangoDriverDocumentCursorEntityTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	private static final String COLLECTION_NAME = "unit_test_query_test";
 
 	@Before
@@ -51,13 +47,13 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		// create test collection
 		try {
 			driver.createCollection(COLLECTION_NAME);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		driver.truncateCollection(COLLECTION_NAME);
 
 		// create some test data
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
 			driver.createDocument(COLLECTION_NAME, value, null, null);
 		}
 
@@ -65,7 +61,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 	@Test
 	public void test_validateQuery() throws ArangoException {
-		CursorEntity<?> entity = driver
+		final CursorEntity<?> entity = driver
 				.validateQuery("FOR t IN unit_test_cursor FILTER t.name == @name && t.age >= @age RETURN t");
 
 		assertThat(entity.getCode(), is(200));
@@ -81,7 +77,7 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		try {
 			driver.validateQuery("FOR t IN unit_test_cursor FILTER t.name = @name@");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(400));
 			assertThat(e.getErrorNumber(), is(1501));
 		}
@@ -92,12 +88,12 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 	public void test_executeQuery() throws ArangoException {
 		// String query =
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
-		String query = "FOR t IN unit_test_query_test FILTER t.age >= @age RETURN t";
-		Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
+		final String query = "FOR t IN unit_test_query_test FILTER t.age >= @age RETURN t";
+		final Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
 
 		// 全件とれる範囲
 		{
-			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 20, false,
+			final CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 20, false,
 				TestComplexEntity01.class);
 			assertThat(result.size(), is(10));
 			assertThat(result.getCount(), is(10));
@@ -110,13 +106,13 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 	public void test_executeQuery_2() throws ArangoException {
 		// String query =
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
-		String query = "FOR t IN unit_test_query_test FILTER t.age >= @age RETURN t";
-		Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
+		final String query = "FOR t IN unit_test_query_test FILTER t.age >= @age RETURN t";
+		final Map<String, Object> bindVars = new MapBuilder().put("age", 90).get();
 
 		// ちまちまとる範囲
 		long cursorId;
 		{
-			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 3, false,
+			final CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 3, false,
 				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(3));
 			assertThat(result.getCount(), is(10));
@@ -129,7 +125,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 次のRoundTrip
 		{
-			CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class, TestComplexEntity01.class);
+			final CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class,
+				TestComplexEntity01.class);
 
 			assertThat(result.size(), is(3));
 			assertThat(result.getCount(), is(10));
@@ -138,7 +135,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 次のRoundTrip
 		{
-			CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class, TestComplexEntity01.class);
+			final CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class,
+				TestComplexEntity01.class);
 			assertThat(result.size(), is(3));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(true));
@@ -146,7 +144,8 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 
 		// 次のRoundTrip
 		{
-			CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class, TestComplexEntity01.class);
+			final CursorEntity<?> result = driver.continueQuery(cursorId, DocumentEntity.class,
+				TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(false));
@@ -163,12 +162,12 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 	public void test_executeQueryFullCount() throws ArangoException {
 		// String query =
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
-		String query = "FOR t IN unit_test_query_test FILTER t.age >= @age LIMIT 2 RETURN t";
-		Map<String, Object> bindVars = new MapBuilder().put("age", 10).get();
+		final String query = "FOR t IN unit_test_query_test FILTER t.age >= @age LIMIT 2 RETURN t";
+		final Map<String, Object> bindVars = new MapBuilder().put("age", 10).get();
 
 		// 全件とれる範囲
 		{
-			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 1, true,
+			final CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 1, true,
 				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(2));
@@ -184,18 +183,18 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		// String query =
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
 		String query = "FOR t IN unit_test_query_test FILTER t.age >= @age LIMIT 2 RETURN t";
-		Map<String, Object> bindVars = new MapBuilder().put("age", 10).get();
+		final Map<String, Object> bindVars = new MapBuilder().put("age", 10).get();
 
 		// 全件とれる範囲
 		{
-			CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 2, false,
+			final CursorEntity<?> result = driver.executeCursorEntityQuery(query, bindVars, true, 2, false,
 				DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(2));
 			assertThat(result.getCount(), is(2));
 			String msg = "";
 			try {
 				result.getUniqueResult();
-			} catch (NonUniqueResultException e) {
+			} catch (final NonUniqueResultException e) {
 				msg = e.getMessage();
 			}
 			assertThat(msg, startsWith("Query did not return a unique result:"));
@@ -205,11 +204,11 @@ public class ArangoDriverDocumentCursorEntityTest extends BaseTest {
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
 		query = "FOR t IN unit_test_query_test FILTER t.age == @age LIMIT 2 RETURN t";
 		{
-			CursorEntity<DocumentEntity<TestComplexEntity01>> result = driver.executeCursorEntityQuery(query, bindVars,
-				true, 2, false, DocumentEntity.class, TestComplexEntity01.class);
+			final CursorEntity<DocumentEntity<TestComplexEntity01>> result = driver.executeCursorEntityQuery(query,
+				bindVars, true, 2, false, DocumentEntity.class, TestComplexEntity01.class);
 			assertThat(result.size(), is(1));
 			assertThat(result.getCount(), is(1));
-			DocumentEntity<TestComplexEntity01> uniqueResult = result.getUniqueResult();
+			final DocumentEntity<TestComplexEntity01> uniqueResult = result.getUniqueResult();
 			assertThat(uniqueResult.getEntity().getAge(), is(10));
 		}
 	}

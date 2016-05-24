@@ -43,28 +43,24 @@ import com.arangodb.util.TraversalQueryOptions;
  */
 public class ArangoDriverTraversalTest extends BaseGraphTest {
 
-	String graphName = "TraversalTestGraph";
-	String vertexCollectionName = "person";
-	String edgeCollectionName = "knows";
-
-	public ArangoDriverTraversalTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+	private final String graphName = "TraversalTestGraph";
+	private final String vertexCollectionName = "person";
+	private final String edgeCollectionName = "knows";
 
 	@Override
 	@Before
 	public void _before() throws ArangoException {
 		super._before();
 
-		List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
-		EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+		final List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+		final EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
 		edgeDefinition.setCollection(edgeCollectionName);
 
-		List<String> from = new ArrayList<String>();
+		final List<String> from = new ArrayList<String>();
 		from.add(vertexCollectionName);
 		edgeDefinition.setFrom(from);
 
-		List<String> to = new ArrayList<String>();
+		final List<String> to = new ArrayList<String>();
 		to.add(vertexCollectionName);
 		edgeDefinition.setTo(to);
 
@@ -72,11 +68,11 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 
 		driver.createGraph(graphName, edgeDefinitions, null, true);
 
-		VertexEntity<Person> alice = createPerson("Alice");
-		VertexEntity<Person> bob = createPerson("Bob");
-		VertexEntity<Person> charlie = createPerson("Charlie");
-		VertexEntity<Person> dave = createPerson("Dave");
-		VertexEntity<Person> eve = createPerson("Eve");
+		final VertexEntity<Person> alice = createPerson("Alice");
+		final VertexEntity<Person> bob = createPerson("Bob");
+		final VertexEntity<Person> charlie = createPerson("Charlie");
+		final VertexEntity<Person> dave = createPerson("Dave");
+		final VertexEntity<Person> eve = createPerson("Eve");
 
 		driver.graphCreateEdge(graphName, edgeCollectionName, "Alice_knows_Bob", alice.getDocumentHandle(),
 			bob.getDocumentHandle());
@@ -93,20 +89,21 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void test_create_vertex() throws ArangoException {
-		TraversalQueryOptions traversalQueryOptions = new TraversalQueryOptions();
+		final TraversalQueryOptions traversalQueryOptions = new TraversalQueryOptions();
 
 		traversalQueryOptions.setGraphName(graphName);
 		traversalQueryOptions.setStartVertex("person/Alice");
 		traversalQueryOptions.setDirection(Direction.OUTBOUND);
 
-		Class<Person> vertexClass = Person.class;
-		Class<Map> edgeClass = Map.class;
+		final Class<Person> vertexClass = Person.class;
+		final Class<Map> edgeClass = Map.class;
 
-		TraversalEntity<Person, Map> traversal = driver.getTraversal(traversalQueryOptions, vertexClass, edgeClass);
+		final TraversalEntity<Person, Map> traversal = driver.getTraversal(traversalQueryOptions, vertexClass,
+			edgeClass);
 
 		assertThat(traversal, is(notNullValue()));
 
-		List<VertexEntity<Person>> vertices = traversal.getVertices();
+		final List<VertexEntity<Person>> vertices = traversal.getVertices();
 		assertThat(vertices, is(notNullValue()));
 		assertThat(vertices.size(), is(4));
 		assertThat(vertices.get(0).getEntity().getName(), is("Alice"));
@@ -114,7 +111,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		assertThat(vertices.get(2).getEntity().getName(), is("Charlie"));
 		assertThat(vertices.get(3).getEntity().getName(), is("Dave"));
 
-		List<PathEntity<Person, Map>> paths = traversal.getPaths();
+		final List<PathEntity<Person, Map>> paths = traversal.getPaths();
 		assertThat(paths, is(notNullValue()));
 		assertThat(paths.size(), is(4));
 
@@ -127,7 +124,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		assertThat(paths.get(3).getVertices().size(), is(3));
 	}
 
-	private VertexEntity<Person> createPerson(String name) throws ArangoException {
+	private VertexEntity<Person> createPerson(final String name) throws ArangoException {
 		return driver.graphCreateVertex(graphName, vertexCollectionName, name, new Person(name), true);
 	}
 
@@ -135,7 +132,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 
 		private String name;
 
-		public Person(String name) {
+		public Person(final String name) {
 			this.name = name;
 		}
 
@@ -143,7 +140,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 	}

@@ -35,10 +35,6 @@ import com.arangodb.http.HttpResponseEntity;
  */
 public class NegativeTest extends BaseTest {
 
-	public NegativeTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	/**
 	 * 開発途中にあった命令だけど、今は存在しない。 きとんとエラーになること。
 	 * 
@@ -48,17 +44,17 @@ public class NegativeTest extends BaseTest {
 	@Test
 	public void test_collections() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 
-		HttpManager httpManager = new HttpManager(configure);
+		final HttpManager httpManager = new HttpManager(configure);
 		httpManager.init();
 
 		// TODO Create configure of common test.
-		HttpResponseEntity res = httpManager.doGet("http://" + configure.getArangoHost().getHost() + ":"
+		final HttpResponseEntity res = httpManager.doGet("http://" + configure.getArangoHost().getHost() + ":"
 				+ configure.getArangoHost().getPort() + "/_api/collections",
 			null);
 
-		DefaultEntity entity = EntityFactory.createEntity(res.getText(), DefaultEntity.class);
+		final DefaultEntity entity = EntityFactory.createEntity(res.getText(), DefaultEntity.class);
 		assertThat(entity.isError(), is(true));
 		assertThat(entity.getCode(), is(501));
 		assertThat(entity.getErrorNumber(), is(9));
@@ -74,7 +70,7 @@ public class NegativeTest extends BaseTest {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 	}
@@ -82,21 +78,21 @@ public class NegativeTest extends BaseTest {
 	@Test
 	public void test_issue_35_and_41() throws Exception {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.init();
-		ArangoDriver driver = new ArangoDriver(configure);
+		final ArangoDriver driver = new ArangoDriver(configure);
 
 		try {
 			driver.createCollection("unit_test_issue35");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
-		TestComplex value = new TestComplex();
+		final TestComplex value = new TestComplex();
 		value.setName("A\"A'@:///A");
 
 		// String value = "AAA";
-		DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
-		String documentHandle = doc.getDocumentHandle();
+		final DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
+		final String documentHandle = doc.getDocumentHandle();
 		driver.getDocument(documentHandle, TestComplex.class);
 
 		configure.shutdown();
@@ -106,22 +102,22 @@ public class NegativeTest extends BaseTest {
 	@Test
 	public void test_primitive() throws Exception {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.init();
-		ArangoDriver driver = new ArangoDriver(configure);
+		final ArangoDriver driver = new ArangoDriver(configure);
 
 		try {
 			driver.createCollection("unit_test_issue35");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		try {
-			String value = "AAA";
-			DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
-			String documentHandle = doc.getDocumentHandle();
+			final String value = "AAA";
+			final DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
+			final String documentHandle = doc.getDocumentHandle();
 			driver.getDocument(documentHandle, String.class);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
 		}
 

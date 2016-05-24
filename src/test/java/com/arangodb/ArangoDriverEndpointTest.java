@@ -43,10 +43,6 @@ public class ArangoDriverEndpointTest extends BaseTest {
 	private static final String MYDB2 = "mydb2";
 	private static final String[] DB_S = new String[] { DB, MYDB, MYDB1, MYDB2 };
 
-	public ArangoDriverEndpointTest(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	@Before
 	public void _before() {
 		for (final String db : DB_S) {

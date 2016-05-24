@@ -21,8 +21,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionsEntity;
@@ -30,14 +28,6 @@ import com.arangodb.entity.CollectionsEntity;
 public class CollectionExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "CreateCollectionExample";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public CollectionExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

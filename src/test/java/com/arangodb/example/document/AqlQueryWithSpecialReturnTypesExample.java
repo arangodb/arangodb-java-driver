@@ -26,8 +26,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorResult;
 import com.arangodb.util.AqlQueryOptions;
@@ -36,14 +34,6 @@ public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "SimplePersonAqlQueryWithLimitExample";
 	private static final String COLLECTION_NAME = "SimplePersonAqlQueryWithLimitExample";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public AqlQueryWithSpecialReturnTypesExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

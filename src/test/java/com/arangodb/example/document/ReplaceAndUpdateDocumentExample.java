@@ -23,8 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.ErrorNums;
 import com.arangodb.entity.DocumentEntity;
@@ -37,14 +35,6 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 	private static final String COLLECTION_NAME = "ReplaceDocument";
 
 	private static final String KEY1 = "key1";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public ReplaceAndUpdateDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

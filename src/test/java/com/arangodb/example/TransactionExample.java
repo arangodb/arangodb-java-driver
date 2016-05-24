@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.DocumentEntity;
@@ -49,14 +48,6 @@ public class TransactionExample extends BaseExample {
 
 	// increment counter 10 times
 	private static final int NUMBER_UPDATES = 10;
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public TransactionExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

@@ -46,14 +46,10 @@ public class ArangoDriverAdminTest extends BaseTest {
 
 	private static Logger logger = LoggerFactory.getLogger(ArangoDriverAdminTest.class);
 
-	public ArangoDriverAdminTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	@Test
 	public void test_version() throws ArangoException {
 
-		ArangoVersion version = driver.getVersion();
+		final ArangoVersion version = driver.getVersion();
 		assertEquals("arango", version.getServer());
 		assertNotNull(version.getVersion());
 		assertTrue(version.getVersion().startsWith("2.") || version.getVersion().startsWith("3."));
@@ -62,7 +58,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_time() throws ArangoException {
 
-		ArangoUnixTime time = driver.getTime();
+		final ArangoUnixTime time = driver.getTime();
 		assertThat(time.getSecond(), is(not(0)));
 		assertThat(time.getMicrosecond(), is(not(0)));
 
@@ -75,14 +71,14 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_log_all() throws ArangoException {
 
-		AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, null);
+		final AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, null);
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getTotalAmount(), is(not(0)));
 		assertThat(entity.getLogs().size(), is(entity.getTotalAmount()));
 
 		// debug
-		for (AdminLogEntity.LogEntry log : entity.getLogs()) {
+		for (final AdminLogEntity.LogEntry log : entity.getLogs()) {
 			logger.debug("%d\t%d\t%tF %<tT\t%s%n", log.getLid(), log.getLevel(), log.getTimestamp(), log.getText());
 		}
 
@@ -91,11 +87,11 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_log_text() throws ArangoException {
 
-		AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, "Fun");
+		final AdminLogEntity entity = driver.getServerLog(null, null, null, null, null, null, "Fun");
 
 		assertThat(entity, is(notNullValue()));
 		// debug
-		for (AdminLogEntity.LogEntry log : entity.getLogs()) {
+		for (final AdminLogEntity.LogEntry log : entity.getLogs()) {
 			logger.debug("%d\t%d\t%tF %<tT\t%s%n", log.getLid(), log.getLevel(), log.getTimestamp(), log.getText());
 		}
 
@@ -106,10 +102,10 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_statistics() throws ArangoException {
 
-		StatisticsEntity stat = driver.getStatistics();
+		final StatisticsEntity stat = driver.getStatistics();
 
 		// debug
-		Gson gson = new Gson();
+		final Gson gson = new Gson();
 		assertNotNull(gson.toJson(stat));
 		assertNotNull(gson.toJson(stat.getSystem()));
 		assertNotNull(gson.toJson(stat.getClient()));
@@ -120,10 +116,10 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_statistics_description() throws ArangoException {
 
-		StatisticsDescriptionEntity desc = driver.getStatisticsDescription();
+		final StatisticsDescriptionEntity desc = driver.getStatisticsDescription();
 
 		// debug
-		Gson gson = new Gson();
+		final Gson gson = new Gson();
 		assertNotNull(gson.toJson(desc));
 		assertNotNull(gson.toJson(desc.getGroups()));
 		assertNotNull(gson.toJson(desc.getFigures()));
@@ -132,7 +128,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_reload_routing() throws ArangoException {
 
-		DefaultEntity entity = driver.reloadRouting();
+		final DefaultEntity entity = driver.reloadRouting();
 		assertThat(entity.getStatusCode(), is(200));
 		assertThat(entity.isError(), is(false));
 
@@ -141,7 +137,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_execute_do_nothing() throws ArangoException {
 
-		DefaultEntity entity = driver.executeScript("");
+		final DefaultEntity entity = driver.executeScript("");
 		assertThat(entity.isError(), is(false));
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.getStatusCode(), is(200));
@@ -151,7 +147,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_execute() throws ArangoException {
 
-		DefaultEntity entity = driver.executeScript(
+		final DefaultEntity entity = driver.executeScript(
 			"var db = require(\"internal\").db; cols = db._collections();\n" + "len = cols.length;\n");
 		assertThat(entity.isError(), is(false));
 		assertThat(entity.getCode(), is(200));
@@ -162,7 +158,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 	@Test
 	public void test_execute_delete_collection() throws ArangoException {
 
-		DefaultEntity entity1 = driver
+		final DefaultEntity entity1 = driver
 				.executeScript("var db = require(\"internal\").db; db._drop(\"" + "col-execute-delete-test" + "\")");
 		assertThat(entity1.isError(), is(false));
 		assertThat(entity1.getCode(), is(200));
@@ -171,7 +167,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 		driver.createCollection("col-execute-delete-test");
 		driver.getCollection("col-execute-delete-test");
 
-		DefaultEntity entity2 = driver
+		final DefaultEntity entity2 = driver
 				.executeScript("var db = require(\"internal\").db; db._drop(\"" + "col-execute-delete-test" + "\")");
 		assertThat(entity2.isError(), is(false));
 		assertThat(entity2.getCode(), is(200));
@@ -180,7 +176,7 @@ public class ArangoDriverAdminTest extends BaseTest {
 		try {
 			driver.getCollection("col-execute-delete-test");
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -191,8 +187,8 @@ public class ArangoDriverAdminTest extends BaseTest {
 		try {
 			driver.executeScript("xxx");
 			fail();
-		} catch (ArangoException e) {
-			String t = "Internal Server Error: JavaScript exception in file 'undefined' at 1,14: ReferenceError: xxx is not defined\n"
+		} catch (final ArangoException e) {
+			final String t = "Internal Server Error: JavaScript exception in file 'undefined' at 1,14: ReferenceError: xxx is not defined\n"
 					+ "!(function() {xxx}());\n" + "!             ^\n"
 					+ "stacktrace: ReferenceError: xxx is not defined\n";
 			assertThat(e.getErrorMessage(), startsWith(t));

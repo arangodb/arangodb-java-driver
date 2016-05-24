@@ -33,12 +33,8 @@ import com.arangodb.entity.marker.VertexEntity;
  */
 public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
-	String graphName = "UnitTestGraph";
-	String collectionName = "UnitTestCollection";
-
-	public ArangoDriverGraphVertexReplaceTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+	private final String graphName = "UnitTestGraph";
+	private final String collectionName = "UnitTestCollection";
 
 	@Test
 	public void test_vertex_replace() throws ArangoException {
@@ -48,15 +44,15 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		// create vertex collection
 		driver.graphCreateVertexCollection(this.graphName, this.collectionName);
 		// create vertex
-		VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
 			new TestComplexEntity01("Homer", "Simpson", 38), null);
 		// check exists vertex
-		VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
 			v1.getDocumentKey(), TestComplexEntity01.class, null, null);
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
-		DocumentEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
+		final DocumentEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
 			this.collectionName, v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3));
 		assertThat(updatedVertex.getCode(), is(202));
 		assertThat(updatedVertex.isError(), is(false));
@@ -66,8 +62,8 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		assertThat(updatedVertex.getDocumentRevision(), is(not(0L)));
 		assertThat(updatedVertex.getDocumentKey(), is(v1.getDocumentKey()));
 
-		DocumentEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName, this.collectionName,
-			v1.getDocumentKey(), TestComplexEntity02.class);
+		final DocumentEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName,
+			this.collectionName, v1.getDocumentKey(), TestComplexEntity02.class);
 		assertThat(updatedVertex2.getEntity().getX(), is(1));
 		assertThat(updatedVertex2.getEntity().getY(), is(2));
 		assertThat(updatedVertex2.getEntity().getZ(), is(3));
@@ -83,7 +79,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		try {
 			driver.graphReplaceVertex(this.graphName, this.collectionName, "key1", new TestComplexEntity02(1, 2, 3));
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorMessage(), is("graph not found"));
 		}
@@ -101,7 +97,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		try {
 			driver.graphReplaceVertex(this.graphName, this.collectionName, "key1", new TestComplexEntity02(1, 2, 3));
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 		}
 
@@ -115,16 +111,16 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		// create vertex collection
 		driver.graphCreateVertexCollection(this.graphName, this.collectionName);
 		// create vertex
-		VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
 			new TestComplexEntity01("Homer", "Simpson", 38), null);
 		// check exists vertex
-		VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
 			v1.getDocumentKey(), TestComplexEntity01.class, null, null);
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
-		VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName, this.collectionName,
-			v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3));
+		final VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
+			this.collectionName, v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3));
 		assertThat(updatedVertex.getCode(), is(202));
 		assertThat(updatedVertex.isError(), is(false));
 
@@ -133,8 +129,8 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		assertThat(updatedVertex.getDocumentRevision(), is(not(0L)));
 		assertThat(updatedVertex.getDocumentKey(), is(v1.getDocumentKey()));
 
-		VertexEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName, this.collectionName,
-			v1.getDocumentKey(), TestComplexEntity02.class);
+		final VertexEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName,
+			this.collectionName, v1.getDocumentKey(), TestComplexEntity02.class);
 		assertThat(updatedVertex2.getEntity().getX(), is(1));
 		assertThat(updatedVertex2.getEntity().getY(), is(2));
 		assertThat(updatedVertex2.getEntity().getZ(), is(3));
@@ -152,20 +148,20 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		// create vertex collection
 		driver.graphCreateVertexCollection(this.graphName, this.collectionName);
 		// create vertex
-		VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
 			new TestComplexEntity01("Homer", "Simpson", 38), null);
 		// check exists vertex
-		VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
 			v1.getDocumentKey(), TestComplexEntity01.class, null, null);
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
 		try {
-			Long rev = 1L;
+			final Long rev = 1L;
 			driver.graphReplaceVertex(this.graphName, this.collectionName, v1.getDocumentKey(),
 				new TestComplexEntity02(1, 2, 3), true, rev, null);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(412));
 			assertThat(e.getErrorNumber(), is(1903));
 			assertThat(e.getErrorMessage(), is("wrong revision"));
@@ -181,17 +177,17 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		// create vertex collection
 		driver.graphCreateVertexCollection(this.graphName, this.collectionName);
 		// create vertex
-		VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
 			new TestComplexEntity01("Homer", "Simpson", 38), null);
 		// check exists vertex
-		VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
 			v1.getDocumentKey(), TestComplexEntity01.class, null, null);
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
-		Long rev = vertex.getDocumentRevision();
-		VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName, this.collectionName,
-			v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3), true, rev, null);
+		final Long rev = vertex.getDocumentRevision();
+		final VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
+			this.collectionName, v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3), true, rev, null);
 		assertThat(updatedVertex.getCode(), is(200));
 		assertThat(updatedVertex.isError(), is(false));
 
@@ -200,8 +196,8 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		assertThat(updatedVertex.getDocumentRevision(), is(not(0L)));
 		assertThat(updatedVertex.getDocumentKey(), is(v1.getDocumentKey()));
 
-		DocumentEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName, this.collectionName,
-			v1.getDocumentKey(), TestComplexEntity02.class);
+		final DocumentEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName,
+			this.collectionName, v1.getDocumentKey(), TestComplexEntity02.class);
 		assertThat(updatedVertex2.getEntity().getX(), is(1));
 		assertThat(updatedVertex2.getEntity().getY(), is(2));
 		assertThat(updatedVertex2.getEntity().getZ(), is(3));
@@ -219,20 +215,20 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		// create vertex collection
 		driver.graphCreateVertexCollection(this.graphName, this.collectionName);
 		// create vertex
-		VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> v1 = driver.graphCreateVertex(this.graphName, this.collectionName,
 			new TestComplexEntity01("xxx", "yyy", 10), null);
 		// check exists vertex
-		VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
+		final VertexEntity<TestComplexEntity01> vertex = driver.graphGetVertex(this.graphName, this.collectionName,
 			v1.getDocumentKey(), TestComplexEntity01.class, null, null);
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
 		try {
-			Long rev = 1L;
+			final Long rev = 1L;
 			driver.graphReplaceVertex(this.graphName, this.collectionName, v1.getDocumentKey(),
 				new TestComplexEntity02(1, 2, 3), true, rev, null);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(412));
 			assertThat(e.getErrorNumber(), is(1903));
 			assertThat(e.getErrorMessage(), is("wrong revision"));

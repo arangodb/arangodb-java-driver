@@ -43,14 +43,10 @@ import com.arangodb.entity.IndexesEntity;
  */
 public class ArangoDriverIndexTest extends BaseTest {
 
-	public ArangoDriverIndexTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
 
-	final String collectionName = "unit_test_arango_index"; //
-	final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
+	private final String collectionName = "unit_test_arango_index"; //
+	private final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
 
 	CollectionEntity col1;
 
@@ -62,11 +58,11 @@ public class ArangoDriverIndexTest extends BaseTest {
 		// 事前に消しておく
 		try {
 			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.deleteCollection(collectionName404);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// 1は作る
@@ -85,7 +81,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 	public void test_create_index() throws ArangoException {
 
 		{
-			IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, false, "a");
+			final IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, false, "a");
 
 			assertThat(entity, is(notNullValue()));
 			assertThat(entity.getCode(), is(201));
@@ -98,7 +94,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 
 		// 重複して作成する
 		{
-			IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, false, "a");
+			final IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, false, "a");
 
 			assertThat(entity, is(notNullValue()));
 			assertThat(entity.getCode(), is(200));
@@ -117,7 +113,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		try {
 			driver.createIndex(collectionName404, IndexType.GEO, false, "a");
 			fail("We expect an Exception here");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(1203)); // FIXME MagicNumber
 		}
 
@@ -126,7 +122,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_geo_index_unique() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, true, "a", "b");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.GEO, true, "a", "b");
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getCode(), is(201));
@@ -146,7 +142,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		try {
 			driver.createIndex(collectionName, IndexType.GEO, true, "a", "b", "c");
 			fail("We expect an Exception here");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_BAD_PARAMETER));
 		}
 
@@ -155,8 +151,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_hash_index() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, false, "a", "b", "c", "d", "e", "f",
-			"g");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, false, "a", "b", "c", "d", "e",
+			"f", "g");
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getCode(), is(201));
@@ -174,7 +170,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		try {
 			driver.createIndex(collectionName404, IndexType.HASH, false, "a", "b", "c", "d", "e", "f", "g");
 			fail("We expect an Exception here");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_COLLECTION_NOT_FOUND));
 		}
 
@@ -183,8 +179,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_hash_index_unique() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "a", "b", "c", "d", "e", "f",
-			"g");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "a", "b", "c", "d", "e",
+			"f", "g");
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getCode(), is(201));
@@ -199,8 +195,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_skiplist_index() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.SKIPLIST, false, "a", "b", "c", "d", "e", "f",
-			"g");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.SKIPLIST, false, "a", "b", "c", "d",
+			"e", "f", "g");
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getCode(), is(201));
@@ -215,8 +211,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_create_skiplist_index_unique() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.SKIPLIST, true, "a", "b", "c", "d", "e", "f",
-			"g");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.SKIPLIST, true, "a", "b", "c", "d", "e",
+			"f", "g");
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getCode(), is(201));
@@ -232,12 +228,12 @@ public class ArangoDriverIndexTest extends BaseTest {
 	public void test_create_hash_index_with_document() throws ArangoException {
 
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user_" + i, "", i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user_" + i, "", i);
 
 			assertThat(driver.createDocument(collectionName, value, false, false), is(notNullValue()));
 		}
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
 
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getCode(), is(201));
@@ -254,13 +250,13 @@ public class ArangoDriverIndexTest extends BaseTest {
 
 		// create test data 100 count.
 		for (int i = 0; i < 100; i++) {
-			String desc = i % 2 == 0 ? "寿司" : "天ぷら";
-			TestComplexEntity01 value = new TestComplexEntity01("user_" + i, desc, i);
+			final String desc = i % 2 == 0 ? "寿司" : "天ぷら";
+			final TestComplexEntity01 value = new TestComplexEntity01("user_" + i, desc, i);
 			assertThat(driver.createDocument(collectionName, value, false, false), is(notNullValue()));
 		}
 
 		// create fulltext index
-		IndexEntity index = driver.createFulltextIndex(collectionName, 1, "desc");
+		final IndexEntity index = driver.createFulltextIndex(collectionName, 1, "desc");
 
 		// {"id":"unit_test_arango_index/6420761720","unique":false,"type":"fulltext","minLength":1,"fields":["desc"],"isNewlyCreated":true,"error":false,"code":201}
 		assertThat(index.getCode(), is(201));
@@ -277,13 +273,13 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_delete_index() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getId(), is(notNullValue()));
 
-		String id = entity.getId();
+		final String id = entity.getId();
 
-		IndexEntity entity2 = driver.deleteIndex(id);
+		final IndexEntity entity2 = driver.deleteIndex(id);
 
 		assertThat(entity2, is(notNullValue()));
 		assertThat(entity2.getCode(), is(200));
@@ -299,7 +295,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		try {
 			driver.deleteIndex(collectionName + "/0");
 			fail("例外が飛ばないといけない");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(1212));
 		}
 
@@ -313,7 +309,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		try {
 			driver.deleteIndex(collectionName + "/1");
 			fail("例外が飛ばないといけない");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(1212));
 		}
 
@@ -328,7 +324,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Ignore
 	public void test_create_hash_index_dup_unique() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "user", "age");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "user", "age");
 
 		assertThat(driver.createDocument(collectionName, new TestComplexEntity01("寿司天ぷら", "", 18), false, false),
 			is(notNullValue()));
@@ -348,10 +344,10 @@ public class ArangoDriverIndexTest extends BaseTest {
 	@Test
 	public void test_getIndexes() throws ArangoException {
 
-		IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
 		assertThat(entity, is(notNullValue()));
 
-		IndexesEntity indexes = driver.getIndexes(collectionName);
+		final IndexesEntity indexes = driver.getIndexes(collectionName);
 
 		assertThat(indexes, is(notNullValue()));
 
@@ -364,8 +360,8 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(indexes.getIndexes().get(1).getFields().get(1), is("name"));
 		assertThat(indexes.getIndexes().get(1).getFields().get(0), is("age"));
 
-		String id1 = indexes.getIndexes().get(0).getId();
-		String id2 = indexes.getIndexes().get(1).getId();
+		final String id1 = indexes.getIndexes().get(0).getId();
+		final String id2 = indexes.getIndexes().get(1).getId();
 
 		assertThat(indexes.getIdentifiers().size(), is(2));
 		assertThat(indexes.getIdentifiers().get(id1).getType(), is(IndexType.PRIMARY));

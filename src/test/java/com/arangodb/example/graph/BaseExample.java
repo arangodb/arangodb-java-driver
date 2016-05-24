@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.junit.Assert;
 
-import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.BaseTest;
@@ -35,14 +34,6 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.util.TestUtils;
 
 public class BaseExample extends BaseTest {
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public BaseExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	protected void removeTestDatabase(final String name) {
 		try {

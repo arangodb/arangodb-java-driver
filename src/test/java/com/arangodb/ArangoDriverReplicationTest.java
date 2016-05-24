@@ -54,10 +54,6 @@ public class ArangoDriverReplicationTest extends BaseTest {
 
 	private static Logger logger = LoggerFactory.getLogger(ArangoConfigure.class);
 
-	public ArangoDriverReplicationTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	@Before
 	public void before() {
 		driver.setDefaultDatabase(null);
@@ -68,10 +64,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 
 		try {
 			driver.stopReplicationLogger();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 
-		ReplicationInventoryEntity entity = driver.getReplicationInventory();
+		final ReplicationInventoryEntity entity = driver.getReplicationInventory();
 		assertThat(entity.getCode(), is(0));
 		assertThat(entity.getStatusCode(), is(200));
 
@@ -84,12 +80,12 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_get_inventory_includeSystem() throws ArangoException {
 
-		ReplicationInventoryEntity entity = driver.getReplicationInventory(true);
+		final ReplicationInventoryEntity entity = driver.getReplicationInventory(true);
 		assertThat(entity.getCode(), is(0));
 		assertThat(entity.getStatusCode(), is(200));
 
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		for (Collection col : entity.getCollections()) {
+		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		for (final Collection col : entity.getCollections()) {
 			logger.debug(gson.toJson(col.getParameter()));
 			logger.debug(gson.toJson(col.getIndexes()));
 		}
@@ -103,7 +99,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		try {
 			driver.getReplicationInventory();
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1228)); // database not found
 		}
@@ -113,29 +109,29 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_get_dump() throws ArangoException {
 
-		String collectionName = "rep_dump_test";
+		final String collectionName = "rep_dump_test";
 
 		try {
 			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.createCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
+			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
 			driver.createDocument(collectionName, entity, true, null);
 		}
 		// truncate
 		try {
 			driver.truncateCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		// create 1 document
-		TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
+		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
 		driver.createDocument(collectionName, entity, true, null);
 
 		final AtomicInteger upsertCount = new AtomicInteger(0);
@@ -143,7 +139,8 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		final AtomicBoolean headCall = new AtomicBoolean(false);
 		driver.getReplicationDump(collectionName, null, null, null, null, TestComplexEntity01.class,
 			new DumpHandler<TestComplexEntity01>() {
-				public boolean head(ReplicationDumpHeader header) {
+				@Override
+				public boolean head(final ReplicationDumpHeader header) {
 					headCall.set(true);
 					assertThat(header.getCheckmore(), is(not(nullValue())));
 					assertThat(header.getLastincluded(), is(not(nullValue())));
@@ -152,7 +149,8 @@ public class ArangoDriverReplicationTest extends BaseTest {
 					return true;
 				}
 
-				public boolean handle(ReplicationDumpRecord<TestComplexEntity01> entity) {
+				@Override
+				public boolean handle(final ReplicationDumpRecord<TestComplexEntity01> entity) {
 					switch (entity.getType()) {
 					case DOCUMENT_UPSERT:
 					case EDGE_UPSERT:
@@ -188,36 +186,37 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_get_dump_noticks() throws ArangoException {
 
-		String collectionName = "rep_dump_test";
+		final String collectionName = "rep_dump_test";
 
 		try {
 			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.createCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
+			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
 			driver.createDocument(collectionName, entity, true, null);
 		}
 		// truncate
 		try {
 			driver.truncateCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		// create 1 document
-		TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
+		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
 		driver.createDocument(collectionName, entity, true, null);
 
 		final AtomicInteger upsertCount = new AtomicInteger(0);
 		final AtomicInteger deleteCount = new AtomicInteger(0);
 		driver.getReplicationDump(collectionName, null, null, null, false, TestComplexEntity01.class,
 			new DumpHandlerAdapter<TestComplexEntity01>() {
-				public boolean handle(ReplicationDumpRecord<TestComplexEntity01> entity) {
+				@Override
+				public boolean handle(final ReplicationDumpRecord<TestComplexEntity01> entity) {
 					switch (entity.getType()) {
 					case DOCUMENT_UPSERT:
 					case EDGE_UPSERT:
@@ -252,40 +251,42 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_get_dump_handler_control_1() throws ArangoException {
 
-		String collectionName = "rep_dump_test";
+		final String collectionName = "rep_dump_test";
 
 		try {
 			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.createCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
+			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
 			driver.createDocument(collectionName, entity, true, null);
 		}
 		// truncate
 		try {
 			driver.truncateCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		// create 1 document
-		TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
+		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
 		driver.createDocument(collectionName, entity, true, null);
 
 		final AtomicBoolean headCall = new AtomicBoolean(false);
 		driver.getReplicationDump(collectionName, null, null, null, null, TestComplexEntity01.class,
 			new DumpHandler<TestComplexEntity01>() {
-				public boolean head(ReplicationDumpHeader header) {
+				@Override
+				public boolean head(final ReplicationDumpHeader header) {
 					headCall.set(true);
 					return false;
 				}
 
-				public boolean handle(ReplicationDumpRecord<TestComplexEntity01> entity) {
+				@Override
+				public boolean handle(final ReplicationDumpRecord<TestComplexEntity01> entity) {
 					fail("");
 					return true;
 				}
@@ -298,42 +299,44 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_get_dump_handler_control_2() throws ArangoException {
 
-		String collectionName = "rep_dump_test";
+		final String collectionName = "rep_dump_test";
 
 		try {
 			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.createCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
+			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
 			driver.createDocument(collectionName, entity, true, null);
 		}
 		// truncate
 		try {
 			driver.truncateCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		// create 1 document
-		TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
+		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
 		driver.createDocument(collectionName, entity, true, null);
 
 		final AtomicInteger handleCount = new AtomicInteger(0);
 		final AtomicBoolean headCall = new AtomicBoolean(false);
 		driver.getReplicationDump(collectionName, null, null, null, null, TestComplexEntity01.class,
 			new DumpHandler<TestComplexEntity01>() {
-				public boolean head(ReplicationDumpHeader header) {
+				@Override
+				public boolean head(final ReplicationDumpHeader header) {
 					headCall.set(true);
 					return true;
 				}
 
-				public boolean handle(ReplicationDumpRecord<TestComplexEntity01> entity) {
-					int cnt = handleCount.incrementAndGet();
+				@Override
+				public boolean handle(final ReplicationDumpRecord<TestComplexEntity01> entity) {
+					final int cnt = handleCount.incrementAndGet();
 					if (cnt == 5) {
 						return false;
 					}
@@ -359,7 +362,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_server_id() throws ArangoException {
 
-		String serverId = driver.getReplicationServerId();
+		final String serverId = driver.getReplicationServerId();
 		assertThat(serverId, is(notNullValue()));
 
 	}
@@ -367,10 +370,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_start_logger() throws ArangoException {
 
-		boolean running = driver.startReplicationLogger();
+		final boolean running = driver.startReplicationLogger();
 		assertThat(running, is(true));
 
-		boolean running2 = driver.startReplicationLogger();
+		final boolean running2 = driver.startReplicationLogger();
 		assertThat(running2, is(true));
 
 	}
@@ -378,10 +381,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_stop_logger() throws ArangoException {
 
-		boolean running = driver.stopReplicationLogger();
+		final boolean running = driver.stopReplicationLogger();
 		assertThat(running, is(false));
 
-		boolean running2 = driver.stopReplicationLogger();
+		final boolean running2 = driver.stopReplicationLogger();
 		assertThat(running2, is(false));
 
 	}
@@ -390,28 +393,29 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	public void test_logger_config() throws ArangoException {
 
 		// set
-		ReplicationLoggerConfigEntity config1 = driver.setReplicationLoggerConfig(true, true, 0L, 0L);
+		final ReplicationLoggerConfigEntity config1 = driver.setReplicationLoggerConfig(true, true, 0L, 0L);
 		assertThat(config1.isAutoStart(), is(true));
 		assertThat(config1.isLogRemoteChanges(), is(true));
 		assertThat(config1.getMaxEvents(), is(0L));
 		assertThat(config1.getMaxEventsSize(), is(0L));
 
 		// get
-		ReplicationLoggerConfigEntity config2 = driver.getReplicationLoggerConfig();
+		final ReplicationLoggerConfigEntity config2 = driver.getReplicationLoggerConfig();
 		assertThat(config2.isAutoStart(), is(true));
 		assertThat(config2.isLogRemoteChanges(), is(true));
 		assertThat(config2.getMaxEvents(), is(0L));
 		assertThat(config2.getMaxEventsSize(), is(0L));
 
 		// set
-		ReplicationLoggerConfigEntity config3 = driver.setReplicationLoggerConfig(false, false, 1048576L, 134217728L);
+		final ReplicationLoggerConfigEntity config3 = driver.setReplicationLoggerConfig(false, false, 1048576L,
+			134217728L);
 		assertThat(config3.isAutoStart(), is(false));
 		assertThat(config3.isLogRemoteChanges(), is(false));
 		assertThat(config3.getMaxEvents(), is(1048576L));
 		assertThat(config3.getMaxEventsSize(), is(134217728L));
 
 		// get
-		ReplicationLoggerConfigEntity config4 = driver.getReplicationLoggerConfig();
+		final ReplicationLoggerConfigEntity config4 = driver.getReplicationLoggerConfig();
 		assertThat(config4.isAutoStart(), is(false));
 		assertThat(config4.isLogRemoteChanges(), is(false));
 		assertThat(config4.getMaxEvents(), is(1048576L));
@@ -421,7 +425,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		try {
 			driver.setReplicationLoggerConfig(false, false, 0L, 32768L);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(500));
 			assertThat(e.getErrorNumber(), is(1409));
 		}
@@ -441,7 +445,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 			driver.setReplicationApplierConfig(null, // endpoint is null
 				null, null, null, 99, 98, 97, 1024, true, true);
 			fail("");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(400));
 			assertThat(e.getErrorNumber(), is(1410));
 		}
@@ -482,7 +486,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_start_stop_applier() throws ArangoException {
 
-		ReplicationApplierStateEntity state1 = driver.startReplicationApplier(null);
+		final ReplicationApplierStateEntity state1 = driver.startReplicationApplier(null);
 		assertThat(state1.getStatusCode(), is(200));
 		assertThat(state1.getServerVersion(), is(notNullValue()));
 		assertThat(state1.getServerId(), is(notNullValue()));
@@ -498,7 +502,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		assertThat(state1.getState().getTotalEvents(), is(notNullValue()));
 		// LastError, Progress -> see Sceinario Test
 
-		ReplicationApplierStateEntity state2 = driver.stopReplicationApplier();
+		final ReplicationApplierStateEntity state2 = driver.stopReplicationApplier();
 		assertThat(state2.getStatusCode(), is(200));
 		assertThat(state2.getServerVersion(), is(notNullValue()));
 		assertThat(state2.getServerId(), is(notNullValue()));
@@ -518,7 +522,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_logger_state() throws ArangoException {
 
-		ReplicationLoggerStateEntity entity = driver.getReplicationLoggerState();
+		final ReplicationLoggerStateEntity entity = driver.getReplicationLoggerState();
 
 		assertThat(entity.getState().isRunning(), is(false));
 		assertThat(entity.getState().getLastLogTick(), is(not(0L)));
@@ -535,7 +539,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 	@Test
 	public void test_applier_state() throws ArangoException {
 
-		ReplicationApplierStateEntity state = driver.getReplicationApplierState();
+		final ReplicationApplierStateEntity state = driver.getReplicationApplierState();
 		assertThat(state.getStatusCode(), is(200));
 		assertThat(state.getServerVersion(), is(notNullValue()));
 		assertThat(state.getServerId(), is(notNullValue()));

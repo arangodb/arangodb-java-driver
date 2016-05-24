@@ -23,8 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentEntity;
@@ -42,14 +40,6 @@ public class CreateDocumentExample extends BaseExample {
 	private static final String KEY3 = "key3";
 
 	private static final String KEY4 = "key4";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public CreateDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

@@ -37,25 +37,21 @@ import com.arangodb.entity.marker.VertexEntity;
  */
 public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 
-	public ArangoDriverGraphEdgesGetTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	private static final String GRAPH_NAME = "UnitTestGraph";
 
 	@Before
 	public void setup() throws ArangoException {
 		try {
 			driver.createGraph(GRAPH_NAME, this.createEdgeDefinitions(1, 0), this.createOrphanCollections(0), true);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void test_getEdges_All() throws ArangoException {
-		GraphEntity graph = this.createTestGraph();
-		CursorEntity<PlainEdgeEntity> cursor = driver.graphGetEdges(graph.getName());
+		final GraphEntity graph = this.createTestGraph();
+		final CursorEntity<PlainEdgeEntity> cursor = driver.graphGetEdges(graph.getName());
 		assertThat(cursor.getCount(), is(8));
 		assertThat(cursor.getCode(), is(201));
 		assertThat(cursor.isError(), is(false));
@@ -70,13 +66,13 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void test_getEdges_Vertex() throws ArangoException {
-		VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
 			new TestComplexEntity01("Homer", "A Simpson", 38), true);
 
-		VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1",
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1",
 			new TestComplexEntity01("Marge", "A Simpson", 36), true);
 
-		VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1",
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1",
 			new TestComplexEntity01("Bart", "A Simpson", 10), true);
 
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex2.getDocumentHandle(),
@@ -96,18 +92,18 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void test_GetEdgesByExampleObject() throws ArangoException {
-		TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
-		TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
-		TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
-		TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
+		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
+		final TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
+		final TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
+		final TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
 
-		VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
 
-		VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
 
-		VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
 
-		VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
+		final VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
 
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex2.getDocumentHandle(),
 			new TestComplexEntity02(1, 2, 3), null);
@@ -132,18 +128,18 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void test_GetEdgesByExampleMap() throws ArangoException {
-		TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
-		TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
-		TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
-		TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
+		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
+		final TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
+		final TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
+		final TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
 
-		VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
 
-		VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
 
-		VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
 
-		VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
+		final VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
 
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex2.getDocumentHandle(),
 			new TestComplexEntity02(1, 2, 3), null);
@@ -154,7 +150,7 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex2.getDocumentHandle(),
 			new TestComplexEntity02(7, 8, 9), null);
 
-		Map<String, Object> exampleVertex = new HashMap<String, Object>();
+		final Map<String, Object> exampleVertex = new HashMap<String, Object>();
 		exampleVertex.put("user", "Homer");
 
 		CursorEntity<TestComplexEntity02> cursor = driver.graphGetEdgesByExampleMap(GRAPH_NAME,

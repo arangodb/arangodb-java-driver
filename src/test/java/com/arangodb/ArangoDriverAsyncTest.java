@@ -40,28 +40,24 @@ import com.arangodb.entity.JobsEntity;
  */
 public class ArangoDriverAsyncTest extends BaseTest {
 
-	public ArangoDriverAsyncTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	@Before
 	public void before() throws ArangoException {
-		for (String col : new String[] { "blub" }) {
+		for (final String col : new String[] { "blub" }) {
 			try {
 				driver.deleteCollection(col);
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 			try {
 				driver.createCollection(col);
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 			try {
 				driver.stopAsyncMode();
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 
 			}
-			AqlFunctionsEntity res = driver.getAqlFunctions(null);
-			Iterator<String> it = res.getAqlFunctions().keySet().iterator();
+			final AqlFunctionsEntity res = driver.getAqlFunctions(null);
+			final Iterator<String> it = res.getAqlFunctions().keySet().iterator();
 			while (it.hasNext()) {
 				driver.deleteAqlFunction(it.next(), false);
 			}
@@ -79,7 +75,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		String msg = "";
 		try {
 			driver.startAsyncMode(false);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			msg = e.getErrorMessage();
 		}
 		assertThat(msg, is("Arango driver already set to asynchronous mode."));
@@ -88,7 +84,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		msg = "";
 		try {
 			driver.stopAsyncMode();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			msg = e.getErrorMessage();
 		}
 		assertThat(msg, is("Arango driver already set to synchronous mode."));
@@ -114,7 +110,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		assertThat(driver.getJobIds().size(), is(3));
 
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
 			driver.createDocument("blub", value, true, false);
 			assertThat(driver.getJobIds().size(), is(4 + i));
 		}
@@ -166,7 +162,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		assertThat(driver.getJobIds().size(), is(3));
 
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
 			driver.createDocument("blub", value, true, false);
 			assertThat(driver.getJobIds().size(), is(4 + i));
 		}
@@ -179,7 +175,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 
 		driver.startAsyncMode(false);
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
 			driver.createDocument("blub", value, true, false);
 		}
 		driver.stopAsyncMode();
@@ -197,20 +193,20 @@ public class ArangoDriverAsyncTest extends BaseTest {
 
 		driver.createAqlFunction("someNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }");
 
-		String id1 = driver.getLastJobId();
+		final String id1 = driver.getLastJobId();
 
 		driver.createAqlFunction("someNamespace::testC&&&&&&&&&&de",
 			"function (celsius) { return celsius * 2.8 + 32; }");
 
-		String id2 = driver.getLastJobId();
+		final String id2 = driver.getLastJobId();
 
 		driver.getAqlFunctions(null);
 
-		String id3 = driver.getLastJobId();
+		final String id3 = driver.getLastJobId();
 
-		List<String> ids = new ArrayList<String>();
+		final List<String> ids = new ArrayList<String>();
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
 			driver.createDocument("blub", value, true, false);
 			ids.add(driver.getLastJobId());
 		}
@@ -218,24 +214,24 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		driver.stopAsyncMode();
 		try {
 			Thread.sleep(2000);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
-		DefaultEntity de = driver.getJobResult(id1);
+		final DefaultEntity de = driver.getJobResult(id1);
 		assertThat(de.getStatusCode(), is(201));
 
 		try {
 			driver.getJobResult(id2);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertTrue(e.getErrorMessage().equals("java.lang.reflect.InvocationTargetException"));
 		}
 
-		AqlFunctionsEntity functions = driver.getJobResult(id3);
+		final AqlFunctionsEntity functions = driver.getJobResult(id3);
 		assertThat(functions.getStatusCode(), is(200));
 
 		DocumentEntity<TestComplexEntity01> resultComplex;
 
-		for (String id : ids) {
+		for (final String id : ids) {
 			resultComplex = driver.getJobResult(id);
 			assertThat(resultComplex.getStatusCode(), is(202));
 		}

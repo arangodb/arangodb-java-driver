@@ -45,7 +45,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 			return a;
 		}
 
-		public void setA(String a) {
+		public void setA(final String a) {
 			this.a = a;
 		}
 
@@ -53,7 +53,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 			return b;
 		}
 
-		public void setB(String b) {
+		public void setB(final String b) {
 			this.b = b;
 		}
 
@@ -61,25 +61,21 @@ public class ArangoDriverTransactionTest extends BaseTest {
 			return i;
 		}
 
-		public void setI(int i) {
+		public void setI(final int i) {
 			this.i = i;
 		}
-	}
-
-	public ArangoDriverTransactionTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
 	}
 
 	@Before
 	public void setup() throws ArangoException {
 		try {
 			driver.deleteCollection(SOME_COLLECTION);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 
 		}
 		try {
 			driver.createCollection(SOME_COLLECTION);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 
 		}
 	}
@@ -88,7 +84,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 	public void teardown() throws ArangoException {
 		try {
 			driver.deleteCollection(SOME_COLLECTION);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 
 		}
 	}

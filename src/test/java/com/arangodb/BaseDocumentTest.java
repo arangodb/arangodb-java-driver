@@ -23,19 +23,15 @@ import com.arangodb.entity.EdgeDefinitionEntity;
  */
 public class BaseDocumentTest extends BaseGraphTest {
 
-	String graphName = "UnitTestGraph";
-	String edgeCollectionName = "edge";
-
-	public BaseDocumentTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+	private final String graphName = "UnitTestGraph";
+	// private final String edgeCollectionName = "edge";
 
 	class Blub {
 		public String getBlubStr() {
 			return blubStr;
 		}
 
-		public void setBlubStr(String blubStr) {
+		public void setBlubStr(final String blubStr) {
 			this.blubStr = blubStr;
 		}
 
@@ -43,14 +39,14 @@ public class BaseDocumentTest extends BaseGraphTest {
 			return blubObj;
 		}
 
-		public void setBlubObj(Object blubObj) {
+		public void setBlubObj(final Object blubObj) {
 			this.blubObj = blubObj;
 		}
 
 		private String blubStr;
 		private Object blubObj;
 
-		public Blub(String blubStr, Object blubObj) {
+		public Blub(final String blubStr, final Object blubObj) {
 			this.blubStr = blubStr;
 			this.blubObj = blubObj;
 		}
@@ -58,8 +54,8 @@ public class BaseDocumentTest extends BaseGraphTest {
 
 	@Test
 	public void constructor() {
-		String myKey = "myKey";
-		Map<String, Object> myEmptyMap = new HashMap<String, Object>();
+		final String myKey = "myKey";
+		final Map<String, Object> myEmptyMap = new HashMap<String, Object>();
 
 		BaseDocument doc = new BaseDocument();
 		assertThat(doc, instanceOf(BaseDocument.class));
@@ -70,15 +66,15 @@ public class BaseDocumentTest extends BaseGraphTest {
 		assertEquals(doc.getProperties(), myEmptyMap);
 		assertThat(doc.getDocumentKey(), is(myKey));
 
-		String key1 = "key1";
-		String key2 = "key2";
-		String key3 = "key3";
-		String val1 = "val1";
-		int val2 = 2;
+		final String key1 = "key1";
+		final String key2 = "key2";
+		final String key3 = "key3";
+		final String val1 = "val1";
+		final int val2 = 2;
 
-		Blub val3 = new Blub("pappnase", 4711);
+		final Blub val3 = new Blub("pappnase", 4711);
 
-		Map<String, Object> myMap = new HashMap<String, Object>();
+		final Map<String, Object> myMap = new HashMap<String, Object>();
 		myMap.put(key1, val1);
 		myMap.put(key2, val2);
 		myMap.put(key3, val3);
@@ -108,27 +104,27 @@ public class BaseDocumentTest extends BaseGraphTest {
 
 	@Test
 	public void save_document() throws ArangoException {
-		String key1 = "key1";
-		String key2 = "key2";
-		String key3 = "key3";
-		String key4 = "key4";
-		String key5 = "key5";
-		String key6 = "key6";
-		String key7 = "key7";
+		final String key1 = "key1";
+		final String key2 = "key2";
+		final String key3 = "key3";
+		final String key4 = "key4";
+		final String key5 = "key5";
+		final String key6 = "key6";
+		final String key7 = "key7";
 
-		String val1 = "val1";
-		double val2 = -20;
-		Blub val3 = new Blub("pappnase", 4711);
-		Object[] val4 = new Object[4];
+		final String val1 = "val1";
+		final double val2 = -20;
+		final Blub val3 = new Blub("pappnase", 4711);
+		final Object[] val4 = new Object[4];
 		val4[0] = 1;
 		val4[1] = 2;
 		val4[2] = "Hallo";
 		val4[3] = new Blub("Hallo", 42);
-		Boolean val5 = true;
-		Object val6 = null;
-		Object val7 = 0;
+		final Boolean val5 = true;
+		final Object val6 = null;
+		final Object val7 = 0;
 
-		Map<String, Object> myMap = new HashMap<String, Object>();
+		final Map<String, Object> myMap = new HashMap<String, Object>();
 		myMap.put(key1, val1);
 		myMap.put(key2, val2);
 		myMap.put(key3, val3);
@@ -137,18 +133,18 @@ public class BaseDocumentTest extends BaseGraphTest {
 		myMap.put(key6, val6);
 		myMap.put(key7, val7);
 
-		BaseDocument baseDocument = new BaseDocument(myMap);
+		final BaseDocument baseDocument = new BaseDocument(myMap);
 
 		driver.createCollection("myCollection");
 		driver.createDocument("myCollection", baseDocument);
 
 		driver.createGraph(this.graphName, this.createEdgeDefinitions(), null, true);
-		BaseDocument myDoc1 = new BaseDocument("myKeyFROM", myMap);
-		Blub myDoc2 = new Blub("myKeyTO", new Blub("blub2", new Blub("blub3", 42)));
-		DocumentEntity<BaseDocument> v1 = driver.graphCreateVertex(this.graphName, "from", myDoc1, null);
+		final BaseDocument myDoc1 = new BaseDocument("myKeyFROM", myMap);
+		final Blub myDoc2 = new Blub("myKeyTO", new Blub("blub2", new Blub("blub3", 42)));
+		final DocumentEntity<BaseDocument> v1 = driver.graphCreateVertex(this.graphName, "from", myDoc1, null);
 		driver.graphCreateVertex(this.graphName, "to", myDoc2, null);
 
-		DocumentEntity<BaseDocument> v1DB = driver.getDocument(v1.getDocumentHandle(), BaseDocument.class);
+		final DocumentEntity<BaseDocument> v1DB = driver.getDocument(v1.getDocumentHandle(), BaseDocument.class);
 		// DocumentEntity<Blub> v2DB =
 		// driver.getDocument(v2.getDocumentHandle(), Blub.class);
 
@@ -157,8 +153,9 @@ public class BaseDocumentTest extends BaseGraphTest {
 		assertThat(v1DB.getDocumentHandle(), is(notNullValue()));
 		assertThat(v1DB.getDocumentRevision(), is(not(0L)));
 		assertThat(v1DB.getDocumentKey(), is(notNullValue()));
-		Map<String, Object> dbProperties = v1DB.getEntity().getProperties();
-		Object x = dbProperties.get(key1);
+		// final Map<String, Object> dbProperties =
+		// v1DB.getEntity().getProperties();
+		// final Object x = dbProperties.get(key1);
 
 		assertThat((String) v1DB.getEntity().getProperties().get(key1), is(val1));
 		assertThat((Double) v1DB.getEntity().getProperties().get(key2), is(val2));
@@ -169,13 +166,13 @@ public class BaseDocumentTest extends BaseGraphTest {
 	}
 
 	protected List<EdgeDefinitionEntity> createEdgeDefinitions() {
-		List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
-		EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+		final List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+		final EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
 		edgeDefinition.setCollection("edge");
-		List<String> from = new ArrayList<String>();
+		final List<String> from = new ArrayList<String>();
 		from.add("from");
 		edgeDefinition.setFrom(from);
-		List<String> to = new ArrayList<String>();
+		final List<String> to = new ArrayList<String>();
 		to.add("to");
 		edgeDefinition.setTo(to);
 		edgeDefinitions.add(edgeDefinition);

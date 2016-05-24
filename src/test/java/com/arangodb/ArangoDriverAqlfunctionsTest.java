@@ -36,73 +36,64 @@ import com.arangodb.entity.DefaultEntity;
  */
 public class ArangoDriverAqlfunctionsTest extends BaseTest {
 
-  public ArangoDriverAqlfunctionsTest(ArangoConfigure configure, ArangoDriver driver) {
-    super(configure, driver);
-  }
+	@Before
+	public void before() throws ArangoException {
+		final AqlFunctionsEntity res = driver.getAqlFunctions(null);
+		final Iterator<String> it = res.getAqlFunctions().keySet().iterator();
+		while (it.hasNext()) {
+			driver.deleteAqlFunction(it.next(), false);
+		}
+	}
 
+	@After
+	public void after() {
+	}
 
-  @Before
-  public void before() throws ArangoException {
-    AqlFunctionsEntity res = driver.getAqlFunctions(null);
-    Iterator<String> it = res.getAqlFunctions().keySet().iterator();
-    while(it.hasNext()) {
-      driver.deleteAqlFunction(it.next(), false);
-    }
-  }
+	@Test
+	public void test_AqlFunctions() throws ArangoException {
 
-  @After
-  public void after() {
-  }
+		DefaultEntity res = driver.createAqlFunction("someNamespace::testCode",
+			"function (celsius) { return celsius * 2.8 + 32; }");
+		assertThat(res.getCode(), is(201));
+		assertThat(res.getErrorMessage(), is((String) null));
 
-  @Test
-  public void test_AqlFunctions() throws ArangoException {
+		try {
+			res = driver.createAqlFunction("someNamespace::testC&&&&&&&&&&de",
+				"function (celsius) { return celsius * 2.8 + 32; }");
+		} catch (final ArangoException e) {
+			assertThat(e.getCode(), is(400));
+			assertThat(e.getErrorMessage(), is("invalid user function name"));
+		}
 
-    DefaultEntity res = driver.createAqlFunction(
-      "someNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
-    assertThat(res.getCode(), is(201));
-    assertThat(res.getErrorMessage(), is((String) null));
+		res = driver.createAqlFunction("anotherNamespace::testCode",
+			"function (celsius) { return celsius * 2.8 + 32; }");
+		assertThat(res.getCode(), is(201));
+		assertThat(res.getErrorMessage(), is((String) null));
+		res = driver.createAqlFunction("anotherNamespace::testCode2",
+			"function (celsius) { return celsius * 2.8 + 32; }");
+		assertThat(res.getCode(), is(201));
+		assertThat(res.getErrorMessage(), is((String) null));
 
-    try {
-        res = driver.createAqlFunction(
-        	      "someNamespace::testC&&&&&&&&&&de", "function (celsius) { return celsius * 2.8 + 32; }"
-        	    );
-    } catch (ArangoException e) {
-        assertThat(e.getCode(), is(400));
-        assertThat(e.getErrorMessage(), is("invalid user function name"));
-    }
+		AqlFunctionsEntity r = driver.getAqlFunctions(null);
+		assertThat(r.size(), is(3));
+		assertTrue(r.getAqlFunctions().keySet().contains("anotherNamespace::testCode"));
+		assertTrue(r.getAqlFunctions().keySet().contains("someNamespace::testCode"));
 
-    res = driver.createAqlFunction(
-      "anotherNamespace::testCode", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
-    assertThat(res.getCode(), is(201));
-    assertThat(res.getErrorMessage(), is((String) null));
-    res = driver.createAqlFunction(
-      "anotherNamespace::testCode2", "function (celsius) { return celsius * 2.8 + 32; }"
-    );
-    assertThat(res.getCode(), is(201));
-    assertThat(res.getErrorMessage(), is((String) null));
+		r = driver.getAqlFunctions("someNamespace");
+		assertThat(r.size(), is(1));
+		assertFalse(r.getAqlFunctions().keySet().contains("anotherNamespace::testCode"));
+		assertTrue(r.getAqlFunctions().keySet().contains("someNamespace::testCode"));
 
-    AqlFunctionsEntity r = driver.getAqlFunctions(null);
-    assertThat(r.size() , is(3));
-    assertTrue(r.getAqlFunctions().keySet().contains("anotherNamespace::testCode"));
-    assertTrue(r.getAqlFunctions().keySet().contains("someNamespace::testCode"));
+		res = driver.deleteAqlFunction("someNamespace::testCode", false);
+		assertThat(res.getCode(), is(200));
+		assertThat(res.getErrorMessage(), is((String) null));
 
-    r = driver.getAqlFunctions("someNamespace");
-    assertThat(r.size() , is(1));
-    assertFalse(r.getAqlFunctions().keySet().contains("anotherNamespace::testCode"));
-    assertTrue(r.getAqlFunctions().keySet().contains("someNamespace::testCode"));
+		res = driver.deleteAqlFunction("anotherNamespace", true);
+		assertThat(res.getCode(), is(200));
+		assertThat(res.getErrorMessage(), is((String) null));
 
-    res = driver.deleteAqlFunction("someNamespace::testCode", false);
-    assertThat(res.getCode(), is(200));
-    assertThat(res.getErrorMessage(), is((String) null));
-
-    res = driver.deleteAqlFunction("anotherNamespace", true);
-    assertThat(res.getCode(), is(200));
-    assertThat(res.getErrorMessage(), is((String) null));
-
-    AqlFunctionsEntity c = driver.getAqlFunctions("someNamespace");
-    assertThat(c.size() , is(0));
-  }
+		final AqlFunctionsEntity c = driver.getAqlFunctions("someNamespace");
+		assertThat(c.size(), is(0));
+	}
 
 }

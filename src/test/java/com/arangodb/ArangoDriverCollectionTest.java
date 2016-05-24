@@ -52,15 +52,11 @@ import com.arangodb.util.MapBuilder;
  */
 public class ArangoDriverCollectionTest extends BaseTest {
 
-	public ArangoDriverCollectionTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	private static Logger logger = LoggerFactory.getLogger(ArangoDriverCollectionTest.class);
 
-	final String collectionName = "unit_test_arango_001"; // 通常ケースで使うコレクション名
-	final String collectionName2 = "unit_test_arango_002";
-	final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
+	private final String collectionName = "unit_test_arango_001"; // 通常ケースで使うコレクション名
+	private final String collectionName2 = "unit_test_arango_002";
+	private final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
 
 	@Before
 	public void before() throws ArangoException {
@@ -68,10 +64,10 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		logger.debug("----------");
 
 		// 事前に消しておく
-		for (String col : new String[] { collectionName, collectionName2, collectionName404 }) {
+		for (final String col : new String[] { collectionName, collectionName2, collectionName404 }) {
 			try {
 				driver.deleteCollection(col);
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 		}
 
@@ -93,7 +89,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	public void test_create_document_collection() throws ArangoException {
 
 		// DocumentCollection
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1, is(notNullValue()));
 		assertThat(res1.getCode(), is(200));
 		assertThat(res1.getId(), is(notNullValue()));
@@ -114,9 +110,9 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	// @Parameters
 	public void test_create_edge_collection() throws ArangoException {
-		CollectionOptions collectionOptions = new CollectionOptions();
+		final CollectionOptions collectionOptions = new CollectionOptions();
 		collectionOptions.setType(CollectionType.EDGE);
-		CollectionEntity res2 = driver.createCollection(collectionName, collectionOptions);
+		final CollectionEntity res2 = driver.createCollection(collectionName, collectionOptions);
 		assertThat(res2, is(notNullValue()));
 		assertThat(res2.getCode(), is(200));
 		assertThat(res2.getId(), is(notNullValue()));
@@ -137,9 +133,9 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_create_inmemory_document_collection() throws ArangoException {
 
-		CollectionOptions collectionOptions = new CollectionOptions();
+		final CollectionOptions collectionOptions = new CollectionOptions();
 		collectionOptions.setIsVolatile(true);
-		CollectionEntity res = driver.createCollection(collectionName, collectionOptions);
+		final CollectionEntity res = driver.createCollection(collectionName, collectionOptions);
 		assertThat(res, is(notNullValue()));
 		assertThat(res.getCode(), is(200));
 		assertThat(res.getId(), is(not(0L)));
@@ -155,15 +151,15 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_create_with_options() throws ArangoException {
 
-		CollectionKeyOption keyOptions = new CollectionKeyOption();
+		final CollectionKeyOption keyOptions = new CollectionKeyOption();
 		keyOptions.setType("autoincrement");
 		keyOptions.setAllowUserKeys(true);
 		keyOptions.setIncrement(10);
 		keyOptions.setOffset(200);
 
-		CollectionOptions collectionOptions = new CollectionOptions();
+		final CollectionOptions collectionOptions = new CollectionOptions();
 		collectionOptions.setKeyOptions(keyOptions);
-		CollectionEntity res = driver.createCollection(collectionName, collectionOptions);
+		final CollectionEntity res = driver.createCollection(collectionName, collectionOptions);
 		assertThat(res, is(notNullValue()));
 		assertThat(res.getCode(), is(200));
 		assertThat(res.getId(), is(not(0L)));
@@ -179,8 +175,8 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(res.getKeyOptions(), is(nullValue()));
 
 		// 別のAPIで確認する
-		CollectionEntity ent = driver.getCollectionProperties(collectionName);
-		CollectionKeyOption opt = ent.getKeyOptions();
+		final CollectionEntity ent = driver.getCollectionProperties(collectionName);
+		final CollectionKeyOption opt = ent.getKeyOptions();
 		assertThat(opt.isAllowUserKeys(), is(true));
 		assertThat(opt.getType(), is("autoincrement"));
 		assertThat(opt.getIncrement(), is(10L));
@@ -192,7 +188,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	public void test_create_no_compact() throws ArangoException {
 
 		// DocumentCollection
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1, is(notNullValue()));
 		assertThat(res1.getCode(), is(200));
 		assertThat(res1.getId(), is(notNullValue()));
@@ -203,7 +199,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(res1.getStatus(), is(CollectionStatus.LOADED));
 		assertThat(res1.getType(), is(CollectionType.DOCUMENT));
 
-		CollectionEntity prop = driver.getCollectionProperties(collectionName);
+		final CollectionEntity prop = driver.getCollectionProperties(collectionName);
 		assertThat(prop.getCode(), is(200));
 		assertThat(prop.getId(), is(res1.getId()));
 		assertThat(prop.getDoCompact(), is(true));
@@ -218,7 +214,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_create_dup() throws ArangoException {
 
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1, is(notNullValue()));
 		assertThat(res1.getCode(), is(200));
 		assertThat(res1.getId(), is(not(0L)));
@@ -232,7 +228,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 			try {
 				driver.createCollection(collectionName);
 				fail("ここに来てはダメー！");
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 				assertThat(e.getCode(), is(409));
 				assertThat(e.getErrorNumber(), is(1207));
 			}
@@ -243,15 +239,15 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_getCollection_01() throws ArangoException {
 
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1.getCode(), is(200));
 
-		long collectionId = res1.getId();
+		final long collectionId = res1.getId();
 
 		// IDで取得
-		CollectionEntity entity1 = driver.getCollection(collectionId);
+		final CollectionEntity entity1 = driver.getCollection(collectionId);
 		// 名前で取得
-		CollectionEntity entity2 = driver.getCollection(collectionName);
+		final CollectionEntity entity2 = driver.getCollection(collectionName);
 		assertThat(entity1.getId(), is(collectionId));
 		assertThat(entity2.getId(), is(collectionId));
 		assertThat(entity1.getName(), is(collectionName));
@@ -274,7 +270,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.getCollection(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -284,10 +280,10 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_getCollectionProperties_01() throws ArangoException {
 
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1.getCode(), is(200));
 
-		CollectionEntity collection = driver.getCollectionProperties(collectionName);
+		final CollectionEntity collection = driver.getCollectionProperties(collectionName);
 		assertThat(collection.getCode(), is(200));
 		assertThat(collection.getId(), is(res1.getId()));
 		assertThat(collection.getName(), is(collectionName));
@@ -321,7 +317,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.getCollectionProperties(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -331,7 +327,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_getCollectionRevision() throws ArangoException {
 
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1.getCode(), is(200));
 
 		// Get Revision
@@ -344,7 +340,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		// Get Revision again
 		collection = driver.getCollectionRevision(collectionName);
 		// Check to updated revision
-		long rev2 = collection.getRevision();
+		final long rev2 = collection.getRevision();
 		assertThat(rev2, is(not(0L)));
 
 		// Create Document
@@ -353,7 +349,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		// Get Revision again
 		collection = driver.getCollectionRevision(collectionName);
 		// Check to updated revision
-		long rev3 = collection.getRevision();
+		final long rev3 = collection.getRevision();
 		assertThat(rev3, greaterThan(rev2));
 
 	}
@@ -364,7 +360,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.getCollectionRevision(collectionName404);
 			fail("Because did not raise Exception.");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -374,7 +370,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_getCollectionCount_01() throws ArangoException {
 
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1.getCode(), is(200));
 
 		CollectionEntity collection = driver.getCollectionCount(collectionName);
@@ -388,7 +384,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 
 		// 100個ほどドキュメントを入れてみる
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "tes user:" + i, 20 + i);
+			final TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "tes user:" + i, 20 + i);
 			driver.createDocument(collectionName, value, false, true);
 		}
 
@@ -409,7 +405,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.getCollectionCount(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -420,20 +416,21 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	public void test_getCollectionFigures_01() throws ArangoException {
 
 		// コレクションを作る
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1.getCode(), is(200));
 
 		// 100個ほどドキュメントを入れてみる
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "test user:" + i, 20 + i);
-			DocumentEntity<TestComplexEntity01> entity = driver.createDocument(collectionName, value, false, true);
+			final TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "test user:" + i, 20 + i);
+			final DocumentEntity<TestComplexEntity01> entity = driver.createDocument(collectionName, value, false,
+				true);
 			// 1個消す
 			if (i == 50) {
 				driver.deleteDocument(entity.getDocumentHandle(), null, null);
 			}
 		}
 
-		CollectionEntity collection = driver.getCollectionFigures(collectionName);
+		final CollectionEntity collection = driver.getCollectionFigures(collectionName);
 		assertThat(collection.getCode(), is(200));
 		assertThat(collection.getId(), is(res1.getId()));
 		assertThat(collection.getName(), is(collectionName));
@@ -476,7 +473,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.getCollectionFigures(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -487,11 +484,11 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	public void test_getCollectionChecksum() throws ArangoException {
 
 		// create collection.
-		CollectionEntity res1 = driver.createCollection(collectionName);
+		final CollectionEntity res1 = driver.createCollection(collectionName);
 		assertThat(res1.getCode(), is(200));
 
 		// checksum
-		CollectionEntity entity = driver.getCollectionChecksum(collectionName, true, true);
+		final CollectionEntity entity = driver.getCollectionChecksum(collectionName, true, true);
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.isError(), is(false));
 		assertThat(entity.getRevision(), is(0L)); // レスポンスは戻ってきてるんだけど、0なのでどうチェックしたものか・・
@@ -505,16 +502,16 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		for (int i = 0; i < 10; i++) {
 			try {
 				driver.createCollection("unit_test_arango_" + (1000 + i));
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 		}
 
-		CollectionsEntity collections = driver.getCollections();
+		final CollectionsEntity collections = driver.getCollections();
 		assertThat(collections.getCode(), is(200));
-		Map<String, CollectionEntity> map = collections.getNames();
+		final Map<String, CollectionEntity> map = collections.getNames();
 		for (int i = 0; i < 10; i++) {
-			String collectionName = "unit_test_arango_" + (1000 + i);
-			CollectionEntity collection = map.get(collectionName);
+			final String collectionName = "unit_test_arango_" + (1000 + i);
+			final CollectionEntity collection = map.get(collectionName);
 			// id, name, status
 			assertThat(collection, is(notNullValue()));
 			assertThat(collection.getId(), is(not(0L)));
@@ -522,8 +519,8 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		}
 
 		// with exluceSystem parameter.
-		int allColCount = collections.getCollections().size();
-		int sysExcludeCount = driver.getCollections(true).getCollections().size();
+		final int allColCount = collections.getCollections().size();
+		final int sysExcludeCount = driver.getCollections(true).getCollections().size();
 		assertThat(allColCount > sysExcludeCount, is(true));
 
 	}
@@ -532,7 +529,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	public void test_load_unload() throws ArangoException {
 
 		// create
-		CollectionEntity collection = driver.createCollection(collectionName);
+		final CollectionEntity collection = driver.createCollection(collectionName);
 		assertThat(collection, is(notNullValue()));
 		assertThat(collection.getCode(), is(200));
 
@@ -547,7 +544,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(collection1.getStatus(),
 			anyOf(is(CollectionStatus.UNLOADED), is(CollectionStatus.IN_THE_PROCESS_OF_BEING_UNLOADED)));
 
-		CollectionEntity collection2 = driver.loadCollection(collectionName);
+		final CollectionEntity collection2 = driver.loadCollection(collectionName);
 		assertThat(collection2, is(notNullValue()));
 		assertThat(collection2.getCode(), is(200));
 		assertThat(collection2.getStatus(), is(CollectionStatus.LOADED));
@@ -560,7 +557,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(collection1.getCount(), is(0L));
 
 		// with count parameter
-		CollectionEntity col3 = driver.loadCollection(collectionName, false);
+		final CollectionEntity col3 = driver.loadCollection(collectionName, false);
 		assertThat(col3, is(notNullValue()));
 		assertThat(col3.getCode(), is(200));
 		assertThat(col3.getStatus(), is(CollectionStatus.LOADED));
@@ -574,7 +571,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.loadCollection(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -587,7 +584,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.unloadCollection(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -597,20 +594,20 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_truncate() throws ArangoException {
 
-		CollectionEntity collection = driver.createCollection(collectionName);
+		final CollectionEntity collection = driver.createCollection(collectionName);
 		assertThat(collection, is(notNullValue()));
 		assertThat(collection.getCode(), is(200));
 
 		// 100個ほどドキュメントを入れてみる
 		for (int i = 0; i < 100; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "test user:" + i, 20 + i);
+			final TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "test user:" + i, 20 + i);
 			assertThat(driver.createDocument(collectionName, value, false, true).getStatusCode(), is(201));
 		}
 		// 100個入ったよね？
 		assertThat(driver.getCollectionCount(collectionName).getCount(), is(100L));
 
 		// 抹殺じゃー！
-		CollectionEntity collection2 = driver.truncateCollection(collectionName);
+		final CollectionEntity collection2 = driver.truncateCollection(collectionName);
 		assertThat(collection2, is(notNullValue()));
 		assertThat(collection2.getCode(), is(200));
 
@@ -625,7 +622,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.unloadCollection(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -635,7 +632,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_setCollectionProperties() throws ArangoException {
 
-		CollectionEntity collection = driver.createCollection(collectionName);
+		final CollectionEntity collection = driver.createCollection(collectionName);
 		assertThat(collection, is(notNullValue()));
 		assertThat(collection.getCode(), is(200));
 		assertThat(collection.getWaitForSync(), is(Boolean.FALSE));
@@ -658,7 +655,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.setCollectionProperties(collectionName404, true, null);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -669,26 +666,26 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	public void test_delete() throws ArangoException {
 
 		// コレクションを適当に10個作る
-		TreeSet<String> collectionNames = new TreeSet<String>();
+		final TreeSet<String> collectionNames = new TreeSet<String>();
 		for (int i = 0; i < 10; i++) {
 			try {
-				CollectionEntity col = driver.createCollection("unit_test_arango_" + (1000 + i));
-				long collectionId = col.getId();
+				final CollectionEntity col = driver.createCollection("unit_test_arango_" + (1000 + i));
+				final long collectionId = col.getId();
 				if (i == 5) {
 					// 1個だけ消す
-					CollectionEntity res = driver.deleteCollection(collectionId);
+					final CollectionEntity res = driver.deleteCollection(collectionId);
 					assertThat(res.getCode(), is(200));
 					assertThat(res.getId(), is(collectionId));
 				} else {
 					collectionNames.add(col.getName());
 				}
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 		}
 
 		// 残りの9個は残っていること
-		Map<String, CollectionEntity> collections = driver.getCollections().getNames();
-		for (String name : collectionNames) {
+		final Map<String, CollectionEntity> collections = driver.getCollections().getNames();
+		for (final String name : collectionNames) {
 			assertThat(collections.containsKey(name), is(true));
 		}
 
@@ -700,7 +697,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.deleteCollection(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -710,13 +707,13 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_rename_404() throws ArangoException {
 
-		CollectionEntity collection = driver.createCollection(collectionName);
+		final CollectionEntity collection = driver.createCollection(collectionName);
 		assertThat(collection.getCode(), is(200));
 
 		try {
 			driver.renameCollection(collectionName404, collectionName);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
 		}
@@ -731,16 +728,16 @@ public class ArangoDriverCollectionTest extends BaseTest {
 	@Test
 	public void test_rename_dup() throws ArangoException {
 
-		CollectionEntity collection1 = driver.createCollection(collectionName);
+		final CollectionEntity collection1 = driver.createCollection(collectionName);
 		assertThat(collection1.getCode(), is(200));
 
-		CollectionEntity collection2 = driver.createCollection(collectionName2);
+		final CollectionEntity collection2 = driver.createCollection(collectionName2);
 		assertThat(collection2.getCode(), is(200));
 
 		try {
 			driver.renameCollection(collectionName, collectionName2);
 			fail("ここに来てはダメー！");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(409));
 			assertThat(e.getErrorNumber(), is(1207));
 		}

@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.DocumentCursor;
 import com.arangodb.entity.DocumentEntity;
@@ -36,14 +34,6 @@ public class SimplePersonAqlQueryWithLimitExample extends BaseExample {
 	private static final String DATABASE_NAME = "SimplePersonAqlQueryWithLimitExample";
 
 	private static final String COLLECTION_NAME = "SimplePersonAqlQueryWithLimitExample";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public SimplePersonAqlQueryWithLimitExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

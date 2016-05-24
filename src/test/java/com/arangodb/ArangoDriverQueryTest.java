@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.DefaultEntity;
@@ -38,17 +37,9 @@ import com.arangodb.entity.QueryTrackingPropertiesEntity;
  */
 public class ArangoDriverQueryTest extends BaseTest {
 
-	public ArangoDriverQueryTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
-	@Before
-	public void setup() throws ArangoException {
-	}
-
 	@Test
 	public void test_getQueryTrackingProperties() throws ArangoException {
-		QueryTrackingPropertiesEntity queryTrackingProperties = driver.getQueryTrackingProperties();
+		final QueryTrackingPropertiesEntity queryTrackingProperties = driver.getQueryTrackingProperties();
 		assertEquals(200, queryTrackingProperties.getStatusCode());
 		assertNotNull(queryTrackingProperties.getEnabled());
 		assertNotNull(queryTrackingProperties.getTrackSlowQueries());
@@ -59,13 +50,13 @@ public class ArangoDriverQueryTest extends BaseTest {
 
 	@Test
 	public void test_setQueryTrackingProperties() throws ArangoException {
-		QueryTrackingPropertiesEntity properties1 = driver.getQueryTrackingProperties();
+		final QueryTrackingPropertiesEntity properties1 = driver.getQueryTrackingProperties();
 
-		Long maxQueryStringLength = properties1.getMaxQueryStringLength() + 10;
+		final Long maxQueryStringLength = properties1.getMaxQueryStringLength() + 10;
 
 		properties1.setMaxQueryStringLength(maxQueryStringLength);
 
-		QueryTrackingPropertiesEntity properties2 = driver.setQueryTrackingProperties(properties1);
+		final QueryTrackingPropertiesEntity properties2 = driver.setQueryTrackingProperties(properties1);
 
 		assertEquals(200, properties2.getStatusCode());
 		assertNotNull(properties2.getEnabled());
@@ -79,85 +70,86 @@ public class ArangoDriverQueryTest extends BaseTest {
 	@Test
 	public void test_getCurrentlyRunningQueries() throws ArangoException, InterruptedException {
 
-		String queryString = "return sleep(3)";
+		final String queryString = "return sleep(3)";
 
-		Thread thread1 = new Thread(new RunnableThread(driver.getDefaultDatabase(), configure, queryString), "thread1");
+		final Thread thread1 = new Thread(new RunnableThread(driver.getDefaultDatabase(), configure, queryString),
+				"thread1");
 		thread1.start();
 
 		Thread.sleep(1000);
 
-		QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries();
+		final QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries();
 
 		// wait for thread
 		thread1.join();
 
 		// check result
 		assertEquals(200, currentlyRunningQueries.getStatusCode());
-		List<QueryEntity> queries = currentlyRunningQueries.getQueries();
+		final List<QueryEntity> queries = currentlyRunningQueries.getQueries();
 		assertEquals(1, queries.size());
 	}
 
 	@Test
 	public void test_getCurrentlyRunningQueriesWithoutDatabase() throws ArangoException, InterruptedException {
 
-		String queryString = "return sleep(3)";
+		final String queryString = "return sleep(3)";
 
 		// create job in _system database
-		Thread thread1 = new Thread(new RunnableThread(null, configure, queryString), "thread1");
+		final Thread thread1 = new Thread(new RunnableThread(null, configure, queryString), "thread1");
 		thread1.start();
 
 		Thread.sleep(1000);
 
 		// search in default database
-		QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries();
+		final QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries();
 
 		// wait for thread
 		thread1.join();
 
 		// check result
 		assertEquals(200, currentlyRunningQueries.getStatusCode());
-		List<QueryEntity> queries = currentlyRunningQueries.getQueries();
+		final List<QueryEntity> queries = currentlyRunningQueries.getQueries();
 		assertEquals(0, queries.size());
 	}
 
 	@Test
 	public void test_getCurrentlyRunningQueriesWithoutDatabase2() throws ArangoException, InterruptedException {
 
-		String queryString = "return sleep(3)";
+		final String queryString = "return sleep(3)";
 
 		// create job in _system database
-		Thread thread1 = new Thread(new RunnableThread(null, configure, queryString), "thread1");
+		final Thread thread1 = new Thread(new RunnableThread(null, configure, queryString), "thread1");
 		thread1.start();
 
 		Thread.sleep(1000);
 
 		// search in _system database
-		QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries(null);
+		final QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries(null);
 
 		// wait for thread
 		thread1.join();
 
 		// check result
 		assertEquals(200, currentlyRunningQueries.getStatusCode());
-		List<QueryEntity> queries = currentlyRunningQueries.getQueries();
+		final List<QueryEntity> queries = currentlyRunningQueries.getQueries();
 		assertEquals(1, queries.size());
 	}
 
 	@Test
 	public void test_getSlowQueries() throws ArangoException, InterruptedException {
 		// set SlowQueryThreshold to 2
-		QueryTrackingPropertiesEntity properties1 = driver.getQueryTrackingProperties();
+		final QueryTrackingPropertiesEntity properties1 = driver.getQueryTrackingProperties();
 		properties1.setSlowQueryThreshold(2L);
 		driver.setQueryTrackingProperties(properties1);
 
 		// create a slow query
 		driver.executeDocumentQuery("return sleep(3)", new HashMap<String, Object>(), null, Map.class);
 
-		QueriesResultEntity currentlyRunningQueries = driver.getSlowQueries();
+		final QueriesResultEntity currentlyRunningQueries = driver.getSlowQueries();
 
 		// check result
 		assertEquals(200, currentlyRunningQueries.getStatusCode());
-		List<QueryEntity> queries = currentlyRunningQueries.getQueries();
+		final List<QueryEntity> queries = currentlyRunningQueries.getQueries();
 		assertTrue(queries.size() > 0);
 	}
 
@@ -172,7 +164,7 @@ public class ArangoDriverQueryTest extends BaseTest {
 		assertEquals(0, queries.size());
 
 		// set SlowQueryThreshold to 2
-		QueryTrackingPropertiesEntity properties1 = driver.getQueryTrackingProperties();
+		final QueryTrackingPropertiesEntity properties1 = driver.getQueryTrackingProperties();
 		properties1.setSlowQueryThreshold(2L);
 		driver.setQueryTrackingProperties(properties1);
 
@@ -190,10 +182,11 @@ public class ArangoDriverQueryTest extends BaseTest {
 	@Test
 	public void test_killQuery() throws ArangoException, InterruptedException {
 
-		String queryString = "return sleep(3)";
+		final String queryString = "return sleep(3)";
 
 		// create job in _system database
-		Thread thread1 = new Thread(new RunnableThread(driver.getDefaultDatabase(), configure, queryString), "thread1");
+		final Thread thread1 = new Thread(new RunnableThread(driver.getDefaultDatabase(), configure, queryString),
+				"thread1");
 		thread1.start();
 
 		Thread.sleep(1000);
@@ -201,17 +194,17 @@ public class ArangoDriverQueryTest extends BaseTest {
 		int numKilled = 0;
 
 		// search in default database
-		QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries();
+		final QueriesResultEntity currentlyRunningQueries = driver.getCurrentlyRunningQueries();
 		// check result
 		assertEquals(200, currentlyRunningQueries.getStatusCode());
-		List<QueryEntity> queries = currentlyRunningQueries.getQueries();
+		final List<QueryEntity> queries = currentlyRunningQueries.getQueries();
 		if (queries.size() > 0) {
-			for (QueryEntity qe : queries) {
+			for (final QueryEntity qe : queries) {
 				try {
-					DefaultEntity killQuery = driver.killQuery(qe.getId());
+					final DefaultEntity killQuery = driver.killQuery(qe.getId());
 					assertEquals(200, killQuery.getStatusCode());
 					numKilled++;
-				} catch (ArangoException e) {
+				} catch (final ArangoException e) {
 
 				}
 			}
@@ -229,21 +222,22 @@ public class ArangoDriverQueryTest extends BaseTest {
 		ArangoDriver driver;
 		String queryString;
 
-		public RunnableThread(String database, ArangoConfigure configure, String queryString) {
+		public RunnableThread(final String database, final ArangoConfigure configure, final String queryString) {
 			this.driver = new ArangoDriver(configure);
 			this.driver.setDefaultDatabase(database);
 			this.queryString = queryString;
 		}
 
-		public RunnableThread(String threadName) {
+		public RunnableThread(final String threadName) {
 			runner = new Thread(this, threadName);
 			runner.start();
 		}
 
+		@Override
 		public void run() {
 			try {
 				driver.executeDocumentQuery(queryString, new HashMap<String, Object>(), null, Map.class);
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 				if (e.getErrorNumber() != ErrorNums.ERROR_QUERY_KILLED) {
 					e.printStackTrace();
 				}

@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorResult;
 import com.arangodb.entity.EdgeEntity;
@@ -46,14 +44,6 @@ public class GraphAqlTraversalQueryExample extends BaseExample {
 	private static final String GRAPH_NAME = "traversalGraph";
 	private static final String EDGE_COLLECTION_NAME = "edges";
 	private static final String VERTEXT_COLLECTION_NAME = "circles";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public GraphAqlTraversalQueryExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() throws ArangoException {

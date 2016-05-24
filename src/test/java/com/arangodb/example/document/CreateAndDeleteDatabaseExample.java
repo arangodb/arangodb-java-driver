@@ -30,14 +30,6 @@ public class CreateAndDeleteDatabaseExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "CreateDatabaseExample";
 
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public CreateAndDeleteDatabaseExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);

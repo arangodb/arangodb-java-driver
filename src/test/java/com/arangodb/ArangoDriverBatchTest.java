@@ -36,25 +36,21 @@ import com.arangodb.entity.DocumentEntity;
  */
 public class ArangoDriverBatchTest extends BaseTest {
 
-	String colName = "unit_test_batchTest";
-
-	public ArangoDriverBatchTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
+	private static final String COLLECTION_NAME = "unit_test_batchTest";
 
 	@Before
 	public void before() throws ArangoException {
 		try {
 			driver.cancelBatchMode();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
-			driver.deleteCollection(colName);
-		} catch (ArangoException e) {
+			driver.deleteCollection(COLLECTION_NAME);
+		} catch (final ArangoException e) {
 		}
 		try {
-			driver.createCollection(colName);
-		} catch (Exception e) {
+			driver.createCollection(COLLECTION_NAME);
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -64,11 +60,11 @@ public class ArangoDriverBatchTest extends BaseTest {
 	public void after() {
 		try {
 			driver.cancelBatchMode();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
-			driver.deleteCollection(colName);
-		} catch (ArangoException e) {
+			driver.deleteCollection(COLLECTION_NAME);
+		} catch (final ArangoException e) {
 		}
 	}
 
@@ -79,7 +75,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 		String msg = "";
 		try {
 			driver.startBatchMode();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			msg = e.getErrorMessage();
 		}
 		assertThat(msg, is("BatchMode is already active."));
@@ -88,7 +84,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 		msg = "";
 		try {
 			driver.cancelBatchMode();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			msg = e.getErrorMessage();
 		}
 		assertThat(msg, is("BatchMode is not active."));
@@ -96,7 +92,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 		msg = "";
 		try {
 			driver.executeBatch();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			msg = e.getErrorMessage();
 		}
 		assertThat(msg, is("BatchMode is not active."));
@@ -108,7 +104,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 
 		try {
 			driver.truncateCollection("_aqlfunctions");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -131,32 +127,33 @@ public class ArangoDriverBatchTest extends BaseTest {
 		assertThat(res.getRequestId(), is("request3"));
 
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			res = driver.createDocument(colName, value, true, false);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			res = driver.createDocument(COLLECTION_NAME, value, true, false);
 
 			assertThat(res.getStatusCode(), is(206));
 			assertThat(res.getRequestId(), is("request" + (4 + i)));
 		}
 
-		driver.getDocuments(colName);
+		driver.getDocuments(COLLECTION_NAME);
 
 		driver.executeBatch();
-		DefaultEntity created = driver.getBatchResponseByRequestId("request1");
+		final DefaultEntity created = driver.getBatchResponseByRequestId("request1");
 		assertThat(created.getStatusCode(), is(201));
-		AqlFunctionsEntity functions = driver.getBatchResponseByRequestId("request3");
+		final AqlFunctionsEntity functions = driver.getBatchResponseByRequestId("request3");
 		assertThat(functions.getStatusCode(), is(200));
 		assertThat(String.valueOf(functions.getAqlFunctions().keySet().toArray()[0]), is("someNamespace::testCode"));
 		for (int i = 0; i < 10; i++) {
-			DocumentEntity<TestComplexEntity01> resultComplex = driver.getBatchResponseByRequestId("request" + (4 + i));
+			final DocumentEntity<TestComplexEntity01> resultComplex = driver
+					.getBatchResponseByRequestId("request" + (4 + i));
 			assertThat(resultComplex.getStatusCode(), is(202));
 		}
 
-		List<String> documents = driver.getBatchResponseByRequestId("request14");
+		final List<String> documents = driver.getBatchResponseByRequestId("request14");
 		assertThat(documents.size(), is(10));
 
 		try {
 			driver.truncateCollection("_aqlfunctions");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -170,26 +167,26 @@ public class ArangoDriverBatchTest extends BaseTest {
 		BaseEntity res;
 
 		for (int i = 0; i < 10; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			res = driver.createDocument(colName, value, true, false);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			res = driver.createDocument(COLLECTION_NAME, value, true, false);
 			assertThat(res.getRequestId(), is("request" + (i + 1)));
 		}
 
 		driver.executeBatch();
 
-		assertThat(driver.getDocuments(colName).size(), is(10));
+		assertThat(driver.getDocuments(COLLECTION_NAME).size(), is(10));
 
 		driver.startBatchMode();
 
 		for (int i = 20; i < 30; i++) {
-			TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			res = driver.createDocument(colName, value, true, false);
+			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
+			res = driver.createDocument(COLLECTION_NAME, value, true, false);
 			assertThat(res.getRequestId(), is("request" + (i + 1 - 20)));
 		}
 
 		driver.executeBatch();
 
-		assertThat(driver.getDocuments(colName).size(), is(20));
+		assertThat(driver.getDocuments(COLLECTION_NAME).size(), is(20));
 
 	}
 

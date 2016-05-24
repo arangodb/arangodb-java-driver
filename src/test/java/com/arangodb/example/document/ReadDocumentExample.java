@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -38,14 +36,6 @@ public class ReadDocumentExample extends BaseExample {
 	private static final String COLLECTION_NAME = "ReadDocument";
 
 	private static final String KEY1 = "key1";
-
-	/**
-	 * @param configure
-	 * @param driver
-	 */
-	public ReadDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
-		super(configure, driver);
-	}
 
 	@Before
 	public void _before() {

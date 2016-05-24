@@ -32,18 +32,14 @@ import com.arangodb.entity.GraphEntity;
  */
 public abstract class BaseGraphTest extends BaseTest {
 
-	public BaseGraphTest(ArangoConfigure configure, ArangoDriver driver) {
-		super(configure, driver);
-	}
-
 	@Before
 	public void _before() throws ArangoException {
 
-		String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+		final String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
 				+ "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
 				+ "  graph._drop(g, true)\n" + "});";
 		driver.executeScript(deleteAllGraphsAndTheirCollections);
-		String deleteAllCollections = "var db = require('internal').db;\n"
+		final String deleteAllCollections = "var db = require('internal').db;\n"
 				+ "var cols = db._collections().filter(function(c) { return c.name()[0] !== \"_\" });\n"
 				+ "cols.forEach(function(col){db._drop(col.name())});";
 		driver.executeScript(deleteAllCollections);
@@ -51,23 +47,23 @@ public abstract class BaseGraphTest extends BaseTest {
 
 	@After
 	public void after() throws ArangoException {
-		String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
+		final String deleteAllGraphsAndTheirCollections = "var db = require('internal').db;\n"
 				+ "var graph = require('org/arangodb/general-graph');\n" + "graph._list().forEach(function(g){\n"
 				+ "  graph._drop(g, true)\n" + "});";
 		driver.executeScript(deleteAllGraphsAndTheirCollections);
 	}
 
-	protected List<EdgeDefinitionEntity> createEdgeDefinitions(int count, int offset) {
-		List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+	protected List<EdgeDefinitionEntity> createEdgeDefinitions(final int count, final int offset) {
+		final List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
 		for (int i = 1 + offset; i <= count + offset; i++) {
-			EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
+			final EdgeDefinitionEntity edgeDefinition = new EdgeDefinitionEntity();
 			edgeDefinition.setCollection("edge-" + i);
-			List<String> from = new ArrayList<String>();
+			final List<String> from = new ArrayList<String>();
 			from.add("from" + i + "-1");
 			from.add("from" + i + "-2");
 			from.add("from" + i + "-3");
 			edgeDefinition.setFrom(from);
-			List<String> to = new ArrayList<String>();
+			final List<String> to = new ArrayList<String>();
 			to.add("to" + i + "-1");
 			to.add("to" + i + "-2");
 			to.add("to" + i + "-3");
@@ -77,8 +73,8 @@ public abstract class BaseGraphTest extends BaseTest {
 		return edgeDefinitions;
 	}
 
-	protected List<String> createOrphanCollections(int count) {
-		List<String> orphanCollections = new ArrayList<String>();
+	protected List<String> createOrphanCollections(final int count) {
+		final List<String> orphanCollections = new ArrayList<String>();
 		for (int i = 1; i <= count; i++) {
 			orphanCollections.add("orphan" + i);
 		}
@@ -86,7 +82,7 @@ public abstract class BaseGraphTest extends BaseTest {
 	}
 
 	protected GraphEntity createTestGraph() throws ArangoException {
-		String createGraph = "var db = require('internal').db;\n"
+		final String createGraph = "var db = require('internal').db;\n"
 				+ "var graphModule = require('org/arangodb/general-graph');\n"
 				+ "graphModule._create('CountryGraph', [graphModule._relation('hasBorderWith', ['Country'], ['Country'])]);\n"
 				+ "db.Country.save({'_key' : 'Germany'});\n" + "db.Country.save({'_key' : 'Austria'});\n"
