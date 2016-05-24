@@ -68,6 +68,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,13 +99,13 @@ public class HttpManager {
 
 	private List<String> jobIds = new ArrayList<String>();
 
-	private Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
+	private final Map<String, InvocationObject> jobs = new HashMap<String, InvocationObject>();
 
 	public enum HttpMode {
 		SYNC, ASYNC, FIREANDFORGET
 	}
 
-	public HttpManager(ArangoConfigure configure) {
+	public HttpManager(final ArangoConfigure configure) {
 		this.configure = configure;
 	}
 
@@ -114,13 +115,13 @@ public class HttpManager {
 
 	public void init() {
 		// socket factory for HTTP
-		ConnectionSocketFactory plainsf = new PlainConnectionSocketFactory();
+		final ConnectionSocketFactory plainsf = new PlainConnectionSocketFactory();
 
 		// socket factory for HTTPS
-		SSLConnectionSocketFactory sslsf = initSSLConnectionSocketFactory();
+		final SSLConnectionSocketFactory sslsf = initSSLConnectionSocketFactory();
 
 		// register socket factories
-		Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create()
+		final Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory> create()
 				.register("http", plainsf).register("https", sslsf).build();
 
 		// ConnectionManager
@@ -128,7 +129,7 @@ public class HttpManager {
 		cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
 		cm.setMaxTotal(configure.getMaxTotalConnection());
 
-		Builder custom = RequestConfig.custom();
+		final Builder custom = RequestConfig.custom();
 
 		// RequestConfig
 		if (configure.getConnectionTimeout() >= 0) {
@@ -140,16 +141,16 @@ public class HttpManager {
 		}
 		custom.setStaleConnectionCheckEnabled(configure.isStaleConnectionCheck());
 
-		RequestConfig requestConfig = custom.build();
+		final RequestConfig requestConfig = custom.build();
 
-		HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig);
+		final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig);
 		builder.setConnectionManager(cm);
 
 		// KeepAlive Strategy
-		ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
+		final ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
 
 			@Override
-			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+			public long getKeepAliveDuration(final HttpResponse response, final HttpContext context) {
 				return HttpManager.this.getKeepAliveDuration(response);
 			}
 
@@ -166,17 +167,17 @@ public class HttpManager {
 		client = builder.build();
 	}
 
-	private long getKeepAliveDuration(HttpResponse response) {
+	private long getKeepAliveDuration(final HttpResponse response) {
 		// Honor 'keep-alive' header
-		HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+		final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
 		while (it.hasNext()) {
-			HeaderElement he = it.nextElement();
-			String param = he.getName();
-			String value = he.getValue();
+			final HeaderElement he = it.nextElement();
+			final String param = he.getName();
+			final String value = he.getValue();
 			if (value != null && "timeout".equalsIgnoreCase(param)) {
 				try {
 					return Long.parseLong(value) * 1000L;
-				} catch (NumberFormatException ignore) {
+				} catch (final NumberFormatException ignore) {
 					// ignore this exception
 				}
 			}
@@ -185,11 +186,11 @@ public class HttpManager {
 		return 30L * 1000L;
 	}
 
-	private void addProxyToBuilder(HttpClientBuilder builder) {
+	private void addProxyToBuilder(final HttpClientBuilder builder) {
 		if (configure.getProxyHost() != null && configure.getProxyPort() != 0) {
-			HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
+			final HttpHost proxy = new HttpHost(configure.getProxyHost(), configure.getProxyPort(), "http");
 
-			DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+			final DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
 			builder.setRoutePlanner(routePlanner);
 		}
 	}
@@ -199,67 +200,77 @@ public class HttpManager {
 			cm.shutdown();
 		}
 		configure = null;
+		try {
+			if (client != null) {
+				client.close();
+			}
+		} catch (final IOException e) {
+		}
 	}
 
 	public HttpMode getHttpMode() {
 		return httpMode;
 	}
 
-	public void setHttpMode(HttpMode httpMode) {
+	public void setHttpMode(final HttpMode httpMode) {
 		this.httpMode = httpMode;
 	}
 
-	public HttpResponseEntity doGet(String url) throws ArangoException {
+	public HttpResponseEntity doGet(final String url) throws ArangoException {
 		return doGet(url, null);
 	}
 
-	public HttpResponseEntity doGet(String url, Map<String, Object> params) throws ArangoException {
+	public HttpResponseEntity doGet(final String url, final Map<String, Object> params) throws ArangoException {
 		return doHeadGetDelete(RequestType.GET, url, null, params);
 	}
 
-	public HttpResponseEntity doGet(String url, Map<String, Object> headers, Map<String, Object> params)
-			throws ArangoException {
+	public HttpResponseEntity doGet(
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params) throws ArangoException {
 		return doHeadGetDelete(RequestType.GET, url, headers, params);
 	}
 
 	public HttpResponseEntity doGet(
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params,
-		String username,
-		String password) throws ArangoException {
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params,
+		final String username,
+		final String password) throws ArangoException {
 		return doHeadGetDelete(RequestType.GET, url, headers, params, username, password);
 	}
 
-	public HttpResponseEntity doHead(String url, Map<String, Object> params) throws ArangoException {
+	public HttpResponseEntity doHead(final String url, final Map<String, Object> params) throws ArangoException {
 		return doHeadGetDelete(RequestType.HEAD, url, null, params);
 	}
 
-	public HttpResponseEntity doDelete(String url, Map<String, Object> params) throws ArangoException {
+	public HttpResponseEntity doDelete(final String url, final Map<String, Object> params) throws ArangoException {
 		return doHeadGetDelete(RequestType.DELETE, url, null, params);
 	}
 
-	public HttpResponseEntity doDelete(String url, Map<String, Object> headers, Map<String, Object> params)
-			throws ArangoException {
+	public HttpResponseEntity doDelete(
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params) throws ArangoException {
 		return doHeadGetDelete(RequestType.DELETE, url, headers, params);
 	}
 
 	public HttpResponseEntity doHeadGetDelete(
-		RequestType type,
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params) throws ArangoException {
+		final RequestType type,
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params) throws ArangoException {
 		return doHeadGetDelete(type, url, headers, params, null, null);
 	}
 
 	public HttpResponseEntity doHeadGetDelete(
-		RequestType type,
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params,
-		String username,
-		String password) throws ArangoException {
-		HttpRequestEntity requestEntity = new HttpRequestEntity();
+		final RequestType type,
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params,
+		final String username,
+		final String password) throws ArangoException {
+		final HttpRequestEntity requestEntity = new HttpRequestEntity();
 		requestEntity.type = type;
 		requestEntity.url = url;
 		requestEntity.headers = headers;
@@ -270,62 +281,66 @@ public class HttpManager {
 	}
 
 	public HttpResponseEntity doPost(
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params,
-		String bodyText) throws ArangoException {
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params,
+		final String bodyText) throws ArangoException {
 		return doPostPutPatch(RequestType.POST, url, headers, params, bodyText, null);
 	}
 
-	public HttpResponseEntity doPost(String url, Map<String, Object> params, String bodyText) throws ArangoException {
+	public HttpResponseEntity doPost(final String url, final Map<String, Object> params, final String bodyText)
+			throws ArangoException {
 		return doPostPutPatch(RequestType.POST, url, null, params, bodyText, null);
 	}
 
-	public HttpResponseEntity doPost(String url, Map<String, Object> params, HttpEntity entity) throws ArangoException {
+	public HttpResponseEntity doPost(final String url, final Map<String, Object> params, final HttpEntity entity)
+			throws ArangoException {
 		return doPostPutPatch(RequestType.POST, url, null, params, null, entity);
 	}
 
 	public HttpResponseEntity doPostWithHeaders(
-		String url,
-		Map<String, Object> params,
-		HttpEntity entity,
-		Map<String, Object> headers,
-		String body) throws ArangoException {
+		final String url,
+		final Map<String, Object> params,
+		final HttpEntity entity,
+		final Map<String, Object> headers,
+		final String body) throws ArangoException {
 		return doPostPutPatch(RequestType.POST, url, headers, params, body, entity);
 	}
 
 	public HttpResponseEntity doPut(
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params,
-		String bodyText) throws ArangoException {
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params,
+		final String bodyText) throws ArangoException {
 		return doPostPutPatch(RequestType.PUT, url, headers, params, bodyText, null);
 	}
 
-	public HttpResponseEntity doPut(String url, Map<String, Object> params, String bodyText) throws ArangoException {
+	public HttpResponseEntity doPut(final String url, final Map<String, Object> params, final String bodyText)
+			throws ArangoException {
 		return doPostPutPatch(RequestType.PUT, url, null, params, bodyText, null);
 	}
 
 	public HttpResponseEntity doPatch(
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params,
-		String bodyText) throws ArangoException {
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params,
+		final String bodyText) throws ArangoException {
 		return doPostPutPatch(RequestType.PATCH, url, headers, params, bodyText, null);
 	}
 
-	public HttpResponseEntity doPatch(String url, Map<String, Object> params, String bodyText) throws ArangoException {
+	public HttpResponseEntity doPatch(final String url, final Map<String, Object> params, final String bodyText)
+			throws ArangoException {
 		return doPostPutPatch(RequestType.PATCH, url, null, params, bodyText, null);
 	}
 
 	private HttpResponseEntity doPostPutPatch(
-		RequestType type,
-		String url,
-		Map<String, Object> headers,
-		Map<String, Object> params,
-		String bodyText,
-		HttpEntity entity) throws ArangoException {
-		HttpRequestEntity requestEntity = new HttpRequestEntity();
+		final RequestType type,
+		final String url,
+		final Map<String, Object> headers,
+		final Map<String, Object> params,
+		final String bodyText,
+		final HttpEntity entity) throws ArangoException {
+		final HttpRequestEntity requestEntity = new HttpRequestEntity();
 		requestEntity.type = type;
 		requestEntity.url = url;
 		requestEntity.headers = headers;
@@ -344,14 +359,14 @@ public class HttpManager {
 	 * 
 	 * @throws ArangoException
 	 */
-	public HttpResponseEntity execute(HttpRequestEntity requestEntity) throws ArangoException {
+	public HttpResponseEntity execute(final HttpRequestEntity requestEntity) throws ArangoException {
 		int retries = 0;
-		int connectRetryCount = configure.getConnectRetryCount();
+		final int connectRetryCount = configure.getConnectRetryCount();
 
 		while (true) {
 			try {
 				return executeInternal(configure.getBaseUrl(), requestEntity);
-			} catch (SocketException ex) {
+			} catch (final SocketException ex) {
 				retries++;
 				if (connectRetryCount > 0 && retries > connectRetryCount) {
 					logger.error(ex.getMessage(), ex);
@@ -366,7 +381,7 @@ public class HttpManager {
 				try {
 					// 1000 milliseconds is one second.
 					Thread.sleep(configure.getConnectRetryWait());
-				} catch (InterruptedException iex) {
+				} catch (final InterruptedException iex) {
 					Thread.currentThread().interrupt();
 				}
 			}
@@ -381,17 +396,17 @@ public class HttpManager {
 	 * @return the response of the request
 	 * @throws ArangoException
 	 */
-	private HttpResponseEntity executeInternal(String baseUrl, HttpRequestEntity requestEntity)
+	private HttpResponseEntity executeInternal(final String baseUrl, final HttpRequestEntity requestEntity)
 			throws ArangoException, SocketException {
 
-		String url = buildUrl(baseUrl, requestEntity);
+		final String url = buildUrl(baseUrl, requestEntity);
 
 		logRequest(requestEntity, url);
 
-		HttpRequestBase request = buildHttpRequestBase(requestEntity, url);
+		final HttpRequestBase request = buildHttpRequestBase(requestEntity, url);
 
 		// common-header
-		String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)";
+		final String userAgent = "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)";
 		request.setHeader("User-Agent", userAgent);
 
 		addOptionalHeaders(requestEntity, request);
@@ -399,7 +414,7 @@ public class HttpManager {
 		addHttpModeHeader(request);
 
 		// Basic Auth
-		Credentials credentials = addCredentials(requestEntity, request);
+		final Credentials credentials = addCredentials(requestEntity, request);
 
 		// CURL/HTTP Logger
 		if (configure.isEnableCURLLogger()) {
@@ -410,16 +425,17 @@ public class HttpManager {
 		if (preDefinedResponse != null) {
 			responseEntity = preDefinedResponse;
 		} else {
-			HttpResponse response = executeRequest(request);
+			final HttpResponse response = executeRequest(request);
 			if (response != null) {
 				try {
 					responseEntity = buildHttpResponseEntity(requestEntity, response);
-				} catch (IOException e) {
+					consumeResponse(response);
+				} catch (final IOException e) {
 					throw new ArangoException(e);
 				}
 
 				if (this.getHttpMode().equals(HttpMode.ASYNC)) {
-					Map<String, String> map = responseEntity.getHeaders();
+					final Map<String, String> map = responseEntity.getHeaders();
 					this.addJob(map.get("X-Arango-Async-Id"), this.getCurrentObject());
 				} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
 					responseEntity = null;
@@ -430,25 +446,33 @@ public class HttpManager {
 		return responseEntity;
 	}
 
-	private HttpResponse executeRequest(HttpRequestBase request) throws SocketException, ArangoException {
+	private void consumeResponse(final HttpResponse response) throws IOException {
+		final HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			EntityUtils.consume(entity);
+		}
+	}
+
+	private HttpResponse executeRequest(final HttpRequestBase request) throws SocketException, ArangoException {
 		try {
 			return client.execute(request);
-		} catch (SocketException ex) {
+		} catch (final SocketException ex) {
 			// catch SocketException before IOException
 			throw ex;
-		} catch (ClientProtocolException e) {
+		} catch (final ClientProtocolException e) {
 			throw new ArangoException(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new ArangoException(e);
 		}
 	}
 
-	private HttpResponseEntity buildHttpResponseEntity(HttpRequestEntity requestEntity, HttpResponse response)
-			throws IOException {
-		HttpResponseEntity responseEntity = new HttpResponseEntity();
+	private HttpResponseEntity buildHttpResponseEntity(
+		final HttpRequestEntity requestEntity,
+		final HttpResponse response) throws IOException {
+		final HttpResponseEntity responseEntity = new HttpResponseEntity();
 
 		// http status
-		StatusLine status = response.getStatusLine();
+		final StatusLine status = response.getStatusLine();
 		responseEntity.statusCode = status.getStatusCode();
 		responseEntity.statusPhrase = status.getReasonPhrase();
 
@@ -458,20 +482,20 @@ public class HttpManager {
 
 		// ヘッダの処理
 		// // TODO etag特殊処理は削除する。
-		Header etagHeader = response.getLastHeader("etag");
+		final Header etagHeader = response.getLastHeader("etag");
 		if (etagHeader != null) {
 			responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
 		}
 		// ヘッダをMapに変換する
 		responseEntity.headers = new TreeMap<String, String>();
-		for (Header header : response.getAllHeaders()) {
+		for (final Header header : response.getAllHeaders()) {
 			responseEntity.headers.put(header.getName(), header.getValue());
 		}
 
 		// レスポンスの取得
-		HttpEntity entity = response.getEntity();
+		final HttpEntity entity = response.getEntity();
 		if (entity != null) {
-			Header contentType = entity.getContentType();
+			final Header contentType = entity.getContentType();
 			if (contentType != null) {
 				responseEntity.contentType = contentType.getValue();
 				if (responseEntity.isDumpResponse()) {
@@ -492,7 +516,7 @@ public class HttpManager {
 		return responseEntity;
 	}
 
-	private void addHttpModeHeader(HttpRequestBase request) {
+	private void addHttpModeHeader(final HttpRequestBase request) {
 		if (this.getHttpMode().equals(HttpMode.ASYNC)) {
 			request.addHeader("x-arango-async", "store");
 		} else if (this.getHttpMode().equals(HttpMode.FIREANDFORGET)) {
@@ -500,7 +524,7 @@ public class HttpManager {
 		}
 	}
 
-	private Credentials addCredentials(HttpRequestEntity requestEntity, HttpRequestBase request)
+	private Credentials addCredentials(final HttpRequestEntity requestEntity, final HttpRequestBase request)
 			throws ArangoException {
 		Credentials credentials = null;
 		if (requestEntity.username != null && requestEntity.password != null) {
@@ -509,39 +533,39 @@ public class HttpManager {
 			credentials = new UsernamePasswordCredentials(configure.getUser(), configure.getPassword());
 		}
 		if (credentials != null) {
-			BasicScheme basicScheme = new BasicScheme();
+			final BasicScheme basicScheme = new BasicScheme();
 			try {
 				request.addHeader(basicScheme.authenticate(credentials, request, null));
-			} catch (AuthenticationException e) {
+			} catch (final AuthenticationException e) {
 				throw new ArangoException(e);
 			}
 		}
 		return credentials;
 	}
 
-	private void addOptionalHeaders(HttpRequestEntity requestEntity, HttpRequestBase request) {
+	private void addOptionalHeaders(final HttpRequestEntity requestEntity, final HttpRequestBase request) {
 		if (requestEntity.headers != null) {
-			for (Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
+			for (final Entry<String, Object> keyValue : requestEntity.headers.entrySet()) {
 				request.setHeader(keyValue.getKey(), keyValue.getValue().toString());
 			}
 		}
 	}
 
-	private HttpRequestBase buildHttpRequestBase(HttpRequestEntity requestEntity, String url) {
+	private HttpRequestBase buildHttpRequestBase(final HttpRequestEntity requestEntity, final String url) {
 		HttpRequestBase request;
 		switch (requestEntity.type) {
 		case POST:
-			HttpPost post = new HttpPost(url);
+			final HttpPost post = new HttpPost(url);
 			configureBodyParams(requestEntity, post);
 			request = post;
 			break;
 		case PUT:
-			HttpPut put = new HttpPut(url);
+			final HttpPut put = new HttpPut(url);
 			configureBodyParams(requestEntity, put);
 			request = put;
 			break;
 		case PATCH:
-			HttpPatch patch = new HttpPatch(url);
+			final HttpPatch patch = new HttpPatch(url);
 			configureBodyParams(requestEntity, patch);
 			request = patch;
 			break;
@@ -559,7 +583,7 @@ public class HttpManager {
 		return request;
 	}
 
-	private void logRequest(HttpRequestEntity requestEntity, String url) {
+	private void logRequest(final HttpRequestEntity requestEntity, final String url) {
 		if (logger.isDebugEnabled()) {
 			if (requestEntity.type == RequestType.POST || requestEntity.type == RequestType.PUT
 					|| requestEntity.type == RequestType.PATCH) {
@@ -572,9 +596,9 @@ public class HttpManager {
 		}
 	}
 
-	public static String buildUrl(String baseUrl, HttpRequestEntity requestEntity) {
+	public static String buildUrl(final String baseUrl, final HttpRequestEntity requestEntity) {
 		if (requestEntity.parameters != null && !requestEntity.parameters.isEmpty()) {
-			String paramString = URLEncodedUtils.format(toList(requestEntity.parameters), "utf-8");
+			final String paramString = URLEncodedUtils.format(toList(requestEntity.parameters), "utf-8");
 			if (requestEntity.url.contains("?")) {
 				return baseUrl + requestEntity.url + "&" + paramString;
 			} else {
@@ -584,9 +608,9 @@ public class HttpManager {
 		return baseUrl + requestEntity.url;
 	}
 
-	private static List<NameValuePair> toList(Map<String, Object> parameters) {
-		ArrayList<NameValuePair> paramList = new ArrayList<NameValuePair>(parameters.size());
-		for (Entry<String, Object> param : parameters.entrySet()) {
+	private static List<NameValuePair> toList(final Map<String, Object> parameters) {
+		final ArrayList<NameValuePair> paramList = new ArrayList<NameValuePair>(parameters.size());
+		for (final Entry<String, Object> param : parameters.entrySet()) {
 			if (param.getValue() != null) {
 				paramList.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
 			}
@@ -594,7 +618,9 @@ public class HttpManager {
 		return paramList;
 	}
 
-	public static void configureBodyParams(HttpRequestEntity requestEntity, HttpEntityEnclosingRequestBase request) {
+	public static void configureBodyParams(
+		final HttpRequestEntity requestEntity,
+		final HttpEntityEnclosingRequestBase request) {
 
 		if (requestEntity.entity != null) {
 			request.setEntity(requestEntity.entity);
@@ -604,31 +630,31 @@ public class HttpManager {
 
 	}
 
-	public static boolean is400Error(ArangoException e) {
+	public static boolean is400Error(final ArangoException e) {
 		return e.getCode() == HttpStatus.SC_BAD_REQUEST;
 	}
 
-	public static boolean is404Error(ArangoException e) {
+	public static boolean is404Error(final ArangoException e) {
 		return e.getCode() == HttpStatus.SC_NOT_FOUND;
 	}
 
-	public static boolean is412Error(ArangoException e) {
+	public static boolean is412Error(final ArangoException e) {
 		return e.getCode() == HttpStatus.SC_PRECONDITION_FAILED;
 	}
 
-	public static boolean is200(HttpResponseEntity res) {
+	public static boolean is200(final HttpResponseEntity res) {
 		return res.getStatusCode() == HttpStatus.SC_OK;
 	}
 
-	public static boolean is400Error(HttpResponseEntity res) {
+	public static boolean is400Error(final HttpResponseEntity res) {
 		return res.getStatusCode() == HttpStatus.SC_BAD_REQUEST;
 	}
 
-	public static boolean is404Error(HttpResponseEntity res) {
+	public static boolean is404Error(final HttpResponseEntity res) {
 		return res.getStatusCode() == HttpStatus.SC_NOT_FOUND;
 	}
 
-	public static boolean is412Error(HttpResponseEntity res) {
+	public static boolean is412Error(final HttpResponseEntity res) {
 		return res.getStatusCode() == HttpStatus.SC_PRECONDITION_FAILED;
 	}
 
@@ -641,11 +667,11 @@ public class HttpManager {
 		return null;
 	}
 
-	public void setCurrentObject(InvocationObject currentObject) {
+	public void setCurrentObject(final InvocationObject currentObject) {
 		// do nothing here (used in BatchHttpManager)
 	}
 
-	public void setPreDefinedResponse(HttpResponseEntity preDefinedResponse) {
+	public void setPreDefinedResponse(final HttpResponseEntity preDefinedResponse) {
 		this.preDefinedResponse = preDefinedResponse;
 	}
 
@@ -657,7 +683,7 @@ public class HttpManager {
 		return jobs;
 	}
 
-	public void addJob(String jobId, InvocationObject invocationObject) {
+	public void addJob(final String jobId, final InvocationObject invocationObject) {
 		jobIds.add(jobId);
 		jobs.put(jobId, invocationObject);
 	}
