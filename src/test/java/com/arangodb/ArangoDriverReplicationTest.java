@@ -123,7 +123,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
-			driver.createDocument(collectionName, entity, true, null);
+			driver.createDocument(collectionName, entity, null);
 		}
 		// truncate
 		try {
@@ -132,7 +132,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		}
 		// create 1 document
 		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
-		driver.createDocument(collectionName, entity, true, null);
+		driver.createDocument(collectionName, entity, null);
 
 		final AtomicInteger upsertCount = new AtomicInteger(0);
 		final AtomicInteger deleteCount = new AtomicInteger(0);
@@ -200,7 +200,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
-			driver.createDocument(collectionName, entity, true, null);
+			driver.createDocument(collectionName, entity, null);
 		}
 		// truncate
 		try {
@@ -209,7 +209,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		}
 		// create 1 document
 		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
-		driver.createDocument(collectionName, entity, true, null);
+		driver.createDocument(collectionName, entity, null);
 
 		final AtomicInteger upsertCount = new AtomicInteger(0);
 		final AtomicInteger deleteCount = new AtomicInteger(0);
@@ -265,7 +265,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
-			driver.createDocument(collectionName, entity, true, null);
+			driver.createDocument(collectionName, entity, null);
 		}
 		// truncate
 		try {
@@ -274,7 +274,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		}
 		// create 1 document
 		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
-		driver.createDocument(collectionName, entity, true, null);
+		driver.createDocument(collectionName, entity, null);
 
 		final AtomicBoolean headCall = new AtomicBoolean(false);
 		driver.getReplicationDump(collectionName, null, null, null, null, TestComplexEntity01.class,
@@ -313,7 +313,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		// create 10 document
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 entity = new TestComplexEntity01("user-" + i, "desc-" + i, 20 + i);
-			driver.createDocument(collectionName, entity, true, null);
+			driver.createDocument(collectionName, entity, null);
 		}
 		// truncate
 		try {
@@ -322,7 +322,7 @@ public class ArangoDriverReplicationTest extends BaseTest {
 		}
 		// create 1 document
 		final TestComplexEntity01 entity = new TestComplexEntity01("user-99", "desc-99", 99);
-		driver.createDocument(collectionName, entity, true, null);
+		driver.createDocument(collectionName, entity, null);
 
 		final AtomicInteger handleCount = new AtomicInteger(0);
 		final AtomicBoolean headCall = new AtomicBoolean(false);

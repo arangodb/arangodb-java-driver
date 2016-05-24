@@ -91,7 +91,7 @@ public class NegativeTest extends BaseTest {
 		value.setName("A\"A'@:///A");
 
 		// String value = "AAA";
-		final DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true, true);
+		final DocumentEntity<?> doc = driver.createDocument("unit_test_issue35", value, true);
 		final String documentHandle = doc.getDocumentHandle();
 		driver.getDocument(documentHandle, TestComplex.class);
 

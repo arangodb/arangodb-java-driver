@@ -148,7 +148,7 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 			person.setGender((i % 2) == 0 ? MALE : FEMALE);
 			person.setAge((int) (Math.random() * 100) + 10);
 
-			driver.createDocument(COLLECTION_NAME, person, true, null);
+			driver.createDocument(COLLECTION_NAME, person, null);
 		}
 
 	}

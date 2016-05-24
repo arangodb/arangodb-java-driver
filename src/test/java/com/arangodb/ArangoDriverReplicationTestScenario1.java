@@ -116,10 +116,10 @@ public class ArangoDriverReplicationTestScenario1 {
 		// [Master] add document
 		masterDriver.createCollection(collectionName1);
 		final DocumentEntity<Map<String, Object>> doc1 = masterDriver.createDocument(collectionName1,
-			new MapBuilder().put("my-key1", "100").get(), false, false);
+			new MapBuilder().put("my-key1", "100").get(), false);
 		final DocumentEntity<Map<String, Object>> doc2 = masterDriver.createDocument(collectionName1,
-			new MapBuilder().put("my-key2", "255").get(), false, false);
-		masterDriver.createDocument(collectionName1, new MapBuilder().put("my-key3", 1234567).get(), false, false);
+			new MapBuilder().put("my-key2", "255").get(), false);
+		masterDriver.createDocument(collectionName1, new MapBuilder().put("my-key3", 1234567).get(), false);
 
 		// [Master] logger property
 		masterDriver.setReplicationLoggerConfig(true, null, 1048576L, 0L);
@@ -148,8 +148,7 @@ public class ArangoDriverReplicationTestScenario1 {
 
 		// [Master] create 10 document
 		for (int i = 0; i < 10; i++) {
-			masterDriver.createDocument(collectionName1, new MapBuilder().put("my-key" + i, 1234567).get(), false,
-				false);
+			masterDriver.createDocument(collectionName1, new MapBuilder().put("my-key" + i, 1234567).get(), false);
 		}
 
 		// [Master] import 290 document

@@ -71,7 +71,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		// add some test data
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
-			driver.createDocument(COLLECTION_NAME, value, null, null);
+			driver.createDocument(COLLECTION_NAME, value, null);
 		}
 
 		// delete second test collection
@@ -393,10 +393,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		// create fulltext index
 		driver.createFulltextIndex(COLLECTION_NAME, 2, "desc");
 
-		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx1", "this text contains a word", 10), null,
-			null);
+		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx1", "this text contains a word", 10), null);
 		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx2", "this text also contains a word", 10),
-			null, null);
+			null);
 
 		final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleFulltextWithDocuments(
 			COLLECTION_NAME, "desc", "word", 0, 0, null, TestComplexEntity01.class);
@@ -421,10 +420,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		// create fulltext index
 		driver.createFulltextIndex(COLLECTION_NAME, 2, "desc");
 
-		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx1", "this text contains a word", 10), null,
-			null);
+		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx1", "this text contains a word", 10), null);
 		driver.createDocument(COLLECTION_NAME, new TestComplexEntity01("xxx2", "this text also contains a word", 10),
-			null, null);
+			null);
 
 		final DocumentCursor<TestComplexEntity01> documentCursor = driver.executeSimpleFulltextWithDocuments(
 			COLLECTION_NAME, "desc", "word", 0, 0, null, TestComplexEntity01.class);

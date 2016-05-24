@@ -15,14 +15,12 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String collectionName,
 		String documentKey,
 		T value,
-		Boolean createCollection,
 		Boolean waitForSync) throws ArangoException;
 
 	DocumentEntity<String> createDocumentRaw(
 		String database,
 		String collectionName,
 		String rawJsonString,
-		Boolean createCollection,
 		Boolean waitForSync) throws ArangoException;
 
 	<T> DocumentEntity<T> replaceDocument(

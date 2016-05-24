@@ -12,14 +12,14 @@ import com.arangodb.ArangoDriver;
  */
 public class SingleDocumentBenchmarkImporter extends AbstractBenchmarkImporter {
 
-	public SingleDocumentBenchmarkImporter(ArangoDriver driver, String collectionName) {
+	public SingleDocumentBenchmarkImporter(final ArangoDriver driver, final String collectionName) {
 		super(driver, collectionName);
 	}
 
 	@Override
-	protected void execute(List<?> values) throws Exception {
-		for (Object value : values) {
-			driver.createDocument(collectionName, value, true, false);
+	protected void execute(final List<?> values) throws Exception {
+		for (final Object value : values) {
+			driver.createDocument(collectionName, value, false);
 		}
 	}
 

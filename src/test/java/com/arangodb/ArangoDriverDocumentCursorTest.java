@@ -58,7 +58,7 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 		// create some test data
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
-			driver.createDocument(COLLECTION_NAME, value, null, null);
+			driver.createDocument(COLLECTION_NAME, value, null);
 		}
 
 	}

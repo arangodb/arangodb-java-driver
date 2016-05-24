@@ -230,7 +230,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + i, "", i);
 
-			assertThat(driver.createDocument(collectionName, value, false, false), is(notNullValue()));
+			assertThat(driver.createDocument(collectionName, value, false), is(notNullValue()));
 		}
 
 		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
@@ -252,7 +252,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		for (int i = 0; i < 100; i++) {
 			final String desc = i % 2 == 0 ? "寿司" : "天ぷら";
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + i, desc, i);
-			assertThat(driver.createDocument(collectionName, value, false, false), is(notNullValue()));
+			assertThat(driver.createDocument(collectionName, value, false), is(notNullValue()));
 		}
 
 		// create fulltext index
@@ -326,9 +326,9 @@ public class ArangoDriverIndexTest extends BaseTest {
 
 		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "user", "age");
 
-		assertThat(driver.createDocument(collectionName, new TestComplexEntity01("寿司天ぷら", "", 18), false, false),
+		assertThat(driver.createDocument(collectionName, new TestComplexEntity01("寿司天ぷら", "", 18), false),
 			is(notNullValue()));
-		assertThat(driver.createDocument(collectionName, new TestComplexEntity01("寿司天ぷら", "", 18), false, false),
+		assertThat(driver.createDocument(collectionName, new TestComplexEntity01("寿司天ぷら", "", 18), false),
 			is(notNullValue()));
 
 		assertThat(entity, is(notNullValue()));

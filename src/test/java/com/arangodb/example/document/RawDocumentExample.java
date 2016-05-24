@@ -68,7 +68,7 @@ public class RawDocumentExample extends BaseExample {
 
 		String x = "{\"test\":123}";
 		try {
-			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, x, true, false);
+			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, x, false);
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
 			System.out.println("Id: " + entity.getDocumentHandle());
@@ -95,7 +95,7 @@ public class RawDocumentExample extends BaseExample {
 
 		x = "{\"_key\":\"key2\",\"test\":123}";
 		try {
-			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, x, true, false);
+			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, x, false);
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
 			System.out.println("Id: " + entity.getDocumentHandle());
@@ -168,7 +168,7 @@ public class RawDocumentExample extends BaseExample {
 		System.out.println("Orig XML value: " + string);
 		final JSONObject jsonObject = JSONML.toJSONObject(string);
 		try {
-			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, jsonObject.toString(), true,
+			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, jsonObject.toString(),
 				false);
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());

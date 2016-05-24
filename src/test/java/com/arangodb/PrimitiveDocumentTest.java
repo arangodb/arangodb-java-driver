@@ -90,7 +90,7 @@ public class PrimitiveDocumentTest extends BaseTest {
 		final TestComplexEntity01 value = new TestComplexEntity01("寿司", "", 10);
 		logger.debug(new Gson().toJson(value));
 
-		final DocumentEntity<?> res = driver.createDocument("unit_test_primitive", value, true, true);
+		final DocumentEntity<?> res = driver.createDocument("unit_test_primitive", value, true);
 		final String documentHandle = res.getDocumentHandle();
 
 		final DocumentEntity<TestComplexEntity01> doc = driver.getDocument(documentHandle, TestComplexEntity01.class);
@@ -142,7 +142,7 @@ public class PrimitiveDocumentTest extends BaseTest {
 		final boolean value = true;
 
 		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
+			driver.createDocument("unit_test_primitive", value, true);
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
@@ -155,7 +155,7 @@ public class PrimitiveDocumentTest extends BaseTest {
 
 		final boolean value = false;
 		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
+			driver.createDocument("unit_test_primitive", value, true);
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
@@ -169,7 +169,7 @@ public class PrimitiveDocumentTest extends BaseTest {
 		final int value = 1000000;
 
 		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
+			driver.createDocument("unit_test_primitive", value, true);
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
@@ -183,7 +183,7 @@ public class PrimitiveDocumentTest extends BaseTest {
 		final long value = Long.MAX_VALUE;
 
 		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
+			driver.createDocument("unit_test_primitive", value, true);
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));
@@ -198,7 +198,7 @@ public class PrimitiveDocumentTest extends BaseTest {
 		final double value = Double.MAX_VALUE;
 
 		try {
-			driver.createDocument("unit_test_primitive", value, true, true);
+			driver.createDocument("unit_test_primitive", value, true);
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getErrorNumber(), is(ErrorNums.ERROR_ARANGO_DOCUMENT_TYPE_INVALID));

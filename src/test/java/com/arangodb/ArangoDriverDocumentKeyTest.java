@@ -58,11 +58,11 @@ public class ArangoDriverDocumentKeyTest {
 
 		try {
 			driver.deleteCollection("unit_test_arango_001");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		try {
 			driver.createCollection("unit_test_arango_001");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 	}
@@ -87,13 +87,13 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_key_string() throws ArangoException {
 
-		DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
+		final DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
 		// create
-		DocumentEntity<DocumentKeyTestEntity1> doc = driver.createDocument("unit_test_arango_001", obj, true, null);
+		DocumentEntity<DocumentKeyTestEntity1> doc = driver.createDocument("unit_test_arango_001", obj, null);
 		assertThat(doc.getDocumentKey(), is("s1"));
 		assertThat(doc.getDocumentHandle(), is("unit_test_arango_001/s1"));
 		assertThat(doc.getEntity(), is(notNullValue()));
@@ -109,7 +109,7 @@ public class ArangoDriverDocumentKeyTest {
 		assertThat(doc.getEntity().X, is(123));
 
 		// get as map
-		DocumentEntity<Map> doc2 = driver.getDocument(doc.getDocumentHandle(), Map.class);
+		final DocumentEntity<Map> doc2 = driver.getDocument(doc.getDocumentHandle(), Map.class);
 		assertThat(doc2.getEntity().get("s1"), is(nullValue())); // s1 is not
 																	// contains.
 		assertThat((String) doc2.getEntity().get("_key"), is("s1"));
@@ -118,16 +118,16 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_key_integer() throws ArangoException {
 
-		DocumentKeyTestEntity2 obj = new DocumentKeyTestEntity2();
+		final DocumentKeyTestEntity2 obj = new DocumentKeyTestEntity2();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
 		// create
 		try {
-			driver.createDocument("unit_test_arango_001", obj, true, null);
+			driver.createDocument("unit_test_arango_001", obj, null);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(400));
 			assertThat(e.getErrorNumber(), is(1221));
 			assertThat(e.getErrorMessage(), is("invalid document key"));
@@ -138,12 +138,12 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_create() throws ArangoException {
 
-		DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
+		final DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
-		DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, true, null);
+		final DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, null);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
@@ -152,23 +152,23 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_replace() throws ArangoException {
 
-		DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
+		final DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
-		DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, true, null);
+		final DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, null);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
 		// replace
 		obj.S1 = "s3";
 		obj.X = 456;
-		DocumentEntity<?> doc2 = driver.replaceDocument("unit_test_arango_001", "mykey1", obj);
+		final DocumentEntity<?> doc2 = driver.replaceDocument("unit_test_arango_001", "mykey1", obj);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
-		DocumentEntity<DocumentKeyTestEntity1> doc3 = driver.getDocument(doc2.getDocumentHandle(),
+		final DocumentEntity<DocumentKeyTestEntity1> doc3 = driver.getDocument(doc2.getDocumentHandle(),
 			DocumentKeyTestEntity1.class);
 		assertThat(doc3.getEntity().S1, is("mykey1"));
 		assertThat(doc3.getEntity().S2, is("s2"));
@@ -179,12 +179,12 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_update() throws ArangoException {
 
-		DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
+		final DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
-		DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, true, null);
+		final DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, null);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
@@ -192,11 +192,11 @@ public class ArangoDriverDocumentKeyTest {
 		obj.S1 = "s3";
 		obj.X = 456;
 		obj.S2 = null;
-		DocumentEntity<?> doc2 = driver.updateDocument("unit_test_arango_001", "mykey1", obj, false);
+		final DocumentEntity<?> doc2 = driver.updateDocument("unit_test_arango_001", "mykey1", obj, false);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
-		DocumentEntity<DocumentKeyTestEntity1> doc3 = driver.getDocument(doc2.getDocumentHandle(),
+		final DocumentEntity<DocumentKeyTestEntity1> doc3 = driver.getDocument(doc2.getDocumentHandle(),
 			DocumentKeyTestEntity1.class);
 		assertThat(doc3.getEntity().S1, is("mykey1"));
 		assertThat(doc3.getEntity().S2, is(nullValue()));
@@ -207,12 +207,12 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_delete() throws ArangoException {
 
-		DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
+		final DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
-		DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, true, null);
+		final DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, null);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
@@ -220,14 +220,14 @@ public class ArangoDriverDocumentKeyTest {
 		obj.S1 = "s3";
 		obj.X = 456;
 		obj.S2 = null;
-		DocumentEntity<?> doc2 = driver.deleteDocument("unit_test_arango_001", "mykey1");
+		final DocumentEntity<?> doc2 = driver.deleteDocument("unit_test_arango_001", "mykey1");
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
 		try {
 			driver.getDocument(doc2.getDocumentHandle(), DocumentKeyTestEntity1.class);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1202));
 			// assertThat(e.isNotFound(), is(true));
@@ -238,17 +238,17 @@ public class ArangoDriverDocumentKeyTest {
 	@Test
 	public void test_document_check() throws ArangoException {
 
-		DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
+		final DocumentKeyTestEntity1 obj = new DocumentKeyTestEntity1();
 		obj.S1 = "s1";
 		obj.S2 = "s2";
 		obj.X = 123;
 
-		DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, true, null);
+		final DocumentEntity<?> doc1 = driver.createDocument("unit_test_arango_001", "mykey1", obj, null);
 		assertThat(doc1.getStatusCode(), is(202));
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
 		// check
-		long rev = driver.checkDocument(doc1.getDocumentHandle());
+		final long rev = driver.checkDocument(doc1.getDocumentHandle());
 		assertThat(rev, is(doc1.getDocumentRevision()));
 
 	}

@@ -111,7 +111,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			driver.createDocument("blub", value, true, false);
+			driver.createDocument("blub", value, false);
 			assertThat(driver.getJobIds().size(), is(4 + i));
 		}
 
@@ -163,7 +163,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			driver.createDocument("blub", value, true, false);
+			driver.createDocument("blub", value, false);
 			assertThat(driver.getJobIds().size(), is(4 + i));
 		}
 
@@ -176,7 +176,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		driver.startAsyncMode(false);
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			driver.createDocument("blub", value, true, false);
+			driver.createDocument("blub", value, false);
 		}
 		driver.stopAsyncMode();
 		driver.deleteExpiredJobs((int) (System.currentTimeMillis() / 2000L));
@@ -207,7 +207,7 @@ public class ArangoDriverAsyncTest extends BaseTest {
 		final List<String> ids = new ArrayList<String>();
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			driver.createDocument("blub", value, true, false);
+			driver.createDocument("blub", value, false);
 			ids.add(driver.getLastJobId());
 		}
 

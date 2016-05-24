@@ -90,7 +90,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
-			driver.createDocument(collectionName, value, null, null);
+			driver.createDocument(collectionName, value, null);
 		}
 
 		// String query =
@@ -124,7 +124,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
-			driver.createDocument(collectionName, value, null, null);
+			driver.createDocument(collectionName, value, null);
 		}
 
 		// String query =
@@ -192,7 +192,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
-			driver.createDocument(collectionName, value, null, null);
+			driver.createDocument(collectionName, value, null);
 		}
 
 		// String query =
@@ -227,7 +227,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
-			driver.createDocument(collectionName, value, null, null);
+			driver.createDocument(collectionName, value, null);
 		}
 
 		// String query =

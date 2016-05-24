@@ -128,7 +128,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			res = driver.createDocument(COLLECTION_NAME, value, true, false);
+			res = driver.createDocument(COLLECTION_NAME, value, false);
 
 			assertThat(res.getStatusCode(), is(206));
 			assertThat(res.getRequestId(), is("request" + (4 + i)));
@@ -168,7 +168,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 
 		for (int i = 0; i < 10; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			res = driver.createDocument(COLLECTION_NAME, value, true, false);
+			res = driver.createDocument(COLLECTION_NAME, value, false);
 			assertThat(res.getRequestId(), is("request" + (i + 1)));
 		}
 
@@ -180,7 +180,7 @@ public class ArangoDriverBatchTest extends BaseTest {
 
 		for (int i = 20; i < 30; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user-" + i, "data:" + i, i);
-			res = driver.createDocument(COLLECTION_NAME, value, true, false);
+			res = driver.createDocument(COLLECTION_NAME, value, false);
 			assertThat(res.getRequestId(), is("request" + (i + 1 - 20)));
 		}
 

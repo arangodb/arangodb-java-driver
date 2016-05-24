@@ -335,7 +335,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(collection.getRevision(), is(0L));
 
 		// Create Document
-		driver.createDocument(collectionName, new TestComplexEntity01("test_user1", "test user 1", 20), false, true);
+		driver.createDocument(collectionName, new TestComplexEntity01("test_user1", "test user 1", 20), true);
 
 		// Get Revision again
 		collection = driver.getCollectionRevision(collectionName);
@@ -344,7 +344,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(rev2, is(not(0L)));
 
 		// Create Document
-		driver.createDocument(collectionName, new TestComplexEntity01("test_user2", "test user 2", 21), false, true);
+		driver.createDocument(collectionName, new TestComplexEntity01("test_user2", "test user 2", 21), true);
 
 		// Get Revision again
 		collection = driver.getCollectionRevision(collectionName);
@@ -385,7 +385,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		// 100個ほどドキュメントを入れてみる
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "tes user:" + i, 20 + i);
-			driver.createDocument(collectionName, value, false, true);
+			driver.createDocument(collectionName, value, true);
 		}
 
 		// もっかいアクセスして10になっているか確認する
@@ -422,8 +422,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		// 100個ほどドキュメントを入れてみる
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "test user:" + i, 20 + i);
-			final DocumentEntity<TestComplexEntity01> entity = driver.createDocument(collectionName, value, false,
-				true);
+			final DocumentEntity<TestComplexEntity01> entity = driver.createDocument(collectionName, value, true);
 			// 1個消す
 			if (i == 50) {
 				driver.deleteDocument(entity.getDocumentHandle(), null, null);
@@ -534,7 +533,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(collection.getCode(), is(200));
 
 		// add document, for count parameter test.
-		driver.createDocument(collectionName, new MapBuilder("hoge", "fuga").put("fuga", "piyoko").get(), false, null);
+		driver.createDocument(collectionName, new MapBuilder("hoge", "fuga").put("fuga", "piyoko").get(), null);
 
 		CollectionEntity collection1 = driver.unloadCollection(collectionName);
 		assertThat(collection1, is(notNullValue()));
@@ -601,7 +600,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		// 100個ほどドキュメントを入れてみる
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("test_user" + i, "test user:" + i, 20 + i);
-			assertThat(driver.createDocument(collectionName, value, false, true).getStatusCode(), is(201));
+			assertThat(driver.createDocument(collectionName, value, true).getStatusCode(), is(201));
 		}
 		// 100個入ったよね？
 		assertThat(driver.getCollectionCount(collectionName).getCount(), is(100L));

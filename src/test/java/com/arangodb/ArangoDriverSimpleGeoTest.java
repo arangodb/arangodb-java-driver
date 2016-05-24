@@ -52,7 +52,7 @@ public class ArangoDriverSimpleGeoTest extends BaseTest {
 		// テストデータを作る
 		final List<Station> stations = TestUtils.readStations();
 		for (final Station station : stations) {
-			driver.createDocument(collectionName, station, null, null);
+			driver.createDocument(collectionName, station, null);
 		}
 
 	}

@@ -73,8 +73,8 @@ public class TransactionExample extends BaseExample {
 
 		final myCounter entity = new myCounter();
 		entity.setCount(0L);
-		DocumentEntity<myCounter> documentEntity1 = driver.createDocument(COLLECTION_NAME, entity, true, null);
-		DocumentEntity<myCounter> documentEntity2 = driver.createDocument(COLLECTION_NAME, entity, true, null);
+		DocumentEntity<myCounter> documentEntity1 = driver.createDocument(COLLECTION_NAME, entity, null);
+		DocumentEntity<myCounter> documentEntity2 = driver.createDocument(COLLECTION_NAME, entity, null);
 
 		// start threads without transaction
 		for (int i = 0; i < NUMBER_THREADS; i++) {

@@ -44,7 +44,7 @@ public class ArangoDriverThreadSafeTest {
 	public void story01() throws ArangoException, InterruptedException {
 
 		// hostやport, connection-poolなどの設定
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.init();
 		final ArangoDriver driver = new ArangoDriver(configure);
 
@@ -52,9 +52,9 @@ public class ArangoDriverThreadSafeTest {
 		final String collectionName = "unit_test_story_01";
 		try {
 			driver.deleteCollection(collectionName);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
-		CollectionEntity collection = driver.createCollection(collectionName);
+		final CollectionEntity collection = driver.createCollection(collectionName);
 		logger.debug("collectionId={}", collection.getId());
 
 		// コレクションの中身を削除する
@@ -62,24 +62,25 @@ public class ArangoDriverThreadSafeTest {
 
 		// スレッドセーフです
 		try {
-			ExecutorService svc = Executors.newFixedThreadPool(4);
+			final ExecutorService svc = Executors.newFixedThreadPool(4);
 			for (int t = 0; t < 4; t++) {
 				final int threadNo = t;
 				svc.execute(new Runnable() {
+					@Override
 					public void run() {
 						try {
 							for (int i = 0; i < 100; i++) {
-								TestComplexEntity01 value = new TestComplexEntity01("user" + threadNo + "_" + i,
+								final TestComplexEntity01 value = new TestComplexEntity01("user" + threadNo + "_" + i,
 										"テスト☆ユーザー:" + threadNo + "_" + i, (int) (100d * Math.random()));
 								// ドキュメントを作る
-								DocumentEntity<TestComplexEntity01> ret1 = driver.createDocument(collectionName, value,
-									null, null);
+								final DocumentEntity<TestComplexEntity01> ret1 = driver.createDocument(collectionName,
+									value, null);
 
-								String _id = ret1.getDocumentHandle(); // ドキュメントのID(_id)
-								long _rev = ret1.getDocumentRevision(); // ドキュメントのリビジョン(_rev)
+								final String _id = ret1.getDocumentHandle(); // ドキュメントのID(_id)
+								final long _rev = ret1.getDocumentRevision(); // ドキュメントのリビジョン(_rev)
 
 								// ドキュメントを取得する
-								DocumentEntity<TestComplexEntity01> ret2 = driver.getDocument(_id,
+								final DocumentEntity<TestComplexEntity01> ret2 = driver.getDocument(_id,
 									TestComplexEntity01.class);
 								// 取得したドキュメントの確認
 								assertThat(ret2.getDocumentHandle(), is(_id));
@@ -88,13 +89,13 @@ public class ArangoDriverThreadSafeTest {
 								assertThat(ret2.getEntity().getAge(), is(value.getAge()));
 
 								// ドキュメントを削除する
-								DocumentEntity<?> ret3 = driver.deleteDocument(_id, null, Policy.LAST);
+								final DocumentEntity<?> ret3 = driver.deleteDocument(_id, null, Policy.LAST);
 								assertThat(ret3.getDocumentHandle(), is(_id));
 								assertThat(ret3.getDocumentRevision(), is(_rev));
 
 							}
 
-						} catch (ArangoException e) {
+						} catch (final ArangoException e) {
 							logger.error(e.getMessage(), e);
 							fail("だめぽ");
 						}
