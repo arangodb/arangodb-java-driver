@@ -40,7 +40,7 @@ public abstract class BaseTest {
 
 	protected static ArangoConfigure configure;
 
-	protected ArangoDriver driver;
+	protected static ArangoDriver driver;
 
 	// Suite.classを使った場合、Parametersがテストクラスの数だけ最初に一気に連続で呼ばれる。
 	// そのため、単純にクラス変数にconfigureを保持すると、AfterClassの時に別のテストケースのものを終了してしまう。
@@ -61,53 +61,71 @@ public abstract class BaseTest {
 	@Parameters()
 	public static Collection<Object[]> getParameterizedDrivers() {
 
-		ArangoConfigure configure = new ArangoConfigure();
-		configure.setConnectRetryCount(2);
-		configure.init();
-		ArangoDriver driver = new ArangoDriver(configure);
-		ArangoDriver driverMDB = new ArangoDriver(configure, DATABASE_NAME);
-
-		// create mydb
-		try {
-			driver.createDatabase(DATABASE_NAME);
-		} catch (ArangoException e) {
-		}
+		// final ArangoConfigure configure = new ArangoConfigure();
+		// configure.setConnectRetryCount(2);
+		// configure.init();
+		//
+		// final ArangoDriver driver = new ArangoDriver(configure);
+		// final ArangoDriver driverMDB = new ArangoDriver(configure,
+		// DATABASE_NAME);
+		// // create mydb
+		// try {
+		// driver.createDatabase(DATABASE_NAME);
+		// } catch (final ArangoException e) {
+		// }
 
 		// this is the original list:
 		// return Arrays.asList(
 		// new Object[]{ configure, driver },
 		// new Object[] { configure, driverMDB });
 
-		List<Object[]> result = new ArrayList<Object[]>();
+		final List<Object[]> result = new ArrayList<Object[]>();
 		// result.add(new Object[] { configure, driver });
-		result.add(new Object[] { configure, driverMDB });
+		// result.add(new Object[] { configure, driverMDB });
+		result.add(new Object[] { null, null });
+
 		return result;
 	}
 
-	public BaseTest(ArangoConfigure configure, ArangoDriver driver) {
-		this.driver = driver;
-		BaseTest.configure = configure;
-
-		try {
-			driver.createDatabase(DATABASE_NAME);
-		} catch (ArangoException e) {
-		}
-
+	public BaseTest(final ArangoConfigure configure, final ArangoDriver driver) {
+		// BaseTest.driver = driver;
+		// BaseTest.configure = configure;
+		//
+		// try {
+		// driver.createDatabase(DATABASE_NAME);
+		// } catch (final ArangoException e) {
+		// }
 	}
 
 	@BeforeClass
 	public static void __setup() {
+		final ArangoConfigure configure = new ArangoConfigure();
+		configure.setConnectRetryCount(2);
+		configure.init();
 
+		final ArangoDriver driver = new ArangoDriver(configure);
+		final ArangoDriver driverMDB = new ArangoDriver(configure, DATABASE_NAME);
+		// create mydb
+		try {
+			driver.createDatabase(DATABASE_NAME);
+		} catch (final ArangoException e) {
+		}
+		BaseTest.driver = driverMDB;
+		BaseTest.configure = configure;
 	}
 
 	@AfterClass
 	public static void __shutdown() {
+		try {
+			driver.deleteDatabase(DATABASE_NAME);
+		} catch (final ArangoException e) {
+		}
 		configure.shutdown();
 	}
 
-	public boolean isMinimumVersion(String version) throws ArangoException {
-		ArangoVersion ver = driver.getVersion();
-		int b = TestUtils.compareVersion(ver.getVersion(), version);
+	public boolean isMinimumVersion(final String version) throws ArangoException {
+		final ArangoVersion ver = driver.getVersion();
+		final int b = TestUtils.compareVersion(ver.getVersion(), version);
 		return b > -1;
 	}
 

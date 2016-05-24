@@ -21,10 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorResult;
@@ -33,18 +35,27 @@ import com.arangodb.util.AqlQueryOptions;
 public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "SimplePersonAqlQueryWithLimitExample";
-
 	private static final String COLLECTION_NAME = "SimplePersonAqlQueryWithLimitExample";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public AqlQueryWithSpecialReturnTypesExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -67,11 +78,11 @@ public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 			//
 
 			// bind @gender to WOMAN
-			HashMap<String, Object> bindVars = new HashMap<String, Object>();
+			final HashMap<String, Object> bindVars = new HashMap<String, Object>();
 			bindVars.put("gender", FEMALE);
 
 			// query (count = true, batchSize = 5)
-			AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(true).setBatchSize(5);
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(true).setBatchSize(5);
 
 			//
 			printHeadline("get query results in a map");
@@ -82,13 +93,13 @@ public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 			System.out.println(queryString);
 
 			@SuppressWarnings("rawtypes")
-			CursorResult<Map> cursor = arangoDriver.executeAqlQuery(queryString, bindVars, aqlQueryOptions, Map.class);
+			final CursorResult<Map> cursor = driver.executeAqlQuery(queryString, bindVars, aqlQueryOptions, Map.class);
 			Assert.assertNotNull(cursor);
 
 			@SuppressWarnings("rawtypes")
-			Iterator<Map> iterator = cursor.iterator();
+			final Iterator<Map> iterator = cursor.iterator();
 			while (iterator.hasNext()) {
-				Map<?, ?> map = iterator.next();
+				final Map<?, ?> map = iterator.next();
 
 				Assert.assertNotNull(map);
 				Assert.assertNotNull(map.get("name"));
@@ -107,14 +118,14 @@ public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 			System.out.println(queryString);
 
 			@SuppressWarnings("rawtypes")
-			CursorResult<List> cursor2 = arangoDriver.executeAqlQuery(queryString, bindVars, aqlQueryOptions,
+			final CursorResult<List> cursor2 = driver.executeAqlQuery(queryString, bindVars, aqlQueryOptions,
 				List.class);
 			Assert.assertNotNull(cursor2);
 
 			@SuppressWarnings("rawtypes")
-			Iterator<List> iterator2 = cursor2.iterator();
+			final Iterator<List> iterator2 = cursor2.iterator();
 			while (iterator2.hasNext()) {
-				List<?> list = iterator2.next();
+				final List<?> list = iterator2.next();
 
 				Assert.assertNotNull(list);
 				Assert.assertNotNull(list.get(0));
@@ -124,7 +135,7 @@ public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 				System.out.printf("%15s (%5s): %s%n", list.get(0), list.get(1), list.get(2).toString());
 			}
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Example failed. " + e.getMessage());
 		}
 
@@ -133,12 +144,12 @@ public class AqlQueryWithSpecialReturnTypesExample extends BaseExample {
 	private void createExamples() throws ArangoException {
 		// create some persons
 		for (int i = 0; i < 100; i++) {
-			SimplePerson person = new SimplePerson();
+			final SimplePerson person = new SimplePerson();
 			person.setName("TestUser" + i);
 			person.setGender((i % 2) == 0 ? MALE : FEMALE);
 			person.setAge((int) (Math.random() * 100) + 10);
 
-			arangoDriver.createDocument(COLLECTION_NAME, person, true, null);
+			driver.createDocument(COLLECTION_NAME, person, true, null);
 		}
 
 	}

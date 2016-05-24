@@ -24,6 +24,7 @@ import org.junit.Assert;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
+import com.arangodb.BaseTest;
 import com.arangodb.entity.ArangoVersion;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
@@ -33,62 +34,55 @@ import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.util.TestUtils;
 
-public class BaseExample {
+public class BaseExample extends BaseTest {
 
-	protected ArangoConfigure getConfiguration() {
-		ArangoConfigure configure = new ArangoConfigure();
-		// configure.setUser("myUser");
-		// configure.setPassword("password");
-		// configuration file: src/test/resources/arangodb.properties
-		configure.init();
-
-		return configure;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public BaseExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
 	}
 
-	protected ArangoDriver getArangoDriver(ArangoConfigure configuration) {
-		return new ArangoDriver(configuration);
-	}
-
-	protected void removeTestDatabase(String name) {
-		ArangoDriver arangoDriver = getArangoDriver(getConfiguration());
+	protected void removeTestDatabase(final String name) {
 		try {
-			arangoDriver.deleteDatabase(name);
-		} catch (Exception e) {
+			driver.deleteDatabase(name);
+		} catch (final Exception e) {
 		}
 	}
 
-	protected void createDatabase(ArangoDriver arangoDriver, String name) {
+	protected void createDatabase(final ArangoDriver arangoDriver, final String name) {
 		try {
-			BooleanResultEntity createDatabase = arangoDriver.createDatabase(name);
+			final BooleanResultEntity createDatabase = arangoDriver.createDatabase(name);
 			Assert.assertNotNull(createDatabase);
 			Assert.assertNotNull(createDatabase.getResult());
 			Assert.assertTrue(createDatabase.getResult());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail("Failed to create database " + name + "; " + e.getMessage());
 		}
 
 		arangoDriver.setDefaultDatabase(name);
 	}
 
-	protected void deleteDatabase(ArangoDriver arangoDriver, String name) {
+	protected void deleteDatabase(final ArangoDriver arangoDriver, final String name) {
 		try {
 			arangoDriver.deleteDatabase(name);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 	}
 
-	protected void createCollection(ArangoDriver arangoDriver, String name) {
+	protected void createCollection(final ArangoDriver arangoDriver, final String name) {
 		try {
-			CollectionEntity createCollection = arangoDriver.createCollection(name);
+			final CollectionEntity createCollection = arangoDriver.createCollection(name);
 			Assert.assertNotNull(createCollection);
 			Assert.assertNotNull(createCollection.getName());
 			Assert.assertEquals(name, createCollection.getName());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("create collection failed. " + e.getMessage());
 		}
 	}
 
-	protected void printEntity(Object object) {
+	protected void printEntity(final Object object) {
 		if (object == null) {
 			System.out.println("Document not found");
 		} else {
@@ -96,17 +90,17 @@ public class BaseExample {
 		}
 	}
 
-	protected void printHeadline(String name) {
+	protected void printHeadline(final String name) {
 		System.out.println("---------------------------------------------");
 		System.out.println(name);
 		System.out.println("---------------------------------------------");
 	}
 
 	public void createGraph(
-		ArangoDriver arangoDriver,
-		String grapName,
-		String nameEdgeCollection,
-		String nameVertexCollection) throws ArangoException {
+		final ArangoDriver arangoDriver,
+		final String grapName,
+		final String nameEdgeCollection,
+		final String nameVertexCollection) throws ArangoException {
 
 		//
 		printHeadline("create edge collection");
@@ -132,7 +126,7 @@ public class BaseExample {
 		printHeadline("create edge definition");
 		//
 
-		EdgeDefinitionEntity ed = new EdgeDefinitionEntity();
+		final EdgeDefinitionEntity ed = new EdgeDefinitionEntity();
 		// add edge collection name
 		ed.setCollection(nameEdgeCollection);
 
@@ -145,20 +139,20 @@ public class BaseExample {
 		//
 		printHeadline("create edge definition list");
 		//
-		List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+		final List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
 		edgeDefinitions.add(ed);
 
 		//
 		printHeadline("create graph");
 		//
-		GraphEntity createGraph = arangoDriver.createGraph(grapName, edgeDefinitions, null, true);
+		final GraphEntity createGraph = arangoDriver.createGraph(grapName, edgeDefinitions, null, true);
 		Assert.assertNotNull(createGraph);
 		Assert.assertEquals(grapName, createGraph.getName());
 	}
 
-	public boolean isMinimumVersion(ArangoDriver arangoDriver, String version) throws ArangoException {
-		ArangoVersion ver = arangoDriver.getVersion();
-		int b = TestUtils.compareVersion(ver.getVersion(), version);
+	public boolean isMinimumVersion(final ArangoDriver arangoDriver, final String version) throws ArangoException {
+		final ArangoVersion ver = arangoDriver.getVersion();
+		final int b = TestUtils.compareVersion(ver.getVersion(), version);
 		return b > -1;
 	}
 

@@ -19,6 +19,7 @@ package com.arangodb.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,43 +50,50 @@ public class TransactionExample extends BaseExample {
 	// increment counter 10 times
 	private static final int NUMBER_UPDATES = 10;
 
-	public ArangoDriver arangoDriver;
-
-	public static ArangoConfigure configuration;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public TransactionExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		configuration = getConfiguration();
-		arangoDriver = getArangoDriver(configuration);
-		createDatabase(arangoDriver, DATABASE_NAME);
+		createDatabase(driver, DATABASE_NAME);
 
 		try {
-			arangoDriver.createCollection(COLLECTION_NAME);
-		} catch (Exception ex) {
+			driver.createCollection(COLLECTION_NAME);
+		} catch (final Exception ex) {
 		}
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
 	public void transactionExample() throws ArangoException {
-		List<NoTransactionThread> noTransactionThreadslist = new ArrayList<NoTransactionThread>();
-		List<TransactionThread> transactionThreadslist = new ArrayList<TransactionThread>();
+		final List<NoTransactionThread> noTransactionThreadslist = new ArrayList<NoTransactionThread>();
+		final List<TransactionThread> transactionThreadslist = new ArrayList<TransactionThread>();
 
-		myCounter entity = new myCounter();
+		final myCounter entity = new myCounter();
 		entity.setCount(0L);
-		DocumentEntity<myCounter> documentEntity1 = arangoDriver.createDocument(COLLECTION_NAME, entity, true, null);
-		DocumentEntity<myCounter> documentEntity2 = arangoDriver.createDocument(COLLECTION_NAME, entity, true, null);
+		DocumentEntity<myCounter> documentEntity1 = driver.createDocument(COLLECTION_NAME, entity, true, null);
+		DocumentEntity<myCounter> documentEntity2 = driver.createDocument(COLLECTION_NAME, entity, true, null);
 
 		// start threads without transaction
 		for (int i = 0; i < NUMBER_THREADS; i++) {
-			NoTransactionThread s = new NoTransactionThread(documentEntity1.getDocumentHandle());
+			final NoTransactionThread s = new NoTransactionThread(documentEntity1.getDocumentHandle());
 			noTransactionThreadslist.add(s);
 			s.start();
 		}
 		joinThreads(noTransactionThreadslist);
 
-		documentEntity1 = arangoDriver.getDocument(documentEntity1.getDocumentHandle(), myCounter.class);
+		documentEntity1 = driver.getDocument(documentEntity1.getDocumentHandle(), myCounter.class);
 
 		// result should be NUMBER_THREADS * NUMBER_UPDATES = 100 but has random
 		// values
@@ -95,13 +103,13 @@ public class TransactionExample extends BaseExample {
 
 		// start threads with ArangoDB transaction
 		for (int i = 0; i < NUMBER_THREADS; i++) {
-			TransactionThread s = new TransactionThread(documentEntity2.getDocumentHandle());
+			final TransactionThread s = new TransactionThread(documentEntity2.getDocumentHandle());
 			transactionThreadslist.add(s);
 			s.start();
 		}
 		joinThreads(transactionThreadslist);
 
-		documentEntity2 = arangoDriver.getDocument(documentEntity2.getDocumentHandle(), myCounter.class);
+		documentEntity2 = driver.getDocument(documentEntity2.getDocumentHandle(), myCounter.class);
 
 		// result should be NUMBER_THREADS * NUMBER_UPDATES = 100
 		System.out.println("with transaction result: count = " + documentEntity2.getEntity().getCount());
@@ -114,29 +122,31 @@ public class TransactionExample extends BaseExample {
 	 */
 	public static class NoTransactionThread extends Thread {
 
-		private String documentHandle;
+		private final String documentHandle;
 
-		public NoTransactionThread(String documentHandle) {
+		public NoTransactionThread(final String documentHandle) {
 			this.documentHandle = documentHandle;
 		}
 
+		@Override
 		public void run() {
-			ArangoDriver driver = new ArangoDriver(configuration, DATABASE_NAME);
+			final ArangoDriver driver2 = new ArangoDriver(configure, DATABASE_NAME);
 
 			try {
 				;
 				for (int i = 0; i < NUMBER_UPDATES; i++) {
 					sleepRandom();
 					// read counter
-					DocumentEntity<myCounter> documentEntity = driver.getDocument(documentHandle, myCounter.class);
-					myCounter entity = documentEntity.getEntity();
+					final DocumentEntity<myCounter> documentEntity = driver2.getDocument(documentHandle,
+						myCounter.class);
+					final myCounter entity = documentEntity.getEntity();
 					// update counter
 					entity.setCount(entity.getCount() + 1);
 					sleepRandom();
 					// save counter
-					driver.replaceDocument(documentHandle, entity);
+					driver2.replaceDocument(documentHandle, entity);
 				}
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 				e.printStackTrace();
 			}
 		}
@@ -148,17 +158,18 @@ public class TransactionExample extends BaseExample {
 	 */
 	public static class TransactionThread extends Thread {
 
-		private String documentHandle;
+		private final String documentHandle;
 
-		public TransactionThread(String documentHandle) {
+		public TransactionThread(final String documentHandle) {
 			this.documentHandle = documentHandle;
 
 		}
 
+		@Override
 		public void run() {
-			ArangoDriver driver = new ArangoDriver(configuration, DATABASE_NAME);
+			final ArangoDriver driver = new ArangoDriver(configure, DATABASE_NAME);
 
-			TransactionEntity transaction = buildTransaction(driver);
+			final TransactionEntity transaction = buildTransaction(driver);
 			try {
 				;
 				for (int i = 0; i < NUMBER_UPDATES; i++) {
@@ -167,7 +178,7 @@ public class TransactionExample extends BaseExample {
 					// call transaction function
 					driver.executeTransaction(transaction);
 				}
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 				e.printStackTrace();
 			}
 		}
@@ -183,16 +194,16 @@ public class TransactionExample extends BaseExample {
 			return count;
 		}
 
-		public void setCount(Long count) {
+		public void setCount(final Long count) {
 			this.count = count;
 		}
 	}
 
-	public static <T extends Thread> void joinThreads(List<T> threads) {
-		for (T st : threads) {
+	public static <T extends Thread> void joinThreads(final List<T> threads) {
+		for (final T st : threads) {
 			try {
 				st.join();
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 			}
 		}
 	}
@@ -200,7 +211,7 @@ public class TransactionExample extends BaseExample {
 	private static void sleepRandom() {
 		try {
 			Thread.sleep((long) (Math.random() * 1000L));
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 		}
 
 	}
@@ -212,10 +223,10 @@ public class TransactionExample extends BaseExample {
 	 *            the ArangoDB driver
 	 * @return a transaction entity
 	 */
-	private static TransactionEntity buildTransaction(ArangoDriver driver) {
+	private static TransactionEntity buildTransaction(final ArangoDriver driver) {
 
 		// create action function
-		String action = "function (id) {"
+		final String action = "function (id) {"
 				// use internal database functions
 				+ " var db = require('internal').db;"
 				// get the document
@@ -225,7 +236,7 @@ public class TransactionExample extends BaseExample {
 				// store the new value
 				+ "db._replace(id, a);}";
 
-		TransactionEntity transaction = driver.createTransaction(action);
+		final TransactionEntity transaction = driver.createTransaction(action);
 
 		transaction.addWriteCollection(COLLECTION_NAME);
 
@@ -242,8 +253,8 @@ public class TransactionExample extends BaseExample {
 	 * @return the current value
 	 * @throws ArangoException
 	 */
-	public static Long getCount(ArangoDriver driver, String documentHandle) throws ArangoException {
-		DocumentEntity<myCounter> documentEntity = driver.getDocument(documentHandle, myCounter.class);
+	public static Long getCount(final ArangoDriver driver, final String documentHandle) throws ArangoException {
+		final DocumentEntity<myCounter> documentEntity = driver.getDocument(documentHandle, myCounter.class);
 		return documentEntity.getEntity().getCount();
 	}
 

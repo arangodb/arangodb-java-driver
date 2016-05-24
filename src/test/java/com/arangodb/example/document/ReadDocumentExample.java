@@ -19,10 +19,12 @@ package com.arangodb.example.document;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.BaseDocument;
@@ -37,15 +39,25 @@ public class ReadDocumentExample extends BaseExample {
 
 	private static final String KEY1 = "key1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public ReadDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -61,7 +73,7 @@ public class ReadDocumentExample extends BaseExample {
 		printHeadline("create example document");
 		//
 
-		HashMap<String, Object> myHashMap = new HashMap<String, Object>();
+		final HashMap<String, Object> myHashMap = new HashMap<String, Object>();
 		myHashMap.put("_key", KEY1);
 		// attributes are stored in a HashMap
 		myHashMap.put("name", "Alice");
@@ -70,14 +82,14 @@ public class ReadDocumentExample extends BaseExample {
 		String documentHandleExample = null;
 
 		try {
-			DocumentEntity<HashMap<String, Object>> entity = arangoDriver.createDocument(COLLECTION_NAME, myHashMap);
+			final DocumentEntity<HashMap<String, Object>> entity = driver.createDocument(COLLECTION_NAME, myHashMap);
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getDocumentHandle());
 			Assert.assertNotNull(entity.getDocumentKey());
 			Assert.assertNotNull(entity.getDocumentRevision());
 
 			documentHandleExample = entity.getDocumentHandle();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
@@ -87,7 +99,7 @@ public class ReadDocumentExample extends BaseExample {
 
 		System.out.println("1. read document as BaseDocument object:");
 		try {
-			DocumentEntity<BaseDocument> entity = arangoDriver.getDocument(COLLECTION_NAME, KEY1, BaseDocument.class);
+			final DocumentEntity<BaseDocument> entity = driver.getDocument(COLLECTION_NAME, KEY1, BaseDocument.class);
 
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getDocumentHandle());
@@ -100,7 +112,7 @@ public class ReadDocumentExample extends BaseExample {
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 
-			BaseDocument baseDocument2 = entity.getEntity();
+			final BaseDocument baseDocument2 = entity.getEntity();
 			Assert.assertNotNull(baseDocument2);
 
 			// the BaseDocument contains the key, document handle and revision
@@ -118,14 +130,14 @@ public class ReadDocumentExample extends BaseExample {
 				"Attribute 'age': " + baseDocument2.getProperties().get("age") + " <- Data type changed to double");
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
 		System.out.println("2. read document as HashMap object:");
 		try {
 			@SuppressWarnings("rawtypes")
-			DocumentEntity<HashMap> entity = arangoDriver.getDocument(COLLECTION_NAME, KEY1, HashMap.class);
+			final DocumentEntity<HashMap> entity = driver.getDocument(COLLECTION_NAME, KEY1, HashMap.class);
 
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getDocumentHandle());
@@ -133,7 +145,7 @@ public class ReadDocumentExample extends BaseExample {
 			Assert.assertNotNull(entity.getDocumentRevision());
 			Assert.assertEquals(KEY1, entity.getDocumentKey());
 
-			HashMap<?, ?> map = entity.getEntity();
+			final HashMap<?, ?> map = entity.getEntity();
 			Assert.assertNotNull(map);
 
 			// get the attributes
@@ -148,13 +160,13 @@ public class ReadDocumentExample extends BaseExample {
 			System.out.println("Attribute 'age': " + map.get("age") + " <- Data type changed to double");
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
 		System.out.println("3. read document as SimplePerson object:");
 		try {
-			DocumentEntity<SimplePerson> entity = arangoDriver.getDocument(COLLECTION_NAME, KEY1, SimplePerson.class);
+			final DocumentEntity<SimplePerson> entity = driver.getDocument(COLLECTION_NAME, KEY1, SimplePerson.class);
 
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getDocumentHandle());
@@ -162,7 +174,7 @@ public class ReadDocumentExample extends BaseExample {
 			Assert.assertNotNull(entity.getDocumentRevision());
 			Assert.assertEquals(KEY1, entity.getDocumentKey());
 
-			SimplePerson sp = entity.getEntity();
+			final SimplePerson sp = entity.getEntity();
 			Assert.assertNotNull(sp);
 
 			// get the attributes
@@ -173,13 +185,13 @@ public class ReadDocumentExample extends BaseExample {
 			System.out.println("Attribute 'age': " + sp.getAge());
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
 		System.out.println("4. read document as DocumentPerson object:");
 		try {
-			DocumentEntity<DocumentPerson> entity = arangoDriver.getDocument(COLLECTION_NAME, KEY1,
+			final DocumentEntity<DocumentPerson> entity = driver.getDocument(COLLECTION_NAME, KEY1,
 				DocumentPerson.class);
 
 			Assert.assertNotNull(entity);
@@ -188,7 +200,7 @@ public class ReadDocumentExample extends BaseExample {
 			Assert.assertNotNull(entity.getDocumentRevision());
 			Assert.assertEquals(KEY1, entity.getDocumentKey());
 
-			DocumentPerson dp = entity.getEntity();
+			final DocumentPerson dp = entity.getEntity();
 			Assert.assertNotNull(dp);
 
 			System.out.println("Key: " + dp.getDocumentKey());
@@ -202,7 +214,7 @@ public class ReadDocumentExample extends BaseExample {
 			System.out.println("Attribute 'age': " + dp.getAge());
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
@@ -210,7 +222,7 @@ public class ReadDocumentExample extends BaseExample {
 		printHeadline("read document by document handle");
 		//
 		try {
-			DocumentEntity<DocumentPerson> entity = arangoDriver.getDocument(documentHandleExample,
+			final DocumentEntity<DocumentPerson> entity = driver.getDocument(documentHandleExample,
 				DocumentPerson.class);
 
 			Assert.assertNotNull(entity);
@@ -219,12 +231,12 @@ public class ReadDocumentExample extends BaseExample {
 			Assert.assertNotNull(entity.getDocumentRevision());
 			Assert.assertEquals(KEY1, entity.getDocumentKey());
 
-			DocumentPerson dp = entity.getEntity();
+			final DocumentPerson dp = entity.getEntity();
 			Assert.assertNotNull(dp);
 
 			System.out.println("Key: " + dp.getDocumentKey());
 			System.out.println("Attribute 'name': " + dp.getName());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
@@ -232,13 +244,13 @@ public class ReadDocumentExample extends BaseExample {
 		printHeadline("read collection count");
 		//
 		try {
-			CollectionEntity collectionCount = arangoDriver.getCollectionCount(COLLECTION_NAME);
+			final CollectionEntity collectionCount = driver.getCollectionCount(COLLECTION_NAME);
 
 			Assert.assertNotNull(collectionCount);
 			Assert.assertEquals(1, collectionCount.getCount());
 
 			System.out.println("Collection count: " + collectionCount.getCount());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read collection count. " + e.getMessage());
 		}
 
@@ -246,16 +258,16 @@ public class ReadDocumentExample extends BaseExample {
 		printHeadline("read all document handles of a collection");
 		//
 		try {
-			List<String> documentHandles = arangoDriver.getDocuments(COLLECTION_NAME);
+			final List<String> documentHandles = driver.getDocuments(COLLECTION_NAME);
 
 			Assert.assertNotNull(documentHandles);
 			Assert.assertEquals(1, documentHandles.size());
 
-			for (String documentHandle : documentHandles) {
+			for (final String documentHandle : documentHandles) {
 				System.out.println("document handle: " + documentHandle);
 			}
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read all documents. " + e.getMessage());
 		}
 	}

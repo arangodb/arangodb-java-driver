@@ -1,9 +1,11 @@
 package com.arangodb.example.graph;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.marker.VertexEntity;
@@ -22,15 +24,25 @@ public class UpdateAndReplaceVertexExample extends BaseExample {
 	private static final String EDGE_COLLECTION_NAME = "edgeColl1";
 	private static final String VERTEXT_COLLECTION_NAME = "vertexColl1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public UpdateAndReplaceVertexExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() throws ArangoException {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createGraph(arangoDriver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createGraph(driver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -40,12 +52,12 @@ public class UpdateAndReplaceVertexExample extends BaseExample {
 		printHeadline("replace vertex");
 		//
 
-		Person personA = new Person("A", Person.MALE);
-		VertexEntity<Person> v1 = createVertex(personA);
+		final Person personA = new Person("A", Person.MALE);
+		final VertexEntity<Person> v1 = createVertex(personA);
 
-		Person personB = new Person("B", Person.FEMALE);
+		final Person personB = new Person("B", Person.FEMALE);
 
-		VertexEntity<Person> replaceVertex = arangoDriver.graphReplaceVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> replaceVertex = driver.graphReplaceVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			v1.getDocumentKey(), personB);
 		// document handle is unchanged
 		Assert.assertNotNull(replaceVertex);
@@ -64,13 +76,13 @@ public class UpdateAndReplaceVertexExample extends BaseExample {
 		printHeadline("update vertex");
 		//
 
-		Person personA = new Person("A", Person.MALE);
-		VertexEntity<Person> v1 = createVertex(personA);
+		final Person personA = new Person("A", Person.MALE);
+		final VertexEntity<Person> v1 = createVertex(personA);
 
 		// update one attribute (gender)
 		personA.setGender(Person.FEMALE);
 
-		VertexEntity<Person> updateVertex = arangoDriver.graphUpdateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> updateVertex = driver.graphUpdateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			v1.getDocumentKey(), personA, true);
 
 		// document handle is unchanged
@@ -91,16 +103,16 @@ public class UpdateAndReplaceVertexExample extends BaseExample {
 		printHeadline("update one vertex attribute");
 		//
 
-		Person personA = new Person("A", Person.MALE);
-		VertexEntity<Person> v1 = createVertex(personA);
+		final Person personA = new Person("A", Person.MALE);
+		final VertexEntity<Person> v1 = createVertex(personA);
 
 		// update one attribute (gender)
-		Person update = new Person(null, Person.FEMALE);
+		final Person update = new Person(null, Person.FEMALE);
 
-		arangoDriver.graphUpdateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, v1.getDocumentKey(), update, true);
+		driver.graphUpdateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, v1.getDocumentKey(), update, true);
 
 		// reload vertex
-		VertexEntity<Person> updateVertex = arangoDriver.graphGetVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> updateVertex = driver.graphGetVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			v1.getDocumentKey(), Person.class);
 
 		// document handle is unchanged
@@ -114,8 +126,8 @@ public class UpdateAndReplaceVertexExample extends BaseExample {
 		Assert.assertEquals(personA.getName(), updateVertex.getEntity().getName());
 	}
 
-	private VertexEntity<Person> createVertex(Person person) throws ArangoException {
-		VertexEntity<Person> v = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, person, true);
+	private VertexEntity<Person> createVertex(final Person person) throws ArangoException {
+		final VertexEntity<Person> v = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, person, true);
 		Assert.assertNotNull(v);
 		return v;
 	}

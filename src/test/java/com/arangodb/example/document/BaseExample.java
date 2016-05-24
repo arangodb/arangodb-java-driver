@@ -21,69 +21,62 @@ import org.junit.Assert;
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
+import com.arangodb.BaseTest;
 import com.arangodb.entity.BooleanResultEntity;
 import com.arangodb.entity.CollectionEntity;
 
-public class BaseExample {
+public class BaseExample extends BaseTest {
 
 	protected static final String FEMALE = "female";
-
 	protected static final String MALE = "male";
 
-	protected ArangoConfigure getConfiguration() {
-		ArangoConfigure configure = new ArangoConfigure();
-		// configure.setUser("myUser");
-		// configure.setPassword("password");
-		// configuration file: src/test/resources/arangodb.properties
-		configure.init();
-
-		return configure;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public BaseExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
 	}
 
-	protected ArangoDriver getArangoDriver(ArangoConfigure configuration) {
-		return new ArangoDriver(configuration);
-	}
-
-	protected void removeTestDatabase(String name) {
-		ArangoDriver arangoDriver = getArangoDriver(getConfiguration());
+	protected void removeTestDatabase(final String name) {
 		try {
-			arangoDriver.deleteDatabase(name);
-		} catch (Exception e) {
+			driver.deleteDatabase(name);
+		} catch (final Exception e) {
 		}
 	}
 
-	protected void createDatabase(ArangoDriver arangoDriver, String name) {
+	protected void createDatabase(final ArangoDriver arangoDriver, final String name) {
 		try {
-			BooleanResultEntity createDatabase = arangoDriver.createDatabase(name);
+			final BooleanResultEntity createDatabase = arangoDriver.createDatabase(name);
 			Assert.assertNotNull(createDatabase);
 			Assert.assertNotNull(createDatabase.getResult());
 			Assert.assertTrue(createDatabase.getResult());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Assert.fail("Failed to create database " + name + "; " + e.getMessage());
 		}
 
 		arangoDriver.setDefaultDatabase(name);
 	}
 
-	protected void deleteDatabase(ArangoDriver arangoDriver, String name) {
+	protected void deleteDatabase(final ArangoDriver arangoDriver, final String name) {
 		try {
 			arangoDriver.deleteDatabase(name);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 	}
 
-	protected void createCollection(ArangoDriver arangoDriver, String name) {
+	protected void createCollection(final ArangoDriver arangoDriver, final String name) {
 		try {
-			CollectionEntity createCollection = arangoDriver.createCollection(name);
+			final CollectionEntity createCollection = arangoDriver.createCollection(name);
 			Assert.assertNotNull(createCollection);
 			Assert.assertNotNull(createCollection.getName());
 			Assert.assertEquals(name, createCollection.getName());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("create collection failed. " + e.getMessage());
 		}
 	}
 
-	protected void printEntity(Object object) {
+	protected void printEntity(final Object object) {
 		if (object == null) {
 			System.out.println("Document not found");
 		} else {
@@ -91,7 +84,7 @@ public class BaseExample {
 		}
 	}
 
-	protected void printHeadline(String name) {
+	protected void printHeadline(final String name) {
 		System.out.println("---------------------------------------------");
 		System.out.println(name);
 		System.out.println("---------------------------------------------");

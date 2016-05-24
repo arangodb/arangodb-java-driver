@@ -3,10 +3,12 @@ package com.arangodb.example.graph;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.Direction;
@@ -30,15 +32,25 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 	private static final String EDGE_COLLECTION_NAME = "edgeColl1";
 	private static final String VERTEXT_COLLECTION_NAME = "vertexColl1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public GetVerticesAndEdgesExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() throws ArangoException {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createGraph(arangoDriver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createGraph(driver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -48,15 +60,15 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("get vertex");
 		//
 
-		Person personA = new Person("A", Person.MALE);
-		VertexEntity<Person> v1 = createVertex(personA);
+		final Person personA = new Person("A", Person.MALE);
+		final VertexEntity<Person> v1 = createVertex(personA);
 
-		VertexEntity<Person> vertexEntity = arangoDriver.graphGetVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> vertexEntity = driver.graphGetVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			v1.getDocumentKey(), Person.class);
 
 		Assert.assertNotNull(vertexEntity);
 		Assert.assertNotNull(vertexEntity.getEntity());
-		Person p = vertexEntity.getEntity();
+		final Person p = vertexEntity.getEntity();
 		Assert.assertEquals(personA.getName(), p.getName());
 		Assert.assertNotNull(p.getDocumentHandle());
 		Assert.assertNotNull(p.getDocumentKey());
@@ -77,13 +89,12 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("using the cursor iterator");
 		//
 
-		VertexCursor<Person> vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null,
-			null);
+		VertexCursor<Person> vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
 		Assert.assertNotNull(vertexCursor);
 
-		Iterator<VertexEntity<Person>> iterator = vertexCursor.iterator();
+		final Iterator<VertexEntity<Person>> iterator = vertexCursor.iterator();
 		while (iterator.hasNext()) {
-			VertexEntity<Person> next = iterator.next();
+			final VertexEntity<Person> next = iterator.next();
 			Assert.assertNotNull(next);
 			printPerson(next.getEntity());
 		}
@@ -92,12 +103,12 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("using the cursor entity iterator");
 		//
 
-		vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
 		Assert.assertNotNull(vertexCursor);
 
-		Iterator<Person> entityIterator = vertexCursor.entityIterator();
+		final Iterator<Person> entityIterator = vertexCursor.entityIterator();
 		while (entityIterator.hasNext()) {
-			Person next = entityIterator.next();
+			final Person next = entityIterator.next();
 			Assert.assertNotNull(next);
 			printPerson(next);
 		}
@@ -106,12 +117,12 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("using cursor as list");
 		//
 
-		vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
 		Assert.assertNotNull(vertexCursor);
 
-		List<VertexEntity<Person>> entityList = vertexCursor.asList();
+		final List<VertexEntity<Person>> entityList = vertexCursor.asList();
 
-		for (VertexEntity<Person> next : entityList) {
+		for (final VertexEntity<Person> next : entityList) {
 			Assert.assertNotNull(next);
 			printPerson(next.getEntity());
 		}
@@ -120,12 +131,12 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("using cursor as entity list");
 		//
 
-		vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
 		Assert.assertNotNull(vertexCursor);
 
-		List<Person> personList = vertexCursor.asEntityList();
+		final List<Person> personList = vertexCursor.asEntityList();
 
-		for (Person next : personList) {
+		for (final Person next : personList) {
 			Assert.assertNotNull(next);
 			printPerson(next);
 		}
@@ -144,16 +155,16 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		createVertex(new Person("C", Person.MALE));
 
 		// get all male persons
-		Person example = new Person(null, Person.MALE);
+		final Person example = new Person(null, Person.MALE);
 
-		VertexCursor<Person> vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, example, null,
+		final VertexCursor<Person> vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, example, null,
 			null);
 		Assert.assertNotNull(vertexCursor);
 
-		List<Person> personList = vertexCursor.asEntityList();
+		final List<Person> personList = vertexCursor.asEntityList();
 		Assert.assertEquals(2, personList.size());
 
-		for (Person next : personList) {
+		for (final Person next : personList) {
 			Assert.assertNotNull(next);
 			printPerson(next);
 		}
@@ -167,15 +178,15 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("get edge");
 		//
 
-		VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
-		VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
-		Knows knows = new Knows(1984);
-		EdgeEntity<Knows> e1 = createEdge(v1, v2, knows);
+		final VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
+		final VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
+		final Knows knows = new Knows(1984);
+		final EdgeEntity<Knows> e1 = createEdge(v1, v2, knows);
 
-		EdgeEntity<Knows> edgeEntity = arangoDriver.graphGetEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, e1.getDocumentKey(),
+		final EdgeEntity<Knows> edgeEntity = driver.graphGetEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, e1.getDocumentKey(),
 			Knows.class);
 		Assert.assertNotNull(edgeEntity);
-		Knows entity = edgeEntity.getEntity();
+		final Knows entity = edgeEntity.getEntity();
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.getDocumentHandle());
 		Assert.assertNotNull(entity.getDocumentKey());
@@ -195,18 +206,18 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("get all edges");
 		//
 
-		VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
-		VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
+		final VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
+		final VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
 		createEdge(v1, v2, new Knows(1984));
-		VertexEntity<Person> v3 = createVertex(new Person("C", Person.MALE));
+		final VertexEntity<Person> v3 = createVertex(new Person("C", Person.MALE));
 		createEdge(v1, v3, new Knows(1995));
 		createEdge(v2, v3, new Knows(2005));
 
-		EdgeCursor<Knows> cursor = arangoDriver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, null, null, null);
-		List<Knows> list = cursor.asEntityList();
+		final EdgeCursor<Knows> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, null, null, null);
+		final List<Knows> list = cursor.asEntityList();
 		Assert.assertEquals(3, list.size());
 
-		for (Knows knows : list) {
+		for (final Knows knows : list) {
 			printKnows(knows);
 		}
 	}
@@ -218,52 +229,54 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		printHeadline("get edges by vertex example");
 		//
 
-		VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
-		VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
+		final VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
+		final VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
 		createEdge(v1, v2, new Knows(1984));
-		VertexEntity<Person> v3 = createVertex(new Person("C", Person.MALE));
+		final VertexEntity<Person> v3 = createVertex(new Person("C", Person.MALE));
 		createEdge(v1, v3, new Knows(1995));
 		createEdge(v2, v3, new Knows(2005));
 
 		// get all edges of female persons (inbound and outbound)
-		Person example = new Person(null, Person.FEMALE);
+		final Person example = new Person(null, Person.FEMALE);
 
-		EdgeCursor<Knows> cursor = arangoDriver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, example, null, null);
+		EdgeCursor<Knows> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, example, null, null);
 		List<Knows> list = cursor.asEntityList();
 		Assert.assertEquals(2, list.size());
 
-		for (Knows knows : list) {
+		for (final Knows knows : list) {
 			printKnows(knows);
 		}
 
 		// get all edges of female persons (outbound)
-		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions().setDirection(Direction.OUTBOUND);
+		final GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions().setDirection(Direction.OUTBOUND);
 
-		cursor = arangoDriver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, example, graphEdgesOptions, null);
+		cursor = driver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, example, graphEdgesOptions, null);
 		list = cursor.asEntityList();
 		Assert.assertEquals(1, list.size());
 
-		for (Knows knows : list) {
+		for (final Knows knows : list) {
 			printKnows(knows);
 		}
 
 	}
 
-	private VertexEntity<Person> createVertex(Person person) throws ArangoException {
-		VertexEntity<Person> v = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, person, true);
+	private VertexEntity<Person> createVertex(final Person person) throws ArangoException {
+		final VertexEntity<Person> v = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, person, true);
 		Assert.assertNotNull(v);
 		return v;
 	}
 
-	private EdgeEntity<Knows> createEdge(VertexEntity<Person> personFrom, VertexEntity<Person> personTo, Knows knows)
-			throws ArangoException {
-		EdgeEntity<Knows> e = arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME,
+	private EdgeEntity<Knows> createEdge(
+		final VertexEntity<Person> personFrom,
+		final VertexEntity<Person> personTo,
+		final Knows knows) throws ArangoException {
+		final EdgeEntity<Knows> e = driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME,
 			personFrom.getDocumentHandle(), personTo.getDocumentHandle(), knows, false);
 		Assert.assertNotNull(e);
 		return e;
 	}
 
-	private void printPerson(Person person) {
+	private void printPerson(final Person person) {
 		if (person == null) {
 			System.out.println("Person is null");
 		} else {
@@ -272,7 +285,7 @@ public class GetVerticesAndEdgesExample extends BaseExample {
 		}
 	}
 
-	private void printKnows(Knows knows) {
+	private void printKnows(final Knows knows) {
 		if (knows == null) {
 			System.out.println("Knows is null");
 		} else {

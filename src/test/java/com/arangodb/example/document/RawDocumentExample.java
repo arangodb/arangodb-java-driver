@@ -21,10 +21,12 @@ import java.util.Iterator;
 
 import org.json.JSONML;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorRawResult;
@@ -34,18 +36,27 @@ import com.arangodb.entity.DocumentEntity;
 public class RawDocumentExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "RawDocument";
-
 	private static final String COLLECTION_NAME = "RawDocument";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public RawDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -67,13 +78,13 @@ public class RawDocumentExample extends BaseExample {
 
 		String x = "{\"test\":123}";
 		try {
-			DocumentEntity<String> entity = arangoDriver.createDocumentRaw(COLLECTION_NAME, x, true, false);
+			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, x, true, false);
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 			documentHandle1 = entity.getDocumentHandle();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
@@ -82,9 +93,9 @@ public class RawDocumentExample extends BaseExample {
 		//
 
 		try {
-			String str = arangoDriver.getDocumentRaw(documentHandle1, null, null);
+			final String str = driver.getDocumentRaw(documentHandle1, null, null);
 			System.out.println("value: " + str);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
@@ -94,13 +105,13 @@ public class RawDocumentExample extends BaseExample {
 
 		x = "{\"_key\":\"key2\",\"test\":123}";
 		try {
-			DocumentEntity<String> entity = arangoDriver.createDocumentRaw(COLLECTION_NAME, x, true, false);
+			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, x, true, false);
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 			documentHandle2 = entity.getDocumentHandle();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
@@ -109,9 +120,9 @@ public class RawDocumentExample extends BaseExample {
 		//
 
 		try {
-			String str = arangoDriver.getDocumentRaw(documentHandle2, null, null);
+			final String str = driver.getDocumentRaw(documentHandle2, null, null);
 			System.out.println("value: " + str);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
@@ -120,9 +131,9 @@ public class RawDocumentExample extends BaseExample {
 		//
 
 		try {
-			arangoDriver.getDocumentRaw(COLLECTION_NAME + "/unknown", null, null);
+			driver.getDocumentRaw(COLLECTION_NAME + "/unknown", null, null);
 			Assert.fail("This should fail");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
 		}
 
@@ -132,14 +143,14 @@ public class RawDocumentExample extends BaseExample {
 
 		x = "{\"test\":1234}";
 		try {
-			DocumentEntity<String> updateDocumentRaw = arangoDriver.updateDocumentRaw(documentHandle2, x, null, null,
+			final DocumentEntity<String> updateDocumentRaw = driver.updateDocumentRaw(documentHandle2, x, null, null,
 				false, true);
 			// print new document revision
 			System.out.println("rev: " + updateDocumentRaw.getDocumentRevision());
 			// show request result (you have to use getDocumentRaw to get
 			// all attributes of the changed object):
 			System.out.println("value: " + updateDocumentRaw.getEntity());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
 		}
 
@@ -149,32 +160,32 @@ public class RawDocumentExample extends BaseExample {
 
 		x = "{\"hund\":321,\"katze\":321,\"maus\":777}";
 		try {
-			DocumentEntity<String> replaceDocumentRaw = arangoDriver.replaceDocumentRaw(documentHandle2, x, null, null,
+			final DocumentEntity<String> replaceDocumentRaw = driver.replaceDocumentRaw(documentHandle2, x, null, null,
 				false);
 			// print new document revision
 			System.out.println("rev: " + replaceDocumentRaw.getDocumentRevision());
 			// show request result (you have to use getDocumentRaw to get
 			// all attributes of the replaced object):
 			System.out.println("value: " + replaceDocumentRaw.getEntity());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.assertEquals(ErrorNums.ERROR_HTTP_NOT_FOUND, e.getCode());
 		}
 
 		//
 		printHeadline("using org.json.JSONML to save a xml file");
 		//
-		String string = "<recipe name=\"bread\" prep_time=\"5 mins\" cook_time=\"3 hours\"> <title>Basic bread</title> <ingredient amount=\"8\" unit=\"dL\">Flour</ingredient> <ingredient amount=\"10\" unit=\"grams\">Yeast</ingredient> <ingredient amount=\"4\" unit=\"dL\" state=\"warm\">Water</ingredient> <ingredient amount=\"1\" unit=\"teaspoon\">Salt</ingredient> <instructions> <step>Mix all ingredients together.</step> <step>Knead thoroughly.</step> <step>Cover with a cloth, and leave for one hour in warm room.</step> <step>Knead again.</step> <step>Place in a bread baking tin.</step> <step>Cover with a cloth, and leave for one hour in warm room.</step> <step>Bake in the oven at 180(degrees)C for 30 minutes.</step> </instructions> </recipe> ";
+		final String string = "<recipe name=\"bread\" prep_time=\"5 mins\" cook_time=\"3 hours\"> <title>Basic bread</title> <ingredient amount=\"8\" unit=\"dL\">Flour</ingredient> <ingredient amount=\"10\" unit=\"grams\">Yeast</ingredient> <ingredient amount=\"4\" unit=\"dL\" state=\"warm\">Water</ingredient> <ingredient amount=\"1\" unit=\"teaspoon\">Salt</ingredient> <instructions> <step>Mix all ingredients together.</step> <step>Knead thoroughly.</step> <step>Cover with a cloth, and leave for one hour in warm room.</step> <step>Knead again.</step> <step>Place in a bread baking tin.</step> <step>Cover with a cloth, and leave for one hour in warm room.</step> <step>Bake in the oven at 180(degrees)C for 30 minutes.</step> </instructions> </recipe> ";
 		System.out.println("Orig XML value: " + string);
-		JSONObject jsonObject = JSONML.toJSONObject(string);
+		final JSONObject jsonObject = JSONML.toJSONObject(string);
 		try {
-			DocumentEntity<String> entity = arangoDriver.createDocumentRaw(COLLECTION_NAME, jsonObject.toString(), true,
+			final DocumentEntity<String> entity = driver.createDocumentRaw(COLLECTION_NAME, jsonObject.toString(), true,
 				false);
 			// the DocumentEntity contains the key, document handle and revision
 			System.out.println("Key: " + entity.getDocumentKey());
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 			documentHandle3 = entity.getDocumentHandle();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
@@ -183,11 +194,11 @@ public class RawDocumentExample extends BaseExample {
 		//
 
 		try {
-			String str = arangoDriver.getDocumentRaw(documentHandle3, null, null);
+			final String str = driver.getDocumentRaw(documentHandle3, null, null);
 			System.out.println("JSON value: " + str);
-			JSONObject jsonObject2 = new JSONObject(str);
+			final JSONObject jsonObject2 = new JSONObject(str);
 			System.out.println("XML value: " + JSONML.toString(jsonObject2));
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read document. " + e.getMessage());
 		}
 
@@ -195,19 +206,19 @@ public class RawDocumentExample extends BaseExample {
 		printHeadline("get query results");
 		//
 
-		String queryString = "FOR t IN " + COLLECTION_NAME + " FILTER t.cook_time == \"3 hours\" RETURN t";
+		final String queryString = "FOR t IN " + COLLECTION_NAME + " FILTER t.cook_time == \"3 hours\" RETURN t";
 		System.out.println(queryString);
-		HashMap<String, Object> bindVars = new HashMap<String, Object>();
+		final HashMap<String, Object> bindVars = new HashMap<String, Object>();
 
 		try {
-			CursorRawResult cursor = arangoDriver.executeAqlQueryRaw(queryString, bindVars, null);
+			final CursorRawResult cursor = driver.executeAqlQueryRaw(queryString, bindVars, null);
 			Assert.assertNotNull(cursor);
-			Iterator<String> iter = cursor.iterator();
+			final Iterator<String> iter = cursor.iterator();
 			while (iter.hasNext()) {
-				JSONObject jsonObject2 = new JSONObject(iter.next());
+				final JSONObject jsonObject2 = new JSONObject(iter.next());
 				System.out.println("XML value: " + JSONML.toString(jsonObject2));
 			}
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to query documents. " + e.getMessage());
 		}
 

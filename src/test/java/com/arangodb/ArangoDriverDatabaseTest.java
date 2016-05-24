@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Collections;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +38,15 @@ import com.arangodb.entity.StringsResultEntity;
  */
 public class ArangoDriverDatabaseTest extends BaseTest {
 
-	public ArangoDriverDatabaseTest(ArangoConfigure configure, ArangoDriver driver) {
+	private static final String DB_NAME = "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi61234";
+	private static final String[] DATABASES = new String[] { "db-1", "db_2", "db-_-3", "mydb", // other
+			// testcase
+			"mydb2", // other testcase
+			"repl_scenario_test1", // other test case
+			"unitTestDatabase", // other test case
+	};
+
+	public ArangoDriverDatabaseTest(final ArangoConfigure configure, final ArangoDriver driver) {
 		super(configure, driver);
 	}
 
@@ -46,12 +55,26 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 
 	}
 
+	@AfterClass
+	public static void _afterClass() {
+		try {
+			driver.deleteDatabase(DB_NAME);
+		} catch (final ArangoException e) {
+		}
+		for (final String database : DATABASES) {
+			try {
+				driver.deleteDatabase(database);
+			} catch (final ArangoException e) {
+			}
+		}
+	}
+
 	@Test
 	public void test_invalid_dbname1() throws ArangoException {
 		try {
 			driver.createDatabase(null);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getMessage(), is("invalid format database:null"));
 		}
 	}
@@ -61,7 +84,7 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 		try {
 			driver.createDatabase("0");
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getMessage(), is("invalid format database:0"));
 		}
 	}
@@ -71,7 +94,7 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 		try {
 			driver.createDatabase("abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi612345"); // len=65
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getMessage(),
 				is("invalid format database:abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi612345"));
 		}
@@ -82,7 +105,7 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 		try {
 			driver.deleteDatabase("abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi612345"); // len=65
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getMessage(),
 				is("invalid format database:abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi612345"));
 		}
@@ -91,7 +114,7 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 	@Test
 	public void test_current_database() throws ArangoException {
 
-		DatabaseEntity entity = driver.getCurrentDatabase();
+		final DatabaseEntity entity = driver.getCurrentDatabase();
 		assertThat(entity.isError(), is(false));
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.getName(), is("_system"));
@@ -104,14 +127,14 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 	@Test
 	public void test_createDatabase() throws ArangoException {
 
-		String database = "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi61234";
+		final String database = DB_NAME;
 
 		try {
 			driver.deleteDatabase(database);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
-		BooleanResultEntity entity = driver.createDatabase(database); // len=64
+		final BooleanResultEntity entity = driver.createDatabase(database); // len=64
 		assertThat(entity.getResult(), is(true));
 
 	}
@@ -119,20 +142,20 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 	@Test
 	public void test_createDatabase_duplicate() throws ArangoException {
 
-		String database = "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi61234";
+		final String database = DB_NAME;
 
 		try {
 			driver.deleteDatabase(database);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
-		BooleanResultEntity entity = driver.createDatabase(database); // len=64
+		final BooleanResultEntity entity = driver.createDatabase(database); // len=64
 		assertThat(entity.getResult(), is(true));
 
 		try {
 			driver.createDatabase(database);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(409));
 			assertThat(e.getErrorNumber(), is(1207));
 		}
@@ -142,11 +165,11 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 	@Test
 	public void test_delete() throws ArangoException {
 
-		String database = "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi61234";
+		final String database = DB_NAME;
 
 		try {
 			driver.deleteDatabase(database);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		BooleanResultEntity entity = driver.createDatabase(database); // len=64
@@ -164,17 +187,17 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 	@Test
 	public void test_delete_404() throws ArangoException {
 
-		String database = "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi61234";
+		final String database = DB_NAME;
 
 		try {
 			driver.deleteDatabase(database);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		try {
 			driver.deleteDatabase(database);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1228));
 		}
@@ -184,25 +207,18 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 	@Test
 	public void test_get_databases() throws ArangoException {
 
-		String[] databases = new String[] { "db-1", "db_2", "db-_-3", "mydb", // other
-																				// testcase
-				"mydb2", // other testcase
-				"repl_scenario_test1", // other test case
-				"unitTestDatabase", // other test case
-		};
-
-		for (String database : databases) {
+		for (final String database : DATABASES) {
 			try {
 				driver.deleteDatabase(database);
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 			try {
 				driver.createDatabase(database);
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 			}
 		}
 
-		StringsResultEntity entity = driver.getDatabases();
+		final StringsResultEntity entity = driver.getDatabases();
 		assertThat(entity.isError(), is(false));
 		assertThat(entity.getCode(), is(200));
 
@@ -215,7 +231,6 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 		assertThat(entity.getResult().indexOf("mydb2"), not(-1));
 		assertThat(entity.getResult().indexOf("repl_scenario_test1"), not(-1));
 		assertThat(entity.getResult().indexOf("unitTestDatabase"), not(-1));
-
 	}
 
 }

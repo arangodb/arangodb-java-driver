@@ -30,6 +30,14 @@ public class CreateAndDeleteDatabaseExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "CreateDatabaseExample";
 
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public CreateAndDeleteDatabaseExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
+
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
@@ -47,26 +55,20 @@ public class CreateAndDeleteDatabaseExample extends BaseExample {
 		//
 		printHeadline("create a driver");
 		//
-
-		ArangoDriver arangoDriver = new ArangoDriver(getConfiguration());
-
-		Assert.assertNotNull(arangoDriver);
-
-		//
 		printHeadline("create a database");
 		//
 		try {
-			BooleanResultEntity createDatabase = arangoDriver.createDatabase(DATABASE_NAME);
+			final BooleanResultEntity createDatabase = driver.createDatabase(DATABASE_NAME);
 			Assert.assertNotNull(createDatabase);
 			Assert.assertNotNull(createDatabase.getResult());
 			Assert.assertTrue(createDatabase.getResult());
 
 			System.out.println("Database created: " + DATABASE_NAME);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create database " + DATABASE_NAME + "; " + e.getMessage());
 		}
 		// set a default database for the connection
-		arangoDriver.setDefaultDatabase(DATABASE_NAME);
+		driver.setDefaultDatabase(DATABASE_NAME);
 
 		// do something ...
 
@@ -74,25 +76,25 @@ public class CreateAndDeleteDatabaseExample extends BaseExample {
 		printHeadline("read names of all databases");
 		//
 		try {
-			StringsResultEntity databases = arangoDriver.getDatabases();
+			final StringsResultEntity databases = driver.getDatabases();
 			Assert.assertNotNull(databases);
 			Assert.assertNotNull(databases.getResult());
 			Assert.assertTrue(databases.getResult().size() > 0);
 
-			for (String str : databases.getResult()) {
+			for (final String str : databases.getResult()) {
 				System.out.println("Database: " + str);
 			}
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to read databases. " + e.getMessage());
 		}
 
 		//
 		printHeadline("create a driver with default database");
 		//
-		ArangoConfigure configure2 = new ArangoConfigure();
+		final ArangoConfigure configure2 = new ArangoConfigure();
 		configure2.init();
-		ArangoDriver arangoDriver2 = new ArangoDriver(configure2, DATABASE_NAME);
+		final ArangoDriver arangoDriver2 = new ArangoDriver(configure2, DATABASE_NAME);
 		Assert.assertNotNull(arangoDriver2);
 
 		// do something ...
@@ -101,11 +103,11 @@ public class CreateAndDeleteDatabaseExample extends BaseExample {
 		printHeadline("delete database");
 		//
 		try {
-			BooleanResultEntity deleteDatabase = arangoDriver.deleteDatabase(DATABASE_NAME);
+			final BooleanResultEntity deleteDatabase = driver.deleteDatabase(DATABASE_NAME);
 			Assert.assertNotNull(deleteDatabase);
 			Assert.assertNotNull(deleteDatabase.getResult());
 			Assert.assertTrue(deleteDatabase.getResult());
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to delete database " + DATABASE_NAME + "; " + e.getMessage());
 		}
 

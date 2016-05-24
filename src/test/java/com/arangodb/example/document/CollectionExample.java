@@ -16,10 +16,12 @@
 
 package com.arangodb.example.document;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.CollectionEntity;
@@ -29,14 +31,24 @@ public class CollectionExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "CreateCollectionExample";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public CollectionExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
+		createDatabase(driver, DATABASE_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -49,7 +61,7 @@ public class CollectionExample extends BaseExample {
 		printHeadline("create a collection");
 		//
 		try {
-			CollectionEntity entity = arangoDriver.createCollection(myFirstCollection);
+			final CollectionEntity entity = driver.createCollection(myFirstCollection);
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getName());
 			Assert.assertEquals(myFirstCollection, entity.getName());
@@ -58,27 +70,27 @@ public class CollectionExample extends BaseExample {
 
 			printCollectionEntity(entity);
 			// System.out.println(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("create collection failed. " + e.getMessage());
 		}
 
-		createCollection(arangoDriver, "collection2");
-		createCollection(arangoDriver, "collection3");
+		createCollection(driver, "collection2");
+		createCollection(driver, "collection3");
 
 		//
 		printHeadline("get list of all collections");
 		//
 		try {
-			CollectionsEntity collectionsEntity = arangoDriver.getCollections();
+			final CollectionsEntity collectionsEntity = driver.getCollections();
 			Assert.assertNotNull(collectionsEntity);
 			Assert.assertNotNull(collectionsEntity.getCollections());
 
-			for (CollectionEntity entity : collectionsEntity.getCollections()) {
+			for (final CollectionEntity entity : collectionsEntity.getCollections()) {
 				printCollectionEntity(entity);
 				// System.out.println(entity);
 			}
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("could not get collections. " + e.getMessage());
 		}
 
@@ -86,14 +98,14 @@ public class CollectionExample extends BaseExample {
 		printHeadline("get one collection");
 		//
 		try {
-			CollectionEntity entity = arangoDriver.getCollection(myFirstCollection);
+			final CollectionEntity entity = driver.getCollection(myFirstCollection);
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getName());
 			Assert.assertNotNull(entity.getId());
 
 			printCollectionEntity(entity);
 			// System.out.println(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("could not get collection. " + e.getMessage());
 		}
 
@@ -101,7 +113,7 @@ public class CollectionExample extends BaseExample {
 		printHeadline("rename collection");
 		//
 		try {
-			CollectionEntity entity = arangoDriver.renameCollection(myFirstCollection, "collection4");
+			final CollectionEntity entity = driver.renameCollection(myFirstCollection, "collection4");
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getName());
 			Assert.assertNotNull(entity.getId());
@@ -110,7 +122,7 @@ public class CollectionExample extends BaseExample {
 
 			printCollectionEntity(entity);
 			// System.out.println(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("could not rename collection. " + e.getMessage());
 		}
 
@@ -118,13 +130,13 @@ public class CollectionExample extends BaseExample {
 		printHeadline("truncate collection");
 		//
 		try {
-			CollectionEntity truncateCollection = arangoDriver.truncateCollection(myFirstCollection);
+			final CollectionEntity truncateCollection = driver.truncateCollection(myFirstCollection);
 			Assert.assertNotNull(truncateCollection);
 			Assert.assertNotNull(truncateCollection.getName());
 			Assert.assertNotNull(truncateCollection.getId());
 			Assert.assertEquals(myFirstCollectionId, truncateCollection.getId());
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("could not truncate collection. " + e.getMessage());
 		}
 
@@ -132,7 +144,7 @@ public class CollectionExample extends BaseExample {
 		printHeadline("delete collection");
 		//
 		try {
-			CollectionEntity entity = arangoDriver.deleteCollection(myFirstCollection);
+			final CollectionEntity entity = driver.deleteCollection(myFirstCollection);
 			Assert.assertNotNull(entity);
 			// the name has to be null
 			Assert.assertNull(entity.getName());
@@ -141,13 +153,13 @@ public class CollectionExample extends BaseExample {
 
 			printCollectionEntity(entity);
 			// System.out.println(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("could not delete collection. " + e.getMessage());
 		}
 
 	}
 
-	private void printCollectionEntity(CollectionEntity collection) {
+	private void printCollectionEntity(final CollectionEntity collection) {
 		if (collection == null) {
 			System.out.println("Collection not found");
 		} else if (collection.getName() == null) {

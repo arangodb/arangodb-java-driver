@@ -80,6 +80,10 @@ public class ArangoDriverReplicationTestScenario1 {
 
 	@After
 	public void after() throws ArangoException {
+		try {
+			masterDriver.deleteDatabase(database);
+		} catch (final ArangoException e) {
+		}
 		masterConfigure.shutdown();
 		slaveConfigure.shutdown();
 	}
@@ -94,10 +98,10 @@ public class ArangoDriverReplicationTestScenario1 {
 		// create database in master
 		try {
 			masterDriver.deleteDatabase(database);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 		{
-			BooleanResultEntity result = masterDriver.createDatabase(database);
+			final BooleanResultEntity result = masterDriver.createDatabase(database);
 			assertThat(result.getResult(), is(true));
 		}
 		// configure database
@@ -106,14 +110,14 @@ public class ArangoDriverReplicationTestScenario1 {
 
 		try {
 			slaveDriver.deleteCollection(collectionName1);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 		}
 
 		// [Master] add document
 		masterDriver.createCollection(collectionName1);
-		DocumentEntity<Map<String, Object>> doc1 = masterDriver.createDocument(collectionName1,
+		final DocumentEntity<Map<String, Object>> doc1 = masterDriver.createDocument(collectionName1,
 			new MapBuilder().put("my-key1", "100").get(), false, false);
-		DocumentEntity<Map<String, Object>> doc2 = masterDriver.createDocument(collectionName1,
+		final DocumentEntity<Map<String, Object>> doc2 = masterDriver.createDocument(collectionName1,
 			new MapBuilder().put("my-key2", "255").get(), false, false);
 		masterDriver.createDocument(collectionName1, new MapBuilder().put("my-key3", 1234567).get(), false, false);
 
@@ -127,12 +131,12 @@ public class ArangoDriverReplicationTestScenario1 {
 		slaveDriver.stopReplicationApplier();
 
 		// [Master] get logger state
-		ReplicationLoggerStateEntity state1 = masterDriver.getReplicationLoggerState();
+		final ReplicationLoggerStateEntity state1 = masterDriver.getReplicationLoggerState();
 		assertThat(state1.getClients().size(), is(0));
 
 		// [Slave] sync
-		ReplicationSyncEntity syncResult = slaveDriver.syncReplication(masterConfigure.getEndpoint(), database, "root",
-			null, null);
+		final ReplicationSyncEntity syncResult = slaveDriver.syncReplication(masterConfigure.getEndpoint(), database,
+			"root", null, null);
 
 		Thread.sleep(3000L);
 
@@ -149,18 +153,18 @@ public class ArangoDriverReplicationTestScenario1 {
 		}
 
 		// [Master] import 290 document
-		LinkedList<Map<String, Object>> values = new LinkedList<Map<String, Object>>();
+		final LinkedList<Map<String, Object>> values = new LinkedList<Map<String, Object>>();
 		for (int i = 10; i < 300; i++) {
 			values.add(new MapBuilder().put("my-key" + i, 1234567).get());
 		}
-		ImportResultEntity importResult = masterDriver.importDocuments(collectionName1, values);
+		final ImportResultEntity importResult = masterDriver.importDocuments(collectionName1, values);
 		assertThat(importResult.getCreated(), is(290));
 
 		// wait
 		TimeUnit.SECONDS.sleep(2);
 
 		// [Slave] check a replication data
-		CollectionEntity entity1 = slaveDriver.getCollectionCount(collectionName1);
+		final CollectionEntity entity1 = slaveDriver.getCollectionCount(collectionName1);
 		assertThat(entity1.getCount(), is(303L));
 
 		// ------------------------------------------------------------
@@ -168,7 +172,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		// ------------------------------------------------------------
 
 		// [Master] delete document
-		DocumentEntity<?> delEntity = masterDriver.deleteDocument(doc1.getDocumentHandle(), null, null);
+		final DocumentEntity<?> delEntity = masterDriver.deleteDocument(doc1.getDocumentHandle(), null, null);
 		assertThat(delEntity.isError(), is(false));
 		assertThat(delEntity.getDocumentKey(), is(doc1.getDocumentKey()));
 
@@ -176,13 +180,13 @@ public class ArangoDriverReplicationTestScenario1 {
 		TimeUnit.SECONDS.sleep(2);
 
 		// [Slave] check a replication data
-		CollectionEntity entity2 = slaveDriver.getCollectionCount(collectionName1);
+		final CollectionEntity entity2 = slaveDriver.getCollectionCount(collectionName1);
 		assertThat(entity2.getCount(), is(302L));
 
 		try {
 			slaveDriver.getDocument(doc1.getDocumentHandle(), Map.class);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 		}
 
@@ -197,10 +201,10 @@ public class ArangoDriverReplicationTestScenario1 {
 		TimeUnit.SECONDS.sleep(2);
 
 		// [Slave] check a replication data
-		CollectionEntity entity3 = slaveDriver.getCollectionCount(collectionName1);
+		final CollectionEntity entity3 = slaveDriver.getCollectionCount(collectionName1);
 		assertThat(entity3.getCount(), is(302L));
 
-		DocumentEntity<Map> doc2a = slaveDriver.getDocument(doc2.getDocumentHandle(), Map.class);
+		final DocumentEntity<Map> doc2a = slaveDriver.getDocument(doc2.getDocumentHandle(), Map.class);
 		assertThat(doc2a.getDocumentHandle(), is(doc2a.getDocumentHandle()));
 		assertThat(doc2a.getEntity().size(), is(4)); // _id, _rev, _key
 		assertThat((String) doc2a.getEntity().get("updatedKey"), is("あいうえお"));
@@ -216,10 +220,10 @@ public class ArangoDriverReplicationTestScenario1 {
 		TimeUnit.SECONDS.sleep(2);
 
 		// [Slave] check a replication data
-		CollectionEntity entity4 = slaveDriver.getCollectionCount(collectionName1);
+		final CollectionEntity entity4 = slaveDriver.getCollectionCount(collectionName1);
 		assertThat(entity4.getCount(), is(302L));
 
-		DocumentEntity<Map> doc2b = slaveDriver.getDocument(doc2.getDocumentHandle(), Map.class);
+		final DocumentEntity<Map> doc2b = slaveDriver.getDocument(doc2.getDocumentHandle(), Map.class);
 		assertThat(doc2b.getDocumentHandle(), is(doc2a.getDocumentHandle()));
 		assertThat(doc2b.getEntity().size(), is(5)); // _id, _rev, _key
 		assertThat((String) doc2b.getEntity().get("updatedKey"), is("あいうえお"));
@@ -238,7 +242,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		try {
 			masterDriver.getCollection(collectionName1);
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 		}
 
@@ -247,7 +251,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		// ------------------------------------------------------------
 
 		// [Master] logger state
-		ReplicationLoggerStateEntity state2 = masterDriver.getReplicationLoggerState();
+		final ReplicationLoggerStateEntity state2 = masterDriver.getReplicationLoggerState();
 		assertThat(state2.getState().isRunning(), is(true));
 		assertThat(state2.getState().getLastLogTick(), is(not(0L)));
 		assertThat(state2.getState().getTotalEvents(), is(307L));
@@ -262,7 +266,7 @@ public class ArangoDriverReplicationTestScenario1 {
 		assertThat(state2.getClients().get(0).getTime(), is(notNullValue()));
 
 		// [Slave] applier state
-		ReplicationApplierStateEntity state3 = slaveDriver.getReplicationApplierState();
+		final ReplicationApplierStateEntity state3 = slaveDriver.getReplicationApplierState();
 		assertThat(state3.getStatusCode(), is(200));
 		assertThat(state3.getServerVersion(), is(notNullValue()));
 		assertThat(state3.getServerId(), is(slaveDriver.getReplicationServerId()));

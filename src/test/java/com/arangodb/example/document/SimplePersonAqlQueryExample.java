@@ -19,10 +19,12 @@ package com.arangodb.example.document;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.DocumentCursor;
@@ -35,15 +37,25 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 
 	private static final String COLLECTION_NAME = "SimplePersonAqlQueryExample";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public SimplePersonAqlQueryExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -66,22 +78,22 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 			//
 
 			// build an AQL query string
-			String queryString = "FOR t IN " + COLLECTION_NAME
+			final String queryString = "FOR t IN " + COLLECTION_NAME
 					+ " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
 			System.out.println(queryString);
 
 			// bind @gender to female
-			HashMap<String, Object> bindVars = new HashMap<String, Object>();
+			final HashMap<String, Object> bindVars = new HashMap<String, Object>();
 			bindVars.put("gender", FEMALE);
 
 			// query (count = true, batchSize = 5)
-			AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(true).setBatchSize(5);
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(true).setBatchSize(5);
 
 			//
 			printHeadline("execute query");
 			//
 
-			DocumentCursor<SimplePerson> rs = arangoDriver.executeDocumentQuery(queryString, bindVars, aqlQueryOptions,
+			DocumentCursor<SimplePerson> rs = driver.executeDocumentQuery(queryString, bindVars, aqlQueryOptions,
 				SimplePerson.class);
 			Assert.assertNotNull(rs);
 
@@ -97,9 +109,9 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 			//
 
 			// using the DocumentEntity iterator
-			Iterator<DocumentEntity<SimplePerson>> iterator = rs.iterator();
+			final Iterator<DocumentEntity<SimplePerson>> iterator = rs.iterator();
 			while (iterator.hasNext()) {
-				DocumentEntity<SimplePerson> documentEntity = iterator.next();
+				final DocumentEntity<SimplePerson> documentEntity = iterator.next();
 
 				Assert.assertNotNull(documentEntity);
 				Assert.assertNotNull(documentEntity.getDocumentKey());
@@ -107,7 +119,7 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 				Assert.assertNotNull(documentEntity.getDocumentRevision());
 				Assert.assertNotNull(documentEntity.getEntity());
 
-				SimplePerson person = documentEntity.getEntity();
+				final SimplePerson person = documentEntity.getEntity();
 				System.out.printf("%20s  %15s(%5s): %d%n", documentEntity.getDocumentKey(), person.getName(),
 					person.getGender(), person.getAge());
 			}
@@ -116,23 +128,23 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 			printHeadline("execute query again");
 			//
 
-			rs = arangoDriver.executeDocumentQuery(queryString, bindVars, aqlQueryOptions, SimplePerson.class);
+			rs = driver.executeDocumentQuery(queryString, bindVars, aqlQueryOptions, SimplePerson.class);
 			Assert.assertNotNull(rs);
 
 			// get total number of results
 			System.out.println(rs.getCount());
 
 			// using the entity iterator
-			Iterator<SimplePerson> iterator2 = rs.entityIterator();
+			final Iterator<SimplePerson> iterator2 = rs.entityIterator();
 			while (iterator2.hasNext()) {
-				SimplePerson person = iterator2.next();
+				final SimplePerson person = iterator2.next();
 
 				Assert.assertNotNull(person);
 
 				System.out.printf("  %15s(%5s): %d%n", person.getName(), person.getGender(), person.getAge());
 			}
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Example failed. " + e.getMessage());
 		}
 
@@ -141,12 +153,12 @@ public class SimplePersonAqlQueryExample extends BaseExample {
 	private void createExamples() throws ArangoException {
 		// create some persons
 		for (int i = 0; i < 1000; i++) {
-			SimplePerson person = new SimplePerson();
+			final SimplePerson person = new SimplePerson();
 			person.setName("TestUser" + i);
 			person.setGender((i % 2) == 0 ? MALE : FEMALE);
 			person.setAge((int) (Math.random() * 100) + 10);
 
-			arangoDriver.createDocument(COLLECTION_NAME, person, true, null);
+			driver.createDocument(COLLECTION_NAME, person, true, null);
 		}
 
 	}

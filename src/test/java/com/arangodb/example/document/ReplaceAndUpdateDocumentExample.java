@@ -18,10 +18,12 @@ package com.arangodb.example.document;
 
 import java.util.HashMap;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.ErrorNums;
@@ -36,15 +38,25 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 
 	private static final String KEY1 = "key1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public ReplaceAndUpdateDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -60,7 +72,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		printHeadline("create example document");
 		//
 
-		HashMap<String, Object> myHashMap = new HashMap<String, Object>();
+		final HashMap<String, Object> myHashMap = new HashMap<String, Object>();
 		myHashMap.put("_key", KEY1);
 		// attributes are stored in a HashMap
 		myHashMap.put("name", "Alice");
@@ -70,7 +82,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		long revision = 0L;
 
 		try {
-			DocumentEntity<HashMap<String, Object>> entity = arangoDriver.createDocument(COLLECTION_NAME, myHashMap);
+			final DocumentEntity<HashMap<String, Object>> entity = driver.createDocument(COLLECTION_NAME, myHashMap);
 
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getDocumentHandle());
@@ -82,7 +94,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 			documentHandleExample = entity.getDocumentHandle();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
@@ -91,8 +103,8 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		//
 
 		try {
-			DocumentPerson dp = new DocumentPerson("Moritz", "male", 6);
-			arangoDriver.replaceDocument(documentHandleExample, dp);
+			final DocumentPerson dp = new DocumentPerson("Moritz", "male", 6);
+			driver.replaceDocument(documentHandleExample, dp);
 
 			System.out.println("Key: " + dp.getDocumentKey());
 			System.out.println("Revision: " + dp.getDocumentRevision() + " <- revision changed");
@@ -102,7 +114,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 
 			revision = dp.getDocumentRevision();
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to replace document. " + e.getMessage());
 		}
 
@@ -111,12 +123,12 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		//
 
 		// update one attribute
-		HashMap<String, Object> newHashMap = new HashMap<String, Object>();
+		final HashMap<String, Object> newHashMap = new HashMap<String, Object>();
 		newHashMap.put("name", "Fritz");
 		try {
-			arangoDriver.updateDocument(documentHandleExample, newHashMap);
+			driver.updateDocument(documentHandleExample, newHashMap);
 
-			DocumentEntity<DocumentPerson> entity = arangoDriver.getDocument(documentHandleExample,
+			final DocumentEntity<DocumentPerson> entity = driver.getDocument(documentHandleExample,
 				DocumentPerson.class);
 
 			Assert.assertNotNull(entity);
@@ -125,7 +137,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 			Assert.assertNotNull(entity.getDocumentRevision());
 			Assert.assertNotNull(entity.getEntity());
 
-			DocumentPerson dp = entity.getEntity();
+			final DocumentPerson dp = entity.getEntity();
 
 			System.out.println("Key: " + dp.getDocumentKey());
 			System.out.println("Revision: " + dp.getDocumentRevision() + " <- revision changed");
@@ -137,7 +149,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 
 			revision = dp.getDocumentRevision();
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to update document. " + e.getMessage());
 		}
 
@@ -145,19 +157,19 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		printHeadline("replace document with given revision");
 		//
 		try {
-			DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
+			final DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
 			// wrong revision
-			arangoDriver.replaceDocument(documentHandleExample, dp, 22L, Policy.ERROR, true);
+			driver.replaceDocument(documentHandleExample, dp, 22L, Policy.ERROR, true);
 			Assert.fail("replaceDocument should fail here!");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.assertEquals(ErrorNums.ERROR_ARANGO_CONFLICT, e.getErrorNumber());
 		}
 
 		try {
-			DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
+			final DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
 			// current revision
-			arangoDriver.replaceDocument(documentHandleExample, dp, revision, Policy.ERROR, true);
-		} catch (ArangoException e) {
+			driver.replaceDocument(documentHandleExample, dp, revision, Policy.ERROR, true);
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to replace document. " + e.getMessage());
 		}
 	}

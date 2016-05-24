@@ -1,9 +1,11 @@
 package com.arangodb.example.graph;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.ErrorNums;
@@ -25,15 +27,25 @@ public class DeleteVerticesAndEdgesExample extends BaseExample {
 	private static final String EDGE_COLLECTION_NAME = "edgeColl1";
 	private static final String VERTEXT_COLLECTION_NAME = "vertexColl1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public DeleteVerticesAndEdgesExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() throws ArangoException {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createGraph(arangoDriver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createGraph(driver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -43,17 +55,17 @@ public class DeleteVerticesAndEdgesExample extends BaseExample {
 		printHeadline("delete vertex");
 		//
 
-		VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
+		final VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
 
-		DeletedEntity deletedEntity = arangoDriver.graphDeleteVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final DeletedEntity deletedEntity = driver.graphDeleteVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			v1.getDocumentKey());
 		Assert.assertNotNull(deletedEntity);
 		Assert.assertTrue(deletedEntity.getDeleted());
 
 		try {
-			arangoDriver.graphGetVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, v1.getDocumentKey(), Person.class);
+			driver.graphGetVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, v1.getDocumentKey(), Person.class);
 			Assert.fail("graphGetVertex should fail");
-		} catch (ArangoException ex) {
+		} catch (final ArangoException ex) {
 			Assert.assertEquals(ErrorNums.ERROR_ARANGO_DOCUMENT_NOT_FOUND, ex.getErrorNumber());
 		}
 	}
@@ -65,32 +77,34 @@ public class DeleteVerticesAndEdgesExample extends BaseExample {
 		printHeadline("delete edge");
 		//
 
-		VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
-		VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
-		EdgeEntity<Knows> e1 = createEdge(v1, v2, new Knows(1984));
+		final VertexEntity<Person> v1 = createVertex(new Person("A", Person.MALE));
+		final VertexEntity<Person> v2 = createVertex(new Person("B", Person.FEMALE));
+		final EdgeEntity<Knows> e1 = createEdge(v1, v2, new Knows(1984));
 
-		DeletedEntity deletedEntity = arangoDriver.graphDeleteEdge(GRAPH_NAME, EDGE_COLLECTION_NAME,
+		final DeletedEntity deletedEntity = driver.graphDeleteEdge(GRAPH_NAME, EDGE_COLLECTION_NAME,
 			e1.getDocumentKey());
 		Assert.assertNotNull(deletedEntity);
 		Assert.assertTrue(deletedEntity.getDeleted());
 
 		try {
-			arangoDriver.graphGetEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, e1.getDocumentKey(), Knows.class);
+			driver.graphGetEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, e1.getDocumentKey(), Knows.class);
 			Assert.fail("graphGetEdge should fail");
-		} catch (ArangoException ex) {
+		} catch (final ArangoException ex) {
 			Assert.assertEquals(ErrorNums.ERROR_ARANGO_DOCUMENT_NOT_FOUND, ex.getErrorNumber());
 		}
 	}
 
-	private VertexEntity<Person> createVertex(Person person) throws ArangoException {
-		VertexEntity<Person> v = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, person, true);
+	private VertexEntity<Person> createVertex(final Person person) throws ArangoException {
+		final VertexEntity<Person> v = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME, person, true);
 		Assert.assertNotNull(v);
 		return v;
 	}
 
-	private EdgeEntity<Knows> createEdge(VertexEntity<Person> personFrom, VertexEntity<Person> personTo, Knows knows)
-			throws ArangoException {
-		EdgeEntity<Knows> e = arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME,
+	private EdgeEntity<Knows> createEdge(
+		final VertexEntity<Person> personFrom,
+		final VertexEntity<Person> personTo,
+		final Knows knows) throws ArangoException {
+		final EdgeEntity<Knows> e = driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME,
 			personFrom.getDocumentHandle(), personTo.getDocumentHandle(), knows, false);
 		Assert.assertNotNull(e);
 		return e;

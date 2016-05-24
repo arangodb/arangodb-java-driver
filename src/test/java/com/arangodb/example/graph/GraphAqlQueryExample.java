@@ -21,10 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorResult;
@@ -51,16 +53,26 @@ public class GraphAqlQueryExample extends BaseExample {
 	private static final String EDGE_COLLECTION_NAME = "edgeColl1";
 	private static final String VERTEXT_COLLECTION_NAME = "vertexColl1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public GraphAqlQueryExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() throws ArangoException {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createGraph(arangoDriver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createGraph(driver, GRAPH_NAME, EDGE_COLLECTION_NAME, VERTEXT_COLLECTION_NAME);
 		addExampleElements();
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -71,16 +83,15 @@ public class GraphAqlQueryExample extends BaseExample {
 		//
 
 		int count = 0;
-		VertexCursor<Person> vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null,
-			null);
+		VertexCursor<Person> vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, null, null, null);
 		Assert.assertNotNull(vertexCursor);
 
 		Iterator<VertexEntity<Person>> vertexIterator = vertexCursor.iterator();
 		while (vertexIterator.hasNext()) {
-			VertexEntity<Person> entity = vertexIterator.next();
+			final VertexEntity<Person> entity = vertexIterator.next();
 			Assert.assertNotNull(entity);
 
-			Person person = entity.getEntity();
+			final Person person = entity.getEntity();
 			Assert.assertNotNull(person);
 
 			System.out.printf("%d\t%20s  %15s%n", ++count, entity.getDocumentHandle(), person.getName());
@@ -92,16 +103,15 @@ public class GraphAqlQueryExample extends BaseExample {
 		//
 
 		count = 0;
-		vertexCursor = arangoDriver.graphGetVertexCursor(GRAPH_NAME, Person.class, new Person("Christoph", null), null,
-			null);
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, Person.class, new Person("Christoph", null), null, null);
 		Assert.assertNotNull(vertexCursor);
 
 		vertexIterator = vertexCursor.iterator();
 		while (vertexIterator.hasNext()) {
-			VertexEntity<Person> entity = vertexIterator.next();
+			final VertexEntity<Person> entity = vertexIterator.next();
 			Assert.assertNotNull(entity);
 
-			Person person = entity.getEntity();
+			final Person person = entity.getEntity();
 
 			Assert.assertNotNull(person);
 			System.out.printf("%d\t%20s  %15s%n", ++count, entity.getDocumentHandle(), person.getName());
@@ -113,15 +123,15 @@ public class GraphAqlQueryExample extends BaseExample {
 		//
 
 		count = 0;
-		EdgeCursor<Knows> edgeCursor = arangoDriver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, null, null, null);
+		EdgeCursor<Knows> edgeCursor = driver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, null, null, null);
 		Assert.assertNotNull(edgeCursor);
 
 		Iterator<EdgeEntity<Knows>> edgeIterator = edgeCursor.iterator();
 		while (edgeIterator.hasNext()) {
-			EdgeEntity<Knows> entity = edgeIterator.next();
+			final EdgeEntity<Knows> entity = edgeIterator.next();
 			Assert.assertNotNull(entity);
 
-			Knows knows = entity.getEntity();
+			final Knows knows = entity.getEntity();
 			Assert.assertNotNull(knows);
 
 			System.out.printf("%d\t%20s  %20s->%20s %d%n", ++count, entity.getDocumentHandle(),
@@ -134,16 +144,16 @@ public class GraphAqlQueryExample extends BaseExample {
 		//
 
 		count = 0;
-		edgeCursor = arangoDriver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, new Person("Christoph", Person.MALE),
+		edgeCursor = driver.graphGetEdgeCursor(GRAPH_NAME, Knows.class, new Person("Christoph", Person.MALE),
 			new GraphEdgesOptions().setDirection(Direction.OUTBOUND), null);
 		Assert.assertNotNull(edgeCursor);
 
 		edgeIterator = edgeCursor.iterator();
 		while (edgeIterator.hasNext()) {
-			EdgeEntity<Knows> entity = edgeIterator.next();
+			final EdgeEntity<Knows> entity = edgeIterator.next();
 			Assert.assertNotNull(entity);
 
-			Knows knows = entity.getEntity();
+			final Knows knows = entity.getEntity();
 			Assert.assertNotNull(knows);
 			System.out.printf("%d\t%20s  %20s->%20s %d%n", ++count, entity.getDocumentHandle(),
 				entity.getFromVertexHandle(), entity.getToVertexHandle(), knows.getSince());
@@ -155,7 +165,7 @@ public class GraphAqlQueryExample extends BaseExample {
 		//
 
 		// path Anton -> Frauke
-		ShortestPathEntity<Person, Knows> shortestPath = arangoDriver.graphGetShortestPath(GRAPH_NAME,
+		ShortestPathEntity<Person, Knows> shortestPath = driver.graphGetShortestPath(GRAPH_NAME,
 			new Person("Anton", Person.MALE), new Person("Frauke", Person.FEMALE),
 			new ShortestPathOptions().setDirection(Direction.OUTBOUND), Person.class, Knows.class);
 		Assert.assertNotNull(shortestPath);
@@ -168,7 +178,7 @@ public class GraphAqlQueryExample extends BaseExample {
 		//
 
 		// path Frauke -> Anton (empty result)
-		shortestPath = arangoDriver.graphGetShortestPath(GRAPH_NAME, new Person("Frauke", Person.FEMALE),
+		shortestPath = driver.graphGetShortestPath(GRAPH_NAME, new Person("Frauke", Person.FEMALE),
 			new Person("Anton", Person.MALE), new ShortestPathOptions().setDirection(Direction.OUTBOUND), Person.class,
 			Knows.class);
 		Assert.assertNotNull(shortestPath);
@@ -185,11 +195,11 @@ public class GraphAqlQueryExample extends BaseExample {
 		Map<String, Object> bindVars = new HashMap<String, Object>();
 		bindVars.put("graphName", GRAPH_NAME);
 
-		CursorResult<String> cursor = arangoDriver.executeAqlQuery(query, bindVars, null, String.class);
+		final CursorResult<String> cursor = driver.executeAqlQuery(query, bindVars, null, String.class);
 		Assert.assertNotNull(cursor);
-		List<String> list = cursor.asList();
+		final List<String> list = cursor.asList();
 		count = 0;
-		for (String str : list) {
+		for (final String str : list) {
 			System.out.printf("%d\t%20s%n", ++count, str);
 		}
 		Assert.assertEquals(6, list.size());
@@ -203,17 +213,17 @@ public class GraphAqlQueryExample extends BaseExample {
 		bindVars.put("graphName", GRAPH_NAME);
 		bindVars.put("name", "Boris");
 
-		CursorResult<Person> cursor2 = arangoDriver.executeAqlQuery(query, bindVars, null, Person.class);
+		final CursorResult<Person> cursor2 = driver.executeAqlQuery(query, bindVars, null, Person.class);
 		Assert.assertNotNull(cursor2);
-		List<Person> list2 = cursor2.asList();
+		final List<Person> list2 = cursor2.asList();
 		count = 0;
-		for (Person person : list2) {
+		for (final Person person : list2) {
 			System.out.printf("%d\t%20s\t%s%n", ++count, person.getDocumentHandle(), person.getName());
 		}
 		Assert.assertEquals(5, list2.size());
 	}
 
-	private void printShortestPath(ShortestPathEntity<Person, Knows> shortestPath) {
+	private void printShortestPath(final ShortestPathEntity<Person, Knows> shortestPath) {
 		if (shortestPath.getDistance() > -1) {
 			System.out.printf("%s -> %s : distance = %d, getVertices().size() = %d, edges.size() = %d%n",
 				shortestPath.getVertices().get(0).getDocumentHandle(),
@@ -226,32 +236,32 @@ public class GraphAqlQueryExample extends BaseExample {
 
 	private void addExampleElements() throws ArangoException {
 		// create some persons
-		VertexEntity<Person> v1 = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> v1 = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			new Person("Anton", Person.MALE), true);
-		VertexEntity<Person> v2 = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> v2 = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			new Person("Boris", Person.MALE), false);
-		VertexEntity<Person> v3 = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> v3 = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			new Person("Christoph", Person.MALE), false);
-		VertexEntity<Person> v4 = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> v4 = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			new Person("Doris", Person.FEMALE), false);
-		VertexEntity<Person> v5 = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> v5 = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			new Person("Else", Person.FEMALE), false);
-		VertexEntity<Person> v6 = arangoDriver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
+		final VertexEntity<Person> v6 = driver.graphCreateVertex(GRAPH_NAME, VERTEXT_COLLECTION_NAME,
 			new Person("Frauke", Person.FEMALE), false);
 
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v1.getDocumentHandle(), v2.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v1.getDocumentHandle(), v2.getDocumentHandle(),
 			new Knows(1984), false);
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v2.getDocumentHandle(), v6.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v2.getDocumentHandle(), v6.getDocumentHandle(),
 			new Knows(1990), false);
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v1.getDocumentHandle(), v3.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v1.getDocumentHandle(), v3.getDocumentHandle(),
 			new Knows(1992), false);
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v3.getDocumentHandle(), v4.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v3.getDocumentHandle(), v4.getDocumentHandle(),
 			new Knows(1996), false);
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v4.getDocumentHandle(), v6.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v4.getDocumentHandle(), v6.getDocumentHandle(),
 			new Knows(2003), false);
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v4.getDocumentHandle(), v5.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v4.getDocumentHandle(), v5.getDocumentHandle(),
 			new Knows(2013), false);
-		arangoDriver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v3.getDocumentHandle(), v5.getDocumentHandle(),
+		driver.graphCreateEdge(GRAPH_NAME, EDGE_COLLECTION_NAME, v3.getDocumentHandle(), v5.getDocumentHandle(),
 			new Knows(2003), false);
 	}
 

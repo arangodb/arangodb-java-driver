@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.BooleanResultEntity;
@@ -35,23 +37,53 @@ import com.arangodb.entity.Endpoint;
  */
 public class ArangoDriverEndpointTest extends BaseTest {
 
-	public ArangoDriverEndpointTest(ArangoConfigure configure, ArangoDriver driver) {
+	private static final String DB = "db";
+	private static final String MYDB = "mydb";
+	private static final String MYDB1 = "mydb1";
+	private static final String MYDB2 = "mydb2";
+	private static final String[] DB_S = new String[] { DB, MYDB, MYDB1, MYDB2 };
+
+	public ArangoDriverEndpointTest(final ArangoConfigure configure, final ArangoDriver driver) {
 		super(configure, driver);
+	}
+
+	@Before
+	public void _before() {
+		for (final String db : DB_S) {
+			try {
+				driver.deleteDatabase(db);
+			} catch (final ArangoException e) {
+			}
+			try {
+				driver.createDatabase(db);
+			} catch (final ArangoException e) {
+			}
+		}
+	}
+
+	@After
+	public void _after() {
+		for (final String db : DB_S) {
+			try {
+				driver.deleteDatabase(db);
+			} catch (final ArangoException e) {
+			}
+		}
 	}
 
 	@Test
 	public void test_create_endpoint() throws ArangoException {
-		BooleanResultEntity result = driver.createEndpoint("tcp://0.0.0.0:18529", "db");
+		final BooleanResultEntity result = driver.createEndpoint("tcp://0.0.0.0:18529", DB);
 		assertThat(result.getResult(), is(true));
 	}
 
 	@Test
 	public void test_create_endpoint_dup() throws ArangoException {
 
-		BooleanResultEntity result1 = driver.createEndpoint("tcp://0.0.0.0:18529", "db");
+		final BooleanResultEntity result1 = driver.createEndpoint("tcp://0.0.0.0:18529", DB);
 		assertThat(result1.getResult(), is(true));
 
-		BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18529", "db");
+		final BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18529", DB);
 		assertThat(result2.getResult(), is(true));
 
 	}
@@ -59,21 +91,21 @@ public class ArangoDriverEndpointTest extends BaseTest {
 	@Test
 	public void test_get_endpoints() throws ArangoException {
 
-		BooleanResultEntity result1 = driver.createEndpoint("tcp://0.0.0.0:18530", "db");
+		final BooleanResultEntity result1 = driver.createEndpoint("tcp://0.0.0.0:18530", DB);
 		assertThat(result1.getResult(), is(true));
 
-		BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18531", "mydb1", "mydb2", "mydb");
+		final BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18531", MYDB1, MYDB2, MYDB);
 		assertThat(result2.getResult(), is(true));
 
-		List<Endpoint> endpoints = driver.getEndpoints();
+		final List<Endpoint> endpoints = driver.getEndpoints();
 		// convert to Map
-		TreeMap<String, List<String>> endpointMap = new TreeMap<String, List<String>>();
-		for (Endpoint ep : endpoints) {
+		final TreeMap<String, List<String>> endpointMap = new TreeMap<String, List<String>>();
+		for (final Endpoint ep : endpoints) {
 			endpointMap.put(ep.getEndpoint(), ep.getDatabases());
 		}
 
-		assertThat(endpointMap.get("tcp://0.0.0.0:18530"), is(Arrays.asList("db")));
-		assertThat(endpointMap.get("tcp://0.0.0.0:18531"), is(Arrays.asList("mydb1", "mydb2", "mydb")));
+		assertThat(endpointMap.get("tcp://0.0.0.0:18530"), is(Arrays.asList(DB)));
+		assertThat(endpointMap.get("tcp://0.0.0.0:18531"), is(Arrays.asList(MYDB1, MYDB2, MYDB)));
 
 	}
 
@@ -81,18 +113,18 @@ public class ArangoDriverEndpointTest extends BaseTest {
 	public void test_connect_new_endpoint() throws ArangoException {
 
 		try {
-			driver.createDatabase("mydb2");
-		} catch (ArangoException e) {
+			driver.createDatabase(MYDB2);
+		} catch (final ArangoException e) {
 		}
 
-		BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18531", "mydb1", "mydb2", "mydb");
+		final BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18531", MYDB1, MYDB2, MYDB);
 		assertThat(result2.getResult(), is(true));
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.getArangoHost().setPort(18531); // change port
 		configure.init();
 		try {
-			ArangoDriver driver = new ArangoDriver(configure, "mydb2");
+			final ArangoDriver driver = new ArangoDriver(configure, MYDB2);
 			driver.getCollections();
 		} finally {
 			configure.shutdown();
@@ -104,20 +136,20 @@ public class ArangoDriverEndpointTest extends BaseTest {
 	public void test_delete() throws ArangoException {
 
 		try {
-			driver.createDatabase("mydb2");
-		} catch (ArangoException e) {
+			driver.createDatabase(MYDB2);
+		} catch (final ArangoException e) {
 		}
 
-		BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18531", "mydb1", "mydb2", "mydb");
+		final BooleanResultEntity result2 = driver.createEndpoint("tcp://0.0.0.0:18531", MYDB1, MYDB2, MYDB);
 		assertThat(result2.getResult(), is(true));
 
-		BooleanResultEntity result3 = driver.deleteEndpoint("tcp://0.0.0.0:18531");
+		final BooleanResultEntity result3 = driver.deleteEndpoint("tcp://0.0.0.0:18531");
 		assertThat(result3.getResult(), is(true));
 
 		try {
 			driver.deleteEndpoint("tcp://0.0.0.0:18531");
 			fail();
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1231));
 		}

@@ -19,10 +19,12 @@ package com.arangodb.example.document;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.DocumentCursor;
@@ -31,18 +33,27 @@ import com.arangodb.util.AqlQueryOptions;
 public class DocumentPersonAqlQueryExample extends BaseExample {
 
 	private static final String DATABASE_NAME = "DocumentPersonAqlQueryExample";
-
 	private static final String COLLECTION_NAME = "DocumentPersonAqlQueryExample";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public DocumentPersonAqlQueryExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -65,22 +76,22 @@ public class DocumentPersonAqlQueryExample extends BaseExample {
 			//
 
 			// build an AQL query string
-			String queryString = "FOR t IN " + COLLECTION_NAME
+			final String queryString = "FOR t IN " + COLLECTION_NAME
 					+ " FILTER t.age >= 20 && t.age < 30 && t.gender == @gender RETURN t";
 			System.out.println(queryString);
 
 			// bind @gender to female
-			HashMap<String, Object> bindVars = new HashMap<String, Object>();
+			final HashMap<String, Object> bindVars = new HashMap<String, Object>();
 			bindVars.put("gender", FEMALE);
 
 			// query (count = true, batchSize = 5)
-			AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(true).setBatchSize(5);
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions().setCount(true).setBatchSize(5);
 
 			//
 			printHeadline("execute query");
 			//
 
-			DocumentCursor<DocumentPerson> rs = arangoDriver.executeDocumentQuery(queryString, bindVars,
+			final DocumentCursor<DocumentPerson> rs = driver.executeDocumentQuery(queryString, bindVars,
 				aqlQueryOptions, DocumentPerson.class);
 			Assert.assertNotNull(rs);
 
@@ -96,9 +107,9 @@ public class DocumentPersonAqlQueryExample extends BaseExample {
 			//
 
 			// using the entity iterator
-			Iterator<DocumentPerson> iterator = rs.entityIterator();
+			final Iterator<DocumentPerson> iterator = rs.entityIterator();
 			while (iterator.hasNext()) {
-				DocumentPerson person = iterator.next();
+				final DocumentPerson person = iterator.next();
 
 				Assert.assertNotNull(person);
 				Assert.assertNotNull(person.getDocumentKey());
@@ -109,7 +120,7 @@ public class DocumentPersonAqlQueryExample extends BaseExample {
 					person.getGender(), person.getAge());
 			}
 
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Example failed. " + e.getMessage());
 		}
 
@@ -118,12 +129,12 @@ public class DocumentPersonAqlQueryExample extends BaseExample {
 	private void createExamples() throws ArangoException {
 		// create some persons
 		for (int i = 0; i < 1000; i++) {
-			DocumentPerson person = new DocumentPerson();
+			final DocumentPerson person = new DocumentPerson();
 			person.setName("TestUser" + i);
 			person.setGender((i % 2) == 0 ? MALE : FEMALE);
 			person.setAge((int) (Math.random() * 100) + 10);
 
-			arangoDriver.createDocument(COLLECTION_NAME, person, true, null);
+			driver.createDocument(COLLECTION_NAME, person, true, null);
 		}
 
 	}

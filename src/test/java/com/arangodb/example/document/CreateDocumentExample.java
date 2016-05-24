@@ -18,10 +18,12 @@ package com.arangodb.example.document;
 
 import java.util.HashMap;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.BaseDocument;
@@ -41,15 +43,25 @@ public class CreateDocumentExample extends BaseExample {
 
 	private static final String KEY4 = "key4";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public CreateDocumentExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
-		createCollection(arangoDriver, COLLECTION_NAME);
+		createDatabase(driver, DATABASE_NAME);
+		createCollection(driver, COLLECTION_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -66,7 +78,7 @@ public class CreateDocumentExample extends BaseExample {
 		//
 
 		System.out.println("1. create a document by a BaseDocument object:");
-		BaseDocument myBaseDocument = new BaseDocument();
+		final BaseDocument myBaseDocument = new BaseDocument();
 		myBaseDocument.setDocumentKey(KEY1);
 		// attributes are stored in a HashMap
 		myBaseDocument.addAttribute("name", "Alice");
@@ -74,7 +86,7 @@ public class CreateDocumentExample extends BaseExample {
 		myBaseDocument.addAttribute("age", 18);
 
 		try {
-			DocumentEntity<BaseDocument> entity = arangoDriver.createDocument(COLLECTION_NAME, myBaseDocument);
+			final DocumentEntity<BaseDocument> entity = driver.createDocument(COLLECTION_NAME, myBaseDocument);
 			// or DocumentEntity<BaseDocument> entity =
 			// arangoDriver.createDocument(COLLECTION_NAME, KEY1,
 			// myBaseDocument);
@@ -90,7 +102,7 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 
-			BaseDocument baseDocument = entity.getEntity();
+			final BaseDocument baseDocument = entity.getEntity();
 			// the BaseDocument contains the key, document handle and revision
 			System.out.println("Key: " + baseDocument.getDocumentKey());
 			System.out.println("Id: " + baseDocument.getDocumentHandle());
@@ -101,12 +113,12 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Attribute 'age': " + baseDocument.getProperties().get("age"));
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 		System.out.println("2. create a document by a HashMap object:");
-		HashMap<String, Object> myHashMap = new HashMap<String, Object>();
+		final HashMap<String, Object> myHashMap = new HashMap<String, Object>();
 		myHashMap.put("_key", KEY2);
 		// attributes are stored in a HashMap
 		myHashMap.put("name", "Alice");
@@ -114,7 +126,7 @@ public class CreateDocumentExample extends BaseExample {
 		myHashMap.put("age", 18);
 
 		try {
-			DocumentEntity<HashMap<String, Object>> entity = arangoDriver.createDocument(COLLECTION_NAME, myHashMap);
+			final DocumentEntity<HashMap<String, Object>> entity = driver.createDocument(COLLECTION_NAME, myHashMap);
 			// or DocumentEntity<HashMap<String, Object>> entity =
 			// arangoDriver.createDocument(COLLECTION_NAME, KEY2, myHashMap);
 
@@ -129,7 +141,7 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 
-			HashMap<String, Object> hashMap = entity.getEntity();
+			final HashMap<String, Object> hashMap = entity.getEntity();
 			// the HashMap contains the key, document handle and revision
 			System.out.println("Key: " + hashMap.get("_key"));
 			System.out.println("Id: " + hashMap.get("_id"));
@@ -140,14 +152,14 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Attribute 'age': " + hashMap.get("age"));
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 		System.out.println("3. create a document by an object:");
-		SimplePerson mySimplePerson = new SimplePerson("Angela", "female", 42);
+		final SimplePerson mySimplePerson = new SimplePerson("Angela", "female", 42);
 		try {
-			DocumentEntity<SimplePerson> entity = arangoDriver.createDocument(COLLECTION_NAME, KEY3, mySimplePerson);
+			final DocumentEntity<SimplePerson> entity = driver.createDocument(COLLECTION_NAME, KEY3, mySimplePerson);
 
 			Assert.assertNotNull(entity);
 			Assert.assertNotNull(entity.getDocumentKey());
@@ -160,21 +172,21 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 
-			SimplePerson simplePerson = entity.getEntity();
+			final SimplePerson simplePerson = entity.getEntity();
 			// get the attributes
 			System.out.println("Attribute 'name': " + simplePerson.getName());
 			System.out.println("Attribute 'gender': " + simplePerson.getGender());
 			System.out.println("Attribute 'age': " + simplePerson.getAge());
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 
 		System.out.println("4. create a document by an object with document attributes:");
-		DocumentPerson myDocumentPerson = new DocumentPerson("Peter", "male", 24);
+		final DocumentPerson myDocumentPerson = new DocumentPerson("Peter", "male", 24);
 		try {
-			DocumentEntity<DocumentPerson> entity = arangoDriver.createDocument(COLLECTION_NAME, KEY4,
+			final DocumentEntity<DocumentPerson> entity = driver.createDocument(COLLECTION_NAME, KEY4,
 				myDocumentPerson);
 
 			Assert.assertNotNull(entity);
@@ -188,7 +200,7 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Id: " + entity.getDocumentHandle());
 			System.out.println("Revision: " + entity.getDocumentRevision());
 
-			DocumentPerson documentPerson = entity.getEntity();
+			final DocumentPerson documentPerson = entity.getEntity();
 			// the DocumentPerson contains the key, document handle and revision
 			System.out.println("Key: " + documentPerson.getDocumentKey());
 			System.out.println("Id: " + documentPerson.getDocumentHandle());
@@ -199,7 +211,7 @@ public class CreateDocumentExample extends BaseExample {
 			System.out.println("Attribute 'age': " + documentPerson.getAge());
 
 			// printEntity(entity);
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			Assert.fail("Failed to create document. " + e.getMessage());
 		}
 

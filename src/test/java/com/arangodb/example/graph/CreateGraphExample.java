@@ -19,10 +19,12 @@ package com.arangodb.example.graph;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.entity.CollectionEntity;
@@ -45,14 +47,24 @@ public class CreateGraphExample extends BaseExample {
 	private static final String EDGE_COLLECTION_NAME = "edgeColl1";
 	private static final String VERTEXT_COLLECTION_NAME = "vertexColl1";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public CreateGraphExample(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
+		createDatabase(driver, DATABASE_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -62,7 +74,7 @@ public class CreateGraphExample extends BaseExample {
 		printHeadline("create edge collection");
 		//
 
-		CollectionEntity createCollection = arangoDriver.createCollection(EDGE_COLLECTION_NAME,
+		CollectionEntity createCollection = driver.createCollection(EDGE_COLLECTION_NAME,
 			new CollectionOptions().setType(CollectionType.EDGE));
 		Assert.assertNotNull(createCollection);
 		Assert.assertNotNull(createCollection.getId());
@@ -72,7 +84,7 @@ public class CreateGraphExample extends BaseExample {
 		printHeadline("create vertex collection");
 		//
 
-		createCollection = arangoDriver.createCollection(VERTEXT_COLLECTION_NAME,
+		createCollection = driver.createCollection(VERTEXT_COLLECTION_NAME,
 			new CollectionOptions().setType(CollectionType.DOCUMENT));
 		Assert.assertNotNull(createCollection);
 		Assert.assertNotNull(createCollection.getId());
@@ -82,7 +94,7 @@ public class CreateGraphExample extends BaseExample {
 		printHeadline("create edge definition");
 		//
 
-		EdgeDefinitionEntity ed = new EdgeDefinitionEntity();
+		final EdgeDefinitionEntity ed = new EdgeDefinitionEntity();
 		// add edge collection name
 		ed.setCollection(EDGE_COLLECTION_NAME);
 
@@ -95,13 +107,13 @@ public class CreateGraphExample extends BaseExample {
 		//
 		printHeadline("create edge definition list");
 		//
-		List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
+		final List<EdgeDefinitionEntity> edgeDefinitions = new ArrayList<EdgeDefinitionEntity>();
 		edgeDefinitions.add(ed);
 
 		//
 		printHeadline("create graph");
 		//
-		GraphEntity createGraph = arangoDriver.createGraph(GRAPH_NAME, edgeDefinitions, null, true);
+		final GraphEntity createGraph = driver.createGraph(GRAPH_NAME, edgeDefinitions, null, true);
 		Assert.assertNotNull(createGraph);
 		Assert.assertEquals(GRAPH_NAME, createGraph.getName());
 	}

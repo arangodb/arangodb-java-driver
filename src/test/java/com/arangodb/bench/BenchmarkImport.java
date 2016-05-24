@@ -18,10 +18,12 @@ package com.arangodb.bench;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.Station;
@@ -42,17 +44,26 @@ import com.arangodb.util.TestUtils;
 public class BenchmarkImport extends BaseExample {
 
 	private static final String DATABASE_NAME = "BenchmarkImport";
-
 	private static final String COLLECTION_NAME = "BenchmarkImportCollection";
 
-	public ArangoDriver arangoDriver;
+	/**
+	 * @param configure
+	 * @param driver
+	 */
+	public BenchmarkImport(final ArangoConfigure configure, final ArangoDriver driver) {
+		super(configure, driver);
+	}
 
 	@Before
 	public void _before() {
 		removeTestDatabase(DATABASE_NAME);
 
-		arangoDriver = getArangoDriver(getConfiguration());
-		createDatabase(arangoDriver, DATABASE_NAME);
+		createDatabase(driver, DATABASE_NAME);
+	}
+
+	@After
+	public void _after() {
+		removeTestDatabase(DATABASE_NAME);
 	}
 
 	@Test
@@ -64,17 +75,17 @@ public class BenchmarkImport extends BaseExample {
 		printHeadline("read example data");
 		//
 
-		List<Station> stations = TestUtils.readStations();
+		final List<Station> stations = TestUtils.readStations();
 
 		// truncate collection
 		try {
-			arangoDriver.truncateCollection(COLLECTION_NAME);
-		} catch (ArangoException e) {
+			driver.truncateCollection(COLLECTION_NAME);
+		} catch (final ArangoException e) {
 		}
 
 		// create importer
-		AbstractBenchmarkImporter logic1 = new ImportDocumentBenchmarkImporter(arangoDriver, COLLECTION_NAME);
-		AbstractBenchmarkImporter logic2 = new SingleDocumentBenchmarkImporter(arangoDriver, COLLECTION_NAME);
+		final AbstractBenchmarkImporter logic1 = new ImportDocumentBenchmarkImporter(driver, COLLECTION_NAME);
+		final AbstractBenchmarkImporter logic2 = new SingleDocumentBenchmarkImporter(driver, COLLECTION_NAME);
 
 		//
 		printHeadline("import data");
