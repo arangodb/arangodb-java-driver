@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -153,21 +152,6 @@ public class ArangoDriverSimpleTest extends BaseTest {
 			assertThat(doc.getEntity().getDesc(), is(notNullValue()));
 			assertThat(doc.getEntity().getAge(), is(notNullValue()));
 		}
-	}
-
-	@Test
-	public void test_range_no_skiplist() throws ArangoException {
-
-		// no suitable index known
-		try {
-			driver.executeSimpleRangeWithDocuments(COLLECTION_NAME, "age", 5, 30, null, 0, 0,
-				TestComplexEntity01.class);
-			fail("request should fail");
-		} catch (final ArangoException e) {
-			assertThat(e.getErrorNumber(), is(1209));
-			assertThat(e.getCode(), is(404));
-		}
-
 	}
 
 	@Test
