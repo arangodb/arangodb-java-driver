@@ -3,7 +3,7 @@
 
 # arangodb-java-driver
 
-[![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.png)](http://travis-ci.org/arangodb/arangodb-java-driver)
+[![Build Status](https://travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.0)](https://travis-ci.org/arangodb/arangodb-java-driver)
 
 This library is a Java driver for ArangoDB.
 
