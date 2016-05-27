@@ -139,7 +139,8 @@ public class HttpManager {
 			custom.setConnectionRequestTimeout(configure.getTimeout());
 			custom.setSocketTimeout(configure.getTimeout());
 		}
-		custom.setStaleConnectionCheckEnabled(configure.isStaleConnectionCheck());
+
+		cm.setValidateAfterInactivity(configure.getValidateAfterInactivity());
 
 		final RequestConfig requestConfig = custom.build();
 

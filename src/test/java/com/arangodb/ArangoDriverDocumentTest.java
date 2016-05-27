@@ -52,8 +52,6 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	private final String collectionName2 = "unit_test_arango_002";
 	private final String collectionName404 = "unit_test_arango_404"; // 存在しないコレクション名
 
-	private CollectionEntity col1;
-	private CollectionEntity col2;
 	private TestInterfaceInstanceCreator testInstanceCreator;
 
 	@Before
@@ -70,8 +68,8 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		}
 
 		// 1と2は作る
-		col1 = driver.createCollection(collectionName);
-		col2 = driver.createCollection(collectionName2);
+		driver.createCollection(collectionName);
+		driver.createCollection(collectionName2);
 
 		// configure Gson to use our instance creator whenever documents of
 		// TestInterface are requested

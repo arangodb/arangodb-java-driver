@@ -35,7 +35,6 @@ import com.arangodb.util.MapBuilder;
 public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 		implements com.arangodb.InternalIndexDriver {
 
-	private static final String SIZE = "size";
 	private static final String FIELDS = "fields";
 	private static final String SPARSE = "sparse";
 	private static final String UNIQUE = "unique";

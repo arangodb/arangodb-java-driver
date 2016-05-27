@@ -17,10 +17,7 @@
 package com.arangodb.impl;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
@@ -41,12 +38,6 @@ import com.google.gson.JsonElement;
 public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements com.arangodb.InternalDocumentDriver {
 
 	private static final String WAIT_FOR_SYNC = "waitForSync";
-
-	private static final String POLICY = "policy";
-
-	private static final String API_DOCUMENT_PREFIX = "/_api/document/";
-
-	private static final Pattern pattern = Pattern.compile("^/_db/.*/_api/document/(.*)$");
 
 	InternalDocumentDriverImpl(final ArangoConfigure configure, final HttpManager httpManager) {
 		super(configure, httpManager);
@@ -198,21 +189,6 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final CursorEntity<String> tmp = createEntity(res, CursorEntity.class, String.class);
 
 		return tmp.getResults();
-	}
-
-	private void updateDocumentHandles(final List<String> documents) {
-		final ListIterator<String> lit = documents.listIterator();
-		while (lit.hasNext()) {
-			final String d = lit.next();
-			if (d.startsWith(API_DOCUMENT_PREFIX)) {
-				lit.set(d.substring(API_DOCUMENT_PREFIX.length()));
-			} else {
-				final Matcher matcher = pattern.matcher(d);
-				if (matcher.find()) {
-					lit.set(matcher.group(1));
-				}
-			}
-		}
 	}
 
 	@Override

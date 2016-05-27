@@ -95,7 +95,7 @@ public class ArangoConfigure {
 
 	private boolean enableCURLLogger = false;
 
-	private boolean staleConnectionCheck = false;
+	private int validateAfterInactivity = -1;
 
 	private boolean useSsl = false;
 
@@ -257,9 +257,9 @@ public class ArangoConfigure {
 			setEnableCURLLogger(Boolean.parseBoolean(enableCURLLoggerProperty));
 		}
 
-		String staleConnectionCheckProperty = prop.getProperty("staleConnectionCheck");
-		if (staleConnectionCheckProperty != null) {
-			setStaleConnectionCheck(Boolean.parseBoolean(staleConnectionCheckProperty));
+		String validateAfterInactivityProperty = prop.getProperty("validateAfterInactivity");
+		if (validateAfterInactivityProperty != null) {
+			setValidateAfterInactivity(Integer.parseInt(validateAfterInactivityProperty));
 		}
 
 		String batchSizeProperty = prop.getProperty("batchSize");
@@ -562,12 +562,12 @@ public class ArangoConfigure {
 		this.enableCURLLogger = enableCURLLogger;
 	}
 
-	public boolean isStaleConnectionCheck() {
-		return staleConnectionCheck;
+	public int getValidateAfterInactivity() {
+		return validateAfterInactivity;
 	}
 
-	public void setStaleConnectionCheck(boolean staleConnectionCheck) {
-		this.staleConnectionCheck = staleConnectionCheck;
+	public void setValidateAfterInactivity(int validateAfterInactivity) {
+		this.validateAfterInactivity = validateAfterInactivity;
 	}
 
 	public int getConnectRetryCount() {
