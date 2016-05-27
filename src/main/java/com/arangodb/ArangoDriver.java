@@ -3052,8 +3052,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * This will find all documents within a given range. In order to execute a
-	 * range query, a skip-list index on the queried attribute must be present.
+	 * This will find all documents within a given range.
 	 *
 	 * @param collectionName
 	 *            The collection name.
