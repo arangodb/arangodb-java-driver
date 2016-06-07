@@ -17,22 +17,15 @@
 package com.arangodb.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
-import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.InternalCursorDriver;
-import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DeletedEntity;
-import com.arangodb.entity.Direction;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EntityFactory;
-import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphGetCollectionsResultEntity;
 import com.arangodb.entity.GraphsEntity;
@@ -51,7 +44,6 @@ import com.google.gson.JsonObject;
  * @author gschwab
  * @author a-brandt
  */
-@SuppressWarnings("deprecation")
 public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		implements com.arangodb.InternalGraphDriver {
 
@@ -62,13 +54,15 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	private static final String VERTEX = "/vertex";
 	private static final String EDGE = "/edge";
 
-	InternalGraphDriverImpl(ArangoConfigure configure, InternalCursorDriver cursorDriver, HttpManager httpManager) {
+	InternalGraphDriverImpl(final ArangoConfigure configure, final InternalCursorDriver cursorDriver,
+		final HttpManager httpManager) {
 		super(configure, cursorDriver, httpManager);
 	}
 
 	@Override
-	public GraphEntity createGraph(String databaseName, String graphName, Boolean waitForSync) throws ArangoException {
-		HttpResponseEntity response = httpManager.doPost(createGharialEndpointUrl(databaseName),
+	public GraphEntity createGraph(final String databaseName, final String graphName, final Boolean waitForSync)
+			throws ArangoException {
+		final HttpResponseEntity response = httpManager.doPost(createGharialEndpointUrl(databaseName),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
 			EntityFactory.toJsonString(new MapBuilder().put("name", graphName).get()));
 		return createEntity(response, GraphEntity.class);
@@ -76,13 +70,13 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public GraphEntity createGraph(
-		String databaseName,
-		String graphName,
-		List<EdgeDefinitionEntity> edgeDefinitions,
-		List<String> orphanCollections,
-		Boolean waitForSync) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final List<EdgeDefinitionEntity> edgeDefinitions,
+		final List<String> orphanCollections,
+		final Boolean waitForSync) throws ArangoException {
 
-		HttpResponseEntity response = httpManager
+		final HttpResponseEntity response = httpManager
 				.doPost(createGharialEndpointUrl(databaseName), new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
 					EntityFactory.toJsonString(
 						new MapBuilder().put("name", graphName).put("edgeDefinitions", edgeDefinitions)
@@ -91,13 +85,13 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public GraphsEntity getGraphs(String databaseName) throws ArangoException {
+	public GraphsEntity getGraphs(final String databaseName) throws ArangoException {
 
-		GraphsEntity graphsEntity = new GraphsEntity();
-		List<GraphEntity> graphEntities = new ArrayList<GraphEntity>();
-		List<String> graphList = this.getGraphList(databaseName);
+		final GraphsEntity graphsEntity = new GraphsEntity();
+		final List<GraphEntity> graphEntities = new ArrayList<GraphEntity>();
+		final List<String> graphList = this.getGraphList(databaseName);
 		if (CollectionUtils.isNotEmpty(graphList)) {
-			for (String graphName : graphList) {
+			for (final String graphName : graphList) {
 				graphEntities.add(this.getGraph(databaseName, graphName));
 			}
 		}
@@ -107,13 +101,13 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public List<String> getGraphList(String databaseName) throws ArangoException {
-		HttpResponseEntity res = httpManager.doGet(createGharialEndpointUrl(databaseName));
-		GraphsEntity graphsEntity = createEntity(res, GraphsEntity.class);
-		List<String> graphList = new ArrayList<String>();
-		List<GraphEntity> graphs = graphsEntity.getGraphs();
+	public List<String> getGraphList(final String databaseName) throws ArangoException {
+		final HttpResponseEntity res = httpManager.doGet(createGharialEndpointUrl(databaseName));
+		final GraphsEntity graphsEntity = createEntity(res, GraphsEntity.class);
+		final List<String> graphList = new ArrayList<String>();
+		final List<GraphEntity> graphs = graphsEntity.getGraphs();
 		if (CollectionUtils.isNotEmpty(graphs)) {
-			for (GraphEntity graph : graphs) {
+			for (final GraphEntity graph : graphs) {
 				graphList.add(graph.getDocumentKey());
 			}
 		}
@@ -121,19 +115,19 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public GraphEntity getGraph(String databaseName, String graphName) throws ArangoException {
+	public GraphEntity getGraph(final String databaseName, final String graphName) throws ArangoException {
 		validateCollectionName(graphName); // ??
-		HttpResponseEntity res = httpManager.doGet(
+		final HttpResponseEntity res = httpManager.doGet(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName)), new MapBuilder().get(), null);
 		return createEntity(res, GraphEntity.class);
 
 	}
 
 	@Override
-	public DeletedEntity deleteGraph(String databaseName, String graphName, Boolean dropCollections)
+	public DeletedEntity deleteGraph(final String databaseName, final String graphName, final Boolean dropCollections)
 			throws ArangoException {
 		validateCollectionName(graphName); // ??
-		HttpResponseEntity res = httpManager.doDelete(
+		final HttpResponseEntity res = httpManager.doDelete(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName)), new MapBuilder().get(),
 			new MapBuilder().put("dropCollections", dropCollections).get());
 
@@ -152,9 +146,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public List<String> getVertexCollections(String databaseName, String graphName) throws ArangoException {
+	public List<String> getVertexCollections(final String databaseName, final String graphName) throws ArangoException {
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager
+		final HttpResponseEntity res = httpManager
 				.doGet(createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX));
 
 		if (wrongResult(res)) {
@@ -182,15 +176,15 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	 */
 	@Override
 	public DeletedEntity deleteVertexCollection(
-		String databaseName,
-		String graphName,
-		String collectionName,
-		Boolean dropCollection) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String collectionName,
+		final Boolean dropCollection) throws ArangoException {
 		validateDatabaseName(databaseName, false);
 		validateCollectionName(collectionName);
 		validateCollectionName(graphName);
 
-		HttpResponseEntity res = httpManager.doDelete(
+		final HttpResponseEntity res = httpManager.doDelete(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName)),
 			new MapBuilder().get(), new MapBuilder().put("dropCollection", dropCollection).get());
@@ -210,12 +204,14 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public GraphEntity createVertexCollection(String databaseName, String graphName, String collectionName)
-			throws ArangoException {
+	public GraphEntity createVertexCollection(
+		final String databaseName,
+		final String graphName,
+		final String collectionName) throws ArangoException {
 		validateCollectionName(graphName);
 		validateCollectionName(collectionName);
 
-		HttpResponseEntity res = httpManager.doPost(
+		final HttpResponseEntity res = httpManager.doPost(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX), null,
 			EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).get()));
 
@@ -234,9 +230,9 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public List<String> getEdgeCollections(String databaseName, String graphName) throws ArangoException {
+	public List<String> getEdgeCollections(final String databaseName, final String graphName) throws ArangoException {
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager
+		final HttpResponseEntity res = httpManager
 				.doGet(createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), EDGE));
 
 		if (wrongResult(res)) {
@@ -254,15 +250,17 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public GraphEntity createEdgeDefinition(String databaseName, String graphName, EdgeDefinitionEntity edgeDefinition)
-			throws ArangoException {
+	public GraphEntity createEdgeDefinition(
+		final String databaseName,
+		final String graphName,
+		final EdgeDefinitionEntity edgeDefinition) throws ArangoException {
 
 		validateCollectionName(graphName);
 		validateCollectionName(edgeDefinition.getCollection());
 
-		String edgeDefinitionJson = this.convertToString(edgeDefinition);
+		final String edgeDefinitionJson = this.convertToString(edgeDefinition);
 
-		HttpResponseEntity res = httpManager.doPost(
+		final HttpResponseEntity res = httpManager.doPost(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), EDGE), null, edgeDefinitionJson);
 
 		if (wrongResult(res)) {
@@ -281,17 +279,17 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public GraphEntity replaceEdgeDefinition(
-		String databaseName,
-		String graphName,
-		String edgeName,
-		EdgeDefinitionEntity edgeDefinition) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String edgeName,
+		final EdgeDefinitionEntity edgeDefinition) throws ArangoException {
 
 		validateCollectionName(graphName);
 		validateCollectionName(edgeDefinition.getCollection());
 
-		String edgeDefinitionJson = this.convertToString(edgeDefinition);
+		final String edgeDefinitionJson = this.convertToString(edgeDefinition);
 
-		HttpResponseEntity res = httpManager.doPut(createGharialEndpointUrl(databaseName,
+		final HttpResponseEntity res = httpManager.doPut(createGharialEndpointUrl(databaseName,
 			StringUtils.encodeUrl(graphName), EDGE, StringUtils.encodeUrl(edgeName)), null, edgeDefinitionJson);
 
 		if (wrongResult(res)) {
@@ -311,14 +309,14 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public GraphEntity deleteEdgeDefinition(
-		String databaseName,
-		String graphName,
-		String edgeName,
-		Boolean dropCollection) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String edgeName,
+		final Boolean dropCollection) throws ArangoException {
 		validateCollectionName(graphName);
 		validateCollectionName(edgeName);
 
-		HttpResponseEntity res = httpManager.doDelete(createGharialEndpointUrl(databaseName,
+		final HttpResponseEntity res = httpManager.doDelete(createGharialEndpointUrl(databaseName,
 			StringUtils.encodeUrl(graphName), EDGE, StringUtils.encodeUrl(edgeName)),
 			new MapBuilder().put("dropCollection", dropCollection).get());
 
@@ -338,29 +336,29 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public <T> VertexEntity<T> createVertex(
-		String database,
-		String graphName,
-		String collectionName,
-		T vertex,
-		Boolean waitForSync) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String collectionName,
+		final T vertex,
+		final Boolean waitForSync) throws ArangoException {
 		return createVertex(database, graphName, collectionName, null, vertex, waitForSync);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> createVertex(
-		String database,
-		String graphName,
-		String collectionName,
-		String key,
-		T vertex,
-		Boolean waitForSync) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String collectionName,
+		final String key,
+		final T vertex,
+		final Boolean waitForSync) throws ArangoException {
 
 		JsonObject obj;
 		if (vertex == null) {
 			obj = new JsonObject();
 		} else {
-			JsonElement elem = EntityFactory.toJsonElement(vertex, false);
+			final JsonElement elem = EntityFactory.toJsonElement(vertex, false);
 			if (elem.isJsonObject()) {
 				obj = elem.getAsJsonObject();
 			} else {
@@ -372,7 +370,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		}
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doPost(
+		final HttpResponseEntity res = httpManager.doPost(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName)),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(obj));
@@ -398,7 +396,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		return result;
 	}
 
-	private boolean wrongResult(HttpResponseEntity res) {
+	private boolean wrongResult(final HttpResponseEntity res) {
 		if (res.isJsonResponse()) {
 			return false;
 		}
@@ -417,16 +415,16 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> getVertex(
-		String databaseName,
-		String graphName,
-		String collectionName,
-		String key,
-		Class<T> clazz,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String collectionName,
+		final String key,
+		final Class<T> clazz,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doGet(
+		final HttpResponseEntity res = httpManager.doGet(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
@@ -438,17 +436,17 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> replaceVertex(
-		String databaseName,
-		String graphName,
-		String collectionName,
-		String key,
-		T vertex,
-		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String collectionName,
+		final String key,
+		final T vertex,
+		final Boolean waitForSync,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doPut(
+		final HttpResponseEntity res = httpManager.doPut(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
@@ -469,18 +467,18 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> VertexEntity<T> updateVertex(
-		String databaseName,
-		String graphName,
-		String collectionName,
-		String key,
-		T vertex,
-		Boolean keepNull,
-		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String collectionName,
+		final String key,
+		final T vertex,
+		final Boolean keepNull,
+		final Boolean waitForSync,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doPatch(
+		final HttpResponseEntity res = httpManager.doPatch(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
@@ -501,16 +499,16 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public DeletedEntity deleteVertex(
-		String databaseName,
-		String graphName,
-		String collectionName,
-		String key,
-		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String databaseName,
+		final String graphName,
+		final String collectionName,
+		final String key,
+		final Boolean waitForSync,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doDelete(
+		final HttpResponseEntity res = httpManager.doDelete(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX,
 				StringUtils.encodeUrl(collectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_MATCH, ifMatchRevision, true).put(IF_NONE_MATCH, ifNoneMatchRevision, true).get(),
@@ -522,24 +520,24 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> createEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
-		String key,
-		String fromHandle,
-		String toHandle,
-		T value,
-		Boolean waitForSync) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String edgeCollectionName,
+		final String key,
+		final String fromHandle,
+		final String toHandle,
+		final T value,
+		final Boolean waitForSync) throws ArangoException {
 
-		JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
+		final JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doPost(
+		final HttpResponseEntity res = httpManager.doPost(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName)),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(obj));
 
-		EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
+		final EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
 		if (value != null) {
 			entity.setEntity(value);
 			annotationHandler.updateEdgeAttributes(value, entity.getDocumentRevision(), entity.getDocumentHandle(),
@@ -551,12 +549,16 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		return entity;
 	}
 
-	private <T> JsonObject valueToEdgeJsonObject(String key, String fromHandle, String toHandle, T value) {
+	private <T> JsonObject valueToEdgeJsonObject(
+		final String key,
+		final String fromHandle,
+		final String toHandle,
+		final T value) {
 		JsonObject obj;
 		if (value == null) {
 			obj = new JsonObject();
 		} else {
-			JsonElement elem = EntityFactory.toJsonElement(value, false);
+			final JsonElement elem = EntityFactory.toJsonElement(value, false);
 			if (elem.isJsonObject()) {
 				obj = elem.getAsJsonObject();
 			} else {
@@ -578,16 +580,16 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> getEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
-		String key,
-		Class<T> clazz,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String edgeCollectionName,
+		final String key,
+		final Class<T> clazz,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doGet(
+		final HttpResponseEntity res = httpManager.doGet(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
@@ -598,16 +600,16 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 	@Override
 	public DeletedEntity deleteEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
-		String key,
-		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String edgeCollectionName,
+		final String key,
+		final Boolean waitForSync,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doDelete(
+		final HttpResponseEntity res = httpManager.doDelete(
 			createEndpointUrl(database, "/_api/gharial", StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
@@ -620,27 +622,27 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> replaceEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
-		String key,
-		String fromHandle,
-		String toHandle,
-		T value,
-		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String edgeCollectionName,
+		final String key,
+		final String fromHandle,
+		final String toHandle,
+		final T value,
+		final Boolean waitForSync,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
-		JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
+		final JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doPut(
+		final HttpResponseEntity res = httpManager.doPut(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(), EntityFactory.toJsonString(obj));
 
-		EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
+		final EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
 		if (value != null) {
 			entity.setEntity(value);
 			annotationHandler.updateEdgeAttributes(entity.getEntity(), entity.getDocumentRevision(),
@@ -659,29 +661,29 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> EdgeEntity<T> updateEdge(
-		String database,
-		String graphName,
-		String edgeCollectionName,
-		String key,
-		String fromHandle,
-		String toHandle,
-		T value,
-		Boolean waitForSync,
-		Boolean keepNull,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException {
+		final String database,
+		final String graphName,
+		final String edgeCollectionName,
+		final String key,
+		final String fromHandle,
+		final String toHandle,
+		final T value,
+		final Boolean waitForSync,
+		final Boolean keepNull,
+		final Long ifMatchRevision,
+		final Long ifNoneMatchRevision) throws ArangoException {
 
-		JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
+		final JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
-		HttpResponseEntity res = httpManager.doPatch(
+		final HttpResponseEntity res = httpManager.doPatch(
 			createGharialEndpointUrl(database, StringUtils.encodeUrl(graphName), EDGE,
 				StringUtils.encodeUrl(edgeCollectionName), StringUtils.encodeUrl(key)),
 			new MapBuilder().put(IF_NONE_MATCH, ifNoneMatchRevision, true).put(IF_MATCH, ifMatchRevision, true).get(),
 			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).put("keepNull", keepNull).get(),
 			EntityFactory.toJsonString(obj));
 
-		EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
+		final EdgeEntity<T> entity = createEntity(res, EdgeEntity.class, value == null ? null : value.getClass());
 		if (value != null) {
 			entity.setEntity(value);
 			annotationHandler.updateEdgeAttributes(entity.getEntity(), entity.getDocumentRevision(),
@@ -698,52 +700,11 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		return entity;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> CursorEntity<EdgeEntity<T>> getEdges(
-		String database,
-		String graphName,
-		String vertexKey,
-		Class<T> clazz,
-		Integer batchSize,
-		Integer limit,
-		Boolean count,
-		Direction direction,
-		Collection<String> labels,
-		ArangoDriver driver,
-		FilterCondition... properties) throws ArangoException {
-
-		validateCollectionName(graphName);
-
-		String getEdges = "var db = require('internal').db;\n" + "var graph = require('org/arangodb/general-graph');\n"
-				+ "var g = graph._graph('" + graphName + "');\n" + "g._edges();";
-		driver.executeScript(getEdges);
-
-		Map<String, Object> filter = new MapBuilder().put("direction", toLower(direction)).put("labels", labels)
-				.put("properties", properties).get();
-
-		HttpResponseEntity res = httpManager.doPost(
-			createEndpointUrl(database, "/_api/graph", StringUtils.encodeUrl(graphName), "edges",
-				StringUtils.encodeUrl(vertexKey)),
-			null, EntityFactory.toJsonString(new MapBuilder().put("batchSize", batchSize).put("limit", limit)
-					.put("count", count).put("filter", filter).get()));
-
-		return createEntity(res, CursorEntity.class, EdgeEntity.class, clazz);
-
-	}
-
-	private String convertToString(EdgeDefinitionEntity edgeDefinition) {
-		JsonObject rawEdgeDefinition = (JsonObject) EntityFactory
+	private String convertToString(final EdgeDefinitionEntity edgeDefinition) {
+		final JsonObject rawEdgeDefinition = (JsonObject) EntityFactory
 				.toJsonElement(new MapBuilder().put("edgeDefinition", edgeDefinition).get(), false);
-		JsonElement edgeDefinitionJson = rawEdgeDefinition.get("edgeDefinition");
+		final JsonElement edgeDefinitionJson = rawEdgeDefinition.get("edgeDefinition");
 		return edgeDefinitionJson.toString();
-	}
-
-	private String toLower(Enum<?> e) {
-		if (e == null) {
-			return null;
-		}
-		return e.name().toLowerCase(Locale.US);
 	}
 
 }

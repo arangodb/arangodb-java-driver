@@ -21,21 +21,16 @@
 
 package com.arangodb;
 
-import java.util.Collection;
 import java.util.List;
 
-import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DeletedEntity;
-import com.arangodb.entity.Direction;
 import com.arangodb.entity.EdgeDefinitionEntity;
 import com.arangodb.entity.EdgeEntity;
-import com.arangodb.entity.FilterCondition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.GraphsEntity;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.impl.BaseDriverInterface;
 
-@SuppressWarnings("deprecation")
 public interface InternalGraphDriver extends BaseDriverInterface {
 
 	/**
@@ -467,36 +462,5 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		Boolean keepNull,
 		Long ifMatchRevision,
 		Long ifNoneMatchRevision) throws ArangoException;
-
-	/**
-	 * 
-	 * 
-	 * @param database
-	 * @param graphName
-	 * @param vertexKey
-	 * @param clazz
-	 * @param batchSize
-	 * @param limit
-	 * @param count
-	 * @param direction
-	 * @param labels
-	 * @param driver
-	 * @param properties
-	 * @return a CursorEntity object
-	 * @throws ArangoException
-	 */
-	@Deprecated
-	<T> CursorEntity<EdgeEntity<T>> getEdges(
-		String database,
-		String graphName,
-		String vertexKey,
-		Class<T> clazz,
-		Integer batchSize,
-		Integer limit,
-		Boolean count,
-		Direction direction,
-		Collection<String> labels,
-		ArangoDriver driver,
-		FilterCondition... properties) throws ArangoException;
 
 }

@@ -114,13 +114,13 @@ public class ArangoConfigure {
 		init(DEFAULT_PROPERTY_FILE);
 	}
 
-	public ArangoConfigure(String propertyPath) {
+	public ArangoConfigure(final String propertyPath) {
 		init(propertyPath);
 	}
 
-	private void init(String propertyPath) {
+	private void init(final String propertyPath) {
 		arangoHosts = new ArrayList<ArangoHost>();
-		ArangoHost defaultHost = new ArangoHost(DEFAULT_HOST, DEFAULT_PORT);
+		final ArangoHost defaultHost = new ArangoHost(DEFAULT_HOST, DEFAULT_PORT);
 		arangoHosts.add(defaultHost);
 		currentArangoHost = 0;
 
@@ -141,7 +141,7 @@ public class ArangoConfigure {
 	 * 
 	 * @param propertyPath
 	 */
-	public void loadProperties(String propertyPath) {
+	public void loadProperties(final String propertyPath) {
 		InputStream in = null;
 		try {
 			in = getClass().getResourceAsStream(propertyPath);
@@ -150,7 +150,7 @@ public class ArangoConfigure {
 
 				loadProperties(in);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.warn("load property error", e);
 		} finally {
 			if (in != null) {
@@ -159,131 +159,131 @@ public class ArangoConfigure {
 		}
 	}
 
-	private void loadProperties(InputStream in) throws IOException {
+	private void loadProperties(final InputStream in) throws IOException {
 
-		Properties prop = new Properties();
+		final Properties prop = new Properties();
 		prop.load(in);
 
 		//
-		String port = prop.getProperty("port");
+		final String port = prop.getProperty("port");
 		if (port != null) {
 			arangoHosts.get(0).setPort(Integer.parseInt(port));
 		}
 
-		String host = prop.getProperty("host");
+		final String host = prop.getProperty("host");
 		if (host != null) {
 			arangoHosts.get(0).setHost(host);
 		}
 
-		String arangoHost = prop.getProperty("arangoHost");
+		final String arangoHost = prop.getProperty("arangoHost");
 		if (arangoHost != null) {
-			ArangoHost ah = parseArangoHost(arangoHost);
+			final ArangoHost ah = parseArangoHost(arangoHost);
 			if (ah != null) {
 				arangoHosts.get(0).setHost(ah.getHost());
 				arangoHosts.get(0).setPort(ah.getPort());
 			}
 		}
 
-		String fallbackArangoHost = prop.getProperty("fallbackArangoHost");
+		final String fallbackArangoHost = prop.getProperty("fallbackArangoHost");
 		if (fallbackArangoHost != null) {
-			ArangoHost ah = parseArangoHost(fallbackArangoHost);
+			final ArangoHost ah = parseArangoHost(fallbackArangoHost);
 			if (ah != null) {
 				addFallbackArangoHost(ah);
 			}
 		}
 
-		String timeoutProperty = prop.getProperty("timeout");
+		final String timeoutProperty = prop.getProperty("timeout");
 		if (timeoutProperty != null) {
 			setTimeout(Integer.parseInt(timeoutProperty));
 		}
 
-		String connectionTimeoutProperty = prop.getProperty("connectionTimeout");
+		final String connectionTimeoutProperty = prop.getProperty("connectionTimeout");
 		if (connectionTimeoutProperty != null) {
 			setConnectionTimeout(Integer.parseInt(connectionTimeoutProperty));
 		}
 
-		String proxyHostProperty = prop.getProperty("proxy.host");
+		final String proxyHostProperty = prop.getProperty("proxy.host");
 		if (proxyHostProperty != null) {
 			setProxyHost(proxyHostProperty);
 		}
 
-		String proxyPortProperty = prop.getProperty("proxy.port");
+		final String proxyPortProperty = prop.getProperty("proxy.port");
 		if (proxyPortProperty != null) {
 			setProxyPort(Integer.parseInt(proxyPortProperty));
 		}
 
-		String maxPerConnectionProperty = prop.getProperty("maxPerConnection");
+		final String maxPerConnectionProperty = prop.getProperty("maxPerConnection");
 		if (maxPerConnectionProperty != null) {
 			setMaxPerConnection(Integer.parseInt(maxPerConnectionProperty));
 		}
 
-		String maxTotalConnectionProperty = prop.getProperty("maxTotalConnection");
+		final String maxTotalConnectionProperty = prop.getProperty("maxTotalConnection");
 		if (maxTotalConnectionProperty != null) {
 			setMaxTotalConnection(Integer.parseInt(maxTotalConnectionProperty));
 		}
 
-		String retryCountProperty = prop.getProperty("retryCount");
+		final String retryCountProperty = prop.getProperty("retryCount");
 		if (retryCountProperty != null) {
 			setRetryCount(Integer.parseInt(retryCountProperty));
 		}
 
-		String connnectRetryCount = prop.getProperty("connnectRetryCount");
+		final String connnectRetryCount = prop.getProperty("connnectRetryCount");
 		if (connnectRetryCount != null) {
 			setConnectRetryCount(Integer.parseInt(connnectRetryCount));
 		}
 
-		String connectRetryWaitProperty = prop.getProperty("connectRetryWait");
+		final String connectRetryWaitProperty = prop.getProperty("connectRetryWait");
 		if (connectRetryWaitProperty != null) {
 			setConnectRetryWait(Integer.parseInt(connectRetryWaitProperty));
 		}
 
-		String userProperty = prop.getProperty("user");
+		final String userProperty = prop.getProperty("user");
 		if (userProperty != null) {
 			setUser(userProperty);
 		}
 
-		String passwordProperty = prop.getProperty("password");
+		final String passwordProperty = prop.getProperty("password");
 		if (passwordProperty != null) {
 			setPassword(passwordProperty);
 		}
 
-		String defaultDatabaseProperty = prop.getProperty("defaultDatabase");
+		final String defaultDatabaseProperty = prop.getProperty("defaultDatabase");
 		if (defaultDatabaseProperty != null) {
 			setDefaultDatabase(defaultDatabaseProperty);
 		}
 
-		String enableCURLLoggerProperty = prop.getProperty("enableCURLLogger");
+		final String enableCURLLoggerProperty = prop.getProperty("enableCURLLogger");
 		if (enableCURLLoggerProperty != null) {
 			setEnableCURLLogger(Boolean.parseBoolean(enableCURLLoggerProperty));
 		}
 
-		String validateAfterInactivityProperty = prop.getProperty("validateAfterInactivity");
+		final String validateAfterInactivityProperty = prop.getProperty("validateAfterInactivity");
 		if (validateAfterInactivityProperty != null) {
 			setValidateAfterInactivity(Integer.parseInt(validateAfterInactivityProperty));
 		}
 
-		String batchSizeProperty = prop.getProperty("batchSize");
+		final String batchSizeProperty = prop.getProperty("batchSize");
 		if (batchSizeProperty != null) {
 			setBatchSize(Integer.parseInt(batchSizeProperty));
 		}
 
-		String useSslProperty = prop.getProperty("useSsl");
+		final String useSslProperty = prop.getProperty("useSsl");
 		if (useSslProperty != null) {
 			setUseSsl(Boolean.parseBoolean(useSslProperty));
 		}
 
-		String sslTrustStoreProperty = prop.getProperty("sslTrustStore");
+		final String sslTrustStoreProperty = prop.getProperty("sslTrustStore");
 		if (sslTrustStoreProperty != null) {
 			setSslTrustStore(sslTrustStoreProperty);
 		}
 	}
 
-	private ArangoHost parseArangoHost(String str) {
+	private ArangoHost parseArangoHost(final String str) {
 		if (str == null) {
 			return null;
 		}
 
-		String[] split = str.split(":", 2);
+		final String[] split = str.split(":", 2);
 		if (split.length != 2) {
 			return null;
 		}
@@ -304,13 +304,13 @@ public class ArangoConfigure {
 	}
 
 	public String getBaseUrl() {
-		ArangoHost currentHost = getCurrentHost();
+		final ArangoHost currentHost = getCurrentHost();
 
 		return (useSsl ? "https://" : "http://") + currentHost.getHost() + ":" + currentHost.getPort();
 	}
 
 	public String getEndpoint() {
-		ArangoHost currentHost = getCurrentHost();
+		final ArangoHost currentHost = getCurrentHost();
 
 		return (useSsl ? "ssl://" : "tcp://") + currentHost.getHost() + ":" + currentHost.getPort();
 	}
@@ -343,45 +343,6 @@ public class ArangoConfigure {
 
 	public static int getDefaultMaxConnection() {
 		return DEFAULT_MAX_CONNECTION;
-	}
-
-	/**
-	 * Get the server port number
-	 * 
-	 * Don't use method. Please use {@link #getArangoHost() getArangoHost}
-	 * 
-	 * @deprecated
-	 * @return the port number
-	 */
-	@Deprecated
-	public int getClientPort() {
-		return arangoHosts.get(0).getPort();
-	}
-
-	/**
-	 * Get the server port number
-	 * 
-	 * Don't use method. Please use {@link #getArangoHost() getArangoHost}
-	 * 
-	 * @deprecated
-	 * @return the port number
-	 */
-	@Deprecated
-	public int getPort() {
-		return arangoHosts.get(0).getPort();
-	}
-
-	/**
-	 * Get the database host name
-	 * 
-	 * Don't use method. Please use {@link #getArangoHost() getArangoHost}
-	 * 
-	 * @deprecated
-	 * @return the host name
-	 */
-	@Deprecated
-	public String getHost() {
-		return arangoHosts.get(0).getHost();
 	}
 
 	/**
@@ -418,58 +379,13 @@ public class ArangoConfigure {
 	}
 
 	/**
-	 * Set the port number of the database
-	 * 
-	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
-	 * setArangoHost}
-	 * 
-	 * @param clientPort
-	 *            the port number
-	 * @deprecated
-	 */
-	@Deprecated
-	public void setClinetPort(int clientPort) {
-		arangoHosts.get(0).setPort(clientPort);
-	}
-
-	/**
-	 * Set the port number of the database
-	 * 
-	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
-	 * setArangoHost}
-	 * 
-	 * @deprecated
-	 * @param port
-	 *            the port number
-	 */
-	@Deprecated
-	public void setPort(int port) {
-		arangoHosts.get(0).setPort(port);
-	}
-
-	/**
-	 * Set the host name of the database
-	 * 
-	 * Don't use this method. Please use {@link #setArangoHost(ArangoHost)
-	 * setArangoHost}
-	 * 
-	 * @deprecated
-	 * @param host
-	 *            the host name
-	 */
-	@Deprecated
-	public void setHost(String host) {
-		arangoHosts.get(0).setHost(host);
-	}
-
-	/**
 	 * Set the host name and port of the database
 	 * 
 	 * @param arangoHost
 	 *            the host name and port
 	 */
-	public void setArangoHost(ArangoHost arangoHost) {
-		ArangoHost host = arangoHosts.get(0);
+	public void setArangoHost(final ArangoHost arangoHost) {
+		final ArangoHost host = arangoHosts.get(0);
 		host.setHost(arangoHost.getHost());
 		host.setPort(arangoHost.getPort());
 	}
@@ -480,31 +396,31 @@ public class ArangoConfigure {
 	 * @param arangoHost
 	 *            the host name and port
 	 */
-	public void addFallbackArangoHost(ArangoHost arangoHost) {
+	public void addFallbackArangoHost(final ArangoHost arangoHost) {
 		arangoHosts.add(arangoHost);
 	}
 
-	public void setConnectionTimeout(int connectionTimeout) {
+	public void setConnectionTimeout(final int connectionTimeout) {
 		this.connectionTimeout = connectionTimeout;
 	}
 
-	public void setTimeout(int timeout) {
+	public void setTimeout(final int timeout) {
 		this.timeout = timeout;
 	}
 
-	public void setMaxTotalConnection(int maxTotalConnection) {
+	public void setMaxTotalConnection(final int maxTotalConnection) {
 		this.maxTotalConnection = maxTotalConnection;
 	}
 
-	public void setMaxPerConnection(int maxPerConnection) {
+	public void setMaxPerConnection(final int maxPerConnection) {
 		this.maxPerConnection = maxPerConnection;
 	}
 
-	public void setProxyHost(String proxyHost) {
+	public void setProxyHost(final String proxyHost) {
 		this.proxyHost = proxyHost;
 	}
 
-	public void setProxyPort(int proxyPort) {
+	public void setProxyPort(final int proxyPort) {
 		this.proxyPort = proxyPort;
 	}
 
@@ -512,7 +428,7 @@ public class ArangoConfigure {
 		return retryCount;
 	}
 
-	public void setRetryCount(int retryCount) {
+	public void setRetryCount(final int retryCount) {
 		this.retryCount = retryCount;
 	}
 
@@ -520,7 +436,7 @@ public class ArangoConfigure {
 		return httpManager;
 	}
 
-	public void setHttpManager(BatchHttpManager httpManager) {
+	public void setHttpManager(final BatchHttpManager httpManager) {
 		this.httpManager = httpManager;
 	}
 
@@ -532,11 +448,11 @@ public class ArangoConfigure {
 		return password;
 	}
 
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		this.user = user;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 
@@ -550,7 +466,7 @@ public class ArangoConfigure {
 	 * 
 	 * @param defaultDatabase
 	 */
-	public void setDefaultDatabase(String defaultDatabase) {
+	public void setDefaultDatabase(final String defaultDatabase) {
 		this.defaultDatabase = defaultDatabase;
 	}
 
@@ -558,7 +474,7 @@ public class ArangoConfigure {
 		return enableCURLLogger;
 	}
 
-	public void setEnableCURLLogger(boolean enableCURLLogger) {
+	public void setEnableCURLLogger(final boolean enableCURLLogger) {
 		this.enableCURLLogger = enableCURLLogger;
 	}
 
@@ -566,7 +482,7 @@ public class ArangoConfigure {
 		return validateAfterInactivity;
 	}
 
-	public void setValidateAfterInactivity(int validateAfterInactivity) {
+	public void setValidateAfterInactivity(final int validateAfterInactivity) {
 		this.validateAfterInactivity = validateAfterInactivity;
 	}
 
@@ -580,7 +496,7 @@ public class ArangoConfigure {
 	 * @param connectRetryCount
 	 *            number of connect retries
 	 */
-	public void setConnectRetryCount(int connectRetryCount) {
+	public void setConnectRetryCount(final int connectRetryCount) {
 		this.connectRetryCount = connectRetryCount;
 	}
 
@@ -594,7 +510,7 @@ public class ArangoConfigure {
 	 * @param connectRetryWait
 	 *            milliseconds to wait
 	 */
-	public void setConnectRetryWait(int connectRetryWait) {
+	public void setConnectRetryWait(final int connectRetryWait) {
 		this.connectRetryWait = connectRetryWait;
 	}
 
@@ -602,7 +518,7 @@ public class ArangoConfigure {
 		return batchSize;
 	}
 
-	public void setBatchSize(int batchSize) {
+	public void setBatchSize(final int batchSize) {
 		this.batchSize = batchSize;
 	}
 
@@ -616,7 +532,7 @@ public class ArangoConfigure {
 	 * @param useSsl
 	 *            set true to use HTTPS (default false)
 	 */
-	public void setUseSsl(boolean useSsl) {
+	public void setUseSsl(final boolean useSsl) {
 		this.useSsl = useSsl;
 	}
 
@@ -631,7 +547,7 @@ public class ArangoConfigure {
 	 * 
 	 * @param sslContext
 	 */
-	public void setSslContext(SSLContext sslContext) {
+	public void setSslContext(final SSLContext sslContext) {
 		this.sslContext = sslContext;
 	}
 
@@ -646,7 +562,7 @@ public class ArangoConfigure {
 	 * 
 	 * @param sslTrustStore
 	 */
-	public void setSslTrustStore(String sslTrustStore) {
+	public void setSslTrustStore(final String sslTrustStore) {
 		this.sslTrustStore = sslTrustStore;
 	}
 

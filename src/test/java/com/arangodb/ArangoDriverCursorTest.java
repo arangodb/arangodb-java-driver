@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.WarningEntity;
+import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
 
 /**
@@ -75,7 +76,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 	public void test_validateQuery_400_2() throws ArangoException {
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQuery() throws ArangoException {
 
@@ -100,16 +100,18 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			final CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01> executeQuery(query, bindVars,
-				TestComplexEntity01.class, true, 20);
-			assertThat(result.size(), is(10));
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+			aqlQueryOptions.setBatchSize(20);
+			aqlQueryOptions.setCount(true);
+			final DocumentCursor<TestComplexEntity01> result = driver.<TestComplexEntity01> executeDocumentQuery(query,
+				bindVars, aqlQueryOptions, TestComplexEntity01.class);
+			assertThat(result.asEntityList().size(), is(10));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(false));
 		}
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQuery_2() throws ArangoException {
 
@@ -135,9 +137,12 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// ちまちまとる範囲
 		long cursorId;
 		{
-			final CursorEntity<TestComplexEntity01> result = driver.executeQuery(query, bindVars,
-				TestComplexEntity01.class, true, 3);
-			assertThat(result.size(), is(3));
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+			aqlQueryOptions.setBatchSize(3);
+			aqlQueryOptions.setCount(true);
+			final DocumentCursor<TestComplexEntity01> result = driver.executeDocumentQuery(query, bindVars,
+				aqlQueryOptions, TestComplexEntity01.class);
+			assertThat(result.asEntityList().size(), is(3));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(true));
 			assertThat(result.getCursorId(), is(not(-1L)));
@@ -177,7 +182,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQueryFullCount() throws ArangoException {
 
@@ -202,9 +206,13 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			final CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01> executeQuery(query, bindVars,
-				TestComplexEntity01.class, true, 1, true);
-			assertThat(result.size(), is(1));
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+			aqlQueryOptions.setBatchSize(1);
+			aqlQueryOptions.setCount(true);
+			aqlQueryOptions.setFullCount(true);
+			final DocumentCursor<TestComplexEntity01> result = driver.<TestComplexEntity01> executeDocumentQuery(query,
+				bindVars, aqlQueryOptions, TestComplexEntity01.class);
+			assertThat(result.asEntityList().size(), is(1));
 			assertThat(result.getCount(), is(2));
 			assertThat(result.getFullCount(), is(90));
 			assertThat(result.hasMore(), is(true));
@@ -212,7 +220,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_executeQueryUniqueResult() throws ArangoException {
 
@@ -237,9 +244,12 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 		// 全件とれる範囲
 		{
-			final CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01> executeQuery(query, bindVars,
-				TestComplexEntity01.class, true, 2);
-			assertThat(result.size(), is(2));
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+			aqlQueryOptions.setBatchSize(2);
+			aqlQueryOptions.setCount(true);
+			final DocumentCursor<TestComplexEntity01> result = driver.<TestComplexEntity01> executeDocumentQuery(query,
+				bindVars, aqlQueryOptions, TestComplexEntity01.class);
+			assertThat(result.asEntityList().size(), is(2));
 			assertThat(result.getCount(), is(2));
 			String msg = "";
 			try {
@@ -254,11 +264,14 @@ public class ArangoDriverCursorTest extends BaseTest {
 		// "SELECT t FROM unit_test_query_test t WHERE t.age >= @age@";
 		query = "FOR t IN unit_test_query_test FILTER t.age == @age LIMIT 2 RETURN t";
 		{
-			final CursorEntity<TestComplexEntity01> result = driver.<TestComplexEntity01> executeQuery(query, bindVars,
-				TestComplexEntity01.class, true, 2);
-			assertThat(result.size(), is(1));
+			final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+			aqlQueryOptions.setBatchSize(2);
+			aqlQueryOptions.setCount(true);
+			final DocumentCursor<TestComplexEntity01> result = driver.<TestComplexEntity01> executeDocumentQuery(query,
+				bindVars, aqlQueryOptions, TestComplexEntity01.class);
+			assertThat(result.asEntityList().size(), is(1));
 			assertThat(result.getCount(), is(1));
-			final TestComplexEntity01 entity = result.getUniqueResult();
+			final TestComplexEntity01 entity = result.getUniqueResult().getEntity();
 			assertThat(entity.getAge(), is(10));
 		}
 	}
