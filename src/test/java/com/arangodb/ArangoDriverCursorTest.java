@@ -283,6 +283,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 		}
 		driver.truncateCollection(collectionName);
 
+		driver.setDefaultDatabase(null);
 		final String query = "return _users + 1";
 		final Map<String, Object> bindVars = new HashMap<String, Object>();
 		final CursorResult<Long> cursor = driver.executeAqlQuery(query, bindVars, null, Long.class);

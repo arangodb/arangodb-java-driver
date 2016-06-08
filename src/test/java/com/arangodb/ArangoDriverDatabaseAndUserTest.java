@@ -77,21 +77,11 @@ public class ArangoDriverDatabaseAndUserTest {
 			new UserEntity("user3", "pass3", true, new MapBuilder().put("attr1", "value1").get()),
 			new UserEntity("user4", "pass4", false, new MapBuilder().put("attr2", "value2").get()));
 		assertThat(entity.getResult(), is(true));
+		driver.grantDatabaseAccess("user1", "_system");
+		driver.grantDatabaseAccess("user4", DATABASE);
 
 		// change default db
-		try {
-			driver.createUser("user1", "pass1", true, null);
-		} catch (final ArangoException e) {
-		}
 		driver.setDefaultDatabase(DATABASE);
-
-		// root user cannot access
-		try {
-			driver.getUsers();
-			fail();
-		} catch (final ArangoException e) {
-			assertThat(e.isUnauthorized(), is(true));
-		}
 
 		// user1 can access
 		configure.setUser("user1");
@@ -99,7 +89,7 @@ public class ArangoDriverDatabaseAndUserTest {
 		final StringsResultEntity res2 = driver.getDatabases(true);
 		assertThat(res2.getResult(), is(Arrays.asList("_system", DATABASE)));
 
-		// user2 cannot access
+		// user2 cannot access (inactive)
 		configure.setUser("user2");
 		configure.setPassword("pass2");
 		try {
@@ -109,9 +99,11 @@ public class ArangoDriverDatabaseAndUserTest {
 			assertThat(e.isUnauthorized(), is(true));
 		}
 
+		configure.setUser("root");
+		configure.setPassword("");
+
 		final StringsResultEntity res3 = driver.getDatabases("user1", "pass1");
 		assertThat(res3.getResult(), is(Arrays.asList("_system", DATABASE)));
-
 	}
 
 }

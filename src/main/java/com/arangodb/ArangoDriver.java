@@ -101,6 +101,8 @@ import com.arangodb.util.TraversalQueryOptions;
  */
 public class ArangoDriver extends BaseArangoDriver {
 
+	private static final String DATABASE_SYSTEM = "_system";
+	private static final String COLLECTION_USERS = "_users";
 	private static final String GRAPH_NAME = "graphName";
 	private static final String VERTEX_EXAMPLE = "vertexExample";
 	private final ArangoConfigure configure;
@@ -2950,7 +2952,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public List<DocumentEntity<UserEntity>> getUsersDocument() throws ArangoException {
-		final DocumentCursor<UserEntity> documentCursor = executeSimpleAllDocuments("_users", 0, 0, UserEntity.class);
+		final DocumentCursor<UserEntity> documentCursor = simpleDriver.executeSimpleAllDocuments(DATABASE_SYSTEM,
+			COLLECTION_USERS, 0, 0, UserEntity.class);
 		return documentCursor.asList();
 	}
 
@@ -2961,7 +2964,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public List<UserEntity> getUsers() throws ArangoException {
-		final DocumentCursor<UserEntity> documentCursor = executeSimpleAllDocuments("_users", 0, 0, UserEntity.class);
+		final DocumentCursor<UserEntity> documentCursor = simpleDriver.executeSimpleAllDocuments(DATABASE_SYSTEM,
+			COLLECTION_USERS, 0, 0, UserEntity.class);
 		return documentCursor.asEntityList();
 	}
 
