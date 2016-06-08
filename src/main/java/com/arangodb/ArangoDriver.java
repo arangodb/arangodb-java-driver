@@ -2846,7 +2846,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param username
 	 *            the username as string
 	 * @param passwd
-	 *            the username as string
+	 *            the password as string
 	 * @param active
 	 *            if true the user is active
 	 * @param extra
@@ -2868,7 +2868,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param username
 	 *            the username as string
 	 * @param passwd
-	 *            the username as string
+	 *            the password as string
 	 * @param active
 	 *            if true the user is active
 	 * @param extra
@@ -2890,7 +2890,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param username
 	 *            the username as string
 	 * @param passwd
-	 *            the username as string
+	 *            the password as string
 	 * @param active
 	 *            if true the user is active
 	 * @param extra
