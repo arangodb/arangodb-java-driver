@@ -2859,7 +2859,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String passwd,
 		final Boolean active,
 		final Map<String, Object> extra) throws ArangoException {
-		return usersDriver.createUser(getDefaultDatabase(), username, passwd, active, extra);
+		return usersDriver.createUser(username, passwd, active, extra);
 	}
 
 	/**
@@ -2881,7 +2881,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String passwd,
 		final Boolean active,
 		final Map<String, Object> extra) throws ArangoException {
-		return usersDriver.replaceUser(getDefaultDatabase(), username, passwd, active, extra);
+		return usersDriver.replaceUser(username, passwd, active, extra);
 	}
 
 	/**
@@ -2903,7 +2903,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String passwd,
 		final Boolean active,
 		final Map<String, Object> extra) throws ArangoException {
-		return usersDriver.updateUser(getDefaultDatabase(), username, passwd, active, extra);
+		return usersDriver.updateUser(username, passwd, active, extra);
 	}
 
 	/**
@@ -2915,7 +2915,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteUser(final String username) throws ArangoException {
-		return usersDriver.deleteUser(getDefaultDatabase(), username);
+		return usersDriver.deleteUser(username);
 	}
 
 	/**
@@ -2927,7 +2927,20 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public UserEntity getUser(final String username) throws ArangoException {
-		return usersDriver.getUser(getDefaultDatabase(), username);
+		return usersDriver.getUser(username);
+	}
+
+	/**
+	 * Grants the User access to the given database.
+	 * 
+	 * @param username
+	 *            the username as string
+	 * @param database
+	 * @return
+	 * @throws ArangoException
+	 */
+	public DefaultEntity grantDatabaseAccess(String username, String database) throws ArangoException {
+		return usersDriver.grantDatabaseAccess(username, database);
 	}
 
 	/**

@@ -142,7 +142,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 			aqlQueryOptions.setCount(true);
 			final DocumentCursor<TestComplexEntity01> result = driver.executeDocumentQuery(query, bindVars,
 				aqlQueryOptions, TestComplexEntity01.class);
-			assertThat(result.asEntityList().size(), is(3));
 			assertThat(result.getCount(), is(10));
 			assertThat(result.hasMore(), is(true));
 			assertThat(result.getCursorId(), is(not(-1L)));
@@ -212,7 +211,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 			aqlQueryOptions.setFullCount(true);
 			final DocumentCursor<TestComplexEntity01> result = driver.<TestComplexEntity01> executeDocumentQuery(query,
 				bindVars, aqlQueryOptions, TestComplexEntity01.class);
-			assertThat(result.asEntityList().size(), is(1));
 			assertThat(result.getCount(), is(2));
 			assertThat(result.getFullCount(), is(90));
 			assertThat(result.hasMore(), is(true));
