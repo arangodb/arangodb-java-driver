@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -30,6 +31,24 @@ import org.junit.Test;
  *
  */
 public class ArangoDriverAuthTest {
+
+	private static final String USER_MIN_A = "user-A";
+	private static final String USER_A = "userA";
+	private static final String USER_B = "userB";
+	private static final String USER_JAP_A = "ゆーざーA";
+
+	@After
+	public void after() {
+		ArangoConfigure configure = new ArangoConfigure();
+		configure.init();
+		ArangoDriver driver = new ArangoDriver(configure);
+		for (String username : new String[] { USER_A, USER_B, USER_MIN_A, USER_JAP_A }) {
+			try {
+				driver.deleteUser(username);
+			} catch (ArangoException e) {
+			}
+		}
+	}
 
 	@Test
 	public void test_auth() throws ArangoException {
@@ -77,7 +96,7 @@ public class ArangoDriverAuthTest {
 		ArangoDriver driver = new ArangoDriver(configure);
 
 		// Create User
-		final String username = "userA";
+		final String username = USER_A;
 		try {
 			driver.createUser(username, "passA", true, null);
 		} catch (ArangoException e) {
@@ -108,15 +127,15 @@ public class ArangoDriverAuthTest {
 
 		// Create User
 		try {
-			driver.createUser("userB", "passB", false, null);
+			driver.createUser(USER_B, "passB", false, null);
 		} catch (ArangoException e) {
-			driver.replaceUser("userB", "passB", false, null);
+			driver.replaceUser(USER_B, "passB", false, null);
 		}
 
 		configure.shutdown();
 
 		configure = new ArangoConfigure();
-		configure.setUser("userB");
+		configure.setUser(USER_B);
 		configure.setPassword("passB");
 		configure.init();
 		driver = new ArangoDriver(configure);
@@ -146,15 +165,15 @@ public class ArangoDriverAuthTest {
 
 		// Create User
 		try {
-			driver.createUser("ゆーざーA", "pass", false, null);
+			driver.createUser(USER_JAP_A, "pass", false, null);
 		} catch (ArangoException e) {
-			driver.replaceUser("ゆーざーA", "pass", false, null);
+			driver.replaceUser(USER_JAP_A, "pass", false, null);
 		}
 
 		configure.shutdown();
 
 		ArangoConfigure configure2 = new ArangoConfigure();
-		configure2.setUser("ゆーざーA");
+		configure2.setUser(USER_JAP_A);
 		configure2.setPassword("pass");
 		configure2.init();
 		ArangoDriver driver2 = new ArangoDriver(configure2);
@@ -183,15 +202,15 @@ public class ArangoDriverAuthTest {
 
 		// Create User
 		try {
-			driver.createUser("user-A", "パスワード", false, null);
+			driver.createUser(USER_MIN_A, "パスワード", false, null);
 		} catch (ArangoException e) {
-			driver.replaceUser("user-A", "パスワード", false, null);
+			driver.replaceUser(USER_MIN_A, "パスワード", false, null);
 		}
 
 		configure.shutdown();
 
 		configure = new ArangoConfigure();
-		configure.setUser("user-A");
+		configure.setUser(USER_MIN_A);
 		configure.setPassword("パスワード");
 		configure.init();
 		driver = new ArangoDriver(configure);
