@@ -303,22 +303,20 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		assertEquals(201, vertexCursor.getCode());
 
 		final GraphVerticesOptions graphVerticesOptions = new GraphVerticesOptions();
-		graphVerticesOptions.setDirection(Direction.INBOUND);
-
-		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, null, graphVerticesOptions,
-			aqlQueryOptions);
-		assertEquals(2, vertexCursor.getCount());
-		assertEquals(201, vertexCursor.getCode());
-
 		final List<String> vertexCollectionRestriction = new ArrayList<String>();
 		vertexCollectionRestriction.add("from1-1");
 		graphVerticesOptions.setVertexCollectionRestriction(vertexCollectionRestriction);
 
 		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, null, graphVerticesOptions,
 			aqlQueryOptions);
-		assertEquals(0, vertexCursor.getCount());
+		assertEquals(2, vertexCursor.getCount());
 		assertEquals(201, vertexCursor.getCode());
 
+		vertexCursor = driver.graphGetVertexCursor(GRAPH_NAME, TestComplexEntity01.class, vertex1.getDocumentHandle(),
+			null, aqlQueryOptions);
+		assertEquals(201, vertexCursor.getCode());
+		assertEquals(1, vertexCursor.getCount());
+		assertEquals(vertex1.getDocumentHandle(), vertexCursor.getUniqueResult().getDocumentHandle());
 	}
 
 	@Test

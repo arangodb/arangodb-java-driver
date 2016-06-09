@@ -35,10 +35,10 @@ public class GraphQueryUtil {
 		if (vertexExample != null && String.class.isAssignableFrom(vertexExample.getClass())) {
 			sb.append("FOR v,e IN ");
 			appendDepth(graphEdgesOptions, sb);
-			appendDirection(graphEdgesOptions, sb);
+			appendDirection(graphEdgesOptions.getDirection(), sb);
 			sb.append(" @");
 			sb.append(VERTEX_EXAMPLE);
-			bindVars.put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample));
+			bindVars.put(VERTEX_EXAMPLE, vertexExample);
 		} else {
 			final List<String> startVertexCollectionRestriction = graphEdgesOptions
 					.getStartVertexCollectionRestriction();
@@ -65,7 +65,7 @@ public class GraphQueryUtil {
 			}
 			sb.append(" FOR v,e IN ");
 			appendDepth(graphEdgesOptions, sb);
-			appendDirection(graphEdgesOptions, sb);
+			appendDirection(graphEdgesOptions.getDirection(), sb);
 			sb.append(" start");
 		}
 		sb.append(" ");
@@ -78,9 +78,7 @@ public class GraphQueryUtil {
 			// remove last ,
 			sb.deleteCharAt(sb.length() - 1);
 		} else {
-			sb.append("GRAPH @");
-			sb.append(GRAPH_NAME);
-			bindVars.put(GRAPH_NAME, graphName);
+			appendGraphName(graphName, bindVars, sb);
 		}
 		appendFilter("e", graphEdgesOptions.getEdgeExamples(), sb);
 		appendFilter("v", graphEdgesOptions.getNeighborExamples(), sb);
@@ -98,6 +96,17 @@ public class GraphQueryUtil {
 		return query;
 	}
 
+	/**
+	 * @param graphName
+	 * @param bindVars
+	 * @param sb
+	 */
+	private static void appendGraphName(final String graphName, final MapBuilder bindVars, final StringBuilder sb) {
+		sb.append("GRAPH @");
+		sb.append(GRAPH_NAME);
+		bindVars.put(GRAPH_NAME, graphName);
+	}
+
 	private static void appendDepth(final GraphEdgesOptions graphEdgesOptions, final StringBuilder sb) {
 		final Integer minDepth = graphEdgesOptions.getMinDepth();
 		final Integer maxDepth = graphEdgesOptions.getMaxDepth();
@@ -109,10 +118,9 @@ public class GraphQueryUtil {
 		}
 	}
 
-	private static void appendDirection(final GraphEdgesOptions graphEdgesOptions, final StringBuilder sb) {
-		final String direction = graphEdgesOptions.getDirection() != null ? graphEdgesOptions.getDirection().name()
-				: Direction.ANY.name();
-		sb.append(direction);
+	private static void appendDirection(final Direction direction, final StringBuilder sb) {
+		final String directionName = direction != null ? direction.name() : Direction.ANY.name();
+		sb.append(directionName);
 	}
 
 	private static void appendFilter(final String var, final Object example, final StringBuilder sb)
@@ -167,7 +175,53 @@ public class GraphQueryUtil {
 		final Object vertexExample,
 		final GraphVerticesOptions graphVerticesOptions,
 		final MapBuilder bindVars) throws ArangoException {
-		return null;
+
+		// final String query = "for i in graph_vertices(@graphName ,
+		// @vertexExample, @options) return i";
+		// final Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME,
+		// graphName)
+		// .put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample))
+		// .put("options",
+		// JsonUtils.convertNullToMap(graphVerticesOptions)).get();
+
+		StringBuilder sb = new StringBuilder();
+		final boolean stringVertexExample = vertexExample != null
+				&& String.class.isAssignableFrom(vertexExample.getClass());
+		if (stringVertexExample) {
+			sb.append("RETURN ");
+			sb.append("DOCUMENT(");
+			sb.append("@");
+			sb.append(VERTEX_EXAMPLE);
+			bindVars.put(VERTEX_EXAMPLE, vertexExample);
+			sb.append(")");
+		} else {
+			final List<String> startVertexCollectionRestriction = graphVerticesOptions.getVertexCollectionRestriction();
+			final List<String> vertexCollections = startVertexCollectionRestriction != null
+					&& startVertexCollectionRestriction.size() > 0 ? startVertexCollectionRestriction
+							: driver.graphGetVertexCollections(graphName, true);
+			if (vertexCollections.size() == 1) {
+				sb.append("FOR start IN `");
+				sb.append(vertexCollections.get(0));
+				sb.append("`");
+				appendFilter("start", vertexExample, sb);
+			} else {
+				sb.append("FOR start IN UNION (");
+				for (String vertexCollection : vertexCollections) {
+					sb.append("(FOR start IN `");
+					sb.append(vertexCollection);
+					sb.append("`");
+					appendFilter("start", vertexExample, sb);
+					sb.append(" RETURN start),");
+				}
+				// remove last ,
+				sb.deleteCharAt(sb.length() - 1);
+				sb.append(")");
+			}
+			sb.append(" RETURN start");
+		}
+
+		String query = sb.toString();
+		return query;
 	}
 
 	public static String createShortestPathQuery(

@@ -81,7 +81,6 @@ import com.arangodb.util.DumpHandler;
 import com.arangodb.util.GraphEdgesOptions;
 import com.arangodb.util.GraphQueryUtil;
 import com.arangodb.util.GraphVerticesOptions;
-import com.arangodb.util.JsonUtils;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
 import com.arangodb.util.TraversalQueryOptions;
@@ -104,8 +103,6 @@ public class ArangoDriver extends BaseArangoDriver {
 
 	private static final String DATABASE_SYSTEM = "_system";
 	private static final String COLLECTION_USERS = "_users";
-	private static final String GRAPH_NAME = "graphName";
-	private static final String VERTEX_EXAMPLE = "vertexExample";
 	private final ArangoConfigure configure;
 	private final BatchHttpManager httpManager;
 
@@ -4439,11 +4436,15 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		validateCollectionName(graphName);
 
-		final String query = "for i in graph_vertices(@graphName , @vertexExample, @options) return i";
+		GraphVerticesOptions tmpGraphVerticesOptions = graphVerticesOptions;
+		if (tmpGraphVerticesOptions == null) {
+			tmpGraphVerticesOptions = new GraphVerticesOptions();
+		}
 
-		final Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName)
-				.put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample))
-				.put("options", JsonUtils.convertNullToMap(graphVerticesOptions)).get();
+		final MapBuilder mapBuilder = new MapBuilder();
+		final String query = GraphQueryUtil.createVerticesQuery(this, graphName, clazz, vertexExample,
+			tmpGraphVerticesOptions, mapBuilder);
+		final Map<String, Object> bindVars = mapBuilder.get();
 
 		return executeVertexQuery(query, bindVars, aqlQueryOptions, clazz);
 	}
