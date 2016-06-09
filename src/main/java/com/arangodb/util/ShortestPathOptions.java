@@ -10,7 +10,6 @@ public class ShortestPathOptions {
 	private List<String> edgeCollectionRestriction;
 	private List<String> startVertexCollectionRestriction;
 	private List<String> endVertexCollectionRestriction;
-	private Object edgeExamples;
 	private String weight;
 	private Long defaultWeight;
 	private Boolean includeData = Boolean.TRUE;
@@ -100,26 +99,6 @@ public class ShortestPathOptions {
 	 */
 	public ShortestPathOptions setEndVertexCollectionRestriction(List<String> endVertexCollectionRestriction) {
 		this.endVertexCollectionRestriction = endVertexCollectionRestriction;
-		return this;
-	}
-
-	/**
-	 * A filter example for the edges
-	 * 
-	 * @return A filter example for the edges
-	 */
-	public Object getEdgeExamples() {
-		return edgeExamples;
-	}
-
-	/**
-	 * A filter example for the edges
-	 * 
-	 * @param edgeExamples
-	 * @return this
-	 */
-	public ShortestPathOptions setEdgeExamples(Object edgeExamples) {
-		this.edgeExamples = edgeExamples;
 		return this;
 	}
 

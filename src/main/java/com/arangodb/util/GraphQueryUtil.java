@@ -300,7 +300,7 @@ public class GraphQueryUtil {
 			if (weight != null) {
 				sb.append(" OPTIONS {weightAttribute: @attribute, defaultWeight: @default} ");
 				sb.append(
-					" RETURN { v: v, e: e, d: IS_NULL(e) ? 0 : (IS_NUMBER(e[@attribute]) ? e[@attribute] : @default))}) ");
+					" RETURN { v: v, e: e, d: IS_NULL(e) ? 0 : (IS_NUMBER(e[@attribute]) ? e[@attribute] : @default)}) ");
 				bindVars.put("attribute", weight);
 				final Long defaultWeight = shortestPathOptions.getDefaultWeight();
 				bindVars.put("default", defaultWeight != null ? defaultWeight : 1);
@@ -317,7 +317,6 @@ public class GraphQueryUtil {
 		}
 
 		final String query = sb.toString();
-		System.out.println(query);
 		return query;
 	}
 }
