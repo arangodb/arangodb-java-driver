@@ -112,7 +112,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 	 * @return List<String>
 	 * @throws ArangoException
 	 */
-	List<String> getVertexCollections(String databaseName, String graphName) throws ArangoException;
+	List<String> getVertexCollections(String databaseName, String graphName, boolean excludeOrphan)
+			throws ArangoException;
 
 	/**
 	 * 

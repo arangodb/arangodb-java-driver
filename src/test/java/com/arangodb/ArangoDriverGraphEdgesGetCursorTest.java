@@ -37,7 +37,7 @@ import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.util.AqlQueryOptions;
-import com.arangodb.util.MapBuilder;
+import com.arangodb.util.GraphEdgesOptions;
 import com.arangodb.util.ShortestPathOptions;
 
 /**
@@ -228,16 +228,16 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		final Boolean count = true;
 		final Boolean fullCount = true;
 
-		final String query = "for i in graph_edges(@graphName, null, {includeData: true}) LIMIT 3 return i";
-		final Map<String, Object> bindVars = new MapBuilder().put("graphName", GRAPH_NAME).get();
+		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions();
+		graphEdgesOptions.setLimit(3);
 
-		final EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars,
-			getAqlQueryOptions(count, batchSize, fullCount), TestComplexEntity02.class);
+		final EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+			null, graphEdgesOptions, getAqlQueryOptions(count, batchSize, fullCount));
 
 		assertEquals(3, cursor.getCount());
 		assertEquals(201, cursor.getCode());
 		assertTrue(cursor.hasMore());
-		assertEquals(4, cursor.getFullCount());
+		assertEquals(8, cursor.getFullCount());
 		assertTrue(cursor.getCursorId() > -1L);
 	}
 
@@ -270,36 +270,28 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 		final Boolean count = true;
 		final Boolean fullCount = true;
 
-		// get outbound vertices of vertex1 (the should be 2)
-		final String query = "for i in graph_edges(@graphName, @vertex, @options) return i";
+		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions();
+		graphEdgesOptions.setDirection(Direction.OUTBOUND);
+		graphEdgesOptions.setIncludeData(true);
+		{
+			EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+				vertex1.getDocumentHandle(), graphEdgesOptions, getAqlQueryOptions(count, batchSize, fullCount));
 
-		// options bindVars
-		final Map<String, Object> options = new MapBuilder().put("direction", "outbound").put("includeData", true)
-				.get();
+			assertEquals(2, cursor.getCount());
+			assertEquals(201, cursor.getCode());
+			assertFalse(cursor.hasMore());
+			assertEquals(new Long(-1L), cursor.getCursorId());
+		}
+		{
+			// get outbound vertices of vertex2 (the should be no)
+			EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+				vertex2.getDocumentHandle(), graphEdgesOptions, getAqlQueryOptions(count, batchSize, fullCount));
 
-		// bindVars
-		Map<String, Object> bindVars = new MapBuilder().put("graphName", GRAPH_NAME)
-				.put("vertex", vertex1.getDocumentHandle()).put("options", options).get();
-
-		EdgeCursor<TestComplexEntity02> cursor = driver.executeEdgeQuery(query, bindVars,
-			getAqlQueryOptions(count, batchSize, fullCount), TestComplexEntity02.class);
-
-		assertEquals(2, cursor.getCount());
-		assertEquals(201, cursor.getCode());
-		assertFalse(cursor.hasMore());
-		assertEquals(new Long(-1L), cursor.getCursorId());
-
-		// get outbound vertices of vertex2 (the should be no)
-		bindVars = new MapBuilder().put("graphName", GRAPH_NAME).put("vertex", vertex2.getDocumentHandle())
-				.put("options", options).get();
-
-		cursor = driver.executeEdgeQuery(query, bindVars, getAqlQueryOptions(count, batchSize, fullCount),
-			TestComplexEntity02.class);
-
-		assertEquals(0, cursor.getCount());
-		assertEquals(201, cursor.getCode());
-		assertFalse(cursor.hasMore());
-		assertEquals(new Long(-1L), cursor.getCursorId());
+			assertEquals(0, cursor.getCount());
+			assertEquals(201, cursor.getCode());
+			assertFalse(cursor.hasMore());
+			assertEquals(new Long(-1L), cursor.getCursorId());
+		}
 
 	}
 

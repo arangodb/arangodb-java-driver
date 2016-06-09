@@ -79,6 +79,7 @@ import com.arangodb.impl.InternalBatchDriverImpl;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.DumpHandler;
 import com.arangodb.util.GraphEdgesOptions;
+import com.arangodb.util.GraphQueryUtil;
 import com.arangodb.util.GraphVerticesOptions;
 import com.arangodb.util.JsonUtils;
 import com.arangodb.util.MapBuilder;
@@ -3516,7 +3517,22 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public List<String> graphGetVertexCollections(final String graphName) throws ArangoException {
-		return graphDriver.getVertexCollections(getDefaultDatabase(), graphName);
+		return graphGetVertexCollections(graphName, false);
+	}
+
+	/**
+	 * Returns a list of all vertex collection of a graph that are defined in
+	 * the graphs edgeDefinitions (in "from", "to", and "orphanCollections")
+	 *
+	 * @param graphName
+	 *            The graph name.
+	 * @param excludeOrphan
+	 * @return List<String> List of the names of the vertex collections
+	 * @throws ArangoException
+	 */
+	public List<String> graphGetVertexCollections(final String graphName, final boolean excludeOrphan)
+			throws ArangoException {
+		return graphDriver.getVertexCollections(getDefaultDatabase(), graphName, excludeOrphan);
 	}
 
 	/**
@@ -4368,6 +4384,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return EdgeCursor<T>
 	 * @throws ArangoException
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> EdgeCursor<T> graphGetEdgeCursor(
 		final String graphName,
 		final Class<T> clazz,
@@ -4382,17 +4399,20 @@ public class ArangoDriver extends BaseArangoDriver {
 
 		validateCollectionName(graphName);
 
-		final String query = "for i in graph_edges(@graphName, @vertexExample, @options) return i";
-		final Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME, graphName)
-				.put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample))
-				.put("options", JsonUtils.convertNullToMap(tmpGraphEdgesOptions)).get();
+		final MapBuilder mapBuilder = new MapBuilder();
+		final String query = GraphQueryUtil.createEdgeQuery(this, graphName, clazz, vertexExample, tmpGraphEdgesOptions,
+			mapBuilder);
+		final Map<String, Object> bindVars = mapBuilder.get();
 
 		AqlQueryOptions tmpAqlQueryOptions = aqlQueryOptions;
 		if (tmpAqlQueryOptions == null) {
 			tmpAqlQueryOptions = getDefaultAqlQueryOptions().setCount(true);
 		}
 
-		return executeEdgeQuery(query, bindVars, tmpAqlQueryOptions, clazz);
+		DocumentCursorResult<T, EdgeEntity<T>> cursor = executeAqlQueryWithDocumentCursorResult(query, bindVars,
+			tmpAqlQueryOptions, EdgeEntity.class, clazz);
+
+		return new EdgeCursor<T>(cursor);
 	}
 
 	/**

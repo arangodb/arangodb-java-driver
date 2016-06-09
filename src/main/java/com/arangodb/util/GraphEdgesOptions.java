@@ -15,8 +15,8 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 	private Object neighborExamples;
 	private Integer minDepth;
 	private Integer maxDepth;
-	private Integer maxIterations;
-	private Boolean includeData = Boolean.TRUE;
+	private Integer limit;
+	private Boolean includeData = Boolean.TRUE;// false = i._id, true = i
 
 	/**
 	 * The direction of the edges as a string. Possible values are outbound,
@@ -194,25 +194,12 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 		return this;
 	}
 
-	/**
-	 * the maximum number of iterations that the traversal is allowed to
-	 * perform. It is sensible to set this number so unbounded traversals
-	 * 
-	 * @return the maximum number of iterations
-	 */
-	public Integer getMaxIterations() {
-		return maxIterations;
+	public Integer getLimit() {
+		return limit;
 	}
 
-	/**
-	 * the maximum number of iterations that the traversal is allowed to
-	 * perform. It is sensible to set this number so unbounded traversals
-	 * 
-	 * @return this
-	 * @param maxIterations
-	 */
-	public GraphEdgesOptions setMaxIterations(Integer maxIterations) {
-		this.maxIterations = maxIterations;
+	public GraphEdgesOptions setLimit(Integer limit) {
+		this.limit = limit;
 		return this;
 	}
 
@@ -248,7 +235,6 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 		putAttribute(mp, "neighborExamples", neighborExamples);
 		putAttribute(mp, "minDepth", minDepth);
 		putAttribute(mp, "maxDepth", maxDepth);
-		putAttribute(mp, "maxIterations", maxIterations);
 		putAttribute(mp, "includeData", includeData);
 
 		return mp.get();

@@ -53,6 +53,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	private static final String UNKNOWN_ERROR = "unknown error";
 	private static final String VERTEX = "/vertex";
 	private static final String EDGE = "/edge";
+	private static final String EXCLUDE_ORPHAN = "excludeOrphan";
 
 	InternalGraphDriverImpl(final ArangoConfigure configure, final InternalCursorDriver cursorDriver,
 		final HttpManager httpManager) {
@@ -146,10 +147,14 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 	}
 
 	@Override
-	public List<String> getVertexCollections(final String databaseName, final String graphName) throws ArangoException {
+	public List<String> getVertexCollections(
+		final String databaseName,
+		final String graphName,
+		final boolean excludeOrphan) throws ArangoException {
 		validateCollectionName(graphName);
-		final HttpResponseEntity res = httpManager
-				.doGet(createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX));
+		final HttpResponseEntity res = httpManager.doGet(
+			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX),
+			new MapBuilder().put(EXCLUDE_ORPHAN, excludeOrphan).get());
 
 		if (wrongResult(res)) {
 			throw new ArangoException(UNKNOWN_ERROR);
