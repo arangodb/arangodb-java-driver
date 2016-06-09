@@ -176,14 +176,6 @@ public class GraphQueryUtil {
 		final GraphVerticesOptions graphVerticesOptions,
 		final MapBuilder bindVars) throws ArangoException {
 
-		// final String query = "for i in graph_vertices(@graphName ,
-		// @vertexExample, @options) return i";
-		// final Map<String, Object> bindVars = new MapBuilder().put(GRAPH_NAME,
-		// graphName)
-		// .put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample))
-		// .put("options",
-		// JsonUtils.convertNullToMap(graphVerticesOptions)).get();
-
 		StringBuilder sb = new StringBuilder();
 		final boolean stringVertexExample = vertexExample != null
 				&& String.class.isAssignableFrom(vertexExample.getClass());
