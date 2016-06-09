@@ -218,8 +218,9 @@ public class GraphEdgesOptions {
 	 * 
 	 * @since ArangoDB 2.6
 	 */
-	public void setIncludeData(Boolean includeData) {
+	public GraphEdgesOptions setIncludeData(Boolean includeData) {
 		this.includeData = includeData;
+		return this;
 	}
 
 }

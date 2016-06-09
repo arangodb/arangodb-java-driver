@@ -1,18 +1,16 @@
 package com.arangodb.util;
 
 import java.util.List;
-import java.util.Map;
 
 import com.arangodb.Direction;
 
-public class ShortestPathOptions extends AbstractOptions implements OptionsInterface {
+public class ShortestPathOptions {
 
 	private Direction direction;
 	private List<String> edgeCollectionRestriction;
 	private List<String> startVertexCollectionRestriction;
 	private List<String> endVertexCollectionRestriction;
 	private Object edgeExamples;
-	private String algorithm;
 	private String weight;
 	private Long defaultWeight;
 	private Boolean includeData = Boolean.TRUE;
@@ -126,30 +124,6 @@ public class ShortestPathOptions extends AbstractOptions implements OptionsInter
 	}
 
 	/**
-	 * The algorithm to calculate the shortest paths. If both start and end
-	 * vertex examples are empty Floyd-Warshall is used, otherwise the default
-	 * is Dijkstra.
-	 * 
-	 * @return The algorithm to calculate the shortest paths.
-	 */
-	public String getAlgorithm() {
-		return algorithm;
-	}
-
-	/**
-	 * The algorithm to calculate the shortest paths. If both start and end
-	 * vertex examples are empty Floyd-Warshall is used, otherwise the default
-	 * is Dijkstra.
-	 * 
-	 * @param algorithm
-	 * @return this
-	 */
-	public ShortestPathOptions setAlgorithm(String algorithm) {
-		this.algorithm = algorithm;
-		return this;
-	}
-
-	/**
 	 * The name of the attribute of the edges containing the length as a string.
 	 * 
 	 * @return The name of the attribute
@@ -196,31 +170,23 @@ public class ShortestPathOptions extends AbstractOptions implements OptionsInter
 	}
 
 	/**
-	 * Returns a map of the options
+	 * Get include data
 	 * 
-	 * @return a map
+	 * @return
 	 */
-	@Override
-	public Map<String, Object> toMap() {
-		MapBuilder mp = new MapBuilder();
-
-		putAttributeToLower(mp, "direction", direction);
-		putAttributeCollection(mp, "edgeCollectionRestriction", edgeCollectionRestriction);
-		putAttributeCollection(mp, "startVertexCollectionRestriction", startVertexCollectionRestriction);
-		putAttributeCollection(mp, "endVertexCollectionRestriction", endVertexCollectionRestriction);
-		putAttribute(mp, "edgeExamples", edgeExamples);
-		putAttribute(mp, "algorithm", algorithm);
-		putAttribute(mp, "weight", weight);
-		putAttribute(mp, "defaultWeight", defaultWeight);
-
-		if (includeData != null) {
-			mp.put("includeData", includeData);
-			MapBuilder mp2 = new MapBuilder();
-			mp2.put("edges", true);
-			mp2.put("vertices", true);
-			mp.put("includePath", mp2.get());
-		}
-		return mp.get();
+	public Boolean getIncludeData() {
+		return includeData;
 	}
 
+	/**
+	 * set include data to be compatible with older versions of AnrangoDB
+	 * 
+	 * @param includeData
+	 * 
+	 * @since ArangoDB 2.6
+	 */
+	public ShortestPathOptions setIncludeData(Boolean includeData) {
+		this.includeData = includeData;
+		return this;
+	}
 }

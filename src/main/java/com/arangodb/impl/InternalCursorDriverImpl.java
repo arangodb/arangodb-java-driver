@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
+import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.CursorRawResult;
 import com.arangodb.CursorResult;
@@ -34,6 +35,7 @@ import com.arangodb.entity.ShortestPathEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.AqlQueryOptions;
+import com.arangodb.util.GraphQueryUtil;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
 import com.google.gson.JsonObject;
@@ -171,19 +173,21 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		final ShortestPathOptions shortestPathOptions,
 		final AqlQueryOptions aqlQueryOptions,
 		final Class<V> vertexClass,
-		final Class<E> edgeClass) throws ArangoException {
+		final Class<E> edgeClass,
+		final ArangoDriver driver) throws ArangoException {
 
 		validateCollectionName(graphName);
 
-		final String query = "for i in graph_shortest_path(@graphName, @startVertexExample, @endVertexExample, @options) return i";
+		ShortestPathOptions tmpShortestPathOptions = shortestPathOptions;
+		if (tmpShortestPathOptions == null) {
+			tmpShortestPathOptions = new ShortestPathOptions();
+		}
 
-		final Map<String, Object> options = shortestPathOptions == null ? new MapBuilder().get()
-				: shortestPathOptions.toMap();
+		MapBuilder mapBuilder = new MapBuilder();
+		final String query = GraphQueryUtil.createShortestPathQuery(driver, database, graphName, startVertexExample,
+			endVertexExample, tmpShortestPathOptions, vertexClass, edgeClass, mapBuilder);
 
-		final Map<String, Object> bindVars = new MapBuilder().put("graphName", graphName)
-				.put("startVertexExample", startVertexExample).put("endVertexExample", endVertexExample)
-				.put("options", options).get();
-
+		final Map<String, Object> bindVars = mapBuilder.get();
 		final HttpResponseEntity res = getCursor(database, query, bindVars, aqlQueryOptions);
 
 		return createEntity(res, ShortestPathEntity.class, vertexClass, edgeClass);

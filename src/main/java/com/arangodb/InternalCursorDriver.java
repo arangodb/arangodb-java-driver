@@ -93,7 +93,8 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 		ShortestPathOptions shortestPathOptions,
 		AqlQueryOptions aqlQueryOptions,
 		Class<V> vertexClass,
-		Class<E> edgeClass) throws ArangoException;
+		Class<E> edgeClass,
+		ArangoDriver driver) throws ArangoException;
 
 	QueryTrackingPropertiesEntity getQueryTrackingProperties(String database) throws ArangoException;
 

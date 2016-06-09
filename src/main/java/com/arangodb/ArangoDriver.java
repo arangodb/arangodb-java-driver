@@ -4397,7 +4397,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		validateCollectionName(graphName);
 
 		final MapBuilder mapBuilder = new MapBuilder();
-		final String query = GraphQueryUtil.createEdgeQuery(this, graphName, clazz, vertexExample, tmpGraphEdgesOptions,
+		final String query = GraphQueryUtil.createEdgeQuery(this, graphName, vertexExample, tmpGraphEdgesOptions,
 			mapBuilder);
 		final Map<String, Object> bindVars = mapBuilder.get();
 
@@ -4442,8 +4442,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		}
 
 		final MapBuilder mapBuilder = new MapBuilder();
-		final String query = GraphQueryUtil.createVerticesQuery(this, graphName, clazz, vertexExample,
-			tmpGraphVerticesOptions, mapBuilder);
+		final String query = GraphQueryUtil.createVerticesQuery(this, graphName, vertexExample, tmpGraphVerticesOptions,
+			mapBuilder);
 		final Map<String, Object> bindVars = mapBuilder.get();
 
 		return executeVertexQuery(query, bindVars, aqlQueryOptions, clazz);
@@ -4495,7 +4495,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		}
 
 		return cursorDriver.getShortestPath(getDefaultDatabase(), graphName, startVertexExample, endVertexExample,
-			tmpShortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass);
+			tmpShortestPathOptions, getDefaultAqlQueryOptions(), vertexClass, edgeClass, this);
 	}
 
 	/**
