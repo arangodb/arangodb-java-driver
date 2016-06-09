@@ -1,11 +1,10 @@
 package com.arangodb.util;
 
 import java.util.List;
-import java.util.Map;
 
 import com.arangodb.Direction;
 
-public class GraphEdgesOptions extends AbstractOptions implements OptionsInterface {
+public class GraphEdgesOptions {
 
 	private Direction direction;
 	private List<String> edgeCollectionRestriction;
@@ -16,7 +15,7 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 	private Integer minDepth;
 	private Integer maxDepth;
 	private Integer limit;
-	private Boolean includeData = Boolean.TRUE;// false = i._id, true = i
+	private Boolean includeData = Boolean.TRUE;
 
 	/**
 	 * The direction of the edges as a string. Possible values are outbound,
@@ -221,23 +220,6 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 	 */
 	public void setIncludeData(Boolean includeData) {
 		this.includeData = includeData;
-	}
-
-	@Override
-	public Map<String, Object> toMap() {
-		MapBuilder mp = new MapBuilder();
-
-		putAttributeToLower(mp, "direction", direction);
-		putAttributeCollection(mp, "edgeCollectionRestriction", edgeCollectionRestriction);
-		putAttributeCollection(mp, "startVertexCollectionRestriction", startVertexCollectionRestriction);
-		putAttributeCollection(mp, "endVertexCollectionRestriction", endVertexCollectionRestriction);
-		putAttribute(mp, "edgeExamples", edgeExamples);
-		putAttribute(mp, "neighborExamples", neighborExamples);
-		putAttribute(mp, "minDepth", minDepth);
-		putAttribute(mp, "maxDepth", maxDepth);
-		putAttribute(mp, "includeData", includeData);
-
-		return mp.get();
 	}
 
 }

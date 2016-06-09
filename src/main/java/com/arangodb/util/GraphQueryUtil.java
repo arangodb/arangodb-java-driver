@@ -8,6 +8,7 @@ import com.arangodb.ArangoDriver;
 import com.arangodb.ArangoException;
 import com.arangodb.Direction;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -18,6 +19,7 @@ import com.google.gson.JsonObject;
 public class GraphQueryUtil {
 
 	private static final String AND = " && ";
+	private static final String OR = " || ";
 	private static final String GRAPH_NAME = "graphName";
 	private static final String VERTEX_EXAMPLE = "vertexExample";
 
@@ -31,33 +33,37 @@ public class GraphQueryUtil {
 
 		final StringBuilder sb = new StringBuilder();
 		if (vertexExample != null && String.class.isAssignableFrom(vertexExample.getClass())) {
-			sb.append("FOR v,i IN ");
+			sb.append("FOR v,e IN ");
 			appendDepth(graphEdgesOptions, sb);
 			appendDirection(graphEdgesOptions, sb);
 			sb.append(" @");
 			sb.append(VERTEX_EXAMPLE);
 			bindVars.put(VERTEX_EXAMPLE, JsonUtils.convertNullToMap(vertexExample));
 		} else {
-			final List<String> vertexCollections = driver.graphGetVertexCollections(graphName, true);
+			final List<String> startVertexCollectionRestriction = graphEdgesOptions
+					.getStartVertexCollectionRestriction();
+			final List<String> vertexCollections = startVertexCollectionRestriction != null
+					&& startVertexCollectionRestriction.size() > 0 ? startVertexCollectionRestriction
+							: driver.graphGetVertexCollections(graphName, true);
 			if (vertexCollections.size() == 1) {
 				sb.append("FOR start IN `");
 				sb.append(vertexCollections.get(0));
 				sb.append("`");
-				appendFilter(vertexExample, sb);
+				appendFilter("start", vertexExample, sb);
 			} else {
 				sb.append("FOR start IN UNION (");
 				for (String vertexCollection : vertexCollections) {
 					sb.append("(FOR start IN `");
 					sb.append(vertexCollection);
 					sb.append("`");
-					appendFilter(vertexExample, sb);
+					appendFilter("start", vertexExample, sb);
 					sb.append(" RETURN start),");
 				}
 				// remove last ,
 				sb.deleteCharAt(sb.length() - 1);
 				sb.append(")");
 			}
-			sb.append(" FOR v,i IN ");
+			sb.append(" FOR v,e IN ");
 			appendDepth(graphEdgesOptions, sb);
 			appendDirection(graphEdgesOptions, sb);
 			sb.append(" start");
@@ -76,12 +82,14 @@ public class GraphQueryUtil {
 			sb.append(GRAPH_NAME);
 			bindVars.put(GRAPH_NAME, graphName);
 		}
+		appendFilter("e", graphEdgesOptions.getEdgeExamples(), sb);
+		appendFilter("v", graphEdgesOptions.getNeighborExamples(), sb);
 		final Integer limit = graphEdgesOptions.getLimit();
 		if (limit != null) {
 			sb.append(" LIMIT ");
 			sb.append(limit.intValue());
 		}
-		sb.append(" RETURN distinct i");
+		sb.append(" RETURN distinct e");
 		if (graphEdgesOptions.getIncludeData() != null && !graphEdgesOptions.getIncludeData().booleanValue()) {
 			sb.append(".id");
 		}
@@ -107,22 +115,49 @@ public class GraphQueryUtil {
 		sb.append(direction);
 	}
 
-	private static void appendFilter(final Object vertexExample, final StringBuilder sb) {
-		Gson gson = new Gson();
-		final JsonElement json = gson.toJsonTree(vertexExample);
-		if (json.isJsonObject()) {
-			sb.append(" FILTER ");
-			final JsonObject jsonObject = json.getAsJsonObject();
-			final Set<Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
-			for (Entry<String, JsonElement> entry : entrySet) {
-				sb.append("start.`");
-				sb.append(entry.getKey());
-				sb.append("` == ");
-				sb.append(entry.getValue().toString());
-				sb.append(AND);
+	private static void appendFilter(final String var, final Object example, final StringBuilder sb)
+			throws ArangoException {
+		if (example != null) {
+			final Gson gson = new Gson();
+			final JsonElement json = gson.toJsonTree(example);
+			if (json.isJsonObject()) {
+				sb.append(" FILTER ");
+				appendObjectinFilter(var, json.getAsJsonObject(), sb);
+			} else if (json.isJsonArray()) {
+				sb.append(" FILTER ");
+				final JsonArray jsonArray = json.getAsJsonArray();
+				if (jsonArray.size() > 0) {
+					for (JsonElement jsonElement : jsonArray) {
+						if (jsonElement.isJsonObject()) {
+							sb.append("(");
+							appendObjectinFilter(var, jsonElement.getAsJsonObject(), sb);
+							sb.append(")");
+							sb.append(OR);
+						} else if (!jsonElement.isJsonNull()) {
+							throw new ArangoException("invalide format of entry in array example: "
+									+ example.getClass().getSimpleName() + ". only objects in array allowed.");
+						}
+					}
+					sb.delete(sb.length() - OR.length(), sb.length() - 1);
+				}
+			} else {
+				throw new ArangoException("invalide format of example: " + example.getClass().getSimpleName()
+						+ ". only object or array allowed.");
 			}
-			sb.delete(sb.length() - AND.length(), sb.length() - 1);
 		}
+	}
+
+	private static void appendObjectinFilter(final String var, final JsonObject jsonObject, final StringBuilder sb) {
+		final Set<Entry<String, JsonElement>> entrySet = jsonObject.entrySet();
+		for (Entry<String, JsonElement> entry : entrySet) {
+			sb.append(var);
+			sb.append(".`");
+			sb.append(entry.getKey());
+			sb.append("` == ");
+			sb.append(entry.getValue().toString());
+			sb.append(AND);
+		}
+		sb.delete(sb.length() - AND.length(), sb.length() - 1);
 	}
 
 	public static String createVerticesQuery(

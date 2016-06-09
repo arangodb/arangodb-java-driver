@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -293,6 +294,120 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 			assertEquals(new Long(-1L), cursor.getCursorId());
 		}
 
+	}
+
+	@Test
+	public void graphGetEdgeCursorWithEdgeExample() throws ArangoException {
+
+		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
+		final TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
+		final TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
+		final TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
+
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
+		final VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
+
+		final TestComplexEntity02 e1 = new TestComplexEntity02(1, 2, 3);
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex2.getDocumentHandle(), e1,
+			null);
+
+		final TestComplexEntity02 e2 = new TestComplexEntity02(4, 5, 6);
+		EdgeEntity<TestComplexEntity02> edge2 = driver.graphCreateEdge(GRAPH_NAME, "edge-1", null,
+			vertex1.getDocumentHandle(), vertex3.getDocumentHandle(), e2, null);
+
+		final TestComplexEntity02 e3 = new TestComplexEntity02(7, 8, 9);
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex2.getDocumentHandle(), e3,
+			null);
+
+		final TestComplexEntity02 e4 = new TestComplexEntity02(10, 11, 12);
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex3.getDocumentHandle(), e4,
+			null);
+
+		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions();
+		graphEdgesOptions.setEdgeExamples(e2);
+
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+			vertex1.getDocumentHandle(), graphEdgesOptions, getAqlQueryOptions(true, 10, true));
+
+		assertEquals(201, cursor.getCode());
+		assertEquals(1, cursor.getCount());
+		assertEquals(edge2.getDocumentHandle(), cursor.getUniqueResult().getDocumentHandle());
+	}
+
+	@Test
+	public void graphGetEdgeCursorWithNeighborExample() throws ArangoException {
+
+		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
+		final TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
+		final TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
+		final TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
+
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
+		final VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
+
+		final TestComplexEntity02 e1 = new TestComplexEntity02(1, 2, 3);
+		EdgeEntity<TestComplexEntity02> edge1 = driver.graphCreateEdge(GRAPH_NAME, "edge-1", null,
+			vertex1.getDocumentHandle(), vertex2.getDocumentHandle(), e1, null);
+
+		final TestComplexEntity02 e2 = new TestComplexEntity02(4, 5, 6);
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex3.getDocumentHandle(), e2,
+			null);
+
+		final TestComplexEntity02 e3 = new TestComplexEntity02(7, 8, 9);
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex2.getDocumentHandle(), e3,
+			null);
+
+		final TestComplexEntity02 e4 = new TestComplexEntity02(10, 11, 12);
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex3.getDocumentHandle(), e4,
+			null);
+
+		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions();
+		graphEdgesOptions.setNeighborExamples(new TestComplexEntity01(null, null, 36));
+
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+			vertex1.getDocumentHandle(), graphEdgesOptions, getAqlQueryOptions(true, 10, true));
+
+		assertEquals(201, cursor.getCode());
+		assertEquals(1, cursor.getCount());
+		assertEquals(edge1.getDocumentHandle(), cursor.getUniqueResult().getDocumentHandle());
+	}
+
+	@Test
+	public void graphGetEdgeCursorByExampleStartVertexRestriction() throws ArangoException {
+		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
+		final TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
+		final TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
+		final TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
+
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
+
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
+
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
+
+		final VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
+
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex2.getDocumentHandle(),
+			new TestComplexEntity02(1, 2, 3), null);
+
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex3.getDocumentHandle(),
+			new TestComplexEntity02(4, 5, 6), null);
+
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex2.getDocumentHandle(),
+			new TestComplexEntity02(7, 8, 9), null);
+
+		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions();
+		List<String> startVertexCollectionRestriction = new ArrayList<String>();
+		startVertexCollectionRestriction.add("from1-1");
+		graphEdgesOptions.setStartVertexCollectionRestriction(startVertexCollectionRestriction);
+
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+			new TestComplexEntity01(null, "A Simpson", null), graphEdgesOptions, getAqlQueryOptions(true, 10, true));
+		assertThat(cursor.getCount(), is(2));
 	}
 
 	@Test
