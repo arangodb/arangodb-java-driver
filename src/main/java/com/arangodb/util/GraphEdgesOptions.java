@@ -1,11 +1,10 @@
 package com.arangodb.util;
 
 import java.util.List;
-import java.util.Map;
 
 import com.arangodb.Direction;
 
-public class GraphEdgesOptions extends AbstractOptions implements OptionsInterface {
+public class GraphEdgesOptions {
 
 	private Direction direction;
 	private List<String> edgeCollectionRestriction;
@@ -15,7 +14,7 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 	private Object neighborExamples;
 	private Integer minDepth;
 	private Integer maxDepth;
-	private Integer maxIterations;
+	private Integer limit;
 	private Boolean includeData = Boolean.TRUE;
 
 	/**
@@ -194,25 +193,12 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 		return this;
 	}
 
-	/**
-	 * the maximum number of iterations that the traversal is allowed to
-	 * perform. It is sensible to set this number so unbounded traversals
-	 * 
-	 * @return the maximum number of iterations
-	 */
-	public Integer getMaxIterations() {
-		return maxIterations;
+	public Integer getLimit() {
+		return limit;
 	}
 
-	/**
-	 * the maximum number of iterations that the traversal is allowed to
-	 * perform. It is sensible to set this number so unbounded traversals
-	 * 
-	 * @return this
-	 * @param maxIterations
-	 */
-	public GraphEdgesOptions setMaxIterations(Integer maxIterations) {
-		this.maxIterations = maxIterations;
+	public GraphEdgesOptions setLimit(Integer limit) {
+		this.limit = limit;
 		return this;
 	}
 
@@ -232,26 +218,9 @@ public class GraphEdgesOptions extends AbstractOptions implements OptionsInterfa
 	 * 
 	 * @since ArangoDB 2.6
 	 */
-	public void setIncludeData(Boolean includeData) {
+	public GraphEdgesOptions setIncludeData(Boolean includeData) {
 		this.includeData = includeData;
-	}
-
-	@Override
-	public Map<String, Object> toMap() {
-		MapBuilder mp = new MapBuilder();
-
-		putAttributeToLower(mp, "direction", direction);
-		putAttributeCollection(mp, "edgeCollectionRestriction", edgeCollectionRestriction);
-		putAttributeCollection(mp, "startVertexCollectionRestriction", startVertexCollectionRestriction);
-		putAttributeCollection(mp, "endVertexCollectionRestriction", endVertexCollectionRestriction);
-		putAttribute(mp, "edgeExamples", edgeExamples);
-		putAttribute(mp, "neighborExamples", neighborExamples);
-		putAttribute(mp, "minDepth", minDepth);
-		putAttribute(mp, "maxDepth", maxDepth);
-		putAttribute(mp, "maxIterations", maxIterations);
-		putAttribute(mp, "includeData", includeData);
-
-		return mp.get();
+		return this;
 	}
 
 }

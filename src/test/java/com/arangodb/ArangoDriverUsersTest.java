@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,6 +46,7 @@ import com.arangodb.util.MapBuilder;
 public class ArangoDriverUsersTest extends BaseTest {
 
 	@Before
+	@After
 	public void setup() throws ArangoException {
 		// delete user
 		for (final String user : new String[] { "user1", "user2", "user3", "user4", "testuser", "テスト☆ユーザー", "user-A",
@@ -312,6 +314,8 @@ public class ArangoDriverUsersTest extends BaseTest {
 	@Test
 	public void test_get_users() throws ArangoException {
 
+		int expectedUserSize = driver.getUsers().size() + 3;
+
 		driver.createUser("user1", "pass1", true, null);
 		driver.createUser("user2", "pass2", false, null);
 		driver.createUser("user3", "pass3", true, new MapBuilder().put("key", "value").get());
@@ -326,7 +330,7 @@ public class ArangoDriverUsersTest extends BaseTest {
 		});
 
 		// validate
-		assertThat(users.size(), is(4)); // user1,2,3 and root
+		assertThat(users.size(), is(expectedUserSize)); // user1,2,3 and root
 		assertThat(users.get(0).getUsername(), is("root"));
 
 		assertThat(users.get(1).getUsername(), is("user1"));

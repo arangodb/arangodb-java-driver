@@ -407,8 +407,8 @@ public abstract class BaseArangoDriver {
 		return createEndpointUrl(database, newPaths);
 	}
 
-	protected String createUserEndpointUrl(String database, Object... paths) throws ArangoException {
-		return createEndpointUrl(database, "/_api/user", paths);
+	protected String createUserEndpointUrl(Object... paths) throws ArangoException {
+		return createEndpointUrl(null, "/_api/user", paths);
 	}
 
 	protected String createJobEndpointUrl(String database, Object... paths) throws ArangoException {

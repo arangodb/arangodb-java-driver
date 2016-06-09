@@ -93,36 +93,8 @@ public interface InternalCursorDriver extends BaseDriverInterface {
 		ShortestPathOptions shortestPathOptions,
 		AqlQueryOptions aqlQueryOptions,
 		Class<V> vertexClass,
-		Class<E> edgeClass) throws ArangoException;
-
-	@Deprecated
-	<T> CursorEntity<T> executeQuery(
-		String database,
-		String query,
-		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize,
-		Boolean fullCount) throws ArangoException;
-
-	@Deprecated
-	<T> CursorResultSet<T> executeQueryWithResultSet(
-		String database,
-		String query,
-		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize,
-		Boolean fullCount) throws ArangoException;
-
-	@Deprecated
-	<T> CursorResultSet<T> executeQueryWithResultSet(
-		String database,
-		String query,
-		Map<String, Object> bindVars,
-		Class<T> clazz,
-		Boolean calcCount,
-		Integer batchSize) throws ArangoException;
+		Class<E> edgeClass,
+		ArangoDriver driver) throws ArangoException;
 
 	QueryTrackingPropertiesEntity getQueryTrackingProperties(String database) throws ArangoException;
 

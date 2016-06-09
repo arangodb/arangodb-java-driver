@@ -38,7 +38,6 @@ import com.arangodb.entity.IndexType;
 import com.arangodb.entity.ScalarExampleEntity;
 import com.arangodb.entity.SimpleByResultEntity;
 import com.arangodb.util.MapBuilder;
-import com.arangodb.util.ResultSetUtils;
 import com.arangodb.util.TestUtils;
 
 /**
@@ -248,7 +247,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test_replace_by_example_with_limit() throws ArangoException {
 
@@ -262,9 +261,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(0));
 
 		// Get Replaced Document
-		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final DocumentCursor<Map> rs = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
-		final List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = rs.asEntityList();
 
 		assertThat(list.size(), is(3));
 		for (final Map<String, ?> map : list) {
@@ -274,7 +273,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test_update_by_example() throws ArangoException {
 
@@ -289,9 +288,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(10));
 
 		// Get Replaced Document
-		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final DocumentCursor<Map> rs = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
-		final List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = rs.asEntityList();
 
 		assertThat(list.size(), is(10));
 		for (final Map<String, ?> map : list) {
@@ -305,7 +304,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test_update_by_example_with_limit() throws ArangoException {
 
@@ -320,9 +319,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(3));
 
 		// Get Replaced Document
-		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final DocumentCursor<Map> rs = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
 			new MapBuilder().put("age", 999).get(), 0, 0, Map.class);
-		final List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = rs.asEntityList();
 
 		assertThat(list.size(), is(3));
 		for (final Map<String, ?> map : list) {
@@ -336,7 +335,7 @@ public class ArangoDriverSimpleTest extends BaseTest {
 
 	}
 
-	@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test_update_by_example_with_keepnull() throws ArangoException {
 
@@ -351,9 +350,9 @@ public class ArangoDriverSimpleTest extends BaseTest {
 		assertThat(entity.getUpdated(), is(10));
 
 		// Get Replaced Document
-		final CursorResultSet<Map> rs = driver.executeSimpleByExampleWithResusltSet(COLLECTION_NAME,
+		final DocumentCursor<Map> rs = driver.executeSimpleByExampleDocuments(COLLECTION_NAME,
 			new MapBuilder().put("abc", "xxx").get(), 0, 0, Map.class);
-		final List<Map> list = ResultSetUtils.toList(rs);
+		final List<Map> list = rs.asEntityList();
 
 		assertThat(list.size(), is(10));
 		for (final Map<String, ?> map : list) {

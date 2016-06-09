@@ -26,7 +26,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.PlainEdgeEntity;
 import com.arangodb.entity.marker.VertexEntity;
@@ -47,23 +46,20 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_getEdges_All() throws ArangoException {
 		final GraphEntity graph = this.createTestGraph();
-		final CursorEntity<PlainEdgeEntity> cursor = driver.graphGetEdges(graph.getName());
+		final EdgeCursor<PlainEdgeEntity> cursor = driver.graphGetEdgeCursor(graph.getName());
 		assertThat(cursor.getCount(), is(8));
 		assertThat(cursor.getCode(), is(201));
-		assertThat(cursor.isError(), is(false));
 		assertThat(cursor.hasMore(), is(false));
 		assertThat(cursor.getCursorId(), is(-1L));
-		assertThat(cursor.getResults().size(), is(8));
-		assertThat(cursor.get(0).getFromCollection(), startsWith("Country/"));
-		assertThat(cursor.get(0).getToCollection(), startsWith("Country/"));
+		assertThat(cursor.asEntityList().size(), is(8));
+		assertThat(cursor.asEntityList().get(0).getFromCollection(), startsWith("Country/"));
+		assertThat(cursor.asEntityList().get(0).getToCollection(), startsWith("Country/"));
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_getEdges_Vertex() throws ArangoException {
 		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1",
@@ -81,15 +77,15 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex3.getDocumentHandle(),
 			new TestComplexEntity02(4, 5, 6), null);
 
-		CursorEntity<TestComplexEntity02> cursor = driver.graphGetEdges(GRAPH_NAME, TestComplexEntity02.class,
-			vertex1.getDocumentHandle());
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+			vertex1.getDocumentHandle(), null, null);
 		assertThat(cursor.getCount(), is(2));
 
-		cursor = driver.graphGetEdges(GRAPH_NAME, TestComplexEntity02.class, vertex2.getDocumentHandle());
+		cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class, vertex2.getDocumentHandle(), null,
+			null);
 		assertThat(cursor.getCount(), is(1));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_GetEdgesByExampleObject() throws ArangoException {
 		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
@@ -114,18 +110,17 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex2.getDocumentHandle(),
 			new TestComplexEntity02(7, 8, 9), null);
 
-		CursorEntity<TestComplexEntity02> cursor = driver.graphGetEdgesByExampleObject(GRAPH_NAME,
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursorByExample(GRAPH_NAME,
 			TestComplexEntity02.class, new TestComplexEntity01(null, null, 38));
 		assertThat(cursor.getCount(), is(3));
 
-		cursor = driver.graphGetEdgesByExampleObject(GRAPH_NAME, TestComplexEntity02.class, v3);
+		cursor = driver.graphGetEdgeCursorByExample(GRAPH_NAME, TestComplexEntity02.class, v3);
 		assertThat(cursor.getCount(), is(1));
-		assertThat(cursor.get(0).getClass().getName(), is(TestComplexEntity02.class.getName()));
-		assertThat(cursor.get(0).getX(), is(4));
+		assertThat(cursor.asEntityList().get(0).getClass().getName(), is(TestComplexEntity02.class.getName()));
+		assertThat(cursor.asEntityList().get(0).getX(), is(4));
 
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void test_GetEdgesByExampleMap() throws ArangoException {
 		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
@@ -153,15 +148,15 @@ public class ArangoDriverGraphEdgesGetTest extends BaseGraphTest {
 		final Map<String, Object> exampleVertex = new HashMap<String, Object>();
 		exampleVertex.put("user", "Homer");
 
-		CursorEntity<TestComplexEntity02> cursor = driver.graphGetEdgesByExampleMap(GRAPH_NAME,
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursorByExample(GRAPH_NAME,
 			TestComplexEntity02.class, exampleVertex);
 		assertThat(cursor.getCount(), is(2));
 
 		exampleVertex.put("user", "Bart");
-		cursor = driver.graphGetEdgesByExampleMap(GRAPH_NAME, TestComplexEntity02.class, exampleVertex);
+		cursor = driver.graphGetEdgeCursorByExample(GRAPH_NAME, TestComplexEntity02.class, exampleVertex);
 		assertThat(cursor.getCount(), is(1));
-		assertThat(cursor.get(0).getClass().getName(), is(TestComplexEntity02.class.getName()));
-		assertThat(cursor.get(0).getX(), is(4));
+		assertThat(cursor.asEntityList().get(0).getClass().getName(), is(TestComplexEntity02.class.getName()));
+		assertThat(cursor.asEntityList().get(0).getX(), is(4));
 
 	}
 	//
