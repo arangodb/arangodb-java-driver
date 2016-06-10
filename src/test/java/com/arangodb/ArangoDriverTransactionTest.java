@@ -122,7 +122,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 		transaction.setParams(true);
 		result = driver.executeTransaction(transaction);
 
-		assertThat(result.<Boolean> getResult(), is(true));
+		assertThat(result.getResultAsBoolean(), is(true));
 		assertThat(result.getStatusCode(), is(200));
 		assertThat(result.getCode(), is(200));
 		assertThat(result.isError(), is(false));
@@ -130,7 +130,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 		transaction.setParams("Hans");
 		result = driver.executeTransaction(transaction);
 
-		assertThat(result.<String> getResult(), is("Hans"));
+		assertThat(result.getResultAsString(), is("Hans"));
 		assertThat(result.getStatusCode(), is(200));
 		assertThat(result.getCode(), is(200));
 		assertThat(result.isError(), is(false));

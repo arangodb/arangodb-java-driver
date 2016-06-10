@@ -16,6 +16,8 @@
 
 package com.arangodb.entity;
 
+import com.google.gson.JsonObject;
+
 /**
  * @author tamtam180 - kirscheless at gmail.com
  * @author gschwab
@@ -28,9 +30,8 @@ public class TransactionResultEntity extends BaseEntity {
 	 */
 	private Object result;
 
-	@SuppressWarnings("unchecked")
-	public <T> T getResult() {
-		return (T) this.result;
+	public JsonObject getResultAsJsonObject() {
+		return (JsonObject) result;
 	}
 
 	public long getResultAsLong() {
@@ -56,6 +57,14 @@ public class TransactionResultEntity extends BaseEntity {
 	public int getResultAsInt() {
 		java.lang.Number number = (java.lang.Number) this.result;
 		return number.intValue();
+	}
+
+	public boolean getResultAsBoolean() {
+		return (Boolean) result;
+	}
+
+	public String getResultAsString() {
+		return (String) result;
 	}
 
 	public void setResult(Object result) {
