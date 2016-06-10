@@ -293,7 +293,7 @@ If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Auth
 
 ##DELETE user
 ``` Java
-  arangoDriver.createUser("myUser");
+  arangoDriver.deleteUser("myUser");
 ```
 
 
