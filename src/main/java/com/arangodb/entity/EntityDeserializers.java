@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.CollectionEntity.Figures;
+import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.ReplicationApplierState.LastError;
 import com.arangodb.entity.ReplicationApplierState.Progress;
 import com.arangodb.entity.ReplicationInventoryEntity.Collection;
@@ -2302,7 +2303,8 @@ public class EntityDeserializers {
 			final QueryCachePropertiesEntity entity = deserializeBaseParameter(obj, new QueryCachePropertiesEntity());
 
 			if (obj.has("mode")) {
-				entity.setMode(obj.getAsJsonPrimitive("mode").getAsString());
+				final String modeAsString = obj.getAsJsonPrimitive("mode").getAsString();
+				entity.setMode(CacheMode.valueOf(modeAsString));
 			}
 
 			if (obj.has("maxResults")) {

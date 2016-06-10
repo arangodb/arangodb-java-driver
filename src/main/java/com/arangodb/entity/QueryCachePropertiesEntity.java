@@ -21,11 +21,15 @@ package com.arangodb.entity;
  */
 public class QueryCachePropertiesEntity extends BaseEntity {
 
+	public enum CacheMode {
+		off, on, demand;
+	}
+
 	/**
 	 * The mode the AQL query cache operates in. The mode is one of the
 	 * following values: "off", "on" or "demand".
 	 */
-	private String mode;
+	private CacheMode mode;
 
 	/**
 	 * The maximum number of query results that will be stored per
@@ -41,7 +45,7 @@ public class QueryCachePropertiesEntity extends BaseEntity {
 	 * 
 	 * @return The mode is one of the following values: "off", "on" or "demand".
 	 */
-	public String getMode() {
+	public CacheMode getMode() {
 		return mode;
 	}
 
@@ -52,7 +56,7 @@ public class QueryCachePropertiesEntity extends BaseEntity {
 	 *            The mode is one of the following values: "off", "on" or
 	 *            "demand".
 	 */
-	public void setMode(String mode) {
+	public void setMode(CacheMode mode) {
 		this.mode = mode;
 	}
 

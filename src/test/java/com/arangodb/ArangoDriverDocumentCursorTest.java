@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.util.AqlQueryOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.TestUtils;
@@ -154,7 +155,7 @@ public class ArangoDriverDocumentCursorTest extends BaseTest {
 		if (isMinimumVersion(TestUtils.VERSION_2_7)) {
 			// start caching
 			final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
-			properties.setMode("on");
+			properties.setMode(CacheMode.on);
 			driver.setQueryCacheProperties(properties);
 
 			final String query = "FOR t IN unit_test_query_test FILTER t.age >= @age SORT t.age RETURN t";

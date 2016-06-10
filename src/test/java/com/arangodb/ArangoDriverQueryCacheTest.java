@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import com.arangodb.entity.DefaultEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.util.TestUtils;
 
 /**
@@ -53,25 +54,23 @@ public class ArangoDriverQueryCacheTest extends BaseTest {
 
 	@Test
 	public void test_setQueryCacheProperties() throws ArangoException {
-		final String on = "on";
-		final String off = "off";
 
 		if (isMinimumVersion(TestUtils.VERSION_2_7)) {
 			final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
-			properties.setMode(on);
+			properties.setMode(CacheMode.on);
 			properties.setMaxResults(100L);
 
 			QueryCachePropertiesEntity ret = driver.setQueryCacheProperties(properties);
 			assertEquals(200, ret.getStatusCode());
-			assertEquals(on, ret.getMode());
+			assertEquals(CacheMode.on, ret.getMode());
 			assertEquals(new Long(100L), ret.getMaxResults());
 
-			properties.setMode(off);
+			properties.setMode(CacheMode.off);
 			properties.setMaxResults(200L);
 
 			ret = driver.setQueryCacheProperties(properties);
 			assertEquals(200, ret.getStatusCode());
-			assertEquals(off, ret.getMode());
+			assertEquals(CacheMode.off, ret.getMode());
 			assertEquals(new Long(200L), ret.getMaxResults());
 		}
 	}
