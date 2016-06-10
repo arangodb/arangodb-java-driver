@@ -151,7 +151,8 @@ public class ShortestPathOptions {
 	/**
 	 * Get include data
 	 * 
-	 * @return
+	 * @return returns true, if the return values are compatible with older
+	 *         versions of AnrangoDB
 	 */
 	public Boolean getIncludeData() {
 		return includeData;

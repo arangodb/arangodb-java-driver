@@ -947,8 +947,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the desired document key
 	 * @param value
 	 *            An object containing the documents attributes
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -975,8 +973,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the desired document key
 	 * @param value
 	 *            An object containing the documents attributes
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -2936,7 +2932,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param username
 	 *            the username as string
 	 * @param database
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity grantDatabaseAccess(String username, String database) throws ArangoException {
@@ -4688,7 +4684,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Clears the list of slow AQL queries of the default database
 	 * 
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteSlowQueries() throws ArangoException {
@@ -4700,7 +4696,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * 
 	 * @param database
 	 *            the database name or null
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteSlowQueries(final String database) throws ArangoException {
@@ -4712,7 +4708,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * 
 	 * @param id
 	 *            the identifier of a query
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity killQuery(final String id) throws ArangoException {
@@ -4726,7 +4722,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the identifier of a query
 	 * @param database
 	 *            the database name or null
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity killQuery(final String database, final String id) throws ArangoException {
@@ -4749,8 +4745,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the collection
 	 * @param rawJsonString
 	 *            A string containing a JSON object
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.

@@ -46,7 +46,7 @@ public class QueryEntity {
 	/**
 	 * Returns the query string (potentially truncated)
 	 * 
-	 * @return
+	 * @return the query string
 	 */
 	public String getQuery() {
 		return query;
