@@ -57,6 +57,19 @@ public class GraphQueryUtil {
 		appendEdgeCollectionsOrGraph(graphName, bindVars, sb, edgeCollectionRestriction);
 		appendFilter("e", graphEdgesOptions.getEdgeExamples(), sb);
 		appendFilter("v", graphEdgesOptions.getNeighborExamples(), sb);
+		{
+			final List<String> endVertexCollectionRestriction = graphEdgesOptions.getEndVertexCollectionRestriction();
+			if (endVertexCollectionRestriction != null && endVertexCollectionRestriction.size() > 0) {
+				sb.append(" FILTER ");
+				for (String endVertexCollection : endVertexCollectionRestriction) {
+					sb.append("IS_SAME_COLLECTION(`");
+					sb.append(endVertexCollection);
+					sb.append("`,v)");
+					sb.append(OR);
+				}
+				sb.delete(sb.length() - OR.length(), sb.length() - 1);
+			}
+		}
 		final Integer limit = graphEdgesOptions.getLimit();
 		if (limit != null) {
 			sb.append(" LIMIT ");
