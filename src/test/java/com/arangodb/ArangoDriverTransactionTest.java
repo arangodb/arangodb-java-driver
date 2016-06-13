@@ -20,9 +20,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.TransactionEntity;
 import com.arangodb.entity.TransactionResultEntity;
 
@@ -33,6 +35,7 @@ import com.arangodb.entity.TransactionResultEntity;
 public class ArangoDriverTransactionTest extends BaseTest {
 
 	private static final String SOME_COLLECTION = "someCollection";
+	private static final String SOME_OTHER_COLLECTION = "someOtherCollection";
 
 	public class ParamObject {
 		private String a = "a";
@@ -78,12 +81,27 @@ public class ArangoDriverTransactionTest extends BaseTest {
 		} catch (final ArangoException e) {
 
 		}
+		try {
+			driver.deleteCollection(SOME_OTHER_COLLECTION);
+		} catch (final ArangoException e) {
+
+		}
+		try {
+			driver.createCollection(SOME_OTHER_COLLECTION);
+		} catch (final ArangoException e) {
+
+		}
 	}
 
 	@After
 	public void teardown() throws ArangoException {
 		try {
 			driver.deleteCollection(SOME_COLLECTION);
+		} catch (final ArangoException e) {
+
+		}
+		try {
+			driver.deleteCollection(SOME_OTHER_COLLECTION);
 		} catch (final ArangoException e) {
 
 		}
@@ -137,4 +155,30 @@ public class ArangoDriverTransactionTest extends BaseTest {
 
 	}
 
+	@Test
+	public void allowImplicit() throws ArangoException {
+		TransactionEntity transaction = driver
+				.createTransaction("function (params) {" + "var db = require('internal').db;"
+						+ "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()[0]};"
+						+ "}");
+		transaction.addReadCollection(SOME_COLLECTION);
+		{
+			TransactionResultEntity result = driver.executeTransaction(transaction);
+			assertThat(result.getStatusCode(), is(200));
+			assertThat(result.getCode(), is(200));
+			assertThat(result.isError(), is(false));
+		}
+		{
+			transaction.setAllowImplicit(false);
+			try {
+				driver.executeTransaction(transaction);
+				Assert.fail();
+			} catch (ArangoException e) {
+				final BaseEntity result = e.getEntity();
+				assertThat(result.getStatusCode(), is(400));
+				assertThat(result.getCode(), is(400));
+				assertThat(result.isError(), is(true));
+			}
+		}
+	}
 }
