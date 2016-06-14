@@ -9,6 +9,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.EdgeEntity;
 
 /**
  * @author Mark - mark@arangodb.com
@@ -54,7 +55,7 @@ public class ArangoDriverEdgeTest extends BaseTest {
 	}
 
 	@Test
-	public void test_create_normal() throws ArangoException {
+	public void test_createDocument() throws ArangoException {
 
 		final TestComplexEntity01 value = new TestComplexEntity01("user", "desc", 42);
 		final DocumentEntity<TestComplexEntity01> fromDoc = driver.createDocument(collectionName2, value, true);
@@ -72,6 +73,41 @@ public class ArangoDriverEdgeTest extends BaseTest {
 		Assert.assertEquals(fromDoc.getDocumentHandle(), doc.getEntity().getAttribute(BaseDocument.FROM));
 		Assert.assertEquals(toDoc.getDocumentHandle(), doc.getEntity().getAttribute(BaseDocument.TO));
 
+	}
+
+	@Test
+	public void test_createEdge() throws ArangoException {
+
+		TestComplexEntity01 value = new TestComplexEntity01("user", "desc", 42);
+		DocumentEntity<TestComplexEntity01> fromDoc = driver.createDocument(collectionName2, value, true);
+		DocumentEntity<TestComplexEntity01> toDoc = driver.createDocument(collectionName2, value, true);
+
+		EdgeEntity<TestComplexEntity01> doc = driver.createEdge(collectionName, value, fromDoc.getDocumentHandle(),
+			toDoc.getDocumentHandle(), true);
+
+		Assert.assertNotNull(doc.getDocumentKey());
+		Assert.assertEquals(collectionName + "/" + doc.getDocumentKey(), doc.getDocumentHandle());
+		Assert.assertNotEquals(0L, doc.getDocumentRevision());
+		Assert.assertEquals(fromDoc.getDocumentHandle(), doc.getFromVertexHandle());
+		Assert.assertEquals(toDoc.getDocumentHandle(), doc.getToVertexHandle());
+	}
+
+	@Test
+	public void test_createEdgeWithKey() throws ArangoException {
+
+		final TestComplexEntity01 value = new TestComplexEntity01("user", "desc", 42);
+		final DocumentEntity<TestComplexEntity01> fromDoc = driver.createDocument(collectionName2, value, true);
+		final DocumentEntity<TestComplexEntity01> toDoc = driver.createDocument(collectionName2, value, true);
+
+		final String documentKey = ArangoDriverEdgeTest.class.getSimpleName() + "_test_createEdgeWithKey";
+		EdgeEntity<TestComplexEntity01> doc = driver.createEdge(collectionName, documentKey, value,
+			fromDoc.getDocumentHandle(), toDoc.getDocumentHandle(), true);
+
+		Assert.assertNotNull(doc.getDocumentKey());
+		Assert.assertEquals(collectionName + "/" + documentKey, doc.getDocumentHandle());
+		Assert.assertNotEquals(0L, doc.getDocumentRevision());
+		Assert.assertEquals(fromDoc.getDocumentHandle(), doc.getFromVertexHandle());
+		Assert.assertEquals(toDoc.getDocumentHandle(), doc.getToVertexHandle());
 	}
 
 }

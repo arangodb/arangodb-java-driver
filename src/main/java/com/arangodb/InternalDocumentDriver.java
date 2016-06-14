@@ -3,6 +3,7 @@ package com.arangodb;
 import java.util.List;
 
 import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.EdgeEntity;
 import com.arangodb.impl.BaseDriverInterface;
 
 /**
@@ -67,4 +68,14 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 			throws ArangoException;
 
 	DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev) throws ArangoException;
+
+	<T> EdgeEntity<T> createEdge(
+		String database,
+		String collectionName,
+		String documentKey,
+		T value,
+		String fromHandle,
+		String toHandle,
+		Boolean waitForSync) throws ArangoException;
+
 }

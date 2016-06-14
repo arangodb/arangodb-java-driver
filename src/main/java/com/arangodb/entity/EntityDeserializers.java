@@ -1959,6 +1959,9 @@ public class EntityDeserializers {
 	}
 
 	public static class GraphEntityDeserializer implements JsonDeserializer<GraphEntity> {
+
+		private static final String COLLECTION = "collection";
+
 		@Override
 		public GraphEntity deserialize(
 			final JsonElement json,
@@ -2008,8 +2011,8 @@ public class EntityDeserializers {
 			for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
 				final EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
 				final JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
-				if (edgeDefinition.has("collection")) {
-					edgeDefinitionEntity.setCollection(edgeDefinition.get("collection").getAsString());
+				if (edgeDefinition.has(COLLECTION)) {
+					edgeDefinitionEntity.setCollection(edgeDefinition.get(COLLECTION).getAsString());
 				}
 				if (edgeDefinition.has("from")) {
 					final List<String> from = new ArrayList<String>();
