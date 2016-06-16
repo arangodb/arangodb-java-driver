@@ -1,4 +1,4 @@
-v3.0.0 (2016-06-15)
+v3.0.0 (2016-06-17)
 ---------------------------
 * removed ArangoDriver.EdgeEntity() (/_api/edge withdrawn in Server)
 * removed CAP-Index (Cap-constraints are withdrawn in Server)
