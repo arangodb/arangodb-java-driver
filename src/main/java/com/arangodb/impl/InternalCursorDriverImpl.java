@@ -163,6 +163,10 @@ public class InternalCursorDriverImpl extends BaseArangoDriverImpl implements co
 		return new CursorRawResult(database, this, entity);
 	}
 
+	/**
+	 * @deprecated use AQL instead
+	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	@Override
 	public <V, E> ShortestPathEntity<V, E> getShortestPath(

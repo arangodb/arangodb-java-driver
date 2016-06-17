@@ -16,33 +16,73 @@
 
 package com.arangodb.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author tamtam180 - kirscheless at gmail.com
  *
  */
 public class ImportResultEntity extends BaseEntity {
 
-  int created;
-  int errors;
-  int empty;
-  
-  public int getCreated() {
-    return created;
-  }
-  public int getErrors() {
-    return errors;
-  }
-  public int getEmpty() {
-    return empty;
-  }
-  public void setCreated(int created) {
-    this.created = created;
-  }
-  public void setErrors(int errors) {
-    this.errors = errors;
-  }
-  public void setEmpty(int empty) {
-    this.empty = empty;
-  }
-  
+	private int created;
+	private int errors;
+	private int empty;
+	private int updated;
+	private int ignored;
+	private List<String> details;
+
+	public ImportResultEntity() {
+		super();
+		details = new ArrayList<String>();
+	}
+
+	public int getCreated() {
+		return created;
+	}
+
+	public void setCreated(int created) {
+		this.created = created;
+	}
+
+	public int getErrors() {
+		return errors;
+	}
+
+	public void setErrors(int errors) {
+		this.errors = errors;
+	}
+
+	public int getEmpty() {
+		return empty;
+	}
+
+	public void setEmpty(int empty) {
+		this.empty = empty;
+	}
+
+	public int getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(int updated) {
+		this.updated = updated;
+	}
+
+	public int getIgnored() {
+		return ignored;
+	}
+
+	public void setIgnored(int ignored) {
+		this.ignored = ignored;
+	}
+
+	public List<String> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<String> details) {
+		this.details = details;
+	}
+
 }
