@@ -5,6 +5,7 @@ import java.util.Collection;
 import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.impl.BaseDriverInterface;
 import com.arangodb.util.ImportOptions;
+import com.arangodb.util.ImportOptionsJson;
 import com.arangodb.util.ImportOptionsRaw;
 
 /**
@@ -16,7 +17,7 @@ public interface InternalImportDriver extends BaseDriverInterface {
 		String database,
 		String collection,
 		Collection<?> values,
-		ImportOptions importOptions) throws ArangoException;
+		ImportOptionsJson importOptionsJson) throws ArangoException;
 
 	ImportResultEntity importDocumentsRaw(
 		String database,
@@ -27,6 +28,12 @@ public interface InternalImportDriver extends BaseDriverInterface {
 	ImportResultEntity importDocumentsByHeaderValues(
 		String database,
 		String collection,
-		Collection<? extends Collection<?>> headerValues) throws ArangoException;
+		Collection<? extends Collection<?>> headerValues,
+		ImportOptions importOptions) throws ArangoException;
 
+	ImportResultEntity importDocumentsByHeaderValuesRaw(
+		String database,
+		String collection,
+		String headerValues,
+		ImportOptions importOptions) throws ArangoException;
 }

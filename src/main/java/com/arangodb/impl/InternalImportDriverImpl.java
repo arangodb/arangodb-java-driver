@@ -26,8 +26,8 @@ import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.ImportOptions;
+import com.arangodb.util.ImportOptionsJson;
 import com.arangodb.util.ImportOptionsRaw;
-import com.arangodb.util.MapBuilder;
 
 /**
  * @author tamtam180 - kirscheless at gmail.com
@@ -46,9 +46,9 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 		String database,
 		String collection,
 		Collection<?> values,
-		ImportOptions importOptions) throws ArangoException {
+		ImportOptionsJson importOptionsJson) throws ArangoException {
 
-		Map<String, Object> map = importOptions.toMap();
+		Map<String, Object> map = importOptionsJson.toMap();
 		map.put("type", "list");
 
 		return importDocumentsInternal(database, collection, EntityFactory.toJsonString(values), map);
@@ -64,7 +64,28 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 		return importDocumentsInternal(database, collection, values, importOptionsRaw.toMap());
 	}
 
-	public ImportResultEntity importDocumentsInternal(
+	@Override
+	public ImportResultEntity importDocumentsByHeaderValues(
+		String database,
+		String collection,
+		Collection<? extends Collection<?>> headerValues,
+		ImportOptions importOptions) throws ArangoException {
+
+		return importDocumentsByHeaderValuesInternal(database, collection,
+			EntityFactory.toImportHeaderValues(headerValues), importOptions);
+	}
+
+	@Override
+	public ImportResultEntity importDocumentsByHeaderValuesRaw(
+		String database,
+		String collection,
+		String headerValues,
+		ImportOptions importOptions) throws ArangoException {
+
+		return importDocumentsByHeaderValuesInternal(database, collection, headerValues, importOptions);
+	}
+
+	private ImportResultEntity importDocumentsInternal(
 		String database,
 		String collection,
 		String values,
@@ -75,17 +96,18 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/import"), importOptions, values);
 
 		return createEntity(res, ImportResultEntity.class);
-
 	}
 
-	@Override
-	public ImportResultEntity importDocumentsByHeaderValues(
+	private ImportResultEntity importDocumentsByHeaderValuesInternal(
 		String database,
 		String collection,
-		Collection<? extends Collection<?>> headerValues) throws ArangoException {
+		String headerValues,
+		ImportOptions importOptions) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/import"),
-			new MapBuilder().put(COLLECTION, collection).get(), EntityFactory.toImportHeaderValues(headerValues));
+		Map<String, Object> map = importOptions.toMap();
+		map.put(COLLECTION, collection);
+
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/import"), map, headerValues);
 
 		return createEntity(res, ImportResultEntity.class);
 

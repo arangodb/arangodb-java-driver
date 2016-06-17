@@ -82,6 +82,7 @@ import com.arangodb.util.GraphEdgesOptions;
 import com.arangodb.util.GraphQueryUtil;
 import com.arangodb.util.GraphVerticesOptions;
 import com.arangodb.util.ImportOptions;
+import com.arangodb.util.ImportOptionsJson;
 import com.arangodb.util.ImportOptionsRaw;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
@@ -2977,7 +2978,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public ImportResultEntity importDocuments(final String collection, final Collection<?> values)
 			throws ArangoException {
-		return importDriver.importDocuments(getDefaultDatabase(), collection, values, new ImportOptions());
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values, new ImportOptionsJson());
 	}
 
 	/**
@@ -2987,7 +2988,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the collection as a string
 	 * @param values
 	 *            a list of Objects that will be stored as documents
-	 * @param importOptions
+	 * @param importOptionsJson
 	 *            options for importing documents
 	 * @return ImportResultEntity
 	 * @throws ArangoException
@@ -2995,8 +2996,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	public ImportResultEntity importDocuments(
 		final String collection,
 		final Collection<?> values,
-		final ImportOptions importOptions) throws ArangoException {
-		return importDriver.importDocuments(getDefaultDatabase(), collection, values, importOptions);
+		final ImportOptionsJson importOptionsJson) throws ArangoException {
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values, importOptionsJson);
 	}
 
 	/**
@@ -3019,7 +3020,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Creates documents in the collection.
+	 * Creates documents in a collection.
 	 *
 	 * @param collection
 	 *            the collection as a string
@@ -3031,7 +3032,49 @@ public class ArangoDriver extends BaseArangoDriver {
 	public ImportResultEntity importDocumentsByHeaderValues(
 		final String collection,
 		final Collection<? extends Collection<?>> headerValues) throws ArangoException {
-		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues);
+		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues,
+			new ImportOptions());
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param headerValues
+	 *            a list of lists that will be stored as documents
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocumentsByHeaderValues(
+		final String collection,
+		final Collection<? extends Collection<?>> headerValues,
+		ImportOptions importOptions) throws ArangoException {
+		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues,
+			importOptions);
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param headerValues
+	 *            raw JSON data that contains a list of lists that will be
+	 *            stored as documents
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocumentsByHeaderValuesRaw(
+		final String collection,
+		String headerValues,
+		ImportOptions importOptions) throws ArangoException {
+		return importDriver.importDocumentsByHeaderValuesRaw(getDefaultDatabase(), collection, headerValues,
+			importOptions);
 	}
 
 	/**
