@@ -4369,6 +4369,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns an EdgeCursor by a given vertex example and some options
 	 * 
+	 * @deprecated use AQL instead
 	 * @param graphName
 	 *            The name of the graph.
 	 * @param clazz
@@ -4381,6 +4382,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return EdgeCursor<T>
 	 * @throws ArangoException
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public <T> EdgeCursor<T> graphGetEdgeCursor(
 		final String graphName,
@@ -4415,6 +4417,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns a VertexCursor by a given vertex example and some options
 	 * 
+	 * @deprecated use AQL instead
 	 * @param graphName
 	 *            The name of the graph.
 	 * @param clazz
@@ -4427,6 +4430,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return VertexCursor<T>
 	 * @throws ArangoException
 	 */
+	@Deprecated
 	public <T> VertexCursor<T> graphGetVertexCursor(
 		final String graphName,
 		final Class<T> clazz,
@@ -4481,6 +4485,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		return graphGetEdgeCursor(graphName, clazz, vertexExample, new GraphEdgesOptions(), null);
 	}
 
+	/**
+	 * @deprecated use AQL instead
+	 */
+	@Deprecated
 	public <V, E> ShortestPathEntity<V, E> graphGetShortestPath(
 		final String graphName,
 		final Object startVertexExample,
