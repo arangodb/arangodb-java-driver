@@ -39,7 +39,6 @@ public class InternalIndexDriverImpl extends BaseArangoDriverWithCursorImpl
 	private static final String SPARSE = "sparse";
 	private static final String UNIQUE = "unique";
 	private static final String TYPE = "type";
-	private static final String COLLECTION = "collection";
 
 	InternalIndexDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
 		super(configure, null, httpManager);

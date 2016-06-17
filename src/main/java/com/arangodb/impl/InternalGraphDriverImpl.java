@@ -34,6 +34,7 @@ import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.util.CollectionUtils;
+import com.arangodb.util.EdgeUtils;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.StringUtils;
 import com.google.gson.JsonElement;
@@ -218,7 +219,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 
 		final HttpResponseEntity res = httpManager.doPost(
 			createGharialEndpointUrl(databaseName, StringUtils.encodeUrl(graphName), VERTEX), null,
-			EntityFactory.toJsonString(new MapBuilder().put("collection", collectionName).get()));
+			EntityFactory.toJsonString(new MapBuilder().put(COLLECTION, collectionName).get()));
 
 		if (wrongResult(res)) {
 			throw new ArangoException(UNKNOWN_ERROR);
@@ -534,7 +535,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final T value,
 		final Boolean waitForSync) throws ArangoException {
 
-		final JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
+		final JsonObject obj = EdgeUtils.valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doPost(
@@ -552,34 +553,6 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		entity.setFromVertexHandle(fromHandle);
 		entity.setToVertexHandle(toHandle);
 		return entity;
-	}
-
-	private <T> JsonObject valueToEdgeJsonObject(
-		final String key,
-		final String fromHandle,
-		final String toHandle,
-		final T value) {
-		JsonObject obj;
-		if (value == null) {
-			obj = new JsonObject();
-		} else {
-			final JsonElement elem = EntityFactory.toJsonElement(value, false);
-			if (elem.isJsonObject()) {
-				obj = elem.getAsJsonObject();
-			} else {
-				throw new IllegalArgumentException("value need object type(not support array, primitive, etc..).");
-			}
-		}
-		if (key != null) {
-			obj.addProperty("_key", key);
-		}
-		if (fromHandle != null) {
-			obj.addProperty("_from", fromHandle);
-		}
-		if (toHandle != null) {
-			obj.addProperty("_to", toHandle);
-		}
-		return obj;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -638,7 +611,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final Long ifMatchRevision,
 		final Long ifNoneMatchRevision) throws ArangoException {
 
-		final JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
+		final JsonObject obj = EdgeUtils.valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doPut(
@@ -678,7 +651,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final Long ifMatchRevision,
 		final Long ifNoneMatchRevision) throws ArangoException {
 
-		final JsonObject obj = valueToEdgeJsonObject(key, fromHandle, toHandle, value);
+		final JsonObject obj = EdgeUtils.valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doPatch(

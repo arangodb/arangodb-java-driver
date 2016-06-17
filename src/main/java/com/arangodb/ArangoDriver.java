@@ -4561,6 +4561,64 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
+	 * Create an edge in an edge collection.
+	 *
+	 * @param collectionName
+	 *            name of the edge collection
+	 * @param value
+	 *            the edge object
+	 * @param fromHandle
+	 *            id of document 'from'
+	 * @param toHandle
+	 *            id of document 'to'
+	 * @param waitForSync
+	 *            wait for sync
+	 * @return the new created EdgeEntity object
+	 * @throws ArangoException
+	 */
+	public <T> EdgeEntity<T> createEdge(
+		final String collectionName,
+		final T value,
+		final String fromHandle,
+		final String toHandle,
+		final Boolean waitForSync) throws ArangoException {
+
+		return createEdge(collectionName, null, value, fromHandle, toHandle, waitForSync);
+	}
+
+	/**
+	 * Create an edge in an edge collection. This method allows to define to
+	 * documents key. Note that the collection's property
+	 * CollectionKeyOption.allowUserKeys has to be set accordingly.
+	 * 
+	 * @param collectionName
+	 *            name of the edge collection
+	 * @param documentKey
+	 *            the desired document key
+	 * @param value
+	 *            the edge object
+	 * @param fromHandle
+	 *            id of document 'from'
+	 * @param toHandle
+	 *            id of document 'to'
+	 * @param waitForSync
+	 *            wait for sync
+	 * @return the new created EdgeEntity object
+	 * @throws ArangoException
+	 */
+	public <T> EdgeEntity<T> createEdge(
+		final String collectionName,
+		final String documentKey,
+		final T value,
+		final String fromHandle,
+		final String toHandle,
+		final Boolean waitForSync) throws ArangoException {
+
+		return documentDriver.createEdge(getDefaultDatabase(), collectionName, documentKey, value, fromHandle, toHandle,
+			waitForSync);
+	}
+
+	/**
 	 * Do a graph traversal.
 	 * 
 	 * See API documentation of Traversals

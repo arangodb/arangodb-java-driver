@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.CollectionEntity.Figures;
+import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.ReplicationApplierState.LastError;
 import com.arangodb.entity.ReplicationApplierState.Progress;
 import com.arangodb.entity.ReplicationInventoryEntity.Collection;
@@ -1958,6 +1959,9 @@ public class EntityDeserializers {
 	}
 
 	public static class GraphEntityDeserializer implements JsonDeserializer<GraphEntity> {
+
+		private static final String COLLECTION = "collection";
+
 		@Override
 		public GraphEntity deserialize(
 			final JsonElement json,
@@ -2007,8 +2011,8 @@ public class EntityDeserializers {
 			for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
 				final EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
 				final JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
-				if (edgeDefinition.has("collection")) {
-					edgeDefinitionEntity.setCollection(edgeDefinition.get("collection").getAsString());
+				if (edgeDefinition.has(COLLECTION)) {
+					edgeDefinitionEntity.setCollection(edgeDefinition.get(COLLECTION).getAsString());
 				}
 				if (edgeDefinition.has("from")) {
 					final List<String> from = new ArrayList<String>();
@@ -2302,7 +2306,8 @@ public class EntityDeserializers {
 			final QueryCachePropertiesEntity entity = deserializeBaseParameter(obj, new QueryCachePropertiesEntity());
 
 			if (obj.has("mode")) {
-				entity.setMode(obj.getAsJsonPrimitive("mode").getAsString());
+				final String modeAsString = obj.getAsJsonPrimitive("mode").getAsString();
+				entity.setMode(CacheMode.valueOf(modeAsString));
 			}
 
 			if (obj.has("maxResults")) {

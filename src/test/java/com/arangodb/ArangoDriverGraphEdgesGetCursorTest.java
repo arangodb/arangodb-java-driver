@@ -411,6 +411,40 @@ public class ArangoDriverGraphEdgesGetCursorTest extends BaseGraphTest {
 	}
 
 	@Test
+	public void graphGetEdgeCursorByExampleEndVertexRestriction() throws ArangoException {
+		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
+		final TestComplexEntity01 v2 = new TestComplexEntity01("Marge", "A Simpson", 36);
+		final TestComplexEntity01 v3 = new TestComplexEntity01("Bart", "A Simpson", 10);
+		final TestComplexEntity01 v4 = new TestComplexEntity01("Remoh", "Homer's twin", 38);
+
+		final VertexEntity<TestComplexEntity01> vertex1 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v1, true);
+
+		final VertexEntity<TestComplexEntity01> vertex2 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v2, true);
+
+		final VertexEntity<TestComplexEntity01> vertex3 = driver.graphCreateVertex(GRAPH_NAME, "to1-1", v3, true);
+
+		final VertexEntity<TestComplexEntity01> vertex4 = driver.graphCreateVertex(GRAPH_NAME, "from1-1", v4, true);
+
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex2.getDocumentHandle(),
+			new TestComplexEntity02(1, 2, 3), null);
+
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex1.getDocumentHandle(), vertex3.getDocumentHandle(),
+			new TestComplexEntity02(4, 5, 6), null);
+
+		driver.graphCreateEdge(GRAPH_NAME, "edge-1", null, vertex4.getDocumentHandle(), vertex2.getDocumentHandle(),
+			new TestComplexEntity02(7, 8, 9), null);
+
+		GraphEdgesOptions graphEdgesOptions = new GraphEdgesOptions();
+		List<String> endVertexCollectionRestriction = new ArrayList<String>();
+		endVertexCollectionRestriction.add("to1-1");
+		graphEdgesOptions.setEndVertexCollectionRestriction(endVertexCollectionRestriction);
+
+		EdgeCursor<TestComplexEntity02> cursor = driver.graphGetEdgeCursor(GRAPH_NAME, TestComplexEntity02.class,
+			new TestComplexEntity01(null, "A Simpson", null), graphEdgesOptions, getAqlQueryOptions(true, 10, true));
+		assertThat(cursor.getCount(), is(2));
+	}
+
+	@Test
 	public void shortestPathTest() throws ArangoException {
 
 		final TestComplexEntity01 v1 = new TestComplexEntity01("Homer", "A Simpson", 38);
