@@ -140,9 +140,6 @@ public class ImportOptions implements OptionsInterface {
 	public Map<String, Object> toMap() {
 		MapBuilder mp = new MapBuilder();
 
-		if (createCollection != null) {
-			mp.put("createCollection", createCollection);
-		}
 		if (createCollectionType != null) {
 			mp.put("createCollectionType", createCollectionType.toString().toLowerCase());
 		}
