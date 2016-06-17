@@ -42,6 +42,9 @@ public class ArangoClient {
 		total.setCreated(total.getCreated() + result.getCreated());
 		total.setErrors(total.getErrors() + result.getErrors());
 		total.setEmpty(total.getEmpty() + result.getEmpty());
+		total.setUpdated(total.getUpdated() + result.getUpdated());
+		total.setIgnored(total.getIgnored() + result.getIgnored());
+		total.getDetails().addAll(result.getDetails());
 	}
 
 	public ImportResultEntity importRawJsonDocuments(String collectionName, Iterator<String> itr, int bufferCount)
