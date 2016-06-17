@@ -10,35 +10,10 @@ public class ImportOptions implements OptionsInterface {
 		ERROR, UPDATE, REPLACE, IGNORE
 	}
 
-	private Boolean createCollection;
 	private CollectionType createCollectionType;
 	private Boolean overwrite;
 	private Boolean waitForSync;
 	private OnDuplicate onDuplicate;
-
-	/**
-	 * (optional) If this parameter has a value of true or yes, then the
-	 * collection is created if it does not yet exist. Other values will be
-	 * ignored so the collection must be present for the operation to succeed.
-	 * 
-	 * @return this ImportOptions object
-	 */
-	public Boolean getCreateCollection() {
-		return createCollection;
-	}
-
-	/**
-	 * (optional) If this parameter has a value of true or yes, then the
-	 * collection is created if it does not yet exist. Other values will be
-	 * ignored so the collection must be present for the operation to succeed.
-	 * 
-	 * @param createCollection
-	 * @return this ImportOptions object
-	 */
-	public ImportOptions setCreateCollection(Boolean createCollection) {
-		this.createCollection = createCollection;
-		return this;
-	}
 
 	/**
 	 * createCollectionType (optional): If this parameter has a value of
