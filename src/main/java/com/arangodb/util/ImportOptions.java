@@ -2,49 +2,22 @@ package com.arangodb.util;
 
 import java.util.Map;
 
-import com.arangodb.entity.CollectionType;
-
 public class ImportOptions implements OptionsInterface {
 
 	public enum OnDuplicate {
 		ERROR, UPDATE, REPLACE, IGNORE
 	}
 
-	private CollectionType createCollectionType;
 	private Boolean overwrite;
 	private Boolean waitForSync;
 	private OnDuplicate onDuplicate;
+	private Boolean complete;
+	private Boolean details;
 
 	/**
-	 * createCollectionType (optional): If this parameter has a value of
-	 * document or edge, it will determine the type of collection that is going
-	 * to be created when the createCollection option is set to true. The
-	 * default value is document.
-	 * 
-	 * @return
-	 */
-	public CollectionType getCreateCollectionType() {
-		return createCollectionType;
-	}
-
-	/**
-	 * createCollectionType (optional): If this parameter has a value of
-	 * document or edge, it will determine the type of collection that is going
-	 * to be created when the createCollection option is set to true. The
-	 * default value is document.
-	 * 
-	 * @param createCollectionType
-	 * @return this ImportOptions object
-	 */
-	public ImportOptions setCreateCollectionType(CollectionType createCollectionType) {
-		this.createCollectionType = createCollectionType;
-		return this;
-	}
-
-	/**
-	 * overwrite (optional): If this parameter has a value of true or yes, then
-	 * all data in the collection will be removed prior to the import. Note that
-	 * any existing index definitions will be preseved.
+	 * overwrite (optional): If this parameter has a value of true, then all
+	 * data in the collection will be removed prior to the import. Note that any
+	 * existing index definitions will be preseved.
 	 * 
 	 * @return
 	 */
@@ -53,9 +26,9 @@ public class ImportOptions implements OptionsInterface {
 	}
 
 	/**
-	 * overwrite (optional): If this parameter has a value of true or yes, then
-	 * all data in the collection will be removed prior to the import. Note that
-	 * any existing index definitions will be preseved.
+	 * overwrite (optional): If this parameter has a value of true, then all
+	 * data in the collection will be removed prior to the import. Note that any
+	 * existing index definitions will be preseved.
 	 * 
 	 * 
 	 * @param overwrite
@@ -136,13 +109,56 @@ public class ImportOptions implements OptionsInterface {
 		return this;
 	}
 
+	/**
+	 * (optional) If set to true, it will make the whole import fail if any
+	 * error occurs. Otherwise the import will continue even if some documents
+	 * cannot be imported.
+	 * 
+	 * @return
+	 */
+	public Boolean getComplete() {
+		return complete;
+	}
+
+	/**
+	 * (optional) If set to true, it will make the whole import fail if any
+	 * error occurs. Otherwise the import will continue even if some documents
+	 * cannot be imported.
+	 * 
+	 * @param complete
+	 * @return this ImportOptions object
+	 */
+	public ImportOptions setComplete(Boolean complete) {
+		this.complete = complete;
+		return this;
+	}
+
+	/**
+	 * (optional) If set to true, the result will include an attribute details
+	 * with details about documents that could not be imported.
+	 * 
+	 * @return
+	 */
+	public Boolean getDetails() {
+		return details;
+	}
+
+	/**
+	 * (optional) If set to true, the result will include an attribute details
+	 * with details about documents that could not be imported.
+	 * 
+	 * @param details
+	 * @return this ImportOptions object
+	 */
+	public ImportOptions setDetails(Boolean details) {
+		this.details = details;
+		return this;
+	}
+
 	@Override
 	public Map<String, Object> toMap() {
 		MapBuilder mp = new MapBuilder();
 
-		if (createCollectionType != null) {
-			mp.put("createCollectionType", createCollectionType.toString().toLowerCase());
-		}
 		if (overwrite != null) {
 			mp.put("overwrite", overwrite);
 		}
@@ -151,6 +167,12 @@ public class ImportOptions implements OptionsInterface {
 		}
 		if (onDuplicate != null) {
 			mp.put("onDuplicate", onDuplicate.toString().toLowerCase());
+		}
+		if (complete != null) {
+			mp.put("complete", complete);
+		}
+		if (details != null) {
+			mp.put("details", details);
 		}
 
 		return mp.get();
