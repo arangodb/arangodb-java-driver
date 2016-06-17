@@ -17,6 +17,7 @@
 package com.arangodb.impl;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.arangodb.ArangoConfigure;
 import com.arangodb.ArangoException;
@@ -24,6 +25,8 @@ import com.arangodb.entity.EntityFactory;
 import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.http.HttpManager;
 import com.arangodb.http.HttpResponseEntity;
+import com.arangodb.util.ImportOptions;
+import com.arangodb.util.ImportOptionsRaw;
 import com.arangodb.util.MapBuilder;
 
 /**
@@ -39,12 +42,37 @@ public class InternalImportDriverImpl extends BaseArangoDriverImpl implements co
 	}
 
 	@Override
-	public ImportResultEntity importDocuments(String database, String collection, Collection<?> values)
-			throws ArangoException {
+	public ImportResultEntity importDocuments(
+		String database,
+		String collection,
+		Collection<?> values,
+		ImportOptions importOptions) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/import"),
-			new MapBuilder().put(COLLECTION, collection).put("type", "array").get(),
-			EntityFactory.toJsonString(values));
+		Map<String, Object> map = importOptions.toMap();
+		map.put("type", "list");
+
+		return importDocumentsInternal(database, collection, EntityFactory.toJsonString(values), map);
+	}
+
+	@Override
+	public ImportResultEntity importDocumentsRaw(
+		String database,
+		String collection,
+		String values,
+		ImportOptionsRaw importOptionsRaw) throws ArangoException {
+
+		return importDocumentsInternal(database, collection, values, importOptionsRaw.toMap());
+	}
+
+	public ImportResultEntity importDocumentsInternal(
+		String database,
+		String collection,
+		String values,
+		Map<String, Object> importOptions) throws ArangoException {
+
+		importOptions.put(COLLECTION, collection);
+
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_api/import"), importOptions, values);
 
 		return createEntity(res, ImportResultEntity.class);
 

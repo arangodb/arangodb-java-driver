@@ -81,6 +81,8 @@ import com.arangodb.util.DumpHandler;
 import com.arangodb.util.GraphEdgesOptions;
 import com.arangodb.util.GraphQueryUtil;
 import com.arangodb.util.GraphVerticesOptions;
+import com.arangodb.util.ImportOptions;
+import com.arangodb.util.ImportOptionsRaw;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
 import com.arangodb.util.TraversalQueryOptions;
@@ -2964,7 +2966,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Creates documents in the collection.
+	 * Creates documents in a collection.
 	 *
 	 * @param collection
 	 *            the collection as a string
@@ -2975,7 +2977,45 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public ImportResultEntity importDocuments(final String collection, final Collection<?> values)
 			throws ArangoException {
-		return importDriver.importDocuments(getDefaultDatabase(), collection, values);
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values, new ImportOptions());
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param values
+	 *            a list of Objects that will be stored as documents
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocuments(
+		final String collection,
+		final Collection<?> values,
+		final ImportOptions importOptions) throws ArangoException {
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values, importOptions);
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param values
+	 *            a raw string containing JSON data
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocumentsRaw(
+		final String collection,
+		final String values,
+		final ImportOptionsRaw importOptionsRaw) throws ArangoException {
+		return importDriver.importDocumentsRaw(getDefaultDatabase(), collection, values, importOptionsRaw);
 	}
 
 	/**
