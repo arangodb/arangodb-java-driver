@@ -1,7 +1,13 @@
-v3.0.0 (2016-XX-XX)
+v3.0.0 (2016-06-17)
 ---------------------------
 * removed ArangoDriver.EdgeEntity() (/_api/edge withdrawn in Server)
 * removed CAP-Index (Cap-constraints are withdrawn in Server)
+* removed Param database in User-Methods (in 3.0 users are managed in _users Collection in _system Database only) 
+* added User-Method grantDatabaseAccess(username, database)
+* replaced Graph-Functions (graph_edge, graph_vertices, graph_shortes_path) with AQL
+* removed deprecated Methods
+* added Transaction attribute allowImplicit
+* refactored QueryCachePropertiesEntity, TransactionResultEntity
 
 v2.7.4 (2016-04-15)
 ---------------------------

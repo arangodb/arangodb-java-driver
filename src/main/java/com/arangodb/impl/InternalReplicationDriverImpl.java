@@ -77,8 +77,8 @@ public class InternalReplicationDriverImpl extends BaseArangoDriverImpl
 		DumpHandler<T> handler) throws ArangoException {
 
 		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/replication/dump"),
-			new MapBuilder().put("collection", collectionName).put("from", from).put("to", to)
-					.put("chunkSize", chunkSize).put("ticks", ticks).get());
+			new MapBuilder().put(COLLECTION, collectionName).put("from", from).put("to", to).put("chunkSize", chunkSize)
+					.put("ticks", ticks).get());
 
 		ReplicationDumpHeader header = toReplicationDumpHeader(res);
 		boolean cont = handler.head(header);

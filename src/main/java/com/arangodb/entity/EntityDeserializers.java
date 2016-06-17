@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.CollectionEntity.Figures;
+import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.ReplicationApplierState.LastError;
 import com.arangodb.entity.ReplicationApplierState.Progress;
 import com.arangodb.entity.ReplicationInventoryEntity.Collection;
@@ -168,6 +169,12 @@ public class EntityDeserializers {
 	private static final String DELETED = "deleted";
 
 	private static final String MESSAGE = "message";
+
+	private static final String CREATED = "created";
+	private static final String ERRORS = "errors";
+	private static final String EMPTY = "empty";
+	private static final String IGNORED = "ignored";
+	private static final String DETAILS = "details";
 
 	private static Logger logger = LoggerFactory.getLogger(EntityDeserializers.class);
 
@@ -1307,6 +1314,7 @@ public class EntityDeserializers {
 	}
 
 	public static class ImportResultEntityDeserializer implements JsonDeserializer<ImportResultEntity> {
+
 		@Override
 		public ImportResultEntity deserialize(
 			final JsonElement json,
@@ -1320,16 +1328,31 @@ public class EntityDeserializers {
 			final JsonObject obj = json.getAsJsonObject();
 			final ImportResultEntity entity = deserializeBaseParameter(obj, new ImportResultEntity());
 
-			if (obj.has("created")) {
-				entity.created = obj.getAsJsonPrimitive("created").getAsInt();
+			if (obj.has(CREATED)) {
+				entity.setCreated(obj.getAsJsonPrimitive(CREATED).getAsInt());
 			}
 
-			if (obj.has("errors")) {
-				entity.errors = obj.getAsJsonPrimitive("errors").getAsInt();
+			if (obj.has(ERRORS)) {
+				entity.setErrors(obj.getAsJsonPrimitive(ERRORS).getAsInt());
 			}
 
-			if (obj.has("empty")) {
-				entity.empty = obj.getAsJsonPrimitive("empty").getAsInt();
+			if (obj.has(EMPTY)) {
+				entity.setEmpty(obj.getAsJsonPrimitive(EMPTY).getAsInt());
+			}
+
+			if (obj.has(UPDATED)) {
+				entity.setUpdated(obj.getAsJsonPrimitive(UPDATED).getAsInt());
+			}
+
+			if (obj.has(IGNORED)) {
+				entity.setIgnored(obj.getAsJsonPrimitive(IGNORED).getAsInt());
+			}
+
+			if (obj.has(DETAILS)) {
+				final JsonArray asJsonArray = obj.getAsJsonArray(DETAILS);
+				for (JsonElement jsonElement : asJsonArray) {
+					entity.getDetails().add(jsonElement.getAsString());
+				}
 			}
 
 			return entity;
@@ -1958,6 +1981,9 @@ public class EntityDeserializers {
 	}
 
 	public static class GraphEntityDeserializer implements JsonDeserializer<GraphEntity> {
+
+		private static final String COLLECTION = "collection";
+
 		@Override
 		public GraphEntity deserialize(
 			final JsonElement json,
@@ -2007,8 +2033,8 @@ public class EntityDeserializers {
 			for (int i = 0, imax = edgeDefinitions.size(); i < imax; i++) {
 				final EdgeDefinitionEntity edgeDefinitionEntity = new EdgeDefinitionEntity();
 				final JsonObject edgeDefinition = edgeDefinitions.get(i).getAsJsonObject();
-				if (edgeDefinition.has("collection")) {
-					edgeDefinitionEntity.setCollection(edgeDefinition.get("collection").getAsString());
+				if (edgeDefinition.has(COLLECTION)) {
+					edgeDefinitionEntity.setCollection(edgeDefinition.get(COLLECTION).getAsString());
 				}
 				if (edgeDefinition.has("from")) {
 					final List<String> from = new ArrayList<String>();
@@ -2302,7 +2328,8 @@ public class EntityDeserializers {
 			final QueryCachePropertiesEntity entity = deserializeBaseParameter(obj, new QueryCachePropertiesEntity());
 
 			if (obj.has("mode")) {
-				entity.setMode(obj.getAsJsonPrimitive("mode").getAsString());
+				final String modeAsString = obj.getAsJsonPrimitive("mode").getAsString();
+				entity.setMode(CacheMode.valueOf(modeAsString));
 			}
 
 			if (obj.has("maxResults")) {

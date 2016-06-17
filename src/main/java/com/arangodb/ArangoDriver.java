@@ -81,6 +81,9 @@ import com.arangodb.util.DumpHandler;
 import com.arangodb.util.GraphEdgesOptions;
 import com.arangodb.util.GraphQueryUtil;
 import com.arangodb.util.GraphVerticesOptions;
+import com.arangodb.util.ImportOptions;
+import com.arangodb.util.ImportOptionsJson;
+import com.arangodb.util.ImportOptionsRaw;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.util.ShortestPathOptions;
 import com.arangodb.util.TraversalQueryOptions;
@@ -947,8 +950,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the desired document key
 	 * @param value
 	 *            An object containing the documents attributes
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -975,8 +976,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the desired document key
 	 * @param value
 	 *            An object containing the documents attributes
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.
@@ -2936,7 +2935,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @param username
 	 *            the username as string
 	 * @param database
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity grantDatabaseAccess(String username, String database) throws ArangoException {
@@ -2968,7 +2967,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Creates documents in the collection.
+	 * Creates documents in a collection.
 	 *
 	 * @param collection
 	 *            the collection as a string
@@ -2979,11 +2978,49 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public ImportResultEntity importDocuments(final String collection, final Collection<?> values)
 			throws ArangoException {
-		return importDriver.importDocuments(getDefaultDatabase(), collection, values);
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values, new ImportOptionsJson());
 	}
 
 	/**
-	 * Creates documents in the collection.
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param values
+	 *            a list of Objects that will be stored as documents
+	 * @param importOptionsJson
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocuments(
+		final String collection,
+		final Collection<?> values,
+		final ImportOptionsJson importOptionsJson) throws ArangoException {
+		return importDriver.importDocuments(getDefaultDatabase(), collection, values, importOptionsJson);
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param values
+	 *            a raw string containing JSON data
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocumentsRaw(
+		final String collection,
+		final String values,
+		final ImportOptionsRaw importOptionsRaw) throws ArangoException {
+		return importDriver.importDocumentsRaw(getDefaultDatabase(), collection, values, importOptionsRaw);
+	}
+
+	/**
+	 * Creates documents in a collection.
 	 *
 	 * @param collection
 	 *            the collection as a string
@@ -2995,7 +3032,49 @@ public class ArangoDriver extends BaseArangoDriver {
 	public ImportResultEntity importDocumentsByHeaderValues(
 		final String collection,
 		final Collection<? extends Collection<?>> headerValues) throws ArangoException {
-		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues);
+		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues,
+			new ImportOptions());
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param headerValues
+	 *            a list of lists that will be stored as documents
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocumentsByHeaderValues(
+		final String collection,
+		final Collection<? extends Collection<?>> headerValues,
+		ImportOptions importOptions) throws ArangoException {
+		return importDriver.importDocumentsByHeaderValues(getDefaultDatabase(), collection, headerValues,
+			importOptions);
+	}
+
+	/**
+	 * Creates documents in a collection.
+	 *
+	 * @param collection
+	 *            the collection as a string
+	 * @param headerValues
+	 *            raw JSON data that contains a list of lists that will be
+	 *            stored as documents
+	 * @param importOptions
+	 *            options for importing documents
+	 * @return ImportResultEntity
+	 * @throws ArangoException
+	 */
+	public ImportResultEntity importDocumentsByHeaderValuesRaw(
+		final String collection,
+		String headerValues,
+		ImportOptions importOptions) throws ArangoException {
+		return importDriver.importDocumentsByHeaderValuesRaw(getDefaultDatabase(), collection, headerValues,
+			importOptions);
 	}
 
 	/**
@@ -4369,6 +4448,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns an EdgeCursor by a given vertex example and some options
 	 * 
+	 * @deprecated use AQL instead
 	 * @param graphName
 	 *            The name of the graph.
 	 * @param clazz
@@ -4381,6 +4461,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return EdgeCursor<T>
 	 * @throws ArangoException
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public <T> EdgeCursor<T> graphGetEdgeCursor(
 		final String graphName,
@@ -4415,6 +4496,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Returns a VertexCursor by a given vertex example and some options
 	 * 
+	 * @deprecated use AQL instead
 	 * @param graphName
 	 *            The name of the graph.
 	 * @param clazz
@@ -4427,6 +4509,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return VertexCursor<T>
 	 * @throws ArangoException
 	 */
+	@Deprecated
 	public <T> VertexCursor<T> graphGetVertexCursor(
 		final String graphName,
 		final Class<T> clazz,
@@ -4481,6 +4564,10 @@ public class ArangoDriver extends BaseArangoDriver {
 		return graphGetEdgeCursor(graphName, clazz, vertexExample, new GraphEdgesOptions(), null);
 	}
 
+	/**
+	 * @deprecated use AQL instead
+	 */
+	@Deprecated
 	public <V, E> ShortestPathEntity<V, E> graphGetShortestPath(
 		final String graphName,
 		final Object startVertexExample,
@@ -4562,6 +4649,64 @@ public class ArangoDriver extends BaseArangoDriver {
 	public TransactionResultEntity executeTransaction(final TransactionEntity transactionEntity)
 			throws ArangoException {
 		return this.transactionDriver.executeTransaction(getDefaultDatabase(), transactionEntity);
+	}
+
+	/**
+	 * Create an edge in an edge collection.
+	 *
+	 * @param collectionName
+	 *            name of the edge collection
+	 * @param value
+	 *            the edge object
+	 * @param fromHandle
+	 *            id of document 'from'
+	 * @param toHandle
+	 *            id of document 'to'
+	 * @param waitForSync
+	 *            wait for sync
+	 * @return the new created EdgeEntity object
+	 * @throws ArangoException
+	 */
+	public <T> EdgeEntity<T> createEdge(
+		final String collectionName,
+		final T value,
+		final String fromHandle,
+		final String toHandle,
+		final Boolean waitForSync) throws ArangoException {
+
+		return createEdge(collectionName, null, value, fromHandle, toHandle, waitForSync);
+	}
+
+	/**
+	 * Create an edge in an edge collection. This method allows to define to
+	 * documents key. Note that the collection's property
+	 * CollectionKeyOption.allowUserKeys has to be set accordingly.
+	 * 
+	 * @param collectionName
+	 *            name of the edge collection
+	 * @param documentKey
+	 *            the desired document key
+	 * @param value
+	 *            the edge object
+	 * @param fromHandle
+	 *            id of document 'from'
+	 * @param toHandle
+	 *            id of document 'to'
+	 * @param waitForSync
+	 *            wait for sync
+	 * @return the new created EdgeEntity object
+	 * @throws ArangoException
+	 */
+	public <T> EdgeEntity<T> createEdge(
+		final String collectionName,
+		final String documentKey,
+		final T value,
+		final String fromHandle,
+		final String toHandle,
+		final Boolean waitForSync) throws ArangoException {
+
+		return documentDriver.createEdge(getDefaultDatabase(), collectionName, documentKey, value, fromHandle, toHandle,
+			waitForSync);
 	}
 
 	/**
@@ -4688,7 +4833,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	/**
 	 * Clears the list of slow AQL queries of the default database
 	 * 
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteSlowQueries() throws ArangoException {
@@ -4700,7 +4845,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * 
 	 * @param database
 	 *            the database name or null
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteSlowQueries(final String database) throws ArangoException {
@@ -4712,7 +4857,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * 
 	 * @param id
 	 *            the identifier of a query
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity killQuery(final String id) throws ArangoException {
@@ -4726,7 +4871,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            the identifier of a query
 	 * @param database
 	 *            the database name or null
-	 * @return
+	 * @return a DefaultEntity object
 	 * @throws ArangoException
 	 */
 	public DefaultEntity killQuery(final String database, final String id) throws ArangoException {
@@ -4749,8 +4894,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *            The name of the collection
 	 * @param rawJsonString
 	 *            A string containing a JSON object
-	 * @param createCollection
-	 *            if set to true the collection is created if it does not exist
 	 * @param waitForSync
 	 *            if set to true the response is returned when the server has
 	 *            finished.

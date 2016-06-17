@@ -42,7 +42,6 @@ public class InternalSimpleDriverImpl extends BaseArangoDriverWithCursorImpl
 	private static final String WAIT_FOR_SYNC = "waitForSync";
 	private static final String LIMIT = "limit";
 	private static final String EXAMPLE = "example";
-	private static final String COLLECTION = "collection";
 
 	InternalSimpleDriverImpl(final ArangoConfigure configure, final InternalCursorDriver cursorDriver,
 		final HttpManager httpManager) {

@@ -27,9 +27,19 @@ public class TransactionEntity extends BaseEntity {
 
 	public static class ReadWriteCollections {
 
-		List<String> read = new ArrayList<String>();
+		private List<String> read = new ArrayList<String>();
 
-		List<String> write = new ArrayList<String>();
+		private List<String> write = new ArrayList<String>();
+
+		private boolean allowImplicit = true;
+
+		public boolean isAllowImplicit() {
+			return allowImplicit;
+		}
+
+		public void setAllowImplicit(boolean allowImplicit) {
+			this.allowImplicit = allowImplicit;
+		}
 	}
 
 	ReadWriteCollections collections = new ReadWriteCollections();
@@ -60,6 +70,15 @@ public class TransactionEntity extends BaseEntity {
 
 	public void addWriteCollection(String collection) {
 		this.collections.write.add(collection);
+	}
+
+	/**
+	 * @param allowImplicit
+	 *            allows(true)/ disallows(false) read access to other
+	 *            collections than specified. Default is true.
+	 */
+	public void setAllowImplicit(final boolean allowImplicit) {
+		collections.setAllowImplicit(allowImplicit);
 	}
 
 	public String getAction() {

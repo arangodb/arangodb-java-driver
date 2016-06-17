@@ -26,6 +26,7 @@ import com.arangodb.http.HttpManager;
  */
 class BaseArangoDriverImpl extends BaseArangoDriver implements BaseDriverInterface {
 
+	protected static final String COLLECTION = "collection";
 	protected ArangoConfigure configure;
 	protected HttpManager httpManager;
 	protected AnnotationHandler annotationHandler;
