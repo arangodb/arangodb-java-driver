@@ -2,13 +2,17 @@ package com.arangodb.util;
 
 import java.util.Map;
 
-public class ImportOptionsRaw extends ImportOptions {
+public class ImportOptionsRaw extends ImportOptionsJson {
 
 	public enum ImportType {
 		DOCUMENTS, LIST, AUTO
 	}
 
 	private ImportType importType;
+
+	public ImportOptionsRaw(ImportType importType) {
+		this.importType = importType;
+	}
 
 	/**
 	 * Determines how the body of the request will be interpreted. type can have
