@@ -134,7 +134,7 @@ public class AqlQueryOptions implements OptionsInterface {
 	 * @return boolean flag
 	 */
 	public Boolean getCache() {
-		return fullCount;
+		return cache;
 	}
 
 	/**
