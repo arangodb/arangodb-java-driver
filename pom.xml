@@ -41,6 +41,11 @@
 			<name>a-brandt</name>
 			<url>https://github.com/a-brandt</url>
 		</developer>
+		<developer>
+			<id>mpv1989</id>
+			<name>Mark</name>
+			<url>https://github.com/mpv1989</url>
+		</developer>
 	</developers>
 
 	<distributionManagement>
