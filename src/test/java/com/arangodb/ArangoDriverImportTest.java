@@ -306,6 +306,43 @@ public class ArangoDriverImportTest extends BaseTest {
 	}
 
 	@Test
+	public void test_import_from_to_Prefix_with_errors_details() throws ArangoException, IOException {
+		ImportOptionsJson options = new ImportOptionsJson();
+		{
+			Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+			for (int i = 0; i < 100; i++) {
+				BaseDocument doc = new BaseDocument();
+				doc.setDocumentKey(String.valueOf(i));
+				docs.add(doc);
+			}
+			{
+				final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, options);
+				assertThat(result.getStatusCode(), is(201));
+				assertThat(result.isError(), is(false));
+				assertThat(result.getCreated(), is(docs.size()));
+			}
+		}
+		{
+			Collection<Map<String, Object>> edgeDocs = new ArrayList<Map<String, Object>>();
+			for (int i = 0; i < 100; i++) {
+				final HashMap<String, Object> doc = new HashMap<String, Object>();
+				doc.put(BaseDocument.KEY, String.valueOf(i));
+				// doc.put(BaseDocument.FROM, String.valueOf(i));
+				doc.put(BaseDocument.TO, String.valueOf(i));
+				edgeDocs.add(doc);
+			}
+			options.setFromPrefix(UT_IMPORT_TEST);
+			options.setToPrefix(UT_IMPORT_TEST);
+			options.setDetails(true);
+			final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST_EDGE, edgeDocs, options);
+			assertThat(result.getStatusCode(), is(201));
+			assertThat(result.isError(), is(false));
+			assertThat(result.getErrors(), is(edgeDocs.size()));
+			assertThat(result.getDetails().size(), is(edgeDocs.size()));
+		}
+	}
+
+	@Test
 	public void test_import_rawList() throws ArangoException {
 		String values = "[{\"_key\":\"a\"},{\"_key\":\"b\"}]";
 		ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.LIST);
