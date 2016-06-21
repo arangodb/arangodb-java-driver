@@ -16,10 +16,10 @@
 
 package com.arangodb.example.ssl;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -123,8 +123,7 @@ public class SslExample {
 			// create a sslContext for the self signed certificate
 			final URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
 			final SSLContext sslContext = SSLContexts.custom()
-					.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray())
-					.build();
+					.loadTrustMaterial(new File(resource.toURI()), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
 			configuration = new ArangoConfigure("/ssl-arangodb.properties");
 			configuration.setSslContext(sslContext);
@@ -176,8 +175,7 @@ public class SslExample {
 			// create a sslContext for the self signed certificate
 			final URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
 			final SSLContext sslContext = SSLContexts.custom()
-					.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray())
-					.build();
+					.loadTrustMaterial(new File(resource.toURI()), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
 			configuration = new ArangoConfigure("/ssl-arangodb.properties");
 			// 127.0.0.1 is the wrong name
