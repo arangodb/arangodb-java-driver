@@ -37,6 +37,7 @@ import com.arangodb.ArangoException;
 import com.arangodb.ArangoHost;
 import com.arangodb.entity.ArangoVersion;
 import com.arangodb.http.HttpResponseEntity;
+import com.arangodb.util.TestUtils;
 
 /*-
  * Example for using a HTTPS connection
@@ -95,21 +96,24 @@ public class SslExample {
 
 	@Test
 	public void sslConnectionTest() throws ArangoException {
-		// use HTTPS with java default trust store
-		ArangoConfigure configuration = null;
-		try {
-			configuration = new ArangoConfigure();
-			configuration.setArangoHost(new ArangoHost("www.arangodb.com", 443));
-			configuration.setUseSsl(true);
-			configuration.init();
+		final String javaVersion = System.getProperty("java.version");
+		if (TestUtils.compareVersion(javaVersion, "1.7") > -1) {
+			// use HTTPS with java default trust store
+			ArangoConfigure configuration = null;
+			try {
+				configuration = new ArangoConfigure();
+				configuration.setArangoHost(new ArangoHost("www.arangodb.com", 443));
+				configuration.setUseSsl(true);
+				configuration.init();
 
-			final ArangoDriver arangoDriver = new ArangoDriver(configuration);
+				final ArangoDriver arangoDriver = new ArangoDriver(configuration);
 
-			final HttpResponseEntity response = arangoDriver.getHttpManager().doGet("/");
-			Assert.assertEquals(200, response.getStatusCode());
-		} finally {
-			if (configuration != null) {
-				configuration.shutdown();
+				final HttpResponseEntity response = arangoDriver.getHttpManager().doGet("/");
+				Assert.assertEquals(200, response.getStatusCode());
+			} finally {
+				if (configuration != null) {
+					configuration.shutdown();
+				}
 			}
 		}
 	}
