@@ -24,10 +24,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.AqlFunctionsEntity;
+import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DefaultEntity;
 
 /**
@@ -51,6 +53,10 @@ public class ArangoDriverAqlfunctionsTest extends BaseTest {
 
 	@Test
 	public void test_AqlFunctions() throws ArangoException {
+		{
+			final CollectionEntity count = driver.getCollectionCount("_aqlfunctions");
+			Assert.assertEquals(0, count.getCount());
+		}
 
 		DefaultEntity res = driver.createAqlFunction("someNamespace::testCode",
 			"function (celsius) { return celsius * 2.8 + 32; }");
@@ -73,6 +79,11 @@ public class ArangoDriverAqlfunctionsTest extends BaseTest {
 			"function (celsius) { return celsius * 2.8 + 32; }");
 		assertThat(res.getCode(), is(201));
 		assertThat(res.getErrorMessage(), is((String) null));
+
+		{
+			final CollectionEntity count = driver.getCollectionCount("_aqlfunctions");
+			Assert.assertEquals(3, count.getCount());
+		}
 
 		AqlFunctionsEntity r = driver.getAqlFunctions(null);
 		assertThat(r.size(), is(3));

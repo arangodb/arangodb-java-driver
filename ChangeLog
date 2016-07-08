@@ -1,3 +1,8 @@
+v3.0.1 (2016-07-08)
+---------------------------
+* added flag complete and details in ImportOptions
+* fixed issue #43 (ArangoDriver.getAqlFunctions(String) does not uses the defaultDatabase setting)
+
 v3.0.0 (2016-06-17)
 ---------------------------
 * removed ArangoDriver.EdgeEntity() (/_api/edge withdrawn in Server)
