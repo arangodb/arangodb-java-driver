@@ -182,23 +182,30 @@ public class EntityFactory {
 	}
 
 	public static <T> String toJsonString(T obj, boolean includeNullValue) {
-		if (obj != null && obj.getClass().equals(BaseDocument.class)) {
+		if (obj != null) {
 			String tmp = includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
 			JsonParser jsonParser = new JsonParser();
 			JsonElement jsonElement = jsonParser.parse(tmp);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			JsonObject result = jsonObject.getAsJsonObject("properties");
-			JsonElement keyObject = jsonObject.get("_key");
-			if (keyObject != null && keyObject.getClass() != JsonNull.class) {
-				result.add("_key", jsonObject.get("_key"));
+			
+			if(obj.getClass().equals(BaseDocument.class)) {
+				JsonObject result = jsonObject.getAsJsonObject("properties");
+				JsonElement keyObject = jsonObject.get("_key");
+				if (keyObject != null && keyObject.getClass() != JsonNull.class) {
+					result.add("_key", jsonObject.get("_key"));
+				}
+				JsonElement handleObject = jsonObject.get("_id");
+				if (handleObject != null && handleObject.getClass() != JsonNull.class) {
+					result.add("_id", jsonObject.get("_id"));
+				}
+				// JsonElement revisionValue = jsonObject.get("documentRevision");
+				// result.add("_rev", revisionValue);
+				return result.toString();
+			} else {	// if given object has _id or _key fields, must remove them, or a cryptic server error occurs.
+				if(jsonObject.has("_key")) jsonObject.remove("_key");
+				if(jsonObject.has("_id")) jsonObject.remove("_id");
+				return jsonObject.toString();
 			}
-			JsonElement handleObject = jsonObject.get("_id");
-			if (handleObject != null && handleObject.getClass() != JsonNull.class) {
-				result.add("_id", jsonObject.get("_id"));
-			}
-			// JsonElement revisionValue = jsonObject.get("documentRevision");
-			// result.add("_rev", revisionValue);
-			return result.toString();
 		}
 		return includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
 	}
