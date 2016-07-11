@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,6 +36,8 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.ImportResultEntity;
+import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.IndexType;
 import com.arangodb.util.ImportOptions;
 import com.arangodb.util.ImportOptions.OnDuplicate;
 import com.arangodb.util.ImportOptionsJson;
@@ -340,6 +343,28 @@ public class ArangoDriverImportTest extends BaseTest {
 			assertThat(result.getErrors(), is(edgeDocs.size()));
 			assertThat(result.getDetails().size(), is(edgeDocs.size()));
 		}
+	}
+
+	@Test
+	public void test_import_index_with_errors_details() throws ArangoException {
+		final IndexEntity index = driver.createIndex(UT_IMPORT_TEST, IndexType.HASH, true, "pk_id");
+		Assert.assertFalse(index.isError());
+
+		Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		for (int i = 0; i < 2; i++) {
+			BaseDocument doc = new BaseDocument();
+			doc.addAttribute("pk_id", "test");
+			docs.add(doc);
+		}
+		ImportOptionsJson importOptions = new ImportOptionsJson();
+		importOptions.setDetails(true);
+		final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, importOptions);
+		Assert.assertFalse(result.isError());
+		Assert.assertEquals(1, result.getCreated());
+		Assert.assertEquals(1, result.getErrors());
+		Assert.assertEquals(1, result.getDetails().size());
+		String expectedErrorDetail = "at position 1: creating document failed with error 'unique constraint violated'";
+		Assert.assertTrue(result.getDetails().get(0).startsWith(expectedErrorDetail));
 	}
 
 	@Test
