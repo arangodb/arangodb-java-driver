@@ -274,7 +274,7 @@ instead of using a ```for``` statement you can also use an DocumentEntitiy or an
 ```
 
 #User Management
-If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Authentication.html) you can manage users with the driver.
+If you are using [authentication] (https://docs.arangodb.com/Manual/GettingStarted/Authentication.html) you can manage users with the driver.
 
 ##add user
 ``` Java
@@ -298,7 +298,7 @@ If you are using [authentication] (http://docs.arangodb.com/ConfigureArango/Auth
 
 
 #Graphs
-This driver supports the new [graph api](https://docs.arangodb.com/HttpGharial/README.html).
+This driver supports the new [graph api](https://docs.arangodb.com/HTTP/Gharial/index.html).
 
 Some of the basic graph operations are described in the following:
 
