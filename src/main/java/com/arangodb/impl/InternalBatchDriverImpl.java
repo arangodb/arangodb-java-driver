@@ -47,33 +47,34 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 
 	private BatchResponseListEntity batchResponseListEntity;
 
-	InternalBatchDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+	InternalBatchDriverImpl(final ArangoConfigure configure, final HttpManager httpManager) {
 		super(configure, httpManager);
 	}
 
-	public DefaultEntity executeBatch(List<BatchPart> callStack, String defaultDataBase) throws ArangoException {
+	public DefaultEntity executeBatch(final List<BatchPart> callStack, final String defaultDataBase)
+			throws ArangoException {
 
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 
-		Map<String, InvocationObject> resolver = new HashMap<String, InvocationObject>();
+		final Map<String, InvocationObject> resolver = new HashMap<String, InvocationObject>();
 
-		for (BatchPart bp : callStack) {
+		for (final BatchPart bp : callStack) {
 			addBatchPart(sb, bp);
 			resolver.put(bp.getId(), bp.getInvocationObject());
 		}
 
 		sb.append(DELIMITER + "--");
 
-		Map<String, Object> headers = new HashMap<String, Object>();
+		final Map<String, Object> headers = new HashMap<String, Object>();
 		headers.put("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
 
-		HttpResponseEntity res = httpManager.doPostWithHeaders(createEndpointUrl(defaultDataBase, "/_api/batch"), null,
-			null, headers, sb.toString());
+		final HttpResponseEntity res = httpManager.doPostWithHeaders(createEndpointUrl(defaultDataBase, "/_api/batch"),
+			null, null, headers, sb.toString());
 
-		String data = res.getText();
+		final String data = res.getText();
 		res.setContentType("application/json");
 		res.setText("");
-		List<BatchResponseEntity> batchResponseEntityList = handleResponse(resolver, data);
+		final List<BatchResponseEntity> batchResponseEntityList = handleResponse(resolver, data);
 		batchResponseListEntity = new BatchResponseListEntity();
 		batchResponseListEntity.setBatchResponseEntities(batchResponseEntityList);
 		return createEntity(res, DefaultEntity.class, null, false);
@@ -83,13 +84,13 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 		return batchResponseListEntity;
 	}
 
-	private List<BatchResponseEntity> handleResponse(Map<String, InvocationObject> resolver, String data) {
+	private List<BatchResponseEntity> handleResponse(final Map<String, InvocationObject> resolver, final String data) {
 		String currentId = null;
 		Boolean fetchText = false;
-		List<BatchResponseEntity> batchResponseEntityList = new ArrayList<BatchResponseEntity>();
+		final List<BatchResponseEntity> batchResponseEntityList = new ArrayList<BatchResponseEntity>();
 		BatchResponseEntity batchResponseEntity = new BatchResponseEntity(null);
-		StringBuilder sb = new StringBuilder();
-		for (String line : data.split(newline)) {
+		final StringBuilder sb = new StringBuilder();
+		for (final String line : data.split(newline)) {
 			line.trim();
 			line.replaceAll("\r", "");
 			if (line.indexOf("Content-Id") != -1) {
@@ -98,11 +99,11 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 				batchResponseEntity = new BatchResponseEntity(resolver.get(currentId));
 				batchResponseEntity.setRequestId(currentId);
 			} else if (isContentTypeLine(line)) {
-				String ct = line.replaceAll("Content-Type: ", "");
+				final String ct = line.replaceAll("Content-Type: ", "");
 				batchResponseEntity.httpResponseEntity.setContentType(ct);
 			} else if (line.indexOf("Etag") != -1) {
-				String etag = line.split(" ")[1].replaceAll("\"", "").trim();
-				batchResponseEntity.httpResponseEntity.setEtag(Long.parseLong(etag));
+				final String etag = line.split(" ")[1].replaceAll("\"", "").trim();
+				batchResponseEntity.httpResponseEntity.setEtag(etag);
 			} else if (line.indexOf("HTTP/1.1") != -1) {
 				batchResponseEntity.httpResponseEntity.setStatusCode(Integer.valueOf(line.split(" ")[1]));
 			} else if (line.indexOf("Content-Length") != -1) {
@@ -121,38 +122,41 @@ public class InternalBatchDriverImpl extends BaseArangoDriverImpl {
 		return batchResponseEntityList;
 	}
 
-	private void copyResponseToEntity(BatchResponseEntity batchResponseEntity, StringBuilder sb) {
+	private void copyResponseToEntity(final BatchResponseEntity batchResponseEntity, final StringBuilder sb) {
 		if (!batchResponseEntity.httpResponseEntity.isDumpResponse()) {
 			batchResponseEntity.httpResponseEntity.setText(sb.toString());
 		} else {
-			InputStream is = new ByteArrayInputStream(sb.toString().getBytes());
+			final InputStream is = new ByteArrayInputStream(sb.toString().getBytes());
 			batchResponseEntity.httpResponseEntity.setStream(is);
 		}
 	}
 
-	private boolean isDelimiterLine(Map<String, InvocationObject> resolver, String currentId, String line) {
+	private boolean isDelimiterLine(
+		final Map<String, InvocationObject> resolver,
+		final String currentId,
+		final String line) {
 		return line.indexOf(DELIMITER) != -1 && resolver.get(currentId) != null;
 	}
 
-	private boolean canFetchLine(Boolean fetchText, String line) {
+	private boolean canFetchLine(final Boolean fetchText, final String line) {
 		return fetchText && !line.equals(newline);
 	}
 
-	private boolean isContentTypeLine(String line) {
+	private boolean isContentTypeLine(final String line) {
 		return line.indexOf("Content-Type:") != -1
 				&& line.indexOf("Content-Type: application/x-arango-batchpart") == -1;
 	}
 
 	private void addBatchResponseEntity(
-		String currentId,
-		List<BatchResponseEntity> batchResponseEntityList,
-		BatchResponseEntity batchResponseEntity) {
+		final String currentId,
+		final List<BatchResponseEntity> batchResponseEntityList,
+		final BatchResponseEntity batchResponseEntity) {
 		if (currentId != null) {
 			batchResponseEntityList.add(batchResponseEntity);
 		}
 	}
 
-	private void addBatchPart(StringBuilder sb, BatchPart bp) {
+	private void addBatchPart(final StringBuilder sb, final BatchPart bp) {
 		sb.append(DELIMITER + newline);
 		sb.append("Content-Type: application/x-arango-batchpart" + newline);
 		sb.append("Content-Id: " + bp.getId() + newline + newline);

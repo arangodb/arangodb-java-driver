@@ -29,7 +29,7 @@ public class HttpResponseEntity {
 	String statusPhrase;
 	String text;
 	InputStream stream;
-	long etag = -1;
+	String etag;
 	String requestId;
 	Map<String, String> headers;
 
@@ -77,7 +77,7 @@ public class HttpResponseEntity {
 		return stream;
 	}
 
-	public void setStream(InputStream stream) {
+	public void setStream(final InputStream stream) {
 		this.stream = stream;
 	}
 
@@ -89,23 +89,23 @@ public class HttpResponseEntity {
 		return text;
 	}
 
-	public void setStatusCode(int statusCode) {
+	public void setStatusCode(final int statusCode) {
 		this.statusCode = statusCode;
 	}
 
-	public void setStatusPhrase(String statusPhrase) {
+	public void setStatusPhrase(final String statusPhrase) {
 		this.statusPhrase = statusPhrase;
 	}
 
-	public void setText(String text) {
+	public void setText(final String text) {
 		this.text = text;
 	}
 
-	public long getEtag() {
+	public String getEtag() {
 		return etag;
 	}
 
-	public void setEtag(long etag) {
+	public void setEtag(final String etag) {
 		this.etag = etag;
 	}
 
@@ -113,7 +113,7 @@ public class HttpResponseEntity {
 		return headers;
 	}
 
-	public void setHeaders(Map<String, String> headers) {
+	public void setHeaders(final Map<String, String> headers) {
 		this.headers = headers;
 	}
 
@@ -121,7 +121,7 @@ public class HttpResponseEntity {
 		return contentType;
 	}
 
-	public void setContentType(String contentType) {
+	public void setContentType(final String contentType) {
 		this.contentType = contentType;
 	}
 
@@ -129,7 +129,7 @@ public class HttpResponseEntity {
 		return requestId;
 	}
 
-	public void setRequestId(String requestId) {
+	public void setRequestId(final String requestId) {
 		this.requestId = requestId;
 	}
 

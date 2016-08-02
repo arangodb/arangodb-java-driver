@@ -68,7 +68,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		myHashMap.put("gender", "female");
 		myHashMap.put("age", 18);
 		String documentHandleExample = null;
-		long revision = 0L;
+		String revision = "0";
 
 		try {
 			final DocumentEntity<HashMap<String, Object>> entity = driver.createDocument(COLLECTION_NAME, myHashMap);
@@ -148,7 +148,7 @@ public class ReplaceAndUpdateDocumentExample extends BaseExample {
 		try {
 			final DocumentPerson dp = new DocumentPerson("Nina", "female", 9);
 			// wrong revision
-			driver.replaceDocument(documentHandleExample, dp, 22L, true);
+			driver.replaceDocument(documentHandleExample, dp, "22", true);
 			Assert.fail("replaceDocument should fail here!");
 		} catch (final ArangoException e) {
 			Assert.assertEquals(ErrorNums.ERROR_ARANGO_CONFLICT, e.getErrorNumber());

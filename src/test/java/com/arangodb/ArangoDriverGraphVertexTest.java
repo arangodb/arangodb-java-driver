@@ -62,7 +62,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 			new TestComplexEntity01("Homer", "Simpson", 38), true);
 
 		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
-		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(vertex.getDocumentKey(), is(notNullValue()));
 		assertThat(vertex.getEntity(), isA(TestComplexEntity01.class));
 		final DocumentEntity<TestComplexEntity01> document = driver.getDocument(vertex.getDocumentHandle(),
@@ -79,7 +79,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 			new TestComplexEntity03("Homer", "Simpson", 38), true);
 
 		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
-		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(vertex.getDocumentKey(), is(notNullValue()));
 		assertThat(vertex.getEntity(), isA(TestComplexEntity03.class));
 
@@ -326,7 +326,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 			new TestComplexEntity03("Homer", "Simpson", 38), true);
 
 		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
-		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(vertex.getDocumentKey(), is(notNullValue()));
 		final TestComplexEntity03 en1 = vertex.getEntity();
 		assertThat(en1, isA(TestComplexEntity03.class));
@@ -334,7 +334,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		assertThat(en1.getDocumentHandle(), is(notNullValue()));
 		assertThat(en1.getDocumentKey(), is(notNullValue()));
 		assertThat(en1.getDocumentRevision(), is(notNullValue()));
-		final Long rev = en1.getDocumentRevision();
+		final String rev = en1.getDocumentRevision();
 
 		en1.setUser("Tim");
 
@@ -348,7 +348,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		assertThat(en2.getDocumentKey(), is(notNullValue()));
 		assertThat(en2.getDocumentRevision(), is(notNullValue()));
 		assertThat(en2.getDocumentRevision(), is(not(rev)));
-		final Long rev2 = en2.getDocumentRevision();
+		final String rev2 = en2.getDocumentRevision();
 
 		final DocumentEntity<TestComplexEntity03> document = driver.getDocument(vertex.getDocumentHandle(),
 			TestComplexEntity03.class);
@@ -365,9 +365,9 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 			new TestComplexEntity03("Homer", "Simpson", 38), true);
 
 		assertThat(vertex.getDocumentHandle(), is(notNullValue()));
-		assertThat(vertex.getDocumentRevision(), is(not(0L)));
+		assertThat(vertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(vertex.getDocumentKey(), is(notNullValue()));
-		final Long rev = vertex.getDocumentRevision();
+		final String rev = vertex.getDocumentRevision();
 
 		final TestComplexEntity03 en1 = new TestComplexEntity03("Tim", null, null);
 
@@ -379,7 +379,7 @@ public class ArangoDriverGraphVertexTest extends BaseGraphTest {
 		assertThat(en2.getDocumentKey(), is(notNullValue()));
 		assertThat(en2.getDocumentRevision(), is(notNullValue()));
 		assertThat(en2.getDocumentRevision(), is(not(rev)));
-		final Long rev2 = en2.getDocumentRevision();
+		final String rev2 = en2.getDocumentRevision();
 
 		final DocumentEntity<TestComplexEntity03> document = driver.getDocument(vertex.getDocumentHandle(),
 			TestComplexEntity03.class);

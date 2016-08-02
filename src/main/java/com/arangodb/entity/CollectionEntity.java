@@ -74,11 +74,6 @@ public class CollectionEntity extends BaseEntity {
 	long count;
 
 	/**
-	 * The collections revision
-	 */
-	long revision;
-
-	/**
 	 * The collection figures
 	 * 
 	 * @see com.arangodb.entity.CollectionEntity.Figures
@@ -209,14 +204,6 @@ public class CollectionEntity extends BaseEntity {
 
 	public void setKeyOptions(final CollectionKeyOption keyOptions) {
 		this.keyOptions = keyOptions;
-	}
-
-	public long getRevision() {
-		return revision;
-	}
-
-	public void setRevision(final long revision) {
-		this.revision = revision;
 	}
 
 	public Boolean getDoCompact() {
@@ -456,8 +443,8 @@ public class CollectionEntity extends BaseEntity {
 	public String toString() {
 		return "CollectionEntity [name=" + name + ", id=" + id + ", type=" + type + ", status=" + status
 				+ ", waitForSync=" + waitForSync + ", isSystem=" + isSystem + ", isVolatile=" + isVolatile
-				+ ", journalSize=" + journalSize + ", count=" + count + ", revision=" + revision + ", figures="
-				+ figures + ", keyOptions=" + keyOptions + ", checksum=" + checksum + ", doCompact=" + doCompact + "]";
+				+ ", journalSize=" + journalSize + ", count=" + count + ", figures=" + figures + ", keyOptions="
+				+ keyOptions + ", checksum=" + checksum + ", doCompact=" + doCompact + "]";
 	}
 
 }

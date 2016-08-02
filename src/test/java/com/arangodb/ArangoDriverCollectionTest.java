@@ -17,7 +17,6 @@
 package com.arangodb;
 
 import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -295,9 +294,7 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		assertThat(collection.getKeyOptions().isAllowUserKeys(), is(true));
 
 		// Countがないこと
-		// Revisionがないこと
 		assertThat(collection.getCount(), is(0L));
-		assertThat(collection.getRevision(), is(0L));
 
 	}
 
@@ -312,49 +309,6 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		try {
 			driver.getCollectionProperties(collectionName404);
 			fail("ここに来てはダメー！");
-		} catch (final ArangoException e) {
-			assertThat(e.getCode(), is(404));
-			assertThat(e.getErrorNumber(), is(1203));
-		}
-
-	}
-
-	@Test
-	public void test_getCollectionRevision() throws ArangoException {
-
-		final CollectionEntity res1 = driver.createCollection(collectionName);
-		assertThat(res1.getCode(), is(200));
-
-		// Get Revision
-		CollectionEntity collection = driver.getCollectionRevision(collectionName);
-		assertThat(collection.getRevision(), is(0L));
-
-		// Create Document
-		driver.createDocument(collectionName, new TestComplexEntity01("test_user1", "test user 1", 20), true);
-
-		// Get Revision again
-		collection = driver.getCollectionRevision(collectionName);
-		// Check to updated revision
-		final long rev2 = collection.getRevision();
-		assertThat(rev2, is(not(0L)));
-
-		// Create Document
-		driver.createDocument(collectionName, new TestComplexEntity01("test_user2", "test user 2", 21), true);
-
-		// Get Revision again
-		collection = driver.getCollectionRevision(collectionName);
-		// Check to updated revision
-		final long rev3 = collection.getRevision();
-		assertThat(rev3, greaterThan(rev2));
-
-	}
-
-	@Test
-	public void test_getCollectionRevision_404() throws ArangoException {
-
-		try {
-			driver.getCollectionRevision(collectionName404);
-			fail("Because did not raise Exception.");
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
 			assertThat(e.getErrorNumber(), is(1203));
@@ -485,7 +439,6 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		final CollectionEntity entity = driver.getCollectionChecksum(collectionName, true, true);
 		assertThat(entity.getCode(), is(200));
 		assertThat(entity.isError(), is(false));
-		assertThat(entity.getRevision(), is(0L)); // レスポンスは戻ってきてるんだけど、0なのでどうチェックしたものか・・
 		assertThat(entity.getChecksum(), is(0L)); // 同上
 
 	}

@@ -60,7 +60,7 @@ public abstract class BaseEntity implements Serializable {
 	 * The check sum of the requested resource
 	 */
 	@Exclude(deserialize = false)
-	long etag;
+	String etag;
 
 	/**
 	 * The requestId, this attribute is only used for batch requests.
@@ -99,7 +99,7 @@ public abstract class BaseEntity implements Serializable {
 		return error;
 	}
 
-	public void setError(boolean error) {
+	public void setError(final boolean error) {
 		this.error = error;
 	}
 
@@ -115,23 +115,23 @@ public abstract class BaseEntity implements Serializable {
 		return errorMessage;
 	}
 
-	public void setCode(int code) {
+	public void setCode(final int code) {
 		this.code = code;
 	}
 
-	public void setErrorNumber(int errorNumber) {
+	public void setErrorNumber(final int errorNumber) {
 		this.errorNumber = errorNumber;
 	}
 
-	public void setErrorMessage(String errorMessage) {
+	public void setErrorMessage(final String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
 
-	public long getEtag() {
+	public String getEtag() {
 		return etag;
 	}
 
-	public void setEtag(long etag) {
+	public void setEtag(final String etag) {
 		this.etag = etag;
 	}
 
@@ -139,7 +139,7 @@ public abstract class BaseEntity implements Serializable {
 		return statusCode;
 	}
 
-	public void setStatusCode(int statusCode) {
+	public void setStatusCode(final int statusCode) {
 		this.statusCode = statusCode;
 	}
 
@@ -147,7 +147,7 @@ public abstract class BaseEntity implements Serializable {
 		return requestId;
 	}
 
-	public void setRequestId(String requestId) {
+	public void setRequestId(final String requestId) {
 		this.requestId = requestId;
 	}
 

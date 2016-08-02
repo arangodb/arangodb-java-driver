@@ -248,7 +248,7 @@ public class ArangoDriverDocumentKeyTest {
 		assertThat(doc1.getDocumentKey(), is("mykey1"));
 
 		// check
-		final long rev = driver.checkDocument(doc1.getDocumentHandle());
+		final String rev = driver.checkDocument(doc1.getDocumentHandle());
 		assertThat(rev, is(doc1.getDocumentRevision()));
 
 	}

@@ -280,8 +280,8 @@ public class EntityDeserializers {
 		if (obj.has(ERROR_MESSAGE)) {
 			entity.errorMessage = obj.getAsJsonPrimitive(ERROR_MESSAGE).getAsString();
 		}
-		if (obj.has(ETAG) && obj.getAsJsonPrimitive(ERROR_NUM).isNumber()) {
-			entity.etag = obj.getAsJsonPrimitive(ETAG).getAsLong();
+		if (obj.has(ETAG) && obj.getAsJsonPrimitive(ERROR_NUM).isString()) {
+			entity.etag = obj.getAsJsonPrimitive(ETAG).getAsString();
 		}
 
 		return entity;
@@ -290,7 +290,7 @@ public class EntityDeserializers {
 	private static <T extends DocumentHolder> T deserializeDocumentParameter(final JsonObject obj, final T entity) {
 
 		if (obj.has("_rev")) {
-			entity.setDocumentRevision(obj.getAsJsonPrimitive("_rev").getAsLong());
+			entity.setDocumentRevision(obj.getAsJsonPrimitive("_rev").getAsString());
 		}
 		if (obj.has("_id")) {
 			entity.setDocumentHandle(obj.getAsJsonPrimitive("_id").getAsString());
@@ -513,10 +513,6 @@ public class EntityDeserializers {
 
 			if (obj.has(COUNT)) {
 				entity.count = obj.getAsJsonPrimitive(COUNT).getAsLong();
-			}
-
-			if (obj.has(REVISION)) {
-				entity.revision = obj.getAsJsonPrimitive(REVISION).getAsLong();
 			}
 
 			if (obj.has(FIGURES)) {
@@ -1350,7 +1346,7 @@ public class EntityDeserializers {
 
 			if (obj.has(DETAILS)) {
 				final JsonArray asJsonArray = obj.getAsJsonArray(DETAILS);
-				for (JsonElement jsonElement : asJsonArray) {
+				for (final JsonElement jsonElement : asJsonArray) {
 					entity.getDetails().add(jsonElement.getAsString());
 				}
 			}
@@ -1633,7 +1629,7 @@ public class EntityDeserializers {
 				entity.key = obj.getAsJsonPrimitive("key").getAsString();
 			}
 			if (obj.has("rev")) {
-				entity.rev = obj.getAsJsonPrimitive("rev").getAsLong();
+				entity.rev = obj.getAsJsonPrimitive("rev").getAsString();
 			}
 			if (obj.has("data")) {
 				entity.data = context.deserialize(obj.getAsJsonObject("data"), DocumentEntity.class);

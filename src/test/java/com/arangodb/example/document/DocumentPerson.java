@@ -37,7 +37,7 @@ public class DocumentPerson {
 	private String documentKey;
 
 	@SerializedName(BaseDocument.REV)
-	private Long documentRevision;
+	private String documentRevision;
 
 	private String name;
 
@@ -49,7 +49,7 @@ public class DocumentPerson {
 
 	}
 
-	public DocumentPerson(String name, String gender, Integer age) {
+	public DocumentPerson(final String name, final String gender, final Integer age) {
 		this.name = name;
 		this.gender = gender;
 		this.age = age;
@@ -59,7 +59,7 @@ public class DocumentPerson {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -67,7 +67,7 @@ public class DocumentPerson {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(final String gender) {
 		this.gender = gender;
 	}
 
@@ -75,7 +75,7 @@ public class DocumentPerson {
 		return age;
 	}
 
-	public void setAge(Integer age) {
+	public void setAge(final Integer age) {
 		this.age = age;
 	}
 
@@ -83,7 +83,7 @@ public class DocumentPerson {
 		return documentHandle;
 	}
 
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
@@ -91,15 +91,15 @@ public class DocumentPerson {
 		return documentKey;
 	}
 
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 
-	public Long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return documentRevision;
 	}
 
-	public void setDocumentRevision(Long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 

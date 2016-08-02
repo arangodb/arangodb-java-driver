@@ -28,7 +28,7 @@ public class Knows {
 	private String documentKey;
 
 	@SerializedName(BaseDocument.REV)
-	private long documentRevision;
+	private String documentRevision;
 
 	@SerializedName(BaseDocument.FROM)
 	String fromVertexHandle;
@@ -41,7 +41,7 @@ public class Knows {
 	public Knows() {
 	}
 
-	public Knows(Integer since) {
+	public Knows(final Integer since) {
 		this.since = since;
 	}
 
@@ -49,7 +49,7 @@ public class Knows {
 		return since;
 	}
 
-	public void setSince(Integer since) {
+	public void setSince(final Integer since) {
 		this.since = since;
 	}
 
@@ -57,7 +57,7 @@ public class Knows {
 		return documentHandle;
 	}
 
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
@@ -65,15 +65,15 @@ public class Knows {
 		return documentKey;
 	}
 
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 
-	public long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return documentRevision;
 	}
 
-	public void setDocumentRevision(long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 
@@ -85,11 +85,11 @@ public class Knows {
 		return toVertexHandle;
 	}
 
-	public void setFromVertexHandle(String fromVertexHandle) {
+	public void setFromVertexHandle(final String fromVertexHandle) {
 		this.fromVertexHandle = fromVertexHandle;
 	}
 
-	public void setToVertexHandle(String toVertexHandle) {
+	public void setToVertexHandle(final String toVertexHandle) {
 		this.toVertexHandle = toVertexHandle;
 	}
 

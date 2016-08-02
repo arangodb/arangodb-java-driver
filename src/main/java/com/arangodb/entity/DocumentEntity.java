@@ -25,9 +25,9 @@ package com.arangodb.entity;
 public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 
 	/**
-	 * the documents revision number
+	 * the documents revision
 	 */
-	long documentRevision;
+	String documentRevision;
 
 	/**
 	 * the document handle
@@ -49,7 +49,7 @@ public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 	}
 
 	@Override
-	public long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return documentRevision;
 	}
 
@@ -63,16 +63,16 @@ public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 	}
 
 	@Override
-	public void setDocumentRevision(long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 
 	@Override
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
-	public void setEntity(T entity) {
+	public void setEntity(final T entity) {
 		this.entity = entity;
 	}
 
@@ -82,7 +82,7 @@ public class DocumentEntity<T> extends BaseEntity implements DocumentHolder {
 	}
 
 	@Override
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 

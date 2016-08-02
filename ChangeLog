@@ -1,5 +1,6 @@
 v3.1.0 (2016-09-XX)
 * removed Methods with collectionId (long) from ArangoDriver (Id is only for internal usage)
+* changed Revision from long to String
 
 v3.0.1 (2016-07-08)
 ---------------------------

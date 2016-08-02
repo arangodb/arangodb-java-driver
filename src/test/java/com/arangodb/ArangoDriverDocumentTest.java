@@ -97,7 +97,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		assertThat(doc.getDocumentKey(), is(notNullValue()));
 		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getDocumentRevision(), is(notNullValue()));
 		assertThat(doc.getEntity(), is(notNullValue()));
 
 	}
@@ -111,7 +111,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		assertThat(doc.getDocumentKey(), is(notNullValue()));
 		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getDocumentRevision(), is(notNullValue()));
 		assertThat(doc.getEntity(), is(notNullValue()));
 		assertThat(doc.getEntity().getDocumentHandle(), is(notNullValue()));
 		assertThat(doc.getEntity().getDocumentKey(), is(notNullValue()));
@@ -183,7 +183,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(col3, is(notNullValue()));
 
 		assertThat(res.getDocumentHandle().startsWith(collectionName404 + "/"), is(true));
-		assertThat(res.getDocumentRevision(), is(not(0L)));
+		assertThat(res.getDocumentRevision(), is(notNullValue()));
 		assertThat(res.getDocumentKey(), is(notNullValue()));
 
 	}
@@ -202,7 +202,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		final String id = doc.getDocumentHandle();
 		final String key = doc.getDocumentKey();
-		final Long rev = doc.getDocumentRevision();
+		final String rev = doc.getDocumentRevision();
 
 		final DocumentEntity<TestComplexEntity01> doc2 = driver.replaceDocument(doc.getDocumentHandle(), value, null,
 			null);
@@ -210,7 +210,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(doc2.getDocumentHandle(), is(id));
 		assertThat(doc2.getDocumentKey(), is(key));
 		assertThat(doc2.getDocumentRevision(), is(not(rev)));
-		final Long rev2 = doc2.getDocumentRevision();
+		final String rev2 = doc2.getDocumentRevision();
 
 		assertThat(doc2.getStatusCode(), is(202));
 		// Get
@@ -242,7 +242,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		final String id = doc.getDocumentHandle();
 		final String key = doc.getDocumentKey();
-		final Long rev = doc.getDocumentRevision();
+		final String rev = doc.getDocumentRevision();
 
 		final DocumentEntity<TestComplexEntity03> doc2 = driver.replaceDocument(doc.getDocumentHandle(), value, null,
 			null);
@@ -251,7 +251,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		assertThat(ent.getDocumentHandle(), is(id));
 		assertThat(ent.getDocumentKey(), is(key));
 		assertThat(ent.getDocumentRevision(), is(not(rev)));
-		final Long rev2 = ent.getDocumentRevision();
+		final String rev2 = ent.getDocumentRevision();
 
 		assertThat(doc2.getStatusCode(), is(202));
 		// Get
@@ -353,7 +353,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		final TestComplexEntity03 en1 = doc2.getEntity();
 		assertThat(en1.getDocumentHandle(), is(notNullValue()));
 		assertThat(en1.getDocumentKey(), is(notNullValue()));
-		final Long rev1 = en1.getDocumentRevision();
+		final String rev1 = en1.getDocumentRevision();
 		assertThat(rev1, is(notNullValue()));
 
 		// Get
@@ -432,7 +432,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		assertThat(doc.getDocumentKey(), is(notNullValue()));
 		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getDocumentRevision(), is(notNullValue()));
 		final DocumentEntity<TestComplexEntity01> retVal = driver.getDocument(doc.getDocumentHandle(),
 			TestComplexEntity01.class);
 		assertThat(retVal.getDocumentHandle(), is(doc.getDocumentHandle()));
@@ -452,7 +452,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		assertThat(doc.getDocumentKey(), is(notNullValue()));
 		assertThat(doc.getDocumentHandle(), is(collectionName + "/" + doc.getDocumentKey()));
-		assertThat(doc.getDocumentRevision(), is(not(0L)));
+		assertThat(doc.getDocumentRevision(), is(notNullValue()));
 
 		// now we should get back an instance created with our configured
 		// InstanceCreator<TestInterface> (with "name" already set)
@@ -570,7 +570,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		final DocumentEntity<TestComplexEntity02> doc = driver.createDocument(collectionName,
 			new TestComplexEntity02(1, 2, 3), null);
 
-		final Long etag = driver.checkDocument(doc.getDocumentHandle());
+		final String etag = driver.checkDocument(doc.getDocumentHandle());
 		assertThat(etag, is(doc.getDocumentRevision()));
 	}
 

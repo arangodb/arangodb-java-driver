@@ -149,7 +149,7 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
 			v1.getDocumentHandle(), v2.getDocumentHandle(), new TestComplexEntity02(1, 2, 3), null);
 		assertThat(edge.getCode(), is(202));
 
-		final Long rev = edge.getDocumentRevision();
+		final String rev = edge.getDocumentRevision();
 		EdgeEntity<TestComplexEntity01> replacedEdge = driver.graphReplaceEdge(this.graphName, this.edgeCollectionName,
 			edge.getDocumentKey(), v1.getDocumentHandle(), v2.getDocumentHandle(),
 			new TestComplexEntity01("xx", "yy", 20), null, rev, null);
@@ -185,7 +185,7 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
 		assertThat(edge.getCode(), is(202));
 
 		try {
-			final Long rev = edge.getDocumentRevision() + 1;
+			final String rev = edge.getDocumentRevision() + 1;
 			driver.graphReplaceEdge(this.graphName, this.edgeCollectionName, edge.getDocumentKey(),
 				v1.getDocumentHandle(), v2.getDocumentHandle(), new TestComplexEntity01("xx", "yy", 20), null, rev,
 				null);
@@ -213,7 +213,7 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
 			v1.getDocumentHandle(), v2.getDocumentHandle(), new TestComplexEntity02(1, 2, 3), null);
 		assertThat(edge.getCode(), is(202));
 
-		final Long rev = edge.getDocumentRevision();
+		final String rev = edge.getDocumentRevision();
 		EdgeEntity<TestComplexEntity01> replacedEdge = driver.graphReplaceEdge(this.graphName, this.edgeCollectionName,
 			edge.getDocumentKey(), v1.getDocumentHandle(), v2.getDocumentHandle(),
 			new TestComplexEntity01("xx", "yy", 20), null, rev, null);
@@ -250,7 +250,7 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
 		assertThat(edge.getCode(), is(202));
 
 		try {
-			final Long rev = edge.getDocumentRevision() + 1;
+			final String rev = edge.getDocumentRevision() + 1;
 			driver.graphReplaceEdge(this.graphName, this.edgeCollectionName, edge.getDocumentKey(),
 				v1.getDocumentHandle(), v2.getDocumentHandle(), new TestComplexEntity01("xx", "yy", 20), null, rev,
 				null);
@@ -278,7 +278,7 @@ public class ArangoDriverGraphEdgeReplaceTest extends BaseGraphTest {
 			null, v1.getDocumentHandle(), v2.getDocumentHandle(), new TestComplexEntity02(1, 2, 3), null);
 		assertThat(edge.getCode(), is(202));
 
-		final Long rev = edge.getDocumentRevision();
+		final String rev = edge.getDocumentRevision();
 		EdgeEntity<TestComplexEntity02> replacedEdge = driver.graphReplaceEdge(this.graphName, this.edgeCollectionName,
 			edge.getDocumentKey(), v2.getDocumentHandle(), v1.getDocumentHandle(), edge.getEntity(), null, rev, null);
 

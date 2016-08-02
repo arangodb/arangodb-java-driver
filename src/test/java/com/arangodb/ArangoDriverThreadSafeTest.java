@@ -76,7 +76,7 @@ public class ArangoDriverThreadSafeTest {
 									value, null);
 
 								final String _id = ret1.getDocumentHandle(); // ドキュメントのID(_id)
-								final long _rev = ret1.getDocumentRevision(); // ドキュメントのリビジョン(_rev)
+								final String _rev = ret1.getDocumentRevision(); // ドキュメントのリビジョン(_rev)
 
 								// ドキュメントを取得する
 								final DocumentEntity<TestComplexEntity01> ret2 = driver.getDocument(_id,

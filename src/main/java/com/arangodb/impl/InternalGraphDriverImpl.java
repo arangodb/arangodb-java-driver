@@ -78,11 +78,10 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final List<String> orphanCollections,
 		final Boolean waitForSync) throws ArangoException {
 
-		final HttpResponseEntity response = httpManager
-				.doPost(createGharialEndpointUrl(databaseName), new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
-					EntityFactory.toJsonString(
-						new MapBuilder().put("name", graphName).put("edgeDefinitions", edgeDefinitions)
-								.put("orphanCollections", orphanCollections).get()));
+		final HttpResponseEntity response = httpManager.doPost(createGharialEndpointUrl(databaseName),
+			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
+			EntityFactory.toJsonString(new MapBuilder().put("name", graphName).put("edgeDefinitions", edgeDefinitions)
+					.put("orphanCollections", orphanCollections).get()));
 		return createEntity(response, GraphEntity.class);
 	}
 
@@ -426,8 +425,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final String collectionName,
 		final String key,
 		final Class<T> clazz,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doGet(
@@ -448,8 +447,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final String key,
 		final T vertex,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doPut(
@@ -480,8 +479,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final T vertex,
 		final Boolean keepNull,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doPatch(
@@ -510,8 +509,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final String collectionName,
 		final String key,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doDelete(
@@ -563,8 +562,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final String edgeCollectionName,
 		final String key,
 		final Class<T> clazz,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doGet(
@@ -583,8 +582,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final String edgeCollectionName,
 		final String key,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		validateCollectionName(graphName);
 		final HttpResponseEntity res = httpManager.doDelete(
@@ -608,8 +607,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final String toHandle,
 		final T value,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		final JsonObject obj = EdgeUtils.valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 
@@ -648,8 +647,8 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final T value,
 		final Boolean waitForSync,
 		final Boolean keepNull,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 
 		final JsonObject obj = EdgeUtils.valueToEdgeJsonObject(key, fromHandle, toHandle, value);
 

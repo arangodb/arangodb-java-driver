@@ -24,7 +24,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 * the documents revision number
 	 */
 	@SerializedName(REV)
-	long documentRevision;
+	String documentRevision;
 
 	/**
 	 * the document handle
@@ -56,7 +56,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 * @param documentKey
 	 *            the unique key of the document
 	 */
-	public BaseDocument(String documentKey) {
+	public BaseDocument(final String documentKey) {
 		this.init();
 		this.documentKey = documentKey;
 	}
@@ -67,7 +67,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 * @param properties
 	 *            the attributes (key/value) of the document to be created
 	 */
-	public BaseDocument(Map<String, Object> properties) {
+	public BaseDocument(final Map<String, Object> properties) {
 		this(null, properties);
 	}
 
@@ -79,13 +79,13 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 * @param properties
 	 *            the attributes (key/value) of the document to be created
 	 */
-	public BaseDocument(String documentKey, Map<String, Object> properties) {
+	public BaseDocument(final String documentKey, final Map<String, Object> properties) {
 		this.init();
 		if (documentKey != null) {
 			this.documentKey = documentKey;
 		}
 		if (properties.containsKey(REV)) {
-			this.documentRevision = (Long) properties.get(REV);
+			this.documentRevision = (String) properties.get(REV);
 			properties.remove(REV);
 		}
 		if (properties.containsKey(KEY)) {
@@ -102,7 +102,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	}
 
 	@Override
-	public long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return this.documentRevision;
 	}
 
@@ -117,17 +117,17 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	}
 
 	@Override
-	public void setDocumentRevision(long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 
 	@Override
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
 	@Override
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 
@@ -135,7 +135,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 		return properties;
 	}
 
-	public void setProperties(Map<String, Object> properties) {
+	public void setProperties(final Map<String, Object> properties) {
 		this.properties = properties;
 	}
 
@@ -148,7 +148,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 * @param value
 	 *            the value of the attribute
 	 */
-	public void addAttribute(String key, Object value) {
+	public void addAttribute(final String key, final Object value) {
 		this.properties.put(key, value);
 	}
 
@@ -160,7 +160,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 * @param value
 	 *            the value of the attribute ti replace the old value
 	 */
-	public void updateAttribute(String key, Object value) {
+	public void updateAttribute(final String key, final Object value) {
 		if (this.properties.containsKey(key)) {
 			this.properties.put(key, value);
 		}
@@ -173,7 +173,7 @@ public class BaseDocument extends BaseEntity implements DocumentHolder {
 	 *            the key of the attribute
 	 * @return value of the attribute key
 	 */
-	public Object getAttribute(String key) {
+	public Object getAttribute(final String key) {
 		return this.properties.get(key);
 	}
 

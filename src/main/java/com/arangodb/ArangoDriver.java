@@ -505,18 +505,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * Returns a collection from ArangoDB including revision by name
-	 *
-	 * @param name
-	 *            the name of the collection.
-	 * @return CollectionEntity - the requested collectionEntity.
-	 * @throws ArangoException
-	 */
-	public CollectionEntity getCollectionRevision(final String name) throws ArangoException {
-		return collectionDriver.getCollectionRevision(getDefaultDatabase(), name);
-	}
-
-	/**
 	 * Returns a collection from ArangoDB by name including the document count
 	 *
 	 * @param name
@@ -831,7 +819,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String collectionName,
 		final long documentId,
 		final Object value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync) throws ArangoException {
 		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev,
 			waitForSync);
@@ -861,7 +849,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String collectionName,
 		final String documentKey,
 		final Object value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync) throws ArangoException {
 		return replaceDocument(createDocumentHandle(collectionName, documentKey), value, rev, waitForSync);
 	}
@@ -887,7 +875,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> DocumentEntity<T> replaceDocument(
 		final String documentHandle,
 		final T value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync) throws ArangoException {
 		return documentDriver.replaceDocument(getDefaultDatabase(), documentHandle, value, rev, waitForSync);
 	}
@@ -1028,7 +1016,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String collectionName,
 		final long documentId,
 		final Object value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev, waitForSync,
@@ -1060,7 +1048,7 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String collectionName,
 		final String documentKey,
 		final Object value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 		return updateDocument(createDocumentHandle(collectionName, documentKey), value, rev, waitForSync, keepNull);
@@ -1088,7 +1076,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> DocumentEntity<T> updateDocument(
 		final String documentHandle,
 		final T value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, rev, waitForSync, keepNull);
@@ -1173,7 +1161,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return the document revision number
 	 * @throws ArangoException
 	 */
-	public long checkDocument(final String collectionName, final long documentId) throws ArangoException {
+	public String checkDocument(final String collectionName, final long documentId) throws ArangoException {
 		return checkDocument(createDocumentHandle(collectionName, String.valueOf(documentId)));
 	}
 
@@ -1187,7 +1175,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return the document revision number
 	 * @throws ArangoException
 	 */
-	public long checkDocument(final String collectionName, final String documentKey) throws ArangoException {
+	public String checkDocument(final String collectionName, final String documentKey) throws ArangoException {
 		return checkDocument(createDocumentHandle(collectionName, documentKey));
 	}
 
@@ -1199,7 +1187,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return the document revision number
 	 * @throws ArangoException
 	 */
-	public long checkDocument(final String documentHandle) throws ArangoException {
+	public String checkDocument(final String documentHandle) throws ArangoException {
 		return documentDriver.checkDocument(getDefaultDatabase(), documentHandle);
 	}
 
@@ -1278,8 +1266,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> DocumentEntity<T> getDocument(
 		final String documentHandle,
 		final Class<T> clazz,
-		final Long ifNoneMatchRevision,
-		final Long ifMatchRevision) throws ArangoException {
+		final String ifNoneMatchRevision,
+		final String ifMatchRevision) throws ArangoException {
 		return documentDriver.getDocument(getDefaultDatabase(), documentHandle, clazz, ifNoneMatchRevision,
 			ifMatchRevision);
 	}
@@ -1339,7 +1327,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(final String collectionName, final long documentId, final Long rev)
+	public DocumentEntity<?> deleteDocument(final String collectionName, final long documentId, final String rev)
 			throws ArangoException {
 		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), rev);
 	}
@@ -1358,25 +1346,9 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @return a DocumentEntity object
 	 * @throws ArangoException
 	 */
-	public DocumentEntity<?> deleteDocument(final String collectionName, final String documentKey, final Long rev)
+	public DocumentEntity<?> deleteDocument(final String collectionName, final String documentKey, final String rev)
 			throws ArangoException {
 		return deleteDocument(createDocumentHandle(collectionName, documentKey), rev);
-	}
-
-	/**
-	 * Deletes a document from the database. This method offers a parameter rev
-	 * (revision). If the revision of the document on the server does not match
-	 * the given revision an error is thrown.
-	 *
-	 * @param documentHandle
-	 *            The document handle.
-	 * @param rev
-	 *            The desired revision
-	 * @return a DocumentEntity object
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> deleteDocument(final String documentHandle, final Long rev) throws ArangoException {
-		return documentDriver.deleteDocument(getDefaultDatabase(), documentHandle, rev);
 	}
 
 	/**
@@ -3095,8 +3067,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String collectionName,
 		final String key,
 		final Class<T> clazz,
-		final Long ifNoneMatchRevision,
-		final Long ifMatchRevision) throws ArangoException {
+		final String ifNoneMatchRevision,
+		final String ifMatchRevision) throws ArangoException {
 		return graphDriver.getVertex(getDefaultDatabase(), graphName, collectionName, key, clazz, ifMatchRevision,
 			ifNoneMatchRevision);
 	}
@@ -3168,8 +3140,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String collectionName,
 		final String key,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.deleteVertex(getDefaultDatabase(), graphName, collectionName, key, waitForSync,
 			ifMatchRevision, ifNoneMatchRevision);
 	}
@@ -3227,8 +3199,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String key,
 		final T vertex,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.replaceVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, waitForSync,
 			ifMatchRevision, ifNoneMatchRevision);
 	}
@@ -3294,8 +3266,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final T vertex,
 		final Boolean keepNull,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.updateVertex(getDefaultDatabase(), graphName, collectionName, key, vertex, keepNull,
 			waitForSync, ifMatchRevision, ifNoneMatchRevision);
 	}
@@ -3414,8 +3386,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String edgeCollectionName,
 		final String key,
 		final Class<T> clazz,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.getEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, clazz, ifMatchRevision,
 			ifNoneMatchRevision);
 	}
@@ -3507,8 +3479,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String edgeCollectionName,
 		final String key,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.deleteEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, waitForSync,
 			ifMatchRevision, ifNoneMatchRevision);
 	}
@@ -3583,8 +3555,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final String toHandle,
 		final T value,
 		final Boolean waitForSync,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.replaceEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, fromHandle, toHandle,
 			value, waitForSync, ifMatchRevision, ifNoneMatchRevision);
 	}
@@ -3664,8 +3636,8 @@ public class ArangoDriver extends BaseArangoDriver {
 		final T value,
 		final Boolean waitForSync,
 		final Boolean keepNull,
-		final Long ifMatchRevision,
-		final Long ifNoneMatchRevision) throws ArangoException {
+		final String ifMatchRevision,
+		final String ifNoneMatchRevision) throws ArangoException {
 		return graphDriver.updateEdge(getDefaultDatabase(), graphName, edgeCollectionName, key, fromHandle, toHandle,
 			value, waitForSync, keepNull, ifMatchRevision, ifNoneMatchRevision);
 	}
@@ -4206,8 +4178,8 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public String getDocumentRaw(
 		final String documentHandle,
-		final Long ifNoneMatchRevision,
-		final Long ifMatchRevision) throws ArangoException {
+		final String ifNoneMatchRevision,
+		final String ifMatchRevision) throws ArangoException {
 		return documentDriver.getDocumentRaw(getDefaultDatabase(), documentHandle, ifNoneMatchRevision,
 			ifMatchRevision);
 	}
@@ -4256,7 +4228,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public DocumentEntity<String> replaceDocumentRaw(
 		final String documentHandle,
 		final String rawJsonString,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync) throws ArangoException {
 		return documentDriver.replaceDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, waitForSync);
 	}
@@ -4283,7 +4255,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	public DocumentEntity<String> updateDocumentRaw(
 		final String documentHandle,
 		final String rawJsonString,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 		return documentDriver.updateDocumentRaw(getDefaultDatabase(), documentHandle, rawJsonString, rev, waitForSync,

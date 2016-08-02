@@ -28,7 +28,7 @@ public class CircleEdge {
 	private String documentKey;
 
 	@SerializedName(BaseDocument.REV)
-	private long documentRevision;
+	private String documentRevision;
 
 	@SerializedName(BaseDocument.FROM)
 	String fromVertexHandle;
@@ -43,7 +43,7 @@ public class CircleEdge {
 	public CircleEdge() {
 	}
 
-	public CircleEdge(Boolean theFalse, Boolean theTruth, String label) {
+	public CircleEdge(final Boolean theFalse, final Boolean theTruth, final String label) {
 		this.theFalse = theFalse;
 		this.theTruth = theTruth;
 		this.label = label;
@@ -53,7 +53,7 @@ public class CircleEdge {
 		return theFalse;
 	}
 
-	public void setTheFalse(Boolean theFalse) {
+	public void setTheFalse(final Boolean theFalse) {
 		this.theFalse = theFalse;
 	}
 
@@ -61,7 +61,7 @@ public class CircleEdge {
 		return theTruth;
 	}
 
-	public void setTheTruth(Boolean theTruth) {
+	public void setTheTruth(final Boolean theTruth) {
 		this.theTruth = theTruth;
 	}
 
@@ -69,7 +69,7 @@ public class CircleEdge {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(final String label) {
 		this.label = label;
 	}
 
@@ -77,7 +77,7 @@ public class CircleEdge {
 		return documentHandle;
 	}
 
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
@@ -85,15 +85,15 @@ public class CircleEdge {
 		return documentKey;
 	}
 
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 
-	public long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return documentRevision;
 	}
 
-	public void setDocumentRevision(long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 
@@ -105,11 +105,11 @@ public class CircleEdge {
 		return toVertexHandle;
 	}
 
-	public void setFromVertexHandle(String fromVertexHandle) {
+	public void setFromVertexHandle(final String fromVertexHandle) {
 		this.fromVertexHandle = fromVertexHandle;
 	}
 
-	public void setToVertexHandle(String toVertexHandle) {
+	public void setToVertexHandle(final String toVertexHandle) {
 		this.toVertexHandle = toVertexHandle;
 	}
 

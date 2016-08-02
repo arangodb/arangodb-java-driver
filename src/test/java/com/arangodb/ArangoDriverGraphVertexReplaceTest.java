@@ -18,6 +18,7 @@ package com.arangodb;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -59,7 +60,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
 		assertThat(updatedVertex.getDocumentHandle(), is(v1.getDocumentHandle()));
 		assertThat(updatedVertex.getDocumentRevision(), is(not(v1.getDocumentRevision())));
-		assertThat(updatedVertex.getDocumentRevision(), is(not(0L)));
+		assertThat(updatedVertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(updatedVertex.getDocumentKey(), is(v1.getDocumentKey()));
 
 		final DocumentEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName,
@@ -126,7 +127,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
 		assertThat(updatedVertex.getDocumentHandle(), is(v1.getDocumentHandle()));
 		assertThat(updatedVertex.getDocumentRevision(), is(not(v1.getDocumentRevision())));
-		assertThat(updatedVertex.getDocumentRevision(), is(not(0L)));
+		assertThat(updatedVertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(updatedVertex.getDocumentKey(), is(v1.getDocumentKey()));
 
 		final VertexEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName,
@@ -157,7 +158,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
 		// replace
 		try {
-			final Long rev = 1L;
+			final String rev = "1";
 			driver.graphReplaceVertex(this.graphName, this.collectionName, v1.getDocumentKey(),
 				new TestComplexEntity02(1, 2, 3), true, rev, null);
 			fail();
@@ -185,7 +186,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 		assertThat(vertex.getCode(), is(200));
 
 		// replace
-		final Long rev = vertex.getDocumentRevision();
+		final String rev = vertex.getDocumentRevision();
 		final VertexEntity<TestComplexEntity02> updatedVertex = driver.graphReplaceVertex(this.graphName,
 			this.collectionName, v1.getDocumentKey(), new TestComplexEntity02(1, 2, 3), true, rev, null);
 		assertThat(updatedVertex.getCode(), is(200));
@@ -193,7 +194,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
 		assertThat(updatedVertex.getDocumentHandle(), is(v1.getDocumentHandle()));
 		assertThat(updatedVertex.getDocumentRevision(), is(not(v1.getDocumentRevision())));
-		assertThat(updatedVertex.getDocumentRevision(), is(not(0L)));
+		assertThat(updatedVertex.getDocumentRevision(), is(notNullValue()));
 		assertThat(updatedVertex.getDocumentKey(), is(v1.getDocumentKey()));
 
 		final DocumentEntity<TestComplexEntity02> updatedVertex2 = driver.graphGetVertex(this.graphName,
@@ -224,7 +225,7 @@ public class ArangoDriverGraphVertexReplaceTest extends BaseGraphTest {
 
 		// replace
 		try {
-			final Long rev = 1L;
+			final String rev = "1";
 			driver.graphReplaceVertex(this.graphName, this.collectionName, v1.getDocumentKey(),
 				new TestComplexEntity02(1, 2, 3), true, rev, null);
 			fail();

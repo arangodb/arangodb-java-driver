@@ -17,8 +17,8 @@
 package com.arangodb;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -85,7 +85,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		final GraphEntity graph = driver.createGraph(this.graphName, edgeDefinitions, orphanCollections, true);
 
 		assertThat(graph.getCode(), is(201));
-		assertThat(graph.getDocumentRevision(), is(not(0L)));
+		assertThat(graph.getDocumentRevision(), is(notNullValue()));
 		assertThat(graph.getDocumentHandle(), is("_graphs/" + this.graphName));
 		assertThat(graph.getName(), is(this.graphName));
 		assertThat(graph.getOrphanCollections(), is(orphanCollections));
@@ -102,7 +102,7 @@ public class ArangoDriverGraphTest extends BaseGraphTest {
 		// create
 		final GraphEntity graph = driver.createGraph(this.graphName, edgeDefinitions, orphanCollections, true);
 		assertThat(graph.getCode(), is(201));
-		assertThat(graph.getDocumentRevision(), is(not(0L)));
+		assertThat(graph.getDocumentRevision(), is(notNullValue()));
 		assertThat(graph.getDocumentHandle(), is("_graphs/" + this.graphName));
 		assertThat(graph.getName(), is(this.graphName));
 		assertThat(graph.getOrphanCollections(), is(orphanCollections));

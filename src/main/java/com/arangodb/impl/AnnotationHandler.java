@@ -36,15 +36,19 @@ public class AnnotationHandler {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public synchronized void updateDocumentAttributes(Object o, long rev, String id, String key) {
+	public synchronized void updateDocumentAttributes(
+		final Object o,
+		final String rev,
+		final String id,
+		final String key) {
 		if (o != null) {
 			if (o instanceof java.util.Map) {
-				java.util.Map m = (java.util.Map) o;
+				final java.util.Map m = (java.util.Map) o;
 				m.put(BaseDocument.ID, id);
 				m.put(BaseDocument.KEY, key);
 				m.put(BaseDocument.REV, rev);
 			} else {
-				DocumentAttributes documentAttributes = getDocumentAttributes(o);
+				final DocumentAttributes documentAttributes = getDocumentAttributes(o);
 				setAttribute(documentAttributes.id, o, id);
 				setAttribute(documentAttributes.key, o, key);
 				setAttribute(documentAttributes.rev, o, rev);
@@ -53,23 +57,29 @@ public class AnnotationHandler {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public synchronized void updateDocumentRev(Object o, long rev) {
+	public synchronized void updateDocumentRev(final Object o, final String rev) {
 		if (o != null) {
 			if (o instanceof java.util.Map) {
-				java.util.Map m = (java.util.Map) o;
+				final java.util.Map m = (java.util.Map) o;
 				m.put(BaseDocument.REV, rev);
 			} else {
-				DocumentAttributes documentAttributes = getDocumentAttributes(o);
+				final DocumentAttributes documentAttributes = getDocumentAttributes(o);
 				setAttribute(documentAttributes.rev, o, rev);
 			}
 		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public synchronized void updateEdgeAttributes(Object o, long rev, String id, String key, String from, String to) {
+	public synchronized void updateEdgeAttributes(
+		final Object o,
+		final String rev,
+		final String id,
+		final String key,
+		final String from,
+		final String to) {
 		if (o != null) {
 			if (o instanceof java.util.Map) {
-				java.util.Map m = (java.util.Map) o;
+				final java.util.Map m = (java.util.Map) o;
 				m.put(BaseDocument.ID, id);
 				m.put(BaseDocument.KEY, key);
 				m.put(BaseDocument.REV, rev);
@@ -80,7 +90,7 @@ public class AnnotationHandler {
 					m.put(BaseDocument.TO, to);
 				}
 			} else {
-				DocumentAttributes documentAttributes = getDocumentAttributes(o);
+				final DocumentAttributes documentAttributes = getDocumentAttributes(o);
 				setAttribute(documentAttributes.id, o, id);
 				setAttribute(documentAttributes.key, o, key);
 				setAttribute(documentAttributes.rev, o, rev);
@@ -94,19 +104,19 @@ public class AnnotationHandler {
 		}
 	}
 
-	private void setAttribute(Field field, Object o, Object value) {
+	private void setAttribute(final Field field, final Object o, final Object value) {
 		if (field != null) {
 			try {
 				field.setAccessible(true);
 				field.set(o, value);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				logger.error("could not update document attribute of class " + value.getClass().getCanonicalName(), e);
 			}
 		}
 	}
 
-	private DocumentAttributes getDocumentAttributes(Object o) {
-		Class<? extends Object> clazz = o.getClass();
+	private DocumentAttributes getDocumentAttributes(final Object o) {
+		final Class<? extends Object> clazz = o.getClass();
 		DocumentAttributes documentAttributes = class2DocumentAttributes.get(clazz);
 
 		if (documentAttributes == null) {
@@ -122,13 +132,13 @@ public class AnnotationHandler {
 		return documentAttributes;
 	}
 
-	private Field getFieldByAnnotationValue(Class<?> clazz, String value) {
+	private Field getFieldByAnnotationValue(final Class<?> clazz, final String value) {
 
-		List<Field> fields = getAllDeclaredFields(clazz);
-		for (Field field : fields) {
+		final List<Field> fields = getAllDeclaredFields(clazz);
+		for (final Field field : fields) {
 
-			Annotation[] annotations = field.getAnnotations();
-			for (Annotation annotation : annotations) {
+			final Annotation[] annotations = field.getAnnotations();
+			for (final Annotation annotation : annotations) {
 
 				if (annotation instanceof SerializedName && value.equals(((SerializedName) annotation).value())) {
 					return field;
@@ -139,14 +149,14 @@ public class AnnotationHandler {
 		return null;
 	}
 
-	private List<Field> getAllDeclaredFields(Class<?> clazz) {
-		List<Field> result = new ArrayList<Field>();
+	private List<Field> getAllDeclaredFields(final Class<?> clazz) {
+		final List<Field> result = new ArrayList<Field>();
 
 		Class<?> current = clazz;
 
 		while (current != null) {
-			Field[] fields = current.getDeclaredFields();
-			for (Field field : fields) {
+			final Field[] fields = current.getDeclaredFields();
+			for (final Field field : fields) {
 				result.add(field);
 			}
 			current = current.getSuperclass();

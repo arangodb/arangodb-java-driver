@@ -29,7 +29,7 @@ public class TestComplexEntity03 {
 	@SerializedName(BaseDocument.KEY)
 	private String documentKey;
 	@SerializedName(BaseDocument.REV)
-	private Long documentRevision;
+	private String documentRevision;
 	@SerializedName(BaseDocument.ID)
 	private String documentHandle;
 
@@ -40,7 +40,7 @@ public class TestComplexEntity03 {
 	public TestComplexEntity03() {
 	}
 
-	public TestComplexEntity03(String user, String desc, Integer age) {
+	public TestComplexEntity03(final String user, final String desc, final Integer age) {
 		this.user = user;
 		this.desc = desc;
 		this.age = age;
@@ -58,15 +58,15 @@ public class TestComplexEntity03 {
 		return age;
 	}
 
-	public void setUser(String user) {
+	public void setUser(final String user) {
 		this.user = user;
 	}
 
-	public void setDesc(String desc) {
+	public void setDesc(final String desc) {
 		this.desc = desc;
 	}
 
-	public void setAge(Integer age) {
+	public void setAge(final Integer age) {
 		this.age = age;
 	}
 
@@ -74,7 +74,7 @@ public class TestComplexEntity03 {
 		return documentKey;
 	}
 
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 
@@ -82,15 +82,15 @@ public class TestComplexEntity03 {
 		return documentHandle;
 	}
 
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
-	public Long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return documentRevision;
 	}
 
-	public void setDocumentRevision(Long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 

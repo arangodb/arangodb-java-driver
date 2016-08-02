@@ -37,7 +37,7 @@ public class Circle {
 	private String documentKey;
 
 	@SerializedName(BaseDocument.REV)
-	private Long documentRevision;
+	private String documentRevision;
 
 	private String label;
 
@@ -45,7 +45,7 @@ public class Circle {
 
 	}
 
-	public Circle(String documentKey, String label) {
+	public Circle(final String documentKey, final String label) {
 		this.documentKey = documentKey;
 		this.label = label;
 	}
@@ -54,7 +54,7 @@ public class Circle {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public void setLabel(final String label) {
 		this.label = label;
 	}
 
@@ -62,7 +62,7 @@ public class Circle {
 		return documentHandle;
 	}
 
-	public void setDocumentHandle(String documentHandle) {
+	public void setDocumentHandle(final String documentHandle) {
 		this.documentHandle = documentHandle;
 	}
 
@@ -70,15 +70,15 @@ public class Circle {
 		return documentKey;
 	}
 
-	public void setDocumentKey(String documentKey) {
+	public void setDocumentKey(final String documentKey) {
 		this.documentKey = documentKey;
 	}
 
-	public Long getDocumentRevision() {
+	public String getDocumentRevision() {
 		return documentRevision;
 	}
 
-	public void setDocumentRevision(Long documentRevision) {
+	public void setDocumentRevision(final String documentRevision) {
 		this.documentRevision = documentRevision;
 	}
 

@@ -24,41 +24,50 @@ import java.io.Serializable;
  */
 public class ReplicationDumpRecord<T> implements Serializable {
 
-  long tick;
-  ReplicationEventType type;
-  String key;
-  long rev;
-  DocumentEntity<T> data;
-  
-  public long getTick() {
-    return tick;
-  }
-  public ReplicationEventType getType() {
-    return type;
-  }
-  public String getKey() {
-    return key;
-  }
-  public long getRev() {
-    return rev;
-  }
-  public DocumentEntity<T> getData() {
-    return data;
-  }
-  public void setTick(long tick) {
-    this.tick = tick;
-  }
-  public void setType(ReplicationEventType type) {
-    this.type = type;
-  }
-  public void setKey(String key) {
-    this.key = key;
-  }
-  public void setRev(long rev) {
-    this.rev = rev;
-  }
-  public void setData(DocumentEntity<T> data) {
-    this.data = data;
-  }
-  
+	long tick;
+	ReplicationEventType type;
+	String key;
+	String rev;
+	DocumentEntity<T> data;
+
+	public long getTick() {
+		return tick;
+	}
+
+	public ReplicationEventType getType() {
+		return type;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public String getRev() {
+		return rev;
+	}
+
+	public DocumentEntity<T> getData() {
+		return data;
+	}
+
+	public void setTick(final long tick) {
+		this.tick = tick;
+	}
+
+	public void setType(final ReplicationEventType type) {
+		this.type = type;
+	}
+
+	public void setKey(final String key) {
+		this.key = key;
+	}
+
+	public void setRev(final String rev) {
+		this.rev = rev;
+	}
+
+	public void setData(final DocumentEntity<T> data) {
+		this.data = data;
+	}
+
 }

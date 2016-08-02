@@ -157,10 +157,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 						upsertCount.getAndIncrement();
 						assertThat(entity.getTick(), is(not(0L)));
 						assertThat(entity.getKey(), is(not(nullValue())));
-						assertThat(entity.getRev(), is(not(0L)));
+						assertThat(entity.getRev(), is(notNullValue()));
 						assertThat(entity.getData(), is(notNullValue()));
 						assertThat(entity.getData().getDocumentKey(), is(notNullValue()));
-						assertThat(entity.getData().getDocumentRevision(), is(not(0L)));
+						assertThat(entity.getData().getDocumentRevision(), is(notNullValue()));
 						assertThat(entity.getData().getDocumentHandle(), is(nullValue()));
 						assertThat(entity.getData().getEntity().getAge(), is(not(0)));
 						break;
@@ -168,8 +168,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 						deleteCount.incrementAndGet();
 						assertThat(entity.getTick(), is(not(0L)));
 						assertThat(entity.getKey(), is(not(nullValue())));
-						assertThat(entity.getRev(), is(not(0L)));
+						assertThat(entity.getRev(), is(notNullValue()));
 						assertThat(entity.getData(), is(nullValue()));
+						break;
+					default:
 						break;
 					}
 					return true;
@@ -223,10 +225,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 						upsertCount.getAndIncrement();
 						assertThat(entity.getTick(), is((0L)));
 						assertThat(entity.getKey(), is(not(nullValue())));
-						assertThat(entity.getRev(), is(not(0L)));
+						assertThat(entity.getRev(), is(notNullValue()));
 						assertThat(entity.getData(), is(notNullValue()));
 						assertThat(entity.getData().getDocumentKey(), is(notNullValue()));
-						assertThat(entity.getData().getDocumentRevision(), is(not(0L)));
+						assertThat(entity.getData().getDocumentRevision(), is(notNullValue()));
 						assertThat(entity.getData().getDocumentHandle(), is(nullValue()));
 						assertThat(entity.getData().getEntity().getAge(), is(not(0)));
 						break;
@@ -234,8 +236,10 @@ public class ArangoDriverReplicationTest extends BaseTest {
 						deleteCount.incrementAndGet();
 						assertThat(entity.getTick(), is((0L)));
 						assertThat(entity.getKey(), is(not(nullValue())));
-						assertThat(entity.getRev(), is(not(0L)));
+						assertThat(entity.getRev(), is(notNullValue()));
 						assertThat(entity.getData(), is(nullValue()));
+						break;
+					default:
 						break;
 					}
 					return true;

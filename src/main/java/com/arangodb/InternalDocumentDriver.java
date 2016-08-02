@@ -27,21 +27,21 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String database,
 		String documentHandle,
 		T value,
-		Long rev,
+		String rev,
 		Boolean waitForSync) throws ArangoException;
 
 	DocumentEntity<String> replaceDocumentRaw(
 		String database,
 		String documentHandle,
 		String rawJsonString,
-		Long rev,
+		String rev,
 		Boolean waitForSync) throws ArangoException;
 
 	<T> DocumentEntity<T> updateDocument(
 		String database,
 		String documentHandle,
 		T value,
-		Long rev,
+		String rev,
 		Boolean waitForSync,
 		Boolean keepNull) throws ArangoException;
 
@@ -49,25 +49,25 @@ public interface InternalDocumentDriver extends BaseDriverInterface {
 		String database,
 		String documentHandle,
 		String rawJsonString,
-		Long rev,
+		String rev,
 		Boolean waitForSync,
 		Boolean keepNull) throws ArangoException;
 
 	List<String> getDocuments(String database, String collectionName) throws ArangoException;
 
-	long checkDocument(String database, String documentHandle) throws ArangoException;
+	String checkDocument(String database, String documentHandle) throws ArangoException;
 
 	<T> DocumentEntity<T> getDocument(
 		String database,
 		String documentHandle,
 		Class<T> clazz,
-		Long ifNoneMatchRevision,
-		Long ifMatchRevision) throws ArangoException;
+		String ifNoneMatchRevision,
+		String ifMatchRevision) throws ArangoException;
 
-	String getDocumentRaw(String database, String documentHandle, Long ifNoneMatchRevision, Long ifMatchRevision)
+	String getDocumentRaw(String database, String documentHandle, String ifNoneMatchRevision, String ifMatchRevision)
 			throws ArangoException;
 
-	DocumentEntity<?> deleteDocument(String database, String documentHandle, Long rev) throws ArangoException;
+	DocumentEntity<?> deleteDocument(String database, String documentHandle, String rev) throws ArangoException;
 
 	<T> EdgeEntity<T> createEdge(
 		String database,

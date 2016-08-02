@@ -107,7 +107,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String database,
 		final String documentHandle,
 		final T value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
@@ -127,7 +127,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String database,
 		final String documentHandle,
 		final String rawJsonString,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
@@ -145,7 +145,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String database,
 		final String documentHandle,
 		final T value,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 
@@ -168,7 +168,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String database,
 		final String documentHandle,
 		final String rawJsonString,
-		final Long rev,
+		final String rev,
 		final Boolean waitForSync,
 		final Boolean keepNull) throws ArangoException {
 
@@ -195,7 +195,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public long checkDocument(final String database, final String documentHandle) throws ArangoException {
+	public String checkDocument(final String database, final String documentHandle) throws ArangoException {
 		validateDocumentHandle(documentHandle);
 		final HttpResponseEntity res = httpManager.doHead(createDocumentEndpointUrl(database, documentHandle), null);
 
@@ -209,8 +209,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		final String database,
 		final String documentHandle,
 		final Class<T> clazz,
-		final Long ifNoneMatchRevision,
-		final Long ifMatchRevision) throws ArangoException {
+		final String ifNoneMatchRevision,
+		final String ifMatchRevision) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
 		final HttpResponseEntity res = httpManager.doGet(createDocumentEndpointUrl(database, documentHandle),
@@ -228,8 +228,8 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	public String getDocumentRaw(
 		final String database,
 		final String documentHandle,
-		final Long ifNoneMatchRevision,
-		final Long ifMatchRevision) throws ArangoException {
+		final String ifNoneMatchRevision,
+		final String ifMatchRevision) throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
 		final HttpResponseEntity res = httpManager.doGet(createDocumentEndpointUrl(database, documentHandle),
@@ -250,7 +250,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public DocumentEntity<?> deleteDocument(final String database, final String documentHandle, final Long rev)
+	public DocumentEntity<?> deleteDocument(final String database, final String documentHandle, final String rev)
 			throws ArangoException {
 
 		validateDocumentHandle(documentHandle);
@@ -259,7 +259,7 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 		return createEntity(res, DocumentEntity.class);
 	}
 
-	private Map<String, Object> createRevisionCheckHeader(final Long rev) {
+	private Map<String, Object> createRevisionCheckHeader(final String rev) {
 		Map<String, Object> header = null;
 		if (rev != null) {
 			final MapBuilder mapBuilder = new MapBuilder().put("If-Match", rev);
@@ -270,17 +270,17 @@ public class InternalDocumentDriverImpl extends BaseArangoDriverImpl implements 
 
 	@Override
 	public <T> EdgeEntity<T> createEdge(
-		String database,
-		String collectionName,
-		String documentKey,
-		T value,
-		String fromHandle,
-		String toHandle,
-		Boolean waitForSync) throws ArangoException {
+		final String database,
+		final String collectionName,
+		final String documentKey,
+		final T value,
+		final String fromHandle,
+		final String toHandle,
+		final Boolean waitForSync) throws ArangoException {
 
 		validateCollectionName(collectionName);
 
-		JsonObject obj = EdgeUtils.valueToEdgeJsonObject(documentKey, fromHandle, toHandle, value);
+		final JsonObject obj = EdgeUtils.valueToEdgeJsonObject(documentKey, fromHandle, toHandle, value);
 
 		final HttpResponseEntity res = httpManager.doPost(createDocumentEndpointUrl(database),
 			new MapBuilder().put(COLLECTION, collectionName).put(WAIT_FOR_SYNC, waitForSync).get(),

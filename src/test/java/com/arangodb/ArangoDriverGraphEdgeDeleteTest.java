@@ -123,7 +123,7 @@ public class ArangoDriverGraphEdgeDeleteTest extends BaseGraphTest {
 			v1.getDocumentHandle(), v2.getDocumentHandle(), null, null);
 		assertThat(edge.getCode(), is(202));
 
-		final Long rev = edge.getDocumentRevision();
+		final String rev = edge.getDocumentRevision();
 		final DeletedEntity deleted = driver.graphDeleteEdge(this.graphName, this.edgeCollectionName,
 			edge.getDocumentKey(), null, rev, null);
 		assertThat(deleted.getCode(), is(202));
@@ -146,7 +146,7 @@ public class ArangoDriverGraphEdgeDeleteTest extends BaseGraphTest {
 		assertThat(edge.getCode(), is(202));
 
 		try {
-			final Long rev = edge.getDocumentRevision() + 1;
+			final String rev = edge.getDocumentRevision() + 1;
 			driver.graphDeleteEdge(this.graphName, this.edgeCollectionName, edge.getDocumentKey(), null, rev, null);
 			fail();
 		} catch (final ArangoException e) {
@@ -170,7 +170,7 @@ public class ArangoDriverGraphEdgeDeleteTest extends BaseGraphTest {
 			v1.getDocumentHandle(), v2.getDocumentHandle(), null, null);
 		assertThat(edge.getCode(), is(202));
 
-		final Long rev = edge.getDocumentRevision();
+		final String rev = edge.getDocumentRevision();
 		final DeletedEntity deleted = driver.graphDeleteEdge(this.graphName, this.edgeCollectionName,
 			edge.getDocumentKey(), null, rev, null);
 		assertThat(deleted.getCode(), is(202));
@@ -193,7 +193,7 @@ public class ArangoDriverGraphEdgeDeleteTest extends BaseGraphTest {
 		assertThat(edge.getCode(), is(202));
 
 		try {
-			final Long rev = edge.getDocumentRevision() + 1;
+			final String rev = edge.getDocumentRevision() + 1;
 			driver.graphDeleteEdge(this.graphName, this.edgeCollectionName, edge.getDocumentKey(), null, rev, null);
 			fail();
 		} catch (final ArangoException e) {

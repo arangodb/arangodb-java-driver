@@ -256,8 +256,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String collectionName,
 		String key,
 		Class<T> clazz,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 	/**
 	 * Replaces a vertex with the given key by the content in the body. This
@@ -281,8 +281,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String key,
 		T vertex,
 		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 	/**
 	 * Updates a vertex with the given key by adding the content in the body.
@@ -309,8 +309,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		T vertex,
 		Boolean keepNull,
 		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 	/**
 	 * Deletes a vertex with the given key, if it is contained within the graph.
@@ -332,8 +332,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String collectionName,
 		String key,
 		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 	/**
 	 * 
@@ -378,8 +378,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String edgeCollectionName,
 		String key,
 		Class<T> clazz,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 	/**
 	 * Deletes an edge with the given id, if it is contained within the graph.
@@ -400,8 +400,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String edgeCollectionName,
 		String key,
 		Boolean waitForSync,
-		Long rev,
-		Long ifMatchRevision) throws ArangoException;
+		String rev,
+		String ifMatchRevision) throws ArangoException;
 
 	/**
 	 * Replaces an edge with the given key by the content in the body. This will
@@ -429,8 +429,8 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		String toHandle,
 		T value,
 		Boolean waitForSync,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 	/**
 	 * Updates an edge with the given key by adding the content in the body.
@@ -461,7 +461,7 @@ public interface InternalGraphDriver extends BaseDriverInterface {
 		T value,
 		Boolean waitForSync,
 		Boolean keepNull,
-		Long ifMatchRevision,
-		Long ifNoneMatchRevision) throws ArangoException;
+		String ifMatchRevision,
+		String ifNoneMatchRevision) throws ArangoException;
 
 }

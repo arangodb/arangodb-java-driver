@@ -22,11 +22,16 @@ package com.arangodb.entity;
  */
 public interface DocumentHolder {
 
-  public long getDocumentRevision();
-  public String getDocumentHandle();
-  public String getDocumentKey();
-  public void setDocumentRevision(long documentRevision);
-  public void setDocumentHandle(String documentHandle);
-  public void setDocumentKey(String documentKey);
-  
+	public String getDocumentRevision();
+
+	public String getDocumentHandle();
+
+	public String getDocumentKey();
+
+	public void setDocumentRevision(String documentRevision);
+
+	public void setDocumentHandle(String documentHandle);
+
+	public void setDocumentKey(String documentKey);
+
 }
