@@ -244,17 +244,12 @@ public class ArangoDriverCollectionTest extends BaseTest {
 
 		final long collectionId = res1.getId();
 
-		// IDで取得
-		final CollectionEntity entity1 = driver.getCollection(collectionId);
 		// 名前で取得
 		final CollectionEntity entity2 = driver.getCollection(collectionName);
-		assertThat(entity1.getId(), is(collectionId));
 		assertThat(entity2.getId(), is(collectionId));
-		assertThat(entity1.getName(), is(collectionName));
 		assertThat(entity2.getName(), is(collectionName));
 
 		// Type確認
-		assertThat(entity1.getType(), is(CollectionType.DOCUMENT));
 		assertThat(entity2.getType(), is(CollectionType.DOCUMENT));
 
 	}
@@ -668,11 +663,12 @@ public class ArangoDriverCollectionTest extends BaseTest {
 		final TreeSet<String> collectionNames = new TreeSet<String>();
 		for (int i = 0; i < 10; i++) {
 			try {
-				final CollectionEntity col = driver.createCollection("unit_test_arango_" + (1000 + i));
+				final String collectionName = "unit_test_arango_" + (1000 + i);
+				final CollectionEntity col = driver.createCollection(collectionName);
 				final long collectionId = col.getId();
 				if (i == 5) {
 					// 1個だけ消す
-					final CollectionEntity res = driver.deleteCollection(collectionId);
+					final CollectionEntity res = driver.deleteCollection(collectionName);
 					assertThat(res.getCode(), is(200));
 					assertThat(res.getId(), is(collectionId));
 				} else {
