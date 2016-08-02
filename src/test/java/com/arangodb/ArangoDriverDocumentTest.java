@@ -278,7 +278,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		final TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 		// 存在しないコレクションに追加しようとする
 		try {
-			driver.replaceDocument(collectionName404, 1, value, null, null);
+			driver.replaceDocument(collectionName404, "1", value, null, null);
 			fail("no exception was thrown");
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -291,7 +291,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		final TestComplexEntity01 value = new TestComplexEntity01("test-user", "test user", 22);
 		// 存在するコレクションだが、ドキュメントが存在しない
 		try {
-			driver.replaceDocument(collectionName, 1, value, null, null);
+			driver.replaceDocument(collectionName, "1", value, null, null);
 			fail("no exception was thrown");
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -470,7 +470,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	public void test_get_document_collection_not_found() throws ArangoException {
 		// Get
 		try {
-			driver.getDocument(collectionName404, 1L, TestComplexEntity01.class);
+			driver.getDocument(collectionName404, "1", TestComplexEntity01.class);
 			fail("");
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -483,7 +483,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	public void test_get_document_doc_not_found() throws ArangoException {
 		// Get
 		try {
-			driver.getDocument(collectionName, 1L, TestComplexEntity01.class);
+			driver.getDocument(collectionName, "1", TestComplexEntity01.class);
 			fail("");
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -580,7 +580,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 		driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3), null);
 
 		try {
-			driver.checkDocument(collectionName, 1);
+			driver.checkDocument(collectionName, "1");
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(404));
@@ -593,7 +593,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 
 		driver.createDocument(collectionName, new TestComplexEntity02(1, 2, 3), null);
 
-		final boolean b = driver.exists(collectionName, 1);
+		final boolean b = driver.exists(collectionName, "1");
 
 		assertThat(b, is(false));
 	}
@@ -608,7 +608,7 @@ public class ArangoDriverDocumentTest extends BaseTest {
 	@Test
 	public void test_delete_doc_not_found() throws ArangoException {
 		try {
-			driver.deleteDocument(collectionName, 1);
+			driver.deleteDocument(collectionName, "1");
 			fail();
 		} catch (final ArangoException e) {
 			assertThat(e.getCode(), is(ErrorNums.ERROR_HTTP_NOT_FOUND));

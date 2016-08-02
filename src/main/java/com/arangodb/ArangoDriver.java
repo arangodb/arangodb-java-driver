@@ -747,23 +747,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * This method replaces the content of the document defined by documentId.
-	 *
-	 * @param collectionName
-	 *            The collection's name.
-	 * @param documentId
-	 *            The document's id.
-	 * @param value
-	 *            An object containing the documents attributes
-	 * @return DocumentEntity<?>
-	 * @throws ArangoException
-	 */
-	public <T> DocumentEntity<T> replaceDocument(final String collectionName, final long documentId, final T value)
-			throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null);
-	}
-
-	/**
 	 * This method replaces the content of the document defined by documentKey.
 	 *
 	 * @param collectionName
@@ -793,36 +776,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> DocumentEntity<T> replaceDocument(final String documentHandle, final T value) throws ArangoException {
 		return documentDriver.replaceDocument(getDefaultDatabase(), documentHandle, value, null, null);
-	}
-
-	/**
-	 * This method replaces the content of the document defined by documentId.
-	 * This method offers a parameter rev (revision). If the revision of the
-	 * document on the server does not match the given revision an error is
-	 * thrown.
-	 *
-	 * @param collectionName
-	 *            The collection's name.
-	 * @param documentId
-	 *            The document's id.
-	 * @param value
-	 *            An object containing the new attributes of the document.
-	 * @param rev
-	 *            the desired revision.
-	 * @param waitForSync
-	 *            if set to true the response is returned when the server has
-	 *            finished.
-	 * @return a DocumentEntity object
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> replaceDocument(
-		final String collectionName,
-		final long documentId,
-		final Object value,
-		final String rev,
-		final Boolean waitForSync) throws ArangoException {
-		return replaceDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev,
-			waitForSync);
 	}
 
 	/**
@@ -881,24 +834,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
-	 * This method updates a document defined by documentId.
-	 *
-	 * @param collectionName
-	 *            The collection's name.
-	 * @param documentId
-	 *            The document's id.
-	 * @param value
-	 *            An object containing the documents attributes
-	 * @return DocumentEntity<?>
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> updateDocument(final String collectionName, final long documentId, final Object value)
-			throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
-			null);
-	}
-
-	/**
 	 * This method updates a document defined by documentKey.
 	 *
 	 * @param collectionName
@@ -927,29 +862,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public <T> DocumentEntity<T> updateDocument(final String documentHandle, final T value) throws ArangoException {
 		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, null, null, null);
-	}
-
-	/**
-	 * This method updates a document defined by documentId.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param documentId
-	 *            The document id.
-	 * @param value
-	 *            An object containing the documents attributes
-	 * @param keepNull
-	 *            If true null values are kept.
-	 * @return DocumentEntity<?>
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> updateDocument(
-		final String collectionName,
-		final long documentId,
-		final Object value,
-		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, null, null,
-			keepNull);
 	}
 
 	/**
@@ -989,38 +901,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	public <T> DocumentEntity<T> updateDocument(final String documentHandle, final T value, final Boolean keepNull)
 			throws ArangoException {
 		return documentDriver.updateDocument(getDefaultDatabase(), documentHandle, value, null, null, keepNull);
-	}
-
-	/**
-	 * This method updates a document defined by documentId. This method offers
-	 * a parameter rev (revision). If the revision of the document on the server
-	 * does not match the given revision an error is thrown.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param documentId
-	 *            The document id.
-	 * @param value
-	 *            An object containing the documents attributes
-	 * @param rev
-	 *            The desired revision
-	 * @param waitForSync
-	 *            if set to true the response is returned when the server has
-	 *            finished.
-	 * @param keepNull
-	 *            If true null values are kept.
-	 * @return a DocumentEntity object
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> updateDocument(
-		final String collectionName,
-		final long documentId,
-		final Object value,
-		final String rev,
-		final Boolean waitForSync,
-		final Boolean keepNull) throws ArangoException {
-		return updateDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), value, rev, waitForSync,
-			keepNull);
 	}
 
 	/**
@@ -1102,23 +982,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param collectionName
 	 *            The collection name.
-	 * @param documentId
-	 *            The document id
-	 * @return true, if the document exists
-	 * @throws ArangoException
-	 */
-	public boolean exists(final String collectionName, final long documentId) throws ArangoException {
-		return exists(createDocumentHandle(collectionName, String.valueOf(documentId)));
-	}
-
-	/**
-	 * The exists method determines whether a document exists given its
-	 * identifier. Instead of returning the found document or an error, this
-	 * method will return either true or false. It can thus be used for easy
-	 * existence checks.
-	 *
-	 * @param collectionName
-	 *            The collection name.
 	 * @param documentKey
 	 *            The document key
 	 * @return true, if the document exists
@@ -1156,20 +1019,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param collectionName
 	 *            The collection name.
-	 * @param documentId
-	 *            The document id
-	 * @return the document revision number
-	 * @throws ArangoException
-	 */
-	public String checkDocument(final String collectionName, final long documentId) throws ArangoException {
-		return checkDocument(createDocumentHandle(collectionName, String.valueOf(documentId)));
-	}
-
-	/**
-	 * This method returns the current revision of a document.
-	 *
-	 * @param collectionName
-	 *            The collection name.
 	 * @param documentKey
 	 *            The document key
 	 * @return the document revision number
@@ -1189,24 +1038,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public String checkDocument(final String documentHandle) throws ArangoException {
 		return documentDriver.checkDocument(getDefaultDatabase(), documentHandle);
-	}
-
-	/**
-	 * Returns a document entity.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param documentId
-	 *            The document id
-	 * @param clazz
-	 *            The expected class, the result from the server request is
-	 *            deserialized to an instance of this class.
-	 * @return a DocumentEntity object
-	 * @throws ArangoException
-	 */
-	public <T> DocumentEntity<T> getDocument(final String collectionName, final long documentId, final Class<T> clazz)
-			throws ArangoException {
-		return getDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), clazz);
 	}
 
 	/**
@@ -1277,20 +1108,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 *
 	 * @param collectionName
 	 *            The collection name.
-	 * @param documentId
-	 *            The document id.
-	 * @return a DocumentEntity object
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> deleteDocument(final String collectionName, final long documentId) throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)));
-	}
-
-	/**
-	 * Deletes a document from the database.
-	 *
-	 * @param collectionName
-	 *            The collection name.
 	 * @param documentKey
 	 *            The document key.
 	 * @return a DocumentEntity object
@@ -1311,25 +1128,6 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public DocumentEntity<?> deleteDocument(final String documentHandle) throws ArangoException {
 		return documentDriver.deleteDocument(getDefaultDatabase(), documentHandle, null);
-	}
-
-	/**
-	 * Deletes a document from the database. This method offers a parameter rev
-	 * (revision). If the revision of the document on the server does not match
-	 * the given revision an error is thrown.
-	 *
-	 * @param collectionName
-	 *            The collection name.
-	 * @param documentId
-	 *            The document id.
-	 * @param rev
-	 *            The desired revision
-	 * @return a DocumentEntity object
-	 * @throws ArangoException
-	 */
-	public DocumentEntity<?> deleteDocument(final String collectionName, final long documentId, final String rev)
-			throws ArangoException {
-		return deleteDocument(createDocumentHandle(collectionName, String.valueOf(documentId)), rev);
 	}
 
 	/**
