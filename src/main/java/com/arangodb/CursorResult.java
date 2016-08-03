@@ -19,6 +19,7 @@ package com.arangodb;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.arangodb.entity.CursorEntity;
@@ -176,6 +177,37 @@ public class CursorResult<T> implements Iterable<T> {
 	}
 
 	/**
+	 * Returns true if the cursor can load more data from the database
+	 * 
+	 * @return true, if the cursor can load more data from the database
+	 */
+	public boolean hasMore() {
+		return entity.hasMore();
+	}
+
+	/**
+	 * Returns the cursor identifier
+	 * 
+	 * @return the cursor identifier
+	 */
+	public Long getCursorId() {
+		return entity.getCursorId();
+	}
+
+	/**
+	 * a boolean flag indicating whether the query result was served from the
+	 * query cache or not. If the query result is served from the query cache,
+	 * the extra return attribute will not contain any stats sub-attribute and
+	 * no profile sub-attribute. (since ArangoDB 2.7)
+	 * 
+	 * @return true, if the result is cached
+	 * 
+	 */
+	public boolean isCached() {
+		return entity.isCached();
+	}
+
+	/**
 	 * Returns true, if there are AQL warnings
 	 * 
 	 * @return true, if there are AQL warnings
@@ -191,6 +223,15 @@ public class CursorResult<T> implements Iterable<T> {
 	 */
 	public List<WarningEntity> getWarnings() {
 		return entity.getWarnings();
+	}
+
+	/**
+	 * A list of extra stats returned by the query
+	 * 
+	 * @return query stats
+	 */
+	public Map<String, Object> getExtra() {
+		return entity.getExtra();
 	}
 
 }
