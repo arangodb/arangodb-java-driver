@@ -9,6 +9,7 @@ public class AqlQueryOptions implements OptionsInterface {
 	private Boolean fullCount;
 	private Boolean cache;
 	private Integer ttl;
+	private Boolean profile;
 
 	/**
 	 * boolean flag that indicates whether the number of documents in the result
@@ -64,6 +65,31 @@ public class AqlQueryOptions implements OptionsInterface {
 	 */
 	public AqlQueryOptions setBatchSize(Integer batchSize) {
 		this.batchSize = batchSize;
+		return this;
+	}
+
+	/**
+	 * if set to true, then the additional query profiling information will be
+	 * returned in the extra.stats return attribute if the query result is not
+	 * served from the query cache.
+	 * 
+	 * @return boolean flag
+	 */
+	public Boolean getProfile() {
+		return profile;
+	}
+
+	/**
+	 * if set to true, then the additional query profiling information will be
+	 * returned in the extra.stats return attribute if the query result is not
+	 * served from the query cache.
+	 * 
+	 * @param profile
+	 *            boolean flag
+	 * @return this
+	 */
+	public AqlQueryOptions setProfile(Boolean profile) {
+		this.profile = profile;
 		return this;
 	}
 
@@ -172,6 +198,10 @@ public class AqlQueryOptions implements OptionsInterface {
 
 		if (fullCount != null) {
 			optionsMp.put("fullCount", fullCount);
+		}
+
+		if (profile != null) {
+			optionsMp.put("profile", profile);
 		}
 
 		// TODO add maxPlans

@@ -1,5 +1,7 @@
 v3.0.2 (2016-08-XX)
 ---------------------------
+* added profile flag to AqlQueryOptions (issue #47)
+* added getExtra() to DocumentCursor<> (issue #47)
 * added IndexType.PERSISTENT (issue #48)
 
 v3.0.1 (2016-07-08)

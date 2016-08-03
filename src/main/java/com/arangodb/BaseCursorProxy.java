@@ -2,6 +2,7 @@ package com.arangodb;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.arangodb.entity.DocumentEntity;
 
@@ -115,7 +116,7 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 	 * @return true, if the cursor can load more data from the database
 	 */
 	public boolean hasMore() {
-		return baseCursor.getEntity().hasMore();
+		return baseCursor.hasMore();
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 	 * @return the cursor identifier
 	 */
 	public Long getCursorId() {
-		return baseCursor.getEntity().getCursorId();
+		return baseCursor.getCursorId();
 	}
 
 	/**
@@ -137,7 +138,16 @@ public class BaseCursorProxy<T, S extends DocumentEntity<T>> implements Iterable
 	 * 
 	 */
 	public boolean isCached() {
-		return baseCursor.getEntity().isCached();
+		return baseCursor.isCached();
+	}
+
+	/**
+	 * A list of extra stats returned by the query
+	 * 
+	 * @return query stats
+	 */
+	public Map<String, Object> getExtra() {
+		return baseCursor.getExtra();
 	}
 
 }
