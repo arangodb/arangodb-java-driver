@@ -157,23 +157,24 @@ public class ArangoDriverTransactionTest extends BaseTest {
 
 	@Test
 	public void allowImplicit() throws ArangoException {
-		TransactionEntity transaction = driver
+		final TransactionEntity transaction = driver
 				.createTransaction("function (params) {" + "var db = require('internal').db;"
 						+ "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()[0]};"
 						+ "}");
 		transaction.addReadCollection(SOME_COLLECTION);
 		{
-			TransactionResultEntity result = driver.executeTransaction(transaction);
+			final TransactionResultEntity result = driver.executeTransaction(transaction);
 			assertThat(result.getStatusCode(), is(200));
 			assertThat(result.getCode(), is(200));
 			assertThat(result.isError(), is(false));
 		}
+		driver.deleteQueryCache();
 		{
 			transaction.setAllowImplicit(false);
 			try {
 				driver.executeTransaction(transaction);
 				Assert.fail();
-			} catch (ArangoException e) {
+			} catch (final ArangoException e) {
 				final BaseEntity result = e.getEntity();
 				assertThat(result.getStatusCode(), is(400));
 				assertThat(result.getCode(), is(400));
