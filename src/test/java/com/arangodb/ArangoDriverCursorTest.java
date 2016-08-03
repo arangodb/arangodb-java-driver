@@ -283,6 +283,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 			// extra.profile has to be null
 			assertThat(object, is(nullValue()));
 		}
+		driver.deleteQueryCache();
 		{
 			// with profiling
 			aqlQueryOptions.setProfile(true);
@@ -312,6 +313,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 			// extra.profile has to be null
 			assertThat(object, is(nullValue()));
 		}
+		driver.deleteQueryCache();
 		{
 			// with profiling
 			aqlQueryOptions.setProfile(true);
