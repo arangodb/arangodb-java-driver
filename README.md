@@ -7,13 +7,13 @@
 
 This library is a Java driver for ArangoDB.
 
-Supported version: ArangoDB 3.0.X 
+Supported version: ArangoDB 3.1.X 
 
 (Use ```arangodb-java-driver 2.7.4``` for ArangoDB 2.7.x and ArangoDB 2.8.x)
 
 # Required
 
-* [ArangoDB](https://github.com/arangodb/arangodb) version 3.0.X
+* [ArangoDB](https://github.com/arangodb/arangodb) version 3.1.X
 * Java 1.6 later
 
 # Basics
@@ -23,7 +23,7 @@ Supported version: ArangoDB 3.0.X
 To add the driver to your project with maven, add the following code to your pom.xml
 (please use a driver with a version number compatible to your ArangoDB server's version):
 
-ArangoDB 3.0.X
+ArangoDB 3.1.X
 ```XML
 <dependencies>
   <dependency>
@@ -47,7 +47,7 @@ ArangoDB 2.7.x and ArangoDB 2.8.x:
 </dependencies>
 ```
 
-If you want to test with a snapshot version (e.g. 3.0.0-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
+If you want to test with a snapshot version (e.g. 3.1.0-SNAPSHOT), add the staging repository of oss.sonatype.org to your pom.xml:
 
 ```XML
 <repositories>
