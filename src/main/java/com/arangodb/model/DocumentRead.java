@@ -1,6 +1,9 @@
 package com.arangodb.model;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+
+import com.arangodb.internal.net.Communication;
+import com.arangodb.internal.net.Request;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -25,8 +28,19 @@ public class DocumentRead<T> implements Executeable<T> {
 		this.options = options;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.arangodb.model.Executeable#executeAsync()
+	 */
 	@Override
-	public Future<T> execute(final ExecuteCallback<T> callback) {
+	public CompletableFuture<T> executeAsync() {
+
+		final Request request = new Request();
+
+		final Communication communication = null;
+		// communication.send(message, future);
 		return null;
 	}
+
 }

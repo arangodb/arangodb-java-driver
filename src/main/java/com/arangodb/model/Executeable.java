@@ -1,7 +1,7 @@
 package com.arangodb.model;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import com.arangodb.ArangoException;
 
@@ -13,12 +13,12 @@ public interface Executeable<T> {
 
 	default T execute() throws ArangoException {
 		try {
-			return execute(null).get();
+			return executeAsync().get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new ArangoException(e);
 		}
 	}
 
-	Future<T> execute(final ExecuteCallback<T> callback);
+	CompletableFuture<T> executeAsync();
 
 }
