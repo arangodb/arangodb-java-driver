@@ -1,3 +1,7 @@
+v3.0.2 (2016-08-XX)
+---------------------------
+* added IndexType.PERSISTENT (issue #48)
+
 v3.0.1 (2016-07-08)
 ---------------------------
 * added flag complete and details in ImportOptions
