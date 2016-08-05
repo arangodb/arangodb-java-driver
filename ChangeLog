@@ -1,9 +1,13 @@
 v3.1.0 (2016-09-XX)
+---------------------------
 * removed Methods with collectionId (long) from ArangoDriver (Id is only for internal usage)
 * changed Revision from long to String
 * removed Methods with documentId (long) from ArangoDriver
 * added profile flag to AqlQueryOptions (issue #47)
-* added getExtra() to DocumentCursor<> (issue #47)
+
+v3.0.2 (2016-08-05)
+---------------------------
+* added profile flag to AqlQueryOptions (issue #47)
 * added getExtra() to DocumentCursor<> (issue #47)
 * added IndexType.PERSISTENT (issue #48)
 
