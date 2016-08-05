@@ -2,10 +2,12 @@ package com.arangodb;
 
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Communication;
+import com.arangodb.internal.net.Request;
+import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.model.DB;
-import com.arangodb.model.DBCreate;
-import com.arangodb.model.DBDelete;
+import com.arangodb.model.ExecuteBase;
+import com.arangodb.model.Executeable;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
@@ -15,10 +17,7 @@ import com.arangodb.velocypack.VPackSerializer;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDB {
-
-	private final Communication communication;
-	private final VPack vpack;
+public class ArangoDB extends ExecuteBase {
 
 	public static class Builder {
 
@@ -82,17 +81,16 @@ public class ArangoDB {
 	}
 
 	private ArangoDB(final Builder builder) {
-		vpack = builder.vpack;
-		communication = new Communication.Builder(vpack).host(builder.host).port(builder.port).timeout(builder.timeout)
-				.build();
+		super(new Communication.Builder(builder.vpack).host(builder.host).port(builder.port).timeout(builder.timeout)
+				.build(), builder.vpack);
 	}
 
-	public DBCreate dbCreate(final String name) {
-		return new DBCreate(this, name);
+	public Executeable<Boolean> createDB(final String name) {
+		return execute(Boolean.class, new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_DATABASE));
 	}
 
-	public DBDelete dbDelete(final String name) {
-		return new DBDelete(this, name);
+	public Executeable<Boolean> deleteDB(final String name) {
+		return execute(Boolean.class, new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_DATABASE));
 	}
 
 	public DB db() {

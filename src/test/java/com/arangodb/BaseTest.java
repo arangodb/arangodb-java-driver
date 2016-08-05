@@ -19,7 +19,7 @@ public class BaseTest {
 	public static void setup() {
 		arangoDB = new ArangoDB.Builder().build();
 		try {
-			arangoDB.dbCreate(TEST_DB).execute();
+			arangoDB.createDB(TEST_DB).execute();
 		} catch (final ArangoDBException e) {
 		}
 		BaseTest.db = arangoDB.db(TEST_DB);
@@ -28,7 +28,7 @@ public class BaseTest {
 	@AfterClass
 	public static void shutdown() {
 		try {
-			arangoDB.dbDelete(TEST_DB).execute();
+			arangoDB.deleteDB(TEST_DB).execute();
 		} catch (final ArangoDBException e) {
 		}
 	}

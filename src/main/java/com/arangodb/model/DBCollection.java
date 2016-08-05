@@ -1,15 +1,20 @@
 package com.arangodb.model;
 
+import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.net.Request;
+import com.arangodb.internal.net.velocystream.RequestType;
+
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DBCollection {
+public class DBCollection extends ExecuteBase {
 
 	private final DB db;
 	private final String name;
 
 	protected DBCollection(final DB db, final String name) {
+		super(db);
 		this.db = db;
 		this.name = name;
 	}
@@ -22,20 +27,40 @@ public class DBCollection {
 		return name;
 	}
 
-	public <T> DocumentCreate<T> documentCreate(final T value, final DocumentCreate.Options options) {
-		return new DocumentCreate<>(this, value, options);
+	private String createDocumentHandle(final String key) {
+		return String.format("%s/%s", name, key);
 	}
 
-	public <T> DocumentRead<T> documentRead(final String key, final Class<T> type, final DocumentRead.Options options) {
-		return new DocumentRead<>(this, key, type, options);
+	public <T> Executeable<T> createDocument(final T value, final DocumentCreateOptions options) {
+		return execute((Class<T>) value.getClass(),
+			new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_DOCUMENT + name));
 	}
 
-	public <T> DocumentUpdate<T> documentUpdate(final String key, final T value, final DocumentUpdate.Options options) {
-		return new DocumentUpdate<>(this, key, value, options);
+	public <T> Executeable<T> readDocument(final String key, final Class<T> type, final DocumentReadOptions options) {
+		return execute(type,
+			new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key)));
 	}
 
-	public DocumentDelete documentDelete(final String key, final DocumentDelete.Options options) {
-		return new DocumentDelete(this, key, options);
+	public <T> Executeable<T> updateDocument(final String key, final T value, final DocumentUpdateOptions options) {
+		return execute((Class<T>) value.getClass(),
+			new Request(db.name(), RequestType.PATCH, ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key)));
+	}
+
+	public Executeable<Boolean> deleteDocument(final String key, final DocumentDeleteOptions options) {
+		return execute(Boolean.class, new Request(db.name(), RequestType.DELETE,
+				ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key)));
+	}
+
+	public static class DocumentCreateOptions {
+	}
+
+	public static class DocumentReadOptions {
+	}
+
+	public static class DocumentUpdateOptions {
+	}
+
+	public static class DocumentDeleteOptions {
 	}
 
 }

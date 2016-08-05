@@ -1,21 +1,22 @@
 package com.arangodb.model;
 
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Communication;
+import com.arangodb.internal.net.Request;
+import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.velocypack.VPack;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DB {
+public class DB extends ExecuteBase {
 
-	private final Communication communication;
-	private final VPack vpack;
 	private final String name;
 
 	public DB(final Communication communication, final VPack vpack, final String name) {
-		this.communication = communication;
-		this.vpack = vpack;
+		super(communication, vpack);
 		this.name = name;
 	}
 
@@ -35,12 +36,16 @@ public class DB {
 		return new DBCollection(this, name);
 	}
 
-	public CollectionCreate collectionCreate(final String name, final CollectionCreate.Options options) {
-		return new CollectionCreate(this, name, options);
+	public Executeable<CollectionEntity> createCollection(final String name, final CollectionCreateOptions options) {
+		return execute(CollectionEntity.class,
+			new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION));
 	}
 
-	public CollectionDelete collectionDelete(final String name) {
-		return new CollectionDelete(this, name);
+	public Executeable<Boolean> deleteCollection(final String name) {
+		return execute(Boolean.class, new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_COLLECTION));
 	}
 
+	public static class CollectionCreateOptions {
+
+	}
 }

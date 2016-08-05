@@ -11,5 +11,8 @@ public class ArangoDBConstants {
 	public static final int DEFAULT_PORT = 8529;
 	public static final int DEFAULT_TIMEOUT = 1000;
 	public static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
+	public static final String PATH_API_DOCUMENT = "/_api/document/";
+	public static final String PATH_API_COLLECTION = "/_api/collection/";
+	public static final String PATH_API_DATABASE = "/_api/database";
 
 }
