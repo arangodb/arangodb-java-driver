@@ -1,4 +1,4 @@
-v3.0.2 (2016-08-XX)
+v3.0.2 (2016-08-05)
 ---------------------------
 * added profile flag to AqlQueryOptions (issue #47)
 * added getExtra() to DocumentCursor<> (issue #47)
