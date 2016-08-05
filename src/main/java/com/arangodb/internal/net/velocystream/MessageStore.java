@@ -26,7 +26,13 @@ public class MessageStore {
 		future.complete(message);
 	}
 
+	public void clear(final Exception e) {
+		data.values().stream().forEach(future -> future.completeExceptionally(e));
+		data.clear();
+	}
+
 	public void clear() {
+		data.values().stream().forEach(future -> future.cancel(true));
 		data.clear();
 	}
 

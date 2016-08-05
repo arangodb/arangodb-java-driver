@@ -12,16 +12,12 @@ import java.util.Optional;
  */
 public class ChunkStore {
 
-	public static interface MessageCompleteListener {
-		void complete(long messageId, Collection<Chunk> chunks);
-	}
-
+	private final MessageStore messageStore;
 	private final Map<Long, Collection<Chunk>> data;
-	private final MessageCompleteListener messageCompleteListener;
 
-	public ChunkStore(final MessageCompleteListener messageCompleteListener) {
+	public ChunkStore(final MessageStore messageStore) {
 		super();
-		this.messageCompleteListener = messageCompleteListener;
+		this.messageStore = messageStore;
 		data = new HashMap<>();
 	}
 
@@ -41,7 +37,7 @@ public class ChunkStore {
 		if (first.isPresent()) {
 			final int numChunks = first.get().getChunk();
 			if (numChunks == chunks.size()) {
-				messageCompleteListener.complete(messageId, chunks);
+				messageStore.consume(new Message(messageId, chunks));
 				data.remove(messageId);
 			}
 		}

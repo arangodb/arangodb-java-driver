@@ -7,12 +7,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.net.SocketFactory;
 
+import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.ChunkStore;
 import com.arangodb.internal.net.velocystream.Message;
@@ -25,9 +27,9 @@ import com.arangodb.internal.net.velocystream.MessageStore;
 public class Connection {
 
 	private final MessageStore messageStore;
-	private final String host;
-	private final int port;
-	private final int timeout;
+	private Optional<String> host = Optional.empty();
+	private Optional<Integer> port = Optional.empty();
+	private Optional<Integer> timeout = Optional.empty();
 	private Socket socket;
 	private OutputStream outputStream;
 	private InputStream inputStream;
@@ -36,8 +38,8 @@ public class Connection {
 	public static class Builder {
 		private final MessageStore messageStore;
 		private String host;
-		private int port;
-		private int timeout;
+		private Integer port;
+		private Integer timeout;
 
 		public Builder(final MessageStore messageStore) {
 			super();
@@ -54,22 +56,22 @@ public class Connection {
 			return this;
 		}
 
-		public Builder timeout(final int timeout) {
+		public Builder timeout(final Integer timeout) {
 			this.timeout = timeout;
 			return this;
 		}
 
 		public Connection build() {
-			return new Connection(messageStore, host, port, timeout);
+			return new Connection(this);
 		}
 	}
 
-	private Connection(final MessageStore messageStore, final String host, final int port, final int timeout) {
+	private Connection(final Builder builder) {
 		super();
-		this.messageStore = messageStore;
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
+		this.messageStore = builder.messageStore;
+		this.host = Optional.of(builder.host);
+		this.port = Optional.of(builder.port);
+		this.timeout = Optional.of(builder.timeout);
 	}
 
 	public void connect() throws IOException {
@@ -77,7 +79,9 @@ public class Connection {
 			return;
 		}
 		socket = SocketFactory.getDefault().createSocket();
-		socket.connect(new InetSocketAddress(host, port), timeout);
+		socket.connect(new InetSocketAddress(host.orElse(ArangoDBConstants.DEFAULT_HOST),
+				port.orElse(ArangoDBConstants.DEFAULT_PORT)),
+			timeout.orElse(ArangoDBConstants.DEFAULT_TIMEOUT));
 		socket.setKeepAlive(true);
 		socket.setTcpNoDelay(true);
 
@@ -85,12 +89,10 @@ public class Connection {
 		inputStream = socket.getInputStream();
 		executor = Executors.newSingleThreadExecutor();
 		executor.submit(() -> {
-			final ChunkStore chunkStore = new ChunkStore((messageId, chunks) -> {
-				messageStore.consume(new Message(messageId, chunks));
-			});
+			final ChunkStore chunkStore = new ChunkStore(messageStore);
 			while (true) {
 				if (!isOpen()) {
-					// TODO
+					messageStore.clear(new IOException("The socket is closed."));
 					// exception = new IOException();
 					disconnect();
 					break;
@@ -98,8 +100,7 @@ public class Connection {
 				try {
 					chunkStore.storeChunk(read());
 				} catch (final IOException e) {
-					// TODO
-					// exception = e;
+					messageStore.clear(e);
 					disconnect();
 					break;
 				}
@@ -139,7 +140,7 @@ public class Connection {
 	private Chunk read() throws IOException {
 		final ByteBuffer head = readBytes(4);
 		final int len = head.getInt();
-		return new Chunk.Builder().length(len).data(readBytes(len - 4)).build();
+		return new Chunk(len, readBytes(len - 4));
 	}
 
 	private ByteBuffer readBytes(final int len) throws IOException {

@@ -1,12 +1,12 @@
 package com.arangodb.model;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DocumentDelete implements Executeable<Boolean> {
+public class DocumentDelete extends Executeable<Boolean> {
 
 	private final DBCollection dbCollection;
 	private final String key;
@@ -17,13 +17,15 @@ public class DocumentDelete implements Executeable<Boolean> {
 	}
 
 	protected DocumentDelete(final DBCollection dbCollection, final String key, final Options options) {
+		super(dbCollection, Boolean.class);
 		this.dbCollection = dbCollection;
 		this.key = key;
 		this.options = options;
 	}
 
 	@Override
-	public Future<Boolean> execute(final ExecuteCallback<Boolean> callback) {
+	public CompletableFuture<Boolean> executeAsync() {
 		return null;
 	}
+
 }

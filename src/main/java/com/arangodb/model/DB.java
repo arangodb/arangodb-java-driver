@@ -1,6 +1,7 @@
 package com.arangodb.model;
 
-import com.arangodb.ArangoDB;
+import com.arangodb.internal.net.Communication;
+import com.arangodb.velocypack.VPack;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -8,16 +9,22 @@ import com.arangodb.ArangoDB;
  */
 public class DB {
 
-	private final ArangoDB arangoDB;
+	private final Communication communication;
+	private final VPack vpack;
 	private final String name;
 
-	public DB(final ArangoDB arangoDB, final String name) {
-		this.arangoDB = arangoDB;
+	public DB(final Communication communication, final VPack vpack, final String name) {
+		this.communication = communication;
+		this.vpack = vpack;
 		this.name = name;
 	}
 
-	protected ArangoDB arangoDB() {
-		return arangoDB;
+	protected Communication communication() {
+		return communication;
+	}
+
+	protected VPack vpack() {
+		return vpack;
 	}
 
 	protected String name() {

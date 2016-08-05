@@ -1,13 +1,13 @@
 package com.arangodb.model;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark - mark at arangodb.com
  * @param <T>
  *
  */
-public class DocumentCreate<T> implements Executeable<T> {
+public class DocumentCreate<T> extends Executeable<T> {
 
 	private final DBCollection dbCollection;
 	private final T value;
@@ -18,13 +18,14 @@ public class DocumentCreate<T> implements Executeable<T> {
 	}
 
 	protected DocumentCreate(final DBCollection dbCollection, final T value, final Options options) {
+		super(dbCollection, null);// TODO
 		this.dbCollection = dbCollection;
 		this.value = value;
 		this.options = options;
 	}
 
 	@Override
-	public Future<T> execute(final ExecuteCallback<T> callback) {
+	public CompletableFuture<T> executeAsync() {
 		return null;
 	}
 

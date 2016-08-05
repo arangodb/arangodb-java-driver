@@ -38,8 +38,4 @@ public class DBCollection {
 		return new DocumentDelete(this, key, options);
 	}
 
-	public DocumentReadAll documentReadAll() {
-		return new DocumentReadAll(this);
-	}
-
 }

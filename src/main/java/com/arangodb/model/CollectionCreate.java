@@ -1,7 +1,7 @@
 package com.arangodb.model;
 
 import java.util.Optional;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionEntity;
 
@@ -9,7 +9,7 @@ import com.arangodb.entity.CollectionEntity;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CollectionCreate implements Executeable<CollectionEntity> {
+public class CollectionCreate extends Executeable<CollectionEntity> {
 
 	private final DB db;
 	private final String name;
@@ -25,13 +25,15 @@ public class CollectionCreate implements Executeable<CollectionEntity> {
 	}
 
 	protected CollectionCreate(final DB db, final String name, final Options options) {
+		super(db, CollectionEntity.class);
 		this.db = db;
 		this.name = name;
 		this.options = options;
 	}
 
 	@Override
-	public Future<CollectionEntity> execute(final ExecuteCallback<CollectionEntity> callback) {
+	public CompletableFuture<CollectionEntity> executeAsync() {
 		return null;
 	}
+
 }
