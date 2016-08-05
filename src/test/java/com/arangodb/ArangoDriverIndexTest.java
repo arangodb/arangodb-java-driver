@@ -271,6 +271,22 @@ public class ArangoDriverIndexTest extends BaseTest {
 	}
 
 	@Test
+	public void test_create_persistent_index() throws ArangoException {
+
+		final IndexEntity entity = driver.createIndex(collectionName, IndexType.PERSISTENT, false, "a", "b", "c", "d",
+			"e", "f", "g");
+
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.getCode(), is(201));
+		assertThat(entity.isError(), is(false));
+		assertThat(entity.isNewlyCreated(), is(true));
+		assertThat(entity.isGeoJson(), is(false));
+		assertThat(entity.getId(), is(notNullValue()));
+		assertThat(entity.getType(), is(IndexType.PERSISTENT));
+
+	}
+
+	@Test
 	public void test_delete_index() throws ArangoException {
 
 		final IndexEntity entity = driver.createIndex(collectionName, IndexType.HASH, true, "name", "age");
