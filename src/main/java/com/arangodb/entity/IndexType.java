@@ -20,9 +20,8 @@ package com.arangodb.entity;
  * Index Type.
  * 
  * @author tamtam180 - kirscheless at gmail.com
- * @see <a href=
- *      "http://www.arangodb.com/manuals/current/HttpIndex.html#HttpIndexIntro">
- *      HttpIndexIntro</a>
+ * @see <a https://docs.arangodb.com/current/HTTP/Indexes/index.html">
+ *      Indexes</a>
  */
 public enum IndexType {
 	/** Primary Index */
@@ -36,5 +35,7 @@ public enum IndexType {
 	/** Skiplist Index */
 	SKIPLIST,
 	/** Fulltext Inex */
-	FULLTEXT
+	FULLTEXT,
+	/** Persistent Index */
+	PERSISTENT
 }
