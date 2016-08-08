@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.Message;
 import com.arangodb.internal.net.velocystream.MessageStore;
@@ -95,8 +96,18 @@ public class Communication {
 						if (m.getBody().isPresent()) {
 							response.setBody(m.getBody().get());
 						}
-						// TODO if responseCode == error throw ex
-						rfuture.complete(response);
+						if (response.getResponseCode() >= 300) {
+							if (response.getBody().isPresent()) {
+								final ErrorEntity errorEntity = vpack.deserialize(response.getBody().get(),
+									ErrorEntity.class);
+								rfuture.completeExceptionally(new ArangoDBException(errorEntity));
+							} else {
+								rfuture.completeExceptionally(new ArangoDBException(
+										String.format("Response Code: %s", response.getResponseCode())));
+							}
+						} else {
+							rfuture.complete(response);
+						}
 					} catch (final VPackParserException e) {
 						rfuture.completeExceptionally(e);
 					}

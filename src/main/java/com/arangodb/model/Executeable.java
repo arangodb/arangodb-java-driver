@@ -11,6 +11,7 @@ import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.Response;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 
 /**
@@ -19,22 +20,36 @@ import com.arangodb.velocypack.exception.VPackParserException;
  */
 public class Executeable<T> {
 
+	@FunctionalInterface
+	public static interface ResponseDeserializer<T> {
+		T deserialize(Response response) throws VPackException;
+	}
+
 	protected final Communication communication;
 	protected final VPack vpack;
 	protected final Class<T> type;
 	private final Request request;
+	private final ResponseDeserializer<T> responseDeserializer;
 
 	protected Executeable(final Communication communication, final VPack vpack, final Class<T> type,
 		final Request request) {
+		this(communication, vpack, type, request, (response) -> {
+			return createResult(vpack, type, response);
+		});
+	}
+
+	protected Executeable(final Communication communication, final VPack vpack, final Class<T> type,
+		final Request request, final ResponseDeserializer<T> responseDeserializer) {
 		super();
 		this.communication = communication;
 		this.vpack = vpack;
 		this.type = type;
 		this.request = request;
+		this.responseDeserializer = responseDeserializer;
 	}
 
 	@SuppressWarnings("unchecked")
-	protected T createResult(final Response response) {
+	private static <T> T createResult(final VPack vpack, final Class<T> type, final Response response) {
 		T value = null;
 		if (response.getBody().isPresent()) {
 			try {
@@ -62,9 +77,13 @@ public class Executeable<T> {
 
 	public CompletableFuture<T> executeAsync() {
 		final CompletableFuture<T> result = new CompletableFuture<>();
-		communication.execute(request).whenComplete((r, ex) -> {
-			if (r != null) {
-				result.complete(createResult(r));
+		communication.execute(request).whenComplete((response, ex) -> {
+			if (response != null) {
+				try {
+					result.complete(responseDeserializer.deserialize(response));
+				} catch (final VPackException e) {
+					result.completeExceptionally(e);
+				}
 			} else if (ex != null) {
 				result.completeExceptionally(ex);
 			} else {

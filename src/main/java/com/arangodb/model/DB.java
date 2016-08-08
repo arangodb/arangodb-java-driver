@@ -15,8 +15,8 @@ public class DB extends ExecuteBase {
 
 	private final String name;
 
-	public DB(final Communication communication, final VPack vpack, final String name) {
-		super(communication, vpack);
+	public DB(final Communication communication, final VPack vpacker, final String name) {
+		super(communication, vpacker);
 		this.name = name;
 	}
 
@@ -25,7 +25,7 @@ public class DB extends ExecuteBase {
 	}
 
 	protected VPack vpack() {
-		return vpack;
+		return vpacker;
 	}
 
 	protected String name() {
@@ -36,16 +36,15 @@ public class DB extends ExecuteBase {
 		return new DBCollection(this, name);
 	}
 
-	public Executeable<CollectionEntity> createCollection(final String name, final CollectionCreateOptions options) {
-		return execute(CollectionEntity.class,
-			new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION));
+	public Executeable<CollectionEntity> createCollection(final String name, final CollectionCreate.Options options) {
+		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
+		request.setBody(serialize((options != null ? options : new CollectionCreate.Options()).build(name)));
+		return execute(CollectionEntity.class, request);
 	}
 
-	public Executeable<Boolean> deleteCollection(final String name) {
-		return execute(Boolean.class, new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_COLLECTION));
+	public Executeable<Void> deleteCollection(final String name) {
+		return execute(Void.class,
+			new Request(name(), RequestType.DELETE, ArangoDBConstants.PATH_API_COLLECTION + name));
 	}
 
-	public static class CollectionCreateOptions {
-
-	}
 }

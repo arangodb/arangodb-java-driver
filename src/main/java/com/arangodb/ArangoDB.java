@@ -1,11 +1,13 @@
 package com.arangodb;
 
+import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.model.DB;
+import com.arangodb.model.DBCreate;
 import com.arangodb.model.ExecuteBase;
 import com.arangodb.model.Executeable;
 import com.arangodb.velocypack.VPack;
@@ -90,19 +92,31 @@ public class ArangoDB extends ExecuteBase {
 	}
 
 	public Executeable<Boolean> createDB(final String name) {
-		return execute(Boolean.class, new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_DATABASE));
+		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
+				ArangoDBConstants.PATH_API_DATABASE);
+		request.setBody(serialize(new DBCreate.Options().build(name)));
+		return execute(Boolean.class, request,
+			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
 	public Executeable<Boolean> deleteDB(final String name) {
-		return execute(Boolean.class, new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_DATABASE));
+		return execute(Boolean.class,
+			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE, ArangoDBConstants.PATH_API_DATABASE + name),
+			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
 	public DB db() {
-		return db(ArangoDBConstants.SYSTEM_COLLECTION);
+		return db(ArangoDBConstants.SYSTEM);
 	}
 
 	public DB db(final String name) {
-		return new DB(communication, vpack, name);
+		return new DB(communication, vpacker, name);
+	}
+
+	public Executeable<ArangoDBVersion> getVersion() {
+		// TODO details
+		return execute(ArangoDBVersion.class,
+			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
 	}
 
 }
