@@ -2,6 +2,7 @@ package com.arangodb.internal.net.velocystream;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -61,6 +62,7 @@ public class Chunk {
 
 	public ByteBuffer toByteBuffer() {
 		final ByteBuffer buffer = ByteBuffer.allocate(CHUNK_HEADER_SIZE + content.length);
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
 		buffer.putInt(length);
 		buffer.putInt(chunkX);
 		buffer.putLong(messageId);

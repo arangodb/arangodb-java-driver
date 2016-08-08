@@ -133,7 +133,7 @@ public class Connection {
 		messageStore.storeMessage(messageId, future);
 		chunks.stream().forEach(chunk -> {
 			try {
-				outputStream.write(chunk.toByteBuffer().order(ByteOrder.LITTLE_ENDIAN).array());
+				outputStream.write(chunk.toByteBuffer().array());
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
