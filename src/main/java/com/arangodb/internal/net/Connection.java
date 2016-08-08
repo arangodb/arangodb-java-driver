@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -132,7 +133,7 @@ public class Connection {
 		messageStore.storeMessage(messageId, future);
 		chunks.stream().forEach(chunk -> {
 			try {
-				outputStream.write(chunk.toByteBuffer().array());
+				outputStream.write(chunk.toByteBuffer().order(ByteOrder.LITTLE_ENDIAN).array());
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -155,7 +156,7 @@ public class Connection {
 				readed += read;
 			}
 		}
-		return ByteBuffer.wrap(buf);
+		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
 	}
 
 }
