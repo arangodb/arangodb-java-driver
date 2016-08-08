@@ -45,7 +45,7 @@ public abstract class ExecuteBase {
 		return new Executeable<>(communication, vpacker, type, request, responseDeserializer);
 	}
 
-	public <T> T deserialize(final VPackSlice vpack, final Class<T> type) throws ArangoDBException {
+	protected <T> T deserialize(final VPackSlice vpack, final Class<T> type) throws ArangoDBException {
 		try {
 			return vpacker.deserialize(vpack, type);
 		} catch (final VPackParserException e) {
@@ -53,7 +53,7 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	public <T extends Collection<C>, C> T deserialize(
+	protected <T extends Collection<C>, C> T deserialize(
 		final VPackSlice vpack,
 		final Class<T> type,
 		final Class<C> contentType) throws ArangoDBException {
@@ -64,7 +64,7 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	public <T extends Map<K, C>, K, C> T deserialize(
+	protected <T extends Map<K, C>, K, C> T deserialize(
 		final VPackSlice vpack,
 		final Class<T> type,
 		final Class<K> keyType,
@@ -76,7 +76,7 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	public VPackSlice serialize(final Object entity) throws ArangoDBException {
+	protected VPackSlice serialize(final Object entity) throws ArangoDBException {
 		try {
 			return vpacker.serialize(entity);
 		} catch (final VPackParserException e) {
@@ -84,7 +84,7 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	public VPackSlice serialize(final Object entity, final Map<String, Object> additionalFields)
+	protected VPackSlice serialize(final Object entity, final Map<String, Object> additionalFields)
 			throws ArangoDBException {
 		try {
 			return vpacker.serialize(entity, additionalFields);
@@ -93,7 +93,7 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	public VPackSlice serialize(final Map<?, ?> entity, final Class<?> keyType) throws ArangoDBException {
+	protected VPackSlice serialize(final Map<?, ?> entity, final Class<?> keyType) throws ArangoDBException {
 		try {
 			return vpacker.serialize(entity, keyType);
 		} catch (final VPackParserException e) {
