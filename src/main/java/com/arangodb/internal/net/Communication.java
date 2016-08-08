@@ -88,16 +88,22 @@ public class Communication {
 			final long id = mId.incrementAndGet();
 			final VPackSlice body = request.getBody().isPresent() ? vpack.serialize(request.getBody().get()) : null;
 			final Message message = new Message(id, vpack.serialize(request), body);
-			send(message).thenAccept(m -> {
-				try {
-					final Response response = vpack.deserialize(m.getHead(), Response.class);
-					if (m.getBody().isPresent()) {
-						response.setBody(m.getBody().get());
+			send(message).whenComplete((m, ex) -> {
+				if (m != null) {
+					try {
+						final Response response = vpack.deserialize(m.getHead(), Response.class);
+						if (m.getBody().isPresent()) {
+							response.setBody(m.getBody().get());
+						}
+						// TODO if responseCode == error throw ex
+						rfuture.complete(response);
+					} catch (final VPackParserException e) {
+						rfuture.completeExceptionally(e);
 					}
-					// TODO if responseCode == error throw ex
-					rfuture.complete(response);
-				} catch (final VPackParserException e) {
-					rfuture.completeExceptionally(e);
+				} else if (ex != null) {
+					rfuture.completeExceptionally(ex);
+				} else {
+					rfuture.cancel(true);
 				}
 			});
 		} catch (final IOException | VPackException e) {

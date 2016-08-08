@@ -1,5 +1,6 @@
 package com.arangodb.internal.net.velocystream;
 
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class ChunkStore {
 		data = new HashMap<>();
 	}
 
-	public void storeChunk(final Chunk chunk) {
+	public void storeChunk(final Chunk chunk) throws BufferUnderflowException, IndexOutOfBoundsException {
 		final long messageId = chunk.getMessageId();
 		Collection<Chunk> chunks = data.get(messageId);
 		if (chunks == null) {
@@ -32,7 +33,8 @@ public class ChunkStore {
 		checkCompleteness(messageId, chunks);
 	}
 
-	private void checkCompleteness(final long messageId, final Collection<Chunk> chunks) {
+	private void checkCompleteness(final long messageId, final Collection<Chunk> chunks)
+			throws BufferUnderflowException, IndexOutOfBoundsException {
 		final Optional<Chunk> first = chunks.stream().findFirst();
 		if (first.isPresent()) {
 			final int numChunks = first.get().getChunk();

@@ -1,5 +1,6 @@
 package com.arangodb.internal.net.velocystream;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Optional;
@@ -16,7 +17,8 @@ public class Message {
 	private final VPackSlice head;
 	private final Optional<VPackSlice> body;
 
-	public Message(final long id, final Collection<Chunk> chunks) {
+	public Message(final long id, final Collection<Chunk> chunks)
+			throws BufferUnderflowException, IndexOutOfBoundsException {
 		super();
 		this.id = id;
 		final int capacity = chunks.stream().mapToInt(chunk -> chunk.getContent().length).sum();

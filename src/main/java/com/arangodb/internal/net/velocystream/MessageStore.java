@@ -23,7 +23,9 @@ public class MessageStore {
 
 	public void consume(final Message message) {
 		final CompletableFuture<Message> future = data.remove(message.getId());
-		future.complete(message);
+		if (future != null) {
+			future.complete(message);
+		}
 	}
 
 	public void clear(final Exception e) {

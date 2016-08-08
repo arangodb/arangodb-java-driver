@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Optional;
@@ -100,7 +101,7 @@ public class Connection {
 				}
 				try {
 					chunkStore.storeChunk(read());
-				} catch (final IOException e) {
+				} catch (final Exception e) {
 					messageStore.clear(e);
 					disconnect();
 					break;
@@ -138,7 +139,7 @@ public class Connection {
 		});
 	}
 
-	private Chunk read() throws IOException {
+	private Chunk read() throws IOException, BufferUnderflowException {
 		final ByteBuffer head = readBytes(4);
 		final int len = head.getInt();
 		return new Chunk(len, readBytes(len - 4));

@@ -31,6 +31,7 @@ public class BaseTest {
 			arangoDB.deleteDB(TEST_DB).execute();
 		} catch (final ArangoDBException e) {
 		}
+		arangoDB.shutdown();
 	}
 
 }

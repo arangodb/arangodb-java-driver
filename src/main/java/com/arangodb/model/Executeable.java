@@ -1,6 +1,7 @@
 package com.arangodb.model;
 
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -54,13 +55,23 @@ public class Executeable<T> {
 	public T execute() throws ArangoDBException {
 		try {
 			return executeAsync().get();
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (InterruptedException | ExecutionException | CancellationException e) {
 			throw new ArangoDBException(e);
 		}
 	}
 
 	public CompletableFuture<T> executeAsync() {
-		return communication.execute(request).thenApply(this::createResult);
+		final CompletableFuture<T> result = new CompletableFuture<>();
+		communication.execute(request).whenComplete((r, ex) -> {
+			if (r != null) {
+				result.complete(createResult(r));
+			} else if (ex != null) {
+				result.completeExceptionally(ex);
+			} else {
+				result.cancel(true);
+			}
+		});
+		return result;
 	}
 
 }
