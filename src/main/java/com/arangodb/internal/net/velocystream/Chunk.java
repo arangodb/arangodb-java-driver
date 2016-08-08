@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 public class Chunk {
 
 	public static final int MAX_CHUNK_CONTENT_SIZE = 1024;
+	public static final int CHUNK_HEADER_SIZE = Integer.BYTES + Integer.BYTES + Long.BYTES;
 
 	private final int length;
 	private final long messageId;
@@ -19,16 +20,22 @@ public class Chunk {
 		this.length = length;
 		chunkX = data.getInt();
 		messageId = data.getLong();
-		content = new byte[length - 4 - 4 - 8];
+		content = new byte[length - CHUNK_HEADER_SIZE];
 		data.get(content);
 	}
 
-	public Chunk(final long messageId, final int chunk, final int numberOfChunks, final byte[] content,
+	public Chunk(final long messageId, final int chunkIndex, final int numberOfChunks, final byte[] content,
 		final int length) {
 		this.messageId = messageId;
 		this.content = content;
 		this.length = length;
-		chunkX = chunk >> 1;// TODO
+		if (numberOfChunks == 1) {
+			chunkX = 3;// last byte: 0000 0011
+		} else if (chunkIndex == 0) {
+			chunkX = (numberOfChunks << 1) + 1;
+		} else {
+			chunkX = chunkIndex << 1;
+		}
 	}
 
 	public int getLength() {
@@ -52,8 +59,12 @@ public class Chunk {
 	}
 
 	public ByteBuffer toByteBuffer() {
-		// TODO
-		return null;
+		final ByteBuffer buffer = ByteBuffer.allocate(CHUNK_HEADER_SIZE + content.length);
+		buffer.putInt(length);
+		buffer.putInt(chunkX);
+		buffer.putLong(messageId);
+		buffer.put(content);
+		return buffer;
 	}
 
 }

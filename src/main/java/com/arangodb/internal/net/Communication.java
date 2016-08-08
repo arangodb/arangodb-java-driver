@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.Message;
 import com.arangodb.internal.net.velocystream.MessageStore;
@@ -66,8 +67,14 @@ public class Communication {
 				.build();
 	}
 
-	public void connect() throws IOException {
-		connection.connect();
+	private void reconnect() {
+		if (!connection.isOpen()) {
+			try {
+				connection.connect();
+			} catch (final IOException e) {
+				throw new ArangoDBException(e);
+			}
+		}
 	}
 
 	public void disconnect() {
@@ -75,6 +82,7 @@ public class Communication {
 	}
 
 	public CompletableFuture<Response> execute(final Request request) {
+		reconnect();
 		final CompletableFuture<Response> rfuture = new CompletableFuture<>();
 		try {
 			final long id = mId.incrementAndGet();
@@ -83,7 +91,9 @@ public class Communication {
 			send(message).thenAccept(m -> {
 				try {
 					final Response response = vpack.deserialize(m.getHead(), Response.class);
-					response.setBody(m.getBody().get());
+					if (m.getBody().isPresent()) {
+						response.setBody(m.getBody().get());
+					}
 					// TODO if responseCode == error throw ex
 					rfuture.complete(response);
 				} catch (final VPackParserException e) {
@@ -121,12 +131,12 @@ public class Communication {
 		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		final int n = size / Chunk.MAX_CHUNK_CONTENT_SIZE;
 		final int numberOfChunks = (size % Chunk.MAX_CHUNK_CONTENT_SIZE != 0) ? (n + 1) : n;
-		final byte[] buffer = new byte[Chunk.MAX_CHUNK_CONTENT_SIZE];
 		for (int pos = 0, i = 0; size > 0; pos += Chunk.MAX_CHUNK_CONTENT_SIZE, i++) {
 			final int len = Math.min(Chunk.MAX_CHUNK_CONTENT_SIZE, size);
+			final byte[] buffer = new byte[len];
 			in.read(buffer, pos, len);
 			size -= len;
-			final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, buffer, len);
+			final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, buffer, len + Chunk.CHUNK_HEADER_SIZE);
 			chunks.add(chunk);
 		}
 		in.close();

@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 
 import javax.net.SocketFactory;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.ChunkStore;
@@ -71,7 +72,7 @@ public class Connection {
 		this.messageStore = builder.messageStore;
 		this.host = Optional.of(builder.host);
 		this.port = Optional.of(builder.port);
-		this.timeout = Optional.of(builder.timeout);
+		this.timeout = Optional.ofNullable(builder.timeout);
 	}
 
 	public void connect() throws IOException {
@@ -120,7 +121,7 @@ public class Connection {
 			try {
 				socket.close();
 			} catch (final IOException e) {
-				// TODO
+				throw new ArangoDBException(e);
 			}
 		}
 		messageStore.clear();

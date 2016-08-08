@@ -85,6 +85,10 @@ public class ArangoDB extends ExecuteBase {
 				.build(), builder.vpack);
 	}
 
+	public void shutdown() {
+		communication.disconnect();
+	}
+
 	public Executeable<Boolean> createDB(final String name) {
 		return execute(Boolean.class, new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_DATABASE));
 	}

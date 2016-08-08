@@ -17,9 +17,8 @@ public class Response {
 	@Expose(deserialize = false)
 	private Optional<VPackSlice> body = Optional.empty();
 
-	public Response(final int responseCode) {
+	public Response() {
 		super();
-		this.responseCode = responseCode;
 	}
 
 	public int getVersion() {
