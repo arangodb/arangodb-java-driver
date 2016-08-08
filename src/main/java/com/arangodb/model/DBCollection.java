@@ -37,7 +37,8 @@ public class DBCollection extends ExecuteBase {
 	public <T> Executeable<DocumentEntity> createDocument(final T value, final DocumentCreate.Options options) {
 		// TODO set key, id, rev in value
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_DOCUMENT + name);
-		request.getParameter().put(ArangoDBConstants.WAIT_FOR_SYNC, options.build().getWaitForSync());
+		request.getParameter().put(ArangoDBConstants.WAIT_FOR_SYNC,
+			(options != null ? options : new DocumentCreate.Options()).build().getWaitForSync());
 		request.setBody(serialize(value));
 		return execute(DocumentEntity.class, request);
 	}
@@ -45,13 +46,26 @@ public class DBCollection extends ExecuteBase {
 	public <T> Executeable<T> readDocument(final String key, final Class<T> type, final DocumentRead.Options options) {
 		final Request request = new Request(db.name(), RequestType.GET,
 				ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key));
-		final DocumentRead params = options.build();
+		final DocumentRead params = (options != null ? options : new DocumentRead.Options()).build();
 		request.getMeta().put(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return execute(type, request);
 	}
 
-	// TODO replace
+	public <T> Executeable<DocumentEntity> replaceDocument(
+		final String key,
+		final T value,
+		final DocumentReplace.Options options) {
+		final Request request = new Request(db.name(), RequestType.PUT,
+				ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key));
+		final DocumentReplace params = (options != null ? options : new DocumentReplace.Options()).build();
+		final Map<String, Object> parameter = request.getParameter();
+		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		parameter.put(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
+		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		// TODO returnOld , returnNew
+		return execute(DocumentEntity.class, request);
+	}
 
 	public <T> Executeable<DocumentEntity> updateDocument(
 		final String key,
@@ -59,7 +73,7 @@ public class DBCollection extends ExecuteBase {
 		final DocumentUpdate.Options options) {
 		final Request request = new Request(db.name(), RequestType.PATCH,
 				ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key));
-		final DocumentUpdate params = options.build();
+		final DocumentUpdate params = (options != null ? options : new DocumentUpdate.Options()).build();
 		final Map<String, Object> parameter = request.getParameter();
 		parameter.put(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		parameter.put(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
@@ -73,7 +87,7 @@ public class DBCollection extends ExecuteBase {
 	public Executeable<Void> deleteDocument(final String key, final DocumentDelete.Options options) {
 		final Request request = new Request(db.name(), RequestType.DELETE,
 				ArangoDBConstants.PATH_API_DOCUMENT + createDocumentHandle(key));
-		final DocumentDelete params = options.build();
+		final DocumentDelete params = (options != null ? options : new DocumentDelete.Options()).build();
 		request.getParameter().put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		// TODO returnOld
