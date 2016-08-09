@@ -53,7 +53,7 @@ public abstract class ExecuteBase {
 
 	protected void validateName(final String regex, final CharSequence name) throws ArangoDBException {
 		if (!Pattern.matches(regex, name)) {
-			throw new ArangoDBException("");
+			throw new ArangoDBException(String.format("Name %s is not valid.", name));
 		}
 	}
 
