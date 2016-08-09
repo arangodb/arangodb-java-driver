@@ -728,4 +728,9 @@ public class VPackSlice {
 	protected byte[] getValue() {
 		return Arrays.copyOfRange(vpack, start, start + getByteSize());
 	}
+
+	@Override
+	public String toString() {
+		return VPackParser.toJson(this);
+	}
 }
