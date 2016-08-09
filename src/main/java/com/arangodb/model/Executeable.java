@@ -1,6 +1,6 @@
 package com.arangodb.model;
 
-import java.util.Map;
+import java.lang.reflect.Type;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -27,19 +27,19 @@ public class Executeable<T> {
 
 	protected final Communication communication;
 	protected final VPack vpack;
-	protected final Class<T> type;
+	protected final Type type;
 	private final Request request;
 	private final ResponseDeserializer<T> responseDeserializer;
 
-	protected Executeable(final Communication communication, final VPack vpack, final Class<T> type,
+	protected Executeable(final Communication communication, final VPack vpack, final Type type,
 		final Request request) {
 		this(communication, vpack, type, request, (response) -> {
 			return createResult(vpack, type, response);
 		});
 	}
 
-	protected Executeable(final Communication communication, final VPack vpack, final Class<T> type,
-		final Request request, final ResponseDeserializer<T> responseDeserializer) {
+	protected Executeable(final Communication communication, final VPack vpack, final Type type, final Request request,
+		final ResponseDeserializer<T> responseDeserializer) {
 		super();
 		this.communication = communication;
 		this.vpack = vpack;
@@ -49,14 +49,12 @@ public class Executeable<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T createResult(final VPack vpack, final Class<T> type, final Response response) {
+	private static <T> T createResult(final VPack vpack, final Type type, final Response response) {
 		T value = null;
 		if (response.getBody().isPresent()) {
 			try {
 				if (type == VPackSlice.class) {
 					value = (T) response.getBody().get();
-				} else if (type == Map.class) {
-					value = (T) vpack.deserialize(response.getBody().get(), Map.class, String.class, Object.class);
 				} else {
 					value = vpack.deserialize(response.getBody().get(), type);
 				}

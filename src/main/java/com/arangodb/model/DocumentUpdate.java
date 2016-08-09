@@ -11,15 +11,19 @@ public class DocumentUpdate {
 	private final Boolean waitForSync;
 	private final Boolean ignoreRevs;
 	private final String ifMatch;
+	private final Boolean returnNew;
+	private final Boolean returnOld;
 
 	private DocumentUpdate(final Boolean keepNull, final Boolean mergeObjects, final Boolean waitForSync,
-		final Boolean ignoreRevs, final String ifMatch) {
+		final Boolean ignoreRevs, final String ifMatch, final Boolean returnNew, final Boolean returnOld) {
 		super();
 		this.keepNull = keepNull;
 		this.mergeObjects = mergeObjects;
 		this.waitForSync = waitForSync;
 		this.ignoreRevs = ignoreRevs;
 		this.ifMatch = ifMatch;
+		this.returnNew = returnNew;
+		this.returnOld = returnOld;
 	}
 
 	public Boolean getKeepNull() {
@@ -42,6 +46,14 @@ public class DocumentUpdate {
 		return ifMatch;
 	}
 
+	public Boolean getReturnNew() {
+		return returnNew;
+	}
+
+	public Boolean getReturnOld() {
+		return returnOld;
+	}
+
 	public static class Options {
 
 		private Boolean keepNull;
@@ -49,6 +61,8 @@ public class DocumentUpdate {
 		private Boolean waitForSync;
 		private Boolean ignoreRevs;
 		private String ifMatch;
+		private Boolean returnNew;
+		private Boolean returnOld;
 
 		public Options keepNull(final Boolean keepNull) {
 			this.keepNull = keepNull;
@@ -75,8 +89,18 @@ public class DocumentUpdate {
 			return this;
 		}
 
+		public Options returnNew(final Boolean returnNew) {
+			this.returnNew = returnNew;
+			return this;
+		}
+
+		public Options returnOld(final Boolean returnOld) {
+			this.returnOld = returnOld;
+			return this;
+		}
+
 		protected DocumentUpdate build() {
-			return new DocumentUpdate(keepNull, mergeObjects, waitForSync, ignoreRevs, ifMatch);
+			return new DocumentUpdate(keepNull, mergeObjects, waitForSync, ignoreRevs, ifMatch, returnNew, returnOld);
 		}
 	}
 

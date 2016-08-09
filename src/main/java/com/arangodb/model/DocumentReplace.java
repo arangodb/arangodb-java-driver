@@ -9,12 +9,17 @@ public class DocumentReplace {
 	private final Boolean waitForSync;
 	private final Boolean ignoreRevs;
 	private final String ifMatch;
+	private final Boolean returnNew;
+	private final Boolean returnOld;
 
-	private DocumentReplace(final Boolean waitForSync, final Boolean ignoreRevs, final String ifMatch) {
+	private DocumentReplace(final Boolean waitForSync, final Boolean ignoreRevs, final String ifMatch,
+		final Boolean returnNew, final Boolean returnOld) {
 		super();
 		this.waitForSync = waitForSync;
 		this.ignoreRevs = ignoreRevs;
 		this.ifMatch = ifMatch;
+		this.returnNew = returnNew;
+		this.returnOld = returnOld;
 	}
 
 	public Boolean getWaitForSync() {
@@ -29,11 +34,21 @@ public class DocumentReplace {
 		return ifMatch;
 	}
 
+	public Boolean getReturnNew() {
+		return returnNew;
+	}
+
+	public Boolean getReturnOld() {
+		return returnOld;
+	}
+
 	public static class Options {
 
 		private Boolean waitForSync;
 		private Boolean ignoreRevs;
 		private String ifMatch;
+		private Boolean returnNew;
+		private Boolean returnOld;
 
 		public Options waitForSync(final Boolean waitForSync) {
 			this.waitForSync = waitForSync;
@@ -50,8 +65,18 @@ public class DocumentReplace {
 			return this;
 		}
 
+		public Options returnNew(final Boolean returnNew) {
+			this.returnNew = returnNew;
+			return this;
+		}
+
+		public Options returnOld(final Boolean returnOld) {
+			this.returnOld = returnOld;
+			return this;
+		}
+
 		protected DocumentReplace build() {
-			return new DocumentReplace(waitForSync, ignoreRevs, ifMatch);
+			return new DocumentReplace(waitForSync, ignoreRevs, ifMatch, returnNew, returnOld);
 		}
 
 	}

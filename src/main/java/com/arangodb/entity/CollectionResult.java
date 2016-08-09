@@ -4,7 +4,7 @@ package com.arangodb.entity;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CollectionEntity {
+public class CollectionResult {
 
 	private String name;
 	private Boolean waitForSync;
@@ -13,7 +13,7 @@ public class CollectionEntity {
 	private CollectionStatus status;
 	private CollectionType type;
 
-	public CollectionEntity() {
+	public CollectionResult() {
 		super();
 	}
 

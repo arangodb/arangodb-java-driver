@@ -1,6 +1,6 @@
 package com.arangodb.model;
 
-import java.util.Collection;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.arangodb.ArangoDBException;
@@ -34,43 +34,20 @@ public abstract class ExecuteBase {
 		this.vpacker = vpacker;
 	}
 
-	protected <T> Executeable<T> execute(final Class<T> type, final Request request) {
+	protected <T> Executeable<T> execute(final Type type, final Request request) {
 		return new Executeable<>(communication, vpacker, type, request);
 	}
 
 	protected <T> Executeable<T> execute(
-		final Class<T> type,
+		final Type type,
 		final Request request,
 		final ResponseDeserializer<T> responseDeserializer) {
 		return new Executeable<>(communication, vpacker, type, request, responseDeserializer);
 	}
 
-	protected <T> T deserialize(final VPackSlice vpack, final Class<T> type) throws ArangoDBException {
+	protected <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
 		try {
 			return vpacker.deserialize(vpack, type);
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		}
-	}
-
-	protected <T extends Collection<C>, C> T deserialize(
-		final VPackSlice vpack,
-		final Class<T> type,
-		final Class<C> contentType) throws ArangoDBException {
-		try {
-			return vpacker.deserialize(vpack, type, contentType);
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		}
-	}
-
-	protected <T extends Map<K, C>, K, C> T deserialize(
-		final VPackSlice vpack,
-		final Class<T> type,
-		final Class<K> keyType,
-		final Class<C> contentType) throws ArangoDBException {
-		try {
-			return vpacker.deserialize(vpack, type, keyType, contentType);
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}
@@ -93,9 +70,18 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	protected VPackSlice serialize(final Map<?, ?> entity, final Class<?> keyType) throws ArangoDBException {
+	protected VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
 		try {
-			return vpacker.serialize(entity, keyType);
+			return vpacker.serialize(entity, type);
+		} catch (final VPackParserException e) {
+			throw new ArangoDBException(e);
+		}
+	}
+
+	protected VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
+			throws ArangoDBException {
+		try {
+			return vpacker.serialize(entity, type, additionalFields);
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}

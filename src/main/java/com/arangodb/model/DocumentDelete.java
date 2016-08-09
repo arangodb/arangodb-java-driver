@@ -8,11 +8,13 @@ public class DocumentDelete {
 
 	private final Boolean waitForSync;
 	private final String ifMatch;
+	private final Boolean returnOld;
 
-	private DocumentDelete(final Boolean waitForSync, final String ifMatch) {
+	private DocumentDelete(final Boolean waitForSync, final String ifMatch, final Boolean returnOld) {
 		super();
 		this.waitForSync = waitForSync;
 		this.ifMatch = ifMatch;
+		this.returnOld = returnOld;
 	}
 
 	public Boolean getWaitForSync() {
@@ -23,10 +25,15 @@ public class DocumentDelete {
 		return ifMatch;
 	}
 
+	public Boolean getReturnOld() {
+		return returnOld;
+	}
+
 	public static class Options {
 
 		private Boolean waitForSync;
 		private String ifMatch;
+		private Boolean returnOld;
 
 		public Options waitForSync(final Boolean waitForSync) {
 			this.waitForSync = waitForSync;
@@ -38,8 +45,13 @@ public class DocumentDelete {
 			return this;
 		}
 
+		public Options returnOld(final Boolean returnOld) {
+			this.returnOld = returnOld;
+			return this;
+		}
+
 		protected DocumentDelete build() {
-			return new DocumentDelete(waitForSync, ifMatch);
+			return new DocumentDelete(waitForSync, ifMatch, returnOld);
 		}
 	}
 

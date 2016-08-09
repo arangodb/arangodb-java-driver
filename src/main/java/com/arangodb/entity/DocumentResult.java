@@ -4,7 +4,7 @@ package com.arangodb.entity;
  * @author Mark - mark at arangodb.com
  *
  */
-public class DocumentEntity {
+public class DocumentResult {
 
 	@DocumentKey
 	private String key;
@@ -13,7 +13,7 @@ public class DocumentEntity {
 	@DocumentRev
 	private String rev;
 
-	public DocumentEntity() {
+	public DocumentResult() {
 		super();
 	}
 

@@ -1,6 +1,6 @@
 package com.arangodb.model;
 
-import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
@@ -36,10 +36,10 @@ public class DB extends ExecuteBase {
 		return new DBCollection(this, name);
 	}
 
-	public Executeable<CollectionEntity> createCollection(final String name, final CollectionCreate.Options options) {
+	public Executeable<CollectionResult> createCollection(final String name, final CollectionCreate.Options options) {
 		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
 		request.setBody(serialize((options != null ? options : new CollectionCreate.Options()).build(name)));
-		return execute(CollectionEntity.class, request);
+		return execute(CollectionResult.class, request);
 	}
 
 	public Executeable<Void> deleteCollection(final String name) {

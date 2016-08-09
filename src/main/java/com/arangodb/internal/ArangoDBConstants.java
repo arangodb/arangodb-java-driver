@@ -23,5 +23,9 @@ public class ArangoDBConstants {
 	public static final String KEEP_NULL = "keepNull";
 	public static final String MERGE_OBJECTS = "mergeObjects";
 	public static final String IGNORE_REVS = "ignoreRevs";
+	public static final String RETURN_NEW = "returnNew";
+	public static final String NEW = "new";
+	public static final String RETURN_OLD = "returnOld";
+	public static final String OLD = "old";
 
 }
