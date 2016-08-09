@@ -34,6 +34,7 @@ public class DBCollection extends ExecuteBase {
 	}
 
 	private String createDocumentHandle(final String key) {
+		validateDocumentKey(key);
 		return String.format("%s/%s", name, key);
 	}
 

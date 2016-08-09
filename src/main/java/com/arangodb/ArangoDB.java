@@ -92,6 +92,7 @@ public class ArangoDB extends ExecuteBase {
 	}
 
 	public Executeable<Boolean> createDB(final String name) {
+		validateDBName(name);
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
 		request.setBody(serialize(new DBCreate.Options().build(name)));
@@ -100,6 +101,7 @@ public class ArangoDB extends ExecuteBase {
 	}
 
 	public Executeable<Boolean> deleteDB(final String name) {
+		validateDBName(name);
 		return execute(Boolean.class,
 			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE, ArangoDBConstants.PATH_API_DATABASE + name),
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
@@ -110,6 +112,7 @@ public class ArangoDB extends ExecuteBase {
 	}
 
 	public DB db(final String name) {
+		validateDBName(name);
 		return new DB(communication, vpacker, name);
 	}
 

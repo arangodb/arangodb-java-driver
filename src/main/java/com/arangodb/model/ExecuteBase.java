@@ -2,6 +2,7 @@ package com.arangodb.model;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.Communication;
@@ -16,6 +17,10 @@ import com.arangodb.velocypack.exception.VPackParserException;
  *
  */
 public abstract class ExecuteBase {
+
+	private static final String REGEX_DB_NAME = "[a-zA-Z][\\w-]*";
+	private static final String REGEX_COLLECTION_NAME = "[a-zA-Z_][\\w-]*";
+	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
 
 	protected final Communication communication;
 	protected final VPack vpacker;
@@ -32,6 +37,24 @@ public abstract class ExecuteBase {
 		super();
 		this.communication = communication;
 		this.vpacker = vpacker;
+	}
+
+	protected void validateDBName(final String name) throws ArangoDBException {
+		validateName(REGEX_DB_NAME, name);
+	}
+
+	protected void validateCollectionName(final String name) throws ArangoDBException {
+		validateName(REGEX_COLLECTION_NAME, name);
+	}
+
+	protected void validateDocumentKey(final String key) throws ArangoDBException {
+		validateName(REGEX_DOCUMENT_KEY, key);
+	}
+
+	protected void validateName(final String regex, final CharSequence name) throws ArangoDBException {
+		if (!Pattern.matches(regex, name)) {
+			throw new ArangoDBException("");
+		}
 	}
 
 	protected <T> Executeable<T> execute(final Type type, final Request request) {

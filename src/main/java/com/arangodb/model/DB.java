@@ -33,16 +33,19 @@ public class DB extends ExecuteBase {
 	}
 
 	public DBCollection collection(final String name) {
+		validateCollectionName(name);
 		return new DBCollection(this, name);
 	}
 
 	public Executeable<CollectionResult> createCollection(final String name, final CollectionCreate.Options options) {
+		validateCollectionName(name);
 		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
 		request.setBody(serialize((options != null ? options : new CollectionCreate.Options()).build(name)));
 		return execute(CollectionResult.class, request);
 	}
 
 	public Executeable<Void> deleteCollection(final String name) {
+		validateCollectionName(name);
 		return execute(Void.class,
 			new Request(name(), RequestType.DELETE, ArangoDBConstants.PATH_API_COLLECTION + name));
 	}
