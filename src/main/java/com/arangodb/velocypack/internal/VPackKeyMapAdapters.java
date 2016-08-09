@@ -1,5 +1,6 @@
 package com.arangodb.velocypack.internal;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -15,7 +16,7 @@ public class VPackKeyMapAdapters {
 		super();
 	}
 
-	public static final VPackKeyMapAdapter<Enum<?>> createEnumAdapter(final Class<?> type) {
+	public static final VPackKeyMapAdapter<Enum<?>> createEnumAdapter(final Type type) {
 		return new VPackKeyMapAdapter<Enum<?>>() {
 			@Override
 			public String serialize(final Enum<?> key) {

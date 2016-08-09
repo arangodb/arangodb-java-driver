@@ -26,23 +26,20 @@ import com.arangodb.velocypack.annotations.SerializedName;
 public class VPackCache {
 
 	public abstract static class FieldInfo {
-		private final Class<?> type;
+		private final Type type;
 		private final String fieldName;
 		private final boolean serialize;
 		private final boolean deserialize;
-		private final Class<?>[] parameterizedTypes;
 
-		private FieldInfo(final Class<?> type, final String fieldName, final boolean serialize,
-			final boolean deserialize, final Class<?>[] parameterizedTypes) {
+		private FieldInfo(final Type type, final String fieldName, final boolean serialize, final boolean deserialize) {
 			super();
 			this.type = type;
 			this.fieldName = fieldName;
 			this.serialize = serialize;
 			this.deserialize = deserialize;
-			this.parameterizedTypes = parameterizedTypes;
 		}
 
-		public Class<?> getType() {
+		public Type getType() {
 			return type;
 		}
 
@@ -58,21 +55,17 @@ public class VPackCache {
 			return deserialize;
 		}
 
-		public Class<?>[] getParameterizedTypes() {
-			return parameterizedTypes;
-		}
-
 		public abstract void set(Object obj, Object value) throws IllegalAccessException;
 
 		public abstract Object get(Object obj) throws IllegalAccessException;
 	}
 
-	private final Map<Class<?>, Map<String, FieldInfo>> cache;
+	private final Map<Type, Map<String, FieldInfo>> cache;
 	private final Comparator<Entry<String, FieldInfo>> fieldComparator;
 
 	public VPackCache() {
 		super();
-		cache = new ConcurrentHashMap<Class<?>, Map<String, FieldInfo>>();
+		cache = new ConcurrentHashMap<>();
 		fieldComparator = new Comparator<Map.Entry<String, FieldInfo>>() {
 			@Override
 			public int compare(final Entry<String, FieldInfo> o1, final Entry<String, FieldInfo> o2) {
@@ -81,11 +74,11 @@ public class VPackCache {
 		};
 	}
 
-	public Map<String, FieldInfo> getFields(final Class<?> entityClass) {
+	public Map<String, FieldInfo> getFields(final Type entityClass) {
 		Map<String, FieldInfo> fields = cache.get(entityClass);
 		if (fields == null) {
-			fields = new HashMap<String, VPackCache.FieldInfo>();
-			Class<?> tmp = entityClass;
+			fields = new HashMap<>();
+			Class<?> tmp = (Class<?>) entityClass;
 			while (tmp != null && tmp != Object.class) {
 				final Field[] declaredFields = tmp.getDeclaredFields();
 				for (final Field field : declaredFields) {
@@ -106,8 +99,8 @@ public class VPackCache {
 	}
 
 	private Map<String, FieldInfo> sort(final Set<Entry<String, FieldInfo>> entrySet) {
-		final Map<String, FieldInfo> sorted = new LinkedHashMap<String, VPackCache.FieldInfo>();
-		final List<Entry<String, FieldInfo>> tmp = new ArrayList<Entry<String, FieldInfo>>(entrySet);
+		final Map<String, FieldInfo> sorted = new LinkedHashMap<>();
+		final List<Entry<String, FieldInfo>> tmp = new ArrayList<>(entrySet);
 		Collections.sort(tmp, fieldComparator);
 		for (final Entry<String, FieldInfo> entry : tmp) {
 			sorted.put(entry.getKey(), entry.getValue());
@@ -121,20 +114,14 @@ public class VPackCache {
 		final Expose expose = field.getAnnotation(Expose.class);
 		final boolean serialize = expose != null ? expose.serialize() : true;
 		final boolean deserialize = expose != null ? expose.deserialize() : true;
-		final Class<?> type = field.getType();
-		Class<?>[] parameterizedTypes = null;
-		if (type.isArray()) {
-			parameterizedTypes = new Class<?>[] { type.getComponentType() };
-		} else if (Collection.class.isAssignableFrom(type)) {
-			final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-			parameterizedTypes = new Class<?>[] { getParameterizedType(genericType.getActualTypeArguments()[0]) };
-		} else if (Map.class.isAssignableFrom(type)) {
-			final ParameterizedType genericType = (ParameterizedType) field.getGenericType();
-			final Class<?> key = getParameterizedType(genericType.getActualTypeArguments()[0]);
-			final Class<?> value = getParameterizedType(genericType.getActualTypeArguments()[1]);
-			parameterizedTypes = new Class<?>[] { key, value };
+		final Class<?> clazz = field.getType();
+		final Type type;
+		if (Collection.class.isAssignableFrom(clazz) || Map.class.isAssignableFrom(clazz)) {
+			type = (ParameterizedType) field.getGenericType();
+		} else {
+			type = clazz;
 		}
-		return new FieldInfo(field.getType(), fieldName, serialize, deserialize, parameterizedTypes) {
+		return new FieldInfo(type, fieldName, serialize, deserialize) {
 			@Override
 			public void set(final Object obj, final Object value) throws IllegalAccessException {
 				field.set(obj, value);
@@ -145,11 +132,6 @@ public class VPackCache {
 				return field.get(obj);
 			}
 		};
-	}
-
-	private Class<?> getParameterizedType(final Type argType) {
-		return (Class<?>) (ParameterizedType.class.isAssignableFrom(argType.getClass())
-				? ParameterizedType.class.cast(argType).getRawType() : argType);
 	}
 
 }

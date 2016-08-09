@@ -1,5 +1,9 @@
 package com.arangodb.velocypack;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -1269,11 +1273,11 @@ public class VPackSerializeDeserializeTest {
 	}
 
 	protected static class TestEntityCollection {
-		private Collection<String> c1 = new LinkedList<String>();
-		private List<String> c2 = new ArrayList<String>();
-		private ArrayList<String> c3 = new ArrayList<String>();
-		private Set<String> c4 = new LinkedHashSet<String>();
-		private HashSet<String> c5 = new HashSet<String>();
+		private Collection<String> c1 = new LinkedList<>();
+		private List<String> c2 = new ArrayList<>();
+		private ArrayList<String> c3 = new ArrayList<>();
+		private Set<String> c4 = new LinkedHashSet<>();
+		private HashSet<String> c5 = new HashSet<>();
 
 		public TestEntityCollection() {
 			super();
@@ -1448,11 +1452,11 @@ public class VPackSerializeDeserializeTest {
 	public void fromCollectionWithObjects() throws VPackException {
 		final TestEntityCollectionWithObjects entity = new TestEntityCollectionWithObjects();
 		{
-			final Collection<TestEntityString> c1 = new ArrayList<VPackSerializeDeserializeTest.TestEntityString>();
+			final Collection<TestEntityString> c1 = new ArrayList<>();
 			c1.add(new TestEntityString());
 			c1.add(new TestEntityString());
 			entity.setC1(c1);
-			final Set<TestEntityArray> c2 = new HashSet<VPackSerializeDeserializeTest.TestEntityArray>();
+			final Set<TestEntityArray> c2 = new HashSet<>();
 			c2.add(new TestEntityArray());
 			entity.setC2(c2);
 		}
@@ -1567,15 +1571,15 @@ public class VPackSerializeDeserializeTest {
 	public void fromMap() throws VPackException {
 		final TestEntityMap entity = new TestEntityMap();
 		{
-			final Map<String, String> m1 = new LinkedHashMap<String, String>();
+			final Map<String, String> m1 = new LinkedHashMap<>();
 			m1.put("a", "b");
 			m1.put("c", "d");
 			entity.setM1(m1);
-			final HashMap<Integer, String> m2 = new HashMap<Integer, String>();
+			final HashMap<Integer, String> m2 = new HashMap<>();
 			m2.put(1, "a");
 			m2.put(2, "b");
 			entity.setM2(m2);
-			final Map<String, TestEntityString> m3 = new HashMap<String, VPackSerializeDeserializeTest.TestEntityString>();
+			final Map<String, TestEntityString> m3 = new HashMap<>();
 			final TestEntityString s = new TestEntityString();
 			s.setS("abc");
 			m3.put("a", s);
@@ -1792,67 +1796,67 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityMapStringableKey entity = new TestEntityMapStringableKey();
 		final String value = "test";
 		{
-			final Map<Boolean, String> m1 = new HashMap<Boolean, String>();
+			final Map<Boolean, String> m1 = new HashMap<>();
 			m1.put(true, value);
 			m1.put(false, value);
 			entity.setM1(m1);
 		}
 		{
-			final Map<Integer, String> m2 = new HashMap<Integer, String>();
+			final Map<Integer, String> m2 = new HashMap<>();
 			m2.put(1, value);
 			m2.put(2, value);
 			entity.setM2(m2);
 		}
 		{
-			final Map<Long, String> m3 = new HashMap<Long, String>();
+			final Map<Long, String> m3 = new HashMap<>();
 			m3.put(1L, value);
 			m3.put(2L, value);
 			entity.setM3(m3);
 		}
 		{
-			final Map<Float, String> m4 = new HashMap<Float, String>();
+			final Map<Float, String> m4 = new HashMap<>();
 			m4.put(1.5F, value);
 			m4.put(2.25F, value);
 			entity.setM4(m4);
 		}
 		{
-			final Map<Short, String> m5 = new HashMap<Short, String>();
+			final Map<Short, String> m5 = new HashMap<>();
 			m5.put(new Short("1"), value);
 			m5.put(new Short("2"), value);
 			entity.setM5(m5);
 		}
 		{
-			final Map<Double, String> m6 = new HashMap<Double, String>();
+			final Map<Double, String> m6 = new HashMap<>();
 			m6.put(1.5, value);
 			m6.put(2.25, value);
 			entity.setM6(m6);
 		}
 		{
-			final Map<Number, String> m7 = new HashMap<Number, String>();
+			final Map<Number, String> m7 = new HashMap<>();
 			m7.put(1.5, value);
 			m7.put(1L, value);
 			entity.setM7(m7);
 		}
 		{
-			final Map<BigInteger, String> m8 = new HashMap<BigInteger, String>();
+			final Map<BigInteger, String> m8 = new HashMap<>();
 			m8.put(new BigInteger("1"), value);
 			m8.put(new BigInteger("2"), value);
 			entity.setM8(m8);
 		}
 		{
-			final Map<BigDecimal, String> m9 = new HashMap<BigDecimal, String>();
+			final Map<BigDecimal, String> m9 = new HashMap<>();
 			m9.put(new BigDecimal("1.5"), value);
 			m9.put(new BigDecimal("2.25"), value);
 			entity.setM9(m9);
 		}
 		{
-			final Map<Character, String> m10 = new HashMap<Character, String>();
+			final Map<Character, String> m10 = new HashMap<>();
 			m10.put('1', value);
 			m10.put('a', value);
 			entity.setM10(m10);
 		}
 		{
-			final Map<TestEnum, String> m11 = new HashMap<TestEnum, String>();
+			final Map<TestEnum, String> m11 = new HashMap<>();
 			m11.put(TestEnum.A, value);
 			m11.put(TestEnum.B, value);
 			entity.setM11(m11);
@@ -2103,13 +2107,13 @@ public class VPackSerializeDeserializeTest {
 	public void fromMapWithObjectKey() throws VPackException {
 		final TestEntityMapWithObjectKey entity = new TestEntityMapWithObjectKey();
 		{
-			final Map<TestEntityLong, TestEntityCollection> m1 = new HashMap<VPackSerializeDeserializeTest.TestEntityLong, VPackSerializeDeserializeTest.TestEntityCollection>();
+			final Map<TestEntityLong, TestEntityCollection> m1 = new HashMap<>();
 			m1.put(new TestEntityLong(), new TestEntityCollection());
 			m1.put(new TestEntityLong(), new TestEntityCollection());
 			entity.setM1(m1);
 		}
 		{
-			final Map<TestEntityLong, String> m2 = new HashMap<VPackSerializeDeserializeTest.TestEntityLong, String>();
+			final Map<TestEntityLong, String> m2 = new HashMap<>();
 			m2.put(new TestEntityLong(), "test");
 			m2.put(new TestEntityLong(), "test");
 			m2.put(new TestEntityLong(), "test");
@@ -2394,7 +2398,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromMapWithAttributeAdapter() throws VPackException {
 		final TestEntityMap entity = new TestEntityMap();
 		{
-			final Map<String, String> m1 = new HashMap<String, String>();
+			final Map<String, String> m1 = new HashMap<>();
 			m1.put("_key", "test1");
 			m1.put("_rev", "test2");
 			m1.put("_id", "test3");
@@ -2717,11 +2721,12 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void directFromCollection() throws VPackException {
-		final Collection<TestEntityString> list = new ArrayList<TestEntityString>();
+		final Collection<TestEntityString> list = new ArrayList<>();
 		list.add(new TestEntityString());
 		list.add(new TestEntityString());
 
-		final VPackSlice vpack = new VPack().serialize(list);
+		final VPackSlice vpack = new VPack().serialize(list, new Type<Collection<TestEntityString>>() {
+		}.getType());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isArray());
 		Assert.assertEquals(list.size(), vpack.getLength());
@@ -2735,7 +2740,6 @@ public class VPackSerializeDeserializeTest {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void directToCollection() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
@@ -2744,8 +2748,9 @@ public class VPackSerializeDeserializeTest {
 		builder.add("s", new Value("abc"));
 		builder.close();
 		builder.close();
-		final List<TestEntityString> list = new VPack().deserialize(builder.slice(), List.class,
-			TestEntityString.class);
+		final List<TestEntityString> list = new VPack().deserialize(builder.slice(),
+			new Type<List<TestEntityString>>() {
+			}.getType());
 		Assert.assertNotNull(list);
 		Assert.assertEquals(1, list.size());
 		final TestEntityString entry = list.get(0);
@@ -2754,11 +2759,12 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void directFromStringMap() throws VPackException {
-		final Map<String, TestEntityString> map = new HashMap<String, TestEntityString>();
+		final Map<String, TestEntityString> map = new HashMap<>();
 		map.put("a", new TestEntityString());
 		map.put("b", new TestEntityString());
 
-		final VPackSlice vpack = new VPack().serialize(map, String.class);
+		final VPackSlice vpack = new VPack().serialize(map, new Type<Map<String, TestEntityString>>() {
+		}.getType());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(2, vpack.getLength());
@@ -2766,7 +2772,6 @@ public class VPackSerializeDeserializeTest {
 		checkStringEntity(a);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void directToStringMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
@@ -2775,8 +2780,9 @@ public class VPackSerializeDeserializeTest {
 		builder.add("s", new Value("abc"));
 		builder.close();
 		builder.close();
-		final Map<String, TestEntityString> map = new VPack().deserialize(builder.slice(), Map.class, String.class,
-			TestEntityString.class);
+		final Map<String, TestEntityString> map = new VPack().deserialize(builder.slice(),
+			new Type<Map<String, TestEntityString>>() {
+			}.getType());
 		Assert.assertNotNull(map);
 		Assert.assertEquals(1, map.size());
 		final TestEntityString a = map.get("a");
@@ -2786,11 +2792,12 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void directFromObjectMap() throws VPackException {
-		final Map<TestEntityString, TestEntityString> map = new HashMap<TestEntityString, TestEntityString>();
+		final Map<TestEntityString, TestEntityString> map = new HashMap<>();
 		map.put(new TestEntityString(), new TestEntityString());
 		map.put(new TestEntityString(), new TestEntityString());
 
-		final VPackSlice vpack = new VPack().serialize(map, TestEntityString.class);
+		final VPackSlice vpack = new VPack().serialize(map, new Type<Map<TestEntityString, TestEntityString>>() {
+		}.getType());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isArray());
 		Assert.assertEquals(map.size(), vpack.getLength());
@@ -2818,7 +2825,6 @@ public class VPackSerializeDeserializeTest {
 		Assert.assertEquals(expected.c2, c2.getAsChar());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void directToObjectMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
@@ -2832,8 +2838,9 @@ public class VPackSerializeDeserializeTest {
 		builder.close();
 		builder.close();
 		builder.close();
-		final Map<TestEntityString, TestEntityString> map = new VPack().deserialize(builder.slice(), Map.class,
-			TestEntityString.class, TestEntityString.class);
+		final Map<TestEntityString, TestEntityString> map = new VPack().deserialize(builder.slice(),
+			new Type<Map<TestEntityString, TestEntityString>>() {
+			}.getType());
 		Assert.assertNotNull(map);
 		Assert.assertEquals(1, map.size());
 		for (final Entry<TestEntityString, TestEntityString> entry : map.entrySet()) {
@@ -2883,7 +2890,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void additionalFields() throws VPackException {
 		final TestEntityString entity = new TestEntityString();
-		final Map<String, Object> additionalFields = new HashMap<String, Object>();
+		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("a", "test");
 		final VPackSlice vpack = new VPack().serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
@@ -2899,7 +2906,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void additionalDuplicatedFields() throws VPackException {
 		final TestEntityString entity = new TestEntityString();
-		final Map<String, Object> additionalFields = new HashMap<String, Object>();
+		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("s", "test1");
 		final VPackSlice vpack = new VPack().serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
@@ -2912,7 +2919,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void additionalNullFieldsExcludeNull() throws VPackException {
 		final TestEntityString entity = new TestEntityString();
-		final Map<String, Object> additionalFields = new HashMap<String, Object>();
+		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("a", null);
 		final VPackSlice vpack = new VPack().serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
@@ -2925,7 +2932,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void additionalNullFieldsIncludeNull() throws VPackException {
 		final TestEntityString entity = new TestEntityString();
-		final Map<String, Object> additionalFields = new HashMap<String, Object>();
+		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("a", null);
 		final VPack serializer = new VPack();
 		serializer.getOptions().setSerializeNullValues(true);
@@ -2956,4 +2963,56 @@ public class VPackSerializeDeserializeTest {
 		Assert.assertEquals("test", vpack.getAsString());
 	}
 
+	protected static class TestEntityTyped<T> {
+		private T e;
+	}
+
+	@Test
+	public void fromStringTypedEntity() throws VPackException {
+		final TestEntityTyped<String> entity = new TestEntityTyped<>();
+		entity.e = "test";
+		final VPackSlice vpack = new VPack().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		final VPackSlice e = vpack.get("e");
+		assertThat(e, is(notNullValue()));
+		assertThat(e.isString(), is(true));
+		assertThat(e.getAsString(), is("test"));
+	}
+
+	@Test
+	public void fromObjectTypedEntity() throws VPackException {
+		final TestEntityTyped<TestEntityString> entity = new TestEntityTyped<>();
+		entity.e = new TestEntityString();
+		entity.e.s = "test2";
+		final VPackSlice vpack = new VPack().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		final VPackSlice e = vpack.get("e");
+		assertThat(e, is(notNullValue()));
+		assertThat(e.isObject(), is(true));
+		final VPackSlice s = e.get("s");
+		assertThat(s, is(notNullValue()));
+		assertThat(s.isString(), is(true));
+		assertThat(s.getAsString(), is("test2"));
+	}
+
+	@Test
+	public void fromTypedTypedEntity() throws VPackException {
+		final TestEntityTyped<TestEntityTyped<String>> entity = new TestEntityTyped<>();
+		entity.e = new TestEntityTyped<>();
+		entity.e.e = "test";
+		final VPackSlice vpack = new VPack().serialize(entity,
+			new Type<TestEntityTyped<TestEntityTyped<String>>>() {
+			}.getType());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		final VPackSlice e = vpack.get("e");
+		assertThat(e, is(notNullValue()));
+		assertThat(e.isObject(), is(true));
+		final VPackSlice e2 = e.get("e");
+		assertThat(e2, is(notNullValue()));
+		assertThat(e2.isString(), is(true));
+		assertThat(e2.getAsString(), is("test"));
+	}
 }
