@@ -103,7 +103,8 @@ public class ArangoDB extends ExecuteBase {
 	public Executeable<Boolean> deleteDB(final String name) {
 		validateDBName(name);
 		return execute(Boolean.class,
-			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE, ArangoDBConstants.PATH_API_DATABASE + name),
+			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
+					createPath(ArangoDBConstants.PATH_API_DATABASE, name)),
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
