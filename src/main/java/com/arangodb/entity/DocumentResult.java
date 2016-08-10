@@ -1,16 +1,18 @@
 package com.arangodb.entity;
 
+import com.arangodb.entity.DocumentField.Type;
+
 /**
  * @author Mark - mark at arangodb.com
  *
  */
 public class DocumentResult {
 
-	@DocumentKey
+	@DocumentField(Type.KEY)
 	private String key;
-	@DocumentId
+	@DocumentField(Type.ID)
 	private String id;
-	@DocumentRev
+	@DocumentField(Type.REV)
 	private String rev;
 
 	public DocumentResult() {

@@ -11,6 +11,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
-public @interface DocumentId {
+public @interface DocumentField {
+
+	public static enum Type {
+		ID, KEY, REV;
+	}
+
+	Type value();
 
 }
