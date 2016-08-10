@@ -30,13 +30,12 @@ public class Message {
 
 		final byte[] headBuf = new byte[slice.getByteSize()];
 		buffer.rewind();
-		buffer.get(headBuf, 0, headBuf.length);
+		buffer.get(headBuf);
 		head = new VPackSlice(headBuf);
 
 		if (array.length > headBuf.length) {
 			final byte[] bodyBuf = new byte[array.length - headBuf.length];
-			buffer.rewind();
-			buffer.get(bodyBuf, headBuf.length, bodyBuf.length);
+			buffer.get(bodyBuf);
 			body = Optional.of(new VPackSlice(bodyBuf));
 		} else {
 			body = Optional.empty();
