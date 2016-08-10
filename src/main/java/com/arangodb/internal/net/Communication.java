@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.net.velocystream.Chunk;
@@ -24,6 +27,8 @@ import com.arangodb.velocypack.exception.VPackParserException;
  *
  */
 public class Communication {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
 	private final AtomicLong mId = new AtomicLong(0L);
 	private final VPack vpack;
@@ -68,22 +73,23 @@ public class Communication {
 				.build();
 	}
 
-	private void reconnect() {
+	private void connect() {
 		if (!connection.isOpen()) {
 			try {
-				connection.connect();
+				connection.open();
 			} catch (final IOException e) {
+				LOGGER.error(e.getMessage(), e);
 				throw new ArangoDBException(e);
 			}
 		}
 	}
 
 	public void disconnect() {
-		connection.disconnect();
+		connection.close();
 	}
 
 	public CompletableFuture<Response> execute(final Request request) {
-		reconnect();
+		connect();
 		final CompletableFuture<Response> rfuture = new CompletableFuture<>();
 		try {
 			final long id = mId.incrementAndGet();
@@ -109,15 +115,18 @@ public class Communication {
 							rfuture.complete(response);
 						}
 					} catch (final VPackParserException e) {
+						LOGGER.error(e.getMessage(), e);
 						rfuture.completeExceptionally(e);
 					}
 				} else if (ex != null) {
+					LOGGER.error(ex.getMessage(), ex);
 					rfuture.completeExceptionally(ex);
 				} else {
 					rfuture.cancel(true);
 				}
 			});
 		} catch (final IOException | VPackException e) {
+			LOGGER.error(e.getMessage(), e);
 			rfuture.completeExceptionally(e);
 		}
 		return rfuture;
@@ -125,6 +134,10 @@ public class Communication {
 
 	private CompletableFuture<Message> send(final Message message) throws IOException {
 		final CompletableFuture<Message> future = new CompletableFuture<>();
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
+				message.getBody().isPresent() ? message.getBody().get() : "{}"));
+		}
 		connection.write(message.getId(), buildChunks(message), future);
 		return future;
 	}

@@ -16,6 +16,9 @@ import java.util.concurrent.Executors;
 
 import javax.net.SocketFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
@@ -28,6 +31,8 @@ import com.arangodb.internal.net.velocystream.MessageStore;
  *
  */
 public class Connection {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 
 	private final MessageStore messageStore;
 	private Optional<String> host = Optional.empty();
@@ -77,16 +82,22 @@ public class Connection {
 		this.timeout = Optional.ofNullable(builder.timeout);
 	}
 
-	public void connect() throws IOException {
+	public void open() throws IOException {
 		if (isOpen()) {
 			return;
 		}
 		socket = SocketFactory.getDefault().createSocket();
-		socket.connect(new InetSocketAddress(host.orElse(ArangoDBConstants.DEFAULT_HOST),
-				port.orElse(ArangoDBConstants.DEFAULT_PORT)),
-			timeout.orElse(ArangoDBConstants.DEFAULT_TIMEOUT));
+		final String host = this.host.orElse(ArangoDBConstants.DEFAULT_HOST);
+		final Integer port = this.port.orElse(ArangoDBConstants.DEFAULT_PORT);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Open connection to addr=%s,port=%s", host, port));
+		}
+		socket.connect(new InetSocketAddress(host, port), timeout.orElse(ArangoDBConstants.DEFAULT_TIMEOUT));
 		socket.setKeepAlive(true);
 		socket.setTcpNoDelay(true);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Connected to %s", socket));
+		}
 
 		outputStream = socket.getOutputStream();
 		inputStream = socket.getInputStream();
@@ -96,15 +107,14 @@ public class Connection {
 			while (true) {
 				if (!isOpen()) {
 					messageStore.clear(new IOException("The socket is closed."));
-					// exception = new IOException();
-					disconnect();
+					close();
 					break;
 				}
 				try {
 					chunkStore.storeChunk(read());
 				} catch (final Exception e) {
 					messageStore.clear(e);
-					disconnect();
+					close();
 					break;
 				}
 			}
@@ -115,7 +125,11 @@ public class Connection {
 		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
-	public void disconnect() {
+	public void close() {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Close connection %s", socket));
+		}
+		messageStore.clear();
 		if (executor != null && !executor.isShutdown()) {
 			executor.shutdown();
 		}
@@ -126,13 +140,16 @@ public class Connection {
 				throw new ArangoDBException(e);
 			}
 		}
-		messageStore.clear();
 	}
 
 	public void write(final long messageId, final Collection<Chunk> chunks, final CompletableFuture<Message> future) {
 		messageStore.storeMessage(messageId, future);
 		chunks.stream().forEach(chunk -> {
 			try {
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
+						chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+				}
 				outputStream.write(chunk.toByteBuffer().array());
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
@@ -143,7 +160,12 @@ public class Connection {
 	private Chunk read() throws IOException, BufferUnderflowException {
 		final ByteBuffer head = readBytes(4);
 		final int len = head.getInt();
-		return new Chunk(len, readBytes(len - 4));
+		final Chunk chunk = new Chunk(len, readBytes(len - 4));
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(),
+				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+		}
+		return chunk;
 	}
 
 	private ByteBuffer readBytes(final int len) throws IOException {

@@ -4,11 +4,16 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Mark - mark at arangodb.com
  *
  */
 public class MessageStore {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(MessageStore.class);
 
 	private final Map<Long, CompletableFuture<Message>> data;
 
@@ -24,17 +29,34 @@ public class MessageStore {
 	public void consume(final Message message) {
 		final CompletableFuture<Message> future = data.remove(message.getId());
 		if (future != null) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(String.format("Received Message (id=%s, head=%s, body=%s)", message.getId(),
+					message.getHead(), message.getBody().isPresent() ? message.getBody().get() : "{}"));
+			}
 			future.complete(message);
 		}
 	}
 
 	public void clear(final Exception e) {
-		data.values().stream().forEach(future -> future.completeExceptionally(e));
+		if (!data.isEmpty()) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		data.entrySet().stream().forEach(entry -> {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(String.format("Exceptionally complete Message (id=%s).", entry.getKey()));
+			}
+			entry.getValue().completeExceptionally(e);
+		});
 		data.clear();
 	}
 
 	public void clear() {
-		data.values().stream().forEach(future -> future.cancel(true));
+		data.entrySet().stream().forEach(entry -> {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(String.format("Cancel Message (id=%s).", entry.getKey()));
+			}
+			entry.getValue().cancel(true);
+		});
 		data.clear();
 	}
 
