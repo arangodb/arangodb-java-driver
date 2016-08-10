@@ -39,6 +39,17 @@ public abstract class ExecuteBase {
 		this.vpacker = vpacker;
 	}
 
+	protected String createPath(final String... params) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < params.length; i++) {
+			if (i > 0) {
+				sb.append("/");
+			}
+			sb.append(params[i]);
+		}
+		return sb.toString();
+	}
+
 	protected void validateDBName(final String name) throws ArangoDBException {
 		validateName(REGEX_DB_NAME, name);
 	}

@@ -47,7 +47,7 @@ public class DB extends ExecuteBase {
 	public Executeable<Void> deleteCollection(final String name) {
 		validateCollectionName(name);
 		return execute(Void.class,
-			new Request(name(), RequestType.DELETE, ArangoDBConstants.PATH_API_COLLECTION + name));
+			new Request(name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
 	}
 
 }
