@@ -159,14 +159,20 @@ public class Communication {
 		}
 		out.close();
 		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		final int n = size / Chunk.MAX_CHUNK_CONTENT_SIZE;
-		final int numberOfChunks = (size % Chunk.MAX_CHUNK_CONTENT_SIZE != 0) ? (n + 1) : n;
-		for (int pos = 0, i = 0; size > 0; pos += Chunk.MAX_CHUNK_CONTENT_SIZE, i++) {
-			final int len = Math.min(Chunk.MAX_CHUNK_CONTENT_SIZE, size);
+		final int n = size / Chunk.MAX_CHUNK_BODY_SIZE;
+		final int numberOfChunks = (size % Chunk.MAX_CHUNK_BODY_SIZE != 0) ? (n + 1) : n;
+		for (int pos = 0, i = 0; size > 0; pos += Chunk.MAX_CHUNK_BODY_SIZE, i++) {
+			final int len = Math.min(Chunk.MAX_CHUNK_BODY_SIZE, size);
 			final byte[] buffer = new byte[len];
 			in.read(buffer, pos, len);
 			size -= len;
-			final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, buffer, len + Chunk.CHUNK_HEADER_SIZE);
+			final Chunk chunk;
+			if (i == 0 && numberOfChunks > 1) {
+				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer,
+						len + Chunk.CHUNK_MIN_HEADER_SIZE + Long.BYTES, size);
+			} else {
+				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer, len + Chunk.CHUNK_MIN_HEADER_SIZE, -1L);
+			}
 			chunks.add(chunk);
 		}
 		in.close();
