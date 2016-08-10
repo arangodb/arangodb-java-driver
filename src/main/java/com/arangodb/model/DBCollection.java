@@ -10,6 +10,7 @@ import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -51,7 +52,7 @@ public class DBCollection extends ExecuteBase {
 		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.setBody(serialize(value));
-		return execute(DocumentCreateResult.class, request, response -> {
+		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentCreateResult<T> doc = deserialize(body, DocumentCreateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
@@ -84,7 +85,7 @@ public class DBCollection extends ExecuteBase {
 		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return execute(DocumentUpdateResult.class, request, response -> {
+		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
@@ -114,7 +115,7 @@ public class DBCollection extends ExecuteBase {
 		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return execute(DocumentUpdateResult.class, request, response -> {
+		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
@@ -140,7 +141,7 @@ public class DBCollection extends ExecuteBase {
 		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return execute(Void.class, request, response -> {
+		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentDeleteResult<T> doc = deserialize(body, DocumentDeleteResult.class);
 			final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
@@ -177,6 +178,14 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.setBody(serialize((options != null ? options : new GeoIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
+	}
+
+	public Executeable<Collection<IndexResult>> readIndexes() {
+		final Request request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
+		request.getParameter().put(ArangoDBConstants.COLLECTION, name);
+		return execute(request,
+			response -> deserialize(response.getBody().get().get("indexes"), new Type<Collection<IndexResult>>() {
+			}.getType()));
 	}
 
 }

@@ -72,11 +72,8 @@ public abstract class ExecuteBase {
 		return new Executeable<>(communication, vpacker, type, request);
 	}
 
-	protected <T> Executeable<T> execute(
-		final Type type,
-		final Request request,
-		final ResponseDeserializer<T> responseDeserializer) {
-		return new Executeable<>(communication, vpacker, type, request, responseDeserializer);
+	protected <T> Executeable<T> execute(final Request request, final ResponseDeserializer<T> responseDeserializer) {
+		return new Executeable<>(communication, vpacker, request, responseDeserializer);
 	}
 
 	protected <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {

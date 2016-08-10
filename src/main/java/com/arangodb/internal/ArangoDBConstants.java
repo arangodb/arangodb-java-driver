@@ -17,6 +17,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_VERSION = "/_api/version";
 	public static final String PATH_API_INDEX = "/_api/index";
 
+	public static final String ID = "id";
 	public static final String RESULT = "result";
 	public static final String WAIT_FOR_SYNC = "waitForSync";
 	public static final String IF_NONE_MATCH = "If-None-Match";
@@ -28,5 +29,6 @@ public class ArangoDBConstants {
 	public static final String NEW = "new";
 	public static final String RETURN_OLD = "returnOld";
 	public static final String OLD = "old";
+	public static final String COLLECTION = "collection";
 
 }

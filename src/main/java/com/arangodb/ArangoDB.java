@@ -96,13 +96,12 @@ public class ArangoDB extends ExecuteBase {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
 		request.setBody(serialize(new DBCreate.Options().build(name)));
-		return execute(Boolean.class, request,
-			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
 	public Executeable<Boolean> deleteDB(final String name) {
 		validateDBName(name);
-		return execute(Boolean.class,
+		return execute(
 			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
 					createPath(ArangoDBConstants.PATH_API_DATABASE, name)),
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());

@@ -1,6 +1,7 @@
 package com.arangodb.model;
 
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
@@ -48,6 +49,18 @@ public class DB extends ExecuteBase {
 		validateCollectionName(name);
 		return execute(Void.class,
 			new Request(name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
+	}
+
+	public Executeable<IndexResult> readIndex(final String id) {
+		// TODO validate id
+		return execute(IndexResult.class,
+			new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_INDEX, id)));
+	}
+
+	public Executeable<String> deleteIndex(final String id) {
+		// TODO validate id
+		return execute(new Request(name, RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_INDEX, id)),
+			response -> response.getBody().get().get(ArangoDBConstants.ID).getAsString());
 	}
 
 }

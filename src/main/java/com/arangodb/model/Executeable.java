@@ -27,23 +27,21 @@ public class Executeable<T> {
 
 	protected final Communication communication;
 	protected final VPack vpack;
-	protected final Type type;
 	private final Request request;
 	private final ResponseDeserializer<T> responseDeserializer;
 
 	protected Executeable(final Communication communication, final VPack vpack, final Type type,
 		final Request request) {
-		this(communication, vpack, type, request, (response) -> {
+		this(communication, vpack, request, (response) -> {
 			return createResult(vpack, type, response);
 		});
 	}
 
-	protected Executeable(final Communication communication, final VPack vpack, final Type type, final Request request,
+	protected Executeable(final Communication communication, final VPack vpack, final Request request,
 		final ResponseDeserializer<T> responseDeserializer) {
 		super();
 		this.communication = communication;
 		this.vpack = vpack;
-		this.type = type;
 		this.request = request;
 		this.responseDeserializer = responseDeserializer;
 	}
