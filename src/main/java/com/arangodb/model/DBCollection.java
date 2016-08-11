@@ -1,10 +1,12 @@
 package com.arangodb.model;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentDeleteResult;
+import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -44,7 +46,6 @@ public class DBCollection extends ExecuteBase {
 	public <T> Executeable<DocumentCreateResult<T>> createDocument(
 		final T value,
 		final DocumentCreate.Options options) {
-		// TODO set key, id, rev in value
 		final Request request = new Request(db.name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentCreate params = (options != null ? options : new DocumentCreate.Options()).build();
@@ -59,6 +60,11 @@ public class DBCollection extends ExecuteBase {
 			if (newDoc.isObject()) {
 				doc.setNew(deserialize(newDoc, value.getClass()));
 			}
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.ID, doc.getId());
+			values.put(DocumentField.Type.KEY, doc.getKey());
+			values.put(DocumentField.Type.REV, doc.getRev());
+			documentCache.setValues(value, values);
 			return doc;
 		});
 	}
@@ -96,6 +102,9 @@ public class DBCollection extends ExecuteBase {
 			if (oldDoc.isObject()) {
 				doc.setOld(deserialize(oldDoc, value.getClass()));
 			}
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.REV, doc.getRev());
+			documentCache.setValues(value, values);
 			return doc;
 		});
 	}

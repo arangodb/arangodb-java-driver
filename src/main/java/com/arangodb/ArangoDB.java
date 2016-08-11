@@ -2,6 +2,7 @@ package com.arangodb;
 
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -84,7 +85,7 @@ public class ArangoDB extends ExecuteBase {
 
 	private ArangoDB(final Builder builder) {
 		super(new Communication.Builder(builder.vpack).host(builder.host).port(builder.port).timeout(builder.timeout)
-				.build(), builder.vpack);
+				.build(), builder.vpack, new DocumentCache());
 	}
 
 	public void shutdown() {
@@ -113,7 +114,7 @@ public class ArangoDB extends ExecuteBase {
 
 	public DB db(final String name) {
 		validateDBName(name);
-		return new DB(communication, vpacker, name);
+		return new DB(communication, vpacker, documentCache, name);
 	}
 
 	public Executeable<ArangoDBVersion> getVersion() {

@@ -3,6 +3,7 @@ package com.arangodb.model;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -16,17 +17,10 @@ public class DB extends ExecuteBase {
 
 	private final String name;
 
-	public DB(final Communication communication, final VPack vpacker, final String name) {
-		super(communication, vpacker);
+	public DB(final Communication communication, final VPack vpacker, final DocumentCache documentCache,
+		final String name) {
+		super(communication, vpacker, documentCache);
 		this.name = name;
-	}
-
-	protected Communication communication() {
-		return communication;
-	}
-
-	protected VPack vpack() {
-		return vpacker;
 	}
 
 	protected String name() {

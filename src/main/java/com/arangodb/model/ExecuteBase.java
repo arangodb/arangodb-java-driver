@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.model.Executeable.ResponseDeserializer;
@@ -24,19 +25,33 @@ public abstract class ExecuteBase {
 
 	protected final Communication communication;
 	protected final VPack vpacker;
+	protected final DocumentCache documentCache;
 
 	protected ExecuteBase(final DBCollection dbCollection) {
 		this(dbCollection.db());
 	}
 
 	protected ExecuteBase(final DB db) {
-		this(db.communication(), db.vpack());
+		this(db.communication(), db.vpack(), db.documentCache());
 	}
 
-	protected ExecuteBase(final Communication communication, final VPack vpacker) {
+	protected ExecuteBase(final Communication communication, final VPack vpacker, final DocumentCache documentCache) {
 		super();
 		this.communication = communication;
 		this.vpacker = vpacker;
+		this.documentCache = documentCache;
+	}
+
+	protected Communication communication() {
+		return communication;
+	}
+
+	protected VPack vpack() {
+		return vpacker;
+	}
+
+	protected DocumentCache documentCache() {
+		return documentCache;
 	}
 
 	protected String createPath(final String... params) {
