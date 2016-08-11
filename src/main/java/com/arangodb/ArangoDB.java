@@ -29,12 +29,12 @@ public class ArangoDB extends ExecuteBase {
 		private Integer timeout;
 		private String user;
 		private String password;
-		private final VPack vpack;
+		private final VPack.Builder vpackBuilder;
 
 		public Builder() {
 			super();
-			vpack = new VPack();
-			VPackConfigure.configure(vpack);
+			vpackBuilder = new VPack.Builder();
+			VPackConfigure.configure(vpackBuilder);
 		}
 
 		public Builder host(final String host) {
@@ -63,29 +63,30 @@ public class ArangoDB extends ExecuteBase {
 		}
 
 		public <T> Builder registerSerializer(final Class<T> clazz, final VPackSerializer<T> serializer) {
-			vpack.registerSerializer(clazz, serializer);
+			vpackBuilder.registerSerializer(clazz, serializer);
 			return this;
 		}
 
 		public <T> Builder registerDeserializer(final Class<T> clazz, final VPackDeserializer<T> deserializer) {
-			vpack.registerDeserializer(clazz, deserializer);
+			vpackBuilder.registerDeserializer(clazz, deserializer);
 			return this;
 		}
 
 		public <T> Builder regitserInstanceCreator(final Class<T> clazz, final VPackInstanceCreator<T> creator) {
-			vpack.regitserInstanceCreator(clazz, creator);
+			vpackBuilder.regitserInstanceCreator(clazz, creator);
 			return this;
 		}
 
 		public ArangoDB build() {
-			return new ArangoDB(this);
+			return new ArangoDB(host, port, timeout, user, password, vpackBuilder.build());
 		}
 
 	}
 
-	private ArangoDB(final Builder builder) {
-		super(new Communication.Builder(builder.vpack).host(builder.host).port(builder.port).timeout(builder.timeout)
-				.build(), builder.vpack, new DocumentCache());
+	private ArangoDB(final String host, final Integer port, final Integer timeout, final String user,
+		final String password, final VPack vpack) {
+		super(new Communication.Builder(vpack).host(host).port(port).timeout(timeout).build(), vpack,
+				new DocumentCache());
 	}
 
 	public void shutdown() {

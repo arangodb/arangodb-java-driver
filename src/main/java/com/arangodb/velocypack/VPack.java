@@ -17,12 +17,12 @@ import java.util.Set;
 import com.arangodb.velocypack.VPackBuilder.BuilderOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
+import com.arangodb.velocypack.internal.DefaultVPackBuilderOptions;
 import com.arangodb.velocypack.internal.VPackCache;
 import com.arangodb.velocypack.internal.VPackCache.FieldInfo;
 import com.arangodb.velocypack.internal.VPackDeserializers;
 import com.arangodb.velocypack.internal.VPackInstanceCreators;
 import com.arangodb.velocypack.internal.VPackKeyMapAdapters;
-import com.arangodb.velocypack.internal.VPackOptionsImpl;
 import com.arangodb.velocypack.internal.VPackSerializers;
 
 /**
@@ -32,12 +32,6 @@ import com.arangodb.velocypack.internal.VPackSerializers;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class VPack {
 
-	public static interface VPackOptions extends BuilderOptions {
-		boolean isSerializeNullValues();
-
-		void setSerializeNullValues(boolean serializeNullValues);
-	}
-
 	private static final String ATTR_KEY = "key";
 	private static final String ATTR_VALUE = "value";
 
@@ -45,76 +39,127 @@ public class VPack {
 	private final Map<Type, VPackDeserializer<?>> deserializers;
 	private final Map<Type, VPackInstanceCreator<?>> instanceCreators;
 	private final Map<Type, VPackKeyMapAdapter<?>> keyMapAdapters;
-	private final VPackOptions options;
 
+	private final BuilderOptions builderOptions;
 	private final VPackCache cache;
 	private final VPackSerializationContext serializationContext;
 	private final VPackDeserializationContext deserializationContext;
+	private final boolean serializeNullValues;
 
-	public VPack() {
-		this(new VPackOptionsImpl());
+	public static class Builder {
+		private final Map<Type, VPackSerializer<?>> serializers;
+		private final Map<Type, VPackDeserializer<?>> deserializers;
+		private final Map<Type, VPackInstanceCreator<?>> instanceCreators;
+		private final BuilderOptions builderOptions;
+		private boolean serializeNullValues;
+
+		public Builder() {
+			super();
+			serializers = new HashMap<>();
+			deserializers = new HashMap<>();
+			instanceCreators = new HashMap<>();
+			builderOptions = new DefaultVPackBuilderOptions();
+			serializeNullValues = false;
+
+			instanceCreators.put(Collection.class, VPackInstanceCreators.COLLECTION);
+			instanceCreators.put(List.class, VPackInstanceCreators.LIST);
+			instanceCreators.put(Set.class, VPackInstanceCreators.SET);
+			instanceCreators.put(Map.class, VPackInstanceCreators.MAP);
+
+			serializers.put(String.class, VPackSerializers.STRING);
+			serializers.put(Boolean.class, VPackSerializers.BOOLEAN);
+			serializers.put(boolean.class, VPackSerializers.BOOLEAN);
+			serializers.put(Integer.class, VPackSerializers.INTEGER);
+			serializers.put(int.class, VPackSerializers.INTEGER);
+			serializers.put(Long.class, VPackSerializers.LONG);
+			serializers.put(long.class, VPackSerializers.LONG);
+			serializers.put(Short.class, VPackSerializers.SHORT);
+			serializers.put(short.class, VPackSerializers.SHORT);
+			serializers.put(Double.class, VPackSerializers.DOUBLE);
+			serializers.put(double.class, VPackSerializers.DOUBLE);
+			serializers.put(Float.class, VPackSerializers.FLOAT);
+			serializers.put(float.class, VPackSerializers.FLOAT);
+			serializers.put(BigInteger.class, VPackSerializers.BIG_INTEGER);
+			serializers.put(BigDecimal.class, VPackSerializers.BIG_DECIMAL);
+			serializers.put(Number.class, VPackSerializers.NUMBER);
+			serializers.put(Character.class, VPackSerializers.CHARACTER);
+			serializers.put(char.class, VPackSerializers.CHARACTER);
+
+			deserializers.put(String.class, VPackDeserializers.STRING);
+			deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);
+			deserializers.put(boolean.class, VPackDeserializers.BOOLEAN);
+			deserializers.put(Integer.class, VPackDeserializers.INTEGER);
+			deserializers.put(int.class, VPackDeserializers.INTEGER);
+			deserializers.put(Long.class, VPackDeserializers.LONG);
+			deserializers.put(long.class, VPackDeserializers.LONG);
+			deserializers.put(Short.class, VPackDeserializers.SHORT);
+			deserializers.put(short.class, VPackDeserializers.SHORT);
+			deserializers.put(Double.class, VPackDeserializers.DOUBLE);
+			deserializers.put(double.class, VPackDeserializers.DOUBLE);
+			deserializers.put(Float.class, VPackDeserializers.FLOAT);
+			deserializers.put(float.class, VPackDeserializers.FLOAT);
+			deserializers.put(BigInteger.class, VPackDeserializers.BIG_INTEGER);
+			deserializers.put(BigDecimal.class, VPackDeserializers.BIG_DECIMAL);
+			deserializers.put(Number.class, VPackDeserializers.NUMBER);
+			deserializers.put(Character.class, VPackDeserializers.CHARACTER);
+			deserializers.put(char.class, VPackDeserializers.CHARACTER);
+		}
+
+		public <T> VPack.Builder registerSerializer(final Type type, final VPackSerializer<T> serializer) {
+			serializers.put(type, serializer);
+			return this;
+		}
+
+		public <T> VPack.Builder registerDeserializer(final Type type, final VPackDeserializer<T> deserializer) {
+			deserializers.put(type, deserializer);
+			return this;
+		}
+
+		public <T> VPack.Builder regitserInstanceCreator(final Type type, final VPackInstanceCreator<T> creator) {
+			instanceCreators.put(type, creator);
+			return this;
+		}
+
+		public VPack.Builder buildUnindexedArrays(final boolean buildUnindexedArrays) {
+			builderOptions.setBuildUnindexedArrays(buildUnindexedArrays);
+			return this;
+		}
+
+		public VPack.Builder buildUnindexedObjects(final boolean buildUnindexedObjects) {
+			builderOptions.setBuildUnindexedObjects(buildUnindexedObjects);
+			return this;
+		}
+
+		public VPack.Builder serializeNullValues(final boolean serializeNullValues) {
+			this.serializeNullValues = serializeNullValues;
+			return this;
+		}
+
+		public VPack build() {
+			return new VPack(serializers, deserializers, instanceCreators, builderOptions, serializeNullValues);
+		}
+
 	}
 
-	public VPack(final VPackOptions options) {
+	private VPack(final Map<Type, VPackSerializer<?>> serializers, final Map<Type, VPackDeserializer<?>> deserializers,
+		final Map<Type, VPackInstanceCreator<?>> instanceCreators, final BuilderOptions builderOptions,
+		final boolean serializeNullValues) {
 		super();
-		this.options = options;
-		serializers = new HashMap<>();
-		deserializers = new HashMap<>();
-		instanceCreators = new HashMap<>();
+		this.serializers = serializers;
+		this.deserializers = deserializers;
+		this.instanceCreators = instanceCreators;
+		this.builderOptions = builderOptions;
+		this.serializeNullValues = serializeNullValues;
 		keyMapAdapters = new HashMap<>();
 		cache = new VPackCache();
 		serializationContext = (builder, attribute, entity) -> VPack.this.serialize(attribute, entity, builder,
 			new HashMap<String, Object>());
-		;
 		deserializationContext = new VPackDeserializationContext() {
 			@Override
 			public <T> T deserialize(final VPackSlice vpack, final Class<T> type) throws VPackParserException {
 				return VPack.this.deserialize(vpack, type);
 			}
 		};
-		instanceCreators.put(Collection.class, VPackInstanceCreators.COLLECTION);
-		instanceCreators.put(List.class, VPackInstanceCreators.LIST);
-		instanceCreators.put(Set.class, VPackInstanceCreators.SET);
-		instanceCreators.put(Map.class, VPackInstanceCreators.MAP);
-
-		serializers.put(String.class, VPackSerializers.STRING);
-		serializers.put(Boolean.class, VPackSerializers.BOOLEAN);
-		serializers.put(boolean.class, VPackSerializers.BOOLEAN);
-		serializers.put(Integer.class, VPackSerializers.INTEGER);
-		serializers.put(int.class, VPackSerializers.INTEGER);
-		serializers.put(Long.class, VPackSerializers.LONG);
-		serializers.put(long.class, VPackSerializers.LONG);
-		serializers.put(Short.class, VPackSerializers.SHORT);
-		serializers.put(short.class, VPackSerializers.SHORT);
-		serializers.put(Double.class, VPackSerializers.DOUBLE);
-		serializers.put(double.class, VPackSerializers.DOUBLE);
-		serializers.put(Float.class, VPackSerializers.FLOAT);
-		serializers.put(float.class, VPackSerializers.FLOAT);
-		serializers.put(BigInteger.class, VPackSerializers.BIG_INTEGER);
-		serializers.put(BigDecimal.class, VPackSerializers.BIG_DECIMAL);
-		serializers.put(Number.class, VPackSerializers.NUMBER);
-		serializers.put(Character.class, VPackSerializers.CHARACTER);
-		serializers.put(char.class, VPackSerializers.CHARACTER);
-
-		deserializers.put(String.class, VPackDeserializers.STRING);
-		deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);
-		deserializers.put(boolean.class, VPackDeserializers.BOOLEAN);
-		deserializers.put(Integer.class, VPackDeserializers.INTEGER);
-		deserializers.put(int.class, VPackDeserializers.INTEGER);
-		deserializers.put(Long.class, VPackDeserializers.LONG);
-		deserializers.put(long.class, VPackDeserializers.LONG);
-		deserializers.put(Short.class, VPackDeserializers.SHORT);
-		deserializers.put(short.class, VPackDeserializers.SHORT);
-		deserializers.put(Double.class, VPackDeserializers.DOUBLE);
-		deserializers.put(double.class, VPackDeserializers.DOUBLE);
-		deserializers.put(Float.class, VPackDeserializers.FLOAT);
-		deserializers.put(float.class, VPackDeserializers.FLOAT);
-		deserializers.put(BigInteger.class, VPackDeserializers.BIG_INTEGER);
-		deserializers.put(BigDecimal.class, VPackDeserializers.BIG_DECIMAL);
-		deserializers.put(Number.class, VPackDeserializers.NUMBER);
-		deserializers.put(Character.class, VPackDeserializers.CHARACTER);
-		deserializers.put(char.class, VPackDeserializers.CHARACTER);
-
 		keyMapAdapters.put(String.class, VPackKeyMapAdapters.STRING);
 		keyMapAdapters.put(Boolean.class, VPackKeyMapAdapters.BOOLEAN);
 		keyMapAdapters.put(Integer.class, VPackKeyMapAdapters.INTEGER);
@@ -126,25 +171,6 @@ public class VPack {
 		keyMapAdapters.put(BigDecimal.class, VPackKeyMapAdapters.BIG_DECIMAL);
 		keyMapAdapters.put(Number.class, VPackKeyMapAdapters.NUMBER);
 		keyMapAdapters.put(Character.class, VPackKeyMapAdapters.CHARACTER);
-	}
-
-	public VPackOptions getOptions() {
-		return options;
-	}
-
-	public <T> VPack registerSerializer(final Type type, final VPackSerializer<T> serializer) {
-		serializers.put(type, serializer);
-		return this;
-	}
-
-	public <T> VPack registerDeserializer(final Type type, final VPackDeserializer<T> deserializer) {
-		deserializers.put(type, deserializer);
-		return this;
-	}
-
-	public <T> VPack regitserInstanceCreator(final Type type, final VPackInstanceCreator<T> creator) {
-		instanceCreators.put(type, creator);
-		return this;
 	}
 
 	public <T> T deserialize(final VPackSlice vpack, final Type type) throws VPackParserException {
@@ -297,7 +323,7 @@ public class VPack {
 
 	public VPackSlice serialize(final Object entity, final Map<String, Object> additionalFields)
 			throws VPackParserException {
-		final VPackBuilder builder = new VPackBuilder(options);
+		final VPackBuilder builder = new VPackBuilder(builderOptions);
 		serialize(null, entity, builder, new HashMap<>(additionalFields));
 		return builder.slice();
 	}
@@ -320,7 +346,7 @@ public class VPack {
 
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws VPackParserException {
-		final VPackBuilder builder = new VPackBuilder(options);
+		final VPackBuilder builder = new VPackBuilder(builderOptions);
 		try {
 			addValue(null, type, entity, builder, null, new HashMap<>(additionalFields));
 		} catch (final Exception e) {
@@ -394,7 +420,7 @@ public class VPack {
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, VPackException {
 
 		if (value == null) {
-			if (options.isSerializeNullValues()) {
+			if (serializeNullValues) {
 				builder.add(name, new Value(ValueType.NULL));
 			}
 		} else {

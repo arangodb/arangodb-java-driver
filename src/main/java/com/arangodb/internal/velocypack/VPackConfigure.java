@@ -11,12 +11,12 @@ import com.arangodb.velocypack.VPack;
  */
 public class VPackConfigure {
 
-	public static void configure(final VPack vpack) {
-		vpack.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE)
-				.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
+	public static void configure(final VPack.Builder builder) {
+		builder.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE);
+		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
 
-		vpack.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE)
-				.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
+		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
+		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
 	}
 
 }

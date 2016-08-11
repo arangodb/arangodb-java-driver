@@ -1,33 +1,20 @@
 package com.arangodb.velocypack.internal;
 
-import com.arangodb.velocypack.VPack.VPackOptions;
 import com.arangodb.velocypack.VPackBuilder.BuilderOptions;
 
 /**
  * @author Mark - mark@arangodb.com
  *
  */
-public class VPackOptionsImpl implements VPackOptions, BuilderOptions {
+public class DefaultVPackBuilderOptions implements BuilderOptions {
 
-	private boolean serializeNullValues;
 	private boolean buildUnindexedArrays;
 	private boolean buildUnindexedObjects;
 
-	public VPackOptionsImpl() {
+	public DefaultVPackBuilderOptions() {
 		super();
-		serializeNullValues = false;
 		buildUnindexedArrays = false;
 		buildUnindexedObjects = false;
-	}
-
-	@Override
-	public boolean isSerializeNullValues() {
-		return serializeNullValues;
-	}
-
-	@Override
-	public void setSerializeNullValues(final boolean serializeNullValues) {
-		this.serializeNullValues = serializeNullValues;
 	}
 
 	@Override

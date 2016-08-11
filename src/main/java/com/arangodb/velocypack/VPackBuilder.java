@@ -21,7 +21,7 @@ import com.arangodb.velocypack.exception.VPackBuilderNumberOutOfRangeException;
 import com.arangodb.velocypack.exception.VPackBuilderUnexpectedValueException;
 import com.arangodb.velocypack.exception.VPackKeyTypeException;
 import com.arangodb.velocypack.exception.VPackNeedAttributeTranslatorException;
-import com.arangodb.velocypack.internal.VPackOptionsImpl;
+import com.arangodb.velocypack.internal.DefaultVPackBuilderOptions;
 import com.arangodb.velocypack.internal.util.NumberUtil;
 
 /**
@@ -57,7 +57,7 @@ public class VPackBuilder {
 	private final BuilderOptions options;
 
 	public VPackBuilder() {
-		this(new VPackOptionsImpl());
+		this(new DefaultVPackBuilderOptions());
 	}
 
 	public VPackBuilder(final BuilderOptions options) {

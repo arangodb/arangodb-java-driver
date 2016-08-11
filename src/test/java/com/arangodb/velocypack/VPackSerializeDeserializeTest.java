@@ -32,11 +32,6 @@ import com.arangodb.velocypack.exception.VPackException;
  */
 public class VPackSerializeDeserializeTest {
 
-	@Test
-	public void defaultOptions() {
-		Assert.assertNotNull(new VPack().getOptions());
-	}
-
 	protected static class TestEntityBoolean {
 		private boolean a = true;
 		private boolean b = false;
@@ -78,7 +73,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromBoolean() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityBoolean());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityBoolean());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -115,7 +110,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityBoolean entity = new VPack().deserialize(vpack, TestEntityBoolean.class);
+		final TestEntityBoolean entity = new VPack.Builder().build().deserialize(vpack, TestEntityBoolean.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(false, entity.a);
 		Assert.assertEquals(true, entity.b);
@@ -155,7 +150,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromStrings() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityString());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityString());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -186,7 +181,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityString entity = new VPack().deserialize(vpack, TestEntityString.class);
+		final TestEntityString entity = new VPack.Builder().build().deserialize(vpack, TestEntityString.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals("abc", entity.s);
 		Assert.assertEquals(new Character('d'), entity.c1);
@@ -216,7 +211,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromInteger() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityInteger());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityInteger());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -241,7 +236,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityInteger entity = new VPack().deserialize(vpack, TestEntityInteger.class);
+		final TestEntityInteger entity = new VPack.Builder().build().deserialize(vpack, TestEntityInteger.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2, entity.i1);
 		Assert.assertEquals(new Integer(3), entity.i2);
@@ -270,7 +265,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromLong() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityLong());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityLong());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -295,7 +290,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityLong entity = new VPack().deserialize(vpack, TestEntityLong.class);
+		final TestEntityLong entity = new VPack.Builder().build().deserialize(vpack, TestEntityLong.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2, entity.l1);
 		Assert.assertEquals(new Long(3), entity.l2);
@@ -324,7 +319,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromFloat() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityFloat());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityFloat());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -349,7 +344,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityFloat entity = new VPack().deserialize(vpack, TestEntityFloat.class);
+		final TestEntityFloat entity = new VPack.Builder().build().deserialize(vpack, TestEntityFloat.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2, entity.f1, 0.);
 		Assert.assertEquals(new Float(3), entity.f2);
@@ -378,7 +373,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromShort() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityShort());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityShort());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -403,7 +398,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityShort entity = new VPack().deserialize(vpack, TestEntityShort.class);
+		final TestEntityShort entity = new VPack.Builder().build().deserialize(vpack, TestEntityShort.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2, entity.s1);
 		Assert.assertEquals(new Short((short) 3), entity.s2);
@@ -432,7 +427,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromDouble() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityDouble());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityDouble());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -457,7 +452,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityDouble entity = new VPack().deserialize(vpack, TestEntityDouble.class);
+		final TestEntityDouble entity = new VPack.Builder().build().deserialize(vpack, TestEntityDouble.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2.25, entity.d1, 0.);
 		Assert.assertEquals(3.75, entity.d2, 0.);
@@ -486,7 +481,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromBigNumbers() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityBigNumber());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityBigNumber());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -511,7 +506,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityBigNumber entity = new VPack().deserialize(vpack, TestEntityBigNumber.class);
+		final TestEntityBigNumber entity = new VPack.Builder().build().deserialize(vpack, TestEntityBigNumber.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(BigInteger.valueOf(2), entity.bi);
 		Assert.assertEquals(BigDecimal.valueOf(3.75), entity.bd);
@@ -560,7 +555,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void fromArray() throws VPackException {
 		final TestEntityArray entity = new TestEntityArray();
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -632,7 +627,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityArray entity = new VPack().deserialize(vpack, TestEntityArray.class);
+		final TestEntityArray entity = new VPack.Builder().build().deserialize(vpack, TestEntityArray.class);
 		Assert.assertNotNull(entity);
 		{
 			Assert.assertEquals(3, entity.a1.length);
@@ -677,7 +672,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromEnum() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityEnum());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityEnum());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -696,7 +691,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityEnum entity = new VPack().deserialize(vpack, TestEntityEnum.class);
+		final TestEntityEnum entity = new VPack.Builder().build().deserialize(vpack, TestEntityEnum.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(TestEnum.B, entity.e1);
 	}
@@ -725,7 +720,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void fromObject() throws VPackException {
 		final TestEntityObject entity = new TestEntityObject();
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -825,7 +820,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityObject entity = new VPack().deserialize(vpack, TestEntityObject.class);
+		final TestEntityObject entity = new VPack.Builder().build().deserialize(vpack, TestEntityObject.class);
 		Assert.assertNotNull(entity);
 		{
 			Assert.assertEquals(5, entity.o1.l1);
@@ -872,7 +867,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromArrayInArray() throws VPackException {
 		final TestEntityArrayInArray entity = new TestEntityArrayInArray();
 		entity.a1 = new long[][] { { 1, 2, 3 }, { 4, 5, 6 } };
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -918,7 +913,8 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityArrayInArray entity = new VPack().deserialize(vpack, TestEntityArrayInArray.class);
+		final TestEntityArrayInArray entity = new VPack.Builder().build().deserialize(vpack,
+			TestEntityArrayInArray.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2, entity.a1.length);
 		{
@@ -952,7 +948,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromArrayInArrayInArray() throws VPackException {
 		final TestEntityArrayInArrayInArray entity = new TestEntityArrayInArrayInArray();
 		entity.setA1(new double[][][] { { { 1.5, 2.25 }, { 10.5, 20.25 } }, { { 100.5 }, { 200.25 } } });
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -1035,7 +1031,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityArrayInArrayInArray entity = new VPack().deserialize(vpack,
+		final TestEntityArrayInArrayInArray entity = new VPack.Builder().build().deserialize(vpack,
 			TestEntityArrayInArrayInArray.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals(2, entity.a1.length);
@@ -1094,7 +1090,7 @@ public class VPackSerializeDeserializeTest {
 			a1[1] = s;
 			entity.setA1(a1);
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -1126,7 +1122,8 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityObjectInArray entity = new VPack().deserialize(vpack, TestEntityObjectInArray.class);
+		final TestEntityObjectInArray entity = new VPack.Builder().build().deserialize(vpack,
+			TestEntityObjectInArray.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.a1);
 		Assert.assertEquals(1, entity.a1.length);
@@ -1161,7 +1158,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromInheritance() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityB());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityB());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(2, vpack.getLength());
@@ -1188,12 +1185,12 @@ public class VPackSerializeDeserializeTest {
 		}
 		final VPackSlice vpack = builder.slice();
 		{
-			final TestEntityA entity = new VPack().deserialize(vpack, TestEntityA.class);
+			final TestEntityA entity = new VPack.Builder().build().deserialize(vpack, TestEntityA.class);
 			Assert.assertNotNull(entity);
 			Assert.assertEquals("test", entity.getA());
 		}
 		{
-			final TestEntityB entity = new VPack().deserialize(vpack, TestEntityB.class);
+			final TestEntityB entity = new VPack.Builder().build().deserialize(vpack, TestEntityB.class);
 			Assert.assertNotNull(entity);
 			Assert.assertEquals("test", entity.getA());
 			Assert.assertEquals("test", entity.getB());
@@ -1236,7 +1233,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromInterface() throws VPackException {
 		final TestEntityC entity = new TestEntityC();
 		entity.setD(new TestEntityDImpl());
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -1259,13 +1256,13 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice slice = builder.slice();
-		final VPack vPack = new VPack();
-		vPack.regitserInstanceCreator(TestEntityD.class, new VPackInstanceCreator<TestEntityD>() {
-			@Override
-			public TestEntityD createInstance() {
-				return new TestEntityDImpl();
-			}
-		});
+		final VPack vPack = new VPack.Builder()
+				.regitserInstanceCreator(TestEntityD.class, new VPackInstanceCreator<TestEntityD>() {
+					@Override
+					public TestEntityD createInstance() {
+						return new TestEntityDImpl();
+					}
+				}).build();
 		final TestEntityC entity = vPack.deserialize(slice, TestEntityC.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.d);
@@ -1334,7 +1331,7 @@ public class VPackSerializeDeserializeTest {
 			entity.c4.add("test");
 			entity.c5.add("test");
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -1407,7 +1404,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityCollection entity = new VPack().deserialize(vpack, TestEntityCollection.class);
+		final TestEntityCollection entity = new VPack.Builder().build().deserialize(vpack, TestEntityCollection.class);
 		Assert.assertNotNull(entity);
 		{
 			checkCollection(entity.c1);
@@ -1460,7 +1457,7 @@ public class VPackSerializeDeserializeTest {
 			c2.add(new TestEntityArray());
 			entity.setC2(c2);
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -1519,7 +1516,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityCollectionWithObjects entity = new VPack().deserialize(vpack,
+		final TestEntityCollectionWithObjects entity = new VPack.Builder().build().deserialize(vpack,
 			TestEntityCollectionWithObjects.class);
 		Assert.assertNotNull(entity);
 		{
@@ -1585,7 +1582,7 @@ public class VPackSerializeDeserializeTest {
 			m3.put("a", s);
 			entity.setM3(m3);
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -1657,7 +1654,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
-		final TestEntityMap entity = new VPack().deserialize(vpack, TestEntityMap.class);
+		final TestEntityMap entity = new VPack.Builder().build().deserialize(vpack, TestEntityMap.class);
 		Assert.assertNotNull(entity);
 		{
 			Assert.assertNotNull(entity.m1);
@@ -1861,7 +1858,7 @@ public class VPackSerializeDeserializeTest {
 			m11.put(TestEnum.B, value);
 			entity.setM11(m11);
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		{
@@ -2014,7 +2011,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		builder.close();
-		final TestEntityMapStringableKey entity = new VPack().deserialize(builder.slice(),
+		final TestEntityMapStringableKey entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntityMapStringableKey.class);
 		{
 			Assert.assertEquals(2, entity.m1.size());
@@ -2119,7 +2116,7 @@ public class VPackSerializeDeserializeTest {
 			m2.put(new TestEntityLong(), "test");
 			entity.setM2(m2);
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertTrue(vpack.isObject());
 		{
 			final VPackSlice m1 = vpack.get("m1");
@@ -2210,7 +2207,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		builder.close();
-		final TestEntityMapWithObjectKey entity = new VPack().deserialize(builder.slice(),
+		final TestEntityMapWithObjectKey entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntityMapWithObjectKey.class);
 		Assert.assertNotNull(entity);
 		{
@@ -2238,7 +2235,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromEmptyObject() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityEmpty());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityEmpty());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(0, vpack.getLength());
@@ -2249,7 +2246,7 @@ public class VPackSerializeDeserializeTest {
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value(ValueType.OBJECT));
 		builder.close();
-		final TestEntityEmpty entity = new VPack().deserialize(builder.slice(), TestEntityEmpty.class);
+		final TestEntityEmpty entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityEmpty.class);
 		Assert.assertNotNull(entity);
 	}
 
@@ -2269,7 +2266,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromEmptyMap() throws VPackException {
 		final TestEntityEmptyMap entity = new TestEntityEmptyMap();
 		entity.setM(new HashMap<String, Object>());
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(1, vpack.getLength());
@@ -2285,7 +2282,8 @@ public class VPackSerializeDeserializeTest {
 		builder.add("m", new Value(ValueType.OBJECT));
 		builder.close();
 		builder.close();
-		final TestEntityEmptyMap entity = new VPack().deserialize(builder.slice(), TestEntityEmptyMap.class);
+		final TestEntityEmptyMap entity = new VPack.Builder().build().deserialize(builder.slice(),
+			TestEntityEmptyMap.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.m);
 		Assert.assertEquals(0, entity.m.size());
@@ -2342,7 +2340,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void fromObjectWithAttributeAdapter() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize(new TestEntityBaseAttributes());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityBaseAttributes());
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(5, vpack.getLength());
 		{
@@ -2384,7 +2382,7 @@ public class VPackSerializeDeserializeTest {
 			builder.add("_to", new Value("e"));
 			builder.close();
 		}
-		final TestEntityBaseAttributes entity = new VPack().deserialize(builder.slice(),
+		final TestEntityBaseAttributes entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntityBaseAttributes.class);
 		Assert.assertNotNull(entity);
 		Assert.assertEquals("a", entity._key);
@@ -2406,7 +2404,7 @@ public class VPackSerializeDeserializeTest {
 			m1.put("_to", "test5");
 			entity.setM1(m1);
 		}
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertTrue(vpack.isObject());
 		final VPackSlice m1 = vpack.get("m1");
 		Assert.assertTrue(m1.isObject());
@@ -2452,7 +2450,7 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 			builder.close();
 		}
-		final TestEntityMap entity = new VPack().deserialize(builder.slice(), TestEntityMap.class);
+		final TestEntityMap entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityMap.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.m1);
 		Assert.assertEquals(5, entity.m1.size());
@@ -2461,19 +2459,19 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void customSerializer() throws VPackException {
 		final String value = "abc";
-		final VPack vp = new VPack();
-		vp.registerSerializer(TestEntityString.class, new VPackSerializer<TestEntityString>() {
-			@Override
-			public void serialize(
-				final VPackBuilder builder,
-				final String attribute,
-				final TestEntityString entity,
-				final VPackSerializationContext context) throws VPackException {
-				builder.add(attribute, new Value(ValueType.OBJECT));
-				builder.add("not-s", new Value(entity.s));
-				builder.close();
-			}
-		});
+		final VPack vp = new VPack.Builder()
+				.registerSerializer(TestEntityString.class, new VPackSerializer<TestEntityString>() {
+					@Override
+					public void serialize(
+						final VPackBuilder builder,
+						final String attribute,
+						final TestEntityString entity,
+						final VPackSerializationContext context) throws VPackException {
+						builder.add(attribute, new Value(ValueType.OBJECT));
+						builder.add("not-s", new Value(entity.s));
+						builder.close();
+					}
+				}).build();
 		final TestEntityString entity = new TestEntityString();
 		entity.setS(value);
 		final VPackSlice vpack = vp.serialize(entity);
@@ -2493,19 +2491,20 @@ public class VPackSerializeDeserializeTest {
 		builder.add(new Value(ValueType.OBJECT));
 		builder.add("not-s", new Value(value));
 		builder.close();
-		final VPack vp = new VPack();
-		vp.registerDeserializer(TestEntityString.class, new VPackDeserializer<TestEntityString>() {
-			@Override
-			public TestEntityString deserialize(final VPackSlice vpack, final VPackDeserializationContext context)
-					throws VPackException {
-				final TestEntityString entity = new TestEntityString();
-				final VPackSlice nots = vpack.get("not-s");
-				if (nots.isString()) {
-					entity.s = nots.getAsString();
-				}
-				return entity;
-			}
-		});
+		final VPack vp = new VPack.Builder()
+				.registerDeserializer(TestEntityString.class, new VPackDeserializer<TestEntityString>() {
+					@Override
+					public TestEntityString deserialize(
+						final VPackSlice vpack,
+						final VPackDeserializationContext context) throws VPackException {
+						final TestEntityString entity = new TestEntityString();
+						final VPackSlice nots = vpack.get("not-s");
+						if (nots.isString()) {
+							entity.s = nots.getAsString();
+						}
+						return entity;
+					}
+				}).build();
 		final TestEntityString entity = vp.deserialize(builder.slice(), TestEntityString.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.s);
@@ -2514,19 +2513,19 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void customSerializerWithContext() throws VPackException {
-		final VPack vp = new VPack();
-		vp.registerSerializer(TestEntityObject.class, new VPackSerializer<TestEntityObject>() {
-			@Override
-			public void serialize(
-				final VPackBuilder builder,
-				final String attribute,
-				final TestEntityObject entity,
-				final VPackSerializationContext context) throws VPackException {
-				builder.add(attribute, new Value(ValueType.OBJECT));
-				context.serialize(builder, "test", entity.o1);
-				builder.close();
-			}
-		});
+		final VPack vp = new VPack.Builder()
+				.registerSerializer(TestEntityObject.class, new VPackSerializer<TestEntityObject>() {
+					@Override
+					public void serialize(
+						final VPackBuilder builder,
+						final String attribute,
+						final TestEntityObject entity,
+						final VPackSerializationContext context) throws VPackException {
+						builder.add(attribute, new Value(ValueType.OBJECT));
+						context.serialize(builder, "test", entity.o1);
+						builder.close();
+					}
+				}).build();
 		final TestEntityObject entity = new TestEntityObject();
 		final VPackSlice vpack = vp.serialize(entity);
 		Assert.assertNotNull(vpack);
@@ -2548,16 +2547,17 @@ public class VPackSerializeDeserializeTest {
 		builder.add("l1", new Value(5));
 		builder.close();
 		builder.close();
-		final VPack vp = new VPack();
-		vp.registerDeserializer(TestEntityObject.class, new VPackDeserializer<TestEntityObject>() {
-			@Override
-			public TestEntityObject deserialize(final VPackSlice vpack, final VPackDeserializationContext context)
-					throws VPackException {
-				final TestEntityObject entity = new TestEntityObject();
-				entity.o1 = context.deserialize(vpack.get("test"), TestEntityLong.class);
-				return entity;
-			}
-		});
+		final VPack vp = new VPack.Builder()
+				.registerDeserializer(TestEntityObject.class, new VPackDeserializer<TestEntityObject>() {
+					@Override
+					public TestEntityObject deserialize(
+						final VPackSlice vpack,
+						final VPackDeserializationContext context) throws VPackException {
+						final TestEntityObject entity = new TestEntityObject();
+						entity.o1 = context.deserialize(vpack.get("test"), TestEntityLong.class);
+						return entity;
+					}
+				}).build();
 		final TestEntityObject entity = vp.deserialize(builder.slice(), TestEntityObject.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.o1);
@@ -2582,7 +2582,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void fromSerializedName() throws VPackException {
 		final TestEntitySerializeAnnotation entity = new TestEntitySerializeAnnotation();
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(1, vpack.getLength());
 		final VPackSlice abc = vpack.get("abc");
@@ -2596,7 +2596,7 @@ public class VPackSerializeDeserializeTest {
 		builder.add(new Value(ValueType.OBJECT));
 		builder.add("abc", new Value("test2"));
 		builder.close();
-		final TestEntitySerializeAnnotation entity = new VPack().deserialize(builder.slice(),
+		final TestEntitySerializeAnnotation entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntitySerializeAnnotation.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.test);
@@ -2669,7 +2669,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromExpose() throws VPackException {
 		final TestEntityExpose entity = new TestEntityExpose();
 		entity.a = entity.b = entity.c = entity.d = entity.e = entity.f = "test";
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		Assert.assertTrue(vpack.isObject());
 		Assert.assertEquals(4, vpack.getLength());
 		{
@@ -2705,7 +2705,8 @@ public class VPackSerializeDeserializeTest {
 		builder.add("e", new Value("test"));
 		builder.add("f", new Value("test"));
 		builder.close();
-		final TestEntityExpose entity = new VPack().deserialize(builder.slice(), TestEntityExpose.class);
+		final TestEntityExpose entity = new VPack.Builder().build().deserialize(builder.slice(),
+			TestEntityExpose.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.a);
 		Assert.assertEquals("test", entity.a);
@@ -2725,7 +2726,7 @@ public class VPackSerializeDeserializeTest {
 		list.add(new TestEntityString());
 		list.add(new TestEntityString());
 
-		final VPackSlice vpack = new VPack().serialize(list, new Type<Collection<TestEntityString>>() {
+		final VPackSlice vpack = new VPack.Builder().build().serialize(list, new Type<Collection<TestEntityString>>() {
 		}.getType());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isArray());
@@ -2748,7 +2749,7 @@ public class VPackSerializeDeserializeTest {
 		builder.add("s", new Value("abc"));
 		builder.close();
 		builder.close();
-		final List<TestEntityString> list = new VPack().deserialize(builder.slice(),
+		final List<TestEntityString> list = new VPack.Builder().build().deserialize(builder.slice(),
 			new Type<List<TestEntityString>>() {
 			}.getType());
 		Assert.assertNotNull(list);
@@ -2763,7 +2764,7 @@ public class VPackSerializeDeserializeTest {
 		map.put("a", new TestEntityString());
 		map.put("b", new TestEntityString());
 
-		final VPackSlice vpack = new VPack().serialize(map, new Type<Map<String, TestEntityString>>() {
+		final VPackSlice vpack = new VPack.Builder().build().serialize(map, new Type<Map<String, TestEntityString>>() {
 		}.getType());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isObject());
@@ -2780,7 +2781,7 @@ public class VPackSerializeDeserializeTest {
 		builder.add("s", new Value("abc"));
 		builder.close();
 		builder.close();
-		final Map<String, TestEntityString> map = new VPack().deserialize(builder.slice(),
+		final Map<String, TestEntityString> map = new VPack.Builder().build().deserialize(builder.slice(),
 			new Type<Map<String, TestEntityString>>() {
 			}.getType());
 		Assert.assertNotNull(map);
@@ -2796,8 +2797,9 @@ public class VPackSerializeDeserializeTest {
 		map.put(new TestEntityString(), new TestEntityString());
 		map.put(new TestEntityString(), new TestEntityString());
 
-		final VPackSlice vpack = new VPack().serialize(map, new Type<Map<TestEntityString, TestEntityString>>() {
-		}.getType());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(map,
+			new Type<Map<TestEntityString, TestEntityString>>() {
+			}.getType());
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isArray());
 		Assert.assertEquals(map.size(), vpack.getLength());
@@ -2838,7 +2840,7 @@ public class VPackSerializeDeserializeTest {
 		builder.close();
 		builder.close();
 		builder.close();
-		final Map<TestEntityString, TestEntityString> map = new VPack().deserialize(builder.slice(),
+		final Map<TestEntityString, TestEntityString> map = new VPack.Builder().build().deserialize(builder.slice(),
 			new Type<Map<TestEntityString, TestEntityString>>() {
 			}.getType());
 		Assert.assertNotNull(map);
@@ -2851,8 +2853,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void dontSerializeNullValues() throws VPackException {
-		final VPack serializer = new VPack();
-		serializer.getOptions().setSerializeNullValues(false);
+		final VPack serializer = new VPack.Builder().serializeNullValues(false).build();
 		final TestEntityString entity = new TestEntityString();
 		entity.setS(null);
 		final VPackSlice vpack = serializer.serialize(entity);
@@ -2864,8 +2865,7 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void serializeNullValue() throws VPackException {
-		final VPack serializer = new VPack();
-		serializer.getOptions().setSerializeNullValues(true);
+		final VPack serializer = new VPack.Builder().serializeNullValues(true).build();
 		final TestEntityString entity = new TestEntityString();
 		entity.setS(null);
 		final VPackSlice vpack = serializer.serialize(entity);
@@ -2880,7 +2880,8 @@ public class VPackSerializeDeserializeTest {
 		builder.add(new Value(ValueType.OBJECT));
 		builder.add("s", new Value(ValueType.NULL));
 		builder.close();
-		final TestEntityString entity = new VPack().deserialize(builder.slice(), TestEntityString.class);
+		final TestEntityString entity = new VPack.Builder().build().deserialize(builder.slice(),
+			TestEntityString.class);
 		Assert.assertNotNull(entity);
 		Assert.assertNull(entity.s);
 		Assert.assertNotNull(entity.c1);
@@ -2892,7 +2893,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityString entity = new TestEntityString();
 		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("a", "test");
-		final VPackSlice vpack = new VPack().serialize(entity, additionalFields);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
 		Assert.assertEquals(4, vpack.getLength());
 		final VPackSlice s = vpack.get("s");
@@ -2908,7 +2909,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityString entity = new TestEntityString();
 		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("s", "test1");
-		final VPackSlice vpack = new VPack().serialize(entity, additionalFields);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
 		Assert.assertEquals(3, vpack.getLength());
 		final VPackSlice s = vpack.get("s");
@@ -2921,7 +2922,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityString entity = new TestEntityString();
 		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("a", null);
-		final VPackSlice vpack = new VPack().serialize(entity, additionalFields);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
 		Assert.assertEquals(3, vpack.getLength());
 		final VPackSlice s = vpack.get("s");
@@ -2934,8 +2935,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityString entity = new TestEntityString();
 		final Map<String, Object> additionalFields = new HashMap<>();
 		additionalFields.put("a", null);
-		final VPack serializer = new VPack();
-		serializer.getOptions().setSerializeNullValues(true);
+		final VPack serializer = new VPack.Builder().serializeNullValues(true).build();
 		final VPackSlice vpack = serializer.serialize(entity, additionalFields);
 		Assert.assertNotNull(vpack);
 		Assert.assertEquals(4, vpack.getLength());
@@ -2950,14 +2950,14 @@ public class VPackSerializeDeserializeTest {
 	public void toSimpleString() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value("test"));
-		final String s = new VPack().deserialize(builder.slice(), String.class);
+		final String s = new VPack.Builder().build().deserialize(builder.slice(), String.class);
 		Assert.assertNotNull(s);
 		Assert.assertEquals("test", s);
 	}
 
 	@Test
 	public void fromSimpleString() throws VPackException {
-		final VPackSlice vpack = new VPack().serialize("test");
+		final VPackSlice vpack = new VPack.Builder().build().serialize("test");
 		Assert.assertNotNull(vpack);
 		Assert.assertTrue(vpack.isString());
 		Assert.assertEquals("test", vpack.getAsString());
@@ -2971,7 +2971,7 @@ public class VPackSerializeDeserializeTest {
 	public void fromStringTypedEntity() throws VPackException {
 		final TestEntityTyped<String> entity = new TestEntityTyped<>();
 		entity.e = "test";
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		assertThat(vpack, is(notNullValue()));
 		assertThat(vpack.isObject(), is(true));
 		final VPackSlice e = vpack.get("e");
@@ -2985,7 +2985,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityTyped<TestEntityString> entity = new TestEntityTyped<>();
 		entity.e = new TestEntityString();
 		entity.e.s = "test2";
-		final VPackSlice vpack = new VPack().serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
 		assertThat(vpack, is(notNullValue()));
 		assertThat(vpack.isObject(), is(true));
 		final VPackSlice e = vpack.get("e");
@@ -3002,7 +3002,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityTyped<TestEntityTyped<String>> entity = new TestEntityTyped<>();
 		entity.e = new TestEntityTyped<>();
 		entity.e.e = "test";
-		final VPackSlice vpack = new VPack().serialize(entity,
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity,
 			new Type<TestEntityTyped<TestEntityTyped<String>>>() {
 			}.getType());
 		assertThat(vpack, is(notNullValue()));
