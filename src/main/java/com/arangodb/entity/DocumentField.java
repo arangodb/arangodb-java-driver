@@ -14,7 +14,17 @@ import java.lang.annotation.Target;
 public @interface DocumentField {
 
 	public static enum Type {
-		ID, KEY, REV;
+		ID("_id"), KEY("_key"), REV("_rev"), FROM("_from"), TO("_to");
+
+		private final String serializeName;
+
+		private Type(final String serializeName) {
+			this.serializeName = serializeName;
+		}
+
+		public String getSerializeName() {
+			return serializeName;
+		}
 	}
 
 	Type value();
