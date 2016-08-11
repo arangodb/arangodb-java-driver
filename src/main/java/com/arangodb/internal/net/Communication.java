@@ -92,7 +92,7 @@ public class Communication {
 		final CompletableFuture<Response> rfuture = new CompletableFuture<>();
 		try {
 			final long id = mId.incrementAndGet();
-			final VPackSlice body = request.getBody().isPresent() ? vpack.serialize(request.getBody().get()) : null;
+			final VPackSlice body = request.getBody().isPresent() ? request.getBody().get() : null;
 			final Message message = new Message(id, vpack.serialize(request), body);
 			send(message).whenComplete((m, ex) -> {
 				if (m != null) {
