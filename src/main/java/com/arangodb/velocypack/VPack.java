@@ -489,8 +489,10 @@ public class VPack {
 				builder.add(name, new Value(ValueType.OBJECT));
 				final Set<Entry<?, ?>> entrySet = map.entrySet();
 				for (final Entry<?, ?> entry : entrySet) {
-					addValue(keyMapAdapter.serialize(entry.getKey()), entry.getValue().getClass(), entry.getValue(),
-						builder, null, additionalFields);
+					final Object entryValue = entry.getValue();
+					addValue(keyMapAdapter.serialize(entry.getKey()),
+						entryValue != null ? entryValue.getClass() : Object.class, entry.getValue(), builder, null,
+						additionalFields);
 				}
 				builder.close();
 			} else {
