@@ -273,7 +273,7 @@ public class VPackSlice {
 	}
 
 	private int getLongStringLength() {
-		return (int) NumberUtil.toLongReversed(vpack, start + 1, 8);
+		return (int) NumberUtil.toLong(vpack, start + 1, 8);
 	}
 
 	private int getStringLength() {
@@ -319,16 +319,16 @@ public class VPackSlice {
 				length = NumberUtil.readVariableValueLength(vpack, (int) (start + end - 1), true);
 			} else {
 				final int offsetsize = ObjectArrayUtil.getOffsetSize(head);
-				final long end = NumberUtil.toLongReversed(vpack, start + 1, offsetsize);
+				final long end = NumberUtil.toLong(vpack, start + 1, offsetsize);
 				if (head <= 0x05) {
 					// array with no offset table or length
 					final int dataOffset = findDataOffset();
 					final VPackSlice first = new VPackSlice(vpack, start + dataOffset);
 					length = (end - dataOffset) / first.getByteSize();
 				} else if (offsetsize < 8) {
-					length = NumberUtil.toLongReversed(vpack, start + 1 + offsetsize, offsetsize);
+					length = NumberUtil.toLong(vpack, start + 1 + offsetsize, offsetsize);
 				} else {
-					length = NumberUtil.toLongReversed(vpack, (int) (start + end - offsetsize), offsetsize);
+					length = NumberUtil.toLong(vpack, (int) (start + end - offsetsize), offsetsize);
 				}
 			}
 		}
@@ -371,7 +371,7 @@ public class VPackSlice {
 					// compact Array or Object
 					size = NumberUtil.readVariableValueLength(vpack, start + 1, false);
 				} else /* if (head <= 0x14) */ {
-					size = NumberUtil.toLongReversed(vpack, start + 1, ObjectArrayUtil.getOffsetSize(head));
+					size = NumberUtil.toLong(vpack, start + 1, ObjectArrayUtil.getOffsetSize(head));
 				}
 				break;
 			case STRING:
@@ -432,12 +432,12 @@ public class VPackSlice {
 			result = getFromCompactObject(attribute);
 		} else {
 			final int offsetsize = ObjectArrayUtil.getOffsetSize(head);
-			final long end = NumberUtil.toLongReversed(vpack, start + 1, offsetsize);
+			final long end = NumberUtil.toLong(vpack, start + 1, offsetsize);
 			final long n;
 			if (offsetsize < 8) {
-				n = NumberUtil.toLongReversed(vpack, start + 1 + offsetsize, offsetsize);
+				n = NumberUtil.toLong(vpack, start + 1 + offsetsize, offsetsize);
 			} else {
-				n = NumberUtil.toLongReversed(vpack, (int) (start + end - offsetsize), offsetsize);
+				n = NumberUtil.toLong(vpack, (int) (start + end - offsetsize), offsetsize);
 			}
 			if (n == 1) {
 				// Just one attribute, there is no index table!
@@ -534,7 +534,7 @@ public class VPackSlice {
 			// midpoint
 			final long index = l + ((r - l) / 2);
 			final long offset = ieBase + index * offsetsize;
-			final long keyIndex = NumberUtil.toLongReversed(vpack, (int) (start + offset), offsetsize);
+			final long keyIndex = NumberUtil.toLong(vpack, (int) (start + offset), offsetsize);
 			final VPackSlice key = new VPackSlice(vpack, (int) (start + keyIndex));
 			int res = 0;
 			if (key.isString()) {
@@ -583,7 +583,7 @@ public class VPackSlice {
 		VPackSlice result = new VPackSlice();
 		for (long index = 0; index < n; index++) {
 			final long offset = ieBase + index * offsetsize;
-			final long keyIndex = NumberUtil.toLongReversed(vpack, (int) (start + offset), offsetsize);
+			final long keyIndex = NumberUtil.toLong(vpack, (int) (start + offset), offsetsize);
 			final VPackSlice key = new VPackSlice(vpack, (int) (start + keyIndex));
 			if (key.isString()) {
 				if (!key.isEqualString(attribute)) {
@@ -650,16 +650,16 @@ public class VPackSlice {
 		} else {
 			final long n;
 			final int offsetsize = ObjectArrayUtil.getOffsetSize(head);
-			final long end = NumberUtil.toLongReversed(vpack, start + 1, offsetsize);
+			final long end = NumberUtil.toLong(vpack, start + 1, offsetsize);
 			int dataOffset = findDataOffset();
 			if (head <= 0x05) {
 				// array with no offset table or length
 				final VPackSlice first = new VPackSlice(vpack, start + dataOffset);
 				n = (end - dataOffset) / first.getByteSize();
 			} else if (offsetsize < 8) {
-				n = NumberUtil.toLongReversed(vpack, start + 1 + offsetsize, offsetsize);
+				n = NumberUtil.toLong(vpack, start + 1 + offsetsize, offsetsize);
 			} else {
-				n = NumberUtil.toLongReversed(vpack, (int) (start + end - offsetsize), offsetsize);
+				n = NumberUtil.toLong(vpack, (int) (start + end - offsetsize), offsetsize);
 			}
 			if (index >= n) {
 				throw new IndexOutOfBoundsException();
@@ -674,7 +674,7 @@ public class VPackSlice {
 				offset = dataOffset + index * new VPackSlice(vpack, start + dataOffset).getByteSize();
 			} else {
 				final long ieBase = end - n * offsetsize + index * offsetsize - (offsetsize == 8 ? 8 : 0);
-				offset = (int) NumberUtil.toLongReversed(vpack, (int) (start + ieBase), offsetsize);
+				offset = (int) NumberUtil.toLong(vpack, (int) (start + ieBase), offsetsize);
 			}
 		}
 		return offset;

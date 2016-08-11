@@ -65,8 +65,8 @@ public class VPackBuilder {
 		this.options = options;
 		size = 0;
 		buffer = new byte[10];
-		stack = new ArrayList<Integer>();
-		index = new HashMap<Integer, List<Integer>>();
+		stack = new ArrayList<>();
+		index = new HashMap<>();
 	}
 
 	public BuilderOptions getOptions() {
@@ -337,13 +337,6 @@ public class VPackBuilder {
 
 	private void append(final long value, final int length) {
 		final long l = value;
-		for (int i = 0; i < length; i++) {
-			add((byte) (l >> (length - i - 1 << 3)));
-		}
-	}
-
-	private void appendReversed(final long value, final int length) {
-		final long l = value;
 		for (int i = length - 1; i >= 0; i--) {
 			add((byte) (l >> (length - i - 1 << 3)));
 		}
@@ -351,7 +344,7 @@ public class VPackBuilder {
 
 	private void append(final BigInteger value, final int length) {
 		final BigInteger l = value;
-		for (int i = 0; i < length; ++i) {
+		for (int i = length - 1; i >= 0; i--) {
 			add(l.shiftRight(length - i - 1 << 3).byteValue());
 		}
 	}
@@ -405,7 +398,7 @@ public class VPackBuilder {
 	}
 
 	private void appendLength(final long length) {
-		appendReversed(length, LONG_BYTES);
+		append(length, LONG_BYTES);
 	}
 
 	private void reportAdd() {
@@ -722,7 +715,7 @@ public class VPackBuilder {
 
 	private void sortObjectIndex(final int start, final List<Integer> offsets)
 			throws VPackKeyTypeException, VPackNeedAttributeTranslatorException {
-		final List<VPackBuilder.SortEntry> attributes = new ArrayList<VPackBuilder.SortEntry>();
+		final List<VPackBuilder.SortEntry> attributes = new ArrayList<>();
 		for (final Integer offset : offsets) {
 			attributes.add(new SortEntry(new VPackSlice(buffer, start + offset).makeKey(), offset));
 		}

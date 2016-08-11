@@ -424,12 +424,12 @@ public class VPackSliceTest {
 	@Test
 	public void getDouble() throws VPackException {
 		{
-			final byte[] vpack = { 0x1b, 64, 96, -74, 102, 102, 102, 102, 102 };
+			final byte[] vpack = { 0x1b, 0x66, 0x66, 0x66, 0x66, 0x66, (byte) 0xb6, 0x60, 0x40 };
 			final VPackSlice slice = new VPackSlice(vpack);
 			Assert.assertEquals(133.7, slice.getAsDouble(), 0.);
 		}
 		{
-			final byte[] vpack = { 0x1b, -64, 96, -74, 102, 102, 102, 102, 102 };
+			final byte[] vpack = { 0x1b, 0x66, 0x66, 0x66, 0x66, 0x66, (byte) 0xb6, 0x60, (byte) 0xc0 };
 			final VPackSlice slice = new VPackSlice(vpack);
 			Assert.assertEquals(-133.7, slice.getAsDouble(), 0.);
 		}
@@ -438,12 +438,12 @@ public class VPackSliceTest {
 	@Test
 	public void getDoubleAsNumber() throws VPackException {
 		{
-			final byte[] vpack = { 0x1b, 64, 96, -74, 102, 102, 102, 102, 102 };
+			final byte[] vpack = { 0x1b, 0x66, 0x66, 0x66, 0x66, 0x66, (byte) 0xb6, 0x60, 0x40 };
 			final VPackSlice slice = new VPackSlice(vpack);
 			Assert.assertEquals(133.7, slice.getAsNumber());
 		}
 		{
-			final byte[] vpack = { 0x1b, -64, 96, -74, 102, 102, 102, 102, 102 };
+			final byte[] vpack = { 0x1b, 0x66, 0x66, 0x66, 0x66, 0x66, (byte) 0xb6, 0x60, (byte) 0xc0 };
 			final VPackSlice slice = new VPackSlice(vpack);
 			Assert.assertEquals(-133.7, slice.getAsNumber());
 		}
@@ -488,9 +488,9 @@ public class VPackSliceTest {
 
 	@Test
 	public void getInt() throws VPackException {
-		checkInt(Short.MAX_VALUE, new byte[] { 0x21, 127, -1 });
-		checkInt(Integer.MAX_VALUE, new byte[] { 0x23, 127, -1, -1, -1 });
-		checkInt(Long.MAX_VALUE, new byte[] { 0x27, 127, -1, -1, -1, -1, -1, -1, -1 });
+		checkInt(Short.MAX_VALUE, new byte[] { 0x29, (byte) 0xff, 0x7f });
+		checkInt(Integer.MAX_VALUE, new byte[] { 0x2b, (byte) 0xff, (byte) 0xff, (byte) 0xff, 0x7f });
+		checkInt(Long.MAX_VALUE, new byte[] { 0x27, -1, -1, -1, -1, -1, -1, -1, 127 });
 	}
 
 	private void checkInt(final long expextedValue, final byte[] vpack) throws VPackException {
@@ -500,18 +500,18 @@ public class VPackSliceTest {
 
 	@Test
 	public void getUInt() throws VPackException {
-		checkUInt(Short.MAX_VALUE, new byte[] { 0x29, 127, -1 });
-		checkUInt(Integer.MAX_VALUE, new byte[] { 0x2b, 127, -1, -1, -1 });
-		checkUInt(Long.MAX_VALUE, new byte[] { 0x2f, 127, -1, -1, -1, -1, -1, -1, -1 });
+		checkUInt(Short.MAX_VALUE, new byte[] { 0x29, -1, 127 });
+		checkUInt(Integer.MAX_VALUE, new byte[] { 0x2b, -1, -1, -1, 127 });
+		checkUInt(Long.MAX_VALUE, new byte[] { 0x2f, -1, -1, -1, -1, -1, -1, -1, 127 });
 	}
 
 	@Test
 	public void getUIntAsBigInteger() throws VPackException {
-		checkUIntAsBigInteger(new BigInteger(String.valueOf(Short.MAX_VALUE)), new byte[] { 0x29, 127, -1 });
-		checkUIntAsBigInteger(new BigInteger(String.valueOf(Integer.MAX_VALUE)), new byte[] { 0x2b, 127, -1, -1, -1 });
+		checkUIntAsBigInteger(new BigInteger(String.valueOf(Short.MAX_VALUE)), new byte[] { 0x29, -1, 127 });
+		checkUIntAsBigInteger(new BigInteger(String.valueOf(Integer.MAX_VALUE)), new byte[] { 0x2b, -1, -1, -1, 127 });
 		final BigInteger longMax = new BigInteger(String.valueOf(Long.MAX_VALUE));
-		checkUIntAsBigInteger(longMax, new byte[] { 0x2f, 127, -1, -1, -1, -1, -1, -1, -1 });
-		checkUIntAsBigInteger(longMax.add(longMax), new byte[] { 0x2f, -1, -1, -1, -1, -1, -1, -1, -2 });
+		checkUIntAsBigInteger(longMax, new byte[] { 0x2f, -1, -1, -1, -1, -1, -1, -1, 127 });
+		checkUIntAsBigInteger(longMax.add(longMax), new byte[] { 0x2f, -2, -1, -1, -1, -1, -1, -1, -1 });
 	}
 
 	private void checkUInt(final long expecteds, final byte[] vpack) throws VPackException {
@@ -532,7 +532,7 @@ public class VPackSliceTest {
 
 	@Test
 	public void getDate() throws VPackException {
-		final byte[] vpack = { 0x1c, 0, 0, 0, -114, 5, 115, 83, 0 };
+		final byte[] vpack = { 0x1c, 0, 83, 115, 5, -114, 0, 0, 0, };
 		final VPackSlice slice = new VPackSlice(vpack);
 		Assert.assertEquals(new Date(609976800000l), slice.getAsDate());
 	}
@@ -650,13 +650,13 @@ public class VPackSliceTest {
 	public void getBinary() throws VPackException {
 		final byte[] expected = new byte[] { 49, 50, 51, 52, 53, 54, 55, 56, 57 };
 		checkBinary(expected, new byte[] { (byte) 0xc0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc1, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc2, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc3, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc4, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc5, 0, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc6, 0, 0, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc7, 0, 0, 0, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc1, 9, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc2, 9, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc3, 9, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc4, 9, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc5, 9, 0, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc6, 9, 0, 0, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc7, 9, 0, 0, 0, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
 	}
 
 	private void checkBinary(final byte[] expected, final byte[] vpack) throws VPackException {
@@ -669,13 +669,13 @@ public class VPackSliceTest {
 	public void getBinaryLength() throws VPackException {
 		final int expected = 9;
 		checkBinary(expected, new byte[] { (byte) 0xc0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc1, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc2, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc3, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc4, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc5, 0, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc6, 0, 0, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
-		checkBinary(expected, new byte[] { (byte) 0xc7, 0, 0, 0, 0, 0, 0, 0, 9, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc1, 9, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc2, 9, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc3, 9, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc4, 9, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc5, 9, 0, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc6, 9, 0, 0, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
+		checkBinary(expected, new byte[] { (byte) 0xc7, 9, 0, 0, 0, 0, 0, 0, 0, 49, 50, 51, 52, 53, 54, 55, 56, 57 });
 	}
 
 	private void checkBinary(final int expected, final byte[] vpack) throws VPackException {

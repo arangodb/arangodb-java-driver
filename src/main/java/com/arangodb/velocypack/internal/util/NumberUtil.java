@@ -20,15 +20,6 @@ public class NumberUtil {
 
 	public static long toLong(final byte[] array, final int offset, final int length) {
 		long result = 0;
-		for (int i = offset; i < (offset + length); i++) {
-			result <<= 8;
-			result |= (array[i] & 0xFF);
-		}
-		return result;
-	}
-
-	public static long toLongReversed(final byte[] array, final int offset, final int length) {
-		long result = 0;
 		for (int i = (offset + length - 1); i >= offset; i--) {
 			result <<= 8;
 			result |= (array[i] & 0xFF);
@@ -38,7 +29,7 @@ public class NumberUtil {
 
 	public static BigInteger toBigInteger(final byte[] array, final int offset, final int length) {
 		BigInteger result = new BigInteger(1, new byte[] {});
-		for (int i = offset; i < (offset + length); i++) {
+		for (int i = (offset + length - 1); i >= offset; i--) {
 			result = result.shiftLeft(8);
 			result = result.or(BigInteger.valueOf(array[i] & 0xFF));
 		}
@@ -67,8 +58,7 @@ public class NumberUtil {
 	}
 
 	/**
-	 * calculate the length of a variable length integer in unsigned LEB128
-	 * format
+	 * calculate the length of a variable length integer in unsigned LEB128 format
 	 */
 	public static long getVariableValueLength(final long value) {
 		long len = 1;
