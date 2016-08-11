@@ -1,8 +1,7 @@
 package com.arangodb.internal.net;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -144,28 +143,27 @@ public class Communication {
 
 	private Collection<Chunk> buildChunks(final Message message) throws IOException {
 		final Collection<Chunk> chunks = new ArrayList<>();
-		final Collection<VPackSlice> vpacks = new ArrayList<>();
-		vpacks.add(message.getHead());
+
+		final VPackSlice head = message.getHead();
+		final int headByteSize = head.getByteSize();
+		int size = headByteSize;
 		final Optional<VPackSlice> body = message.getBody();
 		if (body.isPresent()) {
-			vpacks.add(body.get());
+			size += body.get().getByteSize();
 		}
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		int size = 0;
-		for (final VPackSlice vpack : vpacks) {
-			final int byteSize = vpack.getByteSize();
-			out.write(vpack.getVpack(), vpack.getStart(), byteSize);
-			size += byteSize;
+		final ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+		byteBuffer.put(head.getVpack(), head.getStart(), headByteSize);
+		if (body.isPresent()) {
+			byteBuffer.put(body.get().getVpack(), body.get().getStart(), body.get().getByteSize());
 		}
-		out.close();
-		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		byteBuffer.rewind();
+
 		final int n = size / Chunk.MAX_CHUNK_BODY_SIZE;
 		final int numberOfChunks = (size % Chunk.MAX_CHUNK_BODY_SIZE != 0) ? (n + 1) : n;
-		for (int pos = 0, i = 0; size > 0; pos += Chunk.MAX_CHUNK_BODY_SIZE, i++) {
+		for (int i = 0; size > 0; i++) {
 			final int len = Math.min(Chunk.MAX_CHUNK_BODY_SIZE, size);
 			final byte[] buffer = new byte[len];
-			in.read(buffer, pos, len);
-			size -= len;
+			byteBuffer.get(buffer);
 			final Chunk chunk;
 			if (i == 0 && numberOfChunks > 1) {
 				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer,
@@ -173,9 +171,9 @@ public class Communication {
 			} else {
 				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer, len + Chunk.CHUNK_MIN_HEADER_SIZE, -1L);
 			}
+			size -= len;
 			chunks.add(chunk);
 		}
-		in.close();
 		return chunks;
 	}
 

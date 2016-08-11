@@ -2,7 +2,6 @@ package com.arangodb.internal.net.velocystream;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
 import java.util.Optional;
 
 import com.arangodb.velocypack.VPackSlice;
@@ -17,26 +16,15 @@ public class Message {
 	private final VPackSlice head;
 	private final Optional<VPackSlice> body;
 
-	public Message(final long id, final Collection<Chunk> chunks)
+	public Message(final long id, final ByteBuffer chunkBuffer)
 			throws BufferUnderflowException, IndexOutOfBoundsException {
 		super();
 		this.id = id;
-		final int capacity = chunks.stream().mapToInt(chunk -> chunk.getContent().length).sum();
-		final ByteBuffer buffer = ByteBuffer.allocate(capacity);
-		chunks.stream().forEach(chunk -> buffer.put(chunk.getContent()));
-
-		final byte[] array = buffer.array();
-		final VPackSlice slice = new VPackSlice(array);
-
-		final byte[] headBuf = new byte[slice.getByteSize()];
-		buffer.rewind();
-		buffer.get(headBuf);
-		head = new VPackSlice(headBuf);
-
-		if (array.length > headBuf.length) {
-			final byte[] bodyBuf = new byte[array.length - headBuf.length];
-			buffer.get(bodyBuf);
-			body = Optional.of(new VPackSlice(bodyBuf));
+		final byte[] array = chunkBuffer.array();
+		head = new VPackSlice(array);
+		final int headSize = head.getByteSize();
+		if (array.length > headSize) {
+			body = Optional.of(new VPackSlice(array, headSize));
 		} else {
 			body = Optional.empty();
 		}

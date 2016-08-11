@@ -10,7 +10,7 @@ import java.nio.ByteOrder;
  */
 public class Chunk {
 
-	public static final int MAX_CHUNK_BODY_SIZE = 1024;
+	public static final int MAX_CHUNK_BODY_SIZE = 50;
 	public static final int CHUNK_MIN_HEADER_SIZE = Integer.BYTES + Integer.BYTES + Long.BYTES;
 
 	private final int length;
@@ -56,7 +56,7 @@ public class Chunk {
 		return messageId;
 	}
 
-	public Long getMessageLength() {
+	public long getMessageLength() {
 		return messageLength;
 	}
 

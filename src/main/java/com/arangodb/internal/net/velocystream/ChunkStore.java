@@ -1,11 +1,9 @@
 package com.arangodb.internal.net.velocystream;
 
 import java.nio.BufferUnderflowException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -14,7 +12,7 @@ import java.util.Optional;
 public class ChunkStore {
 
 	private final MessageStore messageStore;
-	private final Map<Long, Collection<Chunk>> data;
+	private final Map<Long, ByteBuffer> data;
 
 	public ChunkStore(final MessageStore messageStore) {
 		super();
@@ -24,24 +22,26 @@ public class ChunkStore {
 
 	public void storeChunk(final Chunk chunk) throws BufferUnderflowException, IndexOutOfBoundsException {
 		final long messageId = chunk.getMessageId();
-		Collection<Chunk> chunks = data.get(messageId);
-		if (chunks == null) {
-			chunks = new ArrayList<>();
-			data.put(messageId, chunks);
+		ByteBuffer chunkBuffer = data.get(messageId);
+		if (chunkBuffer == null) {
+			if (!chunk.isFirstChunk()) {
+				messageStore.cancel(messageId);
+				return;
+			}
+			final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength()
+					: chunk.getContent().length);
+			chunkBuffer = ByteBuffer.allocate(length);
+			data.put(messageId, chunkBuffer);
 		}
-		chunks.add(chunk);
-		checkCompleteness(messageId, chunks);
+		chunkBuffer.put(chunk.getContent());
+		checkCompleteness(messageId, chunkBuffer);
 	}
 
-	private void checkCompleteness(final long messageId, final Collection<Chunk> chunks)
+	private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
 			throws BufferUnderflowException, IndexOutOfBoundsException {
-		final Optional<Chunk> first = chunks.stream().findFirst();
-		if (first.isPresent()) {
-			final int numChunks = first.get().getChunk();
-			if (numChunks == chunks.size()) {
-				messageStore.consume(new Message(messageId, chunks));
-				data.remove(messageId);
-			}
+		if (chunkBuffer.position() == chunkBuffer.limit()) {
+			messageStore.consume(new Message(messageId, chunkBuffer));
+			data.remove(messageId);
 		}
 	}
 

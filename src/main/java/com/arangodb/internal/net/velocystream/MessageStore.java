@@ -37,6 +37,14 @@ public class MessageStore {
 		}
 	}
 
+	public void cancel(final long messageId) {
+		final CompletableFuture<Message> future = data.remove(messageId);
+		if (future != null) {
+			LOGGER.error(String.format("Cancel Message unexpected (id=%s).", messageId));
+			future.cancel(true);
+		}
+	}
+
 	public void clear(final Exception e) {
 		if (!data.isEmpty()) {
 			LOGGER.error(e.getMessage(), e);
