@@ -4,6 +4,9 @@ import java.text.DateFormat;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.arangodb.velocypack.exception.VPackKeyTypeException;
+import com.arangodb.velocypack.exception.VPackNeedAttributeTranslatorException;
+
 /**
  * @author Mark - mark@arangodb.com
  *
@@ -36,7 +39,7 @@ public class VPackParser {
 		final VPackSlice value,
 		final StringBuilder json,
 		final boolean includeNullValue) {
-		if (attribute != null && attribute.isString()) {
+		if (attribute != null) {
 			appendField(attribute, json);
 		}
 		if (value.isObject()) {
@@ -62,7 +65,11 @@ public class VPackParser {
 
 	private static void appendField(final VPackSlice attribute, final StringBuilder json) {
 		json.append(STRING);
-		json.append(attribute.getAsString());
+		try {
+			json.append(attribute.makeKey().getAsString());
+		} catch (VPackKeyTypeException | VPackNeedAttributeTranslatorException e) {
+			json.append(attribute.getAsString());
+		}
 		json.append(STRING);
 		json.append(FIELD);
 	}
