@@ -158,9 +158,20 @@ public class Connection {
 	}
 
 	private Chunk read() throws IOException, BufferUnderflowException {
-		final ByteBuffer head = readBytes(4);
-		final int len = head.getInt();
-		final Chunk chunk = new Chunk(len, readBytes(len - 4));
+		final int length = readBytes(4).getInt();
+		final int chunkX = readBytes(4).getInt();
+		final long messageId = readBytes(8).getLong();
+		final long messageLength;
+		final byte[] content;
+		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
+			messageLength = readBytes(8).getLong();
+			content = new byte[length - Chunk.CHUNK_MIN_HEADER_SIZE - Long.BYTES];
+		} else {
+			messageLength = -1L;
+			content = new byte[length - Chunk.CHUNK_MIN_HEADER_SIZE];
+		}
+		readBytes(content.length).get(content);
+		final Chunk chunk = new Chunk(messageId, chunkX, content, length, messageLength);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(),
 				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));

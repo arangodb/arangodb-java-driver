@@ -1,6 +1,5 @@
 package com.arangodb.internal.net.velocystream;
 
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -19,18 +18,14 @@ public class Chunk {
 	private final int chunkX;
 	private final byte[] content;
 
-	public Chunk(final int length, final ByteBuffer data) throws BufferUnderflowException {
+	public Chunk(final long messageId, final int chunkX, final byte[] content, final int length,
+		final long messageLength) {
+		this.messageId = messageId;
+		this.chunkX = chunkX;
+		this.content = content;
 		this.length = length;
-		chunkX = data.getInt();
-		messageId = data.getLong();
-		if (isFirstChunk() && getChunk() > 1) {
-			messageLength = data.getLong();
-			content = new byte[length - CHUNK_MIN_HEADER_SIZE - Long.BYTES];
-		} else {
-			messageLength = -1L;
-			content = new byte[length - CHUNK_MIN_HEADER_SIZE];
-		}
-		data.get(content);
+		this.messageLength = messageLength;
+
 	}
 
 	public Chunk(final long messageId, final int chunkIndex, final int numberOfChunks, final byte[] content,
