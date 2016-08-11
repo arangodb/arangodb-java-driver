@@ -67,6 +67,10 @@ public class Executeable<T> {
 		try {
 			return executeAsync().get();
 		} catch (InterruptedException | ExecutionException | CancellationException e) {
+			final Throwable cause = e.getCause();
+			if (cause != null && ArangoDBException.class.isAssignableFrom(cause.getClass())) {
+				throw ArangoDBException.class.cast(cause);
+			}
 			throw new ArangoDBException(e);
 		}
 	}
