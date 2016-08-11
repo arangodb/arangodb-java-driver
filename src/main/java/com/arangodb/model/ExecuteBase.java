@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
@@ -19,7 +20,7 @@ import com.arangodb.velocypack.exception.VPackParserException;
  */
 public abstract class ExecuteBase {
 
-	private static final String REGEX_DB_NAME = "[a-zA-Z][\\w-]*";
+	private static final String REGEX_DB_NAME = ArangoDBConstants.SYSTEM + "|[a-zA-Z][\\w-]*";
 	private static final String REGEX_COLLECTION_NAME = "[a-zA-Z_][\\w-]*";
 	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
 

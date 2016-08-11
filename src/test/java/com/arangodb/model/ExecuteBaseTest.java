@@ -37,6 +37,11 @@ public class ExecuteBaseTest {
 		checkDBName("");
 	}
 
+	@Test
+	public void validateDBNameSystem() {
+		checkDBName("_system");
+	}
+
 	private void checkDBName(final String name) throws ArangoDBException {
 		final ExecuteBase executeBase = new ExecuteBase(null, null, null) {
 		};
