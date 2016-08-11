@@ -58,13 +58,14 @@ public class DocumentCache {
 
 	private Map<DocumentField.Type, Field> createFields(final Class<?> clazz) {
 		final Map<DocumentField.Type, Field> fields = new HashMap<>();
-		final Class<?> tmp = clazz;
+		Class<?> tmp = clazz;
 		final Collection<DocumentField.Type> values = new ArrayList<>(Arrays.asList(DocumentField.Type.values()));
 		while (tmp != null && tmp != Object.class && values.size() > 0) {
 			final Field[] declaredFields = tmp.getDeclaredFields();
 			for (int i = 0; i < declaredFields.length && values.size() > 0; i++) {
 				findAnnotation(values, fields, declaredFields[i]);
 			}
+			tmp = tmp.getSuperclass();
 		}
 		return fields;
 	}
