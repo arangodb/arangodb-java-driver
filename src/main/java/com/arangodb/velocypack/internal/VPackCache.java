@@ -13,9 +13,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.arangodb.velocypack.VPackFieldNamingStrategy;
 import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
 
@@ -62,8 +64,9 @@ public class VPackCache {
 
 	private final Map<Type, Map<String, FieldInfo>> cache;
 	private final Comparator<Entry<String, FieldInfo>> fieldComparator;
+	private final Optional<VPackFieldNamingStrategy> fieldNamingStrategy;
 
-	public VPackCache() {
+	public VPackCache(final VPackFieldNamingStrategy fieldNamingStrategy) {
 		super();
 		cache = new ConcurrentHashMap<>();
 		fieldComparator = new Comparator<Map.Entry<String, FieldInfo>>() {
@@ -72,6 +75,7 @@ public class VPackCache {
 				return o1.getKey().compareTo(o2.getKey());
 			}
 		};
+		this.fieldNamingStrategy = Optional.ofNullable(fieldNamingStrategy);
 	}
 
 	public Map<String, FieldInfo> getFields(final Type entityClass) {
@@ -109,8 +113,14 @@ public class VPackCache {
 	}
 
 	private FieldInfo createFieldInfo(final Field field) {
+		String fieldName = field.getName();
+		if (fieldNamingStrategy.isPresent()) {
+			fieldName = fieldNamingStrategy.get().translateName(field);
+		}
 		final SerializedName annotationName = field.getAnnotation(SerializedName.class);
-		final String fieldName = annotationName != null ? annotationName.value() : field.getName();
+		if (annotationName != null) {
+			fieldName = annotationName.value();
+		}
 		final Expose expose = field.getAnnotation(Expose.class);
 		final boolean serialize = expose != null ? expose.serialize() : true;
 		final boolean deserialize = expose != null ? expose.deserialize() : true;

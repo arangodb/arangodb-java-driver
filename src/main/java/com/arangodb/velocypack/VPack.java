@@ -52,6 +52,7 @@ public class VPack {
 		private final Map<Type, VPackInstanceCreator<?>> instanceCreators;
 		private final BuilderOptions builderOptions;
 		private boolean serializeNullValues;
+		private VPackFieldNamingStrategy fieldNamingStrategy;
 
 		public Builder() {
 			super();
@@ -135,15 +136,21 @@ public class VPack {
 			return this;
 		}
 
+		public VPack.Builder fieldNamingStrategy(final VPackFieldNamingStrategy fieldNamingStrategy) {
+			this.fieldNamingStrategy = fieldNamingStrategy;
+			return this;
+		}
+
 		public VPack build() {
-			return new VPack(serializers, deserializers, instanceCreators, builderOptions, serializeNullValues);
+			return new VPack(serializers, deserializers, instanceCreators, builderOptions, serializeNullValues,
+					fieldNamingStrategy);
 		}
 
 	}
 
 	private VPack(final Map<Type, VPackSerializer<?>> serializers, final Map<Type, VPackDeserializer<?>> deserializers,
 		final Map<Type, VPackInstanceCreator<?>> instanceCreators, final BuilderOptions builderOptions,
-		final boolean serializeNullValues) {
+		final boolean serializeNullValues, final VPackFieldNamingStrategy fieldNamingStrategy) {
 		super();
 		this.serializers = serializers;
 		this.deserializers = deserializers;
@@ -151,7 +158,7 @@ public class VPack {
 		this.builderOptions = builderOptions;
 		this.serializeNullValues = serializeNullValues;
 		keyMapAdapters = new HashMap<>();
-		cache = new VPackCache();
+		cache = new VPackCache(fieldNamingStrategy);
 		serializationContext = (builder, attribute, entity) -> VPack.this.serialize(attribute, entity, builder,
 			new HashMap<String, Object>());
 		deserializationContext = new VPackDeserializationContext() {

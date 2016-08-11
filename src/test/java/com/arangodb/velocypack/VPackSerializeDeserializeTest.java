@@ -3015,4 +3015,29 @@ public class VPackSerializeDeserializeTest {
 		assertThat(e2.isString(), is(true));
 		assertThat(e2.getAsString(), is("test"));
 	}
+
+	@Test
+	public void fieldNamingStrategySerialize() throws VPackException {
+		final VPackSlice vpack = new VPack.Builder().fieldNamingStrategy(field -> {
+			return "bla";
+		}).build().serialize(new TestEntityA());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		final VPackSlice bla = vpack.get("bla");
+		assertThat(bla.isString(), is(true));
+		assertThat(bla.getAsString(), is("a"));
+	}
+
+	@Test
+	public void fieldNamingStrategyDeserialize() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value(ValueType.OBJECT));
+		builder.add("bla", new Value("test"));
+		builder.close();
+		final TestEntityA entity = new VPack.Builder().fieldNamingStrategy(field -> {
+			return "bla";
+		}).build().deserialize(builder.slice(), TestEntityA.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.a, is("test"));
+	}
 }
