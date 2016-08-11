@@ -1,5 +1,9 @@
 package com.arangodb;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.DocumentCache;
@@ -24,6 +28,11 @@ public class ArangoDB extends ExecuteBase {
 
 	public static class Builder {
 
+		private static final String PROPERTY_KEY_HOST = "arangodb.host";
+		private static final String PROPERTY_KEY_PORT = "arangodb.port";
+		private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
+		private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
+
 		private String host;
 		private Integer port;
 		private Integer timeout;
@@ -35,6 +44,33 @@ public class ArangoDB extends ExecuteBase {
 			super();
 			vpackBuilder = new VPack.Builder();
 			VPackConfigure.configure(vpackBuilder);
+			loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
+		}
+
+		public Builder loadProperties(final InputStream in) {
+			if (in != null) {
+				final Properties properties = new Properties();
+				try {
+					properties.load(in);
+					host = getProperty(properties, PROPERTY_KEY_HOST, host, ArangoDBConstants.DEFAULT_HOST);
+					port = Integer
+							.parseInt(getProperty(properties, PROPERTY_KEY_PORT, port, ArangoDBConstants.DEFAULT_PORT));
+					timeout = Integer.parseInt(
+						getProperty(properties, PROPERTY_KEY_TIMEOUT, timeout, ArangoDBConstants.DEFAULT_TIMEOUT));
+				} catch (final IOException e) {
+					throw new ArangoDBException(e);
+				}
+			}
+			return this;
+		}
+
+		private <T> String getProperty(
+			final Properties properties,
+			final String key,
+			final T currentValue,
+			final T defaultValue) {
+			return properties.getProperty(key,
+				currentValue != null ? currentValue.toString() : defaultValue.toString());
 		}
 
 		public Builder host(final String host) {

@@ -16,7 +16,7 @@ public class VersionTest {
 
 	@Test
 	public void version() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().host("127.0.0.1").port(8529).build();
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final ArangoDBVersion version = arangoDB.getVersion().execute();
 		assertThat(version, is(notNullValue()));
 		assertThat(version.getServer(), is(notNullValue()));

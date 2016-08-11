@@ -6,17 +6,17 @@ package com.arangodb.internal;
  */
 public class ArangoDBConstants {
 
-	public static final String SYSTEM = "_system";
 	public static final String DEFAULT_HOST = "127.0.0.1";
-	public static final int DEFAULT_PORT = 8529;
-	public static final int DEFAULT_TIMEOUT = 1000;
-	public static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
+	public static final Integer DEFAULT_PORT = 8529;
+	public static final Integer DEFAULT_TIMEOUT = 1000;
+
 	public static final String PATH_API_DOCUMENT = "/_api/document";
 	public static final String PATH_API_COLLECTION = "/_api/collection";
 	public static final String PATH_API_DATABASE = "/_api/database";
 	public static final String PATH_API_VERSION = "/_api/version";
 	public static final String PATH_API_INDEX = "/_api/index";
 
+	public static final String SYSTEM = "_system";
 	public static final String ID = "id";
 	public static final String RESULT = "result";
 	public static final String WAIT_FOR_SYNC = "waitForSync";
