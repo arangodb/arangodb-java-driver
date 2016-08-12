@@ -2722,6 +2722,19 @@ public class VPackSerializeDeserializeTest {
 
 	@Test
 	public void directFromCollection() throws VPackException {
+		final Collection<String> list = new ArrayList<>();
+		list.add("test");
+		final VPackSlice vpack = new VPack.Builder().build().serialize(list);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isArray(), is(true));
+		assertThat(vpack.size(), is(1));
+		final VPackSlice test = vpack.get(0);
+		assertThat(test.isString(), is(true));
+		assertThat(test.getAsString(), is("test"));
+	}
+
+	@Test
+	public void directFromCollectionWithType() throws VPackException {
 		final Collection<TestEntityString> list = new ArrayList<>();
 		list.add(new TestEntityString());
 		list.add(new TestEntityString());
@@ -2810,6 +2823,22 @@ public class VPackSerializeDeserializeTest {
 			final VPackSlice value = entry.get("value");
 			checkStringEntity(value);
 		}
+	}
+
+	@Test
+	public void directFromMap() throws VPackException {
+		final Map<String, Object> map = new HashMap<>();
+		final TestEntityA entity = new TestEntityA();
+		entity.a = "test";
+		map.put("test", entity);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(map);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		final VPackSlice test = vpack.get("test");
+		assertThat(test.isObject(), is(true));
+		final VPackSlice a = test.get("a");
+		assertThat(a.isString(), is(true));
+		assertThat(a.getAsString(), is("test"));
 	}
 
 	private void checkStringEntity(final VPackSlice vpack) throws VPackException {

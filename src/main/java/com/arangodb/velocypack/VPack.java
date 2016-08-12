@@ -444,6 +444,10 @@ public class VPack {
 				} else {
 					serializeObject(name, value, builder, additionalFields);
 				}
+			} else if (Iterable.class.isAssignableFrom((Class<?>) type)) {
+				serializeIterable(name, value, builder, additionalFields);
+			} else if (Map.class.isAssignableFrom((Class<?>) type)) {
+				serializeMap(name, value, builder, String.class, additionalFields);
 			} else if (((Class) type).isArray()) {
 				serializeArray(name, value, builder, additionalFields);
 			} else if (((Class) type).isEnum()) {
