@@ -8,7 +8,7 @@ public class ArangoDBConstants {
 
 	public static final String DEFAULT_HOST = "127.0.0.1";
 	public static final Integer DEFAULT_PORT = 8529;
-	public static final Integer DEFAULT_TIMEOUT = 1000;
+	public static final Integer DEFAULT_TIMEOUT = 0;
 
 	public static final String PATH_API_DOCUMENT = "/_api/document";
 	public static final String PATH_API_COLLECTION = "/_api/collection";
