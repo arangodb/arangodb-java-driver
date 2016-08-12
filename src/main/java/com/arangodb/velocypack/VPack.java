@@ -196,6 +196,8 @@ public class VPack {
 		final VPackDeserializer<?> deserializer = deserializers.get(type);
 		if (deserializer != null) {
 			entity = ((VPackDeserializer<T>) deserializer).deserialize(vpack, deserializationContext);
+		} else if (type == Object.class) {
+			entity = (T) vpack.getAsString();
 		} else {
 			entity = createInstance(type);
 			deserializeFields(entity, vpack);
@@ -259,6 +261,10 @@ public class VPack {
 				} else {
 					value = deserializeObject(vpack, type);
 				}
+			} else if (Collection.class.isAssignableFrom((Class<?>) type)) {
+				value = deserializeCollection(vpack, type, Object.class);
+			} else if (Map.class.isAssignableFrom((Class<?>) type)) {
+				value = deserializeMap(vpack, type, String.class, Object.class);
 			} else if (((Class) type).isArray()) {
 				value = deserializeArray(vpack, type, fieldInfo);
 			} else if (((Class) type).isEnum()) {
