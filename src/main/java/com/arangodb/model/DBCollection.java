@@ -197,4 +197,17 @@ public class DBCollection extends ExecuteBase {
 			}.getType()));
 	}
 
+	public <T> Executeable<T> simpleAnyDocument(final Class<T> type) {
+
+		final Request request = new Request(db.name(), RequestType.PUT, ArangoDBConstants.PATH_API_SIMPLE_ANY);
+
+		final Map<String, String> body = new HashMap<>();
+		body.put(ArangoDBConstants.COLLECTION, name);
+
+		request.setBody(serialize(body, new Type<Map<String, String>>() {
+		}.getType()));
+
+		return execute(type, request);
+	}
+
 }
