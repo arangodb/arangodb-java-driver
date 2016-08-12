@@ -1,5 +1,6 @@
 package com.arangodb.internal.velocypack;
 
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
@@ -24,9 +25,11 @@ public class VPackConfigure {
 
 		builder.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE);
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
+		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
 
 		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
 		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
+		builder.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
 	}
 
 }
