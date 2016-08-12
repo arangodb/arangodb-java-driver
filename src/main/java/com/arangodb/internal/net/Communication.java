@@ -29,7 +29,7 @@ public class Communication {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
-	private final AtomicLong mId = new AtomicLong(0L);
+	private static final AtomicLong mId = new AtomicLong(0L);
 	private final VPack vpack;
 	private final Connection connection;
 	private final MessageStore messageStore;
