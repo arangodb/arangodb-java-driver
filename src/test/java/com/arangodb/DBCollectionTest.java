@@ -20,7 +20,7 @@ import com.arangodb.model.DocumentCreate;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CRUDTest extends BaseTest {
+public class DBCollectionTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "crud-test";
 
@@ -41,7 +41,7 @@ public class CRUDTest extends BaseTest {
 	}
 
 	@Test
-	public void createSync() {
+	public void createDocument() {
 		final DocumentCreateResult<TestEntity> doc = db.collection(COLLECTION_NAME)
 				.createDocument(new TestEntity(), null).execute();
 		assertThat(doc, is(notNullValue()));
@@ -52,7 +52,7 @@ public class CRUDTest extends BaseTest {
 	}
 
 	@Test
-	public void createAsync() throws InterruptedException, ExecutionException {
+	public void createDocumentAsync() throws InterruptedException, ExecutionException {
 		final CompletableFuture<DocumentCreateResult<TestEntity>> f = db.collection(COLLECTION_NAME)
 				.createDocument(new TestEntity(), null).executeAsync();
 		assertThat(f, is(notNullValue()));
@@ -67,7 +67,7 @@ public class CRUDTest extends BaseTest {
 	}
 
 	@Test
-	public void createReturnNew() {
+	public void createDocumentReturnNew() {
 		final DocumentCreate.Options options = new DocumentCreate.Options().returnNew(true);
 		final DocumentCreateResult<TestEntity> doc = db.collection(COLLECTION_NAME)
 				.createDocument(new TestEntity(), options).execute();
