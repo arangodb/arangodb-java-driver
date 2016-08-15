@@ -6,7 +6,17 @@ package com.arangodb.internal.net.velocystream;
  */
 public enum RequestType {
 
-	GET(1), POST(2), PUT(3), DELETE(4), PATCH(5);
+	DELETE(0),
+	GET(1),
+	POST(2),
+	PUT(3),
+	HEAD(4),
+	PATCH(5),
+	OPTIONS(6),
+	VSTREAM_CRED(7),
+	VSTREAM_REGISTER(8),
+	VSTREAM_STATUS(9),
+	ILLEGAL(10);
 
 	private final int type;
 
