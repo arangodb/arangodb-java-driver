@@ -199,6 +199,10 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
@@ -221,6 +225,11 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j-api.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.googlecode.json-simple</groupId>
+			    <artifactId>json-simple</artifactId>
+			    <version>1.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>

@@ -25,22 +25,20 @@ public class Executeable<T> {
 	}
 
 	protected final Communication communication;
-	protected final VPack vpack;
 	private final Request request;
 	private final ResponseDeserializer<T> responseDeserializer;
 
 	protected Executeable(final Communication communication, final VPack vpack, final Type type,
 		final Request request) {
-		this(communication, vpack, request, (response) -> {
+		this(communication, request, (response) -> {
 			return createResult(vpack, type, response);
 		});
 	}
 
-	protected Executeable(final Communication communication, final VPack vpack, final Request request,
+	protected Executeable(final Communication communication, final Request request,
 		final ResponseDeserializer<T> responseDeserializer) {
 		super();
 		this.communication = communication;
-		this.vpack = vpack;
 		this.request = request;
 		this.responseDeserializer = responseDeserializer;
 	}
@@ -75,7 +73,7 @@ public class Executeable<T> {
 			if (response != null) {
 				try {
 					result.complete(responseDeserializer.deserialize(response));
-				} catch (final VPackException e) {
+				} catch (final VPackException | ArangoDBException e) {
 					result.completeExceptionally(e);
 				}
 			} else if (ex != null) {
