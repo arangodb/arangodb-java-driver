@@ -26,6 +26,7 @@ public abstract class ExecuteBase {
 
 	protected final Communication communication;
 	protected final VPack vpacker;
+	protected final VPack vpackerNull;
 	protected final DocumentCache documentCache;
 
 	protected ExecuteBase(final DBCollection dbCollection) {
@@ -33,13 +34,15 @@ public abstract class ExecuteBase {
 	}
 
 	protected ExecuteBase(final DB db) {
-		this(db.communication(), db.vpack(), db.documentCache());
+		this(db.communication(), db.vpack(), db.vpackNull(), db.documentCache());
 	}
 
-	protected ExecuteBase(final Communication communication, final VPack vpacker, final DocumentCache documentCache) {
+	protected ExecuteBase(final Communication communication, final VPack vpacker, final VPack vpackerNull,
+		final DocumentCache documentCache) {
 		super();
 		this.communication = communication;
 		this.vpacker = vpacker;
+		this.vpackerNull = vpackerNull;
 		this.documentCache = documentCache;
 	}
 
@@ -49,6 +52,10 @@ public abstract class ExecuteBase {
 
 	protected VPack vpack() {
 		return vpacker;
+	}
+
+	protected VPack vpackNull() {
+		return vpackerNull;
 	}
 
 	protected DocumentCache documentCache() {
@@ -108,10 +115,10 @@ public abstract class ExecuteBase {
 		}
 	}
 
-	protected VPackSlice serialize(final Object entity, final Map<String, Object> additionalFields)
-			throws ArangoDBException {
+	protected VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
 		try {
-			return vpacker.serialize(entity, additionalFields);
+			final VPack vp = serializeNullValues ? vpackerNull : vpacker;
+			return vp.serialize(entity);
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}
@@ -120,6 +127,16 @@ public abstract class ExecuteBase {
 	protected VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
 		try {
 			return vpacker.serialize(entity, type);
+		} catch (final VPackParserException e) {
+			throw new ArangoDBException(e);
+		}
+	}
+
+	protected VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
+			throws ArangoDBException {
+		try {
+			final VPack vp = serializeNullValues ? vpackerNull : vpacker;
+			return vp.serialize(entity, type);
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}

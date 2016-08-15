@@ -114,14 +114,15 @@ public class ArangoDB extends ExecuteBase {
 		}
 
 		public ArangoDB build() {
-			return new ArangoDB(host, port, timeout, user, password, vpackBuilder.build());
+			return new ArangoDB(host, port, timeout, user, password, vpackBuilder.build(),
+					vpackBuilder.serializeNullValues(true).build());
 		}
 
 	}
 
 	private ArangoDB(final String host, final Integer port, final Integer timeout, final String user,
-		final String password, final VPack vpack) {
-		super(new Communication.Builder(vpack).host(host).port(port).timeout(timeout).build(), vpack,
+		final String password, final VPack vpack, final VPack vpackNull) {
+		super(new Communication.Builder(vpack).host(host).port(port).timeout(timeout).build(), vpack, vpackNull,
 				new DocumentCache());
 	}
 
@@ -151,7 +152,7 @@ public class ArangoDB extends ExecuteBase {
 
 	public DB db(final String name) {
 		validateDBName(name);
-		return new DB(communication, vpacker, documentCache, name);
+		return new DB(communication, vpacker, vpackerNull, documentCache, name);
 	}
 
 	public Executeable<ArangoDBVersion> getVersion() {

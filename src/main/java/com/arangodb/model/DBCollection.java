@@ -91,6 +91,7 @@ public class DBCollection extends ExecuteBase {
 		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(value));
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
@@ -117,13 +118,15 @@ public class DBCollection extends ExecuteBase {
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentUpdate params = (options != null ? options : new DocumentUpdate.Options()).build();
 		final Map<String, Object> parameter = request.getParameter();
-		parameter.put(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
+		final Boolean keepNull = params.getKeepNull();
+		parameter.put(ArangoDBConstants.KEEP_NULL, keepNull);
 		parameter.put(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
 		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		parameter.put(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
 		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(value, keepNull != null && !keepNull));
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);

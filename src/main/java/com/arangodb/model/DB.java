@@ -17,9 +17,9 @@ public class DB extends ExecuteBase {
 
 	private final String name;
 
-	public DB(final Communication communication, final VPack vpacker, final DocumentCache documentCache,
-		final String name) {
-		super(communication, vpacker, documentCache);
+	public DB(final Communication communication, final VPack vpacker, final VPack vpackerNull,
+		final DocumentCache documentCache, final String name) {
+		super(communication, vpacker, vpackerNull, documentCache);
 		this.name = name;
 	}
 
