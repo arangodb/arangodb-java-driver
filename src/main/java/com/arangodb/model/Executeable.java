@@ -10,7 +10,6 @@ import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.Response;
 import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 
@@ -46,16 +45,11 @@ public class Executeable<T> {
 		this.responseDeserializer = responseDeserializer;
 	}
 
-	@SuppressWarnings("unchecked")
 	private static <T> T createResult(final VPack vpack, final Type type, final Response response) {
 		T value = null;
 		if (response.getBody().isPresent()) {
 			try {
-				if (type == VPackSlice.class) {
-					value = (T) response.getBody().get();
-				} else {
-					value = vpack.deserialize(response.getBody().get(), type);
-				}
+				value = vpack.deserialize(response.getBody().get(), type);
 			} catch (final VPackParserException e) {
 				throw new ArangoDBException(e);
 			}
