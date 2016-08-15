@@ -3071,6 +3071,17 @@ public class VPackSerializeDeserializeTest {
 	}
 
 	@Test
+	public void serializeVPack() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value("test"));
+		final VPackSlice slice = builder.slice();
+		final VPackSlice vpack = new VPack.Builder().build().serialize(slice);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isString(), is(true));
+		assertThat(vpack.getAsString(), is("test"));
+	}
+
+	@Test
 	public void deserializeVPack() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value("test"));

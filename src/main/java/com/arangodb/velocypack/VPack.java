@@ -348,6 +348,9 @@ public class VPack {
 
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws VPackParserException {
+		if (type == VPackSlice.class) {
+			return (VPackSlice) entity;
+		}
 		final VPackBuilder builder = new VPackBuilder(builderOptions);
 		serialize(null, entity, type, builder, new HashMap<>(additionalFields));
 		return builder.slice();
