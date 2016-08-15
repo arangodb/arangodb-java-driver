@@ -115,6 +115,7 @@ public class VPackParser {
 		try {
 			parser.parse(json, contentHandler);
 		} catch (final ParseException e) {
+			throw new VPackBuilderException(e);
 		}
 		return builder.slice();
 	}
@@ -134,6 +135,7 @@ public class VPackParser {
 				builder.add(attribute, value);
 				attribute = null;
 			} catch (final VPackBuilderException e) {
+				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
 			}
 		}
 
@@ -142,6 +144,7 @@ public class VPackParser {
 				builder.close();
 			} catch (VPackBuilderNeedOpenCompoundException | VPackKeyTypeException
 					| VPackNeedAttributeTranslatorException e) {
+				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
 			}
 		}
 
