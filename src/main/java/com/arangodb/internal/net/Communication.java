@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
+import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.Message;
 import com.arangodb.internal.net.velocystream.MessageStore;
@@ -158,18 +159,19 @@ public class Communication {
 		}
 		byteBuffer.rewind();
 
-		final int n = size / Chunk.MAX_CHUNK_BODY_SIZE;
-		final int numberOfChunks = (size % Chunk.MAX_CHUNK_BODY_SIZE != 0) ? (n + 1) : n;
+		final int n = size / ArangoDBConstants.CHUNK_BODY_SIZE;
+		final int numberOfChunks = (size % ArangoDBConstants.CHUNK_BODY_SIZE != 0) ? (n + 1) : n;
 		for (int i = 0; size > 0; i++) {
-			final int len = Math.min(Chunk.MAX_CHUNK_BODY_SIZE, size);
+			final int len = Math.min(ArangoDBConstants.CHUNK_BODY_SIZE, size);
 			final byte[] buffer = new byte[len];
 			byteBuffer.get(buffer);
 			final Chunk chunk;
 			if (i == 0 && numberOfChunks > 1) {
 				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer,
-						len + Chunk.CHUNK_MIN_HEADER_SIZE + Long.BYTES, size);
+						len + ArangoDBConstants.CHUNK_MAX_HEADER_SIZE, size);
 			} else {
-				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer, len + Chunk.CHUNK_MIN_HEADER_SIZE, -1L);
+				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer,
+						len + ArangoDBConstants.CHUNK_MIN_HEADER_SIZE, -1L);
 			}
 			size -= len;
 			chunks.add(chunk);

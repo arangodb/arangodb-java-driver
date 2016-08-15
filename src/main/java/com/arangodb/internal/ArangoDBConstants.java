@@ -10,6 +10,10 @@ public class ArangoDBConstants {
 	public static final Integer DEFAULT_PORT = 8529;
 	public static final Integer DEFAULT_TIMEOUT = 0;
 
+	public static final int CHUNK_MIN_HEADER_SIZE = Integer.BYTES + Integer.BYTES + Long.BYTES;
+	public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + Long.BYTES;
+	public static final int CHUNK_BODY_SIZE = 1500;
+
 	public static final String PATH_API_DOCUMENT = "/_api/document";
 	public static final String PATH_API_COLLECTION = "/_api/collection";
 	public static final String PATH_API_DATABASE = "/_api/database";

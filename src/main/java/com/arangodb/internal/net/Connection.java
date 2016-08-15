@@ -165,10 +165,10 @@ public class Connection {
 		final byte[] content;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
 			messageLength = readBytes(8).getLong();
-			content = new byte[length - Chunk.CHUNK_MIN_HEADER_SIZE - Long.BYTES];
+			content = new byte[length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE];
 		} else {
 			messageLength = -1L;
-			content = new byte[length - Chunk.CHUNK_MIN_HEADER_SIZE];
+			content = new byte[length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE];
 		}
 		readBytes(content.length).get(content);
 		final Chunk chunk = new Chunk(messageId, chunkX, content, length, messageLength);
