@@ -73,7 +73,7 @@ public class Executeable<T> {
 			if (response != null) {
 				try {
 					result.complete(responseDeserializer.deserialize(response));
-				} catch (final VPackException e) {
+				} catch (final VPackException | ArangoDBException e) {
 					result.completeExceptionally(e);
 				}
 			} else if (ex != null) {
