@@ -159,8 +159,8 @@ public class VPack {
 		this.serializeNullValues = serializeNullValues;
 		keyMapAdapters = new HashMap<>();
 		cache = new VPackCache(fieldNamingStrategy);
-		serializationContext = (builder, attribute, entity) -> VPack.this.serialize(attribute, entity, builder,
-			new HashMap<String, Object>());
+		serializationContext = (builder, attribute, entity) -> VPack.this.serialize(attribute, entity,
+			entity.getClass(), builder, new HashMap<String, Object>());
 		deserializationContext = new VPackDeserializationContext() {
 			@Override
 			public <T> T deserialize(final VPackSlice vpack, final Class<T> type) throws VPackParserException {
@@ -181,6 +181,9 @@ public class VPack {
 	}
 
 	public <T> T deserialize(final VPackSlice vpack, final Type type) throws VPackParserException {
+		if (type == VPackSlice.class) {
+			return (T) vpack;
+		}
 		final T entity;
 		try {
 			entity = (T) getValue(vpack, type, null);
@@ -331,26 +334,12 @@ public class VPack {
 	}
 
 	public VPackSlice serialize(final Object entity) throws VPackParserException {
-		return serialize(entity, new HashMap<String, Object>());
+		return serialize(entity, entity.getClass(), new HashMap<String, Object>());
 	}
 
 	public VPackSlice serialize(final Object entity, final Map<String, Object> additionalFields)
 			throws VPackParserException {
-		final VPackBuilder builder = new VPackBuilder(builderOptions);
-		serialize(null, entity, builder, new HashMap<>(additionalFields));
-		return builder.slice();
-	}
-
-	private void serialize(
-		final String name,
-		final Object entity,
-		final VPackBuilder builder,
-		final Map<String, Object> additionalFields) throws VPackParserException {
-		try {
-			addValue(name, entity.getClass(), entity, builder, null, additionalFields);
-		} catch (final Exception e) {
-			throw new VPackParserException(e);
-		}
+		return serialize(entity, entity.getClass(), additionalFields);
 	}
 
 	public VPackSlice serialize(final Object entity, final Type type) throws VPackParserException {
@@ -360,12 +349,21 @@ public class VPack {
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws VPackParserException {
 		final VPackBuilder builder = new VPackBuilder(builderOptions);
+		serialize(null, entity, type, builder, new HashMap<>(additionalFields));
+		return builder.slice();
+	}
+
+	private void serialize(
+		final String name,
+		final Object entity,
+		final Type type,
+		final VPackBuilder builder,
+		final Map<String, Object> additionalFields) throws VPackParserException {
 		try {
-			addValue(null, type, entity, builder, null, new HashMap<>(additionalFields));
+			addValue(name, type, entity, builder, null, additionalFields);
 		} catch (final Exception e) {
 			throw new VPackParserException(e);
 		}
-		return builder.slice();
 	}
 
 	private void serializeObject(

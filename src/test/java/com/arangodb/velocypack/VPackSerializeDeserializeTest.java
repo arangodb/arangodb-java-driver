@@ -3069,4 +3069,15 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.a, is("test"));
 	}
+
+	@Test
+	public void deserializeVPack() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value("test"));
+		final VPackSlice slice = builder.slice();
+		final VPackSlice vpack = new VPack.Builder().build().deserialize(slice, slice.getClass());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isString(), is(true));
+		assertThat(vpack.getAsString(), is("test"));
+	}
 }
