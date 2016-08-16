@@ -82,7 +82,7 @@ public class CollectionCache {
 	}
 
 	private boolean isExpired(final long time) {
-		return time + MAX_CACHE_TIME > new Date().getTime();
+		return new Date().getTime() > time + MAX_CACHE_TIME;
 	}
 
 }
