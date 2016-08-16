@@ -78,4 +78,24 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(doc.getNew().isPresent(), is(true));
 	}
 
+	@Test
+	public void createDocumentRaw() {
+		final DocumentCreateResult<String> doc = db.collection(COLLECTION_NAME)
+				.createDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null).execute();
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.getId(), is(notNullValue()));
+		assertThat(doc.getKey(), is(notNullValue()));
+		assertThat(doc.getRev(), is(notNullValue()));
+	}
+
+	@Test
+	public void readDocument() {
+		final DocumentCreateResult<TestEntity> createResult = db.collection(COLLECTION_NAME)
+				.createDocument(new TestEntity(), null).execute();
+		assertThat(createResult.getKey(), is(notNullValue()));
+		final TestEntity readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), TestEntity.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+	}
+
 }

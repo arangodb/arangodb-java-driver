@@ -14,8 +14,6 @@ import com.arangodb.entity.ArangoDBVersion;
  */
 public class ArangoDBTest {
 
-	private static final String TEST_DB = "java-driver-test-db";
-
 	@Test
 	public void getVersion() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
@@ -28,10 +26,10 @@ public class ArangoDBTest {
 	@Test
 	public void createDB() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final Boolean result = arangoDB.createDB(TEST_DB).execute();
+		final Boolean result = arangoDB.createDB(BaseTest.TEST_DB).execute();
 		assertThat(result, is(true));
 		try {
-			arangoDB.deleteDB(TEST_DB).execute();
+			arangoDB.deleteDB(BaseTest.TEST_DB).execute();
 		} catch (final ArangoDBException e) {
 		}
 	}
@@ -39,9 +37,9 @@ public class ArangoDBTest {
 	@Test
 	public void deleteDB() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final Boolean resultCreate = arangoDB.createDB(TEST_DB).execute();
+		final Boolean resultCreate = arangoDB.createDB(BaseTest.TEST_DB).execute();
 		assertThat(resultCreate, is(true));
-		final Boolean resultDelete = arangoDB.deleteDB(TEST_DB).execute();
+		final Boolean resultDelete = arangoDB.deleteDB(BaseTest.TEST_DB).execute();
 		assertThat(resultDelete, is(true));
 	}
 
