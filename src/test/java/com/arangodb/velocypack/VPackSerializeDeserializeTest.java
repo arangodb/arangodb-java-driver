@@ -2495,6 +2495,7 @@ public class VPackSerializeDeserializeTest {
 				.registerDeserializer(TestEntityString.class, new VPackDeserializer<TestEntityString>() {
 					@Override
 					public TestEntityString deserialize(
+						final VPackSlice parent,
 						final VPackSlice vpack,
 						final VPackDeserializationContext context) throws VPackException {
 						final TestEntityString entity = new TestEntityString();
@@ -2509,6 +2510,20 @@ public class VPackSerializeDeserializeTest {
 		Assert.assertNotNull(entity);
 		Assert.assertNotNull(entity.s);
 		Assert.assertEquals(value, entity.s);
+	}
+
+	@Test
+	public void customDeserializerByName() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value(ValueType.OBJECT));
+		builder.add("s", new Value("test"));
+		builder.close();
+		final TestEntityString entity = new VPack.Builder().registerDeserializer("s", (parent, vpack, context) -> {
+			return vpack.getAsString() + "s";
+		}).build().deserialize(builder.slice(), TestEntityString.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.s, is(notNullValue()));
+		assertThat(entity.s, is("tests"));
 	}
 
 	@Test
@@ -2551,6 +2566,7 @@ public class VPackSerializeDeserializeTest {
 				.registerDeserializer(TestEntityObject.class, new VPackDeserializer<TestEntityObject>() {
 					@Override
 					public TestEntityObject deserialize(
+						final VPackSlice parent,
 						final VPackSlice vpack,
 						final VPackDeserializationContext context) throws VPackException {
 						final TestEntityObject entity = new TestEntityObject();
@@ -3091,4 +3107,5 @@ public class VPackSerializeDeserializeTest {
 		assertThat(vpack.isString(), is(true));
 		assertThat(vpack.getAsString(), is("test"));
 	}
+
 }
