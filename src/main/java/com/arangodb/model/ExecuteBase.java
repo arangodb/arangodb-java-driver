@@ -11,7 +11,9 @@ import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.model.Executeable.ResponseDeserializer;
 import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 
 /**
@@ -99,9 +101,16 @@ public abstract class ExecuteBase {
 		return new Executeable<>(communication, request, responseDeserializer);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
 		try {
-			return vpacker.deserialize(vpack, type);
+			final T doc;
+			if (type == String.class && !vpack.isString()) {
+				doc = (T) VPackParser.toJson(vpack);
+			} else {
+				doc = vpacker.deserialize(vpack, type);
+			}
+			return doc;
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}
@@ -109,17 +118,29 @@ public abstract class ExecuteBase {
 
 	protected VPackSlice serialize(final Object entity) throws ArangoDBException {
 		try {
-			return vpacker.serialize(entity);
-		} catch (final VPackParserException e) {
+			final VPackSlice vpack;
+			if (String.class.isAssignableFrom(entity.getClass())) {
+				vpack = VPackParser.fromJson((String) entity);
+			} else {
+				vpack = vpacker.serialize(entity);
+			}
+			return vpack;
+		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}
 	}
 
 	protected VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
 		try {
-			final VPack vp = serializeNullValues ? vpackerNull : vpacker;
-			return vp.serialize(entity);
-		} catch (final VPackParserException e) {
+			final VPackSlice vpack;
+			if (String.class.isAssignableFrom(entity.getClass())) {
+				vpack = VPackParser.fromJson((String) entity, serializeNullValues);
+			} else {
+				final VPack vp = serializeNullValues ? vpackerNull : vpacker;
+				vpack = vp.serialize(entity);
+			}
+			return vpack;
+		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}
 	}
@@ -127,7 +148,7 @@ public abstract class ExecuteBase {
 	protected VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
 		try {
 			return vpacker.serialize(entity, type);
-		} catch (final VPackParserException e) {
+		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}
 	}
@@ -137,7 +158,7 @@ public abstract class ExecuteBase {
 		try {
 			final VPack vp = serializeNullValues ? vpackerNull : vpacker;
 			return vp.serialize(entity, type);
-		} catch (final VPackParserException e) {
+		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}
 	}
