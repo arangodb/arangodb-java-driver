@@ -353,4 +353,46 @@ public class VPackParserTest {
 		assertThat(o.get(2).getAsString(), is("c"));
 	}
 
+	@Test
+	public void fromJsonExcludeNullValueInObject() throws VPackException {
+		final VPackSlice vpack = VPackParser.fromJson("{\"a\":null,\"b\":null,\"c\":\"test\"}", false);
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.size(), is(1));
+		assertThat(vpack.get("a").isNone(), is(true));
+		assertThat(vpack.get("b").isNone(), is(true));
+		assertThat(vpack.get("c").isString(), is(true));
+		assertThat(vpack.get("c").getAsString(), is("test"));
+	}
+
+	@Test
+	public void fromJsonIncludeNullValueInObject() throws VPackException {
+		final VPackSlice vpack = VPackParser.fromJson("{\"a\":null,\"b\":null,\"c\":\"test\"}", true);
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.size(), is(3));
+		assertThat(vpack.get("a").isNull(), is(true));
+		assertThat(vpack.get("b").isNull(), is(true));
+		assertThat(vpack.get("c").isString(), is(true));
+		assertThat(vpack.get("c").getAsString(), is("test"));
+	}
+
+	@Test
+	public void fromJsonExcludeNullValueInArray() throws VPackException {
+		final VPackSlice vpack = VPackParser.fromJson("[null,null,\"test\"]", false);
+		assertThat(vpack.isArray(), is(true));
+		assertThat(vpack.size(), is(1));
+		assertThat(vpack.get(0).isString(), is(true));
+		assertThat(vpack.get(0).getAsString(), is("test"));
+	}
+
+	@Test
+	public void fromJsonIncludeNullValueInArray() throws VPackException {
+		final VPackSlice vpack = VPackParser.fromJson("[null,null,\"test\"]", true);
+		assertThat(vpack.isArray(), is(true));
+		assertThat(vpack.size(), is(3));
+		assertThat(vpack.get(0).isNull(), is(true));
+		assertThat(vpack.get(1).isNull(), is(true));
+		assertThat(vpack.get(2).isString(), is(true));
+		assertThat(vpack.get(2).getAsString(), is("test"));
+	}
+
 }

@@ -109,9 +109,13 @@ public class VPackParser {
 	}
 
 	public static VPackSlice fromJson(final String json) throws VPackException {
+		return fromJson(json, false);
+	}
+
+	public static VPackSlice fromJson(final String json, final boolean includeNullValues) throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		final JSONParser parser = new JSONParser();
-		final ContentHandler contentHandler = new VPackContentHandler(builder);
+		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues);
 		try {
 			parser.parse(json, contentHandler);
 		} catch (final ParseException e) {
@@ -124,9 +128,11 @@ public class VPackParser {
 
 		private final VPackBuilder builder;
 		private String attribute;
+		private final boolean includeNullValues;
 
-		public VPackContentHandler(final VPackBuilder builder) {
+		public VPackContentHandler(final VPackBuilder builder, final boolean includeNullValues) {
 			this.builder = builder;
+			this.includeNullValues = includeNullValues;
 			attribute = null;
 		}
 
@@ -193,7 +199,11 @@ public class VPackParser {
 
 		@Override
 		public boolean primitive(final Object value) throws ParseException, IOException {
-			if (String.class.isAssignableFrom(value.getClass())) {
+			if (value == null) {
+				if (includeNullValues) {
+					add(new Value(ValueType.NULL));
+				}
+			} else if (String.class.isAssignableFrom(value.getClass())) {
 				add(new Value(String.class.cast(value)));
 			} else if (Boolean.class.isAssignableFrom(value.getClass())) {
 				add(new Value(Boolean.class.cast(value)));
