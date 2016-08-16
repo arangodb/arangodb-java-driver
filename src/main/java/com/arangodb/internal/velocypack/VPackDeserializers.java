@@ -13,13 +13,15 @@ import com.arangodb.velocypack.VPackDeserializer;
  */
 public class VPackDeserializers {
 
-	public static final VPackDeserializer<CollectionType> COLLECTION_TYPE = (vpack, context) -> CollectionType
+	public static final VPackDeserializer<CollectionType> COLLECTION_TYPE = (parent, vpack, context) -> CollectionType
 			.fromType(vpack.getAsInt());
 
-	public static final VPackDeserializer<CollectionStatus> COLLECTION_STATUS = (vpack, context) -> CollectionStatus
-			.fromStatus(vpack.getAsInt());
+	public static final VPackDeserializer<CollectionStatus> COLLECTION_STATUS = (
+		parent,
+		vpack,
+		context) -> CollectionStatus.fromStatus(vpack.getAsInt());
 
 	@SuppressWarnings("unchecked")
-	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = (vpack, context) -> new BaseDocument(
+	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = (parent, vpack, context) -> new BaseDocument(
 			context.deserialize(vpack, Map.class));
 }

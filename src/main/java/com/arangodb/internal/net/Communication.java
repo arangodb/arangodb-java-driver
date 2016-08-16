@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.Message;
 import com.arangodb.internal.net.velocystream.MessageStore;
@@ -34,16 +35,15 @@ public class Communication {
 	private final VPack vpack;
 	private final Connection connection;
 	private final MessageStore messageStore;
+	private final CollectionCache collectionCache;
 
 	public static class Builder {
-		private final VPack vpack;
 		private String host;
 		private Integer port;
 		private Integer timeout;
 
-		public Builder(final VPack vpack) {
+		public Builder() {
 			super();
-			this.vpack = vpack;
 		}
 
 		public Builder host(final String host) {
@@ -61,16 +61,17 @@ public class Communication {
 			return this;
 		}
 
-		public Communication build() {
-			return new Communication(this);
+		public Communication build(final VPack vpack, final CollectionCache collectionCache) {
+			return new Communication(host, port, timeout, vpack, collectionCache);
 		}
 	}
 
-	private Communication(final Builder builder) {
+	private Communication(final String host, final Integer port, final Integer timeout, final VPack vpack,
+		final CollectionCache collectionCache) {
 		messageStore = new MessageStore();
-		vpack = builder.vpack;
-		connection = new Connection.Builder(messageStore).host(builder.host).port(builder.port).timeout(builder.timeout)
-				.build();
+		this.vpack = vpack;
+		this.collectionCache = collectionCache;
+		connection = new Connection.Builder(messageStore).host(host).port(port).timeout(timeout).build();
 	}
 
 	private void connect() {
@@ -98,6 +99,7 @@ public class Communication {
 			send(message).whenComplete((m, ex) -> {
 				if (m != null) {
 					try {
+						collectionCache.setDb(request.getDatabase());
 						final Response response = vpack.deserialize(m.getHead(), Response.class);
 						if (m.getBody().isPresent()) {
 							response.setBody(m.getBody().get());

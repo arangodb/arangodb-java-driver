@@ -22,7 +22,7 @@ import com.arangodb.model.DocumentCreate;
  */
 public class DBCollectionTest extends BaseTest {
 
-	private static final String COLLECTION_NAME = "crud-test";
+	private static final String COLLECTION_NAME = "db_collection_test";
 
 	@Before
 	public void setup() {
@@ -35,7 +35,7 @@ public class DBCollectionTest extends BaseTest {
 	@After
 	public void teardown() {
 		try {
-			db.deleteCollection(COLLECTION_NAME);
+			db.deleteCollection(COLLECTION_NAME).execute();
 		} catch (final ArangoDBException e) {
 		}
 	}
@@ -49,6 +49,7 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(doc.getKey(), is(notNullValue()));
 		assertThat(doc.getRev(), is(notNullValue()));
 		assertThat(doc.getNew().isPresent(), is(false));
+		assertThat(doc.getId(), is(COLLECTION_NAME + "/" + doc.getKey()));
 	}
 
 	@Test
@@ -96,6 +97,7 @@ public class DBCollectionTest extends BaseTest {
 		final TestEntity readResult = db.collection(COLLECTION_NAME)
 				.readDocument(createResult.getKey(), TestEntity.class, null).execute();
 		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
 
 }

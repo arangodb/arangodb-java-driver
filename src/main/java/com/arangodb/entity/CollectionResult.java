@@ -6,6 +6,7 @@ package com.arangodb.entity;
  */
 public class CollectionResult {
 
+	private String id;
 	private String name;
 	private Boolean waitForSync;
 	private Boolean isVolatile;
@@ -15,6 +16,10 @@ public class CollectionResult {
 
 	public CollectionResult() {
 		super();
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getName() {

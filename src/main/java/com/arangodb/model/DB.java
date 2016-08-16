@@ -3,6 +3,7 @@ package com.arangodb.model;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
@@ -18,8 +19,8 @@ public class DB extends ExecuteBase {
 	private final String name;
 
 	public DB(final Communication communication, final VPack vpacker, final VPack vpackerNull,
-		final DocumentCache documentCache, final String name) {
-		super(communication, vpacker, vpackerNull, documentCache);
+		final DocumentCache documentCache, final CollectionCache collectionCache, final String name) {
+		super(communication, vpacker, vpackerNull, documentCache, collectionCache);
 		this.name = name;
 	}
 
@@ -43,6 +44,12 @@ public class DB extends ExecuteBase {
 		validateCollectionName(name);
 		return execute(Void.class,
 			new Request(name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
+	}
+
+	public Executeable<CollectionResult> readCollection(final String name) {
+		final Request request = new Request(name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
+		return execute(CollectionResult.class, request);
 	}
 
 	public Executeable<IndexResult> readIndex(final String id) {

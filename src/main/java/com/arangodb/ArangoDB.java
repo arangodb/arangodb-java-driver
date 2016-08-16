@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
@@ -39,11 +40,13 @@ public class ArangoDB extends ExecuteBase {
 		private String user;
 		private String password;
 		private final VPack.Builder vpackBuilder;
+		private final CollectionCache collectionCache;
 
 		public Builder() {
 			super();
 			vpackBuilder = new VPack.Builder();
-			VPackConfigure.configure(vpackBuilder);
+			collectionCache = new CollectionCache();
+			VPackConfigure.configure(vpackBuilder, collectionCache);
 			loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
 		}
 
@@ -114,16 +117,20 @@ public class ArangoDB extends ExecuteBase {
 		}
 
 		public ArangoDB build() {
-			return new ArangoDB(host, port, timeout, user, password, vpackBuilder.build(),
-					vpackBuilder.serializeNullValues(true).build());
+			return new ArangoDB(new Communication.Builder().host(host).port(port).timeout(timeout),
+					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), collectionCache);
 		}
 
 	}
 
-	private ArangoDB(final String host, final Integer port, final Integer timeout, final String user,
-		final String password, final VPack vpack, final VPack vpackNull) {
-		super(new Communication.Builder(vpack).host(host).port(port).timeout(timeout).build(), vpack, vpackNull,
-				new DocumentCache());
+	private ArangoDB(final Communication.Builder commBuilder, final VPack vpack, final VPack vpackNull,
+		final CollectionCache collectionCache) {
+		super(commBuilder.build(vpack, collectionCache), vpack, vpackNull, new DocumentCache(), collectionCache);
+
+		final Communication cacheCom = commBuilder.build(vpack, collectionCache);
+		collectionCache.init(name -> {
+			return new DB(cacheCom, vpackNull, vpack, documentCache, null, name);
+		});
 	}
 
 	public void shutdown() {
@@ -152,7 +159,7 @@ public class ArangoDB extends ExecuteBase {
 
 	public DB db(final String name) {
 		validateDBName(name);
-		return new DB(communication, vpacker, vpackerNull, documentCache, name);
+		return new DB(communication, vpacker, vpackerNull, documentCache, collectionCache, name);
 	}
 
 	public Executeable<ArangoDBVersion> getVersion() {
