@@ -389,6 +389,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		if (isInBatchMode()) {
 			result = new VertexEntity<T>();
 			result.setEntity(vertex);
+			result.setRequestId(res.getRequestId());
 		} else {
 			if (vertex != null) {
 				result = createEntity(res, VertexEntity.class, vertex.getClass());
