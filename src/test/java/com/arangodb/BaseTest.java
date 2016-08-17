@@ -24,19 +24,13 @@ public abstract class BaseTest {
 			arangoDB.deleteDB(TEST_DB).execute();
 		} catch (final ArangoDBException e) {
 		}
-		try {
-			arangoDB.createDB(TEST_DB).execute();
-		} catch (final ArangoDBException e) {
-		}
+		arangoDB.createDB(TEST_DB).execute();
 		BaseTest.db = arangoDB.db(TEST_DB);
 	}
 
 	@AfterClass
 	public static void shutdown() {
-		try {
-			arangoDB.deleteDB(TEST_DB).execute();
-		} catch (final ArangoDBException e) {
-		}
+		arangoDB.deleteDB(TEST_DB).execute();
 		arangoDB.shutdown();
 	}
 
