@@ -39,4 +39,10 @@ public class DBTest extends BaseTest {
 		assertThat(readResult, is(notNullValue()));
 		assertThat(readResult.getId(), is(createResult.getId()));
 	}
+
+	@Test
+	public void deleteCollection() {
+		final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null).execute();
+		db.deleteCollection(COLLECTION_NAME).execute();
+	}
 }

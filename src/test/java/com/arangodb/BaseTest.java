@@ -21,6 +21,10 @@ public abstract class BaseTest {
 			arangoDB = new ArangoDB.Builder().build();
 		}
 		try {
+			arangoDB.deleteDB(TEST_DB).execute();
+		} catch (final ArangoDBException e) {
+		}
+		try {
 			arangoDB.createDB(TEST_DB).execute();
 		} catch (final ArangoDBException e) {
 		}

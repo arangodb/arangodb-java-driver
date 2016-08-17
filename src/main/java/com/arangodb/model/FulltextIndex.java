@@ -32,7 +32,7 @@ public class FulltextIndex {
 		}
 
 		public FulltextIndex build(final Collection<String> fields) {
-			return new FulltextIndex(fields, IndexType.FULLTEXT, minLength);
+			return new FulltextIndex(fields, IndexType.fulltext, minLength);
 		}
 	}
 }

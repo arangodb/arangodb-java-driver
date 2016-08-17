@@ -41,7 +41,7 @@ public class HashIndex {
 		}
 
 		public HashIndex build(final Collection<String> fields) {
-			return new HashIndex(fields, IndexType.HASH, unique, sparse);
+			return new HashIndex(fields, IndexType.hash, unique, sparse);
 		}
 	}
 

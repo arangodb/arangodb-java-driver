@@ -41,7 +41,7 @@ public class SkiplistIndex {
 		}
 
 		public SkiplistIndex build(final Collection<String> fields) {
-			return new SkiplistIndex(fields, IndexType.SKIPLIST, unique, sparse);
+			return new SkiplistIndex(fields, IndexType.skiplist, unique, sparse);
 		}
 	}
 }

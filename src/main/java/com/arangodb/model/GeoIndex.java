@@ -32,7 +32,7 @@ public class GeoIndex {
 		}
 
 		public GeoIndex build(final Collection<String> fields) {
-			return new GeoIndex(fields, IndexType.GEO, geoJson);
+			return new GeoIndex(fields, IndexType.geo, geoJson);
 		}
 	}
 }

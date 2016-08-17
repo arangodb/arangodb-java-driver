@@ -162,6 +162,7 @@ public class DBCollection extends ExecuteBase {
 
 	public Executeable<IndexResult> createHashIndex(final Collection<String> fields, final HashIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize((options != null ? options : new HashIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
 	}
@@ -170,6 +171,7 @@ public class DBCollection extends ExecuteBase {
 		final Collection<String> fields,
 		final SkiplistIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize((options != null ? options : new SkiplistIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
 	}
@@ -178,12 +180,14 @@ public class DBCollection extends ExecuteBase {
 		final Collection<String> fields,
 		final PersistentIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize((options != null ? options : new PersistentIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
 	}
 
 	public Executeable<IndexResult> createGeoIndex(final Collection<String> fields, final GeoIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize((options != null ? options : new GeoIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
 	}

@@ -51,16 +51,18 @@ public class Executeable<T> {
 		final Type type,
 		final Response response) {
 		T value = null;
-		if (response.getBody().isPresent()) {
-			try {
-				final VPackSlice body = response.getBody().get();
-				if (type == String.class && !body.isString()) {
-					value = (T) vpackParser.toJson(body);
-				} else {
-					value = vpack.deserialize(body, type);
+		if (type != Void.class) {
+			if (response.getBody().isPresent()) {
+				try {
+					final VPackSlice body = response.getBody().get();
+					if (type == String.class && !body.isString()) {
+						value = (T) vpackParser.toJson(body);
+					} else {
+						value = vpack.deserialize(body, type);
+					}
+				} catch (final VPackException e) {
+					throw new ArangoDBException(e);
 				}
-			} catch (final VPackException e) {
-				throw new ArangoDBException(e);
 			}
 		}
 		return value;

@@ -41,7 +41,7 @@ public class PersistentIndex {
 		}
 
 		public PersistentIndex build(final Collection<String> fields) {
-			return new PersistentIndex(fields, IndexType.PERSISTENT, unique, sparse);
+			return new PersistentIndex(fields, IndexType.persistent, unique, sparse);
 		}
 	}
 }

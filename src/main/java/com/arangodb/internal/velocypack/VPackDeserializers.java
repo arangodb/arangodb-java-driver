@@ -24,4 +24,5 @@ public class VPackDeserializers {
 	@SuppressWarnings("unchecked")
 	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = (parent, vpack, context) -> new BaseDocument(
 			context.deserialize(vpack, Map.class));
+
 }
