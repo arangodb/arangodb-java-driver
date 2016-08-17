@@ -42,7 +42,7 @@ public class VPackConfigure {
 			}
 			return id;
 		};
-		builder.registerDeserializer("_id", deserializer);
+		builder.registerDeserializer("_id", String.class, deserializer);
 
 		builder.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE);
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);

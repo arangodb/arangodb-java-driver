@@ -2519,12 +2519,28 @@ public class VPackSerializeDeserializeTest {
 		builder.add(new Value(ValueType.OBJECT));
 		builder.add("s", new Value("test"));
 		builder.close();
-		final TestEntityString entity = new VPack.Builder().registerDeserializer("s", (parent, vpack, context) -> {
-			return vpack.getAsString() + "s";
-		}).build().deserialize(builder.slice(), TestEntityString.class);
+		final TestEntityString entity = new VPack.Builder()
+				.registerDeserializer("s", String.class, (parent, vpack, context) -> {
+					return vpack.getAsString() + "s";
+				}).build().deserialize(builder.slice(), TestEntityString.class);
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.s, is(notNullValue()));
 		assertThat(entity.s, is("tests"));
+	}
+
+	@Test
+	public void customDeserializerByNameWrongType() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value(ValueType.OBJECT));
+		builder.add("s", new Value("test"));
+		builder.close();
+		final TestEntityString entity = new VPack.Builder()
+				.registerDeserializer("s", Integer.class, (parent, vpack, context) -> {
+					return "fail";
+				}).build().deserialize(builder.slice(), TestEntityString.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.s, is(notNullValue()));
+		assertThat(entity.s, is("test"));
 	}
 
 	@Test
