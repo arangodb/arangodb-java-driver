@@ -1,3 +1,7 @@
+v3.0.3 (2016-XX-XX)
+---------------------------
+* added error handling in getBatchResponseByRequestId()
+
 v3.0.2 (2016-08-05)
 ---------------------------
 * added profile flag to AqlQueryOptions (issue #47)
