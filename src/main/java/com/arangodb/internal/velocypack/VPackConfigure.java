@@ -5,7 +5,6 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
@@ -48,7 +47,6 @@ public class VPackConfigure {
 		builder.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE);
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
 		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
-		builder.registerSerializer(Request.class, VPackSerializers.REQUEST);
 
 		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
 		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);

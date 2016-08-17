@@ -49,9 +49,8 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentCreate params = (options != null ? options : new DocumentCreate.Options()).build();
-		final Map<String, Object> parameter = request.getParameter();
-		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.setBody(serialize(value));
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
@@ -85,11 +84,10 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentReplace params = (options != null ? options : new DocumentReplace.Options()).build();
-		final Map<String, Object> parameter = request.getParameter();
-		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		parameter.put(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
-		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
-		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
+		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value));
 		return execute(request, response -> {
@@ -117,14 +115,13 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.PATCH,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentUpdate params = (options != null ? options : new DocumentUpdate.Options()).build();
-		final Map<String, Object> parameter = request.getParameter();
 		final Boolean keepNull = params.getKeepNull();
-		parameter.put(ArangoDBConstants.KEEP_NULL, keepNull);
-		parameter.put(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
-		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		parameter.put(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
-		parameter.put(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
-		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
+		request.putParameter(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
+		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value, keepNull != null && !keepNull));
 		return execute(request, response -> {
@@ -149,9 +146,8 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.DELETE,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentDelete params = (options != null ? options : new DocumentDelete.Options()).build();
-		final Map<String, Object> parameter = request.getParameter();
-		parameter.put(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		parameter.put(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
@@ -198,19 +194,6 @@ public class DBCollection extends ExecuteBase {
 		return execute(request,
 			response -> deserialize(response.getBody().get().get("indexes"), new Type<Collection<IndexResult>>() {
 			}.getType()));
-	}
-
-	public <T> Executeable<T> simpleAnyDocument(final Class<T> type) {
-
-		final Request request = new Request(db.name(), RequestType.PUT, ArangoDBConstants.PATH_API_SIMPLE_ANY);
-
-		final Map<String, String> body = new HashMap<>();
-		body.put(ArangoDBConstants.COLLECTION, name);
-
-		request.setBody(serialize(body, new Type<Map<String, String>>() {
-		}.getType()));
-
-		return execute(type, request);
 	}
 
 }

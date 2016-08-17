@@ -20,7 +20,7 @@ public class Request {
 	private String database;
 	private RequestType requestType;
 	private String request;
-	private final Map<String, Object> parameter;
+	private final Map<String, String> parameter;
 	private final Map<String, String> meta;
 	@Expose(serialize = false)
 	private Optional<VPackSlice> body;
@@ -75,8 +75,12 @@ public class Request {
 		this.request = request;
 	}
 
-	public Map<String, Object> getParameter() {
+	public Map<String, String> getParameter() {
 		return parameter;
+	}
+
+	public void putParameter(final String key, final Object value) {
+		parameter.put(key, value != null ? value.toString() : null);
 	}
 
 	public Map<String, String> getMeta() {
