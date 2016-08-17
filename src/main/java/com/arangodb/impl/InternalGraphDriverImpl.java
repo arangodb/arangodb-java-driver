@@ -78,10 +78,11 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		final List<String> orphanCollections,
 		final Boolean waitForSync) throws ArangoException {
 
-		final HttpResponseEntity response = httpManager.doPost(createGharialEndpointUrl(databaseName),
-			new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
-			EntityFactory.toJsonString(new MapBuilder().put("name", graphName).put("edgeDefinitions", edgeDefinitions)
-					.put("orphanCollections", orphanCollections).get()));
+		final HttpResponseEntity response = httpManager
+				.doPost(createGharialEndpointUrl(databaseName), new MapBuilder().put(WAIT_FOR_SYNC, waitForSync).get(),
+					EntityFactory.toJsonString(
+						new MapBuilder().put("name", graphName).put("edgeDefinitions", edgeDefinitions)
+								.put("orphanCollections", orphanCollections).get()));
 		return createEntity(response, GraphEntity.class);
 	}
 
@@ -388,6 +389,7 @@ public class InternalGraphDriverImpl extends BaseArangoDriverWithCursorImpl
 		if (isInBatchMode()) {
 			result = new VertexEntity<T>();
 			result.setEntity(vertex);
+			result.setRequestId(res.getRequestId());
 		} else {
 			if (vertex != null) {
 				result = createEntity(res, VertexEntity.class, vertex.getClass());
