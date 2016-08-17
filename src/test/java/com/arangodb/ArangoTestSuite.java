@@ -105,6 +105,8 @@ import com.arangodb.util.StringJoinTest;
 
 		ArangoDriverGraphShortestPathTest.class,
 
+		ArangoDriverBatchGraphTest.class,
+
 		ArangoDriverTransactionTest.class,
 
 		ArangoDriverThreadSafeTest.class,
