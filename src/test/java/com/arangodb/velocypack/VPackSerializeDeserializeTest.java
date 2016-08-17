@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2857,6 +2858,24 @@ public class VPackSerializeDeserializeTest {
 		assertThat(a.getAsString(), is("test"));
 	}
 
+	@Test
+	public void directFromMapWithinMap() throws VPackException {
+		final Map<String, Object> map = new HashMap<>();
+		final Map<String, Object> map2 = new HashMap<>();
+		map2.put("b", "test");
+		map.put("a", map2);
+		final VPackSlice vpack = new VPack.Builder().build().serialize(map);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.size(), is(1));
+		final VPackSlice a = vpack.get("a");
+		assertThat(a.isObject(), is(true));
+		assertThat(a.size(), is(1));
+		final VPackSlice b = a.get("b");
+		assertThat(b.isString(), is(true));
+		assertThat(b.getAsString(), is("test"));
+	}
+
 	private void checkStringEntity(final VPackSlice vpack) throws VPackException {
 		final TestEntityString expected = new TestEntityString();
 		Assert.assertTrue(vpack.isObject());
@@ -2894,6 +2913,49 @@ public class VPackSerializeDeserializeTest {
 			Assert.assertEquals("abc", entry.getKey().s);
 			Assert.assertEquals("abc", entry.getValue().s);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void directToMapWithinMap() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value(ValueType.OBJECT));
+		builder.add("a", new Value(ValueType.OBJECT));
+		builder.add("b", new Value("test"));
+		builder.add("c", new Value(true));
+		builder.add("d", new Value(1L));
+		builder.add("e", new Value(1.5));
+		final Date date = new Date();
+		builder.add("f", new Value(date));
+		builder.add("g", new Value(ValueType.ARRAY));
+		builder.close();
+		builder.close();
+		builder.close();
+		final Map<String, Object> map = new VPack.Builder().build().deserialize(builder.slice(), Map.class);
+		assertThat(map, is(notNullValue()));
+		assertThat(map.size(), is(1));
+		final Object a = map.get("a");
+		assertThat(Map.class.isAssignableFrom(a.getClass()), is(true));
+		final Map<String, Object> mapA = (Map<String, Object>) a;
+		assertThat(mapA.size(), is(6));
+		final Object b = mapA.get("b");
+		assertThat(String.class.isAssignableFrom(b.getClass()), is(true));
+		assertThat(b.toString(), is("test"));
+		final Object c = mapA.get("c");
+		assertThat(Boolean.class.isAssignableFrom(c.getClass()), is(true));
+		assertThat(Boolean.class.cast(c), is(true));
+		final Object d = mapA.get("d");
+		assertThat(Number.class.isAssignableFrom(d.getClass()), is(true));
+		assertThat(Number.class.cast(d), is(1L));
+		final Object e = mapA.get("e");
+		assertThat(Double.class.isAssignableFrom(e.getClass()), is(true));
+		assertThat(Double.class.cast(e), is(1.5));
+		final Object f = mapA.get("f");
+		assertThat(Date.class.isAssignableFrom(f.getClass()), is(true));
+		assertThat(Date.class.cast(f), is(date));
+		final Object g = mapA.get("g");
+		assertThat(Collection.class.isAssignableFrom(g.getClass()), is(true));
+		assertThat(List.class.isAssignableFrom(g.getClass()), is(true));
 	}
 
 	@Test

@@ -2,6 +2,7 @@ package com.arangodb.velocypack.internal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.Value;
@@ -38,5 +39,7 @@ public class VPackSerializers {
 		new Value(Double.class.cast(value)));
 	public static VPackSerializer<Character> CHARACTER = (builder, attribute, value, context) -> builder.add(attribute,
 		new Value(Character.class.cast(value)));
+	public static VPackSerializer<Date> DATE = (builder, attribute, value, context) -> builder.add(attribute,
+		new Value(Date.class.cast(value)));
 
 }

@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -88,6 +89,7 @@ public class VPack {
 			serializers.put(Number.class, VPackSerializers.NUMBER);
 			serializers.put(Character.class, VPackSerializers.CHARACTER);
 			serializers.put(char.class, VPackSerializers.CHARACTER);
+			serializers.put(Date.class, VPackSerializers.DATE);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
 			deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);
@@ -107,6 +109,7 @@ public class VPack {
 			deserializers.put(Number.class, VPackDeserializers.NUMBER);
 			deserializers.put(Character.class, VPackDeserializers.CHARACTER);
 			deserializers.put(char.class, VPackDeserializers.CHARACTER);
+			deserializers.put(Date.class, VPackDeserializers.DATE);
 		}
 
 		public <T> VPack.Builder registerSerializer(final Type type, final VPackSerializer<T> serializer) {
@@ -225,12 +228,34 @@ public class VPack {
 		if (deserializer != null) {
 			entity = ((VPackDeserializer<T>) deserializer).deserialize(parent, vpack, deserializationContext);
 		} else if (type == Object.class) {
-			entity = (T) vpack.getAsString();
+			entity = (T) getValue(parent, vpack, getType(vpack), fieldInfo);
 		} else {
 			entity = createInstance(type);
 			deserializeFields(entity, vpack);
 		}
 		return entity;
+	}
+
+	private Type getType(final VPackSlice vpack) {
+		final Type type;
+		if (vpack.isObject()) {
+			type = Map.class;
+		} else if (vpack.isString()) {
+			type = String.class;
+		} else if (vpack.isBoolean()) {
+			type = Boolean.class;
+		} else if (vpack.isArray()) {
+			type = Collection.class;
+		} else if (vpack.isDate()) {
+			type = Date.class;
+		} else if (vpack.isDouble()) {
+			type = Double.class;
+		} else if (vpack.isNumber()) {
+			type = Number.class;
+		} else {
+			type = null;
+		}
+		return type;
 	}
 
 	private <T> T createInstance(final Type type) throws InstantiationException, IllegalAccessException {

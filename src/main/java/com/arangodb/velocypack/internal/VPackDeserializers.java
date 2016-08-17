@@ -2,6 +2,7 @@ package com.arangodb.velocypack.internal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 import com.arangodb.velocypack.VPackDeserializer;
 
@@ -26,5 +27,6 @@ public class VPackDeserializers {
 	public static final VPackDeserializer<BigDecimal> BIG_DECIMAL = (parent, vpack, context) -> vpack.getAsBigDecimal();
 	public static final VPackDeserializer<Number> NUMBER = (parent, vpack, context) -> vpack.getAsNumber();
 	public static final VPackDeserializer<Character> CHARACTER = (parent, vpack, context) -> vpack.getAsChar();
+	public static final VPackDeserializer<Date> DATE = (parent, vpack, context) -> vpack.getAsDate();
 
 }
