@@ -1,9 +1,7 @@
 package com.arangodb.velocypack;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.Iterator;
-import java.util.Locale;
 
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ContentHandler;
@@ -29,8 +27,6 @@ public class VPackParser {
 	private static final char FIELD = ':';
 	private static final char SEPARATOR = ',';
 	private static final String NULL = "null";
-	private static final DateFormat DATEFORMAT = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT,
-		Locale.US);
 
 	public static String toJson(final VPackSlice vpack) {
 		return toJson(vpack, false);
@@ -60,8 +56,6 @@ public class VPackParser {
 			json.append(JSONValue.toJSONString(value.getAsString()));
 		} else if (value.isNumber()) {
 			json.append(value.getAsNumber());
-		} else if (value.isDate()) {
-			json.append(JSONValue.toJSONString(DATEFORMAT.format(value.getAsDate())));
 		} else if (value.isNull()) {
 			json.append(NULL);
 		}
