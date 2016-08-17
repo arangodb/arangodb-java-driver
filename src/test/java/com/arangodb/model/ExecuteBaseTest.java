@@ -43,7 +43,7 @@ public class ExecuteBaseTest {
 	}
 
 	private void checkDBName(final String name) throws ArangoDBException {
-		final ExecuteBase executeBase = new ExecuteBase(null, null, null, null, null) {
+		final ExecuteBase executeBase = new ExecuteBase(null, null, null, null, null, null) {
 		};
 		executeBase.validateDBName(name);
 	}
@@ -76,7 +76,7 @@ public class ExecuteBaseTest {
 	}
 
 	private void checkCollectionName(final String name) throws ArangoDBException {
-		final ExecuteBase executeBase = new ExecuteBase(null, null, null, null, null) {
+		final ExecuteBase executeBase = new ExecuteBase(null, null, null, null, null, null) {
 		};
 		executeBase.validateCollectionName(name);
 	}
@@ -101,7 +101,7 @@ public class ExecuteBaseTest {
 	}
 
 	private void checkDocumentKey(final String key) throws ArangoDBException {
-		final ExecuteBase executeBase = new ExecuteBase(null, null, null, null, null) {
+		final ExecuteBase executeBase = new ExecuteBase(null, null, null, null, null, null) {
 		};
 		executeBase.validateDocumentKey(key);
 	}

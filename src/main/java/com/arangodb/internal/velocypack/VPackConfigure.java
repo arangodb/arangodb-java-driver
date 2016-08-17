@@ -1,5 +1,7 @@
 package com.arangodb.internal.velocypack;
 
+import org.json.simple.JSONValue;
+
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
@@ -7,8 +9,9 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.internal.util.NumberUtil;
 
 /**
@@ -17,7 +20,12 @@ import com.arangodb.velocypack.internal.util.NumberUtil;
  */
 public class VPackConfigure {
 
-	public static void configure(final VPack.Builder builder, final CollectionCache cache) {
+	private static final String ID = "_id";
+
+	public static void configure(
+		final VPack.Builder builder,
+		final VPackParser vpackParser,
+		final CollectionCache cache) {
 
 		builder.fieldNamingStrategy(field -> {
 			final DocumentField annotation = field.getAnnotation(DocumentField.class);
@@ -26,7 +34,7 @@ public class VPackConfigure {
 			}
 			return field.getName();
 		});
-		final VPackDeserializer<String> deserializer = (parent, vpack, context) -> {
+		builder.registerDeserializer(ID, String.class, (parent, vpack, context) -> {
 			final String id;
 			if (vpack.isCustom()) {
 				final long idLong = NumberUtil.toLong(vpack.getVpack(), vpack.getStart() + 1, vpack.getByteSize() - 1);
@@ -41,8 +49,19 @@ public class VPackConfigure {
 				id = vpack.getAsString();
 			}
 			return id;
-		};
-		builder.registerDeserializer("_id", String.class, deserializer);
+		});
+		vpackParser.registerDeserializer(ID, ValueType.CUSTOM, (parent, attribute, vpack, json) -> {
+			final String id;
+			final long idLong = NumberUtil.toLong(vpack.getVpack(), vpack.getStart() + 1, vpack.getByteSize() - 1);
+			final String collectionName = cache.getCollectionName(idLong);
+			if (collectionName != null) {
+				final VPackSlice key = parent.get("_key");
+				id = String.format("%s/%s", collectionName, key.getAsString());
+			} else {
+				id = null;
+			}
+			json.append(JSONValue.toJSONString(id));
+		});
 
 		builder.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE);
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);

@@ -30,6 +30,7 @@ public abstract class ExecuteBase {
 	protected final Communication communication;
 	protected final VPack vpacker;
 	protected final VPack vpackerNull;
+	protected final VPackParser vpackParser;
 	protected final DocumentCache documentCache;
 	protected final CollectionCache collectionCache;
 
@@ -38,15 +39,17 @@ public abstract class ExecuteBase {
 	}
 
 	protected ExecuteBase(final DB db) {
-		this(db.communication(), db.vpack(), db.vpackNull(), db.documentCache(), db.collectionCache());
+		this(db.communication(), db.vpack(), db.vpackNull(), db.vpackParser(), db.documentCache(),
+				db.collectionCache());
 	}
 
 	protected ExecuteBase(final Communication communication, final VPack vpacker, final VPack vpackerNull,
-		final DocumentCache documentCache, final CollectionCache collectionCache) {
+		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super();
 		this.communication = communication;
 		this.vpacker = vpacker;
 		this.vpackerNull = vpackerNull;
+		this.vpackParser = vpackParser;
 		this.documentCache = documentCache;
 		this.collectionCache = collectionCache;
 	}
@@ -61,6 +64,10 @@ public abstract class ExecuteBase {
 
 	protected VPack vpackNull() {
 		return vpackerNull;
+	}
+
+	protected VPackParser vpackParser() {
+		return vpackParser;
 	}
 
 	protected DocumentCache documentCache() {
@@ -101,7 +108,7 @@ public abstract class ExecuteBase {
 	}
 
 	protected <T> Executeable<T> execute(final Type type, final Request request) {
-		return new Executeable<>(communication, vpacker, type, request);
+		return new Executeable<>(communication, vpacker, vpackParser, type, request);
 	}
 
 	protected <T> Executeable<T> execute(final Request request, final ResponseDeserializer<T> responseDeserializer) {
@@ -113,12 +120,12 @@ public abstract class ExecuteBase {
 		try {
 			final T doc;
 			if (type == String.class && !vpack.isString()) {
-				doc = (T) VPackParser.toJson(vpack);
+				doc = (T) vpackParser.toJson(vpack);
 			} else {
 				doc = vpacker.deserialize(vpack, type);
 			}
 			return doc;
-		} catch (final VPackParserException e) {
+		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}
 	}
@@ -127,7 +134,7 @@ public abstract class ExecuteBase {
 		try {
 			final VPackSlice vpack;
 			if (String.class.isAssignableFrom(entity.getClass())) {
-				vpack = VPackParser.fromJson((String) entity);
+				vpack = vpackParser.fromJson((String) entity);
 			} else {
 				vpack = vpacker.serialize(entity);
 			}
@@ -141,7 +148,7 @@ public abstract class ExecuteBase {
 		try {
 			final VPackSlice vpack;
 			if (String.class.isAssignableFrom(entity.getClass())) {
-				vpack = VPackParser.fromJson((String) entity, serializeNullValues);
+				vpack = vpackParser.fromJson((String) entity, serializeNullValues);
 			} else {
 				final VPack vp = serializeNullValues ? vpackerNull : vpacker;
 				vpack = vp.serialize(entity);

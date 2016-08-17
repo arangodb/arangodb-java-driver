@@ -59,7 +59,7 @@ public class VPackSlice {
 		return start;
 	}
 
-	private ValueType type() {
+	protected ValueType type() {
 		return ValueTypeUtil.get(head());
 	}
 
@@ -731,6 +731,10 @@ public class VPackSlice {
 
 	@Override
 	public String toString() {
-		return VPackParser.toJson(this);
+		try {
+			return new VPackParser().toJson(this);
+		} catch (final VPackException e) {
+			return super.toString();
+		}
 	}
 }

@@ -13,7 +13,6 @@ import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocypack.exception.VPackParserException;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -30,10 +29,10 @@ public class Executeable<T> {
 	private final Request request;
 	private final ResponseDeserializer<T> responseDeserializer;
 
-	protected Executeable(final Communication communication, final VPack vpack, final Type type,
-		final Request request) {
+	protected Executeable(final Communication communication, final VPack vpack, final VPackParser vpackParser,
+		final Type type, final Request request) {
 		this(communication, request, (response) -> {
-			return createResult(vpack, type, response);
+			return createResult(vpack, vpackParser, type, response);
 		});
 	}
 
@@ -46,17 +45,21 @@ public class Executeable<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T createResult(final VPack vpack, final Type type, final Response response) {
+	private static <T> T createResult(
+		final VPack vpack,
+		final VPackParser vpackParser,
+		final Type type,
+		final Response response) {
 		T value = null;
 		if (response.getBody().isPresent()) {
 			try {
 				final VPackSlice body = response.getBody().get();
 				if (type == String.class && !body.isString()) {
-					value = (T) VPackParser.toJson(body);
+					value = (T) vpackParser.toJson(body);
 				} else {
 					value = vpack.deserialize(body, type);
 				}
-			} catch (final VPackParserException e) {
+			} catch (final VPackException e) {
 				throw new ArangoDBException(e);
 			}
 		}

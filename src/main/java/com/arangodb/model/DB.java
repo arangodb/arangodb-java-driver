@@ -9,6 +9,7 @@ import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackParser;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -19,8 +20,9 @@ public class DB extends ExecuteBase {
 	private final String name;
 
 	public DB(final Communication communication, final VPack vpacker, final VPack vpackerNull,
-		final DocumentCache documentCache, final CollectionCache collectionCache, final String name) {
-		super(communication, vpacker, vpackerNull, documentCache, collectionCache);
+		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache,
+		final String name) {
+		super(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache);
 		this.name = name;
 	}
 

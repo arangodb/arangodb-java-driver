@@ -80,7 +80,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentRaw() {
+	public void createDocumentAsJson() {
 		final DocumentCreateResult<String> doc = db.collection(COLLECTION_NAME)
 				.createDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null).execute();
 		assertThat(doc, is(notNullValue()));
@@ -98,6 +98,15 @@ public class DBCollectionTest extends BaseTest {
 				.readDocument(createResult.getKey(), TestEntity.class, null).execute();
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
+	}
+
+	@Test
+	public void readDocumentAsJson() {
+		db.collection(COLLECTION_NAME).createDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null).execute();
+		final String readResult = db.collection(COLLECTION_NAME).readDocument("docRaw", String.class, null).execute();
+		System.out.println(readResult);
+		assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
+		assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
 	}
 
 }

@@ -10,6 +10,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPack.Builder;
 import com.arangodb.velocypack.VPackBuilder;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.Value;
 import com.arangodb.velocypack.ValueType;
@@ -31,7 +32,7 @@ public class BaseDocumentTest {
 		entity.addAttribute("a", "a");
 
 		final Builder builder = new VPack.Builder();
-		VPackConfigure.configure(builder, null);
+		VPackConfigure.configure(builder, new VPackParser(), null);
 		final VPack vpacker = builder.build();
 
 		final VPackSlice vpack = vpacker.serialize(entity);
@@ -67,7 +68,7 @@ public class BaseDocumentTest {
 		builder.close();
 
 		final VPack.Builder vbuilder = new VPack.Builder();
-		VPackConfigure.configure(vbuilder, null);
+		VPackConfigure.configure(vbuilder, new VPackParser(), null);
 		final VPack vpacker = vbuilder.build();
 
 		final BaseDocument entity = vpacker.deserialize(builder.slice(), BaseDocument.class);
@@ -80,4 +81,5 @@ public class BaseDocumentTest {
 		assertThat(entity.getProperties().size(), is(1));
 		assertThat(entity.getAttribute("a"), is("a"));
 	}
+
 }
