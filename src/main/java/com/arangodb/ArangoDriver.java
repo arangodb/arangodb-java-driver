@@ -73,6 +73,7 @@ import com.arangodb.entity.marker.VertexEntity;
 import com.arangodb.http.BatchHttpManager;
 import com.arangodb.http.BatchPart;
 import com.arangodb.http.HttpManager;
+import com.arangodb.http.HttpResponseEntity;
 import com.arangodb.http.InvocationHandlerImpl;
 import com.arangodb.impl.ImplFactory;
 import com.arangodb.impl.InternalBatchDriverImpl;
@@ -408,8 +409,21 @@ public class ArangoDriver extends BaseArangoDriver {
 			this.httpManager.setPreDefinedResponse(null);
 			return result;
 		} catch (final InvocationTargetException e) {
-			final T result = (T) createEntity(batchResponseEntity.getHttpResponseEntity(), DefaultEntity.class);
 			this.httpManager.setPreDefinedResponse(null);
+
+			HttpResponseEntity httpResponse = batchResponseEntity.getHttpResponseEntity();
+			if (httpResponse.getStatusCode() >= 300) {
+				DefaultEntity de = new DefaultEntity();
+				de.setCode(httpResponse.getStatusCode());
+				de.setError(true);
+				if (httpResponse.getText() != null) {
+					de.setErrorMessage(httpResponse.getText().trim());
+				}
+				de.setErrorNumber(httpResponse.getStatusCode());
+				throw new ArangoException(de);
+			}
+
+			final T result = (T) createEntity(batchResponseEntity.getHttpResponseEntity(), DefaultEntity.class);
 			return result;
 		} catch (final Exception e) {
 			this.httpManager.setPreDefinedResponse(null);
