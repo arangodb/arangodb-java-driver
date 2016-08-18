@@ -25,7 +25,8 @@ public class DBCollection extends ExecuteBase {
 	private final String name;
 
 	protected DBCollection(final DB db, final String name) {
-		super(db);
+		super(db.communication(), db.vpack(), db.vpackNull(), db.vpackParser(), db.documentCache(),
+				db.collectionCache());
 		this.db = db;
 		this.name = name;
 	}

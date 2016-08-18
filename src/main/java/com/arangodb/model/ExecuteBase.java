@@ -34,15 +34,6 @@ public abstract class ExecuteBase {
 	protected final DocumentCache documentCache;
 	protected final CollectionCache collectionCache;
 
-	protected ExecuteBase(final DBCollection dbCollection) {
-		this(dbCollection.db());
-	}
-
-	protected ExecuteBase(final DB db) {
-		this(db.communication(), db.vpack(), db.vpackNull(), db.vpackParser(), db.documentCache(),
-				db.collectionCache());
-	}
-
 	protected ExecuteBase(final Communication communication, final VPack vpacker, final VPack vpackerNull,
 		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super();

@@ -1,4 +1,4 @@
-package com.arangodb;
+package com.arangodb.model;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -11,6 +11,8 @@ import java.util.Collection;
 import org.junit.After;
 import org.junit.Test;
 
+import com.arangodb.ArangoDBException;
+import com.arangodb.BaseTest;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 

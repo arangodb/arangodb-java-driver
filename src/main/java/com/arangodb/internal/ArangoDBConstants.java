@@ -19,7 +19,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_DATABASE = "/_api/database";
 	public static final String PATH_API_VERSION = "/_api/version";
 	public static final String PATH_API_INDEX = "/_api/index";
-	public static final String PATH_API_SIMPLE_ANY = "/_api/simple/any";
+	public static final String PATH_API_USER = "/_api/user";
 
 	public static final String SYSTEM = "_system";
 	public static final String ID = "id";

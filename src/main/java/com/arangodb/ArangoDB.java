@@ -5,17 +5,17 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.UserResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.internal.velocypack.VPackConfigure;
+import com.arangodb.model.ArangoDBImpl;
 import com.arangodb.model.DB;
-import com.arangodb.model.DBCreate;
 import com.arangodb.model.ExecuteBase;
 import com.arangodb.model.Executeable;
+import com.arangodb.model.UserCreate;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
@@ -26,7 +26,7 @@ import com.arangodb.velocypack.VPackSerializer;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDB extends ExecuteBase {
+public abstract class ArangoDB extends ExecuteBase {
 
 	public static class Builder {
 
@@ -120,56 +120,34 @@ public class ArangoDB extends ExecuteBase {
 		}
 
 		public ArangoDB build() {
-			return new ArangoDB(new Communication.Builder().host(host).port(port).timeout(timeout),
+			return new ArangoDBImpl(new Communication.Builder().host(host).port(port).timeout(timeout),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 
 	}
 
-	private ArangoDB(final Communication.Builder commBuilder, final VPack vpack, final VPack vpackNull,
+	protected ArangoDB(final Communication.Builder commBuilder, final VPack vpack, final VPack vpackNull,
 		final VPackParser vpackParser, final CollectionCache collectionCache) {
 		super(commBuilder.build(vpack, collectionCache), vpack, vpackNull, vpackParser, new DocumentCache(),
 				collectionCache);
-
-		final Communication cacheCom = commBuilder.build(vpack, collectionCache);
-		collectionCache.init(name -> {
-			return new DB(cacheCom, vpackNull, vpack, vpackParser, documentCache, null, name);
-		});
 	}
 
-	public void shutdown() {
-		communication.disconnect();
-	}
+	public abstract void shutdown();
 
-	public Executeable<Boolean> createDB(final String name) {
-		validateDBName(name);
-		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
-				ArangoDBConstants.PATH_API_DATABASE);
-		request.setBody(serialize(new DBCreate.Options().build(name)));
-		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
-	}
+	public abstract Executeable<Boolean> createDB(final String name);
 
-	public Executeable<Boolean> deleteDB(final String name) {
-		validateDBName(name);
-		return execute(
-			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
-					createPath(ArangoDBConstants.PATH_API_DATABASE, name)),
-			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
-	}
+	public abstract Executeable<Boolean> deleteDB(final String name);
 
-	public DB db() {
-		return db(ArangoDBConstants.SYSTEM);
-	}
+	public abstract DB db();
 
-	public DB db(final String name) {
-		validateDBName(name);
-		return new DB(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache, name);
-	}
+	public abstract DB db(final String name);
 
-	public Executeable<ArangoDBVersion> getVersion() {
-		// TODO details
-		return execute(ArangoDBVersion.class,
-			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
-	}
+	public abstract Executeable<ArangoDBVersion> getVersion();
 
+	public abstract Executeable<UserResult> createUser(
+		final String user,
+		final String passwd,
+		final UserCreate.Options options);
+
+	public abstract Executeable<Void> deleteUser(final String user);
 }

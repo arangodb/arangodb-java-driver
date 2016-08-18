@@ -19,7 +19,13 @@ public class DB extends ExecuteBase {
 
 	private final String name;
 
-	public DB(final Communication communication, final VPack vpacker, final VPack vpackerNull,
+	protected DB(final ArangoDBImpl arangoDB, final String name) {
+		super(arangoDB.communication(), arangoDB.vpack(), arangoDB.vpackNull(), arangoDB.vpackParser(),
+				arangoDB.documentCache(), arangoDB.collectionCache());
+		this.name = name;
+	}
+
+	protected DB(final Communication communication, final VPack vpacker, final VPack vpackerNull,
 		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache,
 		final String name) {
 		super(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache);

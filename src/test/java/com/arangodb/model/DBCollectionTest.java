@@ -1,4 +1,4 @@
-package com.arangodb;
+package com.arangodb.model;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -22,6 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.ArangoDBException;
+import com.arangodb.BaseTest;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentUpdateResult;
