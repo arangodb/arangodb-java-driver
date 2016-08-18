@@ -1,7 +1,10 @@
 package com.arangodb;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
@@ -10,6 +13,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -24,6 +29,7 @@ import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
 import com.arangodb.model.DocumentCreate;
 import com.arangodb.model.DocumentRead;
+import com.arangodb.model.DocumentUpdate;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -177,19 +183,194 @@ public class DBCollectionTest extends BaseTest {
 	public void updateDocument() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
+		doc.addAttribute("c", "test");
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
 				.execute();
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
+		doc.updateAttribute("c", null);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
 				.updateDocument(createResult.getKey(), doc, null).execute();
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getNew().isPresent(), is(false));
+		assertThat(updateResult.getOld().isPresent(), is(false));
+		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+
 		final BaseDocument readResult = db.collection(COLLECTION_NAME)
 				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getAttribute("a"), is("test1"));
 		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getRevision(), is(updateResult.getRev()));
+		assertThat(readResult.getProperties().containsKey("c"), is(true));
+	}
+
+	@Test
+	public void updateDocumentReturnNew() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.updateAttribute("a", "test1");
+		doc.addAttribute("b", "test");
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().returnNew(true);
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+		assertThat(updateResult.getNew().isPresent(), is(true));
+		assertThat(updateResult.getNew().get().getKey(), is(createResult.getKey()));
+		assertThat(updateResult.getNew().get().getRevision(), is(not(createResult.getRev())));
+		assertThat(updateResult.getNew().get().getAttribute("a"), is("test1"));
+		assertThat(updateResult.getNew().get().getAttribute("b"), is("test"));
+	}
+
+	@Test
+	public void updateDocumentReturnOld() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.updateAttribute("a", "test1");
+		doc.addAttribute("b", "test");
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().returnOld(true);
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+		assertThat(updateResult.getOld().isPresent(), is(true));
+		assertThat(updateResult.getOld().get().getKey(), is(createResult.getKey()));
+		assertThat(updateResult.getOld().get().getRevision(), is(createResult.getRev()));
+		assertThat(updateResult.getOld().get().getAttribute("a"), is("test"));
+		assertThat(updateResult.getOld().get().getAttribute("b"), is(nullValue()));
+	}
+
+	@Test
+	public void updateDocumentKeepNullTrue() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.updateAttribute("a", null);
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().keepNull(true);
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getProperties().containsKey("a"), is(true));
+	}
+
+	@Test
+	public void updateDocumentKeepNullFalse() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.updateAttribute("a", null);
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().keepNull(false);
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getId(), is(createResult.getId()));
+		assertThat(readResult.getRevision(), is(notNullValue()));
+		assertThat(readResult.getProperties().containsKey("a"), is(false));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void updateDocumentMergeObjectsTrue() {
+		final BaseDocument doc = new BaseDocument();
+		final Map<String, String> a = new HashMap<>();
+		a.put("a", "test");
+		doc.addAttribute("a", a);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		a.clear();
+		a.put("b", "test");
+		doc.updateAttribute("a", a);
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().mergeObjects(true);
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		final Object aResult = readResult.getAttribute("a");
+		assertThat(aResult, instanceOf(Map.class));
+		final Map<String, String> aMap = (Map<String, String>) aResult;
+		assertThat(aMap.keySet(), hasItem("a"));
+		assertThat(aMap.keySet(), hasItem("b"));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void updateDocumentMergeObjectsFalse() {
+		final BaseDocument doc = new BaseDocument();
+		final Map<String, String> a = new HashMap<>();
+		a.put("a", "test");
+		doc.addAttribute("a", a);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		a.clear();
+		a.put("b", "test");
+		doc.updateAttribute("a", a);
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().mergeObjects(false);
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		final Object aResult = readResult.getAttribute("a");
+		assertThat(aResult, instanceOf(Map.class));
+		final Map<String, String> aMap = (Map<String, String>) aResult;
+		assertThat(aMap.keySet(), not(hasItem("a")));
+		assertThat(aMap.keySet(), hasItem("b"));
+	}
+
+	@Test
+	public void updateDocumentIgnoreRevsFalse() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.setRevision("no");
+		doc.updateAttribute("a", "test1");
+		try {
+			final DocumentUpdate.Options options = new DocumentUpdate.Options().ignoreRevs(false);
+			db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options).execute();
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getCode().isPresent(), is(true));
+			assertThat(e.getCode().get(), is(greaterThan(200)));
+			assertThat(e.getErrorNum().isPresent(), is(true));
+			assertThat(e.getErrorMessage().isPresent(), is(true));
+		}
 	}
 
 	@Test
