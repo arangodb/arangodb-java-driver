@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,11 @@ public class DBCollectionTest extends BaseTest {
 	@Before
 	public void setup() {
 		db.createCollection(COLLECTION_NAME, null).execute();
+	}
+
+	@After
+	public void teardown() {
+		db.deleteCollection(COLLECTION_NAME).execute();
 	}
 
 	@Test
