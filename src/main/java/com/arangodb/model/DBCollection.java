@@ -123,7 +123,7 @@ public class DBCollection extends ExecuteBase {
 		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(serialize(value, keepNull != null && !keepNull));
+		request.setBody(serialize(value, true));
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
