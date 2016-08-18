@@ -29,6 +29,7 @@ import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
 import com.arangodb.model.DocumentCreate;
 import com.arangodb.model.DocumentRead;
+import com.arangodb.model.DocumentReplace;
 import com.arangodb.model.DocumentUpdate;
 
 /**
@@ -143,6 +144,10 @@ public class DBCollectionTest extends BaseTest {
 			db.collection(COLLECTION_NAME).readDocument(createResult.getKey(), BaseDocument.class, options).execute();
 			fail();
 		} catch (final ArangoDBException e) {
+			assertThat(e.getCode().isPresent(), is(true));
+			assertThat(e.getCode().get(), is(greaterThan(200)));
+			assertThat(e.getErrorNum().isPresent(), is(true));
+			assertThat(e.getErrorMessage().isPresent(), is(true));
 		}
 	}
 
@@ -204,7 +209,56 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(readResult.getAttribute("a"), is("test1"));
 		assertThat(readResult.getAttribute("b"), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
-		assertThat(readResult.getProperties().containsKey("c"), is(true));
+		assertThat(readResult.getProperties().keySet(), hasItem("c"));
+	}
+
+	@Test
+	public void updateDocumentIfMatch() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		doc.addAttribute("c", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.updateAttribute("a", "test1");
+		doc.addAttribute("b", "test");
+		doc.updateAttribute("c", null);
+		final DocumentUpdate.Options options = new DocumentUpdate.Options().ifMatch(createResult.getRev());
+		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, options).execute();
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getId(), is(createResult.getId()));
+		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
+		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getAttribute("a"), is("test1"));
+		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getRevision(), is(updateResult.getRev()));
+		assertThat(readResult.getProperties().keySet(), hasItem("c"));
+	}
+
+	@Test
+	public void updateDocumentIfMatchFail() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		doc.addAttribute("c", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.updateAttribute("a", "test1");
+		doc.addAttribute("b", "test");
+		doc.updateAttribute("c", null);
+		try {
+			final DocumentUpdate.Options options = new DocumentUpdate.Options().ifMatch("no");
+			db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options).execute();
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getCode().isPresent(), is(true));
+			assertThat(e.getCode().get(), is(greaterThan(200)));
+			assertThat(e.getErrorNum().isPresent(), is(true));
+			assertThat(e.getErrorMessage().isPresent(), is(true));
+		}
 	}
 
 	@Test
@@ -246,7 +300,7 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(updateResult.getOld().get().getKey(), is(createResult.getKey()));
 		assertThat(updateResult.getOld().get().getRevision(), is(createResult.getRev()));
 		assertThat(updateResult.getOld().get().getAttribute("a"), is("test"));
-		assertThat(updateResult.getOld().get().getAttribute("b"), is(nullValue()));
+		assertThat(updateResult.getOld().get().getProperties().keySet(), not(hasItem("b")));
 	}
 
 	@Test
@@ -267,7 +321,7 @@ public class DBCollectionTest extends BaseTest {
 		final BaseDocument readResult = db.collection(COLLECTION_NAME)
 				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getProperties().containsKey("a"), is(true));
+		assertThat(readResult.getProperties().keySet(), hasItem("a"));
 	}
 
 	@Test
@@ -290,7 +344,7 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getRevision(), is(notNullValue()));
-		assertThat(readResult.getProperties().containsKey("a"), is(false));
+		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -371,6 +425,136 @@ public class DBCollectionTest extends BaseTest {
 			assertThat(e.getErrorNum().isPresent(), is(true));
 			assertThat(e.getErrorMessage().isPresent(), is(true));
 		}
+	}
+
+	@Test
+	public void replaceDocumemt() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), doc, null).execute();
+		assertThat(replaceResult, is(notNullValue()));
+		assertThat(replaceResult.getId(), is(createResult.getId()));
+		assertThat(replaceResult.getNew().isPresent(), is(false));
+		assertThat(replaceResult.getOld().isPresent(), is(false));
+		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
+		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
+		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+		assertThat(readResult.getAttribute("b"), is("test"));
+	}
+
+	@Test
+	public void replaceDocumemtIfMatch() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		final DocumentReplace.Options options = new DocumentReplace.Options().ifMatch(createResult.getRev());
+		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), doc, options).execute();
+		assertThat(replaceResult, is(notNullValue()));
+		assertThat(replaceResult.getId(), is(createResult.getId()));
+		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
+		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(createResult.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
+		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+		assertThat(readResult.getAttribute("b"), is("test"));
+	}
+
+	@Test
+	public void replaceDocumemtIfMatchFail() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		try {
+			final DocumentReplace.Options options = new DocumentReplace.Options().ifMatch("no");
+			db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options).execute();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getCode().isPresent(), is(true));
+			assertThat(e.getCode().get(), is(greaterThan(200)));
+			assertThat(e.getErrorNum().isPresent(), is(true));
+			assertThat(e.getErrorMessage().isPresent(), is(true));
+		}
+	}
+
+	@Test
+	public void replaceDocumemtIgnoreRevsFalse() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.setRevision("no");
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		try {
+			final DocumentReplace.Options options = new DocumentReplace.Options().ignoreRevs(false);
+			db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options).execute();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getCode().isPresent(), is(true));
+			assertThat(e.getCode().get(), is(greaterThan(200)));
+			assertThat(e.getErrorNum().isPresent(), is(true));
+			assertThat(e.getErrorMessage().isPresent(), is(true));
+		}
+	}
+
+	@Test
+	public void replaceDocumentReturnNew() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		final DocumentReplace.Options options = new DocumentReplace.Options().returnNew(true);
+		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), doc, options).execute();
+		assertThat(replaceResult, is(notNullValue()));
+		assertThat(replaceResult.getId(), is(createResult.getId()));
+		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+		assertThat(replaceResult.getNew().isPresent(), is(true));
+		assertThat(replaceResult.getNew().get().getKey(), is(createResult.getKey()));
+		assertThat(replaceResult.getNew().get().getRevision(), is(not(createResult.getRev())));
+		assertThat(replaceResult.getNew().get().getProperties().keySet(), not(hasItem("a")));
+		assertThat(replaceResult.getNew().get().getAttribute("b"), is("test"));
+	}
+
+	@Test
+	public void replaceDocumentReturnOld() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).createDocument(doc, null)
+				.execute();
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		final DocumentReplace.Options options = new DocumentReplace.Options().returnOld(true);
+		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), doc, options).execute();
+		assertThat(replaceResult, is(notNullValue()));
+		assertThat(replaceResult.getId(), is(createResult.getId()));
+		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+		assertThat(replaceResult.getOld().isPresent(), is(true));
+		assertThat(replaceResult.getOld().get().getKey(), is(createResult.getKey()));
+		assertThat(replaceResult.getOld().get().getRevision(), is(createResult.getRev()));
+		assertThat(replaceResult.getOld().get().getAttribute("a"), is("test"));
+		assertThat(replaceResult.getOld().get().getProperties().keySet(), not(hasItem("b")));
 	}
 
 	@Test
