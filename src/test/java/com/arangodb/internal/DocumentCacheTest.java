@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.arangodb.data.TestEntity;
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentField.Type;
 
 /**
@@ -21,11 +21,11 @@ public class DocumentCacheTest {
 	@Test
 	public void setValues() {
 		final DocumentCache cache = new DocumentCache();
-		final TestEntity doc = new TestEntity();
+		final BaseDocument doc = new BaseDocument();
 
 		assertThat(doc.getId(), is(nullValue()));
 		assertThat(doc.getKey(), is(nullValue()));
-		assertThat(doc.getRev(), is(nullValue()));
+		assertThat(doc.getRevision(), is(nullValue()));
 
 		final Map<Type, String> values = new HashMap<>();
 		values.put(Type.ID, "testId");
@@ -35,7 +35,7 @@ public class DocumentCacheTest {
 
 		assertThat(doc.getId(), is("testId"));
 		assertThat(doc.getKey(), is("testKey"));
-		assertThat(doc.getRev(), is("testRev"));
+		assertThat(doc.getRevision(), is("testRev"));
 	}
 
 	@Test

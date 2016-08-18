@@ -12,11 +12,11 @@ import com.arangodb.entity.DocumentField.Type;
 public class BaseDocument {
 
 	@DocumentField(Type.ID)
-	private String documentHandle;
+	private String id;
 	@DocumentField(Type.KEY)
-	private String documentKey;
+	private String key;
 	@DocumentField(Type.REV)
-	private String documentRevision;
+	private String revision;
 	private Map<String, Object> properties;
 
 	public BaseDocument() {
@@ -25,43 +25,43 @@ public class BaseDocument {
 	}
 
 	public BaseDocument(final Map<String, Object> properties) {
-		final Object id = properties.remove(DocumentField.Type.ID.getSerializeName());
-		if (id != null) {
-			documentHandle = id.toString();
+		final Object tmpId = properties.remove(DocumentField.Type.ID.getSerializeName());
+		if (tmpId != null) {
+			id = tmpId.toString();
 		}
-		final Object key = properties.remove(DocumentField.Type.KEY.getSerializeName());
-		if (key != null) {
-			documentKey = key.toString();
+		final Object tmpKey = properties.remove(DocumentField.Type.KEY.getSerializeName());
+		if (tmpKey != null) {
+			key = tmpKey.toString();
 		}
-		final Object rev = properties.remove(DocumentField.Type.REV.getSerializeName());
-		if (rev != null) {
-			documentRevision = rev.toString();
+		final Object tmpRev = properties.remove(DocumentField.Type.REV.getSerializeName());
+		if (tmpRev != null) {
+			revision = tmpRev.toString();
 		}
 		this.properties = properties;
 	}
 
-	public String getDocumentHandle() {
-		return documentHandle;
+	public String getId() {
+		return id;
 	}
 
-	public void setDocumentHandle(final String documentHandle) {
-		this.documentHandle = documentHandle;
+	public void setId(final String id) {
+		this.id = id;
 	}
 
-	public String getDocumentKey() {
-		return documentKey;
+	public String getKey() {
+		return key;
 	}
 
-	public void setDocumentKey(final String documentKey) {
-		this.documentKey = documentKey;
+	public void setKey(final String key) {
+		this.key = key;
 	}
 
-	public String getDocumentRevision() {
-		return documentRevision;
+	public String getRevision() {
+		return revision;
 	}
 
-	public void setDocumentRevision(final String documentRevision) {
-		this.documentRevision = documentRevision;
+	public void setRevision(final String revision) {
+		this.revision = revision;
 	}
 
 	public Map<String, Object> getProperties() {
@@ -88,7 +88,7 @@ public class BaseDocument {
 
 	@Override
 	public String toString() {
-		return "BaseDocument [documentRevision=" + documentRevision + ", documentHandle=" + documentHandle
-				+ ", documentKey=" + documentKey + ", properties=" + properties + "]";
+		return "BaseDocument [documentRevision=" + revision + ", documentHandle=" + id + ", documentKey=" + key
+				+ ", properties=" + properties + "]";
 	}
 }

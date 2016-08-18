@@ -214,13 +214,11 @@ public class VPack {
 		return entity;
 	}
 
-	private VPackDeserializer<?> getDeserializer(final FieldInfo fieldInfo, final Type type) {
+	private VPackDeserializer<?> getDeserializer(final String fieldName, final Type type) {
 		VPackDeserializer<?> deserializer = null;
-		if (fieldInfo != null) {
-			final Map<Type, VPackDeserializer<?>> byName = deserializersByName.get(fieldInfo.getFieldName());
-			if (byName != null) {
-				deserializer = byName.get(type);
-			}
+		final Map<Type, VPackDeserializer<?>> byName = deserializersByName.get(fieldName);
+		if (byName != null) {
+			deserializer = byName.get(type);
 		}
 		if (deserializer == null) {
 			deserializer = deserializers.get(type);
@@ -232,14 +230,14 @@ public class VPack {
 		final VPackSlice parent,
 		final VPackSlice vpack,
 		final Type type,
-		final FieldInfo fieldInfo) throws InstantiationException, IllegalAccessException, NoSuchMethodException,
+		final String fieldName) throws InstantiationException, IllegalAccessException, NoSuchMethodException,
 			InvocationTargetException, VPackException {
 		final T entity;
-		final VPackDeserializer<?> deserializer = getDeserializer(fieldInfo, type);
+		final VPackDeserializer<?> deserializer = getDeserializer(fieldName, type);
 		if (deserializer != null) {
 			entity = ((VPackDeserializer<T>) deserializer).deserialize(parent, vpack, deserializationContext);
 		} else if (type == Object.class) {
-			entity = (T) getValue(parent, vpack, getType(vpack), fieldInfo);
+			entity = (T) getValue(parent, vpack, getType(vpack), fieldName);
 		} else {
 			entity = createInstance(type);
 			deserializeFields(entity, vpack);
@@ -263,6 +261,8 @@ public class VPack {
 			type = Double.class;
 		} else if (vpack.isNumber()) {
 			type = Number.class;
+		} else if (vpack.isCustom()) {
+			type = String.class;
 		} else {
 			type = null;
 		}
@@ -302,7 +302,7 @@ public class VPack {
 			InstantiationException, VPackException {
 		final VPackSlice attr = new VPackSlice(vpack.getVpack(), vpack.getStart() + vpack.getByteSize());
 		if (!attr.isNone()) {
-			final Object value = getValue(parent, attr, fieldInfo.getType(), fieldInfo);
+			final Object value = getValue(parent, attr, fieldInfo.getType(), fieldInfo.getFieldName());
 			fieldInfo.set(entity, value);
 		}
 	}
@@ -311,13 +311,13 @@ public class VPack {
 		final VPackSlice parent,
 		final VPackSlice vpack,
 		final Type type,
-		final FieldInfo fieldInfo) throws InstantiationException, IllegalAccessException, NoSuchMethodException,
+		final String fieldName) throws InstantiationException, IllegalAccessException, NoSuchMethodException,
 			InvocationTargetException, VPackException {
 		final Object value;
 		if (vpack.isNull()) {
 			value = null;
 		} else {
-			final VPackDeserializer<?> deserializer = getDeserializer(fieldInfo, type);
+			final VPackDeserializer<?> deserializer = getDeserializer(fieldName, type);
 			if (deserializer != null) {
 				value = ((VPackDeserializer<Object>) deserializer).deserialize(parent, vpack, deserializationContext);
 			} else if (type instanceof ParameterizedType) {
@@ -329,29 +329,26 @@ public class VPack {
 					final Type[] parameterizedTypes = pType.getActualTypeArguments();
 					value = deserializeMap(parent, vpack, type, parameterizedTypes[0], parameterizedTypes[1]);
 				} else {
-					value = deserializeObject(parent, vpack, type, fieldInfo);
+					value = deserializeObject(parent, vpack, type, fieldName);
 				}
 			} else if (Collection.class.isAssignableFrom((Class<?>) type)) {
 				value = deserializeCollection(parent, vpack, type, Object.class);
 			} else if (Map.class.isAssignableFrom((Class<?>) type)) {
 				value = deserializeMap(parent, vpack, type, String.class, Object.class);
 			} else if (((Class) type).isArray()) {
-				value = deserializeArray(parent, vpack, type, fieldInfo);
+				value = deserializeArray(parent, vpack, type);
 			} else if (((Class) type).isEnum()) {
 				value = Enum.valueOf((Class<? extends Enum>) type, vpack.getAsString());
 			} else {
-				value = deserializeObject(parent, vpack, type, fieldInfo);
+				value = deserializeObject(parent, vpack, type, fieldName);
 			}
 		}
 		return value;
 	}
 
-	private <T> Object deserializeArray(
-		final VPackSlice parent,
-		final VPackSlice vpack,
-		final Type type,
-		final FieldInfo fieldInfo) throws InstantiationException, IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException, VPackException {
+	private <T> Object deserializeArray(final VPackSlice parent, final VPackSlice vpack, final Type type)
+			throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException,
+			VPackException {
 		final int length = (int) vpack.getLength();
 		final Class<?> componentType = ((Class<?>) type).getComponentType();
 		final Object value = Array.newInstance(componentType, length);
@@ -392,8 +389,8 @@ public class VPack {
 				for (final Iterator<VPackSlice> iterator = vpack.iterator(); iterator.hasNext();) {
 					final VPackSlice key = iterator.next();
 					final VPackSlice valueAt = new VPackSlice(key.getVpack(), key.getStart() + key.getByteSize());
-					value.put(keyMapAdapter.deserialize(key.makeKey().getAsString()),
-						getValue(parent, valueAt, valueType, null));
+					final Object name = keyMapAdapter.deserialize(key.makeKey().getAsString());
+					value.put(name, getValue(vpack, valueAt, valueType, name.toString()));
 				}
 			} else {
 				for (int i = 0; i < vpack.getLength(); i++) {

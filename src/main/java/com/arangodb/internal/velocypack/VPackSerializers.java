@@ -28,9 +28,9 @@ public class VPackSerializers {
 	public static final VPackSerializer<BaseDocument> BASE_DOCUMENT = (builder, attribute, value, context) -> {
 		final Map<String, Object> doc = new HashMap<>();
 		doc.putAll(value.getProperties());
-		doc.put(DocumentField.Type.ID.getSerializeName(), value.getDocumentHandle());
-		doc.put(DocumentField.Type.KEY.getSerializeName(), value.getDocumentKey());
-		doc.put(DocumentField.Type.REV.getSerializeName(), value.getDocumentRevision());
+		doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
+		doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
+		doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
 		context.serialize(builder, attribute, doc);
 	};
 

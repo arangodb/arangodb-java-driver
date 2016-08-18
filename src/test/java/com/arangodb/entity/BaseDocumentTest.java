@@ -1,4 +1,4 @@
-package com.arangodb.internal.velocypack;
+package com.arangodb.entity;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.arangodb.entity.BaseDocument;
+import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPack.Builder;
 import com.arangodb.velocypack.VPackBuilder;
@@ -25,9 +25,9 @@ public class BaseDocumentTest {
 	@Test
 	public void serialize() throws VPackException {
 		final BaseDocument entity = new BaseDocument();
-		entity.setDocumentHandle("test/test");
-		entity.setDocumentKey("test");
-		entity.setDocumentRevision("test");
+		entity.setId("test/test");
+		entity.setKey("test");
+		entity.setRevision("test");
 		entity.addAttribute("_id", "test");
 		entity.addAttribute("a", "a");
 
@@ -72,12 +72,12 @@ public class BaseDocumentTest {
 		final VPack vpacker = vbuilder.build();
 
 		final BaseDocument entity = vpacker.deserialize(builder.slice(), BaseDocument.class);
-		assertThat(entity.getDocumentHandle(), is(notNullValue()));
-		assertThat(entity.getDocumentHandle(), is("test/test"));
-		assertThat(entity.getDocumentKey(), is(notNullValue()));
-		assertThat(entity.getDocumentKey(), is("test"));
-		assertThat(entity.getDocumentRevision(), is(notNullValue()));
-		assertThat(entity.getDocumentRevision(), is("test"));
+		assertThat(entity.getId(), is(notNullValue()));
+		assertThat(entity.getId(), is("test/test"));
+		assertThat(entity.getKey(), is(notNullValue()));
+		assertThat(entity.getKey(), is("test"));
+		assertThat(entity.getRevision(), is(notNullValue()));
+		assertThat(entity.getRevision(), is("test"));
 		assertThat(entity.getProperties().size(), is(1));
 		assertThat(entity.getAttribute("a"), is("a"));
 	}
