@@ -1492,6 +1492,32 @@ public class ArangoDriver extends BaseArangoDriver {
 	}
 
 	/**
+	 * It is possible to define a persistent index on one or more attributes (or
+	 * paths) of documents. The index is then used in queries to locate
+	 * documents within a given range. If the index is declared unique, then no
+	 * two documents are allowed to have the same set of attribute values.
+	 *
+	 * @param collectionName
+	 *            The collection name.
+	 * @param unique
+	 *            if set to true the index will be a unique index
+	 * @param sparse
+	 *            if set to true the index will be sparse
+	 * @param fields
+	 *            the fields (document attributes) the index is created on
+	 * @return IndexEntity
+	 * @throws ArangoException
+	 */
+	public IndexEntity createPersistentIndex(
+		final String collectionName,
+		final boolean unique,
+		final boolean sparse,
+		final String... fields) throws ArangoException {
+		return indexDriver.createIndex(getDefaultDatabase(), collectionName, IndexType.PERSISTENT, unique, sparse,
+			fields);
+	}
+
+	/**
 	 * This method creates a full text index for a collection.
 	 *
 	 * @param collectionName
