@@ -732,7 +732,7 @@ public class VPackSlice {
 	@Override
 	public String toString() {
 		try {
-			return new VPackParser().toJson(this);
+			return new VPackParser().toJson(this, true);
 		} catch (final VPackException e) {
 			return super.toString();
 		}
