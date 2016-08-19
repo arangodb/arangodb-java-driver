@@ -142,7 +142,10 @@ public class Connection {
 		}
 	}
 
-	public void write(final long messageId, final Collection<Chunk> chunks, final CompletableFuture<Message> future) {
+	public synchronized void write(
+		final long messageId,
+		final Collection<Chunk> chunks,
+		final CompletableFuture<Message> future) {
 		messageStore.storeMessage(messageId, future);
 		chunks.stream().forEach(chunk -> {
 			try {
