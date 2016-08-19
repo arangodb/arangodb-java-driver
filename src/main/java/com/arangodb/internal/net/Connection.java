@@ -82,7 +82,7 @@ public class Connection {
 		this.timeout = Optional.ofNullable(builder.timeout);
 	}
 
-	public void open() throws IOException {
+	public synchronized void open() throws IOException {
 		if (isOpen()) {
 			return;
 		}
@@ -121,11 +121,11 @@ public class Connection {
 		});
 	}
 
-	public boolean isOpen() {
+	public synchronized boolean isOpen() {
 		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
-	public void close() {
+	public synchronized void close() {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Close connection %s", socket));
 		}
