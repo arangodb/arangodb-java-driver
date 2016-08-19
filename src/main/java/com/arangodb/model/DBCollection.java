@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentDeleteResult;
 import com.arangodb.entity.DocumentField;
@@ -201,4 +202,8 @@ public class DBCollection extends ExecuteBase {
 			}.getType()));
 	}
 
+	public Executeable<CollectionResult> truncate() {
+		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "truncate")));
+	}
 }

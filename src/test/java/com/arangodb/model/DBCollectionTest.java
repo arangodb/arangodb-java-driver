@@ -25,14 +25,11 @@ import org.junit.Test;
 import com.arangodb.ArangoDBException;
 import com.arangodb.BaseTest;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
-import com.arangodb.model.DocumentCreate;
-import com.arangodb.model.DocumentRead;
-import com.arangodb.model.DocumentReplace;
-import com.arangodb.model.DocumentUpdate;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -674,5 +671,24 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(indexResult.getType(), is(IndexType.persistent));
 		assertThat(indexResult.getUnique().isPresent(), is(true));
 		assertThat(indexResult.getUnique().get(), is(false));
+	}
+
+	@Test
+	public void truncate() {
+		// final BaseDocument doc = new BaseDocument();
+		// db.collection(COLLECTION_NAME).createDocument(doc, null).execute();
+		// final BaseDocument readResult = db.collection(COLLECTION_NAME)
+		// .readDocument(doc.getKey(), BaseDocument.class, null).execute();
+		// assertThat(readResult.getKey(), is(doc.getKey()));
+		final CollectionResult truncateResult = db.collection(COLLECTION_NAME).truncate().execute();
+		assertThat(truncateResult, is(notNullValue()));
+		assertThat(truncateResult.getId(), is(notNullValue()));
+		// try {
+		// db.collection(COLLECTION_NAME).readDocument(doc.getKey(), BaseDocument.class, null).execute();
+		// fail();
+		// } catch (final ArangoDBException e) {
+		// assertThat(e.getCode().isPresent(), is(true));
+		// assertThat(e.getCode().get(), is(404));
+		// }
 	}
 }
