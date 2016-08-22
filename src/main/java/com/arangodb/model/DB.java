@@ -69,7 +69,7 @@ public class DB extends ExecuteBase {
 		final CollectionsRead params = (options != null ? options : new CollectionsRead.Options()).build();
 		request.putParameter(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
 		return execute(request, (response) -> {
-			final VPackSlice result = response.getBody().get().get("result");
+			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
 			return deserialize(result, new Type<Collection<CollectionResult>>() {
 			}.getType());
 		});

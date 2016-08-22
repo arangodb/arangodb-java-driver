@@ -2,6 +2,7 @@ package com.arangodb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Properties;
 
 import com.arangodb.entity.ArangoDBVersion;
@@ -141,6 +142,8 @@ public abstract class ArangoDB extends ExecuteBase {
 	public abstract DB db();
 
 	public abstract DB db(final String name);
+
+	public abstract Executeable<Collection<String>> getDBs();
 
 	public abstract Executeable<ArangoDBVersion> getVersion();
 

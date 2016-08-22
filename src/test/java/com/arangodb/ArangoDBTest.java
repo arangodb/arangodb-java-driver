@@ -1,8 +1,11 @@
 package com.arangodb;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+
+import java.util.Collection;
 
 import org.junit.Test;
 
@@ -42,6 +45,24 @@ public class ArangoDBTest {
 		assertThat(resultCreate, is(true));
 		final Boolean resultDelete = arangoDB.deleteDB(BaseTest.TEST_DB).execute();
 		assertThat(resultDelete, is(true));
+	}
+
+	@Test
+	public void getDBs() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			Collection<String> dbs = arangoDB.getDBs().execute();
+			assertThat(dbs, is(notNullValue()));
+			assertThat(dbs.size(), is(1));
+			assertThat(dbs.stream().findFirst().get(), is("_system"));
+			arangoDB.createDB(BaseTest.TEST_DB).execute();
+			dbs = arangoDB.getDBs().execute();
+			assertThat(dbs.size(), is(2));
+			assertThat(dbs, hasItem("_system"));
+			assertThat(dbs, hasItem(BaseTest.TEST_DB));
+		} finally {
+			arangoDB.deleteDB(BaseTest.TEST_DB).execute();
+		}
 	}
 
 	@Test

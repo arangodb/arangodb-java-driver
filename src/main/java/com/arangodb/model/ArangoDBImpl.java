@@ -1,5 +1,7 @@
 package com.arangodb.model;
 
+import java.util.Collection;
+
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserResult;
@@ -8,8 +10,10 @@ import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -58,6 +62,15 @@ public class ArangoDBImpl extends ArangoDB {
 	public DB db(final String name) {
 		validateDBName(name);
 		return new DB(this, name);
+	}
+
+	@Override
+	public Executeable<Collection<String>> getDBs() {
+		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE), (response) -> {
+			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
+			return deserialize(result, new Type<Collection<String>>() {
+			}.getType());
+		});
 	}
 
 	@Override
