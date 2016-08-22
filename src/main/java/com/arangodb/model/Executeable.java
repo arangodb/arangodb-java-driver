@@ -26,7 +26,7 @@ public class Executeable<T> {
 	}
 
 	protected final Communication communication;
-	private final Request request;
+	protected final Request request;
 	private final ResponseDeserializer<T> responseDeserializer;
 
 	protected Executeable(final Communication communication, final VPack vpack, final VPackParser vpackParser,

@@ -720,4 +720,64 @@ public class DBCollectionTest extends BaseTest {
 		final CollectionPropertiesResult count = db.collection(COLLECTION_NAME).getCount().execute();
 		assertThat(count.getCount(), is(1L));
 	}
+
+	@Test
+	public void documentExists() {
+		final Boolean existsNot = db.collection(COLLECTION_NAME).documentExists("no", null).execute();
+		assertThat(existsNot, is(false));
+		db.collection(COLLECTION_NAME).createDocument("{\"_key\":\"abc\"}", null).execute();
+		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", null).execute();
+		assertThat(exists, is(true));
+	}
+
+	@Test
+	public void documentExistsAsync() throws Exception {
+		final CompletableFuture<Boolean> existsNot = db.collection(COLLECTION_NAME).documentExists("no", null)
+				.executeAsync();
+		existsNot.thenAccept(result -> {
+			assertThat(result, is(false));
+		});
+		existsNot.get();
+		db.collection(COLLECTION_NAME).createDocument("{\"_key\":\"abc\"}", null).execute();
+		final CompletableFuture<Boolean> exists = db.collection(COLLECTION_NAME).documentExists("abc", null)
+				.executeAsync();
+		exists.thenAccept(result -> {
+			assertThat(result, is(true));
+		});
+	}
+
+	@Test
+	public void documentExistsIfMatch() {
+		final DocumentCreateResult<String> createResult = db.collection(COLLECTION_NAME)
+				.createDocument("{\"_key\":\"abc\"}", null).execute();
+		final DocumentExists.Options options = new DocumentExists.Options().ifMatch(createResult.getRev());
+		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options).execute();
+		assertThat(exists, is(true));
+	}
+
+	@Test
+	public void documentExistsIfMatchFail() {
+		db.collection(COLLECTION_NAME).createDocument("{\"_key\":\"abc\"}", null).execute();
+		final DocumentExists.Options options = new DocumentExists.Options().ifMatch("no");
+		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options).execute();
+		assertThat(exists, is(false));
+	}
+
+	@Test
+	public void documentExistsIfNoneMatch() {
+		db.collection(COLLECTION_NAME).createDocument("{\"_key\":\"abc\"}", null).execute();
+		final DocumentExists.Options options = new DocumentExists.Options().ifNoneMatch("no");
+		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options).execute();
+		assertThat(exists, is(true));
+	}
+
+	@Test
+	public void documentExistsIfNoneMatchFail() {
+		final DocumentCreateResult<String> createResult = db.collection(COLLECTION_NAME)
+				.createDocument("{\"_key\":\"abc\"}", null).execute();
+		final DocumentExists.Options options = new DocumentExists.Options().ifNoneMatch(createResult.getRev());
+		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options).execute();
+		assertThat(exists, is(false));
+	}
+
 }

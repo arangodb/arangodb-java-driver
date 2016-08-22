@@ -3,6 +3,7 @@ package com.arangodb.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
@@ -161,6 +162,30 @@ public class DBCollection extends ExecuteBase {
 			}
 			return doc;
 		});
+	}
+
+	public Executeable<Boolean> documentExists(final String key, final DocumentExists.Options options) {
+		final Request request = new Request(db.name(), RequestType.HEAD,
+				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
+		final DocumentExists params = (options != null ? options : new DocumentExists.Options()).build();
+		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.getMeta().put(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		return new Executeable<Boolean>(communication, request, null) {
+			@Override
+			public CompletableFuture<Boolean> executeAsync() {
+				final CompletableFuture<Boolean> result = new CompletableFuture<>();
+				communication.execute(request).whenComplete((response, ex) -> {
+					if (response != null) {
+						result.complete(true);
+					} else if (ex != null) {
+						result.complete(false);
+					} else {
+						result.cancel(true);
+					}
+				});
+				return result;
+			}
+		};
 	}
 
 	public Executeable<IndexResult> createHashIndex(final Collection<String> fields, final HashIndex.Options options) {
