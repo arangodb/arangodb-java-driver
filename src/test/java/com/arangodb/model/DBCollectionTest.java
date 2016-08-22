@@ -29,6 +29,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DocumentCreateResult;
+import com.arangodb.entity.DocumentDeleteResult;
 import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
@@ -828,5 +829,75 @@ public class DBCollectionTest extends BaseTest {
 			assertThat(baseDocument.getKey(), is(notNullValue()));
 		});
 	}
+
+	@Test
+	public void deleteDocuments() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("2");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).createDocuments(values, null).execute();
+		final Collection<String> keys = new ArrayList<>();
+		keys.add("1");
+		keys.add("2");
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null).execute();
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.size(), is(2));
+		deleteResult.stream().forEach(i -> {
+			assertThat(i.getKey(), anyOf(is("1"), is("2")));
+		});
+	}
+
+	@Test
+	public void deleteDocumentsOne() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).createDocuments(values, null).execute();
+		final Collection<String> keys = new ArrayList<>();
+		keys.add("1");
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null).execute();
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.size(), is(1));
+		deleteResult.stream().forEach(i -> {
+			assertThat(i.getKey(), is("1"));
+		});
+	}
+
+	@Test
+	public void deleteDocumentsEmpty() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		db.collection(COLLECTION_NAME).createDocuments(values, null).execute();
+		final Collection<String> keys = new ArrayList<>();
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null).execute();
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.size(), is(0));
+	}
+
+	// @Test
+	// public void deleteDocumentsNotExisting() {
+	// final Collection<BaseDocument> values = new ArrayList<>();
+	// db.collection(COLLECTION_NAME).createDocuments(values, null).execute();
+	// final Collection<String> keys = new ArrayList<>();
+	// keys.add("1");
+	// keys.add("2");
+	// final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+	// .deleteDocuments(keys, null, null).execute();
+	// assertThat(deleteResult, is(notNullValue()));
+	// assertThat(deleteResult.size(), is(0));
+	// }
 
 }

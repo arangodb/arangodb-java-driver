@@ -200,6 +200,32 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
+	public <T> Executeable<Collection<DocumentDeleteResult<T>>> deleteDocuments(
+		final Collection<String> keys,
+		final Class<T> type,
+		final DocumentDelete.Options options) {
+		final Request request = new Request(db.name(), RequestType.DELETE,
+				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
+		final DocumentDelete params = (options != null ? options : new DocumentDelete.Options()).build();
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.setBody(serialize(keys));
+		return execute(request, response -> {
+			final Collection<DocumentDeleteResult<T>> docs = new ArrayList<>();
+			final VPackSlice body = response.getBody().get();
+			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+				final VPackSlice next = iterator.next();
+				final DocumentDeleteResult<T> doc = deserialize(next, DocumentDeleteResult.class);
+				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld(deserialize(oldDoc, type));
+				}
+				docs.add(doc);
+			}
+			return docs;
+		});
+	}
+
 	public Executeable<Boolean> documentExists(final String key, final DocumentExists.Options options) {
 		final Request request = new Request(db.name(), RequestType.HEAD,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
