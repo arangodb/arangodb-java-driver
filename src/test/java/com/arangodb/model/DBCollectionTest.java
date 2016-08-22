@@ -780,4 +780,53 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(exists, is(false));
 	}
 
+	@Test
+	public void createDocuments() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.createDocuments(values, null).execute();
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.size(), is(3));
+	}
+
+	@Test
+	public void createDocumentsOne() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		values.add(new BaseDocument());
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.createDocuments(values, null).execute();
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.size(), is(1));
+	}
+
+	@Test
+	public void createDocumentsEmpty() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.createDocuments(values, null).execute();
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.size(), is(0));
+	}
+
+	@Test
+	public void createDocumentsReturnNew() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		final DocumentCreate.Options options = new DocumentCreate.Options().returnNew(true);
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.createDocuments(values, options).execute();
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.size(), is(3));
+		docs.stream().forEach(doc -> {
+			assertThat(doc.getNew().isPresent(), is(true));
+			final BaseDocument baseDocument = doc.getNew().get();
+			assertThat(baseDocument.getKey(), is(notNullValue()));
+		});
+	}
+
 }

@@ -1,8 +1,11 @@
 package com.arangodb.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionPropertiesResult;
@@ -69,6 +72,39 @@ public class DBCollection extends ExecuteBase {
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
 			return doc;
+		});
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Executeable<Collection<DocumentCreateResult<T>>> createDocuments(
+		final Collection<T> values,
+		final DocumentCreate.Options options) {
+		final Request request = new Request(db.name(), RequestType.POST,
+				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
+		final DocumentCreate params = (options != null ? options : new DocumentCreate.Options()).build();
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.setBody(serialize(values));
+		return execute(request, response -> {
+			Class<T> type = null;
+			if (params.getReturnNew() != null && params.getReturnNew()) {
+				final Optional<T> first = values.stream().findFirst();
+				if (first.isPresent()) {
+					type = (Class<T>) first.get().getClass();
+				}
+			}
+			final Collection<DocumentCreateResult<T>> docs = new ArrayList<>();
+			final VPackSlice body = response.getBody().get();
+			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+				final VPackSlice next = iterator.next();
+				final DocumentCreateResult<T> doc = deserialize(next, DocumentCreateResult.class);
+				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+				if (newDoc.isObject()) {
+					doc.setNew(deserialize(newDoc, type));
+				}
+				docs.add(doc);
+			}
+			return docs;
 		});
 	}
 
