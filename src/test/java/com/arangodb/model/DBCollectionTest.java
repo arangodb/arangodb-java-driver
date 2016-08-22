@@ -1,5 +1,6 @@
 package com.arangodb.model;
 
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import com.arangodb.ArangoDBException;
 import com.arangodb.BaseTest;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentUpdateResult;
@@ -674,21 +676,48 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void readIndexes() {
+		final Collection<String> fields = new ArrayList<>();
+		fields.add("a");
+		db.collection(COLLECTION_NAME).createHashIndex(fields, null).execute();
+		final Collection<IndexResult> indexes = db.collection(COLLECTION_NAME).readIndexes().execute();
+		assertThat(indexes, is(notNullValue()));
+		assertThat(indexes.size(), is(2));
+		indexes.stream().forEach((i) -> {
+			assertThat(i.getType(), anyOf(is(IndexType.primary), is(IndexType.hash)));
+			if (i.getType() == IndexType.hash) {
+				assertThat(i.getFields().size(), is(1));
+				assertThat(i.getFields(), hasItem("a"));
+			}
+		});
+	}
+
+	@Test
 	public void truncate() {
-		// final BaseDocument doc = new BaseDocument();
-		// db.collection(COLLECTION_NAME).createDocument(doc, null).execute();
-		// final BaseDocument readResult = db.collection(COLLECTION_NAME)
-		// .readDocument(doc.getKey(), BaseDocument.class, null).execute();
-		// assertThat(readResult.getKey(), is(doc.getKey()));
+		final BaseDocument doc = new BaseDocument();
+		db.collection(COLLECTION_NAME).createDocument(doc, null).execute();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME)
+				.readDocument(doc.getKey(), BaseDocument.class, null).execute();
+		assertThat(readResult.getKey(), is(doc.getKey()));
 		final CollectionResult truncateResult = db.collection(COLLECTION_NAME).truncate().execute();
 		assertThat(truncateResult, is(notNullValue()));
 		assertThat(truncateResult.getId(), is(notNullValue()));
-		// try {
-		// db.collection(COLLECTION_NAME).readDocument(doc.getKey(), BaseDocument.class, null).execute();
-		// fail();
-		// } catch (final ArangoDBException e) {
-		// assertThat(e.getCode().isPresent(), is(true));
-		// assertThat(e.getCode().get(), is(404));
-		// }
+		try {
+			db.collection(COLLECTION_NAME).readDocument(doc.getKey(), BaseDocument.class, null).execute();
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getCode().isPresent(), is(true));
+			assertThat(e.getCode().get(), is(404));
+		}
+	}
+
+	@Test
+	public void getCount() {
+		final CollectionPropertiesResult countEmpty = db.collection(COLLECTION_NAME).getCount().execute();
+		assertThat(countEmpty, is(notNullValue()));
+		assertThat(countEmpty.getCount(), is(0L));
+		db.collection(COLLECTION_NAME).createDocument("{}", null).execute();
+		final CollectionPropertiesResult count = db.collection(COLLECTION_NAME).getCount().execute();
+		assertThat(count.getCount(), is(1L));
 	}
 }

@@ -1,6 +1,8 @@
 package com.arangodb.model;
 
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.KeyOptions;
+import com.arangodb.entity.KeyType;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -36,27 +38,6 @@ public class CollectionCreate {
 		this.isSystem = isSystem;
 		this.type = type;
 		this.indexBuckets = indexBuckets;
-	}
-
-	public static enum KeyType {
-		traditional, autoincrement
-	}
-
-	public static class KeyOptions {
-		private final Boolean allowUserKeys;
-		private final KeyType type;
-		private final Integer increment;
-		private final Integer offset;
-
-		public KeyOptions(final Boolean allowUserKeys, final KeyType type, final Integer increment,
-			final Integer offset) {
-			super();
-			this.allowUserKeys = allowUserKeys;
-			this.type = type;
-			this.increment = increment;
-			this.offset = offset;
-		}
-
 	}
 
 	public static class Options {

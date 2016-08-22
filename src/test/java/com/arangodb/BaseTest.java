@@ -32,6 +32,7 @@ public abstract class BaseTest {
 	public static void shutdown() {
 		arangoDB.deleteDB(TEST_DB).execute();
 		arangoDB.shutdown();
+		arangoDB = null;
 	}
 
 }

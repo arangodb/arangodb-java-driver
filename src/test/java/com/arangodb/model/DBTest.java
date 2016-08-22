@@ -83,4 +83,36 @@ public class DBTest extends BaseTest {
 		} catch (final ArangoDBException e) {
 		}
 	}
+
+	@Test
+	public void readCollections() {
+		final Collection<CollectionResult> systemCollections = db.readCollections(null).execute();
+		db.createCollection(COLLECTION_NAME + "1", null).execute();
+		db.createCollection(COLLECTION_NAME + "2", null).execute();
+		final Collection<CollectionResult> collections = db.readCollections(null).execute();
+		assertThat(collections.size(), is(2 + systemCollections.size()));
+		assertThat(collections, is(notNullValue()));
+		try {
+			db.deleteCollection(COLLECTION_NAME + "1").execute();
+			db.deleteCollection(COLLECTION_NAME + "2").execute();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void readCollectionsExcludeSystem() {
+		final CollectionsRead.Options options = new CollectionsRead.Options().excludeSystem(true);
+		final Collection<CollectionResult> systemCollections = db.readCollections(options).execute();
+		assertThat(systemCollections.size(), is(0));
+		db.createCollection(COLLECTION_NAME + "1", null).execute();
+		db.createCollection(COLLECTION_NAME + "2", null).execute();
+		final Collection<CollectionResult> collections = db.readCollections(options).execute();
+		assertThat(collections.size(), is(2));
+		assertThat(collections, is(notNullValue()));
+		try {
+			db.deleteCollection(COLLECTION_NAME + "1").execute();
+			db.deleteCollection(COLLECTION_NAME + "2").execute();
+		} catch (final ArangoDBException e) {
+		}
+	}
 }

@@ -1,5 +1,7 @@
 package com.arangodb.model;
 
+import java.util.Collection;
+
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -8,8 +10,10 @@ import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -58,6 +62,17 @@ public class DB extends ExecuteBase {
 		final Request request = new Request(name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 		return execute(CollectionResult.class, request);
+	}
+
+	public Executeable<Collection<CollectionResult>> readCollections(final CollectionsRead.Options options) {
+		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
+		final CollectionsRead params = (options != null ? options : new CollectionsRead.Options()).build();
+		request.putParameter(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
+		return execute(request, (response) -> {
+			final VPackSlice result = response.getBody().get().get("result");
+			return deserialize(result, new Type<Collection<CollectionResult>>() {
+			}.getType());
+		});
 	}
 
 	public Executeable<IndexResult> readIndex(final String id) {

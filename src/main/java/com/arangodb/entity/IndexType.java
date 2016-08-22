@@ -5,5 +5,5 @@ package com.arangodb.entity;
  *
  */
 public enum IndexType {
-	hash, skiplist, persistent, geo, geo1, geo2, fulltext
+	primary, hash, skiplist, persistent, geo, geo1, geo2, fulltext
 }

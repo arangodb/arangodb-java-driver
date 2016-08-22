@@ -35,5 +35,6 @@ public class ArangoDBConstants {
 	public static final String RETURN_OLD = "returnOld";
 	public static final String OLD = "old";
 	public static final String COLLECTION = "collection";
+	public static final String EXCLUDE_SYSTEM = "excludeSystem";
 
 }
