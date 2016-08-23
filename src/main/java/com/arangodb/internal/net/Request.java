@@ -20,8 +20,8 @@ public class Request {
 	private String database;
 	private RequestType requestType;
 	private String request;
-	private final Map<String, String> parameter;
-	private final Map<String, String> meta;
+	private Map<String, String> parameter;
+	private Map<String, String> meta;
 	@Expose(serialize = false)
 	private Optional<VPackSlice> body;
 
@@ -30,9 +30,9 @@ public class Request {
 		this.database = database;
 		this.requestType = requestType;
 		this.request = path;
+		body = Optional.empty();
 		parameter = new HashMap<>();
 		meta = new HashMap<>();
-		body = Optional.empty();
 	}
 
 	public int getVersion() {
@@ -75,16 +75,30 @@ public class Request {
 		this.request = request;
 	}
 
-	public Map<String, String> getParameter() {
+	private Map<String, String> getParameter() {
+		if (parameter == null) {
+			parameter = new HashMap<>();
+		}
 		return parameter;
 	}
 
 	public void putParameter(final String key, final Object value) {
-		parameter.put(key, value != null ? value.toString() : null);
+		if (value != null) {
+			getParameter().put(key, value.toString());
+		}
 	}
 
-	public Map<String, String> getMeta() {
+	private Map<String, String> getMeta() {
+		if (meta == null) {
+			meta = new HashMap<>();
+		}
 		return meta;
+	}
+
+	public void putMeta(final String key, final String value) {
+		if (value != null) {
+			getMeta().put(key, value);
+		}
 	}
 
 	public Optional<VPackSlice> getBody() {

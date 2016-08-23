@@ -112,8 +112,8 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentRead params = (options != null ? options : new DocumentRead.Options()).build();
-		request.getMeta().put(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return execute(type, request);
 	}
 
@@ -128,7 +128,7 @@ public class DBCollection extends ExecuteBase {
 		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
 		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
-		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value));
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
@@ -162,7 +162,7 @@ public class DBCollection extends ExecuteBase {
 		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
 		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
-		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value, true));
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
@@ -188,7 +188,7 @@ public class DBCollection extends ExecuteBase {
 		final DocumentDelete params = (options != null ? options : new DocumentDelete.Options()).build();
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
-		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return execute(request, response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentDeleteResult<T> doc = deserialize(body, DocumentDeleteResult.class);
@@ -230,8 +230,8 @@ public class DBCollection extends ExecuteBase {
 		final Request request = new Request(db.name(), RequestType.HEAD,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentExists params = (options != null ? options : new DocumentExists.Options()).build();
-		request.getMeta().put(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.getMeta().put(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		return new Executeable<Boolean>(communication, request, null) {
 			@Override
 			public CompletableFuture<Boolean> executeAsync() {
@@ -284,7 +284,7 @@ public class DBCollection extends ExecuteBase {
 
 	public Executeable<Collection<IndexResult>> readIndexes() {
 		final Request request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
-		request.getParameter().put(ArangoDBConstants.COLLECTION, name);
+		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		return execute(request,
 			response -> deserialize(response.getBody().get().get("indexes"), new Type<Collection<IndexResult>>() {
 			}.getType()));
