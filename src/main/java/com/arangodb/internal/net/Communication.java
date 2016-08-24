@@ -108,7 +108,9 @@ public class Communication {
 							if (response.getBody().isPresent()) {
 								final ErrorEntity errorEntity = vpack.deserialize(response.getBody().get(),
 									ErrorEntity.class);
-								rfuture.completeExceptionally(new ArangoDBException(errorEntity));
+								final String errorMessage = String.format("Response: %s, Error: %s - %s",
+									errorEntity.getCode(), errorEntity.getErrorNum(), errorEntity.getErrorMessage());
+								rfuture.completeExceptionally(new ArangoDBException(errorMessage));
 							} else {
 								rfuture.completeExceptionally(new ArangoDBException(
 										String.format("Response Code: %s", response.getResponseCode())));

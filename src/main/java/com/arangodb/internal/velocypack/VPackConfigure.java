@@ -7,7 +7,8 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.internal.net.Request;
+import com.arangodb.internal.net.Response;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
@@ -63,10 +64,11 @@ public class VPackConfigure {
 			json.append(JSONValue.toJSONString(id));
 		});
 
-		builder.registerSerializer(RequestType.class, VPackSerializers.REQUEST_TYPE);
+		builder.registerSerializer(Request.class, VPackSerializers.REQUEST);
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
 		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
 
+		builder.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
 		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
 		builder.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);

@@ -27,32 +27,32 @@ public class DBTest extends BaseTest {
 	@After
 	public void teardown() {
 		try {
-			db.deleteCollection(COLLECTION_NAME).execute();
+			db.collection(COLLECTION_NAME).drop();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
 	public void createCollection() {
-		final CollectionResult result = db.createCollection(COLLECTION_NAME, null).execute();
+		final CollectionResult result = db.createCollection(COLLECTION_NAME, null);
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getId(), is(notNullValue()));
 	}
 
 	@Test
 	public void readCollection() {
-		final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null).execute();
-		final CollectionResult readResult = db.readCollection(COLLECTION_NAME).execute();
+		final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null);
+		final CollectionResult readResult = db.readCollection(COLLECTION_NAME);
 		assertThat(readResult, is(notNullValue()));
 		assertThat(readResult.getId(), is(createResult.getId()));
 	}
 
 	@Test
 	public void deleteCollection() {
-		db.createCollection(COLLECTION_NAME, null).execute();
-		db.deleteCollection(COLLECTION_NAME).execute();
+		db.createCollection(COLLECTION_NAME, null);
+		db.collection(COLLECTION_NAME).drop();
 		try {
-			db.readCollection(COLLECTION_NAME).execute();
+			db.readCollection(COLLECTION_NAME);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
@@ -60,25 +60,25 @@ public class DBTest extends BaseTest {
 
 	@Test
 	public void readIndex() {
-		db.createCollection(COLLECTION_NAME, null).execute();
+		db.createCollection(COLLECTION_NAME, null);
 		final Collection<String> fields = new ArrayList<>();
 		fields.add("a");
-		final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null).execute();
-		final IndexResult readResult = db.readIndex(createResult.getId()).execute();
+		final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexResult readResult = db.readIndex(createResult.getId());
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getType(), is(createResult.getType()));
 	}
 
 	@Test
 	public void deleteIndex() {
-		db.createCollection(COLLECTION_NAME, null).execute();
+		db.createCollection(COLLECTION_NAME, null);
 		final Collection<String> fields = new ArrayList<>();
 		fields.add("a");
-		final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null).execute();
-		final String id = db.deleteIndex(createResult.getId()).execute();
+		final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final String id = db.deleteIndex(createResult.getId());
 		assertThat(id, is(createResult.getId()));
 		try {
-			db.readIndex(id).execute();
+			db.readIndex(id);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
@@ -86,15 +86,15 @@ public class DBTest extends BaseTest {
 
 	@Test
 	public void readCollections() {
-		final Collection<CollectionResult> systemCollections = db.readCollections(null).execute();
-		db.createCollection(COLLECTION_NAME + "1", null).execute();
-		db.createCollection(COLLECTION_NAME + "2", null).execute();
-		final Collection<CollectionResult> collections = db.readCollections(null).execute();
+		final Collection<CollectionResult> systemCollections = db.readCollections(null);
+		db.createCollection(COLLECTION_NAME + "1", null);
+		db.createCollection(COLLECTION_NAME + "2", null);
+		final Collection<CollectionResult> collections = db.readCollections(null);
 		assertThat(collections.size(), is(2 + systemCollections.size()));
 		assertThat(collections, is(notNullValue()));
 		try {
-			db.deleteCollection(COLLECTION_NAME + "1").execute();
-			db.deleteCollection(COLLECTION_NAME + "2").execute();
+			db.collection(COLLECTION_NAME + "1").drop();
+			db.collection(COLLECTION_NAME + "2").drop();
 		} catch (final ArangoDBException e) {
 		}
 	}
@@ -102,16 +102,16 @@ public class DBTest extends BaseTest {
 	@Test
 	public void readCollectionsExcludeSystem() {
 		final CollectionsRead.Options options = new CollectionsRead.Options().excludeSystem(true);
-		final Collection<CollectionResult> systemCollections = db.readCollections(options).execute();
+		final Collection<CollectionResult> systemCollections = db.readCollections(options);
 		assertThat(systemCollections.size(), is(0));
-		db.createCollection(COLLECTION_NAME + "1", null).execute();
-		db.createCollection(COLLECTION_NAME + "2", null).execute();
-		final Collection<CollectionResult> collections = db.readCollections(options).execute();
+		db.createCollection(COLLECTION_NAME + "1", null);
+		db.createCollection(COLLECTION_NAME + "2", null);
+		final Collection<CollectionResult> collections = db.readCollections(options);
 		assertThat(collections.size(), is(2));
 		assertThat(collections, is(notNullValue()));
 		try {
-			db.deleteCollection(COLLECTION_NAME + "1").execute();
-			db.deleteCollection(COLLECTION_NAME + "2").execute();
+			db.collection(COLLECTION_NAME + "1").drop();
+			db.collection(COLLECTION_NAME + "2").drop();
 		} catch (final ArangoDBException e) {
 		}
 	}

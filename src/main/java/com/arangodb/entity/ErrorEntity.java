@@ -6,21 +6,12 @@ package com.arangodb.entity;
  */
 public class ErrorEntity {
 
-	private boolean error;
 	private String errorMessage;
 	private int code;
 	private int errorNum;
 
 	public ErrorEntity() {
 		super();
-	}
-
-	public boolean isError() {
-		return error;
-	}
-
-	public void setError(final boolean error) {
-		this.error = error;
 	}
 
 	public String getErrorMessage() {

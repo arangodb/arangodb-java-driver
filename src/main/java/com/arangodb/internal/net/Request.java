@@ -75,7 +75,7 @@ public class Request {
 		this.request = request;
 	}
 
-	private Map<String, String> getParameter() {
+	public Map<String, String> getParameter() {
 		if (parameter == null) {
 			parameter = new HashMap<>();
 		}
@@ -88,7 +88,7 @@ public class Request {
 		}
 	}
 
-	private Map<String, String> getMeta() {
+	public Map<String, String> getMeta() {
 		if (meta == null) {
 			meta = new HashMap<>();
 		}

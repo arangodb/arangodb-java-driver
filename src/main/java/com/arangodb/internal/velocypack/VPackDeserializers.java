@@ -5,6 +5,7 @@ import java.util.Map;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.internal.net.Response;
 import com.arangodb.velocypack.VPackDeserializer;
 
 /**
@@ -12,6 +13,14 @@ import com.arangodb.velocypack.VPackDeserializer;
  *
  */
 public class VPackDeserializers {
+
+	public static final VPackDeserializer<Response> RESPONSE = (parent, vpack, context) -> {
+		final Response response = new Response();
+		response.setVersion(vpack.get(0).getAsInt());
+		response.setType(vpack.get(1).getAsInt());
+		response.setResponseCode(vpack.get(2).getAsInt());
+		return response;
+	};
 
 	public static final VPackDeserializer<CollectionType> COLLECTION_TYPE = (parent, vpack, context) -> CollectionType
 			.fromType(vpack.getAsInt());

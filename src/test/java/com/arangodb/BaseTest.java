@@ -21,16 +21,16 @@ public abstract class BaseTest {
 			arangoDB = new ArangoDB.Builder().build();
 		}
 		try {
-			arangoDB.deleteDB(TEST_DB).execute();
+			arangoDB.db(TEST_DB).drop();
 		} catch (final ArangoDBException e) {
 		}
-		arangoDB.createDB(TEST_DB).execute();
+		arangoDB.createDB(TEST_DB);
 		BaseTest.db = arangoDB.db(TEST_DB);
 	}
 
 	@AfterClass
 	public static void shutdown() {
-		arangoDB.deleteDB(TEST_DB).execute();
+		arangoDB.db(TEST_DB).drop();
 		arangoDB.shutdown();
 		arangoDB = null;
 	}

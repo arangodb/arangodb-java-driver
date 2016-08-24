@@ -1,8 +1,10 @@
 package com.arangodb.model;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -10,6 +12,7 @@ import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.UserCreate.Options;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
@@ -36,21 +39,17 @@ public class ArangoDBImpl extends ArangoDB {
 	}
 
 	@Override
-	public Executeable<Boolean> createDB(final String name) {
+	public Boolean createDB(final String name) throws ArangoDBException {
+		return unwrap(createDBAsync(name));
+	}
+
+	@Override
+	public CompletableFuture<Boolean> createDBAsync(final String name) {
 		validateDBName(name);
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
 		request.setBody(serialize(new DBCreate.Options().build(name)));
 		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
-	}
-
-	@Override
-	public Executeable<Boolean> deleteDB(final String name) {
-		validateDBName(name);
-		return execute(
-			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
-					createPath(ArangoDBConstants.PATH_API_DATABASE, name)),
-			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
 	@Override
@@ -65,7 +64,12 @@ public class ArangoDBImpl extends ArangoDB {
 	}
 
 	@Override
-	public Executeable<Collection<String>> getDBs() {
+	public Collection<String> getDBs() throws ArangoDBException {
+		return unwrap(getDBsAsync());
+	}
+
+	@Override
+	public CompletableFuture<Collection<String>> getDBsAsync() {
 		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE), (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
 			return deserialize(result, new Type<Collection<String>>() {
@@ -74,14 +78,25 @@ public class ArangoDBImpl extends ArangoDB {
 	}
 
 	@Override
-	public Executeable<ArangoDBVersion> getVersion() {
+	public ArangoDBVersion getVersion() throws ArangoDBException {
+		return unwrap(getVersionAsync());
+	}
+
+	@Override
+	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
 		// TODO details
 		return execute(ArangoDBVersion.class,
 			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
 	}
 
 	@Override
-	public Executeable<UserResult> createUser(
+	public UserResult createUser(final String user, final String passwd, final Options options)
+			throws ArangoDBException {
+		return unwrap(createUserAsync(user, passwd, options));
+	}
+
+	@Override
+	public CompletableFuture<UserResult> createUserAsync(
 		final String user,
 		final String passwd,
 		final UserCreate.Options options) {
@@ -91,7 +106,12 @@ public class ArangoDBImpl extends ArangoDB {
 	}
 
 	@Override
-	public Executeable<Void> deleteUser(final String user) {
+	public void deleteUser(final String user) throws ArangoDBException {
+		unwrap(deleteUserAsync(user));
+	}
+
+	@Override
+	public CompletableFuture<Void> deleteUserAsync(final String user) {
 		return execute(Void.class,
 			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}

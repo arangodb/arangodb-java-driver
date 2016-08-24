@@ -1,7 +1,9 @@
 package com.arangodb.model;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -19,7 +21,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class DB extends ExecuteBase {
+public class DB extends Executeable {
 
 	private final String name;
 
@@ -45,26 +47,36 @@ public class DB extends ExecuteBase {
 		return new DBCollection(this, name);
 	}
 
-	public Executeable<CollectionResult> createCollection(final String name, final CollectionCreate.Options options) {
+	public CollectionResult createCollection(final String name, final CollectionCreate.Options options)
+			throws ArangoDBException {
+		return unwrap(createCollectionAsync(name, options));
+	}
+
+	public CompletableFuture<CollectionResult> createCollectionAsync(
+		final String name,
+		final CollectionCreate.Options options) {
 		validateCollectionName(name);
 		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
 		request.setBody(serialize((options != null ? options : new CollectionCreate.Options()).build(name)));
 		return execute(CollectionResult.class, request);
 	}
 
-	public Executeable<Void> deleteCollection(final String name) {
-		validateCollectionName(name);
-		return execute(Void.class,
-			new Request(name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
+	public CollectionResult readCollection(final String name) throws ArangoDBException {
+		return unwrap(readCollectionAsync(name));
 	}
 
-	public Executeable<CollectionResult> readCollection(final String name) {
+	public CompletableFuture<CollectionResult> readCollectionAsync(final String name) {
 		final Request request = new Request(name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 		return execute(CollectionResult.class, request);
 	}
 
-	public Executeable<Collection<CollectionResult>> readCollections(final CollectionsRead.Options options) {
+	public Collection<CollectionResult> readCollections(final CollectionsRead.Options options)
+			throws ArangoDBException {
+		return unwrap(readCollectionsAsync(options));
+	}
+
+	public CompletableFuture<Collection<CollectionResult>> readCollectionsAsync(final CollectionsRead.Options options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
 		final CollectionsRead params = (options != null ? options : new CollectionsRead.Options()).build();
 		request.putParameter(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
@@ -75,16 +87,33 @@ public class DB extends ExecuteBase {
 		});
 	}
 
-	public Executeable<IndexResult> readIndex(final String id) {
-		// TODO validate id
+	public IndexResult readIndex(final String id) throws ArangoDBException {
+		return unwrap(readIndexAsync(id));
+	}
+
+	public CompletableFuture<IndexResult> readIndexAsync(final String id) {
 		return execute(IndexResult.class,
 			new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_INDEX, id)));
 	}
 
-	public Executeable<String> deleteIndex(final String id) {
-		// TODO validate id
+	public String deleteIndex(final String id) throws ArangoDBException {
+		return unwrap(deleteIndexAsync(id));
+	}
+
+	public CompletableFuture<String> deleteIndexAsync(final String id) {
 		return execute(new Request(name, RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_INDEX, id)),
 			response -> response.getBody().get().get(ArangoDBConstants.ID).getAsString());
 	}
 
+	public Boolean drop() throws ArangoDBException {
+		return unwrap(dropAsync());
+	}
+
+	public CompletableFuture<Boolean> dropAsync() {
+		validateDBName(name);
+		return execute(
+			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
+					createPath(ArangoDBConstants.PATH_API_DATABASE, name)),
+			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+	}
 }

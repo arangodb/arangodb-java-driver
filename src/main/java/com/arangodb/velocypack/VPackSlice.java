@@ -25,10 +25,7 @@ import com.arangodb.velocypack.internal.util.ValueTypeUtil;
  */
 public class VPackSlice {
 
-	public static VPackAttributeTranslator attributeTranslator;
-	static {
-		attributeTranslator = new VPackAttributeTranslatorImpl();
-	}
+	public static final VPackAttributeTranslator attributeTranslator = new VPackAttributeTranslatorImpl();
 
 	private final byte[] vpack;
 	private final int start;

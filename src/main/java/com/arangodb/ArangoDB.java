@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserResult;
@@ -14,7 +15,6 @@ import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.model.ArangoDBImpl;
 import com.arangodb.model.DB;
-import com.arangodb.model.ExecuteBase;
 import com.arangodb.model.Executeable;
 import com.arangodb.model.UserCreate;
 import com.arangodb.velocypack.VPack;
@@ -27,7 +27,7 @@ import com.arangodb.velocypack.VPackSerializer;
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoDB extends ExecuteBase {
+public abstract class ArangoDB extends Executeable {
 
 	public static class Builder {
 
@@ -135,22 +135,31 @@ public abstract class ArangoDB extends ExecuteBase {
 
 	public abstract void shutdown();
 
-	public abstract Executeable<Boolean> createDB(final String name);
+	public abstract Boolean createDB(final String name) throws ArangoDBException;
 
-	public abstract Executeable<Boolean> deleteDB(final String name);
+	public abstract CompletableFuture<Boolean> createDBAsync(final String name);
 
 	public abstract DB db();
 
 	public abstract DB db(final String name);
 
-	public abstract Executeable<Collection<String>> getDBs();
+	public abstract Collection<String> getDBs() throws ArangoDBException;
 
-	public abstract Executeable<ArangoDBVersion> getVersion();
+	public abstract CompletableFuture<Collection<String>> getDBsAsync();
 
-	public abstract Executeable<UserResult> createUser(
+	public abstract ArangoDBVersion getVersion() throws ArangoDBException;
+
+	public abstract CompletableFuture<ArangoDBVersion> getVersionAsync();
+
+	public abstract UserResult createUser(final String user, final String passwd, final UserCreate.Options options)
+			throws ArangoDBException;
+
+	public abstract CompletableFuture<UserResult> createUserAsync(
 		final String user,
 		final String passwd,
 		final UserCreate.Options options);
 
-	public abstract Executeable<Void> deleteUser(final String user);
+	public abstract void deleteUser(final String user) throws ArangoDBException;
+
+	public abstract CompletableFuture<Void> deleteUserAsync(final String user);
 }

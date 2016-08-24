@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DocumentCreateResult;
@@ -25,7 +26,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class DBCollection extends ExecuteBase {
+public class DBCollection extends Executeable {
 
 	private final DB db;
 	private final String name;
@@ -50,7 +51,12 @@ public class DBCollection extends ExecuteBase {
 		return createPath(name, key);
 	}
 
-	public <T> Executeable<DocumentCreateResult<T>> createDocument(
+	public <T> DocumentCreateResult<T> insert(final T value, final DocumentCreate.Options options)
+			throws ArangoDBException {
+		return unwrap(insertAsync(value, options));
+	}
+
+	public <T> CompletableFuture<DocumentCreateResult<T>> insertAsync(
 		final T value,
 		final DocumentCreate.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST,
@@ -75,8 +81,14 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
+	public <T> Collection<DocumentCreateResult<T>> insert(
+		final Collection<T> values,
+		final DocumentCreate.Options options) throws ArangoDBException {
+		return unwrap(insertAsync(values, options));
+	}
+
 	@SuppressWarnings("unchecked")
-	public <T> Executeable<Collection<DocumentCreateResult<T>>> createDocuments(
+	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertAsync(
 		final Collection<T> values,
 		final DocumentCreate.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST,
@@ -108,7 +120,15 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
-	public <T> Executeable<T> readDocument(final String key, final Class<T> type, final DocumentRead.Options options) {
+	public <T> T read(final String key, final Class<T> type, final DocumentRead.Options options)
+			throws ArangoDBException {
+		return unwrap(readAsync(key, type, options));
+	}
+
+	public <T> CompletableFuture<T> readAsync(
+		final String key,
+		final Class<T> type,
+		final DocumentRead.Options options) {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentRead params = (options != null ? options : new DocumentRead.Options()).build();
@@ -117,7 +137,12 @@ public class DBCollection extends ExecuteBase {
 		return execute(type, request);
 	}
 
-	public <T> Executeable<DocumentUpdateResult<T>> replaceDocument(
+	public <T> DocumentUpdateResult<T> replace(final String key, final T value, final DocumentReplace.Options options)
+			throws ArangoDBException {
+		return unwrap(replaceAsync(key, value, options));
+	}
+
+	public <T> CompletableFuture<DocumentUpdateResult<T>> replaceAsync(
 		final String key,
 		final T value,
 		final DocumentReplace.Options options) {
@@ -148,7 +173,12 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
-	public <T> Executeable<DocumentUpdateResult<T>> updateDocument(
+	public <T> DocumentUpdateResult<T> update(final String key, final T value, final DocumentUpdate.Options options)
+			throws ArangoDBException {
+		return unwrap(updateAsync(key, value, options));
+	}
+
+	public <T> CompletableFuture<DocumentUpdateResult<T>> updateAsync(
 		final String key,
 		final T value,
 		final DocumentUpdate.Options options) {
@@ -179,7 +209,14 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
-	public <T> Executeable<DocumentDeleteResult<T>> deleteDocument(
+	public <T> DocumentDeleteResult<T> delete(
+		final String key,
+		final Class<T> type,
+		final DocumentDelete.Options options) throws ArangoDBException {
+		return unwrap(deleteAsync(key, type, options));
+	}
+
+	public <T> CompletableFuture<DocumentDeleteResult<T>> deleteAsync(
 		final String key,
 		final Class<T> type,
 		final DocumentDelete.Options options) {
@@ -200,7 +237,14 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
-	public <T> Executeable<Collection<DocumentDeleteResult<T>>> deleteDocuments(
+	public <T> Collection<DocumentDeleteResult<T>> delete(
+		final Collection<String> keys,
+		final Class<T> type,
+		final DocumentDelete.Options options) throws ArangoDBException {
+		return unwrap(deleteAsync(keys, type, options));
+	}
+
+	public <T> CompletableFuture<Collection<DocumentDeleteResult<T>>> deleteAsync(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDelete.Options options) {
@@ -226,38 +270,49 @@ public class DBCollection extends ExecuteBase {
 		});
 	}
 
-	public Executeable<Boolean> documentExists(final String key, final DocumentExists.Options options) {
+	public Boolean documentExists(final String key, final DocumentExists.Options options) throws ArangoDBException {
+		return unwrap(documentExistsAsync(key, options));
+	}
+
+	public CompletableFuture<Boolean> documentExistsAsync(final String key, final DocumentExists.Options options) {
 		final Request request = new Request(db.name(), RequestType.HEAD,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentExists params = (options != null ? options : new DocumentExists.Options()).build();
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		return new Executeable<Boolean>(communication, request, null) {
-			@Override
-			public CompletableFuture<Boolean> executeAsync() {
-				final CompletableFuture<Boolean> result = new CompletableFuture<>();
-				communication.execute(request).whenComplete((response, ex) -> {
-					if (response != null) {
-						result.complete(true);
-					} else if (ex != null) {
-						result.complete(false);
-					} else {
-						result.cancel(true);
-					}
-				});
-				return result;
+		final CompletableFuture<Boolean> result = new CompletableFuture<>();
+		communication.execute(request).whenComplete((response, ex) -> {
+			if (response != null) {
+				result.complete(true);
+			} else if (ex != null) {
+				result.complete(false);
+			} else {
+				result.cancel(true);
 			}
-		};
+		});
+		return result;
 	}
 
-	public Executeable<IndexResult> createHashIndex(final Collection<String> fields, final HashIndex.Options options) {
+	public IndexResult createHashIndex(final Collection<String> fields, final HashIndex.Options options)
+			throws ArangoDBException {
+		return unwrap(createHashIndexAsync(fields, options));
+	}
+
+	public CompletableFuture<IndexResult> createHashIndexAsync(
+		final Collection<String> fields,
+		final HashIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize((options != null ? options : new HashIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
 	}
 
-	public Executeable<IndexResult> createSkiplistIndex(
+	public IndexResult createSkiplistIndex(final Collection<String> fields, final SkiplistIndex.Options options)
+			throws ArangoDBException {
+		return unwrap(createSkiplistIndexAsync(fields, options));
+	}
+
+	public CompletableFuture<IndexResult> createSkiplistIndexAsync(
 		final Collection<String> fields,
 		final SkiplistIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
@@ -266,7 +321,12 @@ public class DBCollection extends ExecuteBase {
 		return execute(IndexResult.class, request);
 	}
 
-	public Executeable<IndexResult> createPersistentIndex(
+	public IndexResult createPersistentIndex(final Collection<String> fields, final PersistentIndex.Options options)
+			throws ArangoDBException {
+		return unwrap(createPersistentIndexAsync(fields, options));
+	}
+
+	public CompletableFuture<IndexResult> createPersistentIndexAsync(
 		final Collection<String> fields,
 		final PersistentIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
@@ -275,14 +335,25 @@ public class DBCollection extends ExecuteBase {
 		return execute(IndexResult.class, request);
 	}
 
-	public Executeable<IndexResult> createGeoIndex(final Collection<String> fields, final GeoIndex.Options options) {
+	public IndexResult createGeoIndex(final Collection<String> fields, final GeoIndex.Options options)
+			throws ArangoDBException {
+		return unwrap(createGeoIndexAsync(fields, options));
+	}
+
+	public CompletableFuture<IndexResult> createGeoIndexAsync(
+		final Collection<String> fields,
+		final GeoIndex.Options options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize((options != null ? options : new GeoIndex.Options()).build(fields)));
 		return execute(IndexResult.class, request);
 	}
 
-	public Executeable<Collection<IndexResult>> readIndexes() {
+	public Collection<IndexResult> readIndexes() throws ArangoDBException {
+		return unwrap(readIndexesAsync());
+	}
+
+	public CompletableFuture<Collection<IndexResult>> readIndexesAsync() {
 		final Request request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		return execute(request,
@@ -290,13 +361,31 @@ public class DBCollection extends ExecuteBase {
 			}.getType()));
 	}
 
-	public Executeable<CollectionResult> truncate() {
+	public CollectionResult truncate() throws ArangoDBException {
+		return unwrap(truncateAsync());
+	}
+
+	public CompletableFuture<CollectionResult> truncateAsync() {
 		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "truncate")));
 	}
 
-	public Executeable<CollectionPropertiesResult> getCount() {
+	public CollectionPropertiesResult count() throws ArangoDBException {
+		return unwrap(countAsync());
+	}
+
+	public CompletableFuture<CollectionPropertiesResult> countAsync() {
 		return execute(CollectionPropertiesResult.class,
 			new Request(db.name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "count")));
+	}
+
+	public void drop() throws ArangoDBException {
+		unwrap(dropAsync());
+	}
+
+	public CompletableFuture<Void> dropAsync() {
+		validateCollectionName(name);
+		return execute(Void.class,
+			new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
 	}
 }

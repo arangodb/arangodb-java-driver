@@ -6,9 +6,10 @@ import java.util.Map;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
-import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.internal.net.Request;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.Value;
+import com.arangodb.velocypack.ValueType;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -16,8 +17,17 @@ import com.arangodb.velocypack.Value;
  */
 public class VPackSerializers {
 
-	public static final VPackSerializer<RequestType> REQUEST_TYPE = (builder, attribute, value, context) -> builder
-			.add(attribute, new Value(value.getType()));
+	public static final VPackSerializer<Request> REQUEST = (builder, attribute, value, context) -> {
+		builder.add(attribute, new Value(ValueType.ARRAY));
+		builder.add(new Value(value.getVersion()));
+		builder.add(new Value(value.getType()));
+		builder.add(new Value(value.getDatabase()));
+		builder.add(new Value(value.getRequestType().getType()));
+		builder.add(new Value(value.getRequest()));
+		context.serialize(builder, null, value.getParameter());
+		context.serialize(builder, null, value.getMeta());
+		builder.close();
+	};
 
 	public static final VPackSerializer<CollectionType> COLLECTION_TYPE = (
 		builder,
