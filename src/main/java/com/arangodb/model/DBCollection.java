@@ -173,6 +173,53 @@ public class DBCollection extends Executeable {
 		});
 	}
 
+	public <T> Collection<DocumentUpdateResult<T>> replace(
+		final Collection<T> values,
+		final DocumentReplaceOptions options) {
+		return unwrap(replaceAsync(values, options));
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceAsync(
+		final Collection<T> values,
+		final DocumentReplaceOptions options) {
+		final Request request = new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
+		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
+		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(values));
+		return execute(request, response -> {
+			Class<T> type = null;
+			if ((params.getReturnNew() != null && params.getReturnNew())
+					|| (params.getReturnOld() != null && params.getReturnOld())) {
+				final Optional<T> first = values.stream().findFirst();
+				if (first.isPresent()) {
+					type = (Class<T>) first.get().getClass();
+				}
+			}
+			final Collection<DocumentUpdateResult<T>> docs = new ArrayList<>();
+			final VPackSlice body = response.getBody().get();
+			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+				final VPackSlice next = iterator.next();
+				final DocumentUpdateResult<T> doc = deserialize(next, DocumentUpdateResult.class);
+				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+				if (newDoc.isObject()) {
+					doc.setNew(deserialize(newDoc, type));
+				}
+				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld(deserialize(oldDoc, type));
+				}
+				docs.add(doc);
+			}
+			return docs;
+		});
+	}
+
 	public <T> DocumentUpdateResult<T> update(final String key, final T value, final DocumentUpdateOptions options)
 			throws ArangoDBException {
 		return unwrap(updateAsync(key, value, options));
@@ -206,6 +253,56 @@ public class DBCollection extends Executeable {
 				doc.setOld(deserialize(oldDoc, value.getClass()));
 			}
 			return doc;
+		});
+	}
+
+	public <T> Collection<DocumentUpdateResult<T>> update(
+		final Collection<T> values,
+		final DocumentUpdateOptions options) {
+		return unwrap(updateAsync(values, options));
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateAsync(
+		final Collection<T> values,
+		final DocumentUpdateOptions options) {
+		final Request request = new Request(db.name(), RequestType.PATCH,
+				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
+		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
+		final Boolean keepNull = params.getKeepNull();
+		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
+		request.putParameter(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
+		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(values, true));
+		return execute(request, response -> {
+			Class<T> type = null;
+			if ((params.getReturnNew() != null && params.getReturnNew())
+					|| (params.getReturnOld() != null && params.getReturnOld())) {
+				final Optional<T> first = values.stream().findFirst();
+				if (first.isPresent()) {
+					type = (Class<T>) first.get().getClass();
+				}
+			}
+			final Collection<DocumentUpdateResult<T>> docs = new ArrayList<>();
+			final VPackSlice body = response.getBody().get();
+			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+				final VPackSlice next = iterator.next();
+				final DocumentUpdateResult<T> doc = deserialize(next, DocumentUpdateResult.class);
+				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+				if (newDoc.isObject()) {
+					doc.setNew(deserialize(newDoc, type));
+				}
+				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld(deserialize(oldDoc, type));
+				}
+				docs.add(doc);
+			}
+			return docs;
 		});
 	}
 

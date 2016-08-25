@@ -52,7 +52,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocument() {
+	public void insert() {
 		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insert(new BaseDocument(), null);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getId(), is(notNullValue()));
@@ -63,7 +63,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentAsync() throws InterruptedException, ExecutionException {
+	public void insertAsync() throws InterruptedException, ExecutionException {
 		final CompletableFuture<DocumentCreateResult<BaseDocument>> f = db.collection(COLLECTION_NAME)
 				.insertAsync(new BaseDocument(), null);
 		assertThat(f, is(notNullValue()));
@@ -78,7 +78,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentReturnNew() {
+	public void insertReturnNew() {
 		final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
 		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insert(new BaseDocument(),
 			options);
@@ -90,7 +90,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentWaitForSync() {
+	public void insertWaitForSync() {
 		final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
 		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insert(new BaseDocument(),
 			options);
@@ -102,7 +102,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentAsJson() {
+	public void insertAsJson() {
 		final DocumentCreateResult<String> doc = db.collection(COLLECTION_NAME)
 				.insert("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
 		assertThat(doc, is(notNullValue()));
@@ -406,7 +406,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceDocumemt() {
+	public void replace() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
@@ -430,7 +430,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceDocumemtIfMatch() {
+	public void replaceIfMatch() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
@@ -453,7 +453,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceDocumemtIfMatchFail() {
+	public void replaceIfMatchFail() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
@@ -468,7 +468,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceDocumemtIgnoreRevsFalse() {
+	public void replaceIgnoreRevsFalse() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
@@ -521,6 +521,56 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(replaceResult.getOld().get().getRevision(), is(createResult.getRev()));
 		assertThat(replaceResult.getOld().get().getAttribute("a"), is("test"));
 		assertThat(replaceResult.getOld().get().getProperties().keySet(), not(hasItem("b")));
+	}
+
+	@Test
+	public void delete() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, null);
+		try {
+			db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class, null);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteReturnOld() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
+		final DocumentDeleteResult<BaseDocument> deleteResult = db.collection(COLLECTION_NAME)
+				.delete(createResult.getKey(), BaseDocument.class, options);
+		assertThat(deleteResult.getOld().isPresent(), is(true));
+		assertThat(deleteResult.getOld().get(), instanceOf(BaseDocument.class));
+		assertThat(deleteResult.getOld().get().getAttribute("a"), is("test"));
+	}
+
+	@Test
+	public void deleteIfMatch() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
+		db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, options);
+		try {
+			db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class, null);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteIfMatchFail() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
+		try {
+			db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
 	}
 
 	@Test
@@ -741,7 +791,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocuments() {
+	public void insertMany() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
@@ -752,7 +802,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentsOne() {
+	public void insertManyOne() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		values.add(new BaseDocument());
 		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME).insert(values, null);
@@ -761,7 +811,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentsEmpty() {
+	public void insertManyEmpty() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME).insert(values, null);
 		assertThat(docs, is(notNullValue()));
@@ -769,7 +819,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createDocumentsReturnNew() {
+	public void insertManyReturnNew() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
@@ -787,7 +837,7 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteDocuments() {
+	public void deleteMany() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
@@ -799,7 +849,7 @@ public class DBCollectionTest extends BaseTest {
 			e.setKey("2");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insertAsync(values, null);
+		db.collection(COLLECTION_NAME).insert(values, null);
 		final Collection<String> keys = new ArrayList<>();
 		keys.add("1");
 		keys.add("2");
@@ -813,14 +863,14 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteDocumentsOne() {
+	public void deleteManyOne() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
 			e.setKey("1");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insertAsync(values, null);
+		db.collection(COLLECTION_NAME).insert(values, null);
 		final Collection<String> keys = new ArrayList<>();
 		keys.add("1");
 		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
@@ -833,9 +883,9 @@ public class DBCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteDocumentsEmpty() {
+	public void deleteManyEmpty() {
 		final Collection<BaseDocument> values = new ArrayList<>();
-		db.collection(COLLECTION_NAME).insertAsync(values, null);
+		db.collection(COLLECTION_NAME).insert(values, null);
 		final Collection<String> keys = new ArrayList<>();
 		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
 			null);
@@ -843,17 +893,157 @@ public class DBCollectionTest extends BaseTest {
 		assertThat(deleteResult.size(), is(0));
 	}
 
-	// @Test
-	// public void deleteDocumentsNotExisting() {
-	// final Collection<BaseDocument> values = new ArrayList<>();
-	// db.collection(COLLECTION_NAME).createDocuments(values, null);
-	// final Collection<String> keys = new ArrayList<>();
-	// keys.add("1");
-	// keys.add("2");
-	// final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
-	// .deleteDocuments(keys, null, null);
-	// assertThat(deleteResult, is(notNullValue()));
-	// assertThat(deleteResult.size(), is(0));
-	// }
+	@Test
+	public void deleteDocumentsNotExisting() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<String> keys = new ArrayList<>();
+		keys.add("1");
+		keys.add("2");
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
+			null);
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.size(), is(2));// TODO expexted 0
+	}
+
+	@Test
+	public void updateMany() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("2");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<BaseDocument> updatedValues = new ArrayList<>();
+		values.stream().forEach(i -> {
+			i.addAttribute("a", "test");
+			updatedValues.add(i);
+		});
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(updatedValues, null);
+		assertThat(updateResult.size(), is(2));
+	}
+
+	@Test
+	public void updateManyOne() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<BaseDocument> updatedValues = new ArrayList<>();
+		final BaseDocument first = values.stream().findFirst().get();
+		first.addAttribute("a", "test");
+		updatedValues.add(first);
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(updatedValues, null);
+		assertThat(updateResult.size(), is(1));
+	}
+
+	@Test
+	public void updateManyEmpty() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(values, null);
+		assertThat(updateResult.size(), is(0));
+	}
+
+	@Test
+	public void updateManyWithoutKey() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<BaseDocument> updatedValues = new ArrayList<>();
+		values.stream().forEach(i -> {
+			i.addAttribute("a", "test");
+			updatedValues.add(i);
+		});
+		updatedValues.add(new BaseDocument());
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(updatedValues, null);
+		assertThat(updateResult.size(), is(2));// TODO expexted 1
+	}
+
+	@Test
+	public void replaceMany() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("2");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<BaseDocument> updatedValues = new ArrayList<>();
+		values.stream().forEach(i -> {
+			i.addAttribute("a", "test");
+			updatedValues.add(i);
+		});
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.replace(updatedValues, null);
+		assertThat(updateResult.size(), is(2));
+	}
+
+	@Test
+	public void replaceManyOne() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<BaseDocument> updatedValues = new ArrayList<>();
+		final BaseDocument first = values.stream().findFirst().get();
+		first.addAttribute("a", "test");
+		updatedValues.add(first);
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(updatedValues, null);
+		assertThat(updateResult.size(), is(1));
+	}
+
+	@Test
+	public void replaceManyEmpty() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(values, null);
+		assertThat(updateResult.size(), is(0));
+	}
+
+	@Test
+	public void replaceManyWithoutKey() {
+		final Collection<BaseDocument> values = new ArrayList<>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<BaseDocument> updatedValues = new ArrayList<>();
+		values.stream().forEach(i -> {
+			i.addAttribute("a", "test");
+			updatedValues.add(i);
+		});
+		updatedValues.add(new BaseDocument());
+		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
+				.update(updatedValues, null);
+		assertThat(updateResult.size(), is(2));// TODO expexted 1
+	}
 
 }
