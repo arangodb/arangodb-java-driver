@@ -115,4 +115,18 @@ public class ArangoDBImpl extends ArangoDB {
 			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
+	@Override
+	public Collection<UserResult> getUsers() {
+		return unwrap(getUsersAsync());
+	}
+
+	@Override
+	public CompletableFuture<Collection<UserResult>> getUsersAsync() {
+		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER), (response) -> {
+			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
+			return deserialize(result, new Type<Collection<UserResult>>() {
+			}.getType());
+		});
+	}
+
 }

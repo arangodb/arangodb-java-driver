@@ -1,5 +1,6 @@
 package com.arangodb;
 
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -85,4 +86,28 @@ public class ArangoDBTest {
 		arangoDB.deleteUser("mit dem mund");
 	}
 
+	@Test
+	public void getUsersOnlyRoot() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final Collection<UserResult> users = arangoDB.getUsers();
+		assertThat(users, is(notNullValue()));
+		assertThat(users.size(), is(1));
+		assertThat(users.stream().findFirst().get().getUser(), is("root"));
+	}
+
+	@Test
+	public void getUsers() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			arangoDB.createUser("mit dem mund", "machts der hund", null);
+			final Collection<UserResult> users = arangoDB.getUsers();
+			assertThat(users, is(notNullValue()));
+			assertThat(users.size(), is(2));
+			users.stream().forEach(user -> {
+				assertThat(user.getUser(), anyOf(is("root"), is("mit dem mund")));
+			});
+		} finally {
+			arangoDB.deleteUser("mit dem mund");
+		}
+	}
 }

@@ -162,4 +162,9 @@ public abstract class ArangoDB extends Executeable {
 	public abstract void deleteUser(final String user) throws ArangoDBException;
 
 	public abstract CompletableFuture<Void> deleteUserAsync(final String user);
+
+	public abstract Collection<UserResult> getUsers();
+
+	public abstract CompletableFuture<Collection<UserResult>> getUsersAsync();
+
 }
