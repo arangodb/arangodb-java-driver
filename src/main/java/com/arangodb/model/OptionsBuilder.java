@@ -44,4 +44,8 @@ public class OptionsBuilder {
 		return options.name(name);
 	}
 
+	public static TransactionOptions build(final TransactionOptions options, final String action) {
+		return options.action(action);
+	}
+
 }

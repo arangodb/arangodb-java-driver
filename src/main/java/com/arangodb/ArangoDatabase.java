@@ -2,6 +2,7 @@ package com.arangodb;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionResult;
@@ -18,6 +19,7 @@ import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.OptionsBuilder;
+import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.UserAccessOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
@@ -164,5 +166,28 @@ public class ArangoDatabase extends Executeable {
 		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name)));
 		return execute(request,
 			response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), GraphResult.class));
+	}
+
+	public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
+			throws ArangoDBException {
+		return unwrap(transactionAsync(action, type, options));
+	}
+
+	public <T> CompletableFuture<T> transactionAsync(
+		final String action,
+		final Class<T> type,
+		final TransactionOptions options) {
+		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRANSACTION);
+		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
+		return execute(request, response -> {
+			final Optional<VPackSlice> body = response.getBody();
+			if (body.isPresent()) {
+				final VPackSlice result = body.get().get(ArangoDBConstants.RESULT);
+				if (!result.isNone()) {
+					return deserialize(result, type);
+				}
+			}
+			return null;
+		});
 	}
 }

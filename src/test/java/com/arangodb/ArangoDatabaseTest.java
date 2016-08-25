@@ -17,6 +17,11 @@ import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.model.CollectionsReadOptions;
+import com.arangodb.model.TransactionOptions;
+import com.arangodb.velocypack.VPackBuilder;
+import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.Value;
+import com.arangodb.velocypack.exception.VPackException;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -184,5 +189,55 @@ public class ArangoDatabaseTest extends BaseTest {
 		final GraphResult result = db.createGraph(GRAPH_NAME, null);
 		assertThat(result, is(notNullValue()));
 		assertThat(result.getName(), is(GRAPH_NAME));
+	}
+
+	@Test
+	public void transactionString() {
+		final TransactionOptions options = new TransactionOptions().params("test");
+		final String result = db.transaction("function (params) {return params;}", String.class, options);
+		assertThat(result, is("test"));
+	}
+
+	@Test
+	public void transactionNumber() {
+		final TransactionOptions options = new TransactionOptions().params(5);
+		final Integer result = db.transaction("function (params) {return params;}", Integer.class, options);
+		assertThat(result, is(5));
+	}
+
+	@Test
+	public void transactionVPack() throws VPackException {
+		final TransactionOptions options = new TransactionOptions()
+				.params(new VPackBuilder().add(new Value("test")).slice());
+		final VPackSlice result = db.transaction("function (params) {return params;}", VPackSlice.class, options);
+		assertThat(result.isString(), is(true));
+		assertThat(result.getAsString(), is("test"));
+	}
+
+	@Test
+	public void transactionEmpty() {
+		db.transaction("function () {}", null, null);
+	}
+
+	@Test
+	public void transactionallowImplicit() {
+		try {
+			db.createCollection("someCollection", null);
+			db.createCollection("someOtherCollection", null);
+			final String action = "function (params) {" + "var db = require('internal').db;"
+					+ "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()[0]};"
+					+ "}";
+			final TransactionOptions options = new TransactionOptions().readCollections("someCollection");
+			db.transaction(action, VPackSlice.class, options);
+			try {
+				options.allowImplicit(false);
+				db.transaction(action, VPackSlice.class, options);
+				fail();
+			} catch (final ArangoDBException e) {
+			}
+		} finally {
+			db.collection("someCollection").drop();
+			db.collection("someOtherCollection").drop();
+		}
 	}
 }
