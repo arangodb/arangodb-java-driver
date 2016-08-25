@@ -22,5 +22,6 @@ public enum ValueType {
 	STRING,
 	BINARY,
 	BCD,
-	CUSTOM
+	CUSTOM,
+	VPACK
 }

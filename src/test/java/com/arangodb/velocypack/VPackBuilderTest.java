@@ -1,5 +1,9 @@
 package com.arangodb.velocypack;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -786,5 +790,18 @@ public class VPackBuilderTest {
 		Assert.assertEquals(expected.length, slice.getBinaryLength());
 		Assert.assertArrayEquals(expected, slice.getAsBinary());
 		Assert.assertEquals(1 + 4 + expected.length, slice.getByteSize());
+	}
+
+	@Test
+	public void addVPack() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(new Value(ValueType.OBJECT));
+		builder.add("s", new Value(new VPackBuilder().add(new Value("test")).slice()));
+		builder.close();
+		final VPackSlice slice = builder.slice();
+		assertThat(slice, is(notNullValue()));
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.get("s").isString(), is(true));
+		assertThat(slice.get("s").getAsString(), is("test"));
 	}
 }

@@ -145,6 +145,11 @@ public class Value {
 		blob = value;
 	}
 
+	public Value(final VPackSlice value) {
+		this(checkNull(value, ValueType.VPACK), null);
+		blob = value.getValue();
+	}
+
 	private static ValueType checkSmallInt(final Number value, final ValueType type) {
 		return value != null ? value.longValue() <= 9 && value.longValue() >= -6 ? ValueType.SMALLINT : type
 				: ValueType.NULL;

@@ -90,6 +90,7 @@ public class VPack {
 			serializers.put(Character.class, VPackSerializers.CHARACTER);
 			serializers.put(char.class, VPackSerializers.CHARACTER);
 			serializers.put(Date.class, VPackSerializers.DATE);
+			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
 			deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);

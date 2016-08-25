@@ -274,6 +274,12 @@ public class VPackBuilder {
 			System.arraycopy(binary, 0, buffer, size, binary.length);
 			size += binary.length;
 			break;
+		case VPACK:
+			final byte[] vpack = item.getBinary();
+			ensureCapacity(vpack.length);
+			System.arraycopy(vpack, 0, buffer, size, vpack.length);
+			size += vpack.length;
+			break;
 		default:
 			break;
 		}
