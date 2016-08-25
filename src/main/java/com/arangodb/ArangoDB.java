@@ -163,6 +163,10 @@ public abstract class ArangoDB extends Executeable {
 
 	public abstract CompletableFuture<Void> deleteUserAsync(final String user);
 
+	public abstract UserResult getUser(String user);
+
+	public abstract CompletableFuture<UserResult> getUserAsync(String user);
+
 	public abstract Collection<UserResult> getUsers();
 
 	public abstract CompletableFuture<Collection<UserResult>> getUsersAsync();

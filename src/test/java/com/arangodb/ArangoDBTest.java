@@ -19,6 +19,10 @@ import com.arangodb.entity.UserResult;
  */
 public class ArangoDBTest {
 
+	private static final String ROOT = "root";
+	private static final String USER = "mit dem mund";
+	private static final String PW = "machts der hund";
+
 	@Test
 	public void getVersion() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
@@ -70,20 +74,41 @@ public class ArangoDBTest {
 	public void createUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			final UserResult result = arangoDB.createUser("mit dem mund", "machts der hund", null);
+			final UserResult result = arangoDB.createUser(USER, PW, null);
 			assertThat(result, is(notNullValue()));
-			assertThat(result.getUser(), is("mit dem mund"));
+			assertThat(result.getUser(), is(USER));
 			assertThat(result.getChangePassword(), is(false));
 		} finally {
-			arangoDB.deleteUser("mit dem mund");
+			arangoDB.deleteUser(USER);
 		}
 	}
 
 	@Test
 	public void deleteUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		arangoDB.createUser("mit dem mund", "machts der hund", null);
-		arangoDB.deleteUser("mit dem mund");
+		arangoDB.createUser(USER, PW, null);
+		arangoDB.deleteUser(USER);
+	}
+
+	@Test
+	public void getUserRoot() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final UserResult user = arangoDB.getUser(ROOT);
+		assertThat(user, is(notNullValue()));
+		assertThat(user.getUser(), is(ROOT));
+	}
+
+	@Test
+	public void getUser() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			arangoDB.createUser(USER, PW, null);
+			final UserResult user = arangoDB.getUser(USER);
+			assertThat(user.getUser(), is(USER));
+		} finally {
+			arangoDB.deleteUser(USER);
+		}
+
 	}
 
 	@Test
@@ -92,22 +117,22 @@ public class ArangoDBTest {
 		final Collection<UserResult> users = arangoDB.getUsers();
 		assertThat(users, is(notNullValue()));
 		assertThat(users.size(), is(1));
-		assertThat(users.stream().findFirst().get().getUser(), is("root"));
+		assertThat(users.stream().findFirst().get().getUser(), is(ROOT));
 	}
 
 	@Test
 	public void getUsers() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			arangoDB.createUser("mit dem mund", "machts der hund", null);
+			arangoDB.createUser(USER, PW, null);
 			final Collection<UserResult> users = arangoDB.getUsers();
 			assertThat(users, is(notNullValue()));
 			assertThat(users.size(), is(2));
 			users.stream().forEach(user -> {
-				assertThat(user.getUser(), anyOf(is("root"), is("mit dem mund")));
+				assertThat(user.getUser(), anyOf(is(ROOT), is(USER)));
 			});
 		} finally {
-			arangoDB.deleteUser("mit dem mund");
+			arangoDB.deleteUser(USER);
 		}
 	}
 }

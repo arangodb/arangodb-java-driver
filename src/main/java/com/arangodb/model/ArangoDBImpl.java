@@ -116,6 +116,17 @@ public class ArangoDBImpl extends ArangoDB {
 	}
 
 	@Override
+	public UserResult getUser(final String user) {
+		return unwrap(getUserAsync(user));
+	}
+
+	@Override
+	public CompletableFuture<UserResult> getUserAsync(final String user) {
+		return execute(UserResult.class,
+			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user)));
+	}
+
+	@Override
 	public Collection<UserResult> getUsers() {
 		return unwrap(getUsersAsync());
 	}
