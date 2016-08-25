@@ -1,6 +1,7 @@
 package com.arangodb.model;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.ArangoDBException;
@@ -114,5 +115,14 @@ public class DB extends Executeable {
 			new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
 					createPath(ArangoDBConstants.PATH_API_DATABASE, name)),
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+	}
+
+	public <T> Cursor<T> executeAQL(
+		final String query,
+		final Map<String, Object> bindVars,
+		final AqlQueryOptions options,
+		final Class<T> type) {
+		return new Cursor<>(this, (options != null ? options : new AqlQueryOptions()).query(query).bindVars(bindVars),
+				type);
 	}
 }

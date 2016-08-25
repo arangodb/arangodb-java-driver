@@ -7,12 +7,15 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.BaseTest;
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 
@@ -86,33 +89,54 @@ public class DBTest extends BaseTest {
 
 	@Test
 	public void readCollections() {
-		final Collection<CollectionResult> systemCollections = db.readCollections(null);
-		db.createCollection(COLLECTION_NAME + "1", null);
-		db.createCollection(COLLECTION_NAME + "2", null);
-		final Collection<CollectionResult> collections = db.readCollections(null);
-		assertThat(collections.size(), is(2 + systemCollections.size()));
-		assertThat(collections, is(notNullValue()));
 		try {
+			final Collection<CollectionResult> systemCollections = db.readCollections(null);
+			db.createCollection(COLLECTION_NAME + "1", null);
+			db.createCollection(COLLECTION_NAME + "2", null);
+			final Collection<CollectionResult> collections = db.readCollections(null);
+			assertThat(collections.size(), is(2 + systemCollections.size()));
+			assertThat(collections, is(notNullValue()));
+		} finally {
 			db.collection(COLLECTION_NAME + "1").drop();
 			db.collection(COLLECTION_NAME + "2").drop();
-		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
 	public void readCollectionsExcludeSystem() {
-		final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
-		final Collection<CollectionResult> systemCollections = db.readCollections(options);
-		assertThat(systemCollections.size(), is(0));
-		db.createCollection(COLLECTION_NAME + "1", null);
-		db.createCollection(COLLECTION_NAME + "2", null);
-		final Collection<CollectionResult> collections = db.readCollections(options);
-		assertThat(collections.size(), is(2));
-		assertThat(collections, is(notNullValue()));
 		try {
+			final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
+			final Collection<CollectionResult> systemCollections = db.readCollections(options);
+			assertThat(systemCollections.size(), is(0));
+			db.createCollection(COLLECTION_NAME + "1", null);
+			db.createCollection(COLLECTION_NAME + "2", null);
+			final Collection<CollectionResult> collections = db.readCollections(options);
+			assertThat(collections.size(), is(2));
+			assertThat(collections, is(notNullValue()));
+		} finally {
 			db.collection(COLLECTION_NAME + "1").drop();
 			db.collection(COLLECTION_NAME + "2").drop();
-		} catch (final ArangoDBException e) {
+
+		}
+	}
+
+	@Test
+	@Ignore
+	public void executeAQL() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insert(new BaseDocument(), null);
+			}
+			final Cursor<String> cursor = db.executeAQL("for i in db_test return i._id", null, null, String.class);
+			assertThat(cursor, is(notNullValue()));
+			final Iterator<String> iterator = cursor.iterator();
+			assertThat(iterator, is(notNullValue()));
+			for (int i = 0; i < 10; i++) {
+				assertThat(iterator.hasNext(), is(i != 10));
+			}
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
 		}
 	}
 }
