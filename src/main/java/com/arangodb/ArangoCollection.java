@@ -185,7 +185,7 @@ public class ArangoCollection extends Executeable {
 
 	public <T> Collection<DocumentUpdateResult<T>> replace(
 		final Collection<T> values,
-		final DocumentReplaceOptions options) {
+		final DocumentReplaceOptions options) throws ArangoDBException {
 		return unwrap(replaceAsync(values, options));
 	}
 
@@ -268,7 +268,7 @@ public class ArangoCollection extends Executeable {
 
 	public <T> Collection<DocumentUpdateResult<T>> update(
 		final Collection<T> values,
-		final DocumentUpdateOptions options) {
+		final DocumentUpdateOptions options) throws ArangoDBException {
 		return unwrap(updateAsync(values, options));
 	}
 

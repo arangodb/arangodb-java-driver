@@ -9,7 +9,7 @@ import com.arangodb.Executeable;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ExecuteBaseTest {
+public class ExecutableTest {
 
 	@Test
 	public void validateDBNameValid() {

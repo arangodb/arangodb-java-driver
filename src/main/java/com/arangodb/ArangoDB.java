@@ -182,7 +182,6 @@ public class ArangoDB extends Executeable {
 	}
 
 	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
-		// TODO details
 		return execute(ArangoDBVersion.class,
 			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
 	}
@@ -211,7 +210,7 @@ public class ArangoDB extends Executeable {
 			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
-	public UserResult getUser(final String user) {
+	public UserResult getUser(final String user) throws ArangoDBException {
 		return unwrap(getUserAsync(user));
 	}
 
@@ -220,7 +219,7 @@ public class ArangoDB extends Executeable {
 			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
-	public Collection<UserResult> getUsers() {
+	public Collection<UserResult> getUsers() throws ArangoDBException {
 		return unwrap(getUsersAsync());
 	}
 
@@ -232,7 +231,7 @@ public class ArangoDB extends Executeable {
 		});
 	}
 
-	public UserResult updateUser(final String user, final UserUpdateOptions options) {
+	public UserResult updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
 		return unwrap(updateUserAsync(user, options));
 	}
 
@@ -243,7 +242,7 @@ public class ArangoDB extends Executeable {
 		return execute(UserResult.class, request);
 	}
 
-	public UserResult replaceUser(final String user, final UserUpdateOptions options) {
+	public UserResult replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
 		return unwrap(replaceUserAsync(user, options));
 	}
 

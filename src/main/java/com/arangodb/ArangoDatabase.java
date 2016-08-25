@@ -126,7 +126,7 @@ public class ArangoDatabase extends Executeable {
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
-	public void grandAccess(final String user) {
+	public void grandAccess(final String user) throws ArangoDBException {
 		unwrap(grandAccessAync(user));
 	}
 
@@ -137,7 +137,7 @@ public class ArangoDatabase extends Executeable {
 		return execute(Void.class, request);
 	}
 
-	public void revokeAccess(final String user) {
+	public void revokeAccess(final String user) throws ArangoDBException {
 		unwrap(revokeAccessAsync(user));
 	}
 
@@ -152,12 +152,12 @@ public class ArangoDatabase extends Executeable {
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
-		final Class<T> type) {
+		final Class<T> type) throws ArangoDBException {
 		return new Cursor<>(this,
 				OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars), type);
 	}
 
-	public GraphResult createGraph(final String name, final GraphCreateOptions options) {
+	public GraphResult createGraph(final String name, final GraphCreateOptions options) throws ArangoDBException {
 		return unwrap(createGraphAsync(name, options));
 	}
 
