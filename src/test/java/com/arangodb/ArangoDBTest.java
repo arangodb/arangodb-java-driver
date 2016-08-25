@@ -141,6 +141,17 @@ public class ArangoDBTest {
 	}
 
 	@Test
+	public void updateUserNoOptions() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			arangoDB.createUser(USER, PW, null);
+			arangoDB.updateUser(USER, null);
+		} finally {
+			arangoDB.deleteUser(USER);
+		}
+	}
+
+	@Test
 	public void updateUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
