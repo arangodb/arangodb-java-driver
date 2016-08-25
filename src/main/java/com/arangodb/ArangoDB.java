@@ -12,24 +12,26 @@ import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
+import com.arangodb.internal.net.Request;
+import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.internal.velocypack.VPackConfigure;
-import com.arangodb.model.ArangoDBImpl;
-import com.arangodb.model.DB;
-import com.arangodb.model.Executeable;
+import com.arangodb.model.DBCreateOptions;
+import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSerializer;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoDB extends Executeable {
-
+public class ArangoDB extends Executeable {
 	public static class Builder {
 
 		private static final String PROPERTY_KEY_HOST = "arangodb.host";
@@ -122,62 +124,134 @@ public abstract class ArangoDB extends Executeable {
 		}
 
 		public ArangoDB build() {
-			return new ArangoDBImpl(new Communication.Builder().host(host).port(port).timeout(timeout),
+			return new ArangoDB(new Communication.Builder().host(host).port(port).timeout(timeout),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 
 	}
 
-	protected ArangoDB(final Communication.Builder commBuilder, final VPack vpack, final VPack vpackNull,
+	public ArangoDB(final Communication.Builder commBuilder, final VPack vpack, final VPack vpackNull,
 		final VPackParser vpackParser, final CollectionCache collectionCache) {
 		super(commBuilder.build(vpack, collectionCache), vpack, vpackNull, vpackParser, new DocumentCache(),
 				collectionCache);
+		final Communication cacheCom = commBuilder.build(vpack, collectionCache);
+		collectionCache.init(name -> {
+			return new ArangoDatabase(cacheCom, vpackNull, vpack, vpackParser, documentCache, null, name);
+		});
 	}
 
-	public abstract void shutdown();
+	public void shutdown() {
+		communication.disconnect();
+	}
 
-	public abstract Boolean createDB(final String name) throws ArangoDBException;
+	public Boolean createDatabase(final String name) throws ArangoDBException {
+		return unwrap(createDatabaseAsync(name));
+	}
 
-	public abstract CompletableFuture<Boolean> createDBAsync(final String name);
+	public CompletableFuture<Boolean> createDatabaseAsync(final String name) {
+		validateDBName(name);
+		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
+				ArangoDBConstants.PATH_API_DATABASE);
+		request.setBody(serialize(new DBCreateOptions().name(name)));
+		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+	}
 
-	public abstract DB db();
+	public ArangoDatabase db() {
+		return db(ArangoDBConstants.SYSTEM);
+	}
 
-	public abstract DB db(final String name);
+	public ArangoDatabase db(final String name) {
+		validateDBName(name);
+		return new ArangoDatabase(this, name);
+	}
 
-	public abstract Collection<String> getDBs() throws ArangoDBException;
+	public Collection<String> getDatabases() throws ArangoDBException {
+		return unwrap(getDatabasesAsync());
+	}
 
-	public abstract CompletableFuture<Collection<String>> getDBsAsync();
+	public CompletableFuture<Collection<String>> getDatabasesAsync() {
+		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE), (response) -> {
+			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
+			return deserialize(result, new Type<Collection<String>>() {
+			}.getType());
+		});
+	}
 
-	public abstract ArangoDBVersion getVersion() throws ArangoDBException;
+	public ArangoDBVersion getVersion() throws ArangoDBException {
+		return unwrap(getVersionAsync());
+	}
 
-	public abstract CompletableFuture<ArangoDBVersion> getVersionAsync();
+	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
+		// TODO details
+		return execute(ArangoDBVersion.class,
+			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
+	}
 
-	public abstract UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
-			throws ArangoDBException;
+	public UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
+			throws ArangoDBException {
+		return unwrap(createUserAsync(user, passwd, options));
+	}
 
-	public abstract CompletableFuture<UserResult> createUserAsync(
+	public CompletableFuture<UserResult> createUserAsync(
 		final String user,
 		final String passwd,
-		final UserCreateOptions options);
+		final UserCreateOptions options) {
+		final Request request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
+		return execute(UserResult.class, request);
+	}
 
-	public abstract void deleteUser(final String user) throws ArangoDBException;
+	public void deleteUser(final String user) throws ArangoDBException {
+		unwrap(deleteUserAsync(user));
+	}
 
-	public abstract CompletableFuture<Void> deleteUserAsync(final String user);
+	public CompletableFuture<Void> deleteUserAsync(final String user) {
+		return execute(Void.class,
+			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
+	}
 
-	public abstract UserResult getUser(String user);
+	public UserResult getUser(final String user) {
+		return unwrap(getUserAsync(user));
+	}
 
-	public abstract CompletableFuture<UserResult> getUserAsync(String user);
+	public CompletableFuture<UserResult> getUserAsync(final String user) {
+		return execute(UserResult.class,
+			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user)));
+	}
 
-	public abstract Collection<UserResult> getUsers();
+	public Collection<UserResult> getUsers() {
+		return unwrap(getUsersAsync());
+	}
 
-	public abstract CompletableFuture<Collection<UserResult>> getUsersAsync();
+	public CompletableFuture<Collection<UserResult>> getUsersAsync() {
+		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER), (response) -> {
+			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
+			return deserialize(result, new Type<Collection<UserResult>>() {
+			}.getType());
+		});
+	}
 
-	public abstract UserResult updateUser(final String user, final UserUpdateOptions options);
+	public UserResult updateUser(final String user, final UserUpdateOptions options) {
+		return unwrap(updateUserAsync(user, options));
+	}
 
-	public abstract CompletableFuture<UserResult> updateUserAsync(String user, UserUpdateOptions options);
+	public CompletableFuture<UserResult> updateUserAsync(final String user, final UserUpdateOptions options) {
+		final Request request = new Request(db().name(), RequestType.PATCH,
+				createPath(ArangoDBConstants.PATH_API_USER, user));
+		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
+		return execute(UserResult.class, request);
+	}
 
-	public abstract UserResult replaceUser(final String user, final UserUpdateOptions options);
+	public UserResult replaceUser(final String user, final UserUpdateOptions options) {
+		return unwrap(replaceUserAsync(user, options));
+	}
 
-	public abstract CompletableFuture<UserResult> replaceUserAsync(String user, UserUpdateOptions options);
+	public CompletableFuture<UserResult> replaceUserAsync(final String user, final UserUpdateOptions options) {
+		final Request request = new Request(db().name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_USER, user));
+		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
+		return execute(UserResult.class, request);
+	}
 
 }

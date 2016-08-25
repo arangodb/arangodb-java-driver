@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.CollectionResult;
-import com.arangodb.model.DB;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -32,7 +32,7 @@ public class CollectionCache {
 	}
 
 	public static interface DBAccess {
-		DB db(final String name);
+		ArangoDatabase db(final String name);
 	}
 
 	private final Map<String, Map<Long, CollectionInfo>> cache;

@@ -37,9 +37,9 @@ public class ArangoDBTest {
 	}
 
 	@Test
-	public void createDB() {
+	public void createDatabase() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final Boolean result = arangoDB.createDB(BaseTest.TEST_DB);
+		final Boolean result = arangoDB.createDatabase(BaseTest.TEST_DB);
 		assertThat(result, is(true));
 		try {
 			arangoDB.db(BaseTest.TEST_DB).drop();
@@ -48,24 +48,24 @@ public class ArangoDBTest {
 	}
 
 	@Test
-	public void deleteDB() {
+	public void deleteDatabase() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final Boolean resultCreate = arangoDB.createDB(BaseTest.TEST_DB);
+		final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB);
 		assertThat(resultCreate, is(true));
 		final Boolean resultDelete = arangoDB.db(BaseTest.TEST_DB).drop();
 		assertThat(resultDelete, is(true));
 	}
 
 	@Test
-	public void getDBs() {
+	public void getDatabases() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			Collection<String> dbs = arangoDB.getDBs();
+			Collection<String> dbs = arangoDB.getDatabases();
 			assertThat(dbs, is(notNullValue()));
 			assertThat(dbs.size(), is(1));
 			assertThat(dbs.stream().findFirst().get(), is("_system"));
-			arangoDB.createDB(BaseTest.TEST_DB);
-			dbs = arangoDB.getDBs();
+			arangoDB.createDatabase(BaseTest.TEST_DB);
+			dbs = arangoDB.getDatabases();
 			assertThat(dbs.size(), is(2));
 			assertThat(dbs, hasItem("_system"));
 			assertThat(dbs, hasItem(BaseTest.TEST_DB));

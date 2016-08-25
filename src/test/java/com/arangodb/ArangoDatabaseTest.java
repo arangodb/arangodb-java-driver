@@ -1,4 +1,4 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -14,16 +14,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.BaseTest;
+import com.arangodb.Cursor;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
+import com.arangodb.model.CollectionsReadOptions;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DBTest extends BaseTest {
+public class ArangoDatabaseTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_test";
 
@@ -152,13 +153,13 @@ public class DBTest extends BaseTest {
 
 	@Test
 	@Ignore
-	public void executeAQL() {
+	public void query() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
 				db.collection(COLLECTION_NAME).insert(new BaseDocument(), null);
 			}
-			final Cursor<String> cursor = db.executeAQL("for i in db_test return i._id", null, null, String.class);
+			final Cursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));
 			final Iterator<String> iterator = cursor.iterator();
 			assertThat(iterator, is(notNullValue()));

@@ -1,4 +1,4 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

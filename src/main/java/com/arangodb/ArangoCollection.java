@@ -1,4 +1,4 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DocumentCreateResult;
@@ -19,6 +18,17 @@ import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.model.DocumentDeleteOptions;
+import com.arangodb.model.DocumentExistsOptions;
+import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.DocumentReplaceOptions;
+import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.model.GeoIndexOptions;
+import com.arangodb.model.HashIndexOptions;
+import com.arangodb.model.OptionsBuilder;
+import com.arangodb.model.PersistentIndexOptions;
+import com.arangodb.model.SkiplistIndexOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -26,19 +36,19 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class DBCollection extends Executeable {
+public class ArangoCollection extends Executeable {
 
-	private final DB db;
+	private final ArangoDatabase db;
 	private final String name;
 
-	protected DBCollection(final DB db, final String name) {
+	protected ArangoCollection(final ArangoDatabase db, final String name) {
 		super(db.communication(), db.vpack(), db.vpackNull(), db.vpackParser(), db.documentCache(),
 				db.collectionCache());
 		this.db = db;
 		this.name = name;
 	}
 
-	protected DB db() {
+	protected ArangoDatabase db() {
 		return db;
 	}
 
@@ -400,7 +410,7 @@ public class DBCollection extends Executeable {
 		final HashIndexOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
-		request.setBody(serialize((options != null ? options : new HashIndexOptions()).fields(fields)));
+		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new HashIndexOptions(), fields)));
 		return execute(IndexResult.class, request);
 	}
 
@@ -414,7 +424,8 @@ public class DBCollection extends Executeable {
 		final SkiplistIndexOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
-		request.setBody(serialize((options != null ? options : new SkiplistIndexOptions()).fields(fields)));
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new SkiplistIndexOptions(), fields)));
 		return execute(IndexResult.class, request);
 	}
 
@@ -428,7 +439,8 @@ public class DBCollection extends Executeable {
 		final PersistentIndexOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
-		request.setBody(serialize((options != null ? options : new PersistentIndexOptions()).fields(fields)));
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new PersistentIndexOptions(), fields)));
 		return execute(IndexResult.class, request);
 	}
 
@@ -442,7 +454,7 @@ public class DBCollection extends Executeable {
 		final GeoIndexOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
-		request.setBody(serialize((options != null ? options : new GeoIndexOptions()).fields(fields)));
+		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new GeoIndexOptions(), fields)));
 		return execute(IndexResult.class, request);
 	}
 

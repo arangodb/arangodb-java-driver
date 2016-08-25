@@ -1,8 +1,9 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import org.junit.Test;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Executeable;
 
 /**
  * @author Mark - mark at arangodb.com

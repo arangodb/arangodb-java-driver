@@ -1,4 +1,4 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -8,6 +8,7 @@ import com.arangodb.entity.CursorResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.AqlQueryOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -15,7 +16,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
  */
 public class Cursor<T> implements Iterable<T> {
 
-	private final DB db;
+	private final ArangoDatabase db;
 	private final Class<T> type;
 	private final CursorIterator<T> iterator;
 	private final String id;
@@ -23,7 +24,7 @@ public class Cursor<T> implements Iterable<T> {
 	private final Optional<Map<String, Object>> extra;
 	private final boolean cached;
 
-	public Cursor(final DB db, final AqlQueryOptions options, final Class<T> type) {
+	public Cursor(final ArangoDatabase db, final AqlQueryOptions options, final Class<T> type) {
 		super();
 		this.db = db;
 		this.type = type;
@@ -37,7 +38,7 @@ public class Cursor<T> implements Iterable<T> {
 		id = result.getId();
 	}
 
-	public DB getDb() {
+	public ArangoDatabase getDb() {
 		return db;
 	}
 

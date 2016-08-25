@@ -1,10 +1,9 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -13,6 +12,11 @@ import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.AqlQueryOptions;
+import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.CollectionsReadOptions;
+import com.arangodb.model.OptionsBuilder;
+import com.arangodb.model.UserAccessOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
@@ -22,17 +26,17 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class DB extends Executeable {
+public class ArangoDatabase extends Executeable {
 
 	private final String name;
 
-	protected DB(final ArangoDBImpl arangoDB, final String name) {
+	protected ArangoDatabase(final ArangoDB arangoDB, final String name) {
 		super(arangoDB.communication(), arangoDB.vpack(), arangoDB.vpackNull(), arangoDB.vpackParser(),
 				arangoDB.documentCache(), arangoDB.collectionCache());
 		this.name = name;
 	}
 
-	protected DB(final Communication communication, final VPack vpacker, final VPack vpackerNull,
+	protected ArangoDatabase(final Communication communication, final VPack vpacker, final VPack vpackerNull,
 		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache,
 		final String name) {
 		super(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache);
@@ -43,9 +47,9 @@ public class DB extends Executeable {
 		return name;
 	}
 
-	public DBCollection collection(final String name) {
+	public ArangoCollection collection(final String name) {
 		validateCollectionName(name);
-		return new DBCollection(this, name);
+		return new ArangoCollection(this, name);
 	}
 
 	public CollectionResult createCollection(final String name, final CollectionCreateOptions options)
@@ -58,7 +62,8 @@ public class DB extends Executeable {
 		final CollectionCreateOptions options) {
 		validateCollectionName(name);
 		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
-		request.setBody(serialize((options != null ? options : new CollectionCreateOptions()).name(name)));
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));
 		return execute(CollectionResult.class, request);
 	}
 
@@ -139,12 +144,12 @@ public class DB extends Executeable {
 		return execute(Void.class, request);
 	}
 
-	public <T> Cursor<T> executeAQL(
+	public <T> Cursor<T> query(
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
 		final Class<T> type) {
-		return new Cursor<>(this, (options != null ? options : new AqlQueryOptions()).query(query).bindVars(bindVars),
-				type);
+		return new Cursor<>(this,
+				OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars), type);
 	}
 }

@@ -1,4 +1,4 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;

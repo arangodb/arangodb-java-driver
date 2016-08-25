@@ -1,4 +1,4 @@
-package com.arangodb.model;
+package com.arangodb;
 
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.hasItem;
@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.BaseTest;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
@@ -32,12 +31,18 @@ import com.arangodb.entity.DocumentDeleteResult;
 import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
+import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.model.DocumentDeleteOptions;
+import com.arangodb.model.DocumentExistsOptions;
+import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.DocumentReplaceOptions;
+import com.arangodb.model.DocumentUpdateOptions;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DBCollectionTest extends BaseTest {
+public class ArangoCollectionTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_collection_test";
 
