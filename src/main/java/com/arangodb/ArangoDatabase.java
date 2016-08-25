@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
@@ -15,6 +16,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
+import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserAccessOptions;
 import com.arangodb.velocypack.Type;
@@ -151,5 +153,16 @@ public class ArangoDatabase extends Executeable {
 		final Class<T> type) {
 		return new Cursor<>(this,
 				OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars), type);
+	}
+
+	public GraphResult createGraph(final String name, final GraphCreateOptions options) {
+		return unwrap(createGraphAsync(name, options));
+	}
+
+	public CompletableFuture<GraphResult> createGraphAsync(final String name, final GraphCreateOptions options) {
+		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_GHARIAL);
+		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name)));
+		return execute(request,
+			response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), GraphResult.class));
 	}
 }

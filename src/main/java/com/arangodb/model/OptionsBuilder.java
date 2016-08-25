@@ -40,4 +40,8 @@ public class OptionsBuilder {
 		return options.query(query).bindVars(bindVars);
 	}
 
+	public static GraphCreateOptions build(final GraphCreateOptions options, final String name) {
+		return options.name(name);
+	}
+
 }

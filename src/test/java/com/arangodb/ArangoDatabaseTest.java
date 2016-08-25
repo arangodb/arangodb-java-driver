@@ -9,14 +9,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.Cursor;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.model.CollectionsReadOptions;
 
@@ -27,28 +25,29 @@ import com.arangodb.model.CollectionsReadOptions;
 public class ArangoDatabaseTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_test";
+	private static final String GRAPH_NAME = "graph_test";
 
-	@After
-	public void teardown() {
+	@Test
+	public void createCollection() {
 		try {
+			final CollectionResult result = db.createCollection(COLLECTION_NAME, null);
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+		} finally {
 			db.collection(COLLECTION_NAME).drop();
-		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void createCollection() {
-		final CollectionResult result = db.createCollection(COLLECTION_NAME, null);
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getId(), is(notNullValue()));
-	}
-
-	@Test
 	public void readCollection() {
-		final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null);
-		final CollectionResult readResult = db.readCollection(COLLECTION_NAME);
-		assertThat(readResult, is(notNullValue()));
-		assertThat(readResult.getId(), is(createResult.getId()));
+		try {
+			final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null);
+			final CollectionResult readResult = db.readCollection(COLLECTION_NAME);
+			assertThat(readResult, is(notNullValue()));
+			assertThat(readResult.getId(), is(createResult.getId()));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
 	}
 
 	@Test
@@ -64,27 +63,35 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void readIndex() {
-		db.createCollection(COLLECTION_NAME, null);
-		final Collection<String> fields = new ArrayList<>();
-		fields.add("a");
-		final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
-		final IndexResult readResult = db.readIndex(createResult.getId());
-		assertThat(readResult.getId(), is(createResult.getId()));
-		assertThat(readResult.getType(), is(createResult.getType()));
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			final Collection<String> fields = new ArrayList<>();
+			fields.add("a");
+			final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+			final IndexResult readResult = db.readIndex(createResult.getId());
+			assertThat(readResult.getId(), is(createResult.getId()));
+			assertThat(readResult.getType(), is(createResult.getType()));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
 	}
 
 	@Test
 	public void deleteIndex() {
-		db.createCollection(COLLECTION_NAME, null);
-		final Collection<String> fields = new ArrayList<>();
-		fields.add("a");
-		final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
-		final String id = db.deleteIndex(createResult.getId());
-		assertThat(id, is(createResult.getId()));
 		try {
-			db.readIndex(id);
-			fail();
-		} catch (final ArangoDBException e) {
+			db.createCollection(COLLECTION_NAME, null);
+			final Collection<String> fields = new ArrayList<>();
+			fields.add("a");
+			final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+			final String id = db.deleteIndex(createResult.getId());
+			assertThat(id, is(createResult.getId()));
+			try {
+				db.readIndex(id);
+				fail();
+			} catch (final ArangoDBException e) {
+			}
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
 		}
 	}
 
@@ -169,5 +176,13 @@ public class ArangoDatabaseTest extends BaseTest {
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
+	}
+
+	@Test
+	@Ignore
+	public void createGraph() {
+		final GraphResult result = db.createGraph(GRAPH_NAME, null);
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getName(), is(GRAPH_NAME));
 	}
 }
