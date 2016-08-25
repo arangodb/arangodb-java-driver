@@ -101,7 +101,7 @@ public class DBTest extends BaseTest {
 
 	@Test
 	public void readCollectionsExcludeSystem() {
-		final CollectionsRead.Options options = new CollectionsRead.Options().excludeSystem(true);
+		final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
 		final Collection<CollectionResult> systemCollections = db.readCollections(options);
 		assertThat(systemCollections.size(), is(0));
 		db.createCollection(COLLECTION_NAME + "1", null);

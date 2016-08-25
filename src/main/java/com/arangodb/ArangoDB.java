@@ -16,7 +16,7 @@ import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.model.ArangoDBImpl;
 import com.arangodb.model.DB;
 import com.arangodb.model.Executeable;
-import com.arangodb.model.UserCreate;
+import com.arangodb.model.UserCreateOptions;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
@@ -151,13 +151,13 @@ public abstract class ArangoDB extends Executeable {
 
 	public abstract CompletableFuture<ArangoDBVersion> getVersionAsync();
 
-	public abstract UserResult createUser(final String user, final String passwd, final UserCreate.Options options)
+	public abstract UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException;
 
 	public abstract CompletableFuture<UserResult> createUserAsync(
 		final String user,
 		final String passwd,
-		final UserCreate.Options options);
+		final UserCreateOptions options);
 
 	public abstract void deleteUser(final String user) throws ArangoDBException;
 

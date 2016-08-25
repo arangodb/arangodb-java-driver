@@ -47,17 +47,17 @@ public class DB extends Executeable {
 		return new DBCollection(this, name);
 	}
 
-	public CollectionResult createCollection(final String name, final CollectionCreate.Options options)
+	public CollectionResult createCollection(final String name, final CollectionCreateOptions options)
 			throws ArangoDBException {
 		return unwrap(createCollectionAsync(name, options));
 	}
 
 	public CompletableFuture<CollectionResult> createCollectionAsync(
 		final String name,
-		final CollectionCreate.Options options) {
+		final CollectionCreateOptions options) {
 		validateCollectionName(name);
 		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
-		request.setBody(serialize((options != null ? options : new CollectionCreate.Options()).build(name)));
+		request.setBody(serialize((options != null ? options : new CollectionCreateOptions()).name(name)));
 		return execute(CollectionResult.class, request);
 	}
 
@@ -71,14 +71,13 @@ public class DB extends Executeable {
 		return execute(CollectionResult.class, request);
 	}
 
-	public Collection<CollectionResult> readCollections(final CollectionsRead.Options options)
-			throws ArangoDBException {
+	public Collection<CollectionResult> readCollections(final CollectionsReadOptions options) throws ArangoDBException {
 		return unwrap(readCollectionsAsync(options));
 	}
 
-	public CompletableFuture<Collection<CollectionResult>> readCollectionsAsync(final CollectionsRead.Options options) {
+	public CompletableFuture<Collection<CollectionResult>> readCollectionsAsync(final CollectionsReadOptions options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
-		final CollectionsRead params = (options != null ? options : new CollectionsRead.Options()).build();
+		final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
 		request.putParameter(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
 		return execute(request, (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);

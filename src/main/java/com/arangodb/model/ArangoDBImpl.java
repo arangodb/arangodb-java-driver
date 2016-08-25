@@ -12,7 +12,6 @@ import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
-import com.arangodb.model.UserCreate.Options;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
@@ -48,7 +47,7 @@ public class ArangoDBImpl extends ArangoDB {
 		validateDBName(name);
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
-		request.setBody(serialize(new DBCreate.Options().build(name)));
+		request.setBody(serialize(new DBCreateOptions().name(name)));
 		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
@@ -90,7 +89,7 @@ public class ArangoDBImpl extends ArangoDB {
 	}
 
 	@Override
-	public UserResult createUser(final String user, final String passwd, final Options options)
+	public UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException {
 		return unwrap(createUserAsync(user, passwd, options));
 	}
@@ -99,9 +98,9 @@ public class ArangoDBImpl extends ArangoDB {
 	public CompletableFuture<UserResult> createUserAsync(
 		final String user,
 		final String passwd,
-		final UserCreate.Options options) {
+		final UserCreateOptions options) {
 		final Request request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
-		request.setBody(serialize((options != null ? options : new UserCreate.Options()).build(user, passwd)));
+		request.setBody(serialize((options != null ? options : new UserCreateOptions()).user(user).passwd(passwd)));
 		return execute(UserResult.class, request);
 	}
 
@@ -115,4 +114,5 @@ public class ArangoDBImpl extends ArangoDB {
 		return execute(Void.class,
 			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
+
 }
