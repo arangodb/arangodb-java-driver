@@ -8,6 +8,8 @@ import com.arangodb.velocypack.ValueType;
  */
 public class VPackBuilderUnexpectedValueException extends VPackBuilderException {
 
+	private static final long serialVersionUID = -7365305871886897353L;
+
 	public VPackBuilderUnexpectedValueException(final ValueType type, final Class<?>... classes) {
 		super(createMessage(type, null, classes));
 	}

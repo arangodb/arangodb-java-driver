@@ -6,4 +6,6 @@ package com.arangodb.velocypack.exception;
  */
 public class VPackNeedAttributeTranslatorException extends VPackException {
 
+	private static final long serialVersionUID = -676583112112943083L;
+
 }

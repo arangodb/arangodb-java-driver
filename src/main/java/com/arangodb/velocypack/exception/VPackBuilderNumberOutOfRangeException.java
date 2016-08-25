@@ -8,6 +8,8 @@ import com.arangodb.velocypack.ValueType;
  */
 public class VPackBuilderNumberOutOfRangeException extends VPackBuilderException {
 
+	private static final long serialVersionUID = 7173727199390076286L;
+
 	public VPackBuilderNumberOutOfRangeException(final ValueType type) {
 		super(String.format("Number out of range of %s.%s", type.getClass().getSimpleName(), type.name()));
 	}
