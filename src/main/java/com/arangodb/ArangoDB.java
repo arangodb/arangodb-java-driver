@@ -175,4 +175,8 @@ public abstract class ArangoDB extends Executeable {
 	public abstract UserResult updateUser(final String user, final UserUpdateOptions options);
 
 	public abstract CompletableFuture<UserResult> updateUserAsync(String user, UserUpdateOptions options);
+
+	public abstract UserResult replaceUser(final String user, final UserUpdateOptions options);
+
+	public abstract CompletableFuture<UserResult> replaceUserAsync(String user, UserUpdateOptions options);
 }

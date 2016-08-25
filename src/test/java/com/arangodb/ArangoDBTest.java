@@ -7,11 +7,14 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserResult;
+import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 
 /**
@@ -141,13 +144,39 @@ public class ArangoDBTest {
 	public void updateUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			arangoDB.createUser(USER, PW, null);
-			final UserUpdateOptions options = new UserUpdateOptions().active(false);
-			final UserResult user = arangoDB.updateUser(USER, options);
+			final Map<String, Object> extra = new HashMap<>();
+			extra.put("hund", false);
+			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
+			extra.put("hund", true);
+			extra.put("mund", true);
+			final UserResult user = arangoDB.updateUser(USER, new UserUpdateOptions().extra(extra));
 			assertThat(user, is(notNullValue()));
-			assertThat(user.getActive(), is(false));
+			assertThat(user.getExtra().size(), is(2));
+			assertThat(user.getExtra().get("hund"), is(true));
 			final UserResult user2 = arangoDB.getUser(USER);
-			assertThat(user2.getActive(), is(false));
+			assertThat(user2.getExtra().size(), is(2));
+			assertThat(user2.getExtra().get("hund"), is(true));
+		} finally {
+			arangoDB.deleteUser(USER);
+		}
+	}
+
+	@Test
+	public void replaceUser() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			final Map<String, Object> extra = new HashMap<>();
+			extra.put("hund", false);
+			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
+			extra.remove("hund");
+			extra.put("mund", true);
+			final UserResult user = arangoDB.replaceUser(USER, new UserUpdateOptions().extra(extra));
+			assertThat(user, is(notNullValue()));
+			assertThat(user.getExtra().size(), is(1));
+			assertThat(user.getExtra().get("mund"), is(true));
+			final UserResult user2 = arangoDB.getUser(USER);
+			assertThat(user2.getExtra().size(), is(1));
+			assertThat(user2.getExtra().get("mund"), is(true));
 		} finally {
 			arangoDB.deleteUser(USER);
 		}
