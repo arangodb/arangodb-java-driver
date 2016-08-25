@@ -121,6 +121,36 @@ public class DBTest extends BaseTest {
 	}
 
 	@Test
+	public void grantAccess() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.grandAccess("user1");
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void grantAccessUserNotFound() {
+		db.grandAccess("user1");
+	}
+
+	@Test
+	public void revokeAccess() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.revokeAccess("user1");
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void revokeAccessUserNotFound() {
+		db.revokeAccess("user1");
+	}
+
+	@Test
 	@Ignore
 	public void executeAQL() {
 		try {

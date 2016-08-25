@@ -12,7 +12,7 @@ import com.arangodb.model.DB;
 public abstract class BaseTest {
 
 	protected static final String TEST_DB = "java_driver_test_db";
-	private static ArangoDB arangoDB;
+	protected static ArangoDB arangoDB;
 	protected static DB db;
 
 	@BeforeClass

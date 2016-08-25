@@ -117,6 +117,28 @@ public class DB extends Executeable {
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
+	public void grandAccess(final String user) {
+		unwrap(grandAccessAync(user));
+	}
+
+	public CompletableFuture<Void> grandAccessAync(final String user) {
+		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_USER, user, "database", name));
+		request.setBody(serialize(new UserAccessOptions().grant("rw")));
+		return execute(Void.class, request);
+	}
+
+	public void revokeAccess(final String user) {
+		unwrap(revokeAccessAsync(user));
+	}
+
+	public CompletableFuture<Void> revokeAccessAsync(final String user) {
+		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_USER, user, "database", name));
+		request.setBody(serialize(new UserAccessOptions().grant("none")));
+		return execute(Void.class, request);
+	}
+
 	public <T> Cursor<T> executeAQL(
 		final String query,
 		final Map<String, Object> bindVars,
