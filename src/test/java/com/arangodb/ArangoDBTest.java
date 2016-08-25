@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserResult;
+import com.arangodb.model.UserUpdateOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -131,6 +132,22 @@ public class ArangoDBTest {
 			users.stream().forEach(user -> {
 				assertThat(user.getUser(), anyOf(is(ROOT), is(USER)));
 			});
+		} finally {
+			arangoDB.deleteUser(USER);
+		}
+	}
+
+	@Test
+	public void updateUser() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			arangoDB.createUser(USER, PW, null);
+			final UserUpdateOptions options = new UserUpdateOptions().active(false);
+			final UserResult user = arangoDB.updateUser(USER, options);
+			assertThat(user, is(notNullValue()));
+			assertThat(user.getActive(), is(false));
+			final UserResult user2 = arangoDB.getUser(USER);
+			assertThat(user2.getActive(), is(false));
 		} finally {
 			arangoDB.deleteUser(USER);
 		}

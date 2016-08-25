@@ -140,4 +140,17 @@ public class ArangoDBImpl extends ArangoDB {
 		});
 	}
 
+	@Override
+	public UserResult updateUser(final String user, final UserUpdateOptions options) {
+		return unwrap(updateUserAsync(user, options));
+	}
+
+	@Override
+	public CompletableFuture<UserResult> updateUserAsync(final String user, final UserUpdateOptions options) {
+		final Request request = new Request(db().name(), RequestType.PATCH,
+				createPath(ArangoDBConstants.PATH_API_USER, user));
+		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
+		return execute(UserResult.class, request);
+	}
+
 }

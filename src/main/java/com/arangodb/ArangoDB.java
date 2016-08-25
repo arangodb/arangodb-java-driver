@@ -17,6 +17,7 @@ import com.arangodb.model.ArangoDBImpl;
 import com.arangodb.model.DB;
 import com.arangodb.model.Executeable;
 import com.arangodb.model.UserCreateOptions;
+import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
@@ -171,4 +172,7 @@ public abstract class ArangoDB extends Executeable {
 
 	public abstract CompletableFuture<Collection<UserResult>> getUsersAsync();
 
+	public abstract UserResult updateUser(final String user, final UserUpdateOptions options);
+
+	public abstract CompletableFuture<UserResult> updateUserAsync(String user, UserUpdateOptions options);
 }
