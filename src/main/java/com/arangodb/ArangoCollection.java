@@ -20,6 +20,7 @@ import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
+import com.arangodb.model.CollectionRevisionResult;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -137,10 +138,7 @@ public class ArangoCollection extends Executeable {
 		return unwrap(getAsync(key, type, options));
 	}
 
-	public <T> CompletableFuture<T> getAsync(
-		final String key,
-		final Class<T> type,
-		final DocumentReadOptions options) {
+	public <T> CompletableFuture<T> getAsync(final String key, final Class<T> type, final DocumentReadOptions options) {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
@@ -559,6 +557,15 @@ public class ArangoCollection extends Executeable {
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "rename"));
 		request.setBody(serialize(new CollectionRenameOptions().name(newName)));
 		return execute(CollectionResult.class, request);
+	}
+
+	public CollectionRevisionResult getRevision() throws ArangoDBException {
+		return unwrap(getRevisionAsync());
+	}
+
+	public CompletableFuture<CollectionRevisionResult> getRevisionAsync() {
+		return execute(CollectionRevisionResult.class, new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "revision")));
 	}
 
 }

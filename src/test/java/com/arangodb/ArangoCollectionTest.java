@@ -31,6 +31,7 @@ import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
 import com.arangodb.model.CollectionPropertiesOptions;
+import com.arangodb.model.CollectionRevisionResult;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -1106,6 +1107,14 @@ public class ArangoCollectionTest extends BaseTest {
 		} finally {
 			db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
 		}
+	}
+
+	@Test
+	public void getRevision() {
+		final CollectionRevisionResult result = db.collection(COLLECTION_NAME).getRevision();
+		assertThat(result, is(notNullValue()));
+		assertThat(result.getName(), is(COLLECTION_NAME));
+		assertThat(result.getRevision(), is(notNullValue()));
 	}
 
 }
