@@ -497,4 +497,23 @@ public class ArangoCollection extends Executeable {
 		return execute(Void.class,
 			new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
 	}
+
+	public CollectionResult load() throws ArangoDBException {
+		return unwrap(loadAsync());
+	}
+
+	public CompletableFuture<CollectionResult> loadAsync() {
+		return execute(CollectionResult.class,
+			new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "load")));
+	}
+
+	public CollectionResult unload() throws ArangoDBException {
+		return unwrap(unloadAsync());
+	}
+
+	public CompletableFuture<CollectionResult> unloadAsync() {
+		return execute(CollectionResult.class,
+			new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "unload")));
+	}
+
 }

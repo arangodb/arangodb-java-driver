@@ -22,7 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
@@ -1049,6 +1048,18 @@ public class ArangoCollectionTest extends BaseTest {
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
 				.update(updatedValues, null);
 		assertThat(updateResult.size(), is(2));// TODO expexted 1
+	}
+
+	@Test
+	public void load() {
+		final CollectionResult result = db.collection(COLLECTION_NAME).load();
+		assertThat(result.getName(), is(COLLECTION_NAME));
+	}
+
+	@Test
+	public void unload() {
+		final CollectionResult result = db.collection(COLLECTION_NAME).unload();
+		assertThat(result.getName(), is(COLLECTION_NAME));
 	}
 
 }
