@@ -31,7 +31,7 @@ public abstract class Executeable {
 	}
 
 	private static final String REGEX_DB_NAME = ArangoDBConstants.SYSTEM + "|[a-zA-Z][\\w-]*";
-	private static final String REGEX_COLLECTION_NAME = "[a-zA-Z_][\\w-]*";
+	private static final String REGEX_COLLECTION_NAME = "[0-9]+|[a-zA-Z_][\\w-]*";
 	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
 
 	protected final Communication communication;

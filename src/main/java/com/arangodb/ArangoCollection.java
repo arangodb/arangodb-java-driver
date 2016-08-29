@@ -516,4 +516,23 @@ public class ArangoCollection extends Executeable {
 			new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "unload")));
 	}
 
+	public CollectionResult getInfo() throws ArangoDBException {
+		return unwrap(getInfoAsync());
+	}
+
+	public CompletableFuture<CollectionResult> getInfoAsync() {
+		final Request request = new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
+		return execute(CollectionResult.class, request);
+	}
+
+	public CollectionPropertiesResult getProperties() throws ArangoDBException {
+		return unwrap(getPropertiesAsync());
+	}
+
+	public CompletableFuture<CollectionPropertiesResult> getPropertiesAsync() {
+		return execute(CollectionPropertiesResult.class, new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "properties")));
+	}
+
 }

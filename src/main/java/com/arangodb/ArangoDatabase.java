@@ -71,16 +71,6 @@ public class ArangoDatabase extends Executeable {
 		return execute(CollectionResult.class, request);
 	}
 
-	public CollectionResult getCollectionInfo(final String name) throws ArangoDBException {
-		return unwrap(getCollectionInfoAsync(name));
-	}
-
-	public CompletableFuture<CollectionResult> getCollectionInfoAsync(final String name) {
-		final Request request = new Request(name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
-		return execute(CollectionResult.class, request);
-	}
-
 	public Collection<CollectionResult> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
 		return unwrap(getCollectionsAsync(options));
 	}

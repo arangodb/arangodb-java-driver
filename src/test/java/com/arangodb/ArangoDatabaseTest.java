@@ -44,23 +44,11 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void getCollectionInfo() {
-		try {
-			final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null);
-			final CollectionResult readResult = db.getCollectionInfo(COLLECTION_NAME);
-			assertThat(readResult, is(notNullValue()));
-			assertThat(readResult.getId(), is(createResult.getId()));
-		} finally {
-			db.collection(COLLECTION_NAME).drop();
-		}
-	}
-
-	@Test
 	public void deleteCollection() {
 		db.createCollection(COLLECTION_NAME, null);
 		db.collection(COLLECTION_NAME).drop();
 		try {
-			db.getCollectionInfo(COLLECTION_NAME);
+			db.collection(COLLECTION_NAME).getInfo();
 			fail();
 		} catch (final ArangoDBException e) {
 		}

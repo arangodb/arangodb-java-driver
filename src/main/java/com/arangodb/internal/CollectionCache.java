@@ -77,7 +77,7 @@ public class CollectionCache {
 	}
 
 	private String execute(final long id) throws ArangoDBException {
-		final CollectionResult result = access.db(db).getCollectionInfo(String.valueOf(id));
+		final CollectionResult result = access.db(db).collection(String.valueOf(id)).getInfo();
 		return result.getName();
 	}
 

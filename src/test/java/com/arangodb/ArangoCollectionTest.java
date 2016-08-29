@@ -1062,4 +1062,17 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(result.getName(), is(COLLECTION_NAME));
 	}
 
+	@Test
+	public void getInfo() {
+		final CollectionResult result = db.collection(COLLECTION_NAME).getInfo();
+		assertThat(result.getName(), is(COLLECTION_NAME));
+	}
+
+	@Test
+	public void getPropeties() {
+		final CollectionPropertiesResult result = db.collection(COLLECTION_NAME).getProperties();
+		assertThat(result.getName(), is(COLLECTION_NAME));
+		assertThat(result.getCount(), is(nullValue()));
+	}
+
 }
