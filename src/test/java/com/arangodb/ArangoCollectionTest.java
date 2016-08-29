@@ -696,11 +696,11 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void readIndexes() {
+	public void getIndexes() {
 		final Collection<String> fields = new ArrayList<>();
 		fields.add("a");
 		db.collection(COLLECTION_NAME).createHashIndex(fields, null);
-		final Collection<IndexResult> indexes = db.collection(COLLECTION_NAME).readIndexes();
+		final Collection<IndexResult> indexes = db.collection(COLLECTION_NAME).getIndexes();
 		assertThat(indexes, is(notNullValue()));
 		assertThat(indexes.size(), is(2));
 		indexes.stream().forEach((i) -> {

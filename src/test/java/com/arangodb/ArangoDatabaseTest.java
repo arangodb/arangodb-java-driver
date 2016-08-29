@@ -44,10 +44,10 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void readCollection() {
+	public void getCollectionInfo() {
 		try {
 			final CollectionResult createResult = db.createCollection(COLLECTION_NAME, null);
-			final CollectionResult readResult = db.readCollection(COLLECTION_NAME);
+			final CollectionResult readResult = db.getCollectionInfo(COLLECTION_NAME);
 			assertThat(readResult, is(notNullValue()));
 			assertThat(readResult.getId(), is(createResult.getId()));
 		} finally {
@@ -60,20 +60,20 @@ public class ArangoDatabaseTest extends BaseTest {
 		db.createCollection(COLLECTION_NAME, null);
 		db.collection(COLLECTION_NAME).drop();
 		try {
-			db.readCollection(COLLECTION_NAME);
+			db.getCollectionInfo(COLLECTION_NAME);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void readIndex() {
+	public void getIndex() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			final Collection<String> fields = new ArrayList<>();
 			fields.add("a");
 			final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
-			final IndexResult readResult = db.readIndex(createResult.getId());
+			final IndexResult readResult = db.getIndex(createResult.getId());
 			assertThat(readResult.getId(), is(createResult.getId()));
 			assertThat(readResult.getType(), is(createResult.getType()));
 		} finally {
@@ -91,7 +91,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			final String id = db.deleteIndex(createResult.getId());
 			assertThat(id, is(createResult.getId()));
 			try {
-				db.readIndex(id);
+				db.getIndex(id);
 				fail();
 			} catch (final ArangoDBException e) {
 			}
@@ -101,12 +101,12 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void readCollections() {
+	public void getCollections() {
 		try {
-			final Collection<CollectionResult> systemCollections = db.readCollections(null);
+			final Collection<CollectionResult> systemCollections = db.getCollections(null);
 			db.createCollection(COLLECTION_NAME + "1", null);
 			db.createCollection(COLLECTION_NAME + "2", null);
-			final Collection<CollectionResult> collections = db.readCollections(null);
+			final Collection<CollectionResult> collections = db.getCollections(null);
 			assertThat(collections.size(), is(2 + systemCollections.size()));
 			assertThat(collections, is(notNullValue()));
 		} finally {
@@ -116,14 +116,14 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void readCollectionsExcludeSystem() {
+	public void getCollectionsExcludeSystem() {
 		try {
 			final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
-			final Collection<CollectionResult> systemCollections = db.readCollections(options);
+			final Collection<CollectionResult> systemCollections = db.getCollections(options);
 			assertThat(systemCollections.size(), is(0));
 			db.createCollection(COLLECTION_NAME + "1", null);
 			db.createCollection(COLLECTION_NAME + "2", null);
-			final Collection<CollectionResult> collections = db.readCollections(options);
+			final Collection<CollectionResult> collections = db.getCollections(options);
 			assertThat(collections.size(), is(2));
 			assertThat(collections, is(notNullValue()));
 		} finally {

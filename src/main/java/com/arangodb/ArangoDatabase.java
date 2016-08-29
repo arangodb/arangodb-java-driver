@@ -71,21 +71,21 @@ public class ArangoDatabase extends Executeable {
 		return execute(CollectionResult.class, request);
 	}
 
-	public CollectionResult readCollection(final String name) throws ArangoDBException {
-		return unwrap(readCollectionAsync(name));
+	public CollectionResult getCollectionInfo(final String name) throws ArangoDBException {
+		return unwrap(getCollectionInfoAsync(name));
 	}
 
-	public CompletableFuture<CollectionResult> readCollectionAsync(final String name) {
+	public CompletableFuture<CollectionResult> getCollectionInfoAsync(final String name) {
 		final Request request = new Request(name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 		return execute(CollectionResult.class, request);
 	}
 
-	public Collection<CollectionResult> readCollections(final CollectionsReadOptions options) throws ArangoDBException {
-		return unwrap(readCollectionsAsync(options));
+	public Collection<CollectionResult> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
+		return unwrap(getCollectionsAsync(options));
 	}
 
-	public CompletableFuture<Collection<CollectionResult>> readCollectionsAsync(final CollectionsReadOptions options) {
+	public CompletableFuture<Collection<CollectionResult>> getCollectionsAsync(final CollectionsReadOptions options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
 		final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
 		request.putParameter(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
@@ -96,11 +96,11 @@ public class ArangoDatabase extends Executeable {
 		});
 	}
 
-	public IndexResult readIndex(final String id) throws ArangoDBException {
-		return unwrap(readIndexAsync(id));
+	public IndexResult getIndex(final String id) throws ArangoDBException {
+		return unwrap(getIndexAsync(id));
 	}
 
-	public CompletableFuture<IndexResult> readIndexAsync(final String id) {
+	public CompletableFuture<IndexResult> getIndexAsync(final String id) {
 		return execute(IndexResult.class,
 			new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_INDEX, id)));
 	}

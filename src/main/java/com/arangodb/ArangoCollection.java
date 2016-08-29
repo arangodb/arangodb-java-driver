@@ -458,11 +458,11 @@ public class ArangoCollection extends Executeable {
 		return execute(IndexResult.class, request);
 	}
 
-	public Collection<IndexResult> readIndexes() throws ArangoDBException {
-		return unwrap(readIndexesAsync());
+	public Collection<IndexResult> getIndexes() throws ArangoDBException {
+		return unwrap(getIndexesAsync());
 	}
 
-	public CompletableFuture<Collection<IndexResult>> readIndexesAsync() {
+	public CompletableFuture<Collection<IndexResult>> getIndexesAsync() {
 		final Request request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		return execute(request,
