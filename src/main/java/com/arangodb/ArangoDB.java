@@ -177,6 +177,20 @@ public class ArangoDB extends Executeable {
 		});
 	}
 
+	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
+		return unwrap(getAccessibleDatabasesAsync());
+	}
+
+	public CompletableFuture<Collection<String>> getAccessibleDatabasesAsync() {
+		return execute(
+			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_DATABASE, "user")),
+			(response) -> {
+				final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
+				return deserialize(result, new Type<Collection<String>>() {
+				}.getType());
+			});
+	}
+
 	public ArangoDBVersion getVersion() throws ArangoDBException {
 		return unwrap(getVersionAsync());
 	}
