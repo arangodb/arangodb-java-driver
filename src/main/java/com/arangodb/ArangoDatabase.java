@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -179,5 +180,14 @@ public class ArangoDatabase extends Executeable {
 			}
 			return null;
 		});
+	}
+
+	public DatabaseResult getInfo() throws ArangoDBException {
+		return unwrap(getInfoAsync());
+	}
+
+	public CompletableFuture<DatabaseResult> getInfoAsync() {
+		return execute(new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_DATABASE, "current")),
+			response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), DatabaseResult.class));
 	}
 }

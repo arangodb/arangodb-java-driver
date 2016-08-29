@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.model.CollectionsReadOptions;
@@ -226,5 +227,15 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.collection("someCollection").drop();
 			db.collection("someOtherCollection").drop();
 		}
+	}
+
+	@Test
+	public void getInfo() {
+		final DatabaseResult info = db.getInfo();
+		assertThat(info, is(notNullValue()));
+		assertThat(info.getId(), is(notNullValue()));
+		assertThat(info.getName(), is(TEST_DB));
+		assertThat(info.getPath(), is(notNullValue()));
+		assertThat(info.getIsSystem(), is(false));
 	}
 }
