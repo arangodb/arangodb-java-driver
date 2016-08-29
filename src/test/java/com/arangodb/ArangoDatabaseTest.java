@@ -152,7 +152,6 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
 	public void query() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
