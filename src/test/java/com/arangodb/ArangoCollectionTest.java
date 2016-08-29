@@ -117,70 +117,70 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void read() {
+	public void getDocument() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insert(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
 
 	@Test
-	public void readIfMatch() {
+	public void getDocumentIfMatch() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insert(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(createResult.getRev());
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			options);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, options);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
 
 	@Test
-	public void readIfMatchFail() {
+	public void getDocumentIfMatchFail() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insert(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
 		try {
-			db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class, options);
+			db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void readIfNoneMatch() {
+	public void getDocumentIfNoneMatch() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insert(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			options);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, options);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
 
 	@Test
-	public void readIfNoneMatchFail() {
+	public void getDocumentIfNoneMatchFail() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insert(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(createResult.getRev());
 		try {
-			db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class, options);
+			db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void readAsJson() {
+	public void getDocumentAsJson() {
 		db.collection(COLLECTION_NAME).insert("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
-		final String readResult = db.collection(COLLECTION_NAME).read("docRaw", String.class, null);
+		final String readResult = db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null);
 		assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
 		assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
 	}
@@ -203,8 +203,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getAttribute("a"), is("test1"));
 		assertThat(readResult.getAttribute("b"), is("test"));
@@ -229,8 +229,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getAttribute("a"), is("test1"));
 		assertThat(readResult.getAttribute("b"), is("test"));
@@ -309,8 +309,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getProperties().keySet(), hasItem("a"));
 	}
@@ -329,8 +329,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getRevision(), is(notNullValue()));
@@ -356,8 +356,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		final Object aResult = readResult.getAttribute("a");
 		assertThat(aResult, instanceOf(Map.class));
@@ -385,8 +385,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		final Object aResult = readResult.getAttribute("a");
 		assertThat(aResult, instanceOf(Map.class));
@@ -426,8 +426,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
@@ -449,8 +449,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
@@ -534,7 +534,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
 		db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, null);
 		try {
-			db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class, null);
+			db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
@@ -560,7 +560,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
 		db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, options);
 		try {
-			db.collection(COLLECTION_NAME).read(createResult.getKey(), BaseDocument.class, null);
+			db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
@@ -716,13 +716,14 @@ public class ArangoCollectionTest extends BaseTest {
 	public void truncate() {
 		final BaseDocument doc = new BaseDocument();
 		db.collection(COLLECTION_NAME).insert(doc, null);
-		final BaseDocument readResult = db.collection(COLLECTION_NAME).read(doc.getKey(), BaseDocument.class, null);
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class,
+			null);
 		assertThat(readResult.getKey(), is(doc.getKey()));
 		final CollectionResult truncateResult = db.collection(COLLECTION_NAME).truncate();
 		assertThat(truncateResult, is(notNullValue()));
 		assertThat(truncateResult.getId(), is(notNullValue()));
 		try {
-			db.collection(COLLECTION_NAME).read(doc.getKey(), BaseDocument.class, null);
+			db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class, null);
 			fail();
 		} catch (final ArangoDBException e) {
 		}

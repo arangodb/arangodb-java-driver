@@ -132,12 +132,12 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> T read(final String key, final Class<T> type, final DocumentReadOptions options)
+	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return unwrap(readAsync(key, type, options));
+		return unwrap(getAsync(key, type, options));
 	}
 
-	public <T> CompletableFuture<T> readAsync(
+	public <T> CompletableFuture<T> getAsync(
 		final String key,
 		final Class<T> type,
 		final DocumentReadOptions options) {
