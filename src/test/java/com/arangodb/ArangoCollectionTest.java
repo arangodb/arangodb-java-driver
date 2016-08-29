@@ -30,6 +30,7 @@ import com.arangodb.entity.DocumentDeleteResult;
 import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
+import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -1073,6 +1074,19 @@ public class ArangoCollectionTest extends BaseTest {
 		final CollectionPropertiesResult result = db.collection(COLLECTION_NAME).getProperties();
 		assertThat(result.getName(), is(COLLECTION_NAME));
 		assertThat(result.getCount(), is(nullValue()));
+	}
+
+	@Test
+	public void changeProperties() {
+		final CollectionPropertiesResult properties = db.collection(COLLECTION_NAME).getProperties();
+		assertThat(properties.getWaitForSync(), is(notNullValue()));
+		final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
+		options.waitForSync(!properties.getWaitForSync());
+		options.journalSize(2000000L);
+		final CollectionPropertiesResult changedProperties = db.collection(COLLECTION_NAME).changeProperties(options);
+		assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
+		assertThat(changedProperties.getWaitForSync(), is(not(properties.getWaitForSync())));
+		assertThat(changedProperties.getJournalSize(), is(options.getJournalSize()));
 	}
 
 }

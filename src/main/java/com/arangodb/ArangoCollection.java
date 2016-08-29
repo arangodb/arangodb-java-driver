@@ -18,6 +18,7 @@ import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -533,6 +534,19 @@ public class ArangoCollection extends Executeable {
 	public CompletableFuture<CollectionPropertiesResult> getPropertiesAsync() {
 		return execute(CollectionPropertiesResult.class, new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "properties")));
+	}
+
+	public CollectionPropertiesResult changeProperties(final CollectionPropertiesOptions options)
+			throws ArangoDBException {
+		return unwrap(changePropertiesAsync(options));
+	}
+
+	public CompletableFuture<CollectionPropertiesResult> changePropertiesAsync(
+		final CollectionPropertiesOptions options) {
+		final Request request = new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "properties"));
+		request.setBody(serialize(options != null ? options : new CollectionPropertiesOptions()));
+		return execute(CollectionPropertiesResult.class, request);
 	}
 
 }
