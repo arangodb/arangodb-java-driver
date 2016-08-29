@@ -33,6 +33,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
@@ -352,24 +353,29 @@ public class HttpManager {
 			try {
 				return executeInternal(configure.getBaseUrl(), requestEntity);
 			} catch (SocketException ex) {
-				retries++;
-				if (connectRetryCount > 0 && retries > connectRetryCount) {
-					logger.error(ex.getMessage(), ex);
-					throw new ArangoException(ex);
-				}
-
-				if (configure.hasFallbackHost()) {
-					configure.changeCurrentHost();
-				}
-
-				logger.warn(ex.getMessage(), ex);
-				try {
-					// 1000 milliseconds is one second.
-					Thread.sleep(configure.getConnectRetryWait());
-				} catch (InterruptedException iex) {
-					Thread.currentThread().interrupt();
-				}
+				handleException(++retries, connectRetryCount, ex);
+			} catch (NoHttpResponseException ex) {
+				handleException(++retries, connectRetryCount, ex);
 			}
+		}
+	}
+
+	private void handleException(int retries, int connectRetryCount, Exception ex) throws ArangoException {
+		if (connectRetryCount > 0 && retries > connectRetryCount) {
+			logger.error(ex.getMessage(), ex);
+			throw new ArangoException(ex);
+		}
+
+		if (configure.hasFallbackHost()) {
+			configure.changeCurrentHost();
+		}
+
+		logger.warn(ex.getMessage(), ex);
+		try {
+			// 1000 milliseconds is one second.
+			Thread.sleep(configure.getConnectRetryWait());
+		} catch (InterruptedException iex) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -380,9 +386,10 @@ public class HttpManager {
 	 *            the request
 	 * @return the response of the request
 	 * @throws ArangoException
+	 * @throws NoHttpResponseException
 	 */
 	private HttpResponseEntity executeInternal(String baseUrl, HttpRequestEntity requestEntity)
-			throws ArangoException, SocketException {
+			throws ArangoException, SocketException, NoHttpResponseException {
 
 		String url = buildUrl(baseUrl, requestEntity);
 
@@ -430,11 +437,15 @@ public class HttpManager {
 		return responseEntity;
 	}
 
-	private HttpResponse executeRequest(HttpRequestBase request) throws SocketException, ArangoException {
+	private HttpResponse executeRequest(HttpRequestBase request)
+			throws SocketException, ArangoException, NoHttpResponseException {
 		try {
 			return client.execute(request);
 		} catch (SocketException ex) {
 			// catch SocketException before IOException
+			throw ex;
+		} catch (NoHttpResponseException ex) {
+			// catch NoHttpResponseException before IOException
 			throw ex;
 		} catch (ClientProtocolException e) {
 			throw new ArangoException(e);
