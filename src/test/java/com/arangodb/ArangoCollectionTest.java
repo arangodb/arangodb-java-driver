@@ -58,8 +58,9 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void insert() {
-		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insert(new BaseDocument(), null);
+	public void insertDocument() {
+		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(),
+			null);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getId(), is(notNullValue()));
 		assertThat(doc.getKey(), is(notNullValue()));
@@ -69,9 +70,9 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void insertAsync() throws InterruptedException, ExecutionException {
+	public void insertDocumentAsync() throws InterruptedException, ExecutionException {
 		final CompletableFuture<DocumentCreateResult<BaseDocument>> f = db.collection(COLLECTION_NAME)
-				.insertAsync(new BaseDocument(), null);
+				.insertDocumentAsync(new BaseDocument(), null);
 		assertThat(f, is(notNullValue()));
 		f.whenComplete((doc, ex) -> {
 			assertThat(ex, is(nullValue()));
@@ -84,9 +85,9 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void insertReturnNew() {
+	public void insertDocumentReturnNew() {
 		final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
-		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insert(new BaseDocument(),
+		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(),
 			options);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getId(), is(notNullValue()));
@@ -96,9 +97,9 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void insertWaitForSync() {
+	public void insertDocumentWaitForSync() {
 		final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
-		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insert(new BaseDocument(),
+		final DocumentCreateResult<BaseDocument> doc = db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(),
 			options);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getId(), is(notNullValue()));
@@ -108,9 +109,9 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void insertAsJson() {
+	public void insertDocumentAsJson() {
 		final DocumentCreateResult<String> doc = db.collection(COLLECTION_NAME)
-				.insert("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
+				.insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getId(), is(notNullValue()));
 		assertThat(doc.getKey(), is(notNullValue()));
@@ -120,7 +121,7 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void getDocument() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
-				.insert(new BaseDocument(), null);
+				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
 			BaseDocument.class, null);
@@ -131,7 +132,7 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void getDocumentIfMatch() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
-				.insert(new BaseDocument(), null);
+				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(createResult.getRev());
 		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
@@ -143,7 +144,7 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void getDocumentIfMatchFail() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
-				.insert(new BaseDocument(), null);
+				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
 		try {
@@ -156,7 +157,7 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void getDocumentIfNoneMatch() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
-				.insert(new BaseDocument(), null);
+				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
 		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
@@ -168,7 +169,7 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void getDocumentIfNoneMatchFail() {
 		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME)
-				.insert(new BaseDocument(), null);
+				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(createResult.getRev());
 		try {
@@ -180,23 +181,24 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void getDocumentAsJson() {
-		db.collection(COLLECTION_NAME).insert("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
+		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
 		final String readResult = db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null);
 		assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
 		assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
 	}
 
 	@Test
-	public void update() {
+	public void updateDocument() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		doc.addAttribute("c", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		doc.updateAttribute("c", null);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, null);
+				.updateDocument(createResult.getKey(), doc, null);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getNew().isPresent(), is(false));
@@ -214,17 +216,18 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void updateIfMatch() {
+	public void updateDocumentIfMatch() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		doc.addAttribute("c", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		doc.updateAttribute("c", null);
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().ifMatch(createResult.getRev());
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
@@ -240,32 +243,34 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void updateIfMatchFail() {
+	public void updateDocumentIfMatchFail() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		doc.addAttribute("c", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		doc.updateAttribute("c", null);
 		try {
 			final DocumentUpdateOptions options = new DocumentUpdateOptions().ifMatch("no");
-			db.collection(COLLECTION_NAME).update(createResult.getKey(), doc, options);
+			db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void updateReturnNew() {
+	public void updateDocumentReturnNew() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().returnNew(true);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
@@ -277,15 +282,16 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void updateReturnOld() {
+	public void updateDocumentReturnOld() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().returnOld(true);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
@@ -297,14 +303,15 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void updateKeepNullTrue() {
+	public void updateDocumentKeepNullTrue() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", null);
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().keepNull(true);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
@@ -317,14 +324,15 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void updateKeepNullFalse() {
+	public void updateDocumentKeepNullFalse() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.updateAttribute("a", null);
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().keepNull(false);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
@@ -340,18 +348,19 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void updateMergeObjectsTrue() {
+	public void updateDocumentMergeObjectsTrue() {
 		final BaseDocument doc = new BaseDocument();
 		final Map<String, String> a = new HashMap<>();
 		a.put("a", "test");
 		doc.addAttribute("a", a);
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		a.clear();
 		a.put("b", "test");
 		doc.updateAttribute("a", a);
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().mergeObjects(true);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
@@ -369,18 +378,19 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void updateMergeObjectsFalse() {
+	public void updateDocumentMergeObjectsFalse() {
 		final BaseDocument doc = new BaseDocument();
 		final Map<String, String> a = new HashMap<>();
 		a.put("a", "test");
 		doc.addAttribute("a", a);
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		a.clear();
 		a.put("b", "test");
 		doc.updateAttribute("a", a);
 		final DocumentUpdateOptions options = new DocumentUpdateOptions().mergeObjects(false);
 		final DocumentUpdateResult<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.update(createResult.getKey(), doc, options);
+				.updateDocument(createResult.getKey(), doc, options);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
@@ -397,29 +407,31 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void updateIgnoreRevsFalse() {
+	public void updateDocumentIgnoreRevsFalse() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.setRevision("no");
 		doc.updateAttribute("a", "test1");
 		try {
 			final DocumentUpdateOptions options = new DocumentUpdateOptions().ignoreRevs(false);
-			db.collection(COLLECTION_NAME).update(createResult.getKey(), doc, options);
+			db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void replace() {
+	public void replaceDocument() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
-				.replace(createResult.getKey(), doc, null);
+				.replaceDocument(createResult.getKey(), doc, null);
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
 		assertThat(replaceResult.getNew().isPresent(), is(false));
@@ -436,15 +448,16 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceIfMatch() {
+	public void replaceDocumentIfMatch() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch(createResult.getRev());
 		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
-				.replace(createResult.getKey(), doc, options);
+				.replaceDocument(createResult.getKey(), doc, options);
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
 		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
@@ -459,46 +472,49 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceIfMatchFail() {
+	public void replaceDocumentIfMatchFail() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		try {
 			final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch("no");
-			db.collection(COLLECTION_NAME).replace(createResult.getKey(), doc, options);
+			db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void replaceIgnoreRevsFalse() {
+	public void replaceDocumentIgnoreRevsFalse() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.setRevision("no");
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		try {
 			final DocumentReplaceOptions options = new DocumentReplaceOptions().ignoreRevs(false);
-			db.collection(COLLECTION_NAME).replace(createResult.getKey(), doc, options);
+			db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
 	}
 
 	@Test
-	public void replaceReturnNew() {
+	public void replaceDocumentReturnNew() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		final DocumentReplaceOptions options = new DocumentReplaceOptions().returnNew(true);
 		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
-				.replace(createResult.getKey(), doc, options);
+				.replaceDocument(createResult.getKey(), doc, options);
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
@@ -510,15 +526,16 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void replaceReturnOld() {
+	public void replaceDocumentReturnOld() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		final DocumentReplaceOptions options = new DocumentReplaceOptions().returnOld(true);
 		final DocumentUpdateResult<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
-				.replace(createResult.getKey(), doc, options);
+				.replaceDocument(createResult.getKey(), doc, options);
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
@@ -530,10 +547,11 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void delete() {
+	public void deleteDocument() {
 		final BaseDocument doc = new BaseDocument();
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
-		db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
+		db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, null);
 		try {
 			db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null);
 			fail();
@@ -542,24 +560,26 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteReturnOld() {
+	public void deleteDocumentReturnOld() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
 		final DocumentDeleteResult<BaseDocument> deleteResult = db.collection(COLLECTION_NAME)
-				.delete(createResult.getKey(), BaseDocument.class, options);
+				.deleteDocument(createResult.getKey(), BaseDocument.class, options);
 		assertThat(deleteResult.getOld().isPresent(), is(true));
 		assertThat(deleteResult.getOld().get(), instanceOf(BaseDocument.class));
 		assertThat(deleteResult.getOld().get().getAttribute("a"), is("test"));
 	}
 
 	@Test
-	public void deleteIfMatch() {
+	public void deleteDocumentIfMatch() {
 		final BaseDocument doc = new BaseDocument();
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
-		db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, options);
+		db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options);
 		try {
 			db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null);
 			fail();
@@ -568,12 +588,13 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteIfMatchFail() {
+	public void deleteDocumentIfMatchFail() {
 		final BaseDocument doc = new BaseDocument();
-		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insert(doc, null);
+		final DocumentCreateResult<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
 		final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
 		try {
-			db.collection(COLLECTION_NAME).delete(createResult.getKey(), null, options);
+			db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options);
 			fail();
 		} catch (final ArangoDBException e) {
 		}
@@ -716,7 +737,7 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void truncate() {
 		final BaseDocument doc = new BaseDocument();
-		db.collection(COLLECTION_NAME).insert(doc, null);
+		db.collection(COLLECTION_NAME).insertDocument(doc, null);
 		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class,
 			null);
 		assertThat(readResult.getKey(), is(doc.getKey()));
@@ -735,7 +756,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final CollectionPropertiesResult countEmpty = db.collection(COLLECTION_NAME).count();
 		assertThat(countEmpty, is(notNullValue()));
 		assertThat(countEmpty.getCount(), is(0L));
-		db.collection(COLLECTION_NAME).insert("{}", null);
+		db.collection(COLLECTION_NAME).insertDocument("{}", null);
 		final CollectionPropertiesResult count = db.collection(COLLECTION_NAME).count();
 		assertThat(count.getCount(), is(1L));
 	}
@@ -744,7 +765,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void documentExists() {
 		final Boolean existsNot = db.collection(COLLECTION_NAME).documentExists("no", null);
 		assertThat(existsNot, is(false));
-		db.collection(COLLECTION_NAME).insert("{\"_key\":\"abc\"}", null);
+		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null);
 		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", null);
 		assertThat(exists, is(true));
 	}
@@ -756,7 +777,7 @@ public class ArangoCollectionTest extends BaseTest {
 			assertThat(result, is(false));
 		});
 		existsNot.get();
-		db.collection(COLLECTION_NAME).insert("{\"_key\":\"abc\"}", null);
+		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null);
 		final CompletableFuture<Boolean> exists = db.collection(COLLECTION_NAME).documentExistsAsync("abc", null);
 		exists.thenAccept(result -> {
 			assertThat(result, is(true));
@@ -765,8 +786,8 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void documentExistsIfMatch() {
-		final DocumentCreateResult<String> createResult = db.collection(COLLECTION_NAME).insert("{\"_key\":\"abc\"}",
-			null);
+		final DocumentCreateResult<String> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument("{\"_key\":\"abc\"}", null);
 		final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch(createResult.getRev());
 		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options);
 		assertThat(exists, is(true));
@@ -774,7 +795,7 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void documentExistsIfMatchFail() {
-		db.collection(COLLECTION_NAME).insert("{\"_key\":\"abc\"}", null);
+		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null);
 		final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch("no");
 		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options);
 		assertThat(exists, is(false));
@@ -782,7 +803,7 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void documentExistsIfNoneMatch() {
-		db.collection(COLLECTION_NAME).insert("{\"_key\":\"abc\"}", null);
+		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null);
 		final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch("no");
 		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options);
 		assertThat(exists, is(true));
@@ -790,50 +811,53 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void documentExistsIfNoneMatchFail() {
-		final DocumentCreateResult<String> createResult = db.collection(COLLECTION_NAME).insert("{\"_key\":\"abc\"}",
-			null);
+		final DocumentCreateResult<String> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument("{\"_key\":\"abc\"}", null);
 		final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch(createResult.getRev());
 		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options);
 		assertThat(exists, is(false));
 	}
 
 	@Test
-	public void insertMany() {
+	public void insertDocuments() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
-		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.insertDocuments(values, null);
 		assertThat(docs, is(notNullValue()));
 		assertThat(docs.size(), is(3));
 	}
 
 	@Test
-	public void insertManyOne() {
+	public void insertDocumentsOne() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		values.add(new BaseDocument());
-		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.insertDocuments(values, null);
 		assertThat(docs, is(notNullValue()));
 		assertThat(docs.size(), is(1));
 	}
 
 	@Test
-	public void insertManyEmpty() {
+	public void insertDocumentsEmpty() {
 		final Collection<BaseDocument> values = new ArrayList<>();
-		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME).insert(values, null);
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.insertDocuments(values, null);
 		assertThat(docs, is(notNullValue()));
 		assertThat(docs.size(), is(0));
 	}
 
 	@Test
-	public void insertManyReturnNew() {
+	public void insertDocumentsReturnNew() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
 		final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
-		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME).insert(values,
-			options);
+		final Collection<DocumentCreateResult<BaseDocument>> docs = db.collection(COLLECTION_NAME)
+				.insertDocuments(values, options);
 		assertThat(docs, is(notNullValue()));
 		assertThat(docs.size(), is(3));
 		docs.stream().forEach(doc -> {
@@ -844,7 +868,7 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteMany() {
+	public void deleteDocuments() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
@@ -856,12 +880,12 @@ public class ArangoCollectionTest extends BaseTest {
 			e.setKey("2");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<String> keys = new ArrayList<>();
 		keys.add("1");
 		keys.add("2");
-		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
-			null);
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.size(), is(2));
 		deleteResult.stream().forEach(i -> {
@@ -870,18 +894,18 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteManyOne() {
+	public void deleteDocumentsOne() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
 			e.setKey("1");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<String> keys = new ArrayList<>();
 		keys.add("1");
-		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
-			null);
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.size(), is(1));
 		deleteResult.stream().forEach(i -> {
@@ -890,12 +914,12 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteManyEmpty() {
+	public void deleteDocumentsEmpty() {
 		final Collection<BaseDocument> values = new ArrayList<>();
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<String> keys = new ArrayList<>();
-		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
-			null);
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.size(), is(0));
 	}
@@ -903,18 +927,18 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void deleteDocumentsNotExisting() {
 		final Collection<BaseDocument> values = new ArrayList<>();
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<String> keys = new ArrayList<>();
 		keys.add("1");
 		keys.add("2");
-		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME).delete(keys, null,
-			null);
+		final Collection<DocumentDeleteResult<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(keys, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.size(), is(2));// TODO expexted 0
 	}
 
 	@Test
-	public void updateMany() {
+	public void updateDocuments() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
@@ -926,52 +950,52 @@ public class ArangoCollectionTest extends BaseTest {
 			e.setKey("2");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
 		values.stream().forEach(i -> {
 			i.addAttribute("a", "test");
 			updatedValues.add(i);
 		});
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(updatedValues, null);
+				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.size(), is(2));
 	}
 
 	@Test
-	public void updateManyOne() {
+	public void updateDocumentsOne() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
 			e.setKey("1");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
 		final BaseDocument first = values.stream().findFirst().get();
 		first.addAttribute("a", "test");
 		updatedValues.add(first);
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(updatedValues, null);
+				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.size(), is(1));
 	}
 
 	@Test
-	public void updateManyEmpty() {
+	public void updateDocumentsEmpty() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(values, null);
+				.updateDocuments(values, null);
 		assertThat(updateResult.size(), is(0));
 	}
 
 	@Test
-	public void updateManyWithoutKey() {
+	public void updateDocumentsWithoutKey() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
 			e.setKey("1");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
 		values.stream().forEach(i -> {
 			i.addAttribute("a", "test");
@@ -979,12 +1003,12 @@ public class ArangoCollectionTest extends BaseTest {
 		});
 		updatedValues.add(new BaseDocument());
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(updatedValues, null);
+				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.size(), is(2));// TODO expexted 1
 	}
 
 	@Test
-	public void replaceMany() {
+	public void replaceDocuments() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
@@ -996,52 +1020,52 @@ public class ArangoCollectionTest extends BaseTest {
 			e.setKey("2");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
 		values.stream().forEach(i -> {
 			i.addAttribute("a", "test");
 			updatedValues.add(i);
 		});
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.replace(updatedValues, null);
+				.replaceDocuments(updatedValues, null);
 		assertThat(updateResult.size(), is(2));
 	}
 
 	@Test
-	public void replaceManyOne() {
+	public void replaceDocumentsOne() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
 			e.setKey("1");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
 		final BaseDocument first = values.stream().findFirst().get();
 		first.addAttribute("a", "test");
 		updatedValues.add(first);
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(updatedValues, null);
+				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.size(), is(1));
 	}
 
 	@Test
-	public void replaceManyEmpty() {
+	public void replaceDocumentsEmpty() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(values, null);
+				.updateDocuments(values, null);
 		assertThat(updateResult.size(), is(0));
 	}
 
 	@Test
-	public void replaceManyWithoutKey() {
+	public void replaceDocumentsWithoutKey() {
 		final Collection<BaseDocument> values = new ArrayList<>();
 		{
 			final BaseDocument e = new BaseDocument();
 			e.setKey("1");
 			values.add(e);
 		}
-		db.collection(COLLECTION_NAME).insert(values, null);
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
 		values.stream().forEach(i -> {
 			i.addAttribute("a", "test");
@@ -1049,7 +1073,7 @@ public class ArangoCollectionTest extends BaseTest {
 		});
 		updatedValues.add(new BaseDocument());
 		final Collection<DocumentUpdateResult<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
-				.update(updatedValues, null);
+				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.size(), is(2));// TODO expexted 1
 	}
 

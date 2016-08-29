@@ -157,7 +157,7 @@ public class ArangoDatabaseTest extends BaseTest {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
-				db.collection(COLLECTION_NAME).insert(new BaseDocument(), null);
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
 			}
 			final Cursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));

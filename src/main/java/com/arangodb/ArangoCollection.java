@@ -64,12 +64,12 @@ public class ArangoCollection extends Executeable {
 		return createPath(name, key);
 	}
 
-	public <T> DocumentCreateResult<T> insert(final T value, final DocumentCreateOptions options)
+	public <T> DocumentCreateResult<T> insertDocument(final T value, final DocumentCreateOptions options)
 			throws ArangoDBException {
-		return unwrap(insertAsync(value, options));
+		return unwrap(insertDocumentAsync(value, options));
 	}
 
-	public <T> CompletableFuture<DocumentCreateResult<T>> insertAsync(
+	public <T> CompletableFuture<DocumentCreateResult<T>> insertDocumentAsync(
 		final T value,
 		final DocumentCreateOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST,
@@ -94,14 +94,14 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> Collection<DocumentCreateResult<T>> insert(
+	public <T> Collection<DocumentCreateResult<T>> insertDocuments(
 		final Collection<T> values,
 		final DocumentCreateOptions options) throws ArangoDBException {
-		return unwrap(insertAsync(values, options));
+		return unwrap(insertDocumentsAsync(values, options));
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertAsync(
+	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertDocumentsAsync(
 		final Collection<T> values,
 		final DocumentCreateOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST,
@@ -135,10 +135,10 @@ public class ArangoCollection extends Executeable {
 
 	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return unwrap(getAsync(key, type, options));
+		return unwrap(getDocumentAsync(key, type, options));
 	}
 
-	public <T> CompletableFuture<T> getAsync(final String key, final Class<T> type, final DocumentReadOptions options) {
+	public <T> CompletableFuture<T> getDocumentAsync(final String key, final Class<T> type, final DocumentReadOptions options) {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
@@ -147,12 +147,12 @@ public class ArangoCollection extends Executeable {
 		return execute(type, request);
 	}
 
-	public <T> DocumentUpdateResult<T> replace(final String key, final T value, final DocumentReplaceOptions options)
+	public <T> DocumentUpdateResult<T> replaceDocument(final String key, final T value, final DocumentReplaceOptions options)
 			throws ArangoDBException {
-		return unwrap(replaceAsync(key, value, options));
+		return unwrap(replaceDocumentAsync(key, value, options));
 	}
 
-	public <T> CompletableFuture<DocumentUpdateResult<T>> replaceAsync(
+	public <T> CompletableFuture<DocumentUpdateResult<T>> replaceDocumentAsync(
 		final String key,
 		final T value,
 		final DocumentReplaceOptions options) {
@@ -183,14 +183,14 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> Collection<DocumentUpdateResult<T>> replace(
+	public <T> Collection<DocumentUpdateResult<T>> replaceDocuments(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) throws ArangoDBException {
-		return unwrap(replaceAsync(values, options));
+		return unwrap(replaceDocumentsAsync(values, options));
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceAsync(
+	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceDocumentsAsync(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) {
 		final Request request = new Request(db.name(), RequestType.PUT,
@@ -230,12 +230,12 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> DocumentUpdateResult<T> update(final String key, final T value, final DocumentUpdateOptions options)
+	public <T> DocumentUpdateResult<T> updateDocument(final String key, final T value, final DocumentUpdateOptions options)
 			throws ArangoDBException {
-		return unwrap(updateAsync(key, value, options));
+		return unwrap(updateDocumentAsync(key, value, options));
 	}
 
-	public <T> CompletableFuture<DocumentUpdateResult<T>> updateAsync(
+	public <T> CompletableFuture<DocumentUpdateResult<T>> updateDocumentAsync(
 		final String key,
 		final T value,
 		final DocumentUpdateOptions options) {
@@ -266,14 +266,14 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> Collection<DocumentUpdateResult<T>> update(
+	public <T> Collection<DocumentUpdateResult<T>> updateDocuments(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) throws ArangoDBException {
-		return unwrap(updateAsync(values, options));
+		return unwrap(updateDocumentsAsync(values, options));
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateAsync(
+	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateDocumentsAsync(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) {
 		final Request request = new Request(db.name(), RequestType.PATCH,
@@ -316,14 +316,14 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> DocumentDeleteResult<T> delete(
+	public <T> DocumentDeleteResult<T> deleteDocument(
 		final String key,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
-		return unwrap(deleteAsync(key, type, options));
+		return unwrap(deleteDocumentAsync(key, type, options));
 	}
 
-	public <T> CompletableFuture<DocumentDeleteResult<T>> deleteAsync(
+	public <T> CompletableFuture<DocumentDeleteResult<T>> deleteDocumentAsync(
 		final String key,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
@@ -344,14 +344,14 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> Collection<DocumentDeleteResult<T>> delete(
+	public <T> Collection<DocumentDeleteResult<T>> deleteDocuments(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
-		return unwrap(deleteAsync(keys, type, options));
+		return unwrap(deleteDocumentsAsync(keys, type, options));
 	}
 
-	public <T> CompletableFuture<Collection<DocumentDeleteResult<T>>> deleteAsync(
+	public <T> CompletableFuture<Collection<DocumentDeleteResult<T>>> deleteDocumentsAsync(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
