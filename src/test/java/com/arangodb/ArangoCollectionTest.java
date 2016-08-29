@@ -1089,4 +1089,22 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(changedProperties.getJournalSize(), is(options.getJournalSize()));
 	}
 
+	@Test
+	public void rename() {
+		try {
+			final CollectionResult result = db.collection(COLLECTION_NAME).rename(COLLECTION_NAME + "1");
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getName(), is(COLLECTION_NAME + "1"));
+			final CollectionResult info = db.collection(COLLECTION_NAME + "1").getInfo();
+			assertThat(info.getName(), is(COLLECTION_NAME + "1"));
+			try {
+				db.collection(COLLECTION_NAME).getInfo();
+				fail();
+			} catch (final ArangoDBException e) {
+			}
+		} finally {
+			db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
+		}
+	}
+
 }

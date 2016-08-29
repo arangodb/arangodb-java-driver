@@ -19,6 +19,7 @@ import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.CollectionPropertiesOptions;
+import com.arangodb.model.CollectionRenameOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -547,6 +548,17 @@ public class ArangoCollection extends Executeable {
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "properties"));
 		request.setBody(serialize(options != null ? options : new CollectionPropertiesOptions()));
 		return execute(CollectionPropertiesResult.class, request);
+	}
+
+	public CollectionResult rename(final String newName) throws ArangoDBException {
+		return unwrap(renameAsync(newName));
+	}
+
+	public CompletableFuture<CollectionResult> renameAsync(final String newName) {
+		final Request request = new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "rename"));
+		request.setBody(serialize(new CollectionRenameOptions().name(newName)));
+		return execute(CollectionResult.class, request);
 	}
 
 }
