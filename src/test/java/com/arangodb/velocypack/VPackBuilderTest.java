@@ -3,11 +3,11 @@ package com.arangodb.velocypack;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.Date;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.arangodb.velocypack.exception.VPackBuilderNeedOpenCompoundException;
@@ -24,7 +24,7 @@ public class VPackBuilderTest {
 	@Test
 	public void empty() {
 		final VPackSlice slice = new VPackBuilder().slice();
-		Assert.assertTrue(slice.isNone());
+		assertThat(slice.isNone(), is(true));
 	}
 
 	@Test
@@ -33,7 +33,7 @@ public class VPackBuilderTest {
 		builder.add(new Value(ValueType.NULL));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isNull());
+		assertThat(slice.isNull(), is(true));
 	}
 
 	@Test
@@ -42,8 +42,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(true));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isBoolean());
-		Assert.assertTrue(slice.getAsBoolean());
+		assertThat(slice.isBoolean(), is(true));
+		assertThat(slice.getAsBoolean(), is(true));
 	}
 
 	@Test
@@ -52,8 +52,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(false));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isBoolean());
-		Assert.assertFalse(slice.getAsBoolean());
+		assertThat(slice.isBoolean(), is(true));
+		assertThat(slice.getAsBoolean(), is(false));
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class VPackBuilderTest {
 		builder.add(new Value(b));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isNull());
+		assertThat(slice.isNull(), is(true));
 	}
 
 	@Test
@@ -73,8 +73,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isDouble());
-		Assert.assertEquals(value, slice.getAsDouble(), 0);
+		assertThat(slice.isDouble(), is(true));
+		assertThat(slice.getAsDouble(), is(value));
 	}
 
 	@Test
@@ -84,8 +84,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.SMALLINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isSmallInt());
-		Assert.assertEquals(value, slice.getAsInt());
+		assertThat(slice.isSmallInt(), is(true));
+		assertThat(slice.getAsInt(), is(value));
 	}
 
 	@Test
@@ -95,8 +95,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.SMALLINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isSmallInt());
-		Assert.assertEquals(value, slice.getAsInt());
+		assertThat(slice.isSmallInt(), is(true));
+		assertThat(slice.getAsInt(), is(value));
 	}
 
 	@Test(expected = VPackBuilderNumberOutOfRangeException.class)
@@ -113,8 +113,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.SMALLINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isSmallInt());
-		Assert.assertEquals(value, slice.getAsLong());
+		assertThat(slice.isSmallInt(), is(true));
+		assertThat(slice.getAsLong(), is(value));
 	}
 
 	@Test
@@ -124,8 +124,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.SMALLINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isSmallInt());
-		Assert.assertEquals(value, slice.getAsLong());
+		assertThat(slice.isSmallInt(), is(true));
+		assertThat(slice.getAsLong(), is(value));
 	}
 
 	@Test(expected = VPackBuilderNumberOutOfRangeException.class)
@@ -142,8 +142,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.SMALLINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isSmallInt());
-		Assert.assertEquals(value, slice.getAsBigInteger());
+		assertThat(slice.isSmallInt(), is(true));
+		assertThat(slice.getAsBigInteger(), is(value));
 	}
 
 	@Test
@@ -153,8 +153,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.SMALLINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isSmallInt());
-		Assert.assertEquals(value, slice.getAsBigInteger());
+		assertThat(slice.isSmallInt(), is(true));
+		assertThat(slice.getAsBigInteger(), is(value));
 	}
 
 	@Test(expected = VPackBuilderNumberOutOfRangeException.class)
@@ -171,8 +171,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.INT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isInt());
-		Assert.assertEquals(value, slice.getAsInt());
+		assertThat(slice.isInt(), is(true));
+		assertThat(slice.getAsInt(), is(value));
 	}
 
 	@Test
@@ -182,8 +182,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.INT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isInt());
-		Assert.assertEquals(value, slice.getAsLong());
+		assertThat(slice.isInt(), is(true));
+		assertThat(slice.getAsLong(), is(value));
 	}
 
 	@Test
@@ -193,8 +193,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.INT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isInt());
-		Assert.assertEquals(value, slice.getAsBigInteger());
+		assertThat(slice.isInt(), is(true));
+		assertThat(slice.getAsBigInteger(), is(value));
 	}
 
 	@Test
@@ -204,8 +204,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.UINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isUInt());
-		Assert.assertEquals(value, slice.getAsLong());
+		assertThat(slice.isUInt(), is(true));
+		assertThat(slice.getAsLong(), is(value));
 	}
 
 	@Test
@@ -215,8 +215,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(value, ValueType.UINT));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isUInt());
-		Assert.assertEquals(value, slice.getAsBigInteger());
+		assertThat(slice.isUInt(), is(true));
+		assertThat(slice.getAsBigInteger(), is(value));
 	}
 
 	@Test(expected = VPackBuilderUnexpectedValueException.class)
@@ -240,8 +240,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(date));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isDate());
-		Assert.assertEquals(date, slice.getAsDate());
+		assertThat(slice.isDate(), is(true));
+		assertThat(slice.getAsDate(), is(date));
 	}
 
 	@Test
@@ -251,8 +251,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(s));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isString());
-		Assert.assertEquals(s, slice.getAsString());
+		assertThat(slice.isString(), is(true));
+		assertThat(slice.getAsString(), is(s));
 	}
 
 	@Test
@@ -262,8 +262,8 @@ public class VPackBuilderTest {
 		builder.add(new Value(s));
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isString());
-		Assert.assertEquals(s, slice.getAsString());
+		assertThat(slice.isString(), is(true));
+		assertThat(slice.getAsString(), is(s));
 	}
 
 	@Test
@@ -273,11 +273,11 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(0, slice.getLength());
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(0));
 		try {
 			slice.get(0);
-			Assert.fail();
+			fail();
 		} catch (final IndexOutOfBoundsException e) {
 
 		}
@@ -294,12 +294,12 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(2, slice.getLength());
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(2));
 		for (int i = 0; i < expected.length; i++) {
 			final VPackSlice at = slice.get(i);
-			Assert.assertTrue(at.isInteger());
-			Assert.assertEquals(expected[i], at.getAsLong());
+			assertThat(at.isInteger(), is(true));
+			assertThat(at.getAsLong(), is(expected[i]));
 		}
 	}
 
@@ -323,7 +323,7 @@ public class VPackBuilderTest {
 			builder.close();
 			sliceSame = builder.slice();
 		}
-		Assert.assertTrue(sliceSame.getByteSize() < sliceNotSame.getByteSize());
+		assertThat(sliceSame.getByteSize() < sliceNotSame.getByteSize(), is(true));
 	}
 
 	@Test
@@ -338,12 +338,12 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(2, slice.getLength());
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(2));
 		for (int i = 0; i < expected.length; i++) {
 			final VPackSlice at = slice.get(i);
-			Assert.assertTrue(at.isInteger());
-			Assert.assertEquals(expected[i], at.getAsLong());
+			assertThat(at.isInteger(), is(true));
+			assertThat(at.getAsLong(), is(expected[i]));
 		}
 	}
 
@@ -358,13 +358,13 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(3, slice.getLength());
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(3));
 	}
 
 	@Test
 	public void indexedArray2ByteLength() throws VPackException {
-		final long valueCount = 100;
+		final int valueCount = 100;
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value(ValueType.ARRAY));
 		for (long i = 0; i < valueCount; i++) {
@@ -374,14 +374,14 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertEquals(0x07, slice.head());
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(valueCount, slice.getLength());
+		assertThat(slice.head(), is((byte) 0x07));
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(valueCount));
 	}
 
 	@Test
 	public void indexedArray2ByteLengthNoIndexTable() throws VPackException {
-		final long valueCount = 100;
+		final int valueCount = 100;
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value(ValueType.ARRAY));
 		for (long i = 0; i < valueCount; i++) {
@@ -391,14 +391,14 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertEquals(0x03, slice.head());
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(valueCount, slice.getLength());
+		assertThat(slice.head(), is((byte) 0x03));
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(valueCount));
 	}
 
 	@Test
 	public void indexedArray4ByteLength() throws VPackException {
-		final long valueCount = 200;
+		final int valueCount = 200;
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value(ValueType.ARRAY));
 		for (long i = 0; i < valueCount; i++) {
@@ -408,14 +408,14 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertEquals(0x04, slice.head());
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(valueCount, slice.getLength());
+		assertThat(slice.head(), is((byte) 0x04));
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(valueCount));
 	}
 
 	@Test
 	public void indexedArray4ByteLengthNoIndexTable() throws VPackException {
-		final long valueCount = 200;
+		final int valueCount = 200;
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value(ValueType.ARRAY));
 		for (long i = 0; i < valueCount; i++) {
@@ -425,9 +425,9 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertEquals(0x08, slice.head());
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(valueCount, slice.getLength());
+		assertThat(slice.head(), is((byte) 0x08));
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(valueCount));
 	}
 
 	@Test
@@ -445,16 +445,16 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(values.length, slice.getLength());
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(values.length));
 		for (int i = 0; i < values.length; i++) {
 			final VPackSlice ls = slice.get(i);
-			Assert.assertTrue(ls.isArray());
-			Assert.assertEquals(values[i].length, ls.getLength());
+			assertThat(ls.isArray(), is(true));
+			assertThat(ls.getLength(), is(values[i].length));
 			for (int j = 0; j < values[i].length; j++) {
 				final VPackSlice l = ls.get(j);
-				Assert.assertTrue(l.isInteger());
-				Assert.assertEquals(values[i][j], l.getAsLong());
+				assertThat(l.isInteger(), is(true));
+				assertThat(l.getAsLong(), is(values[i][j]));
 			}
 		}
 	}
@@ -478,20 +478,20 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isArray());
-		Assert.assertEquals(values.length, slice.getLength());
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.getLength(), is(values.length));
 		for (int i = 0; i < values.length; i++) {
 			final VPackSlice lls = slice.get(i);
-			Assert.assertTrue(lls.isArray());
-			Assert.assertEquals(values[i].length, lls.getLength());
+			assertThat(lls.isArray(), is(true));
+			assertThat(lls.getLength(), is(values[i].length));
 			for (int j = 0; j < values[i].length; j++) {
 				final VPackSlice ls = lls.get(i);
-				Assert.assertTrue(ls.isArray());
-				Assert.assertEquals(values[i][j].length, ls.getLength());
+				assertThat(ls.isArray(), is(true));
+				assertThat(ls.getLength(), is(values[i][j].length));
 				for (int k = 0; k < values[i][j].length; k++) {
 					final VPackSlice l = ls.get(k);
-					Assert.assertTrue(l.isInteger());
-					Assert.assertEquals(values[i][j][k], l.getAsLong());
+					assertThat(l.isInteger(), is(true));
+					assertThat(l.getAsLong(), is(values[i][j][k]));
 				}
 			}
 
@@ -505,19 +505,19 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isObject());
-		Assert.assertEquals(0, slice.getLength());
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.getLength(), is(0));
 		final VPackSlice a = slice.get("a");
-		Assert.assertTrue(a.isNone());
+		assertThat(a.isNone(), is(true));
 		try {
 			slice.keyAt(0);
-			Assert.fail();
+			fail();
 		} catch (final IndexOutOfBoundsException e) {
 
 		}
 		try {
 			slice.valueAt(0);
-			Assert.fail();
+			fail();
 		} catch (final IndexOutOfBoundsException e) {
 
 		}
@@ -534,11 +534,11 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isObject());
-		Assert.assertEquals(3, slice.getLength());
-		Assert.assertEquals(12, slice.get("a").getAsLong());
-		Assert.assertEquals(true, slice.get("b").getAsBoolean());
-		Assert.assertEquals("xyz", slice.get("c").getAsString());
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.getLength(), is(3));
+		assertThat(slice.get("a").getAsLong(), is(12L));
+		assertThat(slice.get("b").getAsBoolean(), is(true));
+		assertThat(slice.get("c").getAsString(), is("xyz"));
 	}
 
 	@Test
@@ -553,11 +553,11 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isObject());
-		Assert.assertEquals(3, slice.getLength());
-		Assert.assertEquals(12, slice.get("a").getAsLong());
-		Assert.assertEquals(true, slice.get("b").getAsBoolean());
-		Assert.assertEquals("xyz", slice.get("c").getAsString());
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.getLength(), is(3));
+		assertThat(slice.get("a").getAsLong(), is(12L));
+		assertThat(slice.get("b").getAsBoolean(), is(true));
+		assertThat(slice.get("c").getAsString(), is("xyz"));
 	}
 
 	@Test
@@ -571,11 +571,11 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isObject());
-		Assert.assertEquals(3, slice.getLength());
-		Assert.assertEquals(12, slice.get("a").getAsLong());
-		Assert.assertEquals(true, slice.get("b").getAsBoolean());
-		Assert.assertEquals("xyz", slice.get("c").getAsString());
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.getLength(), is(3));
+		assertThat(slice.get("a").getAsLong(), is(12L));
+		assertThat(slice.get("b").getAsBoolean(), is(true));
+		assertThat(slice.get("c").getAsString(), is("xyz"));
 	}
 
 	@Test
@@ -598,21 +598,21 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isObject());
-		Assert.assertEquals(2, slice.getLength());
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.getLength(), is(2));
 		{
 			final VPackSlice a = slice.get("a");
-			Assert.assertTrue(a.isObject());
-			Assert.assertEquals(2, a.getLength());
-			Assert.assertEquals(1, a.get("a1").getAsLong());
-			Assert.assertEquals(2, a.get("a2").getAsLong());
+			assertThat(a.isObject(), is(true));
+			assertThat(a.getLength(), is(2));
+			assertThat(a.get("a1").getAsLong(), is(1L));
+			assertThat(a.get("a2").getAsLong(), is(2L));
 		}
 		{
 			final VPackSlice b = slice.get("b");
-			Assert.assertTrue(b.isObject());
-			Assert.assertEquals(2, b.getLength());
-			Assert.assertEquals(1, b.get("b1").getAsLong());
-			Assert.assertEquals(2, b.get("b2").getAsLong());
+			assertThat(b.isObject(), is(true));
+			assertThat(b.getLength(), is(2));
+			assertThat(b.get("b1").getAsLong(), is(1L));
+			assertThat(b.get("b2").getAsLong(), is(2L));
 		}
 	}
 
@@ -631,20 +631,20 @@ public class VPackBuilderTest {
 		builder.close();
 
 		final VPackSlice slice = builder.slice();
-		Assert.assertTrue(slice.isObject());
-		Assert.assertEquals(1, slice.getLength());
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.getLength(), is(1));
 		final VPackSlice a = slice.get("a");
-		Assert.assertTrue(a.isObject());
-		Assert.assertEquals(1, a.getLength());
+		assertThat(a.isObject(), is(true));
+		assertThat(a.getLength(), is(1));
 		final VPackSlice b = a.get("b");
-		Assert.assertTrue(b.isObject());
-		Assert.assertEquals(1, b.getLength());
+		assertThat(b.isObject(), is(true));
+		assertThat(b.getLength(), is(1));
 		final VPackSlice c = b.get("c");
-		Assert.assertTrue(c.isObject());
-		Assert.assertEquals(1, c.getLength());
+		assertThat(c.isObject(), is(true));
+		assertThat(c.getLength(), is(1));
 		final VPackSlice d = c.get("d");
-		Assert.assertTrue(d.isBoolean());
-		Assert.assertTrue(d.isTrue());
+		assertThat(d.isBoolean(), is(true));
+		assertThat(d.isTrue(), is(true));
 	}
 
 	@Test
@@ -654,9 +654,9 @@ public class VPackBuilderTest {
 		builder.add("a", new Value("a"));
 		builder.close();
 		final VPackSlice vpack = builder.slice();
-		Assert.assertTrue(vpack.isObject());
+		assertThat(vpack.isObject(), is(true));
 		final VPackSlice b = vpack.get("b");
-		Assert.assertTrue(b.isNone());
+		assertThat(b.isNone(), is(true));
 	}
 
 	@Test
@@ -673,14 +673,14 @@ public class VPackBuilderTest {
 		}
 		builder.close();
 		final VPackSlice vpack = builder.slice();
-		Assert.assertTrue(vpack.isObject());
-		Assert.assertEquals(size, vpack.getLength());
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.getLength(), is(size));
 		for (int i = 0; i < size; i++) {
 			final VPackSlice attr = vpack.get(String.valueOf(i));
-			Assert.assertTrue(attr.isObject());
+			assertThat(attr.isObject(), is(true));
 			for (int j = 0; j < size; j++) {
 				final VPackSlice childAttr = attr.get(String.valueOf(j));
-				Assert.assertTrue(childAttr.isString());
+				assertThat(childAttr.isString(), is(true));
 			}
 		}
 	}
@@ -699,14 +699,14 @@ public class VPackBuilderTest {
 		}
 		builder.close();
 		final VPackSlice vpack = builder.slice();
-		Assert.assertTrue(vpack.isObject());
-		Assert.assertEquals(size, vpack.getLength());
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.getLength(), is(size));
 		for (int i = 0; i < size; i++) {
 			final VPackSlice attr = vpack.get(String.valueOf(i));
-			Assert.assertTrue(attr.isObject());
+			assertThat(attr.isObject(), is(true));
 			for (int j = 0; j < size; j++) {
 				final VPackSlice childAttr = attr.get(String.valueOf(j));
-				Assert.assertTrue(childAttr.isString());
+				assertThat(childAttr.isString(), is(true));
 			}
 		}
 	}
@@ -722,10 +722,10 @@ public class VPackBuilderTest {
 		}
 		builder.close();
 		final VPackSlice vpack = builder.slice();
-		Assert.assertTrue(vpack.isObject());
-		Assert.assertEquals(max - min + 1, vpack.getLength());
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.getLength(), is(max - min + 1));
 		for (int i = min, j = 0; i <= max; i++, j++) {
-			Assert.assertEquals(String.valueOf(i), vpack.keyAt(j).getAsString());
+			assertThat(vpack.keyAt(j).getAsString(), is(String.valueOf(i)));
 		}
 	}
 
@@ -733,7 +733,7 @@ public class VPackBuilderTest {
 	public void sortObjectAttr2() throws VPackException {
 		final String[] keys = { "a", "b", "c", "d", "e", "f", "g", "h" };
 		final String[] keysUnsorted = { "b", "d", "c", "e", "g", "f", "h", "a" };
-		Assert.assertEquals(keys.length, keysUnsorted.length);
+		assertThat(keysUnsorted.length, is(keys.length));
 		final VPackBuilder builder = new VPackBuilder();
 		builder.add(new Value(ValueType.OBJECT));
 		for (int i = 0; i < keysUnsorted.length; i++) {
@@ -741,10 +741,10 @@ public class VPackBuilderTest {
 		}
 		builder.close();
 		final VPackSlice vpack = builder.slice();
-		Assert.assertTrue(vpack.isObject());
-		Assert.assertEquals(keys.length, vpack.getLength());
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.getLength(), is(keys.length));
 		for (int i = 0; i < keys.length; i++) {
-			Assert.assertEquals(String.valueOf(keys[i]), vpack.keyAt(i).getAsString());
+			assertThat(vpack.keyAt(i).getAsString(), is(String.valueOf(keys[i])));
 		}
 	}
 
@@ -757,7 +757,7 @@ public class VPackBuilderTest {
 			builder.add("_key", new Value("a"));
 			builder.close();
 			vpackWithAttrAdapter = builder.slice();
-			Assert.assertTrue(vpackWithAttrAdapter.isObject());
+			assertThat(vpackWithAttrAdapter.isObject(), is(true));
 		}
 		final VPackSlice vpackWithoutAttrAdapter;
 		{
@@ -766,9 +766,9 @@ public class VPackBuilderTest {
 			builder.add("_kay", new Value("a"));
 			builder.close();
 			vpackWithoutAttrAdapter = builder.slice();
-			Assert.assertTrue(vpackWithoutAttrAdapter.isObject());
+			assertThat(vpackWithoutAttrAdapter.isObject(), is(true));
 		}
-		Assert.assertTrue(vpackWithAttrAdapter.getByteSize() < vpackWithoutAttrAdapter.getByteSize());
+		assertThat(vpackWithAttrAdapter.getByteSize() < vpackWithoutAttrAdapter.getByteSize(), is(true));
 	}
 
 	@Test(expected = VPackBuilderNeedOpenCompoundException.class)
@@ -786,10 +786,10 @@ public class VPackBuilderTest {
 		builder.add(new Value(expected));
 		final VPackSlice slice = builder.slice();
 
-		Assert.assertTrue(slice.isBinary());
-		Assert.assertEquals(expected.length, slice.getBinaryLength());
-		Assert.assertArrayEquals(expected, slice.getAsBinary());
-		Assert.assertEquals(1 + 4 + expected.length, slice.getByteSize());
+		assertThat(slice.isBinary(), is(true));
+		assertThat(slice.getBinaryLength(), is(expected.length));
+		assertThat(slice.getAsBinary(), is(expected));
+		assertThat(slice.getByteSize(), is(1 + 4 + expected.length));
 	}
 
 	@Test

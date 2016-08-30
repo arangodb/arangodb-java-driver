@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.json.simple.JSONValue;
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.arangodb.velocypack.exception.VPackException;
@@ -22,7 +21,7 @@ public class VPackParserTest {
 		builder.add("a", new Value("test"));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":\"test\"}", json);
+		assertThat(json, is("{\"a\":\"test\"}"));
 	}
 
 	@Test
@@ -33,7 +32,7 @@ public class VPackParserTest {
 		builder.add("b", new Value(true));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":\"test\",\"b\":true}", json);
+		assertThat(json, is("{\"a\":\"test\",\"b\":true}"));
 	}
 
 	@Test
@@ -44,7 +43,7 @@ public class VPackParserTest {
 		builder.add("b", new Value("test"));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":\"test\",\"b\":\"test\"}", json);
+		assertThat(json, is("{\"a\":\"test\",\"b\":\"test\"}"));
 	}
 
 	@Test
@@ -55,7 +54,7 @@ public class VPackParserTest {
 		builder.add("b", new Value(false));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":true,\"b\":false}", json);
+		assertThat(json, is("{\"a\":true,\"b\":false}"));
 	}
 
 	@Test
@@ -66,7 +65,7 @@ public class VPackParserTest {
 		builder.add("b", new Value(5.5));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":5,\"b\":5.5}", json);
+		assertThat(json, is("{\"a\":5,\"b\":5.5}"));
 	}
 
 	@Test
@@ -85,7 +84,7 @@ public class VPackParserTest {
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":[1,2,3],\"b\":[\"a\",\"b\",\"c\"]}", json);
+		assertThat(json, is("{\"a\":[1,2,3],\"b\":[\"a\",\"b\",\"c\"]}"));
 	}
 
 	@Test
@@ -102,7 +101,7 @@ public class VPackParserTest {
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("{\"a\":{\"aa\":\"test\",\"ab\":true},\"b\":{\"ba\":\"test\",\"bb\":5.5}}", json);
+		assertThat(json, is("{\"a\":{\"aa\":\"test\",\"ab\":true},\"b\":{\"ba\":\"test\",\"bb\":5.5}}"));
 	}
 
 	@Test
@@ -117,7 +116,7 @@ public class VPackParserTest {
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("[{\"a\":\"test\"},{\"a\":\"test\"}]", json);
+		assertThat(json, is("[{\"a\":\"test\"},{\"a\":\"test\"}]"));
 	}
 
 	@Test
@@ -136,7 +135,7 @@ public class VPackParserTest {
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
-		Assert.assertEquals("[[1,2,3],[\"a\",\"b\",\"c\"]]", json);
+		assertThat(json, is("[[1,2,3],[\"a\",\"b\",\"c\"]]"));
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class VPackParserTest {
 		builder.add("c", new Value("test"));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), false);
-		Assert.assertEquals("{\"c\":\"test\"}", json);
+		assertThat(json, is("{\"c\":\"test\"}"));
 	}
 
 	@Test
@@ -162,7 +161,7 @@ public class VPackParserTest {
 		builder.add("c", new Value("test"));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), true);
-		Assert.assertEquals("{\"a\":null,\"b\":null,\"c\":\"test\"}", json);
+		assertThat(json, is("{\"a\":null,\"b\":null,\"c\":\"test\"}"));
 	}
 
 	@Test
@@ -175,7 +174,7 @@ public class VPackParserTest {
 		builder.add(new Value("test"));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), false);
-		Assert.assertEquals("[\"test\"]", json);
+		assertThat(json, is("[\"test\"]"));
 	}
 
 	@Test
@@ -188,7 +187,7 @@ public class VPackParserTest {
 		builder.add(new Value("test"));
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), true);
-		Assert.assertEquals("[null,null,\"test\"]", json);
+		assertThat(json, is("[null,null,\"test\"]"));
 	}
 
 	@Test

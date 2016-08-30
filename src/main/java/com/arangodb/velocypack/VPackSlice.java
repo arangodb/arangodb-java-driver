@@ -299,7 +299,7 @@ public class VPackSlice {
 	/**
 	 * @return the number of members for an Array, Object or String
 	 */
-	public long getLength() {
+	public int getLength() {
 		final long length;
 		if (isString()) {
 			length = getStringLength();
@@ -329,11 +329,11 @@ public class VPackSlice {
 				}
 			}
 		}
-		return length;
+		return (int) length;
 	}
 
 	public int size() {
-		return (int) getLength();
+		return getLength();
 	}
 
 	/**
