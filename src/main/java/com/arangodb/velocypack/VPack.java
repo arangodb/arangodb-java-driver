@@ -286,11 +286,11 @@ public class VPack {
 	private void deserializeFields(final Object entity, final VPackSlice vpack) throws NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException, InstantiationException, VPackException {
 		final Map<String, FieldInfo> fields = cache.getFields(entity.getClass());
-		for (final Iterator<VPackSlice> iterator = vpack.iterator(); iterator.hasNext();) {
-			final VPackSlice attr = iterator.next();
-			final FieldInfo fieldInfo = fields.get(attr.makeKey().getAsString());
+		for (final Iterator<Entry<String, VPackSlice>> iterator = vpack.objectIterator(); iterator.hasNext();) {
+			final Entry<String, VPackSlice> next = iterator.next();
+			final FieldInfo fieldInfo = fields.get(next.getKey());
 			if (fieldInfo != null && fieldInfo.isDeserialize()) {
-				deserializeField(vpack, attr, entity, fieldInfo);
+				deserializeField(vpack, next.getValue(), entity, fieldInfo);
 			}
 		}
 	}
@@ -301,9 +301,8 @@ public class VPack {
 		final Object entity,
 		final FieldInfo fieldInfo) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
 			InstantiationException, VPackException {
-		final VPackSlice attr = new VPackSlice(vpack.getVpack(), vpack.getStart() + vpack.getByteSize());
-		if (!attr.isNone()) {
-			final Object value = getValue(parent, attr, fieldInfo.getType(), fieldInfo.getFieldName());
+		if (!vpack.isNone()) {
+			final Object value = getValue(parent, vpack, fieldInfo.getType(), fieldInfo.getFieldName());
 			fieldInfo.set(entity, value);
 		}
 	}
@@ -387,11 +386,10 @@ public class VPack {
 		if (length > 0) {
 			final VPackKeyMapAdapter<Object> keyMapAdapter = getKeyMapAdapter(keyType);
 			if (keyMapAdapter != null) {
-				for (final Iterator<VPackSlice> iterator = vpack.iterator(); iterator.hasNext();) {
-					final VPackSlice key = iterator.next();
-					final VPackSlice valueAt = new VPackSlice(key.getVpack(), key.getStart() + key.getByteSize());
-					final Object name = keyMapAdapter.deserialize(key.makeKey().getAsString());
-					value.put(name, getValue(vpack, valueAt, valueType, name.toString()));
+				for (final Iterator<Entry<String, VPackSlice>> iterator = vpack.objectIterator(); iterator.hasNext();) {
+					final Entry<String, VPackSlice> next = iterator.next();
+					final Object name = keyMapAdapter.deserialize(next.getKey());
+					value.put(name, getValue(vpack, next.getValue(), valueType, name.toString()));
 				}
 			} else {
 				for (int i = 0; i < vpack.getLength(); i++) {

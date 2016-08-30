@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ContentHandler;
@@ -80,16 +81,15 @@ public class VPackParser {
 
 	private void parse(
 		final VPackSlice parent,
-		final VPackSlice attribute,
+		final String attribute,
 		final VPackSlice value,
 		final StringBuilder json,
 		final boolean includeNullValues) throws VPackException {
 
 		VPackJsonDeserializer deserializer = null;
 		if (attribute != null) {
-			final String name = attribute.makeKey().getAsString();
-			appendField(name, json);
-			deserializer = getDeserializer(name, value.type());
+			appendField(attribute, json);
+			deserializer = getDeserializer(attribute, value.type());
 		}
 		if (deserializer != null) {
 			deserializer.deserialize(parent, attribute, value, json);
@@ -121,15 +121,14 @@ public class VPackParser {
 			throws VPackException {
 		json.append(OBJECT_OPEN);
 		int added = 0;
-		for (final Iterator<VPackSlice> iterator = value.iterator(); iterator.hasNext();) {
-			final VPackSlice nextAttr = iterator.next();
-			final VPackSlice nextValue = new VPackSlice(nextAttr.getVpack(),
-					nextAttr.getStart() + nextAttr.getByteSize());
+		for (final Iterator<Entry<String, VPackSlice>> iterator = value.objectIterator(); iterator.hasNext();) {
+			final Entry<String, VPackSlice> next = iterator.next();
+			final VPackSlice nextValue = next.getValue();
 			if (!nextValue.isNull() || includeNullValues) {
 				if (added++ > 0) {
 					json.append(SEPARATOR);
 				}
-				parse(value, nextAttr, nextValue, json, includeNullValues);
+				parse(value, next.getKey(), nextValue, json, includeNullValues);
 			}
 		}
 		json.append(OBJECT_CLOSE);

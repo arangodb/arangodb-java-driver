@@ -1,19 +1,18 @@
 package com.arangodb.velocypack;
 
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
+import com.arangodb.velocypack.exception.VPackKeyTypeException;
+import com.arangodb.velocypack.exception.VPackNeedAttributeTranslatorException;
 import com.arangodb.velocypack.exception.VPackValueTypeException;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class ObjectIterator extends SliceIterator {
+public class ObjectIterator extends SliceIterator<Entry<String, VPackSlice>> {
 
-	/**
-	 * @param slice
-	 * @throws VPackValueTypeException
-	 */
 	public ObjectIterator(final VPackSlice slice) throws VPackValueTypeException {
 		super(slice);
 		if (!slice.isObject()) {
@@ -30,7 +29,7 @@ public class ObjectIterator extends SliceIterator {
 	}
 
 	@Override
-	public VPackSlice next() {
+	public Entry<String, VPackSlice> next() {
 		if (position++ > 0) {
 			if (position <= size && current != 0) {
 				// skip over key
@@ -41,7 +40,27 @@ public class ObjectIterator extends SliceIterator {
 				throw new NoSuchElementException();
 			}
 		}
-		return getCurrent();
+		final VPackSlice currentField = getCurrent();
+		return new Entry<String, VPackSlice>() {
+			@Override
+			public VPackSlice setValue(final VPackSlice value) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public VPackSlice getValue() {
+				return new VPackSlice(currentField.getVpack(), currentField.getStart() + currentField.getByteSize());
+			}
+
+			@Override
+			public String getKey() {
+				try {
+					return currentField.makeKey().getAsString();
+				} catch (VPackKeyTypeException | VPackNeedAttributeTranslatorException e) {
+					throw new NoSuchElementException();
+				}
+			}
+		};
 	}
 
 }

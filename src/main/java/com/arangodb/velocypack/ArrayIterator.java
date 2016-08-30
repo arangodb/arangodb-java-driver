@@ -8,12 +8,8 @@ import com.arangodb.velocypack.exception.VPackValueTypeException;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArrayIterator extends SliceIterator {
+public class ArrayIterator extends SliceIterator<VPackSlice> {
 
-	/**
-	 * @param slice
-	 * @throws VPackValueTypeException
-	 */
 	public ArrayIterator(final VPackSlice slice) throws VPackValueTypeException {
 		super(slice);
 		if (!slice.isArray()) {

@@ -390,10 +390,11 @@ public class VPackParserTest {
 		builder.add("a", new Value("a"));
 		builder.add("b", new Value("b"));
 		builder.close();
-		final String json = new VPackParser()
-				.registerDeserializer(ValueType.STRING, (parent, attribute, vpack, jsonBuffer) -> {
-					jsonBuffer.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
-				}).toJson(builder.slice());
+		final VPackJsonDeserializer deserializer = (parent, attribute, vpack, jsonBuffer) -> {
+			jsonBuffer.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
+		};
+		final String json = new VPackParser().registerDeserializer(ValueType.STRING, deserializer)
+				.toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"a1\",\"b\":\"b1\"}"));
 	}
 

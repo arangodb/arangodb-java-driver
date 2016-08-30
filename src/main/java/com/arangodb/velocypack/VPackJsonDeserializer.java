@@ -8,7 +8,6 @@ import com.arangodb.velocypack.exception.VPackException;
  */
 public interface VPackJsonDeserializer {
 
-	void deserialize(VPackSlice parent, VPackSlice attribute, VPackSlice vpack, StringBuilder json)
-			throws VPackException;
+	void deserialize(VPackSlice parent, String attribute, VPackSlice vpack, StringBuilder json) throws VPackException;
 
 }

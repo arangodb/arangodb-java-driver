@@ -8,7 +8,7 @@ import com.arangodb.velocypack.exception.VPackValueTypeException;
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class SliceIterator implements Iterator<VPackSlice> {
+public abstract class SliceIterator<E> implements Iterator<E> {
 
 	protected final VPackSlice slice;
 	protected final long size;
@@ -31,8 +31,4 @@ public abstract class SliceIterator implements Iterator<VPackSlice> {
 		return new VPackSlice(slice.getVpack(), (int) current);
 	}
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
 }

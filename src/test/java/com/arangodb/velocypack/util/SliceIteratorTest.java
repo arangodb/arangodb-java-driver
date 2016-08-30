@@ -3,6 +3,7 @@ package com.arangodb.velocypack.util;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
@@ -23,11 +24,19 @@ public class SliceIteratorTest {
 		// {"a":1, "b":16}
 		final VPackSlice slice = new VPackSlice(
 				new byte[] { 0x14, 0x0a, 0x41, 0x61, 0x31, 0x41, 0x62, 0x28, 0x10, 0x02 });
-		final ObjectIterator iterator = new ObjectIterator(slice);
-
-		for (final String s : new String[] { "a", "b" }) {
-			final VPackSlice next = iterator.next();
-			assertThat(next.getAsString(), is(s));
+		{
+			final ObjectIterator iterator = new ObjectIterator(slice);
+			for (final String s : new String[] { "a", "b" }) {
+				final Entry<String, VPackSlice> next = iterator.next();
+				assertThat(next.getKey(), is(s));
+			}
+		}
+		{
+			final ObjectIterator iterator = new ObjectIterator(slice);
+			for (final int i : new int[] { 1, 16 }) {
+				final Entry<String, VPackSlice> next = iterator.next();
+				assertThat(next.getValue().getAsInt(), is(i));
+			}
 		}
 	}
 
@@ -39,8 +48,8 @@ public class SliceIteratorTest {
 		final ObjectIterator iterator = new ObjectIterator(slice);
 
 		for (final String s : new String[] { "a", "b" }) {
-			final VPackSlice next = iterator.next();
-			assertThat(next.getAsString(), is(s));
+			final Entry<String, VPackSlice> next = iterator.next();
+			assertThat(next.getKey(), is(s));
 		}
 		iterator.next();// no more elements
 	}

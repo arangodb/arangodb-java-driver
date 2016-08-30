@@ -171,7 +171,7 @@ public class ArangoCollection extends ArangoExecuteable {
 			}
 			final Collection<DocumentCreateResult<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
 				final DocumentCreateResult<T> doc = deserialize(next, DocumentCreateResult.class);
 				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
@@ -350,7 +350,7 @@ public class ArangoCollection extends ArangoExecuteable {
 			}
 			final Collection<DocumentUpdateResult<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
 				final DocumentUpdateResult<T> doc = deserialize(next, DocumentUpdateResult.class);
 				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
@@ -498,7 +498,7 @@ public class ArangoCollection extends ArangoExecuteable {
 			}
 			final Collection<DocumentUpdateResult<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
 				final DocumentUpdateResult<T> doc = deserialize(next, DocumentUpdateResult.class);
 				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
@@ -623,7 +623,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		return execute(request, response -> {
 			final Collection<DocumentDeleteResult<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.iterator(); iterator.hasNext();) {
+			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
 				final DocumentDeleteResult<T> doc = deserialize(next, DocumentDeleteResult.class);
 				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);

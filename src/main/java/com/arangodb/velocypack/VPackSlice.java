@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackKeyTypeException;
@@ -506,10 +507,10 @@ public class VPackSlice {
 
 	private VPackSlice getFromCompactObject(final String attribute)
 			throws VPackKeyTypeException, VPackNeedAttributeTranslatorException {
-		for (final Iterator<VPackSlice> iterator = iterator(); iterator.hasNext();) {
-			final VPackSlice key = iterator.next();
-			if (key.makeKey().isEqualString(attribute)) {
-				return new VPackSlice(vpack, key.start + key.getByteSize());
+		for (final Iterator<Entry<String, VPackSlice>> iterator = objectIterator(); iterator.hasNext();) {
+			final Entry<String, VPackSlice> next = iterator.next();
+			if (next.getKey().equals(attribute)) {
+				return next.getValue();
 			}
 		}
 		// not found
@@ -710,16 +711,20 @@ public class VPackSlice {
 		return string.compareTo(s);
 	}
 
-	public Iterator<VPackSlice> iterator() {
-		final Iterator<VPackSlice> iterator;
-		if (isObject()) {
-			iterator = new ObjectIterator(this);
-		} else if (isArray()) {
-			iterator = new ArrayIterator(this);
+	public Iterator<VPackSlice> arrayIterator() {
+		if (isArray()) {
+			return new ArrayIterator(this);
 		} else {
-			throw new VPackValueTypeException(ValueType.ARRAY, ValueType.OBJECT);
+			throw new VPackValueTypeException(ValueType.ARRAY);
 		}
-		return iterator;
+	}
+
+	public Iterator<Entry<String, VPackSlice>> objectIterator() {
+		if (isObject()) {
+			return new ObjectIterator(this);
+		} else {
+			throw new VPackValueTypeException(ValueType.OBJECT);
+		}
 	}
 
 	protected byte[] getValue() {

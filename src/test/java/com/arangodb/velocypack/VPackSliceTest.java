@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.junit.Test;
 
@@ -855,7 +856,7 @@ public class VPackSliceTest {
 		final Collection<String> expected = Arrays.asList("a", "b", "c", "d", "e", "f");
 		final VPackSlice slice = new VPackSlice(new byte[] { 0x13, 0x0f, 0x41, 0x61, 0x41, 0x62, 0x41, 0x63, 0x41, 0x64,
 				0x41, 0x65, 0x41, 0x66, 0x06 });
-		final Iterator<VPackSlice> iteratorSlice = slice.iterator();
+		final Iterator<VPackSlice> iteratorSlice = slice.arrayIterator();
 		for (final Iterator<String> iterator = expected.iterator(); iterator.hasNext();) {
 			final String string = iterator.next();
 			final VPackSlice next = iteratorSlice.next();
@@ -871,18 +872,23 @@ public class VPackSliceTest {
 		final VPackSlice slice = new VPackSlice(new byte[] { 0x0b, 0x1b, 0x03, 0x41, 0x61, 0x44, 0x74, 0x65, 0x73, 0x74,
 				0x41, 0x62, 0x44, 0x74, 0x65, 0x73, 0x74, 0x41, 0x63, 0x44, 0x74, 0x65, 0x73, 0x74, 0x03, 0x0a, 0x11 });
 		int i = 0;
-		for (final Iterator<VPackSlice> iterator = slice.iterator(); iterator.hasNext();) {
-			final VPackSlice next = iterator.next();
-			assertThat(next.getAsString(), is(fields[i++]));
-			final VPackSlice v = new VPackSlice(next.getVpack(), next.getStart() + next.getByteSize());
-			assertThat(v.getAsString(), is("test"));
+		for (final Iterator<Entry<String, VPackSlice>> iterator = slice.objectIterator(); iterator.hasNext();) {
+			final Entry<String, VPackSlice> next = iterator.next();
+			assertThat(next.getKey(), is(fields[i++]));
+			assertThat(next.getValue().getAsString(), is("test"));
 		}
 	}
 
 	@Test(expected = VPackValueTypeException.class)
-	public void nonArrayNonObjectIterator() {
+	public void nonArrayIterator() {
 		final VPackSlice vpack = new VPackSlice(new byte[] { 0x1a });
-		vpack.iterator();
+		vpack.arrayIterator();
+	}
+
+	@Test(expected = VPackValueTypeException.class)
+	public void nonObjectIterator() {
+		final VPackSlice vpack = new VPackSlice(new byte[] { 0x1a });
+		vpack.objectIterator();
 	}
 
 	@Test
