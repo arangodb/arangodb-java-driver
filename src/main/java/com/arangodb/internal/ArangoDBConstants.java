@@ -39,5 +39,17 @@ public class ArangoDBConstants {
 	public static final String OLD = "old";
 	public static final String COLLECTION = "collection";
 	public static final String EXCLUDE_SYSTEM = "excludeSystem";
-
+	public static final String USER = "user";
+	public static final String RW = "rw";
+	public static final String NONE = "none";
+	public static final String DATABASE = "database";
+	public static final String CURRENT = "current";
+	public static final String INDEXES = "indexes";
+	public static final String TRUNCATE = "truncate";
+	public static final String COUNT = "count";
+	public static final String LOAD = "load";
+	public static final String UNLOAD = "unload";
+	public static final String PROPERTIES = "properties";
+	public static final String RENAME = "rename";
+	public static final String REVISION = "revision";
 }

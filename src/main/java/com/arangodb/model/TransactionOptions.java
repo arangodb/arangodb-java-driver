@@ -5,7 +5,9 @@ import java.util.Collection;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+ *      Documentation</a>
  */
 public class TransactionOptions {
 
@@ -20,11 +22,11 @@ public class TransactionOptions {
 		collections = new TransactionCollectionOptions();
 	}
 
-	public String getAction() {
+	protected String getAction() {
 		return action;
 	}
 
-	public TransactionOptions action(final String action) {
+	protected TransactionOptions action(final String action) {
 		this.action = action;
 		return this;
 	}
@@ -33,6 +35,11 @@ public class TransactionOptions {
 		return params;
 	}
 
+	/**
+	 * @param params
+	 *            optional arguments passed to action
+	 * @return options
+	 */
 	public TransactionOptions params(final Object params) {
 		this.params = params;
 		return this;
@@ -42,6 +49,13 @@ public class TransactionOptions {
 		return lockTimeout;
 	}
 
+	/**
+	 * @param lockTimeout
+	 *            an optional numeric value that can be used to set a timeout for waiting on collection locks. If not
+	 *            specified, a default value will be used. Setting lockTimeout to 0 will make ArangoDB not time out
+	 *            waiting for a lock.
+	 * @return options
+	 */
 	public TransactionOptions lockTimeout(final Integer lockTimeout) {
 		this.lockTimeout = lockTimeout;
 		return this;
@@ -51,16 +65,32 @@ public class TransactionOptions {
 		return waitForSync;
 	}
 
+	/**
+	 * @param waitForSync
+	 *            an optional boolean flag that, if set, will force the transaction to write all data to disk before
+	 *            returning
+	 * @return options
+	 */
 	public TransactionOptions waitForSync(final Boolean waitForSync) {
 		this.waitForSync = waitForSync;
 		return this;
 	}
 
+	/**
+	 * @param read
+	 *            contains the array of collection-names to be used in the transaction (mandatory) for read
+	 * @return options
+	 */
 	public TransactionOptions readCollections(final String... read) {
 		collections.read(read);
 		return this;
 	}
 
+	/**
+	 * @param write
+	 *            contains the array of collection-names to be used in the transaction (mandatory) for write
+	 * @return options
+	 */
 	public TransactionOptions writeCollections(final String... write) {
 		collections.write(write);
 		return this;

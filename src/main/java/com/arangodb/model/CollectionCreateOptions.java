@@ -6,7 +6,9 @@ import com.arangodb.entity.KeyType;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+ *      Documentation</a>
  */
 public class CollectionCreateOptions {
 
@@ -22,6 +24,10 @@ public class CollectionCreateOptions {
 	private CollectionType type;
 	private Integer indexBuckets;
 
+	public CollectionCreateOptions() {
+		super();
+	}
+
 	protected String getName() {
 		return name;
 	}
@@ -35,6 +41,11 @@ public class CollectionCreateOptions {
 		return journalSize;
 	}
 
+	/**
+	 * @param journalSize
+	 *            The maximal size of a journal or datafile in bytes. The value must be at least 1048576 (1 MiB).
+	 * @return options
+	 */
 	public CollectionCreateOptions journalSize(final Long journalSize) {
 		this.journalSize = journalSize;
 		return this;
@@ -44,6 +55,20 @@ public class CollectionCreateOptions {
 		return keyOptions;
 	}
 
+	/**
+	 * @param allowUserKeys
+	 *            if set to true, then it is allowed to supply own key values in the _key attribute of a document. If
+	 *            set to false, then the key generator will solely be responsible for generating keys and supplying own
+	 *            key values in the _key attribute of documents is considered an error.
+	 * @param type
+	 *            specifies the type of the key generator. The currently available generators are traditional and
+	 *            autoincrement.
+	 * @param increment
+	 *            increment value for autoincrement key generator. Not used for other key generator types.
+	 * @param offset
+	 *            Initial offset value for autoincrement key generator. Not used for other key generator types.
+	 * @return options
+	 */
 	public CollectionCreateOptions keyOptions(
 		final Boolean allowUserKeys,
 		final KeyType type,
@@ -57,6 +82,12 @@ public class CollectionCreateOptions {
 		return waitForSync;
 	}
 
+	/**
+	 * @param waitForSync
+	 *            If true then the data is synchronized to disk before returning from a document create, update, replace
+	 *            or removal operation. (default: false)
+	 * @return options
+	 */
 	public CollectionCreateOptions waitForSync(final Boolean waitForSync) {
 		this.waitForSync = waitForSync;
 		return this;
@@ -66,6 +97,11 @@ public class CollectionCreateOptions {
 		return doCompact;
 	}
 
+	/**
+	 * @param doCompact
+	 *            whether or not the collection will be compacted (default is true)
+	 * @return options
+	 */
 	public CollectionCreateOptions doCompact(final Boolean doCompact) {
 		this.doCompact = doCompact;
 		return this;
@@ -75,6 +111,17 @@ public class CollectionCreateOptions {
 		return isVolatile;
 	}
 
+	/**
+	 * @param isVolatile
+	 *            If true then the collection data is kept in-memory only and not made persistent. Unloading the
+	 *            collection will cause the collection data to be discarded. Stopping or re-starting the server will
+	 *            also cause full loss of data in the collection. Setting this option will make the resulting collection
+	 *            be slightly faster than regular collections because ArangoDB does not enforce any synchronization to
+	 *            disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option
+	 *            should therefore be used for cache-type collections only, and not for data that cannot be re-created
+	 *            otherwise. (The default is false)
+	 * @return options
+	 */
 	public CollectionCreateOptions isVolatile(final Boolean isVolatile) {
 		this.isVolatile = isVolatile;
 		return this;
@@ -84,6 +131,15 @@ public class CollectionCreateOptions {
 		return shardKeys;
 	}
 
+	/**
+	 * @param shardKeys
+	 *            (The default is [ "_key" ]): in a cluster, this attribute determines which document attributes are
+	 *            used to determine the target shard for documents. Documents are sent to shards based on the values of
+	 *            their shard key attributes. The values of all shard key attributes in a document are hashed, and the
+	 *            hash value is used to determine the target shard. Note: Values of shard key attributes cannot be
+	 *            changed once set. This option is meaningless in a single server setup.
+	 * @return options
+	 */
 	public CollectionCreateOptions shardKeys(final String[] shardKeys) {
 		this.shardKeys = shardKeys;
 		return this;
@@ -93,6 +149,12 @@ public class CollectionCreateOptions {
 		return numberOfShards;
 	}
 
+	/**
+	 * @param numberOfShards
+	 *            (The default is 1): in a cluster, this value determines the number of shards to create for the
+	 *            collection. In a single server setup, this option is meaningless.
+	 * @return options
+	 */
 	public CollectionCreateOptions numberOfShards(final Integer numberOfShards) {
 		this.numberOfShards = numberOfShards;
 		return this;
@@ -102,6 +164,14 @@ public class CollectionCreateOptions {
 		return isSystem;
 	}
 
+	/**
+	 * @param isSystem
+	 *            If true, create a system collection. In this case collection-name should start with an underscore. End
+	 *            users should normally create non-system collections only. API implementors may be required to create
+	 *            system collections in very special occasions, but normally a regular collection will do. (The default
+	 *            is false)
+	 * @return options
+	 */
 	public CollectionCreateOptions isSystem(final Boolean isSystem) {
 		this.isSystem = isSystem;
 		return this;
@@ -111,6 +181,11 @@ public class CollectionCreateOptions {
 		return type;
 	}
 
+	/**
+	 * @param type
+	 *            (The default is {@link CollectionType#DOCUMENT}): the type of the collection to create.
+	 * @return options
+	 */
 	public CollectionCreateOptions type(final CollectionType type) {
 		this.type = type;
 		return this;
@@ -120,6 +195,17 @@ public class CollectionCreateOptions {
 		return indexBuckets;
 	}
 
+	/**
+	 * @param indexBuckets
+	 *            The: number of buckets into which indexes using a hash table are split. The default is 16 and this
+	 *            number has to be a power of 2 and less than or equal to 1024. For very large collections one should
+	 *            increase this to avoid long pauses when the hash table has to be initially built or resized, since
+	 *            buckets are resized individually and can be initially built in parallel. For example, 64 might be a
+	 *            sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects
+	 *            this value, but other index types might follow in future ArangoDB versions. Changes (see below) are
+	 *            applied when the collection is loaded the next time.
+	 * @return options
+	 */
 	public CollectionCreateOptions indexBuckets(final Integer indexBuckets) {
 		this.indexBuckets = indexBuckets;
 		return this;

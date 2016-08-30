@@ -24,7 +24,7 @@ import com.arangodb.velocypack.exception.VPackParserException;
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class Executeable {
+abstract class Executeable {
 
 	public static interface ResponseDeserializer<T> {
 		T deserialize(Response response) throws VPackException;

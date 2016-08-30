@@ -8,11 +8,15 @@ public class CollectionRenameOptions {
 
 	private String name;
 
+	public CollectionRenameOptions() {
+		super();
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	public CollectionRenameOptions name(final String name) {
+	protected CollectionRenameOptions name(final String name) {
 		this.name = name;
 		return this;
 	}

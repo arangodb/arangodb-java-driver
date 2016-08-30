@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.CollectionRevisionResult;
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentDeleteResult;
 import com.arangodb.entity.DocumentField;
@@ -20,13 +21,13 @@ import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
-import com.arangodb.model.CollectionRevisionResult;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.DocumentReplaceOptions;
 import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.model.FulltextIndexOptions;
 import com.arangodb.model.GeoIndexOptions;
 import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.OptionsBuilder;
@@ -64,11 +65,36 @@ public class ArangoCollection extends Executeable {
 		return createPath(name, key);
 	}
 
+	/**
+	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
+	 * _key is given, a new unique _key is generated automatically.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 *      Documentation</a>
+	 * @param value
+	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 * @throws ArangoDBException
+	 */
 	public <T> DocumentCreateResult<T> insertDocument(final T value, final DocumentCreateOptions options)
 			throws ArangoDBException {
 		return unwrap(insertDocumentAsync(value, options));
 	}
 
+	/**
+	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
+	 * _key is given, a new unique _key is generated automatically.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 *      Documentation</a>
+	 * @param value
+	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 */
 	public <T> CompletableFuture<DocumentCreateResult<T>> insertDocumentAsync(
 		final T value,
 		final DocumentCreateOptions options) {
@@ -94,12 +120,37 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+	 * _key is given, a new unique _key is generated automatically.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 *      Documentation</a>
+	 * @param values
+	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 * @throws ArangoDBException
+	 */
 	public <T> Collection<DocumentCreateResult<T>> insertDocuments(
 		final Collection<T> values,
 		final DocumentCreateOptions options) throws ArangoDBException {
 		return unwrap(insertDocumentsAsync(values, options));
 	}
 
+	/**
+	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
+	 * _key is given, a new unique _key is generated automatically.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 *      Documentation</a>
+	 * @param values
+	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertDocumentsAsync(
 		final Collection<T> values,
@@ -133,12 +184,42 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Reads a single document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the document identified by the key
+	 * @throws ArangoDBException
+	 */
 	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
 		return unwrap(getDocumentAsync(key, type, options));
 	}
 
-	public <T> CompletableFuture<T> getDocumentAsync(final String key, final Class<T> type, final DocumentReadOptions options) {
+	/**
+	 * Reads a single document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the document identified by the key
+	 */
+	public <T> CompletableFuture<T> getDocumentAsync(
+		final String key,
+		final Class<T> type,
+		final DocumentReadOptions options) {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
@@ -147,11 +228,42 @@ public class ArangoCollection extends Executeable {
 		return execute(type, request);
 	}
 
-	public <T> DocumentUpdateResult<T> replaceDocument(final String key, final T value, final DocumentReplaceOptions options)
-			throws ArangoDBException {
+	/**
+	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param value
+	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 * @throws ArangoDBException
+	 */
+	public <T> DocumentUpdateResult<T> replaceDocument(
+		final String key,
+		final T value,
+		final DocumentReplaceOptions options) throws ArangoDBException {
 		return unwrap(replaceDocumentAsync(key, value, options));
 	}
 
+	/**
+	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param value
+	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 */
 	public <T> CompletableFuture<DocumentUpdateResult<T>> replaceDocumentAsync(
 		final String key,
 		final T value,
@@ -183,12 +295,37 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+	 * specified by the _key attributes in the documents in values.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
+	 *      Documentation</a>
+	 * @param values
+	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 * @throws ArangoDBException
+	 */
 	public <T> Collection<DocumentUpdateResult<T>> replaceDocuments(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) throws ArangoDBException {
 		return unwrap(replaceDocumentsAsync(values, options));
 	}
 
+	/**
+	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
+	 * specified by the _key attributes in the documents in values.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
+	 *      Documentation</a>
+	 * @param values
+	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceDocumentsAsync(
 		final Collection<T> values,
@@ -230,11 +367,44 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
-	public <T> DocumentUpdateResult<T> updateDocument(final String key, final T value, final DocumentUpdateOptions options)
-			throws ArangoDBException {
+	/**
+	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
+	 * to patch (the patch document). All attributes from the patch document will be added to the existing document if
+	 * they do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param value
+	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 * @throws ArangoDBException
+	 */
+	public <T> DocumentUpdateResult<T> updateDocument(
+		final String key,
+		final T value,
+		final DocumentUpdateOptions options) throws ArangoDBException {
 		return unwrap(updateDocumentAsync(key, value, options));
 	}
 
+	/**
+	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
+	 * to patch (the patch document). All attributes from the patch document will be added to the existing document if
+	 * they do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param value
+	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 */
 	public <T> CompletableFuture<DocumentUpdateResult<T>> updateDocumentAsync(
 		final String key,
 		final T value,
@@ -266,12 +436,41 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
+	 * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
+	 * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
+	 * overwritten in the existing documents if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
+	 *      Documentation</a>
+	 * @param values
+	 *            A list of documents (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 * @throws ArangoDBException
+	 */
 	public <T> Collection<DocumentUpdateResult<T>> updateDocuments(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) throws ArangoDBException {
 		return unwrap(updateDocumentsAsync(values, options));
 	}
 
+	/**
+	 * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
+	 * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
+	 * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
+	 * overwritten in the existing documents if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
+	 *      Documentation</a>
+	 * @param values
+	 *            A list of documents (POJO, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateDocumentsAsync(
 		final Collection<T> values,
@@ -316,6 +515,21 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Removes a document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            options.returnOld is set to true, otherwise can be null.
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 * @throws ArangoDBException
+	 */
 	public <T> DocumentDeleteResult<T> deleteDocument(
 		final String key,
 		final Class<T> type,
@@ -323,6 +537,20 @@ public class ArangoCollection extends Executeable {
 		return unwrap(deleteDocumentAsync(key, type, options));
 	}
 
+	/**
+	 * Removes a document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            options.returnOld is set to true, otherwise can be null.
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the document
+	 */
 	public <T> CompletableFuture<DocumentDeleteResult<T>> deleteDocumentAsync(
 		final String key,
 		final Class<T> type,
@@ -344,6 +572,22 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Removes multiple document
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
+	 *      Documentation</a>
+	 * @param keys
+	 *            The keys of the documents
+	 * @param type
+	 *            The type of the documents (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            options.returnOld is set to true, otherwise can be null.
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 * @throws ArangoDBException
+	 */
 	public <T> Collection<DocumentDeleteResult<T>> deleteDocuments(
 		final Collection<String> keys,
 		final Class<T> type,
@@ -351,6 +595,21 @@ public class ArangoCollection extends Executeable {
 		return unwrap(deleteDocumentsAsync(keys, type, options));
 	}
 
+	/**
+	 * Removes multiple document
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
+	 *      Documentation</a>
+	 * @param keys
+	 *            The keys of the documents
+	 * @param type
+	 *            The type of the documents (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            options.returnOld is set to true, otherwise can be null.
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the documents
+	 */
 	public <T> CompletableFuture<Collection<DocumentDeleteResult<T>>> deleteDocumentsAsync(
 		final Collection<String> keys,
 		final Class<T> type,
@@ -377,10 +636,35 @@ public class ArangoCollection extends Executeable {
 		});
 	}
 
+	/**
+	 * Checks if the document exists by reading a single document head
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param options
+	 *            Additional options, can be null
+	 * @return true if the document was found, otherwise false
+	 * @throws ArangoDBException
+	 */
 	public Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException {
 		return unwrap(documentExistsAsync(key, options));
 	}
 
+	/**
+	 * Checks if the document exists by reading a single document head
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the document
+	 * @param options
+	 *            Additional options, can be null
+	 * @return true if the document was found, otherwise false
+	 */
 	public CompletableFuture<Boolean> documentExistsAsync(final String key, final DocumentExistsOptions options) {
 		final Request request = new Request(db.name(), RequestType.HEAD,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
@@ -400,11 +684,32 @@ public class ArangoCollection extends Executeable {
 		return result;
 	}
 
+	/**
+	 * Creates a hash index for the collection if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
 	public IndexResult createHashIndex(final Collection<String> fields, final HashIndexOptions options)
 			throws ArangoDBException {
 		return unwrap(createHashIndexAsync(fields, options));
 	}
 
+	/**
+	 * Creates a hash index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 */
 	public CompletableFuture<IndexResult> createHashIndexAsync(
 		final Collection<String> fields,
 		final HashIndexOptions options) {
@@ -414,11 +719,34 @@ public class ArangoCollection extends Executeable {
 		return execute(IndexResult.class, request);
 	}
 
+	/**
+	 * Creates a skip-list index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
 	public IndexResult createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
 			throws ArangoDBException {
 		return unwrap(createSkiplistIndexAsync(fields, options));
 	}
 
+	/**
+	 * Creates a skip-list index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 */
 	public CompletableFuture<IndexResult> createSkiplistIndexAsync(
 		final Collection<String> fields,
 		final SkiplistIndexOptions options) {
@@ -429,11 +757,34 @@ public class ArangoCollection extends Executeable {
 		return execute(IndexResult.class, request);
 	}
 
+	/**
+	 * Creates a persistent index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
 	public IndexResult createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
 			throws ArangoDBException {
 		return unwrap(createPersistentIndexAsync(fields, options));
 	}
 
+	/**
+	 * Creates a persistent index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 */
 	public CompletableFuture<IndexResult> createPersistentIndexAsync(
 		final Collection<String> fields,
 		final PersistentIndexOptions options) {
@@ -444,11 +795,34 @@ public class ArangoCollection extends Executeable {
 		return execute(IndexResult.class, request);
 	}
 
+	/**
+	 * Creates a geo-spatial index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
 	public IndexResult createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
 			throws ArangoDBException {
 		return unwrap(createGeoIndexAsync(fields, options));
 	}
 
+	/**
+	 * Creates a geo-spatial index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 */
 	public CompletableFuture<IndexResult> createGeoIndexAsync(
 		final Collection<String> fields,
 		final GeoIndexOptions options) {
@@ -458,114 +832,336 @@ public class ArangoCollection extends Executeable {
 		return execute(IndexResult.class, request);
 	}
 
+	/**
+	 * Creates a fulltext index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	public IndexResult createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
+			throws ArangoDBException {
+		return unwrap(createFulltextIndexAsync(fields, options));
+	}
+
+	/**
+	 * Creates a fulltext index for the collection, if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 */
+	public CompletableFuture<IndexResult> createFulltextIndexAsync(
+		final Collection<String> fields,
+		final FulltextIndexOptions options) {
+		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		request.putParameter(ArangoDBConstants.COLLECTION, name);
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
+		return execute(IndexResult.class, request);
+	}
+
+	/**
+	 * Returns all indexes of the collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-all-indexes-of-a-collection">API
+	 *      Documentation</a>
+	 * @return information about the indexes
+	 * @throws ArangoDBException
+	 */
 	public Collection<IndexResult> getIndexes() throws ArangoDBException {
 		return unwrap(getIndexesAsync());
 	}
 
+	/**
+	 * Returns all indexes of the collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-all-indexes-of-a-collection">API
+	 *      Documentation</a>
+	 * @return information about the indexes
+	 */
 	public CompletableFuture<Collection<IndexResult>> getIndexesAsync() {
 		final Request request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
-		return execute(request,
-			response -> deserialize(response.getBody().get().get("indexes"), new Type<Collection<IndexResult>>() {
+		return execute(request, response -> deserialize(response.getBody().get().get(ArangoDBConstants.INDEXES),
+			new Type<Collection<IndexResult>>() {
 			}.getType()));
 	}
 
+	/**
+	 * Removes all documents from the collection, but leaves the indexes intact
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionResult truncate() throws ArangoDBException {
 		return unwrap(truncateAsync());
 	}
 
+	/**
+	 * Removes all documents from the collection, but leaves the indexes intact
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 */
 	public CompletableFuture<CollectionResult> truncateAsync() {
 		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "truncate")));
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.TRUNCATE)));
 	}
 
+	/**
+	 * Counts the documents in a collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection, including the number of documents
+	 * @throws ArangoDBException
+	 */
 	public CollectionPropertiesResult count() throws ArangoDBException {
 		return unwrap(countAsync());
 	}
 
+	/**
+	 * Counts the documents in a collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection, including the number of documents
+	 */
 	public CompletableFuture<CollectionPropertiesResult> countAsync() {
-		return execute(CollectionPropertiesResult.class,
-			new Request(db.name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "count")));
+		return execute(CollectionPropertiesResult.class, new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.COUNT)));
 	}
 
+	/**
+	 * Drops the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
+	 *      Documentation</a>
+	 * @throws ArangoDBException
+	 */
 	public void drop() throws ArangoDBException {
 		unwrap(dropAsync());
 	}
 
+	/**
+	 * Drops the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
+	 *      Documentation</a>
+	 * @return void
+	 */
 	public CompletableFuture<Void> dropAsync() {
 		validateCollectionName(name);
 		return execute(Void.class,
 			new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
 	}
 
+	/**
+	 * Loads a collection into memory.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#load-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionResult load() throws ArangoDBException {
 		return unwrap(loadAsync());
 	}
 
+	/**
+	 * Loads a collection into memory.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#load-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 */
 	public CompletableFuture<CollectionResult> loadAsync() {
-		return execute(CollectionResult.class,
-			new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "load")));
+		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.LOAD)));
 	}
 
+	/**
+	 * Removes a collection from memory. This call does not delete any documents. You can use the collection afterwards;
+	 * in which case it will be loaded into memory, again.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#unload-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionResult unload() throws ArangoDBException {
 		return unwrap(unloadAsync());
 	}
 
+	/**
+	 * Removes a collection from memory. This call does not delete any documents. You can use the collection afterwards;
+	 * in which case it will be loaded into memory, again.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#unload-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 */
 	public CompletableFuture<CollectionResult> unloadAsync() {
-		return execute(CollectionResult.class,
-			new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "unload")));
+		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.UNLOAD)));
 	}
 
+	/**
+	 * Returns information about the collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-information-about-a-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionResult getInfo() throws ArangoDBException {
 		return unwrap(getInfoAsync());
 	}
 
+	/**
+	 * Returns information about the collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-information-about-a-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 */
 	public CompletableFuture<CollectionResult> getInfoAsync() {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 		return execute(CollectionResult.class, request);
 	}
 
+	/**
+	 * Reads the properties of the specified collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
+	 *      Documentation</a>
+	 * @return properties of the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionPropertiesResult getProperties() throws ArangoDBException {
 		return unwrap(getPropertiesAsync());
 	}
 
+	/**
+	 * Reads the properties of the specified collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
+	 *      Documentation</a>
+	 * @return properties of the collection
+	 */
 	public CompletableFuture<CollectionPropertiesResult> getPropertiesAsync() {
 		return execute(CollectionPropertiesResult.class, new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "properties")));
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.PROPERTIES)));
 	}
 
+	/**
+	 * Changes the properties of a collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#change-properties-of-a-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return properties of the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionPropertiesResult changeProperties(final CollectionPropertiesOptions options)
 			throws ArangoDBException {
 		return unwrap(changePropertiesAsync(options));
 	}
 
+	/**
+	 * Changes the properties of a collection
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#change-properties-of-a-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return properties of the collection
+	 */
 	public CompletableFuture<CollectionPropertiesResult> changePropertiesAsync(
 		final CollectionPropertiesOptions options) {
 		final Request request = new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "properties"));
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.PROPERTIES));
 		request.setBody(serialize(options != null ? options : new CollectionPropertiesOptions()));
 		return execute(CollectionPropertiesResult.class, request);
 	}
 
+	/**
+	 * Renames a collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#rename-collection">API
+	 *      Documentation</a>
+	 * @param newName
+	 *            The new name
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionResult rename(final String newName) throws ArangoDBException {
 		return unwrap(renameAsync(newName));
 	}
 
+	/**
+	 * Renames a collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#rename-collection">API
+	 *      Documentation</a>
+	 * @param newName
+	 *            The new name
+	 * @return information about the collection
+	 */
 	public CompletableFuture<CollectionResult> renameAsync(final String newName) {
 		final Request request = new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "rename"));
-		request.setBody(serialize(new CollectionRenameOptions().name(newName)));
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.RENAME));
+		request.setBody(serialize(OptionsBuilder.build(new CollectionRenameOptions(), newName)));
 		return execute(CollectionResult.class, request);
 	}
 
+	/**
+	 * Retrieve the collections revision
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
+	 *      Documentation</a>
+	 * @return information about the collection, including the collections revision
+	 * @throws ArangoDBException
+	 */
 	public CollectionRevisionResult getRevision() throws ArangoDBException {
 		return unwrap(getRevisionAsync());
 	}
 
+	/**
+	 * Retrieve the collections revision
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
+	 *      Documentation</a>
+	 * @return information about the collection, including the collections revision
+	 */
 	public CompletableFuture<CollectionRevisionResult> getRevisionAsync() {
 		return execute(CollectionRevisionResult.class, new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, "revision")));
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.REVISION)));
 	}
 
 }

@@ -8,11 +8,15 @@ public class UserAccessOptions {
 
 	private String grant;
 
-	public String getGrant() {
+	public UserAccessOptions() {
+		super();
+	}
+
+	protected String getGrant() {
 		return grant;
 	}
 
-	public UserAccessOptions grant(final String grant) {
+	protected UserAccessOptions grant(final String grant) {
 		this.grant = grant;
 		return this;
 	}

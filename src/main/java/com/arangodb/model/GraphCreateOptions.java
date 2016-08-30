@@ -7,13 +7,18 @@ import com.arangodb.entity.EdgeDefinition;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API Documentation</a>
  */
 public class GraphCreateOptions {
 
 	private String name;
 	private Collection<EdgeDefinition> edgeDefinitions;
 	private Collection<String> orphanCollections;
+
+	public GraphCreateOptions() {
+		super();
+	}
 
 	protected String getName() {
 		return name;
@@ -28,7 +33,7 @@ public class GraphCreateOptions {
 		return edgeDefinitions;
 	}
 
-	public GraphCreateOptions edgeDefinitions(final EdgeDefinition... edgeDefinitions) {
+	protected GraphCreateOptions edgeDefinitions(final EdgeDefinition... edgeDefinitions) {
 		this.edgeDefinitions = Arrays.asList(edgeDefinitions);
 		return this;
 	}
@@ -37,6 +42,11 @@ public class GraphCreateOptions {
 		return orphanCollections;
 	}
 
+	/**
+	 * @param orphanCollections
+	 *            Additional vertex collections
+	 * @return options
+	 */
 	public GraphCreateOptions orphanCollections(final String... orphanCollections) {
 		this.orphanCollections = Arrays.asList(orphanCollections);
 		return this;

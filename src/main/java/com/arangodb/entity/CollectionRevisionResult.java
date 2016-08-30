@@ -1,6 +1,4 @@
-package com.arangodb.model;
-
-import com.arangodb.entity.CollectionResult;
+package com.arangodb.entity;
 
 /**
  * @author Mark - mark at arangodb.com

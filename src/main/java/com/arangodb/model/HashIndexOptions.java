@@ -7,6 +7,7 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
  */
 public class HashIndexOptions {
 
@@ -14,6 +15,10 @@ public class HashIndexOptions {
 	private final IndexType type = IndexType.hash;
 	private Boolean unique;
 	private Boolean sparse;
+
+	public HashIndexOptions() {
+		super();
+	}
 
 	protected Collection<String> getFields() {
 		return fields;
@@ -32,6 +37,11 @@ public class HashIndexOptions {
 		return unique;
 	}
 
+	/**
+	 * @param unique
+	 *            if true, then create a unique index
+	 * @return options
+	 */
 	public HashIndexOptions unique(final Boolean unique) {
 		this.unique = unique;
 		return this;
@@ -41,6 +51,11 @@ public class HashIndexOptions {
 		return sparse;
 	}
 
+	/**
+	 * @param sparse
+	 *            if true, then create a sparse index
+	 * @return options
+	 */
 	public HashIndexOptions sparse(final Boolean sparse) {
 		this.sparse = sparse;
 		return this;

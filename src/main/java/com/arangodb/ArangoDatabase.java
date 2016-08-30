@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DatabaseResult;
+import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -57,11 +58,34 @@ public class ArangoDatabase extends Executeable {
 		return new ArangoCollection(this, name);
 	}
 
+	/**
+	 * Creates a collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @param name
+	 *            The name of the collection
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
 	public CollectionResult createCollection(final String name, final CollectionCreateOptions options)
 			throws ArangoDBException {
 		return unwrap(createCollectionAsync(name, options));
 	}
 
+	/**
+	 * Creates a collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @param name
+	 *            The name of the collection
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the collection
+	 */
 	public CompletableFuture<CollectionResult> createCollectionAsync(
 		final String name,
 		final CollectionCreateOptions options) {
@@ -72,10 +96,29 @@ public class ArangoDatabase extends Executeable {
 		return execute(CollectionResult.class, request);
 	}
 
+	/**
+	 * Returns all collections
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return list of information about all collections
+	 * @throws ArangoDBException
+	 */
 	public Collection<CollectionResult> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
 		return unwrap(getCollectionsAsync(options));
 	}
 
+	/**
+	 * Returns all collections
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return list of information about all collections
+	 */
 	public CompletableFuture<Collection<CollectionResult>> getCollectionsAsync(final CollectionsReadOptions options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
 		final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
@@ -87,28 +130,77 @@ public class ArangoDatabase extends Executeable {
 		});
 	}
 
+	/**
+	 * Returns an index
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+	 * @param id
+	 *            The index-handle
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
 	public IndexResult getIndex(final String id) throws ArangoDBException {
 		return unwrap(getIndexAsync(id));
 	}
 
+	/**
+	 * Returns an index
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+	 * @param id
+	 *            The index-handle
+	 * @return information about the index
+	 */
 	public CompletableFuture<IndexResult> getIndexAsync(final String id) {
 		return execute(IndexResult.class,
 			new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_INDEX, id)));
 	}
 
+	/**
+	 * Deletes an index
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+	 * @param id
+	 *            The index-handle
+	 * @return the id of the index
+	 * @throws ArangoDBException
+	 */
 	public String deleteIndex(final String id) throws ArangoDBException {
 		return unwrap(deleteIndexAsync(id));
 	}
 
+	/**
+	 * Deletes an index
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+	 * @param id
+	 *            The index handle
+	 * @return the id of the index
+	 */
 	public CompletableFuture<String> deleteIndexAsync(final String id) {
 		return execute(new Request(name, RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_INDEX, id)),
 			response -> response.getBody().get().get(ArangoDBConstants.ID).getAsString());
 	}
 
+	/**
+	 * Drop an existing database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
+	 *      Documentation</a>
+	 * @return true if the database was dropped successfully
+	 * @throws ArangoDBException
+	 */
 	public Boolean drop() throws ArangoDBException {
 		return unwrap(dropAsync());
 	}
 
+	/**
+	 * Drop an existing database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
+	 *      Documentation</a>
+	 * @return true if the database was dropped successfully
+	 */
 	public CompletableFuture<Boolean> dropAsync() {
 		validateDBName(name);
 		return execute(
@@ -117,28 +209,88 @@ public class ArangoDatabase extends Executeable {
 			response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
+	/**
+	 * Grants access to the database dbname for user user. You need permission to the _system database in order to
+	 * execute this call.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
 	public void grandAccess(final String user) throws ArangoDBException {
 		unwrap(grandAccessAync(user));
 	}
 
+	/**
+	 * Grants access to the database dbname for user user. You need permission to the _system database in order to
+	 * execute this call.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return void
+	 */
 	public CompletableFuture<Void> grandAccessAync(final String user) {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user, "database", name));
-		request.setBody(serialize(new UserAccessOptions().grant("rw")));
+				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
+		request.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.RW)));
 		return execute(Void.class, request);
 	}
 
+	/**
+	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
+	 * execute this call.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
 	public void revokeAccess(final String user) throws ArangoDBException {
 		unwrap(revokeAccessAsync(user));
 	}
 
+	/**
+	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
+	 * execute this call.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return void
+	 */
 	public CompletableFuture<Void> revokeAccessAsync(final String user) {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user, "database", name));
-		request.setBody(serialize(new UserAccessOptions().grant("none")));
+				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
+		request.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.NONE)));
 		return execute(Void.class, request);
 	}
 
+	/**
+	 * Create a cursor and return the first results
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 *      Documentation</a>
+	 * @param query
+	 *            contains the query string to be executed
+	 * @param bindVars
+	 *            key/value pairs representing the bind parameters
+	 * @param options
+	 *            Additional options, can be null
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 * @return cursor of the results
+	 * @throws ArangoDBException
+	 */
 	public <T> Cursor<T> query(
 		final String query,
 		final Map<String, Object> bindVars,
@@ -148,22 +300,85 @@ public class ArangoDatabase extends Executeable {
 				OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars), type);
 	}
 
-	public GraphResult createGraph(final String name, final GraphCreateOptions options) throws ArangoDBException {
-		return unwrap(createGraphAsync(name, options));
+	/**
+	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
+	 * of its edges.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 *      Documentation</a>
+	 * @param name
+	 *            Name of the graph
+	 * @param options
+	 *            Additional options, can be null
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	public GraphResult createGraph(
+		final String name,
+		final GraphCreateOptions options,
+		final EdgeDefinition... edgeDefinitions) throws ArangoDBException {
+		return unwrap(createGraphAsync(name, options, edgeDefinitions));
 	}
 
-	public CompletableFuture<GraphResult> createGraphAsync(final String name, final GraphCreateOptions options) {
+	/**
+	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
+	 * of its edges.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 *      Documentation</a>
+	 * @param name
+	 *            Name of the graph
+	 * @param options
+	 *            Additional options, can be null
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
+	 * @return information about the graph
+	 */
+	public CompletableFuture<GraphResult> createGraphAsync(
+		final String name,
+		final GraphCreateOptions options,
+		final EdgeDefinition... edgeDefinitions) {
 		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_GHARIAL);
-		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name)));
+		request.setBody(serialize(
+			OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name, edgeDefinitions)));
 		return execute(request,
 			response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), GraphResult.class));
 	}
 
+	/**
+	 * execute a server-side transaction
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+	 *      Documentation</a>
+	 * @param action
+	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the result of the transaction if it succeeded
+	 * @throws ArangoDBException
+	 */
 	public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
 			throws ArangoDBException {
 		return unwrap(transactionAsync(action, type, options));
 	}
 
+	/**
+	 * execute a server-side transaction
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+	 *      Documentation</a>
+	 * @param action
+	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the result of the transaction if it succeeded
+	 */
 	public <T> CompletableFuture<T> transactionAsync(
 		final String action,
 		final Class<T> type,
@@ -182,12 +397,27 @@ public class ArangoDatabase extends Executeable {
 		});
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+	 *      Documentation</a>
+	 * @return information about the current database
+	 * @throws ArangoDBException
+	 */
 	public DatabaseResult getInfo() throws ArangoDBException {
 		return unwrap(getInfoAsync());
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+	 *      Documentation</a>
+	 * @return information about the current database
+	 */
 	public CompletableFuture<DatabaseResult> getInfoAsync() {
-		return execute(new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_DATABASE, "current")),
+		return execute(
+			new Request(name, RequestType.GET,
+					createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.CURRENT)),
 			response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), DatabaseResult.class));
 	}
 }

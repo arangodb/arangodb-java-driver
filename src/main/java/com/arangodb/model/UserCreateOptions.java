@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
  */
 public class UserCreateOptions {
 
@@ -12,6 +13,10 @@ public class UserCreateOptions {
 	private String passwd;
 	private Boolean active;
 	private Map<String, Object> extra;
+
+	public UserCreateOptions() {
+		super();
+	}
 
 	protected String getUser() {
 		return user;
@@ -35,6 +40,12 @@ public class UserCreateOptions {
 		return active;
 	}
 
+	/**
+	 * @param active
+	 *            An optional flag that specifies whether the user is active. If not specified, this will default to
+	 *            true
+	 * @return options
+	 */
 	public UserCreateOptions active(final Boolean active) {
 		this.active = active;
 		return this;
@@ -44,6 +55,11 @@ public class UserCreateOptions {
 		return extra;
 	}
 
+	/**
+	 * @param extra
+	 *            Optional data about the user
+	 * @return options
+	 */
 	public UserCreateOptions extra(final Map<String, Object> extra) {
 		this.extra = extra;
 		return this;

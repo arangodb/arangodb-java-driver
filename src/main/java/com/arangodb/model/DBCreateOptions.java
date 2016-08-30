@@ -8,11 +8,15 @@ public class DBCreateOptions {
 
 	private String name;
 
+	public DBCreateOptions() {
+		super();
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	public DBCreateOptions name(final String name) {
+	protected DBCreateOptions name(final String name) {
 		this.name = name;
 		return this;
 	}

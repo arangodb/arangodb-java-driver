@@ -25,13 +25,13 @@ import org.junit.Test;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.CollectionRevisionResult;
 import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentDeleteResult;
 import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.entity.IndexType;
 import com.arangodb.model.CollectionPropertiesOptions;
-import com.arangodb.model.CollectionRevisionResult;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -713,6 +713,27 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getSparse().isPresent(), is(true));
 		assertThat(indexResult.getSparse().get(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.persistent));
+		assertThat(indexResult.getUnique().isPresent(), is(true));
+		assertThat(indexResult.getUnique().get(), is(false));
+	}
+
+	@Test
+	public void createFulltextIndex() {
+		final Collection<String> fields = new ArrayList<>();
+		fields.add("a");
+		final IndexResult indexResult = db.collection(COLLECTION_NAME).createFulltextIndex(fields, null);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getConstraint().isPresent(), is(false));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getGeoJson().isPresent(), is(false));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
+		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
+		assertThat(indexResult.getMinLength().isPresent(), is(true));
+		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(false));
+		assertThat(indexResult.getSparse().isPresent(), is(true));
+		assertThat(indexResult.getSparse().get(), is(true));
+		assertThat(indexResult.getType(), is(IndexType.fulltext));
 		assertThat(indexResult.getUnique().isPresent(), is(true));
 		assertThat(indexResult.getUnique().get(), is(false));
 	}

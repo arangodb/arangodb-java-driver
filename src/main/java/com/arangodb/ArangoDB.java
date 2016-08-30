@@ -32,6 +32,7 @@ import com.arangodb.velocypack.VPackSlice;
  *
  */
 public class ArangoDB extends Executeable {
+
 	public static class Builder {
 
 		private static final String PROPERTY_KEY_HOST = "arangodb.host";
@@ -144,18 +145,6 @@ public class ArangoDB extends Executeable {
 		communication.disconnect();
 	}
 
-	public Boolean createDatabase(final String name) throws ArangoDBException {
-		return unwrap(createDatabaseAsync(name));
-	}
-
-	public CompletableFuture<Boolean> createDatabaseAsync(final String name) {
-		validateDBName(name);
-		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
-				ArangoDBConstants.PATH_API_DATABASE);
-		request.setBody(serialize(new DBCreateOptions().name(name)));
-		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
-	}
-
 	public ArangoDatabase db() {
 		return db(ArangoDBConstants.SYSTEM);
 	}
@@ -165,10 +154,52 @@ public class ArangoDB extends Executeable {
 		return new ArangoDatabase(this, name);
 	}
 
+	/**
+	 * creates a new database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+	 *      Documentation</a>
+	 * @param name
+	 *            Has to contain a valid database name
+	 * @return true if the database was created successfully.
+	 * @throws ArangoDBException
+	 */
+	public Boolean createDatabase(final String name) throws ArangoDBException {
+		return unwrap(createDatabaseAsync(name));
+	}
+
+	/**
+	 * creates a new database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+	 *      Documentation</a>
+	 * @param name
+	 *            Has to contain a valid database name
+	 * @return true if the database was created successfully.
+	 */
+	public CompletableFuture<Boolean> createDatabaseAsync(final String name) {
+		validateDBName(name);
+		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
+				ArangoDBConstants.PATH_API_DATABASE);
+		request.setBody(serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
+		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+	}
+
+	/**
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-databases">API
+	 *      Documentation</a>
+	 * @return a list of all existing databases
+	 * @throws ArangoDBException
+	 */
 	public Collection<String> getDatabases() throws ArangoDBException {
 		return unwrap(getDatabasesAsync());
 	}
 
+	/**
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-databases">API
+	 *      Documentation</a>
+	 * @return a list of all existing databases
+	 */
 	public CompletableFuture<Collection<String>> getDatabasesAsync() {
 		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE), (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
@@ -177,13 +208,26 @@ public class ArangoDB extends Executeable {
 		});
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+	 *      Documentation</a>
+	 * @return a list of all databases the current user can access
+	 * @throws ArangoDBException
+	 */
 	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
 		return unwrap(getAccessibleDatabasesAsync());
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+	 *      Documentation</a>
+	 * @return a list of all databases the current user can access
+	 */
 	public CompletableFuture<Collection<String>> getAccessibleDatabasesAsync() {
-		return execute(
-			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_DATABASE, "user")),
+		return execute(new Request(db().name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER)),
 			(response) -> {
 				final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
 				return deserialize(result, new Type<Collection<String>>() {
@@ -191,20 +235,62 @@ public class ArangoDB extends Executeable {
 			});
 	}
 
+	/**
+	 * Returns the server name and version number.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 *      Documentation</a>
+	 * @return the server version, number
+	 * @throws ArangoDBException
+	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
 		return unwrap(getVersionAsync());
 	}
 
+	/**
+	 * Returns the server name and version number.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 *      Documentation</a>
+	 * @return the server version, number
+	 */
 	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
 		return execute(ArangoDBVersion.class,
 			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
 	}
 
+	/**
+	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
+	 * order to execute this call.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param passwd
+	 *            The user password
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the user
+	 * @throws ArangoDBException
+	 */
 	public UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException {
 		return unwrap(createUserAsync(user, passwd, options));
 	}
 
+	/**
+	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
+	 * order to execute this call.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param passwd
+	 *            The user password
+	 * @param options
+	 *            Additional properties of the user, can be null
+	 * @return information about the user
+	 */
 	public CompletableFuture<UserResult> createUserAsync(
 		final String user,
 		final String passwd,
@@ -215,28 +301,78 @@ public class ArangoDB extends Executeable {
 		return execute(UserResult.class, request);
 	}
 
+	/**
+	 * Removes an existing user, identified by user. You need access to the _system database.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#remove-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
 	public void deleteUser(final String user) throws ArangoDBException {
 		unwrap(deleteUserAsync(user));
 	}
 
+	/**
+	 * Removes an existing user, identified by user. You need access to the _system database.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#remove-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return void
+	 */
 	public CompletableFuture<Void> deleteUserAsync(final String user) {
 		return execute(Void.class,
 			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
+	/**
+	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
+	 * _system database in order to execute this call.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#fetch-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return information about the user
+	 * @throws ArangoDBException
+	 */
 	public UserResult getUser(final String user) throws ArangoDBException {
 		return unwrap(getUserAsync(user));
 	}
 
+	/**
+	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
+	 * _system database in order to execute this call.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#fetch-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return information about the user
+	 */
 	public CompletableFuture<UserResult> getUserAsync(final String user) {
 		return execute(UserResult.class,
 			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
+	/**
+	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-available-users">API
+	 *      Documentation</a>
+	 * @return informations about all users
+	 * @throws ArangoDBException
+	 */
 	public Collection<UserResult> getUsers() throws ArangoDBException {
 		return unwrap(getUsersAsync());
 	}
 
+	/**
+	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-available-users">API
+	 *      Documentation</a>
+	 * @return informations about all users
+	 */
 	public CompletableFuture<Collection<UserResult>> getUsersAsync() {
 		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER), (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
@@ -245,10 +381,33 @@ public class ArangoDB extends Executeable {
 		});
 	}
 
+	/**
+	 * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
+	 * only change the password of your self. You need access to the _system database to change the active flag.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#update-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param options
+	 *            Properties of the user to be changed
+	 * @return information about the user
+	 * @throws ArangoDBException
+	 */
 	public UserResult updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
 		return unwrap(updateUserAsync(user, options));
 	}
 
+	/**
+	 * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
+	 * only change the password of your self. You need access to the _system database to change the active flag.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#update-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param options
+	 *            Properties of the user to be changed
+	 * @return information about the user
+	 */
 	public CompletableFuture<UserResult> updateUserAsync(final String user, final UserUpdateOptions options) {
 		final Request request = new Request(db().name(), RequestType.PATCH,
 				createPath(ArangoDBConstants.PATH_API_USER, user));
@@ -256,10 +415,35 @@ public class ArangoDB extends Executeable {
 		return execute(UserResult.class, request);
 	}
 
+	/**
+	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
+	 * change the password of your self. You need access to the _system database to change the active flag.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#replace-user">API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param options
+	 *            Additional properties of the user, can be null
+	 * @return information about the user
+	 * @throws ArangoDBException
+	 */
 	public UserResult replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
 		return unwrap(replaceUserAsync(user, options));
 	}
 
+	/**
+	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
+	 * change the password of your self. You need access to the _system database to change the active flag.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#replace-user">API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param options
+	 *            Additional properties of the user, can be null
+	 * @return information about the user
+	 */
 	public CompletableFuture<UserResult> replaceUserAsync(final String user, final UserUpdateOptions options) {
 		final Request request = new Request(db().name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_USER, user));
