@@ -13,24 +13,24 @@ import com.arangodb.internal.net.velocystream.RequestType;
  * @author Mark - mark at arangodb.com
  *
  */
-public class Cursor<T> implements Iterable<T> {
+public class ArangoCursor<T> implements Iterable<T> {
 
 	private final ArangoDatabase db;
 	private final Class<T> type;
-	private final CursorIterator<T> iterator;
+	private final ArangoCursorIterator<T> iterator;
 	private final String id;
 	private final Optional<Integer> count;
 	private final Optional<Map<String, Object>> extra;
 	private final boolean cached;
 
-	public Cursor(final ArangoDatabase db, final Class<T> type, final CursorResult result) {
+	public ArangoCursor(final ArangoDatabase db, final Class<T> type, final CursorResult result) {
 		super();
 		this.db = db;
 		this.type = type;
 		count = Optional.ofNullable(result.getCount());
 		extra = Optional.ofNullable(result.getExtra());
 		cached = result.getCached().booleanValue();
-		iterator = new CursorIterator<>(this, result);
+		iterator = new ArangoCursorIterator<>(this, result);
 		id = result.getId();
 	}
 

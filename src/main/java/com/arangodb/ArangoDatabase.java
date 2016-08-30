@@ -33,7 +33,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDatabase extends Executeable {
+public class ArangoDatabase extends ArangoExecuteable {
 
 	private final String name;
 
@@ -292,7 +292,7 @@ public class ArangoDatabase extends Executeable {
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
-	public <T> Cursor<T> query(
+	public <T> ArangoCursor<T> query(
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
@@ -315,7 +315,7 @@ public class ArangoDatabase extends Executeable {
 	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
 	 * @return cursor of the results
 	 */
-	public <T> CompletableFuture<Cursor<T>> queryAsync(
+	public <T> CompletableFuture<ArangoCursor<T>> queryAsync(
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
@@ -323,8 +323,8 @@ public class ArangoDatabase extends Executeable {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
 		request.setBody(serialize(options));
 		final CompletableFuture<CursorResult> execution = execute(CursorResult.class, request);
-		final CompletableFuture<Cursor<T>> cursor = execution.thenApply(result -> {
-			return new Cursor<>(this, type, result);
+		final CompletableFuture<ArangoCursor<T>> cursor = execution.thenApply(result -> {
+			return new ArangoCursor<>(this, type, result);
 		});
 		return cursor;
 	}

@@ -10,14 +10,14 @@ import com.arangodb.entity.CursorResult;
  * @param <T>
  *
  */
-public class CursorIterator<T> implements Iterator<T> {
+public class ArangoCursorIterator<T> implements Iterator<T> {
 
 	private CursorResult result;
 	private int pos;
 
-	private final Cursor<T> cursor;
+	private final ArangoCursor<T> cursor;
 
-	public CursorIterator(final Cursor<T> cursor, final CursorResult result) {
+	public ArangoCursorIterator(final ArangoCursor<T> cursor, final CursorResult result) {
 		super();
 		this.cursor = cursor;
 		this.result = result;

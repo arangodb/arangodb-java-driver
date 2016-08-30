@@ -31,7 +31,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDB extends Executeable {
+public class ArangoDB extends ArangoExecuteable {
 
 	public static class Builder {
 

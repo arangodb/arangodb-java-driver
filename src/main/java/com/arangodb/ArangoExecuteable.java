@@ -24,7 +24,7 @@ import com.arangodb.velocypack.exception.VPackParserException;
  * @author Mark - mark at arangodb.com
  *
  */
-abstract class Executeable {
+abstract class ArangoExecuteable {
 
 	public static interface ResponseDeserializer<T> {
 		T deserialize(Response response) throws VPackException;
@@ -41,7 +41,7 @@ abstract class Executeable {
 	protected final DocumentCache documentCache;
 	protected final CollectionCache collectionCache;
 
-	protected Executeable(final Communication communication, final VPack vpacker, final VPack vpackerNull,
+	protected ArangoExecuteable(final Communication communication, final VPack vpacker, final VPack vpackerNull,
 		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super();
 		this.communication = communication;

@@ -40,7 +40,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoCollection extends Executeable {
+public class ArangoCollection extends ArangoExecuteable {
 
 	private final ArangoDatabase db;
 	private final String name;

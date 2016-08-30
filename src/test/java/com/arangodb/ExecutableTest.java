@@ -3,7 +3,7 @@ package com.arangodb;
 import org.junit.Test;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.Executeable;
+import com.arangodb.ArangoExecuteable;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -44,7 +44,7 @@ public class ExecutableTest {
 	}
 
 	private void checkDBName(final String name) throws ArangoDBException {
-		final Executeable executeBase = new Executeable(null, null, null, null, null, null) {
+		final ArangoExecuteable executeBase = new ArangoExecuteable(null, null, null, null, null, null) {
 		};
 		executeBase.validateDBName(name);
 	}
@@ -77,7 +77,7 @@ public class ExecutableTest {
 	}
 
 	private void checkCollectionName(final String name) throws ArangoDBException {
-		final Executeable executeBase = new Executeable(null, null, null, null, null, null) {
+		final ArangoExecuteable executeBase = new ArangoExecuteable(null, null, null, null, null, null) {
 		};
 		executeBase.validateCollectionName(name);
 	}
@@ -102,7 +102,7 @@ public class ExecutableTest {
 	}
 
 	private void checkDocumentKey(final String key) throws ArangoDBException {
-		final Executeable executeBase = new Executeable(null, null, null, null, null, null) {
+		final ArangoExecuteable executeBase = new ArangoExecuteable(null, null, null, null, null, null) {
 		};
 		executeBase.validateDocumentKey(key);
 	}
