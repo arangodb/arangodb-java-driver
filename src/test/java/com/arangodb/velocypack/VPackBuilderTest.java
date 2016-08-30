@@ -16,7 +16,7 @@ import com.arangodb.velocypack.exception.VPackBuilderUnexpectedValueException;
 import com.arangodb.velocypack.exception.VPackException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackBuilderTest {

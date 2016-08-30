@@ -22,7 +22,7 @@ import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackCache {

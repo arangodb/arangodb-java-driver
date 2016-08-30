@@ -17,7 +17,7 @@ import com.arangodb.velocypack.exception.VPackKeyTypeException;
 import com.arangodb.velocypack.exception.VPackNeedAttributeTranslatorException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackParser {

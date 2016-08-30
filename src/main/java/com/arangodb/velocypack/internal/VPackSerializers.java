@@ -9,7 +9,7 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.Value;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackSerializers {

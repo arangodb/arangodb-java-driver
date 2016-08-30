@@ -20,7 +20,7 @@ import com.arangodb.velocypack.internal.util.ValueLengthUtil;
 import com.arangodb.velocypack.internal.util.ValueTypeUtil;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackSlice {

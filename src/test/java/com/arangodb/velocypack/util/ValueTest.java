@@ -9,7 +9,7 @@ import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackValueTypeException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class ValueTest {

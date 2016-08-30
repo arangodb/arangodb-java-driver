@@ -7,7 +7,7 @@ import java.util.Date;
 import com.arangodb.velocypack.exception.VPackValueTypeException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class Value {

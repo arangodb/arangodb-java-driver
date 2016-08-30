@@ -13,7 +13,7 @@ import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackValueTypeException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackSliceTest {

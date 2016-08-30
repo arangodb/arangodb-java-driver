@@ -7,7 +7,7 @@ import java.util.Date;
 import com.arangodb.velocypack.VPackDeserializer;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackDeserializers {

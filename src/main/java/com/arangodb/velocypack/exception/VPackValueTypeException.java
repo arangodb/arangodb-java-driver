@@ -3,7 +3,7 @@ package com.arangodb.velocypack.exception;
 import com.arangodb.velocypack.ValueType;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackValueTypeException extends IllegalStateException {

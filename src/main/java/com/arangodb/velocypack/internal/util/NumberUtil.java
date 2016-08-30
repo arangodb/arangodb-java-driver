@@ -3,7 +3,7 @@ package com.arangodb.velocypack.internal.util;
 import java.math.BigInteger;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class NumberUtil {

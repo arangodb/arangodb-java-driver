@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.arangodb.velocypack.exception.VPackException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackParserTest {

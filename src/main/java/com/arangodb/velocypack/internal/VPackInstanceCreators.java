@@ -11,7 +11,7 @@ import java.util.Set;
 import com.arangodb.velocypack.VPackInstanceCreator;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 @SuppressWarnings("rawtypes")

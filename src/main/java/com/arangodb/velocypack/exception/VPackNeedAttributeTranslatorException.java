@@ -1,7 +1,7 @@
 package com.arangodb.velocypack.exception;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackNeedAttributeTranslatorException extends VPackException {

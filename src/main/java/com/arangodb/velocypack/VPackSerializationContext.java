@@ -3,7 +3,7 @@ package com.arangodb.velocypack;
 import com.arangodb.velocypack.exception.VPackParserException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public interface VPackSerializationContext {

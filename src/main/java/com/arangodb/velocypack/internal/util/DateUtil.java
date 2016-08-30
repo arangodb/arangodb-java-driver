@@ -3,7 +3,7 @@ package com.arangodb.velocypack.internal.util;
 import java.util.Date;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class DateUtil {

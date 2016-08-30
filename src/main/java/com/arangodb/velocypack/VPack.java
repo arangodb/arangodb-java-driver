@@ -27,7 +27,7 @@ import com.arangodb.velocypack.internal.VPackKeyMapAdapters;
 import com.arangodb.velocypack.internal.VPackSerializers;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })

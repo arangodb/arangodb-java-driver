@@ -11,7 +11,7 @@ import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 
 /**
- * @author Mark - mark@arangodb.com
+ * @author Mark - mark at arangodb.com
  *
  */
 public class VPackAttributeTranslatorImpl implements VPackAttributeTranslator {
