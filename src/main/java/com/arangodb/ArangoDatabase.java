@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.CursorResult;
 import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
@@ -296,8 +297,36 @@ public class ArangoDatabase extends Executeable {
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
-		return new Cursor<>(this,
-				OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars), type);
+		return unwrap(queryAsync(query, bindVars, options, type));
+	}
+
+	/**
+	 * Create a cursor and return the first results
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 *      Documentation</a>
+	 * @param query
+	 *            contains the query string to be executed
+	 * @param bindVars
+	 *            key/value pairs representing the bind parameters
+	 * @param options
+	 *            Additional options, can be null
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 * @return cursor of the results
+	 */
+	public <T> CompletableFuture<Cursor<T>> queryAsync(
+		final String query,
+		final Map<String, Object> bindVars,
+		final AqlQueryOptions options,
+		final Class<T> type) throws ArangoDBException {
+		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
+		request.setBody(serialize(options));
+		final CompletableFuture<CursorResult> execution = execute(CursorResult.class, request);
+		final CompletableFuture<Cursor<T>> cursor = execution.thenApply(result -> {
+			return new Cursor<>(this, type, result);
+		});
+		return cursor;
 	}
 
 	/**

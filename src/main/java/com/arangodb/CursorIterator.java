@@ -32,7 +32,7 @@ public class CursorIterator<T> implements Iterator<T> {
 	@Override
 	public T next() {
 		if (pos >= result.getResult().size() && result.getHasMore()) {
-			result = cursor.execute();
+			result = cursor.executeNext();
 			pos = 0;
 		}
 		if (!hasNext()) {

@@ -8,7 +8,6 @@ import com.arangodb.entity.CursorResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
-import com.arangodb.model.AqlQueryOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -24,13 +23,10 @@ public class Cursor<T> implements Iterable<T> {
 	private final Optional<Map<String, Object>> extra;
 	private final boolean cached;
 
-	public Cursor(final ArangoDatabase db, final AqlQueryOptions options, final Class<T> type) {
+	public Cursor(final ArangoDatabase db, final Class<T> type, final CursorResult result) {
 		super();
 		this.db = db;
 		this.type = type;
-		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
-		request.setBody(db.serialize(options));
-		final CursorResult result = db.unwrap(db.execute(CursorResult.class, request));
 		count = Optional.ofNullable(result.getCount());
 		extra = Optional.ofNullable(result.getExtra());
 		cached = result.getCached().booleanValue();
@@ -38,7 +34,7 @@ public class Cursor<T> implements Iterable<T> {
 		id = result.getId();
 	}
 
-	public ArangoDatabase getDb() {
+	protected ArangoDatabase getDb() {
 		return db;
 	}
 
@@ -58,7 +54,7 @@ public class Cursor<T> implements Iterable<T> {
 		return cached;
 	}
 
-	public CursorResult execute() {
+	protected CursorResult executeNext() {
 		return db.unwrap(db.execute(CursorResult.class,
 			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id))));
 	}
