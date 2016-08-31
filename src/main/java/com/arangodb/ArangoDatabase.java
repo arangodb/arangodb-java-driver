@@ -214,9 +214,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * Grants access to the database dbname for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
-	 *      Documentation</a>
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @throws ArangoDBException
@@ -229,9 +228,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * Grants access to the database dbname for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
-	 *      Documentation</a>
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @return void
@@ -247,9 +245,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
-	 *      Documentation</a>
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @throws ArangoDBException
@@ -262,9 +259,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">API
-	 *      Documentation</a>
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @return void
@@ -321,7 +317,9 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
-		request.setBody(serialize(options));
+		AqlQueryOptions queryOptions = OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query,
+			bindVars);
+		request.setBody(serialize(queryOptions));
 		final CompletableFuture<CursorResult> execution = execute(CursorResult.class, request);
 		final CompletableFuture<ArangoCursor<T>> cursor = execution.thenApply(result -> {
 			return new ArangoCursor<>(this, type, result);
