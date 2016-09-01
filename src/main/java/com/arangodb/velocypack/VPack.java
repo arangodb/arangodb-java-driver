@@ -111,6 +111,7 @@ public class VPack {
 			deserializers.put(Character.class, VPackDeserializers.CHARACTER);
 			deserializers.put(char.class, VPackDeserializers.CHARACTER);
 			deserializers.put(Date.class, VPackDeserializers.DATE);
+			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 		}
 
 		public <T> VPack.Builder registerSerializer(final Type type, final VPackSerializer<T> serializer) {

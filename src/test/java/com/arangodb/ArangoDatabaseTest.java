@@ -163,7 +163,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(cursor, is(notNullValue()));
 			final Iterator<String> iterator = cursor.iterator();
 			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 10; i++, iterator.next()) {
 				assertThat(iterator.hasNext(), is(i != 10));
 			}
 		} finally {

@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -28,5 +29,6 @@ public class VPackDeserializers {
 	public static final VPackDeserializer<Number> NUMBER = (parent, vpack, context) -> vpack.getAsNumber();
 	public static final VPackDeserializer<Character> CHARACTER = (parent, vpack, context) -> vpack.getAsChar();
 	public static final VPackDeserializer<Date> DATE = (parent, vpack, context) -> vpack.getAsDate();
+	public static final VPackDeserializer<VPackSlice> VPACK = (parent, vpack, context) -> vpack;
 
 }
