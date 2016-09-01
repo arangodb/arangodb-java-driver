@@ -103,6 +103,7 @@ public class Communication {
 		try {
 			final Message requestMessage = createMessage(request);
 			final Message responseMessage = sendSync(requestMessage);
+			collectionCache.setDb(request.getDatabase());
 			final Response response = createResponse(responseMessage);
 			if (response.getResponseCode() >= SPARTA) {
 				if (response.getBody().isPresent()) {
