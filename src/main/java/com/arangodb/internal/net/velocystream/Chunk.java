@@ -13,22 +13,24 @@ public class Chunk {
 	private final long messageId;
 	private final long messageLength;
 	private final int chunkX;
-	private final byte[] content;
+	private final int contentLength;
+	private byte[] content;
 
-	public Chunk(final long messageId, final int chunkX, final byte[] content, final int length,
+	public Chunk(final long messageId, final int chunkX, final int contentLength, final int length,
 		final long messageLength) {
 		this.messageId = messageId;
 		this.chunkX = chunkX;
-		this.content = content;
+		this.content = null;
+		this.contentLength = contentLength;
 		this.length = length;
 		this.messageLength = messageLength;
-
 	}
 
 	public Chunk(final long messageId, final int chunkIndex, final int numberOfChunks, final byte[] content,
 		final int length, final long messageLength) {
 		this.messageId = messageId;
 		this.content = content;
+		this.contentLength = content.length;
 		this.length = length;
 		this.messageLength = messageLength;
 		if (numberOfChunks == 1) {
@@ -62,6 +64,14 @@ public class Chunk {
 
 	public byte[] getContent() {
 		return content;
+	}
+
+	public void setContent(final byte[] content) {
+		this.content = content;
+	}
+
+	public int getContentLength() {
+		return contentLength;
 	}
 
 	public ByteBuffer toByteBuffer() {

@@ -57,16 +57,16 @@ public class ConnectionSync extends Connection {
 				throw new ArangoDBException(new IOException("The socket is closed."));
 			}
 			try {
-				final Chunk chunk = read();
+				final Chunk chunk = readChunkHead();
 				if (chunkBuffer == null) {
 					if (!chunk.isFirstChunk()) {
 						throw new ArangoDBException("Wrong Chunk recieved! Expected first Chunk.");
 					}
 					final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength()
-							: chunk.getContent().length);
+							: chunk.getContentLength());
 					chunkBuffer = ByteBuffer.allocate(length);
 				}
-				chunkBuffer.put(chunk.getContent());
+				chunkBuffer.put(readBytesIntoBuffer(chunk.getContentLength()));
 			} catch (final Exception e) {
 				close();
 				throw new ArangoDBException(e);

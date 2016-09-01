@@ -96,20 +96,27 @@ public abstract class Connection {
 	}
 
 	protected Chunk read() throws IOException, BufferUnderflowException {
+		final Chunk chunk = readChunkHead();
+		final byte[] content = new byte[chunk.getContentLength()];
+		chunk.setContent(content);
+		readBytes(content.length).get(content);
+		return chunk;
+	}
+
+	protected Chunk readChunkHead() throws IOException {
 		final int length = readBytes(4).getInt();
 		final int chunkX = readBytes(4).getInt();
 		final long messageId = readBytes(8).getLong();
 		final long messageLength;
-		final byte[] content;
+		final int contentLength;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
 			messageLength = readBytes(8).getLong();
-			content = new byte[length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE];
+			contentLength = length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE;
 		} else {
 			messageLength = -1L;
-			content = new byte[length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE];
+			contentLength = length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
 		}
-		readBytes(content.length).get(content);
-		final Chunk chunk = new Chunk(messageId, chunkX, content, length, messageLength);
+		final Chunk chunk = new Chunk(messageId, chunkX, contentLength, length, messageLength);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(),
 				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
@@ -118,6 +125,10 @@ public abstract class Connection {
 	}
 
 	private ByteBuffer readBytes(final int len) throws IOException {
+		return ByteBuffer.wrap(readBytesIntoBuffer(len)).order(ByteOrder.LITTLE_ENDIAN);
+	}
+
+	protected byte[] readBytesIntoBuffer(final int len) throws IOException {
 		final byte[] buf = new byte[len];
 		for (int readed = 0; readed < len;) {
 			final int read = inputStream.read(buf, readed, len - readed);
@@ -127,7 +138,7 @@ public abstract class Connection {
 				readed += read;
 			}
 		}
-		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
+		return buf;
 	}
 
 }
