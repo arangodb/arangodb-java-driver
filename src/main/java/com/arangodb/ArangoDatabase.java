@@ -317,14 +317,12 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
-		final AqlQueryOptions queryOptions = OptionsBuilder.build(options != null ? options : new AqlQueryOptions(),
-			query, bindVars);
-		request.setBody(serialize(queryOptions));
-		final CompletableFuture<CursorResult> execution = executeSync(CursorResult.class, request);
-		final CompletableFuture<ArangoCursor<T>> cursor = execution.thenApply(result -> {
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
+		final CompletableFuture<CursorResult> execution = executeAsync(CursorResult.class, request);
+		return execution.thenApply(result -> {
 			return new ArangoCursor<>(this, type, result);
 		});
-		return cursor;
 	}
 
 	/**
