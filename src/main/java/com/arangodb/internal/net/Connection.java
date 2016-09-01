@@ -10,9 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.net.SocketFactory;
 
@@ -22,64 +19,32 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
-import com.arangodb.internal.net.velocystream.ChunkStore;
-import com.arangodb.internal.net.velocystream.Message;
-import com.arangodb.internal.net.velocystream.MessageStore;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class Connection {
+public abstract class Connection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 
-	private final MessageStore messageStore;
-	private Optional<String> host = Optional.empty();
-	private Optional<Integer> port = Optional.empty();
-	private Optional<Integer> timeout = Optional.empty();
-	private Socket socket;
-	private OutputStream outputStream;
-	private InputStream inputStream;
-	private ExecutorService executor;
+	protected Optional<String> host = Optional.empty();
+	protected Optional<Integer> port = Optional.empty();
+	protected Optional<Integer> timeout = Optional.empty();
 
-	public static class Builder {
-		private final MessageStore messageStore;
-		private String host;
-		private Integer port;
-		private Integer timeout;
+	protected Socket socket;
+	protected OutputStream outputStream;
+	protected InputStream inputStream;
 
-		public Builder(final MessageStore messageStore) {
-			super();
-			this.messageStore = messageStore;
-		}
-
-		public Builder host(final String host) {
-			this.host = host;
-			return this;
-		}
-
-		public Builder port(final int port) {
-			this.port = port;
-			return this;
-		}
-
-		public Builder timeout(final Integer timeout) {
-			this.timeout = timeout;
-			return this;
-		}
-
-		public Connection build() {
-			return new Connection(this);
-		}
+	protected Connection(final String host, final Integer port, final Integer timeout) {
+		super();
+		this.host = Optional.of(host);
+		this.port = Optional.of(port);
+		this.timeout = Optional.ofNullable(timeout);
 	}
 
-	private Connection(final Builder builder) {
-		super();
-		this.messageStore = builder.messageStore;
-		this.host = Optional.of(builder.host);
-		this.port = Optional.of(builder.port);
-		this.timeout = Optional.ofNullable(builder.timeout);
+	public synchronized boolean isOpen() {
+		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
 	public synchronized void open() throws IOException {
@@ -101,37 +66,11 @@ public class Connection {
 
 		outputStream = socket.getOutputStream();
 		inputStream = socket.getInputStream();
-		executor = Executors.newSingleThreadExecutor();
-		executor.submit(() -> {
-			final ChunkStore chunkStore = new ChunkStore(messageStore);
-			while (true) {
-				if (!isOpen()) {
-					messageStore.clear(new IOException("The socket is closed."));
-					close();
-					break;
-				}
-				try {
-					chunkStore.storeChunk(read());
-				} catch (final Exception e) {
-					messageStore.clear(e);
-					close();
-					break;
-				}
-			}
-		});
-	}
-
-	public synchronized boolean isOpen() {
-		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
 	public synchronized void close() {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Close connection %s", socket));
-		}
-		messageStore.clear();
-		if (executor != null && !executor.isShutdown()) {
-			executor.shutdown();
 		}
 		if (socket != null) {
 			try {
@@ -142,11 +81,7 @@ public class Connection {
 		}
 	}
 
-	public synchronized void write(
-		final long messageId,
-		final Collection<Chunk> chunks,
-		final CompletableFuture<Message> future) {
-		messageStore.storeMessage(messageId, future);
+	protected synchronized void writeIntern(final long messageId, final Collection<Chunk> chunks) {
 		chunks.stream().forEach(chunk -> {
 			try {
 				if (LOGGER.isDebugEnabled()) {
@@ -160,7 +95,7 @@ public class Connection {
 		});
 	}
 
-	private Chunk read() throws IOException, BufferUnderflowException {
+	protected Chunk read() throws IOException, BufferUnderflowException {
 		final int length = readBytes(4).getInt();
 		final int chunkX = readBytes(4).getInt();
 		final long messageId = readBytes(8).getLong();

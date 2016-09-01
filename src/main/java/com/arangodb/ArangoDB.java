@@ -182,7 +182,7 @@ public class ArangoDB extends ArangoExecuteable {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
 		request.setBody(serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
-		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+		return executeAsync(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
 	}
 
 	/**
@@ -201,11 +201,12 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return a list of all existing databases
 	 */
 	public CompletableFuture<Collection<String>> getDatabasesAsync() {
-		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE), (response) -> {
-			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
-			return deserialize(result, new Type<Collection<String>>() {
-			}.getType());
-		});
+		return executeSync(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE),
+			(response) -> {
+				final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
+				return deserialize(result, new Type<Collection<String>>() {
+				}.getType());
+			});
 	}
 
 	/**
@@ -226,7 +227,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return a list of all databases the current user can access
 	 */
 	public CompletableFuture<Collection<String>> getAccessibleDatabasesAsync() {
-		return execute(new Request(db().name(), RequestType.GET,
+		return executeSync(new Request(db().name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER)),
 			(response) -> {
 				final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
@@ -255,7 +256,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return the server version, number
 	 */
 	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
-		return execute(ArangoDBVersion.class,
+		return executeSync(ArangoDBVersion.class,
 			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
 	}
 
@@ -298,7 +299,7 @@ public class ArangoDB extends ArangoExecuteable {
 		final Request request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
-		return execute(UserResult.class, request);
+		return executeSync(UserResult.class, request);
 	}
 
 	/**
@@ -322,7 +323,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return void
 	 */
 	public CompletableFuture<Void> deleteUserAsync(final String user) {
-		return execute(Void.class,
+		return executeSync(Void.class,
 			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
@@ -350,7 +351,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 */
 	public CompletableFuture<UserResult> getUserAsync(final String user) {
-		return execute(UserResult.class,
+		return executeSync(UserResult.class,
 			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user)));
 	}
 
@@ -374,7 +375,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return informations about all users
 	 */
 	public CompletableFuture<Collection<UserResult>> getUsersAsync() {
-		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER), (response) -> {
+		return executeSync(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER), (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
 			return deserialize(result, new Type<Collection<UserResult>>() {
 			}.getType());
@@ -412,7 +413,7 @@ public class ArangoDB extends ArangoExecuteable {
 		final Request request = new Request(db().name(), RequestType.PATCH,
 				createPath(ArangoDBConstants.PATH_API_USER, user));
 		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
-		return execute(UserResult.class, request);
+		return executeSync(UserResult.class, request);
 	}
 
 	/**
@@ -448,7 +449,7 @@ public class ArangoDB extends ArangoExecuteable {
 		final Request request = new Request(db().name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_USER, user));
 		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
-		return execute(UserResult.class, request);
+		return executeSync(UserResult.class, request);
 	}
 
 }

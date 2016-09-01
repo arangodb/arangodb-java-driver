@@ -105,17 +105,17 @@ abstract class ArangoExecuteable {
 		}
 	}
 
-	protected <T> CompletableFuture<T> execute(final Type type, final Request request) {
-		return execute(request, (response) -> {
+	protected <T> CompletableFuture<T> executeAsync(final Type type, final Request request) {
+		return executeAsync(request, (response) -> {
 			return createResult(vpacker, vpackParser, type, response);
 		});
 	}
 
-	protected <T> CompletableFuture<T> execute(
+	protected <T> CompletableFuture<T> executeAsync(
 		final Request request,
 		final ResponseDeserializer<T> responseDeserializer) {
 		final CompletableFuture<T> result = new CompletableFuture<>();
-		communication.execute(request).whenComplete((response, ex) -> {
+		communication.executeAsync(request).whenComplete((response, ex) -> {
 			if (response != null) {
 				try {
 					result.complete(responseDeserializer.deserialize(response));
@@ -129,6 +129,22 @@ abstract class ArangoExecuteable {
 			}
 		});
 		return result;
+	}
+
+	protected <T> T executeSync(final Type type, final Request request) throws ArangoDBException {
+		return executeSync(request, (response) -> {
+			return createResult(vpacker, vpackParser, type, response);
+		});
+	}
+
+	protected <T> T executeSync(final Request request, final ResponseDeserializer<T> responseDeserializer)
+			throws ArangoDBException {
+		try {
+			final Response response = communication.executeSync(request);
+			return responseDeserializer.deserialize(response);
+		} catch (final VPackException e) {
+			throw new ArangoDBException(e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

@@ -29,11 +29,14 @@ import com.arangodb.velocypack.exception.VPackParserException;
  */
 public class Communication {
 
+	private static final int SPARTA = 300;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
 	private static final AtomicLong mId = new AtomicLong(0L);
 	private final VPack vpack;
-	private final Connection connection;
+	private final ConnectionSync connectionSync;
+	private final ConnectionAsync connectionAsync;
 	private final MessageStore messageStore;
 	private final CollectionCache collectionCache;
 
@@ -71,10 +74,11 @@ public class Communication {
 		messageStore = new MessageStore();
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
-		connection = new Connection.Builder(messageStore).host(host).port(port).timeout(timeout).build();
+		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout).build();
+		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).build();
 	}
 
-	private void connect() {
+	private void connect(final Connection connection) {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
@@ -86,24 +90,52 @@ public class Communication {
 	}
 
 	public void disconnect() {
+		disconnect(connectionAsync);
+		disconnect(connectionSync);
+	}
+
+	public void disconnect(final Connection connection) {
 		connection.close();
 	}
 
-	public CompletableFuture<Response> execute(final Request request) {
-		connect();
+	public Response executeSync(final Request request) throws ArangoDBException {
+		connect(connectionSync);
+		try {
+			final Message requestMessage = createMessage(request);
+			final Message responseMessage = sendSync(requestMessage);
+			final Response response = createResponse(responseMessage);
+			if (response.getResponseCode() >= SPARTA) {
+				if (response.getBody().isPresent()) {
+					throw new ArangoDBException(createErrorMessage(response));
+				} else {
+					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()));
+				}
+			}
+			return response;
+		} catch (VPackParserException | IOException e) {
+			throw new ArangoDBException(e);
+		}
+
+	}
+
+	private String createErrorMessage(final Response response) throws VPackParserException {
+		String errorMessage;
+		final ErrorEntity errorEntity = vpack.deserialize(response.getBody().get(), ErrorEntity.class);
+		errorMessage = String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
+			errorEntity.getErrorMessage());
+		return errorMessage;
+	}
+
+	public CompletableFuture<Response> executeAsync(final Request request) {
+		connect(connectionAsync);
 		final CompletableFuture<Response> rfuture = new CompletableFuture<>();
 		try {
-			final long id = mId.incrementAndGet();
-			final VPackSlice body = request.getBody().isPresent() ? request.getBody().get() : null;
-			final Message message = new Message(id, vpack.serialize(request), body);
-			send(message).whenComplete((m, ex) -> {
+			final Message message = createMessage(request);
+			sendAsync(message).whenComplete((m, ex) -> {
 				if (m != null) {
 					try {
 						collectionCache.setDb(request.getDatabase());
-						final Response response = vpack.deserialize(m.getHead(), Response.class);
-						if (m.getBody().isPresent()) {
-							response.setBody(m.getBody().get());
-						}
+						final Response response = createResponse(m);
 						if (response.getResponseCode() >= 300) {
 							if (response.getBody().isPresent()) {
 								final ErrorEntity errorEntity = vpack.deserialize(response.getBody().get(),
@@ -136,14 +168,40 @@ public class Communication {
 		return rfuture;
 	}
 
-	private CompletableFuture<Message> send(final Message message) throws IOException {
-		final CompletableFuture<Message> future = new CompletableFuture<>();
+	private Response createResponse(final Message messsage) throws VPackParserException {
+		final Response response = vpack.deserialize(messsage.getHead(), Response.class);
+		if (messsage.getBody().isPresent()) {
+			response.setBody(messsage.getBody().get());
+		}
+		return response;
+	}
+
+	/**
+	 * @param request
+	 * @return
+	 * @throws VPackParserException
+	 */
+	private Message createMessage(final Request request) throws VPackParserException {
+		final long id = mId.incrementAndGet();
+		final VPackSlice body = request.getBody().isPresent() ? request.getBody().get() : null;
+		final Message message = new Message(id, vpack.serialize(request), body);
+		return message;
+	}
+
+	private CompletableFuture<Message> sendAsync(final Message message) throws IOException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
 				message.getBody().isPresent() ? message.getBody().get() : "{}"));
 		}
-		connection.write(message.getId(), buildChunks(message), future);
-		return future;
+		return connectionAsync.write(message.getId(), buildChunks(message));
+	}
+
+	private Message sendSync(final Message message) throws IOException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
+				message.getBody().isPresent() ? message.getBody().get() : "{}"));
+		}
+		return connectionSync.write(message.getId(), buildChunks(message));
 	}
 
 	private Collection<Chunk> buildChunks(final Message message) throws IOException {

@@ -55,7 +55,7 @@ public class ArangoCursor<T> implements Iterable<T> {
 	}
 
 	protected CursorResult executeNext() {
-		return db.unwrap(db.execute(CursorResult.class,
+		return db.unwrap(db.executeSync(CursorResult.class,
 			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id))));
 	}
 
