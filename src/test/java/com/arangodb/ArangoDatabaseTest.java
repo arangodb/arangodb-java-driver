@@ -7,7 +7,9 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
+import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.velocypack.VPackBuilder;
@@ -169,6 +172,177 @@ public class ArangoDatabaseTest extends BaseTest {
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
+	}
+
+	@Test
+	public void queryWithCount() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+
+			final ArangoCursor<String> cursor = db.query("for i in db_test Limit 6 return i._id", null,
+				new AqlQueryOptions().count(true), String.class);
+			assertThat(cursor, is(notNullValue()));
+			final Iterator<String> iterator = cursor.iterator();
+			assertThat(iterator, is(notNullValue()));
+			for (int i = 0; i < 6; i++, iterator.next()) {
+				assertThat(iterator.hasNext(), is(i != 6));
+			}
+			assertThat(cursor.getCount().isPresent(), is(true));
+			assertThat(cursor.getCount().get(), is(6));
+
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryWithLimitAndFullCount() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+
+			final ArangoCursor<String> cursor = db.query("for i in db_test Limit 5 return i._id", null,
+				new AqlQueryOptions().fullCount(true), String.class);
+			assertThat(cursor, is(notNullValue()));
+			final Iterator<String> iterator = cursor.iterator();
+			assertThat(iterator, is(notNullValue()));
+			for (int i = 0; i < 5; i++, iterator.next()) {
+				assertThat(iterator.hasNext(), is(i != 5));
+			}
+			assertThat(cursor.getFullCount().isPresent(), is(true));
+			assertThat(cursor.getFullCount().get(), is(10L));
+
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryWithBatchSize() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+
+			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null,
+				new AqlQueryOptions().batchSize(5).count(true), String.class);
+
+			assertThat(cursor, is(notNullValue()));
+
+			final Iterator<String> iterator = cursor.iterator();
+			assertThat(iterator, is(notNullValue()));
+			for (int i = 0; i < 10; i++, iterator.next()) {
+				assertThat(iterator.hasNext(), is(i != 10));
+			}
+
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryWithTTL() throws InterruptedException {
+		// set TTL to 5 seconds and get the second batch after 10 seconds!
+		int ttl = 5;
+		int wait = 10;
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+
+			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null,
+				new AqlQueryOptions().batchSize(5).ttl(ttl), String.class);
+
+			assertThat(cursor, is(notNullValue()));
+
+			final Iterator<String> iterator = cursor.iterator();
+			assertThat(iterator, is(notNullValue()));
+			for (int i = 0; i < 10; i++, iterator.next()) {
+				assertThat(iterator.hasNext(), is(i != 10));
+				if (i == 1) {
+					Thread.sleep(wait * 1000);
+				}
+			}
+			fail("this should fail");
+		} catch (ArangoDBException ex) {
+			assertThat(ex.getMessage(), is("Response: 404, Error: 1600 - cursor not found"));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	@Ignore
+	public void queryWithCache() throws InterruptedException {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+
+			// TODO: set query cache property to "on"!
+
+			final ArangoCursor<String> cursor = db.query("FOR t IN db_test FILTER t.age >= 10 SORT t.age RETURN t._id",
+				null, new AqlQueryOptions().cache(true), String.class);
+
+			assertThat(cursor, is(notNullValue()));
+			assertThat(cursor.isCached(), is(false));
+
+			final ArangoCursor<String> cachedCursor = db.query(
+				"FOR t IN db_test FILTER t.age >= 10 SORT t.age RETURN t._id", null, new AqlQueryOptions().cache(true),
+				String.class);
+
+			assertThat(cachedCursor, is(notNullValue()));
+			assertThat(cachedCursor.isCached(), is(true));
+
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryWithBindVars() throws InterruptedException {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				BaseDocument baseDocument = new BaseDocument();
+				baseDocument.addAttribute("age", 20 + i);
+				db.collection(COLLECTION_NAME).insertDocument(baseDocument, null);
+			}
+			Map<String, Object> bindVars = new HashMap<>();
+			bindVars.put("@coll", COLLECTION_NAME);
+			bindVars.put("age", 25);
+
+			final ArangoCursor<String> cursor = db.query("FOR t IN @@coll FILTER t.age >= @age SORT t.age RETURN t._id",
+				bindVars, null, String.class);
+
+			assertThat(cursor, is(notNullValue()));
+
+			final Iterator<String> iterator = cursor.iterator();
+			assertThat(iterator, is(notNullValue()));
+			for (int i = 0; i < 5; i++, iterator.next()) {
+				assertThat(iterator.hasNext(), is(i != 5));
+			}
+
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryWithWarning() {
+		final ArangoCursor<String> cursor = arangoDB.db().query("return _users + 1", null, null, String.class);
+
+		assertThat(cursor, is(notNullValue()));
+		assertThat(cursor.getWarnings().isPresent(), is(true));
+		assertThat(cursor.getWarnings().get().isEmpty(), is(false));
 	}
 
 	@Test
