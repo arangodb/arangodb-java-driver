@@ -1,6 +1,7 @@
 package com.arangodb.internal.net;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -74,7 +75,14 @@ public class ConnectionAsync extends Connection {
 					break;
 				}
 				try {
-					chunkStore.storeChunk(read());
+					final Chunk chunk = readChunk();
+					final ByteBuffer chunkBuffer = chunkStore.storeChunk(chunk);
+					if (chunkBuffer != null) {
+						final byte[] buf = new byte[chunk.getContentLength()];
+						readBytesIntoBuffer(buf, 0, buf.length);
+						chunkBuffer.put(buf);
+						chunkStore.checkCompleteness(chunk.getMessageId());
+					}
 				} catch (final Exception e) {
 					messageStore.clear(e);
 					close();

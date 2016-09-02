@@ -176,16 +176,10 @@ public class Communication {
 		return response;
 	}
 
-	/**
-	 * @param request
-	 * @return
-	 * @throws VPackParserException
-	 */
 	private Message createMessage(final Request request) throws VPackParserException {
 		final long id = mId.incrementAndGet();
 		final VPackSlice body = request.getBody().isPresent() ? request.getBody().get() : null;
-		final Message message = new Message(id, vpack.serialize(request), body);
-		return message;
+		return new Message(id, vpack.serialize(request), body);
 	}
 
 	private CompletableFuture<Message> sendAsync(final Message message) throws IOException {

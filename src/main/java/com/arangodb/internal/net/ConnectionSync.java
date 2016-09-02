@@ -57,7 +57,7 @@ public class ConnectionSync extends Connection {
 				throw new ArangoDBException(new IOException("The socket is closed."));
 			}
 			try {
-				final Chunk chunk = readChunkHead();
+				final Chunk chunk = readChunk();
 				final int contentLength = chunk.getContentLength();
 				if (chunkBuffer == null) {
 					if (!chunk.isFirstChunk()) {

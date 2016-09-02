@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
@@ -127,16 +126,7 @@ public abstract class Connection {
 		outputStream.write(buffer.array());
 	}
 
-	protected Chunk read() throws IOException, BufferUnderflowException {
-		final Chunk chunk = readChunkHead();
-		final byte[] content = new byte[chunk.getContentLength()];
-		// chunk.setContent(content);
-		// TODO
-		readBytes(content.length).get(content);
-		return chunk;
-	}
-
-	protected Chunk readChunkHead() throws IOException {
+	protected Chunk readChunk() throws IOException {
 		final ByteBuffer chunkHeadBuffer = readBytes(ArangoDBConstants.CHUNK_MIN_HEADER_SIZE);
 		final int length = chunkHeadBuffer.getInt();
 		final int chunkX = chunkHeadBuffer.getInt();

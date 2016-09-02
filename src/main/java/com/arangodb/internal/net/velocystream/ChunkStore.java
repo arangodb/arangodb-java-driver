@@ -20,22 +20,24 @@ public class ChunkStore {
 		data = new HashMap<>();
 	}
 
-	public void storeChunk(final Chunk chunk) throws BufferUnderflowException, IndexOutOfBoundsException {
+	public ByteBuffer storeChunk(final Chunk chunk) throws BufferUnderflowException, IndexOutOfBoundsException {
 		final long messageId = chunk.getMessageId();
 		ByteBuffer chunkBuffer = data.get(messageId);
 		if (chunkBuffer == null) {
 			if (!chunk.isFirstChunk()) {
 				messageStore.cancel(messageId);
-				return;
+				return null;
 			}
 			final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength()
 					: chunk.getContentLength());
 			chunkBuffer = ByteBuffer.allocate(length);
 			data.put(messageId, chunkBuffer);
 		}
-//		chunkBuffer.put(chunk.getContent());
-		// TODO 
-		checkCompleteness(messageId, chunkBuffer);
+		return chunkBuffer;
+	}
+
+	public void checkCompleteness(final long messageId) {
+		checkCompleteness(messageId, data.get(messageId));
 	}
 
 	private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
