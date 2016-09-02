@@ -1,5 +1,7 @@
 package com.arangodb;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
@@ -16,7 +18,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoCursor<T> implements Iterable<T> {
+public class ArangoCursor<T> implements Iterable<T>, Closeable {
 
 	private final ArangoDatabase db;
 	private final Class<T> type;
@@ -69,6 +71,12 @@ public class ArangoCursor<T> implements Iterable<T> {
 	@Override
 	public Iterator<T> iterator() {
 		return iterator;
+	}
+
+	@Override
+	public void close() throws IOException {
+		db.executeSync(Void.class,
+			new Request(db.name(), RequestType.DELETE, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)));
 	}
 
 }

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -347,6 +348,13 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(cursor, is(notNullValue()));
 		assertThat(cursor.getWarnings().isPresent(), is(true));
 		assertThat(cursor.getWarnings().get().isEmpty(), is(false));
+	}
+
+	@Test
+	public void queryClose() throws IOException {
+		final ArangoCursor<String> cursor = arangoDB.db().query("for i in _apps return i._id", null,
+			new AqlQueryOptions().batchSize(1), String.class);
+		cursor.close();
 	}
 
 	@Test
