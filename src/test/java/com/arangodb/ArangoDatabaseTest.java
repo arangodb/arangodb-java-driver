@@ -214,8 +214,8 @@ public class ArangoDatabaseTest extends BaseTest {
 			for (int i = 0; i < 5; i++, iterator.next()) {
 				assertThat(iterator.hasNext(), is(i != 5));
 			}
-			assertThat(cursor.getFullCount().isPresent(), is(true));
-			assertThat(cursor.getFullCount().get(), is(10L));
+			assertThat(cursor.getStats().isPresent(), is(true));
+			assertThat(cursor.getStats().get().getFullCount(), is(10L));
 
 		} finally {
 			db.collection(COLLECTION_NAME).drop();

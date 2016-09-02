@@ -1,7 +1,6 @@
 package com.arangodb.entity;
 
 import java.util.Collection;
-import java.util.Map;
 
 import com.arangodb.velocypack.VPackSlice;
 
@@ -20,30 +19,21 @@ public class CursorResult {
 			return code;
 		}
 
-		public void setCode(Integer code) {
-			this.code = code;
-		}
-
 		public String getMessage() {
 			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
 		}
 
 	}
 
 	public static class Extras {
-		private Map<String, Object> stats;
-
+		private Stats stats;
 		private Collection<Warning> warnings;
 
-		public Map<String, Object> getStats() {
+		public Stats getStats() {
 			return stats;
 		}
 
-		public void setStats(Map<String, Object> stats) {
+		public void setStats(final Stats stats) {
 			this.stats = stats;
 		}
 
@@ -51,9 +41,77 @@ public class CursorResult {
 			return warnings;
 		}
 
-		public void setWarnings(Collection<Warning> warnings) {
+		public void setWarnings(final Collection<Warning> warnings) {
 			this.warnings = warnings;
 		}
+
+	}
+
+	public static class Stats {
+		private Long writesExecuted;
+		private Long writesIgnored;
+		private Long scannedFull;
+		private Long scannedIndex;
+		private Long filtered;
+		private Long fullCount;
+		private Double executionTime;
+
+		public Long getWritesExecuted() {
+			return writesExecuted;
+		}
+
+		public void setWritesExecuted(final Long writesExecuted) {
+			this.writesExecuted = writesExecuted;
+		}
+
+		public Long getWritesIgnored() {
+			return writesIgnored;
+		}
+
+		public void setWritesIgnored(final Long writesIgnored) {
+			this.writesIgnored = writesIgnored;
+		}
+
+		public Long getScannedFull() {
+			return scannedFull;
+		}
+
+		public void setScannedFull(final Long scannedFull) {
+			this.scannedFull = scannedFull;
+		}
+
+		public Long getScannedIndex() {
+			return scannedIndex;
+		}
+
+		public void setScannedIndex(final Long scannedIndex) {
+			this.scannedIndex = scannedIndex;
+		}
+
+		public Long getFiltered() {
+			return filtered;
+		}
+
+		public void setFiltered(final Long filtered) {
+			this.filtered = filtered;
+		}
+
+		public Long getFullCount() {
+			return fullCount;
+		}
+
+		public void setFullCount(final Long fullCount) {
+			this.fullCount = fullCount;
+		}
+
+		public Double getExecutionTime() {
+			return executionTime;
+		}
+
+		public void setExecutionTime(final Double executionTime) {
+			this.executionTime = executionTime;
+		}
+
 	}
 
 	private String id;

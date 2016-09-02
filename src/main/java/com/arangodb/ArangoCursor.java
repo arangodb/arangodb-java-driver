@@ -2,11 +2,11 @@ package com.arangodb;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 
 import com.arangodb.entity.CursorResult;
 import com.arangodb.entity.CursorResult.Extras;
+import com.arangodb.entity.CursorResult.Stats;
 import com.arangodb.entity.CursorResult.Warning;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
@@ -49,19 +49,12 @@ public class ArangoCursor<T> implements Iterable<T> {
 		return count;
 	}
 
-	public Optional<Map<String, Object>> getStats() {
+	public Optional<Stats> getStats() {
 		return extra.map(e -> e.getStats());
 	}
 
 	public Optional<Collection<Warning>> getWarnings() {
 		return extra.map(e -> e.getWarnings());
-	}
-
-	public Optional<Long> getFullCount() {
-		return getStats().map(e -> {
-			final Object fullcount = e.get(ArangoDBConstants.FULLCOUNT);
-			return fullcount != null ? (long) fullcount : null;
-		});
 	}
 
 	public boolean isCached() {
