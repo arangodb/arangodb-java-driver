@@ -64,8 +64,8 @@ public class ArangoCursor<T> implements Iterable<T>, Closeable {
 	}
 
 	protected CursorResult executeNext() {
-		return db.executeSync(CursorResult.class,
-			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)));
+		return db.executeSync(new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
+			CursorResult.class);
 	}
 
 	@Override
@@ -75,8 +75,8 @@ public class ArangoCursor<T> implements Iterable<T>, Closeable {
 
 	@Override
 	public void close() throws IOException {
-		db.executeSync(Void.class,
-			new Request(db.name(), RequestType.DELETE, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)));
+		db.executeSync(new Request(db.name(), RequestType.DELETE, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
+			Void.class);
 	}
 
 }

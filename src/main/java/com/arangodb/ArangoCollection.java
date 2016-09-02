@@ -222,7 +222,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return executeSync(type, getDocumentRequest(key, options));
+		return executeSync(getDocumentRequest(key, options), type);
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final Class<T> type,
 		final DocumentReadOptions options) {
-		return executeAsync(type, getDocumentRequest(key, options));
+		return executeAsync(getDocumentRequest(key, options), type);
 	}
 
 	private Request getDocumentRequest(final String key, final DocumentReadOptions options) {
@@ -794,7 +794,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createHashIndex(final Collection<String> fields, final HashIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(IndexResult.class, createHashIndexRequest(fields, options));
+		return executeSync(createHashIndexRequest(fields, options), IndexResult.class);
 	}
 
 	/**
@@ -810,7 +810,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createHashIndexAsync(
 		final Collection<String> fields,
 		final HashIndexOptions options) {
-		return executeAsync(IndexResult.class, createHashIndexRequest(fields, options));
+		return executeAsync(createHashIndexRequest(fields, options), IndexResult.class);
 	}
 
 	private Request createHashIndexRequest(final Collection<String> fields, final HashIndexOptions options) {
@@ -835,7 +835,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(IndexResult.class, createSkiplistIndexRequest(fields, options));
+		return executeSync(createSkiplistIndexRequest(fields, options), IndexResult.class);
 	}
 
 	/**
@@ -852,7 +852,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createSkiplistIndexAsync(
 		final Collection<String> fields,
 		final SkiplistIndexOptions options) {
-		return executeAsync(IndexResult.class, createSkiplistIndexRequest(fields, options));
+		return executeAsync(createSkiplistIndexRequest(fields, options), IndexResult.class);
 	}
 
 	private Request createSkiplistIndexRequest(final Collection<String> fields, final SkiplistIndexOptions options) {
@@ -878,7 +878,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(IndexResult.class, createPersistentIndexRequest(fields, options));
+		return executeSync(createPersistentIndexRequest(fields, options), IndexResult.class);
 	}
 
 	/**
@@ -895,7 +895,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createPersistentIndexAsync(
 		final Collection<String> fields,
 		final PersistentIndexOptions options) {
-		return executeAsync(IndexResult.class, createPersistentIndexRequest(fields, options));
+		return executeAsync(createPersistentIndexRequest(fields, options), IndexResult.class);
 	}
 
 	private Request createPersistentIndexRequest(
@@ -923,7 +923,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(IndexResult.class, createGeoIndexRequest(fields, options));
+		return executeSync(createGeoIndexRequest(fields, options), IndexResult.class);
 	}
 
 	/**
@@ -940,7 +940,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createGeoIndexAsync(
 		final Collection<String> fields,
 		final GeoIndexOptions options) {
-		return executeAsync(IndexResult.class, createGeoIndexRequest(fields, options));
+		return executeAsync(createGeoIndexRequest(fields, options), IndexResult.class);
 	}
 
 	private Request createGeoIndexRequest(final Collection<String> fields, final GeoIndexOptions options) {
@@ -965,7 +965,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(IndexResult.class, createFulltextIndexRequest(fields, options));
+		return executeSync(createFulltextIndexRequest(fields, options), IndexResult.class);
 	}
 
 	/**
@@ -982,7 +982,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createFulltextIndexAsync(
 		final Collection<String> fields,
 		final FulltextIndexOptions options) {
-		return executeAsync(IndexResult.class, createFulltextIndexRequest(fields, options));
+		return executeAsync(createFulltextIndexRequest(fields, options), IndexResult.class);
 	}
 
 	private Request createFulltextIndexRequest(final Collection<String> fields, final FulltextIndexOptions options) {
@@ -1041,7 +1041,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult truncate() throws ArangoDBException {
-		return executeSync(CollectionResult.class, truncateRequest());
+		return executeSync(truncateRequest(), CollectionResult.class);
 	}
 
 	/**
@@ -1052,7 +1052,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> truncateAsync() {
-		return executeAsync(CollectionResult.class, truncateRequest());
+		return executeAsync(truncateRequest(), CollectionResult.class);
 	}
 
 	private Request truncateRequest() {
@@ -1070,7 +1070,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionPropertiesResult count() throws ArangoDBException {
-		return executeSync(CollectionPropertiesResult.class, countRequest());
+		return executeSync(countRequest(), CollectionPropertiesResult.class);
 	}
 
 	/**
@@ -1082,7 +1082,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection, including the number of documents
 	 */
 	public CompletableFuture<CollectionPropertiesResult> countAsync() {
-		return executeAsync(CollectionPropertiesResult.class, countRequest());
+		return executeAsync(countRequest(), CollectionPropertiesResult.class);
 	}
 
 	private Request countRequest() {
@@ -1098,7 +1098,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void drop() throws ArangoDBException {
-		executeSync(Void.class, dropRequest());
+		executeSync(dropRequest(), Void.class);
 	}
 
 	/**
@@ -1109,7 +1109,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return void
 	 */
 	public CompletableFuture<Void> dropAsync() {
-		return executeAsync(Void.class, dropRequest());
+		return executeAsync(dropRequest(), Void.class);
 	}
 
 	private Request dropRequest() {
@@ -1126,7 +1126,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult load() throws ArangoDBException {
-		return executeSync(CollectionResult.class, loadRequest());
+		return executeSync(loadRequest(), CollectionResult.class);
 	}
 
 	/**
@@ -1137,7 +1137,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> loadAsync() {
-		return executeAsync(CollectionResult.class, loadRequest());
+		return executeAsync(loadRequest(), CollectionResult.class);
 	}
 
 	private Request loadRequest() {
@@ -1155,7 +1155,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult unload() throws ArangoDBException {
-		return executeSync(CollectionResult.class, unloadRequest());
+		return executeSync(unloadRequest(), CollectionResult.class);
 	}
 
 	/**
@@ -1167,7 +1167,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> unloadAsync() {
-		return executeAsync(CollectionResult.class, unloadRequest());
+		return executeAsync(unloadRequest(), CollectionResult.class);
 	}
 
 	private Request unloadRequest() {
@@ -1185,7 +1185,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult getInfo() throws ArangoDBException {
-		return executeSync(CollectionResult.class, getInfoRequest());
+		return executeSync(getInfoRequest(), CollectionResult.class);
 	}
 
 	/**
@@ -1197,7 +1197,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> getInfoAsync() {
-		return executeAsync(CollectionResult.class, getInfoRequest());
+		return executeAsync(getInfoRequest(), CollectionResult.class);
 	}
 
 	private Request getInfoRequest() {
@@ -1214,7 +1214,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionPropertiesResult getProperties() throws ArangoDBException {
-		return executeSync(CollectionPropertiesResult.class, getPropertiesRequest());
+		return executeSync(getPropertiesRequest(), CollectionPropertiesResult.class);
 	}
 
 	/**
@@ -1226,7 +1226,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return properties of the collection
 	 */
 	public CompletableFuture<CollectionPropertiesResult> getPropertiesAsync() {
-		return executeAsync(CollectionPropertiesResult.class, getPropertiesRequest());
+		return executeAsync(getPropertiesRequest(), CollectionPropertiesResult.class);
 	}
 
 	private Request getPropertiesRequest() {
@@ -1247,7 +1247,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public CollectionPropertiesResult changeProperties(final CollectionPropertiesOptions options)
 			throws ArangoDBException {
-		return executeSync(CollectionPropertiesResult.class, changePropertiesRequest(options));
+		return executeSync(changePropertiesRequest(options), CollectionPropertiesResult.class);
 	}
 
 	/**
@@ -1262,7 +1262,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public CompletableFuture<CollectionPropertiesResult> changePropertiesAsync(
 		final CollectionPropertiesOptions options) {
-		return executeAsync(CollectionPropertiesResult.class, changePropertiesRequest(options));
+		return executeAsync(changePropertiesRequest(options), CollectionPropertiesResult.class);
 	}
 
 	private Request changePropertiesRequest(final CollectionPropertiesOptions options) {
@@ -1284,7 +1284,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult rename(final String newName) throws ArangoDBException {
-		return executeSync(CollectionResult.class, renameRequest(newName));
+		return executeSync(renameRequest(newName), CollectionResult.class);
 	}
 
 	/**
@@ -1297,7 +1297,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> renameAsync(final String newName) {
-		return executeAsync(CollectionResult.class, renameRequest(newName));
+		return executeAsync(renameRequest(newName), CollectionResult.class);
 	}
 
 	private Request renameRequest(final String newName) {
@@ -1317,7 +1317,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionRevisionResult getRevision() throws ArangoDBException {
-		return executeSync(CollectionRevisionResult.class, getRevisionRequest());
+		return executeSync(getRevisionRequest(), CollectionRevisionResult.class);
 	}
 
 	/**
@@ -1328,7 +1328,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection, including the collections revision
 	 */
 	public CompletableFuture<CollectionRevisionResult> getRevisionAsync() {
-		return executeAsync(CollectionRevisionResult.class, getRevisionRequest());
+		return executeAsync(getRevisionRequest(), CollectionRevisionResult.class);
 	}
 
 	private Request getRevisionRequest() {

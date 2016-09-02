@@ -73,7 +73,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public CollectionResult createCollection(final String name, final CollectionCreateOptions options)
 			throws ArangoDBException {
-		return executeSync(CollectionResult.class, createCollectionRequest(name, options));
+		return executeSync(createCollectionRequest(name, options), CollectionResult.class);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	public CompletableFuture<CollectionResult> createCollectionAsync(
 		final String name,
 		final CollectionCreateOptions options) {
-		return executeAsync(CollectionResult.class, createCollectionRequest(name, options));
+		return executeAsync(createCollectionRequest(name, options), CollectionResult.class);
 	}
 
 	private Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
@@ -155,7 +155,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public IndexResult getIndex(final String id) throws ArangoDBException {
-		return executeSync(IndexResult.class, getIndexRequest(id));
+		return executeSync(getIndexRequest(id), IndexResult.class);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the index
 	 */
 	public CompletableFuture<IndexResult> getIndexAsync(final String id) {
-		return executeAsync(IndexResult.class, getIndexRequest(id));
+		return executeAsync(getIndexRequest(id), IndexResult.class);
 	}
 
 	private Request getIndexRequest(final String id) {
@@ -251,7 +251,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void grandAccess(final String user) throws ArangoDBException {
-		executeSync(Void.class, grandAccessRequest(user));
+		executeSync(grandAccessRequest(user), Void.class);
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return void
 	 */
 	public CompletableFuture<Void> grandAccessAync(final String user) {
-		return executeAsync(Void.class, grandAccessRequest(user));
+		return executeAsync(grandAccessRequest(user), Void.class);
 	}
 
 	private Request grandAccessRequest(final String user) {
@@ -287,7 +287,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void revokeAccess(final String user) throws ArangoDBException {
-		executeSync(Void.class, revokeAccessRequest(user));
+		executeSync(revokeAccessRequest(user), Void.class);
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return void
 	 */
 	public CompletableFuture<Void> revokeAccessAsync(final String user) {
-		return executeAsync(Void.class, revokeAccessRequest(user));
+		return executeAsync(revokeAccessRequest(user), Void.class);
 	}
 
 	private Request revokeAccessRequest(final String user) {
@@ -359,7 +359,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
-		final CompletableFuture<CursorResult> execution = executeAsync(CursorResult.class, request);
+		final CompletableFuture<CursorResult> execution = executeAsync(request, CursorResult.class);
 		return execution.thenApply(result -> {
 			return new ArangoCursor<>(this, type, result);
 		});

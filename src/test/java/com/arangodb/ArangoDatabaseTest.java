@@ -355,6 +355,15 @@ public class ArangoDatabaseTest extends BaseTest {
 		final ArangoCursor<String> cursor = arangoDB.db().query("for i in _apps return i._id", null,
 			new AqlQueryOptions().batchSize(1), String.class);
 		cursor.close();
+		int count = 0;
+		try {
+			for (final Iterator<String> iterator = cursor.iterator(); iterator.hasNext(); iterator.next(), count++) {
+			}
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(count, is(1));
+		}
+
 	}
 
 	@Test

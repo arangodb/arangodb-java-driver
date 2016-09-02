@@ -105,7 +105,7 @@ abstract class ArangoExecuteable {
 		}
 	}
 
-	protected <T> CompletableFuture<T> executeAsync(final Type type, final Request request) {
+	protected <T> CompletableFuture<T> executeAsync(final Request request, final Type type) {
 		return executeAsync(request, (response) -> {
 			return createResult(vpacker, vpackParser, type, response);
 		});
@@ -131,7 +131,7 @@ abstract class ArangoExecuteable {
 		return result;
 	}
 
-	protected <T> T executeSync(final Type type, final Request request) throws ArangoDBException {
+	protected <T> T executeSync(final Request request, final Type type) throws ArangoDBException {
 		return executeSync(request, (response) -> {
 			return createResult(vpacker, vpackParser, type, response);
 		});
