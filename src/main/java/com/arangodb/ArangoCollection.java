@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 import com.arangodb.entity.CollectionPropertiesResult;
 import com.arangodb.entity.CollectionResult;
@@ -18,6 +19,7 @@ import com.arangodb.entity.DocumentUpdateResult;
 import com.arangodb.entity.IndexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
+import com.arangodb.internal.net.Response;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
@@ -80,7 +82,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public <T> DocumentCreateResult<T> insertDocument(final T value, final DocumentCreateOptions options)
 			throws ArangoDBException {
-		return unwrap(insertDocumentAsync(value, options));
+		return executeSync(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value));
 	}
 
 	/**
@@ -98,13 +100,21 @@ public class ArangoCollection extends ArangoExecuteable {
 	public <T> CompletableFuture<DocumentCreateResult<T>> insertDocumentAsync(
 		final T value,
 		final DocumentCreateOptions options) {
+		return executeAsync(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value));
+	}
+
+	private <T> Request insertDocumentRequest(final T value, final DocumentCreateOptions options) {
 		final Request request = new Request(db.name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.setBody(serialize(value));
-		return execute(request, response -> {
+		return request;
+	}
+
+	private <T> ResponseDeserializer<DocumentCreateResult<T>> insertDocumentResponseDeserializer(final T value) {
+		return response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentCreateResult<T> doc = deserialize(body, DocumentCreateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
@@ -117,7 +127,7 @@ public class ArangoCollection extends ArangoExecuteable {
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
 			return doc;
-		});
+		};
 	}
 
 	/**
@@ -136,7 +146,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	public <T> Collection<DocumentCreateResult<T>> insertDocuments(
 		final Collection<T> values,
 		final DocumentCreateOptions options) throws ArangoDBException {
-		return unwrap(insertDocumentsAsync(values, options));
+		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
+		return executeSync(insertDocumentsRequest(values, params), insertDocumentsResponseDeserializer(values, params));
 	}
 
 	/**
@@ -151,17 +162,28 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertDocumentsAsync(
 		final Collection<T> values,
 		final DocumentCreateOptions options) {
+		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
+		return executeAsync(insertDocumentsRequest(values, params),
+			insertDocumentsResponseDeserializer(values, params));
+	}
+
+	private <T> Request insertDocumentsRequest(final Collection<T> values, final DocumentCreateOptions params) {
 		final Request request = new Request(db.name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
-		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.setBody(serialize(values));
-		return execute(request, response -> {
+		return request;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> ResponseDeserializer<Collection<DocumentCreateResult<T>>> insertDocumentsResponseDeserializer(
+		final Collection<T> values,
+		final DocumentCreateOptions params) {
+		return response -> {
 			Class<T> type = null;
 			if (params.getReturnNew() != null && params.getReturnNew()) {
 				final Optional<T> first = values.stream().findFirst();
@@ -181,7 +203,7 @@ public class ArangoCollection extends ArangoExecuteable {
 				docs.add(doc);
 			}
 			return docs;
-		});
+		};
 	}
 
 	/**
@@ -200,7 +222,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return unwrap(getDocumentAsync(key, type, options));
+		return executeSync(type, getDocumentRequest(key, options));
 	}
 
 	/**
@@ -220,12 +242,16 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final Class<T> type,
 		final DocumentReadOptions options) {
+		return executeAsync(type, getDocumentRequest(key, options));
+	}
+
+	private Request getDocumentRequest(final String key, final DocumentReadOptions options) {
 		final Request request = new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return execute(type, request);
+		return request;
 	}
 
 	/**
@@ -247,7 +273,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final T value,
 		final DocumentReplaceOptions options) throws ArangoDBException {
-		return unwrap(replaceDocumentAsync(key, value, options));
+		return executeSync(replaceDocumentRequest(key, value, options), replaceDocumentResponseDeserializer(value));
 	}
 
 	/**
@@ -268,6 +294,10 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final T value,
 		final DocumentReplaceOptions options) {
+		return executeAsync(replaceDocumentRequest(key, value, options), replaceDocumentResponseDeserializer(value));
+	}
+
+	private <T> Request replaceDocumentRequest(final String key, final T value, final DocumentReplaceOptions options) {
 		final Request request = new Request(db.name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
@@ -277,7 +307,11 @@ public class ArangoCollection extends ArangoExecuteable {
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value));
-		return execute(request, response -> {
+		return request;
+	}
+
+	private <T> ResponseDeserializer<DocumentUpdateResult<T>> replaceDocumentResponseDeserializer(final T value) {
+		return response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
@@ -292,7 +326,7 @@ public class ArangoCollection extends ArangoExecuteable {
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
 			return doc;
-		});
+		};
 	}
 
 	/**
@@ -311,7 +345,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	public <T> Collection<DocumentUpdateResult<T>> replaceDocuments(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) throws ArangoDBException {
-		return unwrap(replaceDocumentsAsync(values, options));
+		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
+		return executeSync(replaceDocumentsRequest(values, params),
+			replaceDocumentsResponseDeserializer(values, params));
 	}
 
 	/**
@@ -326,20 +362,31 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceDocumentsAsync(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) {
-		final Request request = new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
+		return executeAsync(replaceDocumentsRequest(values, params),
+			replaceDocumentsResponseDeserializer(values, params));
+	}
+
+	private <T> Request replaceDocumentsRequest(final Collection<T> values, final DocumentReplaceOptions params) {
+		final Request request;
+		request = new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
 		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(values));
-		return execute(request, response -> {
+		return request;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> ResponseDeserializer<Collection<DocumentUpdateResult<T>>> replaceDocumentsResponseDeserializer(
+		final Collection<T> values,
+		final DocumentReplaceOptions params) {
+		return response -> {
 			Class<T> type = null;
 			if ((params.getReturnNew() != null && params.getReturnNew())
 					|| (params.getReturnOld() != null && params.getReturnOld())) {
@@ -364,7 +411,7 @@ public class ArangoCollection extends ArangoExecuteable {
 				docs.add(doc);
 			}
 			return docs;
-		});
+		};
 	}
 
 	/**
@@ -387,7 +434,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final T value,
 		final DocumentUpdateOptions options) throws ArangoDBException {
-		return unwrap(updateDocumentAsync(key, value, options));
+		return executeSync(updateDocumentRequest(key, value, options), updateDocumentResponseDeserializer(value));
 	}
 
 	/**
@@ -409,7 +456,12 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final T value,
 		final DocumentUpdateOptions options) {
-		final Request request = new Request(db.name(), RequestType.PATCH,
+		return executeAsync(updateDocumentRequest(key, value, options), updateDocumentResponseDeserializer(value));
+	}
+
+	private <T> Request updateDocumentRequest(final String key, final T value, final DocumentUpdateOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.PATCH,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
 		final Boolean keepNull = params.getKeepNull();
@@ -421,7 +473,11 @@ public class ArangoCollection extends ArangoExecuteable {
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value, true));
-		return execute(request, response -> {
+		return request;
+	}
+
+	private <T> ResponseDeserializer<DocumentUpdateResult<T>> updateDocumentResponseDeserializer(final T value) {
+		return response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
@@ -433,7 +489,7 @@ public class ArangoCollection extends ArangoExecuteable {
 				doc.setOld(deserialize(oldDoc, value.getClass()));
 			}
 			return doc;
-		});
+		};
 	}
 
 	/**
@@ -454,7 +510,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	public <T> Collection<DocumentUpdateResult<T>> updateDocuments(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) throws ArangoDBException {
-		return unwrap(updateDocumentsAsync(values, options));
+		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
+		return executeSync(updateDocumentsRequest(values, params), updateDocumentsResponseDeserializer(values, params));
 	}
 
 	/**
@@ -471,13 +528,17 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateDocumentsAsync(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) {
-		final Request request = new Request(db.name(), RequestType.PATCH,
-				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
+		return executeAsync(updateDocumentsRequest(values, params),
+			updateDocumentsResponseDeserializer(values, params));
+	}
+
+	private <T> Request updateDocumentsRequest(final Collection<T> values, final DocumentUpdateOptions params) {
+		final Request request;
+		request = new Request(db.name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final Boolean keepNull = params.getKeepNull();
 		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
 		request.putParameter(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
@@ -487,7 +548,14 @@ public class ArangoCollection extends ArangoExecuteable {
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(values, true));
-		return execute(request, response -> {
+		return request;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> ResponseDeserializer<Collection<DocumentUpdateResult<T>>> updateDocumentsResponseDeserializer(
+		final Collection<T> values,
+		final DocumentUpdateOptions params) {
+		return response -> {
 			Class<T> type = null;
 			if ((params.getReturnNew() != null && params.getReturnNew())
 					|| (params.getReturnOld() != null && params.getReturnOld())) {
@@ -512,7 +580,7 @@ public class ArangoCollection extends ArangoExecuteable {
 				docs.add(doc);
 			}
 			return docs;
-		});
+		};
 	}
 
 	/**
@@ -534,7 +602,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
-		return unwrap(deleteDocumentAsync(key, type, options));
+		return executeSync(deleteDocumentRequest(key, options), deleteDocumentResponseDeserializer(type));
 	}
 
 	/**
@@ -555,13 +623,22 @@ public class ArangoCollection extends ArangoExecuteable {
 		final String key,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
-		final Request request = new Request(db.name(), RequestType.DELETE,
+		return executeAsync(deleteDocumentRequest(key, options), deleteDocumentResponseDeserializer(type));
+	}
+
+	private Request deleteDocumentRequest(final String key, final DocumentDeleteOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.DELETE,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return execute(request, response -> {
+		return request;
+	}
+
+	private <T> ResponseDeserializer<DocumentDeleteResult<T>> deleteDocumentResponseDeserializer(final Class<T> type) {
+		return response -> {
 			final VPackSlice body = response.getBody().get();
 			final DocumentDeleteResult<T> doc = deserialize(body, DocumentDeleteResult.class);
 			final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
@@ -569,7 +646,7 @@ public class ArangoCollection extends ArangoExecuteable {
 				doc.setOld(deserialize(oldDoc, type));
 			}
 			return doc;
-		});
+		};
 	}
 
 	/**
@@ -592,7 +669,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
-		return unwrap(deleteDocumentsAsync(keys, type, options));
+		return executeSync(deleteDocumentsRequest(keys, options), deleteDocumentsResponseDeserializer(type));
 	}
 
 	/**
@@ -614,13 +691,22 @@ public class ArangoCollection extends ArangoExecuteable {
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
-		final Request request = new Request(db.name(), RequestType.DELETE,
-				createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
+		return executeAsync(deleteDocumentsRequest(keys, options), deleteDocumentsResponseDeserializer(type));
+	}
+
+	private Request deleteDocumentsRequest(final Collection<String> keys, final DocumentDeleteOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.setBody(serialize(keys));
-		return execute(request, response -> {
+		return request;
+	}
+
+	private <T> ResponseDeserializer<Collection<DocumentDeleteResult<T>>> deleteDocumentsResponseDeserializer(
+		final Class<T> type) {
+		return response -> {
 			final Collection<DocumentDeleteResult<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
@@ -633,7 +719,7 @@ public class ArangoCollection extends ArangoExecuteable {
 				docs.add(doc);
 			}
 			return docs;
-		});
+		};
 	}
 
 	/**
@@ -666,13 +752,25 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return true if the document was found, otherwise false
 	 */
 	public CompletableFuture<Boolean> documentExistsAsync(final String key, final DocumentExistsOptions options) {
-		final Request request = new Request(db.name(), RequestType.HEAD,
+		final CompletableFuture<Boolean> result = new CompletableFuture<>();
+		communication.executeAsync(documentExistsRequest(key, options))
+				.whenComplete(documentExistsResponseConsumer(result));
+		return result;
+	}
+
+	private Request documentExistsRequest(final String key, final DocumentExistsOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.HEAD,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentExistsOptions params = (options != null ? options : new DocumentExistsOptions());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		final CompletableFuture<Boolean> result = new CompletableFuture<>();
-		communication.execute(request).whenComplete((response, ex) -> {
+		return request;
+	}
+
+	private BiConsumer<? super Response, ? super Throwable> documentExistsResponseConsumer(
+		final CompletableFuture<Boolean> result) {
+		return (response, ex) -> {
 			if (response != null) {
 				result.complete(true);
 			} else if (ex != null) {
@@ -680,8 +778,7 @@ public class ArangoCollection extends ArangoExecuteable {
 			} else {
 				result.cancel(true);
 			}
-		});
-		return result;
+		};
 	}
 
 	/**
@@ -697,7 +794,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createHashIndex(final Collection<String> fields, final HashIndexOptions options)
 			throws ArangoDBException {
-		return unwrap(createHashIndexAsync(fields, options));
+		return executeSync(IndexResult.class, createHashIndexRequest(fields, options));
 	}
 
 	/**
@@ -713,10 +810,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createHashIndexAsync(
 		final Collection<String> fields,
 		final HashIndexOptions options) {
-		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		return executeAsync(IndexResult.class, createHashIndexRequest(fields, options));
+	}
+
+	private Request createHashIndexRequest(final Collection<String> fields, final HashIndexOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new HashIndexOptions(), fields)));
-		return execute(IndexResult.class, request);
+		return request;
 	}
 
 	/**
@@ -733,7 +835,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
 			throws ArangoDBException {
-		return unwrap(createSkiplistIndexAsync(fields, options));
+		return executeSync(IndexResult.class, createSkiplistIndexRequest(fields, options));
 	}
 
 	/**
@@ -750,11 +852,16 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createSkiplistIndexAsync(
 		final Collection<String> fields,
 		final SkiplistIndexOptions options) {
-		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		return executeAsync(IndexResult.class, createSkiplistIndexRequest(fields, options));
+	}
+
+	private Request createSkiplistIndexRequest(final Collection<String> fields, final SkiplistIndexOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new SkiplistIndexOptions(), fields)));
-		return execute(IndexResult.class, request);
+		return request;
 	}
 
 	/**
@@ -771,7 +878,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
 			throws ArangoDBException {
-		return unwrap(createPersistentIndexAsync(fields, options));
+		return executeSync(IndexResult.class, createPersistentIndexRequest(fields, options));
 	}
 
 	/**
@@ -788,11 +895,18 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createPersistentIndexAsync(
 		final Collection<String> fields,
 		final PersistentIndexOptions options) {
-		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		return executeAsync(IndexResult.class, createPersistentIndexRequest(fields, options));
+	}
+
+	private Request createPersistentIndexRequest(
+		final Collection<String> fields,
+		final PersistentIndexOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new PersistentIndexOptions(), fields)));
-		return execute(IndexResult.class, request);
+		return request;
 	}
 
 	/**
@@ -809,7 +923,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
 			throws ArangoDBException {
-		return unwrap(createGeoIndexAsync(fields, options));
+		return executeSync(IndexResult.class, createGeoIndexRequest(fields, options));
 	}
 
 	/**
@@ -826,10 +940,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createGeoIndexAsync(
 		final Collection<String> fields,
 		final GeoIndexOptions options) {
-		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		return executeAsync(IndexResult.class, createGeoIndexRequest(fields, options));
+	}
+
+	private Request createGeoIndexRequest(final Collection<String> fields, final GeoIndexOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new GeoIndexOptions(), fields)));
-		return execute(IndexResult.class, request);
+		return request;
 	}
 
 	/**
@@ -846,7 +965,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public IndexResult createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
 			throws ArangoDBException {
-		return unwrap(createFulltextIndexAsync(fields, options));
+		return executeSync(IndexResult.class, createFulltextIndexRequest(fields, options));
 	}
 
 	/**
@@ -863,11 +982,16 @@ public class ArangoCollection extends ArangoExecuteable {
 	public CompletableFuture<IndexResult> createFulltextIndexAsync(
 		final Collection<String> fields,
 		final FulltextIndexOptions options) {
-		final Request request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		return executeAsync(IndexResult.class, createFulltextIndexRequest(fields, options));
+	}
+
+	private Request createFulltextIndexRequest(final Collection<String> fields, final FulltextIndexOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
-		return execute(IndexResult.class, request);
+		return request;
 	}
 
 	/**
@@ -880,7 +1004,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<IndexResult> getIndexes() throws ArangoDBException {
-		return unwrap(getIndexesAsync());
+		return executeSync(getIndexesRequest(), getIndexesResponseDeserializer());
 	}
 
 	/**
@@ -892,11 +1016,20 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the indexes
 	 */
 	public CompletableFuture<Collection<IndexResult>> getIndexesAsync() {
-		final Request request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
+		return executeAsync(getIndexesRequest(), getIndexesResponseDeserializer());
+	}
+
+	private Request getIndexesRequest() {
+		final Request request;
+		request = new Request(db.name(), RequestType.GET, ArangoDBConstants.PATH_API_INDEX);
 		request.putParameter(ArangoDBConstants.COLLECTION, name);
-		return execute(request, response -> deserialize(response.getBody().get().get(ArangoDBConstants.INDEXES),
+		return request;
+	}
+
+	private ResponseDeserializer<Collection<IndexResult>> getIndexesResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.INDEXES),
 			new Type<Collection<IndexResult>>() {
-			}.getType()));
+			}.getType());
 	}
 
 	/**
@@ -908,7 +1041,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult truncate() throws ArangoDBException {
-		return unwrap(truncateAsync());
+		return executeSync(CollectionResult.class, truncateRequest());
 	}
 
 	/**
@@ -919,8 +1052,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> truncateAsync() {
-		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.TRUNCATE)));
+		return executeAsync(CollectionResult.class, truncateRequest());
+	}
+
+	private Request truncateRequest() {
+		return new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.TRUNCATE));
 	}
 
 	/**
@@ -933,7 +1070,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionPropertiesResult count() throws ArangoDBException {
-		return unwrap(countAsync());
+		return executeSync(CollectionPropertiesResult.class, countRequest());
 	}
 
 	/**
@@ -945,8 +1082,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection, including the number of documents
 	 */
 	public CompletableFuture<CollectionPropertiesResult> countAsync() {
-		return execute(CollectionPropertiesResult.class, new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.COUNT)));
+		return executeAsync(CollectionPropertiesResult.class, countRequest());
+	}
+
+	private Request countRequest() {
+		return new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.COUNT));
 	}
 
 	/**
@@ -957,7 +1098,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void drop() throws ArangoDBException {
-		unwrap(dropAsync());
+		executeSync(Void.class, dropRequest());
 	}
 
 	/**
@@ -968,9 +1109,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return void
 	 */
 	public CompletableFuture<Void> dropAsync() {
+		return executeAsync(Void.class, dropRequest());
+	}
+
+	private Request dropRequest() {
 		validateCollectionName(name);
-		return execute(Void.class,
-			new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name)));
+		return new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 	}
 
 	/**
@@ -982,7 +1126,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult load() throws ArangoDBException {
-		return unwrap(loadAsync());
+		return executeSync(CollectionResult.class, loadRequest());
 	}
 
 	/**
@@ -993,8 +1137,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> loadAsync() {
-		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.LOAD)));
+		return executeAsync(CollectionResult.class, loadRequest());
+	}
+
+	private Request loadRequest() {
+		return new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.LOAD));
 	}
 
 	/**
@@ -1007,7 +1155,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult unload() throws ArangoDBException {
-		return unwrap(unloadAsync());
+		return executeSync(CollectionResult.class, unloadRequest());
 	}
 
 	/**
@@ -1019,8 +1167,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> unloadAsync() {
-		return execute(CollectionResult.class, new Request(db.name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.UNLOAD)));
+		return executeAsync(CollectionResult.class, unloadRequest());
+	}
+
+	private Request unloadRequest() {
+		return new Request(db.name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.UNLOAD));
 	}
 
 	/**
@@ -1033,7 +1185,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult getInfo() throws ArangoDBException {
-		return unwrap(getInfoAsync());
+		return executeSync(CollectionResult.class, getInfoRequest());
 	}
 
 	/**
@@ -1045,9 +1197,11 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> getInfoAsync() {
-		final Request request = new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
-		return execute(CollectionResult.class, request);
+		return executeAsync(CollectionResult.class, getInfoRequest());
+	}
+
+	private Request getInfoRequest() {
+		return new Request(db.name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 	}
 
 	/**
@@ -1060,7 +1214,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionPropertiesResult getProperties() throws ArangoDBException {
-		return unwrap(getPropertiesAsync());
+		return executeSync(CollectionPropertiesResult.class, getPropertiesRequest());
 	}
 
 	/**
@@ -1072,8 +1226,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return properties of the collection
 	 */
 	public CompletableFuture<CollectionPropertiesResult> getPropertiesAsync() {
-		return execute(CollectionPropertiesResult.class, new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.PROPERTIES)));
+		return executeAsync(CollectionPropertiesResult.class, getPropertiesRequest());
+	}
+
+	private Request getPropertiesRequest() {
+		return new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.PROPERTIES));
 	}
 
 	/**
@@ -1089,7 +1247,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public CollectionPropertiesResult changeProperties(final CollectionPropertiesOptions options)
 			throws ArangoDBException {
-		return unwrap(changePropertiesAsync(options));
+		return executeSync(CollectionPropertiesResult.class, changePropertiesRequest(options));
 	}
 
 	/**
@@ -1104,10 +1262,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public CompletableFuture<CollectionPropertiesResult> changePropertiesAsync(
 		final CollectionPropertiesOptions options) {
-		final Request request = new Request(db.name(), RequestType.PUT,
+		return executeAsync(CollectionPropertiesResult.class, changePropertiesRequest(options));
+	}
+
+	private Request changePropertiesRequest(final CollectionPropertiesOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.PROPERTIES));
 		request.setBody(serialize(options != null ? options : new CollectionPropertiesOptions()));
-		return execute(CollectionPropertiesResult.class, request);
+		return request;
 	}
 
 	/**
@@ -1121,7 +1284,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionResult rename(final String newName) throws ArangoDBException {
-		return unwrap(renameAsync(newName));
+		return executeSync(CollectionResult.class, renameRequest(newName));
 	}
 
 	/**
@@ -1134,10 +1297,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 */
 	public CompletableFuture<CollectionResult> renameAsync(final String newName) {
-		final Request request = new Request(db.name(), RequestType.PUT,
+		return executeAsync(CollectionResult.class, renameRequest(newName));
+	}
+
+	private Request renameRequest(final String newName) {
+		final Request request;
+		request = new Request(db.name(), RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.RENAME));
 		request.setBody(serialize(OptionsBuilder.build(new CollectionRenameOptions(), newName)));
-		return execute(CollectionResult.class, request);
+		return request;
 	}
 
 	/**
@@ -1149,7 +1317,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionRevisionResult getRevision() throws ArangoDBException {
-		return unwrap(getRevisionAsync());
+		return executeSync(CollectionRevisionResult.class, getRevisionRequest());
 	}
 
 	/**
@@ -1160,8 +1328,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection, including the collections revision
 	 */
 	public CompletableFuture<CollectionRevisionResult> getRevisionAsync() {
-		return execute(CollectionRevisionResult.class, new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.REVISION)));
+		return executeAsync(CollectionRevisionResult.class, getRevisionRequest());
+	}
+
+	private Request getRevisionRequest() {
+		return new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.REVISION));
 	}
 
 }

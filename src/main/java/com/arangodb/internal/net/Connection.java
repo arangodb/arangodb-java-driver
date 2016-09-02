@@ -1,18 +1,15 @@
 package com.arangodb.internal.net;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.net.SocketFactory;
 
@@ -22,64 +19,34 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
-import com.arangodb.internal.net.velocystream.ChunkStore;
 import com.arangodb.internal.net.velocystream.Message;
-import com.arangodb.internal.net.velocystream.MessageStore;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class Connection {
+public abstract class Connection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 
-	private final MessageStore messageStore;
-	private Optional<String> host = Optional.empty();
-	private Optional<Integer> port = Optional.empty();
-	private Optional<Integer> timeout = Optional.empty();
-	private Socket socket;
-	private OutputStream outputStream;
-	private InputStream inputStream;
-	private ExecutorService executor;
+	protected Optional<String> host = Optional.empty();
+	protected Optional<Integer> port = Optional.empty();
+	protected Optional<Integer> timeout = Optional.empty();
 
-	public static class Builder {
-		private final MessageStore messageStore;
-		private String host;
-		private Integer port;
-		private Integer timeout;
+	protected Socket socket;
+	protected OutputStream outputStream;
+	protected InputStream inputStream;
 
-		public Builder(final MessageStore messageStore) {
-			super();
-			this.messageStore = messageStore;
-		}
-
-		public Builder host(final String host) {
-			this.host = host;
-			return this;
-		}
-
-		public Builder port(final int port) {
-			this.port = port;
-			return this;
-		}
-
-		public Builder timeout(final Integer timeout) {
-			this.timeout = timeout;
-			return this;
-		}
-
-		public Connection build() {
-			return new Connection(this);
-		}
+	protected Connection(final String host, final Integer port, final Integer timeout) {
+		super();
+		this.host = Optional.of(host);
+		this.port = Optional.of(port);
+		this.timeout = Optional.ofNullable(timeout);
 	}
 
-	private Connection(final Builder builder) {
-		super();
-		this.messageStore = builder.messageStore;
-		this.host = Optional.of(builder.host);
-		this.port = Optional.of(builder.port);
-		this.timeout = Optional.ofNullable(builder.timeout);
+	public synchronized boolean isOpen() {
+		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
 	public synchronized void open() throws IOException {
@@ -99,39 +66,13 @@ public class Connection {
 			LOGGER.debug(String.format("Connected to %s", socket));
 		}
 
-		outputStream = socket.getOutputStream();
+		outputStream = new BufferedOutputStream(socket.getOutputStream());
 		inputStream = socket.getInputStream();
-		executor = Executors.newSingleThreadExecutor();
-		executor.submit(() -> {
-			final ChunkStore chunkStore = new ChunkStore(messageStore);
-			while (true) {
-				if (!isOpen()) {
-					messageStore.clear(new IOException("The socket is closed."));
-					close();
-					break;
-				}
-				try {
-					chunkStore.storeChunk(read());
-				} catch (final Exception e) {
-					messageStore.clear(e);
-					close();
-					break;
-				}
-			}
-		});
-	}
-
-	public synchronized boolean isOpen() {
-		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
 	public synchronized void close() {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Close connection %s", socket));
-		}
-		messageStore.clear();
-		if (executor != null && !executor.isShutdown()) {
-			executor.shutdown();
 		}
 		if (socket != null) {
 			try {
@@ -142,39 +83,64 @@ public class Connection {
 		}
 	}
 
-	public synchronized void write(
-		final long messageId,
-		final Collection<Chunk> chunks,
-		final CompletableFuture<Message> future) {
-		messageStore.storeMessage(messageId, future);
+	protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) {
 		chunks.stream().forEach(chunk -> {
 			try {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
 						chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
 				}
-				outputStream.write(chunk.toByteBuffer().array());
+				writeChunkHead(chunk);
+				final int contentOffset = chunk.getContentOffset();
+				final int contentLength = chunk.getContentLength();
+				final VPackSlice head = message.getHead();
+				final int headLength = head.getByteSize();
+				int written = 0;
+				if (contentOffset < headLength) {
+					written = Math.min(contentLength, headLength - contentOffset);
+					outputStream.write(head.getVpack(), contentOffset, written);
+				}
+				if (written < contentLength) {
+					final VPackSlice body = message.getBody().get();
+					outputStream.write(body.getVpack(), contentOffset + written - headLength, contentLength - written);
+				}
+				outputStream.flush();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 		});
 	}
 
-	private Chunk read() throws IOException, BufferUnderflowException {
-		final int length = readBytes(4).getInt();
-		final int chunkX = readBytes(4).getInt();
-		final long messageId = readBytes(8).getLong();
+	private void writeChunkHead(final Chunk chunk) throws IOException {
+		final long messageLength = chunk.getMessageLength();
+		final int headLength = messageLength > -1L ? ArangoDBConstants.CHUNK_MAX_HEADER_SIZE
+				: ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
+		final int length = chunk.getContentLength() + headLength;
+		final ByteBuffer buffer = ByteBuffer.allocate(headLength).order(ByteOrder.LITTLE_ENDIAN);
+		buffer.putInt(length);
+		buffer.putInt(chunk.getChunkX());
+		buffer.putLong(chunk.getMessageId());
+		if (messageLength > -1L) {
+			buffer.putLong(messageLength);
+		}
+		outputStream.write(buffer.array());
+	}
+
+	protected Chunk readChunk() throws IOException {
+		final ByteBuffer chunkHeadBuffer = readBytes(ArangoDBConstants.CHUNK_MIN_HEADER_SIZE);
+		final int length = chunkHeadBuffer.getInt();
+		final int chunkX = chunkHeadBuffer.getInt();
+		final long messageId = chunkHeadBuffer.getLong();
 		final long messageLength;
-		final byte[] content;
+		final int contentLength;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-			messageLength = readBytes(8).getLong();
-			content = new byte[length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE];
+			messageLength = readBytes(Long.BYTES).getLong();
+			contentLength = length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE;
 		} else {
 			messageLength = -1L;
-			content = new byte[length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE];
+			contentLength = length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
 		}
-		readBytes(content.length).get(content);
-		final Chunk chunk = new Chunk(messageId, chunkX, content, length, messageLength);
+		final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(),
 				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
@@ -184,15 +150,19 @@ public class Connection {
 
 	private ByteBuffer readBytes(final int len) throws IOException {
 		final byte[] buf = new byte[len];
+		readBytesIntoBuffer(buf, 0, len);
+		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
+	}
+
+	protected void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
 		for (int readed = 0; readed < len;) {
-			final int read = inputStream.read(buf, readed, len - readed);
+			final int read = inputStream.read(buf, off + readed, len - readed);
 			if (read == -1) {
 				throw new IOException("Reached the end of the stream.");
 			} else {
 				readed += read;
 			}
 		}
-		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
 	}
 
 }

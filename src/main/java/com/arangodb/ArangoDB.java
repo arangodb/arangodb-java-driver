@@ -165,7 +165,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Boolean createDatabase(final String name) throws ArangoDBException {
-		return unwrap(createDatabaseAsync(name));
+		validateDBName(name);
+		return executeSync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
 	}
 
 	/**
@@ -179,10 +180,18 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public CompletableFuture<Boolean> createDatabaseAsync(final String name) {
 		validateDBName(name);
+		return executeAsync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
+	}
+
+	private Request createDatabaseRequest(final String name) {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
 		request.setBody(serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
-		return execute(request, response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean());
+		return request;
+	}
+
+	private ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
+		return response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean();
 	}
 
 	/**
@@ -192,7 +201,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getDatabases() throws ArangoDBException {
-		return unwrap(getDatabasesAsync());
+		return executeSync(getDatabasesRequest(), getDatabaseResponseDeserializer());
 	}
 
 	/**
@@ -201,11 +210,19 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return a list of all existing databases
 	 */
 	public CompletableFuture<Collection<String>> getDatabasesAsync() {
-		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE), (response) -> {
+		return executeAsync(getDatabasesRequest(), getDatabaseResponseDeserializer());
+	}
+
+	private Request getDatabasesRequest() {
+		return new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE);
+	}
+
+	private ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
+		return response -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
 			return deserialize(result, new Type<Collection<String>>() {
 			}.getType());
-		});
+		};
 	}
 
 	/**
@@ -216,7 +233,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
-		return unwrap(getAccessibleDatabasesAsync());
+		return executeSync(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
 	}
 
 	/**
@@ -226,13 +243,12 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return a list of all databases the current user can access
 	 */
 	public CompletableFuture<Collection<String>> getAccessibleDatabasesAsync() {
-		return execute(new Request(db().name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER)),
-			(response) -> {
-				final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
-				return deserialize(result, new Type<Collection<String>>() {
-				}.getType());
-			});
+		return executeAsync(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
+	}
+
+	private Request getAccessibleDatabasesRequest() {
+		return new Request(db().name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER));
 	}
 
 	/**
@@ -244,7 +260,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
-		return unwrap(getVersionAsync());
+		return executeSync(ArangoDBVersion.class, getVersionRequest());
 	}
 
 	/**
@@ -255,8 +271,11 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return the server version, number
 	 */
 	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
-		return execute(ArangoDBVersion.class,
-			new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION));
+		return executeAsync(ArangoDBVersion.class, getVersionRequest());
+	}
+
+	private Request getVersionRequest() {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION);
 	}
 
 	/**
@@ -275,7 +294,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException {
-		return unwrap(createUserAsync(user, passwd, options));
+		return executeSync(UserResult.class, createUserRequest(user, passwd, options));
 	}
 
 	/**
@@ -295,10 +314,15 @@ public class ArangoDB extends ArangoExecuteable {
 		final String user,
 		final String passwd,
 		final UserCreateOptions options) {
-		final Request request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
+		return executeAsync(UserResult.class, createUserRequest(user, passwd, options));
+	}
+
+	private Request createUserRequest(final String user, final String passwd, final UserCreateOptions options) {
+		final Request request;
+		request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
-		return execute(UserResult.class, request);
+		return request;
 	}
 
 	/**
@@ -310,7 +334,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void deleteUser(final String user) throws ArangoDBException {
-		unwrap(deleteUserAsync(user));
+		executeSync(Void.class, deleteUserRequest(user));
 	}
 
 	/**
@@ -322,8 +346,11 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return void
 	 */
 	public CompletableFuture<Void> deleteUserAsync(final String user) {
-		return execute(Void.class,
-			new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user)));
+		return executeAsync(Void.class, deleteUserRequest(user));
+	}
+
+	private Request deleteUserRequest(final String user) {
+		return new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user));
 	}
 
 	/**
@@ -337,7 +364,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserResult getUser(final String user) throws ArangoDBException {
-		return unwrap(getUserAsync(user));
+		return executeSync(UserResult.class, getUserRequest(user));
 	}
 
 	/**
@@ -350,8 +377,11 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 */
 	public CompletableFuture<UserResult> getUserAsync(final String user) {
-		return execute(UserResult.class,
-			new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user)));
+		return executeAsync(UserResult.class, getUserRequest(user));
+	}
+
+	private Request getUserRequest(final String user) {
+		return new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user));
 	}
 
 	/**
@@ -363,7 +393,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<UserResult> getUsers() throws ArangoDBException {
-		return unwrap(getUsersAsync());
+		return executeSync(getUsersRequest(), getUsersResponseDeserializer());
 	}
 
 	/**
@@ -374,11 +404,19 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return informations about all users
 	 */
 	public CompletableFuture<Collection<UserResult>> getUsersAsync() {
-		return execute(new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER), (response) -> {
+		return executeAsync(getUsersRequest(), getUsersResponseDeserializer());
+	}
+
+	private Request getUsersRequest() {
+		return new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER);
+	}
+
+	private ResponseDeserializer<Collection<UserResult>> getUsersResponseDeserializer() {
+		return (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
 			return deserialize(result, new Type<Collection<UserResult>>() {
 			}.getType());
-		});
+		};
 	}
 
 	/**
@@ -394,7 +432,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserResult updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return unwrap(updateUserAsync(user, options));
+		return executeSync(UserResult.class, updateUserRequest(user, options));
 	}
 
 	/**
@@ -409,10 +447,14 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 */
 	public CompletableFuture<UserResult> updateUserAsync(final String user, final UserUpdateOptions options) {
-		final Request request = new Request(db().name(), RequestType.PATCH,
-				createPath(ArangoDBConstants.PATH_API_USER, user));
+		return executeAsync(UserResult.class, updateUserRequest(user, options));
+	}
+
+	private Request updateUserRequest(final String user, final UserUpdateOptions options) {
+		final Request request;
+		request = new Request(db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_USER, user));
 		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
-		return execute(UserResult.class, request);
+		return request;
 	}
 
 	/**
@@ -429,7 +471,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserResult replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return unwrap(replaceUserAsync(user, options));
+		return executeSync(UserResult.class, replaceUserRequest(user, options));
 	}
 
 	/**
@@ -445,10 +487,14 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 */
 	public CompletableFuture<UserResult> replaceUserAsync(final String user, final UserUpdateOptions options) {
-		final Request request = new Request(db().name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user));
+		return executeAsync(UserResult.class, replaceUserRequest(user, options));
+	}
+
+	private Request replaceUserRequest(final String user, final UserUpdateOptions options) {
+		final Request request;
+		request = new Request(db().name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_USER, user));
 		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
-		return execute(UserResult.class, request);
+		return request;
 	}
 
 }

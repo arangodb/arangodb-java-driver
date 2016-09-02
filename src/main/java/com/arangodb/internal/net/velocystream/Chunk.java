@@ -1,36 +1,33 @@
 package com.arangodb.internal.net.velocystream;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 /**
  * @author Mark - mark at arangodb.com
  *
  */
 public class Chunk {
 
-	private final int length;
 	private final long messageId;
 	private final long messageLength;
 	private final int chunkX;
-	private final byte[] content;
+	private final int contentOffset;
+	private final int contentLength;
 
-	public Chunk(final long messageId, final int chunkX, final byte[] content, final int length,
-		final long messageLength) {
+	public Chunk(final long messageId, final int chunkX, final long messageLength, final int contentOffset,
+		final int contentLength) {
 		this.messageId = messageId;
 		this.chunkX = chunkX;
-		this.content = content;
-		this.length = length;
 		this.messageLength = messageLength;
-
+		this.contentOffset = contentOffset;
+		this.contentLength = contentLength;
 	}
 
-	public Chunk(final long messageId, final int chunkIndex, final int numberOfChunks, final byte[] content,
-		final int length, final long messageLength) {
-		this.messageId = messageId;
-		this.content = content;
-		this.length = length;
-		this.messageLength = messageLength;
+	public Chunk(final long messageId, final int chunkIndex, final int numberOfChunks, final long messageLength,
+		final int contentOffset, final int contentLength) {
+		this(messageId, chunkX(chunkIndex, numberOfChunks), messageLength, contentOffset, contentLength);
+	}
+
+	private static int chunkX(final int chunkIndex, final int numberOfChunks) {
+		int chunkX;
 		if (numberOfChunks == 1) {
 			chunkX = 3;// last byte: 0000 0011
 		} else if (chunkIndex == 0) {
@@ -38,10 +35,7 @@ public class Chunk {
 		} else {
 			chunkX = chunkIndex << 1;
 		}
-	}
-
-	public int getLength() {
-		return length;
+		return chunkX;
 	}
 
 	public long getMessageId() {
@@ -60,21 +54,16 @@ public class Chunk {
 		return chunkX >> 1;
 	}
 
-	public byte[] getContent() {
-		return content;
+	public int getChunkX() {
+		return chunkX;
 	}
 
-	public ByteBuffer toByteBuffer() {
-		final ByteBuffer buffer = ByteBuffer.allocate(length);
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
-		buffer.putInt(length);
-		buffer.putInt(chunkX);
-		buffer.putLong(messageId);
-		if (messageLength > -1L) {
-			buffer.putLong(messageLength);
-		}
-		buffer.put(content);
-		return buffer;
+	public int getContentOffset() {
+		return contentOffset;
+	}
+
+	public int getContentLength() {
+		return contentLength;
 	}
 
 }
