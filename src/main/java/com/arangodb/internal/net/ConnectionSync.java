@@ -1,7 +1,6 @@
 package com.arangodb.internal.net;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import com.arangodb.ArangoDBException;
@@ -50,23 +49,25 @@ public class ConnectionSync extends Connection {
 
 	public synchronized Message write(final long messageId, final Collection<Chunk> chunks) throws ArangoDBException {
 		super.writeIntern(messageId, chunks);
-		ByteBuffer chunkBuffer = null;
-		while (chunkBuffer == null || chunkBuffer.position() < chunkBuffer.limit()) {
+		byte[] chunkBuffer = null;
+		int off = 0;
+		while (chunkBuffer == null || off < chunkBuffer.length) {
 			if (!isOpen()) {
 				close();
 				throw new ArangoDBException(new IOException("The socket is closed."));
 			}
 			try {
 				final Chunk chunk = readChunkHead();
+				final int contentLength = chunk.getContentLength();
 				if (chunkBuffer == null) {
 					if (!chunk.isFirstChunk()) {
 						throw new ArangoDBException("Wrong Chunk recieved! Expected first Chunk.");
 					}
-					final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength()
-							: chunk.getContentLength());
-					chunkBuffer = ByteBuffer.allocate(length);
+					final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength() : contentLength);
+					chunkBuffer = new byte[length];
 				}
-				chunkBuffer.put(readBytesIntoBuffer(chunk.getContentLength()));
+				readBytesIntoBuffer(chunkBuffer, off, contentLength);
+				off += contentLength;
 			} catch (final Exception e) {
 				close();
 				throw new ArangoDBException(e);

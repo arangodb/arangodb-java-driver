@@ -125,13 +125,13 @@ public abstract class Connection {
 	}
 
 	private ByteBuffer readBytes(final int len) throws IOException {
-		return ByteBuffer.wrap(readBytesIntoBuffer(len)).order(ByteOrder.LITTLE_ENDIAN);
+		final byte[] buf = new byte[len];
+		return ByteBuffer.wrap(readBytesIntoBuffer(buf, 0, len)).order(ByteOrder.LITTLE_ENDIAN);
 	}
 
-	protected byte[] readBytesIntoBuffer(final int len) throws IOException {
-		final byte[] buf = new byte[len];
+	protected byte[] readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
 		for (int readed = 0; readed < len;) {
-			final int read = inputStream.read(buf, readed, len - readed);
+			final int read = inputStream.read(buf, off + readed, len - readed);
 			if (read == -1) {
 				throw new IOException("Reached the end of the stream.");
 			} else {

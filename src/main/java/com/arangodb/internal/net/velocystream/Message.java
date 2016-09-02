@@ -16,15 +16,14 @@ public class Message {
 	private final VPackSlice head;
 	private final Optional<VPackSlice> body;
 
-	public Message(final long id, final ByteBuffer chunkBuffer)
+	public Message(final long id, final byte[] chunkBuffer)
 			throws BufferUnderflowException, IndexOutOfBoundsException {
 		super();
 		this.id = id;
-		final byte[] array = chunkBuffer.array();
-		head = new VPackSlice(array);
+		head = new VPackSlice(chunkBuffer);
 		final int headSize = head.getByteSize();
-		if (array.length > headSize) {
-			body = Optional.of(new VPackSlice(array, headSize));
+		if (chunkBuffer.length > headSize) {
+			body = Optional.of(new VPackSlice(chunkBuffer, headSize));
 		} else {
 			body = Optional.empty();
 		}

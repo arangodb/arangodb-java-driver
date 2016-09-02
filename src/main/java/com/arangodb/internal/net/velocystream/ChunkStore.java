@@ -40,7 +40,7 @@ public class ChunkStore {
 	private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
 			throws BufferUnderflowException, IndexOutOfBoundsException {
 		if (chunkBuffer.position() == chunkBuffer.limit()) {
-			messageStore.consume(new Message(messageId, chunkBuffer));
+			messageStore.consume(new Message(messageId, chunkBuffer.array()));
 			data.remove(messageId);
 		}
 	}
