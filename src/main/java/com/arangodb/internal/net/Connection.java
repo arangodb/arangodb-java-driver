@@ -22,7 +22,6 @@ import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.Message;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.internal.util.NumberUtil;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -138,13 +137,14 @@ public abstract class Connection {
 	}
 
 	protected Chunk readChunkHead() throws IOException {
-		final int length = readInt();
-		final int chunkX = readInt();
-		final long messageId = readLong();
+		final ByteBuffer chunkHeadBuffer = readBytes(ArangoDBConstants.CHUNK_MIN_HEADER_SIZE);
+		final int length = chunkHeadBuffer.getInt();
+		final int chunkX = chunkHeadBuffer.getInt();
+		final long messageId = chunkHeadBuffer.getLong();
 		final long messageLength;
 		final int contentLength;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-			messageLength = readLong();
+			messageLength = readBytes(Long.BYTES).getLong();
 			contentLength = length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE;
 		} else {
 			messageLength = -1L;
@@ -156,18 +156,6 @@ public abstract class Connection {
 				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
 		}
 		return chunk;
-	}
-
-	private int readInt() throws IOException {
-		final byte[] buf = new byte[Integer.BYTES];
-		readBytesIntoBuffer(buf, 0, buf.length);
-		return (int) NumberUtil.toLong(buf, 0, buf.length);
-	}
-
-	private long readLong() throws IOException {
-		final byte[] buf = new byte[Long.BYTES];
-		readBytesIntoBuffer(buf, 0, buf.length);
-		return NumberUtil.toLong(buf, 0, buf.length);
 	}
 
 	private ByteBuffer readBytes(final int len) throws IOException {
