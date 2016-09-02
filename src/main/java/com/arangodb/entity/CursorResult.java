@@ -1,5 +1,6 @@
 package com.arangodb.entity;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.arangodb.velocypack.VPackSlice;
@@ -10,9 +11,54 @@ import com.arangodb.velocypack.VPackSlice;
  */
 public class CursorResult {
 
+	public static class Warning {
+
+		private Integer code;
+		private String message;
+
+		public Integer getCode() {
+			return code;
+		}
+
+		public void setCode(Integer code) {
+			this.code = code;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
+	}
+
+	public static class Extras {
+		private Map<String, Object> stats;
+
+		private Collection<Warning> warnings;
+
+		public Map<String, Object> getStats() {
+			return stats;
+		}
+
+		public void setStats(Map<String, Object> stats) {
+			this.stats = stats;
+		}
+
+		public Collection<Warning> getWarnings() {
+			return warnings;
+		}
+
+		public void setWarnings(Collection<Warning> warnings) {
+			this.warnings = warnings;
+		}
+	}
+
 	private String id;
 	private Integer count;
-	private Map<String, Object> extra;
+	private Extras extra;
 	private Boolean cached;
 	private Boolean hasMore;
 	private VPackSlice result;
@@ -33,11 +79,11 @@ public class CursorResult {
 		this.count = count;
 	}
 
-	public Map<String, Object> getExtra() {
+	public Extras getExtra() {
 		return extra;
 	}
 
-	public void setExtra(final Map<String, Object> extra) {
+	public void setExtra(final Extras extra) {
 		this.extra = extra;
 	}
 

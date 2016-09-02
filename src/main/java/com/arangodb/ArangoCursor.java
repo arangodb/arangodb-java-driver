@@ -1,10 +1,13 @@
 package com.arangodb;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
 import com.arangodb.entity.CursorResult;
+import com.arangodb.entity.CursorResult.Extras;
+import com.arangodb.entity.CursorResult.Warning;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -20,7 +23,7 @@ public class ArangoCursor<T> implements Iterable<T> {
 	private final ArangoCursorIterator<T> iterator;
 	private final String id;
 	private final Optional<Integer> count;
-	private final Optional<Map<String, Object>> extra;
+	private final Optional<Extras> extra;
 	private final boolean cached;
 
 	public ArangoCursor(final ArangoDatabase db, final Class<T> type, final CursorResult result) {
@@ -46,8 +49,37 @@ public class ArangoCursor<T> implements Iterable<T> {
 		return count;
 	}
 
-	public Optional<Map<String, Object>> getExtra() {
+	public Optional<Extras> getExtra() {
 		return extra;
+	}
+
+	public Optional<Map<String, Object>> getStats() {
+		Map<String, Object> stats = null;
+
+		if (extra.isPresent() && extra.get().getStats() != null) {
+			stats = (Map<String, Object>) extra.get().getStats();
+		}
+
+		return Optional.ofNullable(stats);
+	}
+
+	public Optional<Collection<Warning>> getWarnings() {
+		Collection<Warning> warnings = null;
+
+		if (extra.isPresent() && extra.get().getWarnings() != null) {
+			warnings = extra.get().getWarnings();
+		}
+
+		return Optional.ofNullable(warnings);
+	}
+
+	public Optional<Long> getFullCount() {
+		Long fullCount = null;
+		Optional<Map<String, Object>> stats = getStats();
+		if (stats.isPresent() && stats.get().get("fullCount") != null) {
+			fullCount = (Long) stats.get().get("fullCount");
+		}
+		return Optional.ofNullable(fullCount);
 	}
 
 	public boolean isCached() {
