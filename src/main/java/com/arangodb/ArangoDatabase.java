@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import com.arangodb.entity.AqlFunctionResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.CursorResult;
 import com.arangodb.entity.DatabaseResult;
@@ -17,6 +18,9 @@ import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.Communication;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.AqlFunctionCreateOptions;
+import com.arangodb.model.AqlFunctionDeleteOptions;
+import com.arangodb.model.AqlFunctionGetOptions;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
@@ -363,6 +367,61 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return execution.thenApply(result -> {
 			return new ArangoCursor<>(this, type, result);
 		});
+	}
+
+	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options) {
+		executeSync(createAqlFunctionRequest(name, code, options), Void.class);
+	}
+
+	public CompletableFuture<Void> createAqlFunctionAsync(
+		final String name,
+		final String code,
+		final AqlFunctionCreateOptions options) {
+		return executeAsync(createAqlFunctionRequest(name, code, options), Void.class);
+
+	}
+
+	private Request createAqlFunctionRequest(
+		final String name,
+		final String code,
+		final AqlFunctionCreateOptions options) {
+		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_AQLFUNCTION);
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
+		return request;
+	}
+
+	public void deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) {
+		executeSync(deleteAqlFunctionRequest(name, options), Void.class);
+	}
+
+	public CompletableFuture<Void> deleteAqlFunctionAsync(final String name, final AqlFunctionDeleteOptions options) {
+		return executeAsync(deleteAqlFunctionRequest(name, options), Void.class);
+	}
+
+	private Request deleteAqlFunctionRequest(final String name, final AqlFunctionDeleteOptions options) {
+		final Request request = new Request(name(), RequestType.DELETE,
+				createPath(ArangoDBConstants.PATH_API_AQLFUNCTION, name));
+		final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
+		request.putParameter(ArangoDBConstants.GROUP, params.getGroup());
+		return request;
+	}
+
+	public Collection<AqlFunctionResult> getAqlFunctions(final AqlFunctionGetOptions options) {
+		return executeSync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionResult>>() {
+		}.getType());
+	}
+
+	public CompletableFuture<Collection<AqlFunctionResult>> getAqlFunctionsAsync(final AqlFunctionGetOptions options) {
+		return executeAsync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionResult>>() {
+		}.getType());
+	}
+
+	private Request getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
+		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_AQLFUNCTION);
+		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
+		request.putParameter(ArangoDBConstants.NAMESPACE, params.getNamespace());
+		return request;
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package com.arangodb;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -15,11 +17,13 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.arangodb.entity.AqlFunctionResult;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
+import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.TransactionOptions;
@@ -364,6 +368,42 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(count, is(1));
 		}
 
+	}
+
+	@Test
+	public void createGetDeleteAqlFunction() {
+		final Collection<AqlFunctionResult> aqlFunctionsInitial = db.getAqlFunctions(null);
+		assertThat(aqlFunctionsInitial, is(empty()));
+		try {
+			db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit",
+				"function (celsius) { return celsius * 1.8 + 32; }", null);
+
+			final Collection<AqlFunctionResult> aqlFunctions = db.getAqlFunctions(null);
+			assertThat(aqlFunctions.size(), is(greaterThan(aqlFunctionsInitial.size())));
+		} finally {
+			db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
+
+			final Collection<AqlFunctionResult> aqlFunctions = db.getAqlFunctions(null);
+			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
+		}
+	}
+
+	@Test
+	public void createGetDeleteAqlFunctionWithNamespace() {
+		final Collection<AqlFunctionResult> aqlFunctionsInitial = db.getAqlFunctions(null);
+		assertThat(aqlFunctionsInitial, is(empty()));
+		try {
+			db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit1",
+				"function (celsius) { return celsius * 1.8 + 32; }", null);
+			db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit2",
+				"function (celsius) { return celsius * 1.8 + 32; }", null);
+
+		} finally {
+			db.deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true));
+
+			final Collection<AqlFunctionResult> aqlFunctions = db.getAqlFunctions(null);
+			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
+		}
 	}
 
 	@Test

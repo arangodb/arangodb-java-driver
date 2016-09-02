@@ -72,4 +72,11 @@ public class OptionsBuilder {
 	public static UserAccessOptions build(final UserAccessOptions options, final String grant) {
 		return options.grant(grant);
 	}
+
+	public static AqlFunctionCreateOptions build(
+		final AqlFunctionCreateOptions options,
+		final String name,
+		final String code) {
+		return options.name(name).code(code);
+	}
 }
