@@ -47,8 +47,8 @@ public class ConnectionSync extends Connection {
 		super(host, port, timeout);
 	}
 
-	public synchronized Message write(final long messageId, final Collection<Chunk> chunks) throws ArangoDBException {
-		super.writeIntern(messageId, chunks);
+	public synchronized Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+		super.writeIntern(message, chunks);
 		byte[] chunkBuffer = null;
 		int off = 0;
 		while (chunkBuffer == null || off < chunkBuffer.length) {
@@ -73,7 +73,7 @@ public class ConnectionSync extends Connection {
 				throw new ArangoDBException(e);
 			}
 		}
-		return new Message(messageId, chunkBuffer);
+		return new Message(message.getId(), chunkBuffer);
 	}
 
 }

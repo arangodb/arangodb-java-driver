@@ -1,5 +1,6 @@
 package com.arangodb.internal.net;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,6 +20,9 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.velocystream.Chunk;
+import com.arangodb.internal.net.velocystream.Message;
+import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.internal.util.NumberUtil;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -64,7 +68,7 @@ public abstract class Connection {
 			LOGGER.debug(String.format("Connected to %s", socket));
 		}
 
-		outputStream = socket.getOutputStream();
+		outputStream = new BufferedOutputStream(socket.getOutputStream());
 		inputStream = socket.getInputStream();
 	}
 
@@ -81,42 +85,72 @@ public abstract class Connection {
 		}
 	}
 
-	protected synchronized void writeIntern(final long messageId, final Collection<Chunk> chunks) {
+	protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) {
 		chunks.stream().forEach(chunk -> {
 			try {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
 						chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
 				}
-				outputStream.write(chunk.toByteBuffer().array());
+				writeChunkHead(chunk);
+				final int contentOffset = chunk.getContentOffset();
+				final int contentLength = chunk.getContentLength();
+				final VPackSlice head = message.getHead();
+				final int headLength = head.getByteSize();
+				int written = 0;
+				if (contentOffset < headLength) {
+					written = Math.min(contentLength, headLength - contentOffset);
+					outputStream.write(head.getVpack(), contentOffset, written);
+				}
+				if (written < contentLength) {
+					final VPackSlice body = message.getBody().get();
+					outputStream.write(body.getVpack(), contentOffset + written - headLength, contentLength - written);
+				}
+				outputStream.flush();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
 		});
 	}
 
+	private void writeChunkHead(final Chunk chunk) throws IOException {
+		final long messageLength = chunk.getMessageLength();
+		final int headLength = messageLength > -1L ? ArangoDBConstants.CHUNK_MAX_HEADER_SIZE
+				: ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
+		final int length = chunk.getContentLength() + headLength;
+		final ByteBuffer buffer = ByteBuffer.allocate(headLength).order(ByteOrder.LITTLE_ENDIAN);
+		buffer.putInt(length);
+		buffer.putInt(chunk.getChunkX());
+		buffer.putLong(chunk.getMessageId());
+		if (messageLength > -1L) {
+			buffer.putLong(messageLength);
+		}
+		outputStream.write(buffer.array());
+	}
+
 	protected Chunk read() throws IOException, BufferUnderflowException {
 		final Chunk chunk = readChunkHead();
 		final byte[] content = new byte[chunk.getContentLength()];
-		chunk.setContent(content);
+		// chunk.setContent(content);
+		// TODO
 		readBytes(content.length).get(content);
 		return chunk;
 	}
 
 	protected Chunk readChunkHead() throws IOException {
-		final int length = readBytes(4).getInt();
-		final int chunkX = readBytes(4).getInt();
-		final long messageId = readBytes(8).getLong();
+		final int length = readInt();
+		final int chunkX = readInt();
+		final long messageId = readLong();
 		final long messageLength;
 		final int contentLength;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-			messageLength = readBytes(8).getLong();
+			messageLength = readLong();
 			contentLength = length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE;
 		} else {
 			messageLength = -1L;
 			contentLength = length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
 		}
-		final Chunk chunk = new Chunk(messageId, chunkX, contentLength, length, messageLength);
+		final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(),
 				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
@@ -124,12 +158,25 @@ public abstract class Connection {
 		return chunk;
 	}
 
-	private ByteBuffer readBytes(final int len) throws IOException {
-		final byte[] buf = new byte[len];
-		return ByteBuffer.wrap(readBytesIntoBuffer(buf, 0, len)).order(ByteOrder.LITTLE_ENDIAN);
+	private int readInt() throws IOException {
+		final byte[] buf = new byte[Integer.BYTES];
+		readBytesIntoBuffer(buf, 0, buf.length);
+		return (int) NumberUtil.toLong(buf, 0, buf.length);
 	}
 
-	protected byte[] readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
+	private long readLong() throws IOException {
+		final byte[] buf = new byte[Long.BYTES];
+		readBytesIntoBuffer(buf, 0, buf.length);
+		return NumberUtil.toLong(buf, 0, buf.length);
+	}
+
+	private ByteBuffer readBytes(final int len) throws IOException {
+		final byte[] buf = new byte[len];
+		readBytesIntoBuffer(buf, 0, len);
+		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
+	}
+
+	protected void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
 		for (int readed = 0; readed < len;) {
 			final int read = inputStream.read(buf, off + readed, len - readed);
 			if (read == -1) {
@@ -138,7 +185,6 @@ public abstract class Connection {
 				readed += read;
 			}
 		}
-		return buf;
 	}
 
 }

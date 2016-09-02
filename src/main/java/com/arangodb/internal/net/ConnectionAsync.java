@@ -93,10 +93,10 @@ public class ConnectionAsync extends Connection {
 		}
 	}
 
-	public synchronized CompletableFuture<Message> write(final long messageId, final Collection<Chunk> chunks) {
+	public synchronized CompletableFuture<Message> write(final Message message, final Collection<Chunk> chunks) {
 		final CompletableFuture<Message> future = new CompletableFuture<>();
-		messageStore.storeMessage(messageId, future);
-		super.writeIntern(messageId, chunks);
+		messageStore.storeMessage(message.getId(), future);
+		super.writeIntern(message, chunks);
 		return future;
 	}
 

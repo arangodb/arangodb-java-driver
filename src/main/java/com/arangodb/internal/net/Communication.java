@@ -1,7 +1,6 @@
 package com.arangodb.internal.net;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -194,7 +193,7 @@ public class Communication {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
 				message.getBody().isPresent() ? message.getBody().get() : "{}"));
 		}
-		return connectionAsync.write(message.getId(), buildChunks(message));
+		return connectionAsync.write(message, buildChunks(message));
 	}
 
 	private Message sendSync(final Message message) throws IOException {
@@ -202,41 +201,26 @@ public class Communication {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
 				message.getBody().isPresent() ? message.getBody().get() : "{}"));
 		}
-		return connectionSync.write(message.getId(), buildChunks(message));
+		return connectionSync.write(message, buildChunks(message));
 	}
 
 	private Collection<Chunk> buildChunks(final Message message) throws IOException {
 		final Collection<Chunk> chunks = new ArrayList<>();
-
 		final VPackSlice head = message.getHead();
-		final int headByteSize = head.getByteSize();
-		int size = headByteSize;
+		int size = head.getByteSize();
 		final Optional<VPackSlice> body = message.getBody();
 		if (body.isPresent()) {
 			size += body.get().getByteSize();
 		}
-		final ByteBuffer byteBuffer = ByteBuffer.allocate(size);
-		byteBuffer.put(head.getVpack(), head.getStart(), headByteSize);
-		if (body.isPresent()) {
-			byteBuffer.put(body.get().getVpack(), body.get().getStart(), body.get().getByteSize());
-		}
-		byteBuffer.rewind();
-
 		final int n = size / ArangoDBConstants.CHUNK_BODY_SIZE;
 		final int numberOfChunks = (size % ArangoDBConstants.CHUNK_BODY_SIZE != 0) ? (n + 1) : n;
+		int off = 0;
 		for (int i = 0; size > 0; i++) {
 			final int len = Math.min(ArangoDBConstants.CHUNK_BODY_SIZE, size);
-			final byte[] buffer = new byte[len];
-			byteBuffer.get(buffer);
-			final Chunk chunk;
-			if (i == 0 && numberOfChunks > 1) {
-				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer,
-						len + ArangoDBConstants.CHUNK_MAX_HEADER_SIZE, size);
-			} else {
-				chunk = new Chunk(message.getId(), i, numberOfChunks, buffer,
-						len + ArangoDBConstants.CHUNK_MIN_HEADER_SIZE, -1L);
-			}
+			final long messageLength = (i == 0 && numberOfChunks > 1) ? size : -1L;
+			final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, messageLength, off, len);
 			size -= len;
+			off += len;
 			chunks.add(chunk);
 		}
 		return chunks;

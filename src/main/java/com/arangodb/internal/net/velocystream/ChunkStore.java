@@ -29,11 +29,12 @@ public class ChunkStore {
 				return;
 			}
 			final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength()
-					: chunk.getContent().length);
+					: chunk.getContentLength());
 			chunkBuffer = ByteBuffer.allocate(length);
 			data.put(messageId, chunkBuffer);
 		}
-		chunkBuffer.put(chunk.getContent());
+//		chunkBuffer.put(chunk.getContent());
+		// TODO 
 		checkCompleteness(messageId, chunkBuffer);
 	}
 
