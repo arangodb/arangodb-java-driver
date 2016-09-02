@@ -176,7 +176,7 @@ public class AqlQueryOptions {
 	}
 
 	protected Options getOptions() {
-		if (options != null) {
+		if (options == null) {
 			options = new Options();
 		}
 		return options;
