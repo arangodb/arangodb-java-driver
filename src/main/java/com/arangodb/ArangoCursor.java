@@ -49,37 +49,19 @@ public class ArangoCursor<T> implements Iterable<T> {
 		return count;
 	}
 
-	public Optional<Extras> getExtra() {
-		return extra;
-	}
-
 	public Optional<Map<String, Object>> getStats() {
-		Map<String, Object> stats = null;
-
-		if (extra.isPresent() && extra.get().getStats() != null) {
-			stats = (Map<String, Object>) extra.get().getStats();
-		}
-
-		return Optional.ofNullable(stats);
+		return extra.map(e -> e.getStats());
 	}
 
 	public Optional<Collection<Warning>> getWarnings() {
-		Collection<Warning> warnings = null;
-
-		if (extra.isPresent() && extra.get().getWarnings() != null) {
-			warnings = extra.get().getWarnings();
-		}
-
-		return Optional.ofNullable(warnings);
+		return extra.map(e -> e.getWarnings());
 	}
 
 	public Optional<Long> getFullCount() {
-		Long fullCount = null;
-		Optional<Map<String, Object>> stats = getStats();
-		if (stats.isPresent() && stats.get().get("fullCount") != null) {
-			fullCount = (Long) stats.get().get("fullCount");
-		}
-		return Optional.ofNullable(fullCount);
+		return getStats().map(e -> {
+			final Object fullcount = e.get(ArangoDBConstants.FULLCOUNT);
+			return fullcount != null ? (long) fullcount : null;
+		});
 	}
 
 	public boolean isCached() {
@@ -87,8 +69,8 @@ public class ArangoCursor<T> implements Iterable<T> {
 	}
 
 	protected CursorResult executeNext() {
-		return db.unwrap(db.executeSync(CursorResult.class,
-			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id))));
+		return db.executeSync(CursorResult.class,
+			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)));
 	}
 
 	@Override

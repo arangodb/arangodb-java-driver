@@ -52,4 +52,5 @@ public class ArangoDBConstants {
 	public static final String PROPERTIES = "properties";
 	public static final String RENAME = "rename";
 	public static final String REVISION = "revision";
+	public static final String FULLCOUNT = "fullCount";
 }

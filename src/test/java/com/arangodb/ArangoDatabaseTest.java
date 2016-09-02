@@ -246,11 +246,15 @@ public class ArangoDatabaseTest extends BaseTest {
 		}
 	}
 
+	/**
+	 * ignored. takes to long
+	 */
 	@Test
+	@Ignore
 	public void queryWithTTL() throws InterruptedException {
-		// set TTL to 5 seconds and get the second batch after 10 seconds!
-		int ttl = 5;
-		int wait = 10;
+		// set TTL to 1 seconds and get the second batch after 2 seconds!
+		final int ttl = 1;
+		final int wait = 2;
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
@@ -271,7 +275,7 @@ public class ArangoDatabaseTest extends BaseTest {
 				}
 			}
 			fail("this should fail");
-		} catch (ArangoDBException ex) {
+		} catch (final ArangoDBException ex) {
 			assertThat(ex.getMessage(), is("Response: 404, Error: 1600 - cursor not found"));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -312,11 +316,11 @@ public class ArangoDatabaseTest extends BaseTest {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
-				BaseDocument baseDocument = new BaseDocument();
+				final BaseDocument baseDocument = new BaseDocument();
 				baseDocument.addAttribute("age", 20 + i);
 				db.collection(COLLECTION_NAME).insertDocument(baseDocument, null);
 			}
-			Map<String, Object> bindVars = new HashMap<>();
+			final Map<String, Object> bindVars = new HashMap<>();
 			bindVars.put("@coll", COLLECTION_NAME);
 			bindVars.put("age", 25);
 
