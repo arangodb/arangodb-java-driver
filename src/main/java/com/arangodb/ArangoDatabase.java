@@ -369,10 +369,37 @@ public class ArangoDatabase extends ArangoExecuteable {
 		});
 	}
 
-	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options) {
+	/**
+	 * Create a new AQL user function
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
+	 *      Documentation</a>
+	 * @param name
+	 *            the fully qualified name of the user functions
+	 * @param code
+	 *            a string representation of the function body
+	 * @param options
+	 *            Additional options, can be null
+	 * @throws ArangoDBException
+	 */
+	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
+			throws ArangoDBException {
 		executeSync(createAqlFunctionRequest(name, code, options), Void.class);
 	}
 
+	/**
+	 * Create a new AQL user function
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
+	 *      Documentation</a>
+	 * @param name
+	 *            the fully qualified name of the user functions
+	 * @param code
+	 *            a string representation of the function body
+	 * @param options
+	 *            Additional options, can be null
+	 * @return void
+	 */
 	public CompletableFuture<Void> createAqlFunctionAsync(
 		final String name,
 		final String code,
@@ -391,10 +418,34 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return request;
 	}
 
-	public void deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) {
+	/**
+	 * Remove an existing AQL user function
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
+	 *      Documentation</a>
+	 * @param name
+	 *            the name of the AQL user function
+	 * @param options
+	 *            Additional options, can be null
+	 * @throws ArangoDBException
+	 */
+	public void deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) throws ArangoDBException {
 		executeSync(deleteAqlFunctionRequest(name, options), Void.class);
 	}
 
+	/**
+	 * Remove an existing AQL user function
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
+	 *      Documentation</a>
+	 * @param name
+	 *            the name of the AQL user function
+	 * @param options
+	 *            Additional options, can be null
+	 * @return void
+	 */
 	public CompletableFuture<Void> deleteAqlFunctionAsync(final String name, final AqlFunctionDeleteOptions options) {
 		return executeAsync(deleteAqlFunctionRequest(name, options), Void.class);
 	}
@@ -407,11 +458,32 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return request;
 	}
 
-	public Collection<AqlFunctionResult> getAqlFunctions(final AqlFunctionGetOptions options) {
+	/**
+	 * Gets all reqistered AQL user functions
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return all reqistered AQL user functions
+	 * @throws ArangoDBException
+	 */
+	public Collection<AqlFunctionResult> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
 		return executeSync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionResult>>() {
 		}.getType());
 	}
 
+	/**
+	 * Gets all reqistered AQL user functions
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return all reqistered AQL user functions
+	 */
 	public CompletableFuture<Collection<AqlFunctionResult>> getAqlFunctionsAsync(final AqlFunctionGetOptions options) {
 		return executeAsync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionResult>>() {
 		}.getType());
@@ -483,7 +555,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
-	 * execute a server-side transaction
+	 * Execute a server-side transaction
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
 	 *      Documentation</a>
@@ -502,7 +574,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
-	 * execute a server-side transaction
+	 * Execute a server-side transaction
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
 	 *      Documentation</a>
@@ -542,6 +614,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
+	 * Retrieves information about the current database
+	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
 	 *      Documentation</a>
@@ -553,6 +627,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
+	 * Retrieves information about the current database
+	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
 	 *      Documentation</a>
@@ -562,17 +638,11 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeAsync(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
-	/**
-	 * @return
-	 */
 	private Request getInfoRequest() {
 		return new Request(name, RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.CURRENT));
 	}
 
-	/**
-	 * @return
-	 */
 	private ResponseDeserializer<DatabaseResult> getInfoResponseDeserializer() {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), DatabaseResult.class);
 	}
