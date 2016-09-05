@@ -10,7 +10,6 @@ import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark - mark at arangodb.com
- * @param <T>
  *
  */
 public class Request {
