@@ -3,6 +3,9 @@ package com.arangodb.internal.net;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.Message;
@@ -12,6 +15,8 @@ import com.arangodb.internal.net.velocystream.Message;
  *
  */
 public class ConnectionSync extends Connection {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionSync.class);
 
 	public static class Builder {
 
@@ -73,7 +78,13 @@ public class ConnectionSync extends Connection {
 				throw new ArangoDBException(e);
 			}
 		}
-		return new Message(message.getId(), chunkBuffer);
+		final Message responseMessage = new Message(message.getId(), chunkBuffer);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Received Message (id=%s, head=%s, body=%s)", responseMessage.getId(),
+				responseMessage.getHead(),
+				responseMessage.getBody().isPresent() ? responseMessage.getBody().get() : "{}"));
+		}
+		return responseMessage;
 	}
 
 }
