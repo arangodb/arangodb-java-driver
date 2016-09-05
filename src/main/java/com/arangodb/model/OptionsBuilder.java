@@ -57,6 +57,10 @@ public class OptionsBuilder {
 		return options.query(query).bindVars(bindVars);
 	}
 
+	public static AqlQueryParseOptions build(final AqlQueryParseOptions options, final String query) {
+		return options.query(query);
+	}
+
 	public static GraphCreateOptions build(
 		final GraphCreateOptions options,
 		final String name,

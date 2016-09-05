@@ -25,6 +25,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_TRANSACTION = "/_api/transaction";
 	public static final String PATH_API_AQLFUNCTION = "/_api/aqlfunction";
 	public static final String PATH_API_EXPLAIN = "/_api/explain";
+	public static final String PATH_API_QUERY = "/_api/query";
 
 	public static final String SYSTEM = "_system";
 	public static final String ID = "id";

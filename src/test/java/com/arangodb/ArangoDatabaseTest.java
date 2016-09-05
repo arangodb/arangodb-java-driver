@@ -21,6 +21,8 @@ import com.arangodb.entity.AqlExecutionExplainResult;
 import com.arangodb.entity.AqlExecutionExplainResult.ExecutionNode;
 import com.arangodb.entity.AqlExecutionExplainResult.ExecutionPlan;
 import com.arangodb.entity.AqlFunctionResult;
+import com.arangodb.entity.AqlParseResult;
+import com.arangodb.entity.AqlParseResult.AstNode;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.DatabaseResult;
@@ -403,6 +405,42 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(returnNode.getType(), is("ReturnNode"));
 		assertThat(returnNode.getInVariable().isPresent(), is(true));
 		assertThat(returnNode.getInVariable().get().getName(), is("i"));
+	}
+
+	@Test
+	public void parseQuery() {
+		final AqlParseResult parse = arangoDB.db().parseQuery("for i in _apps return i");
+		assertThat(parse, is(notNullValue()));
+		assertThat(parse.getBindVars(), is(empty()));
+		assertThat(parse.getCollections().size(), is(1));
+		assertThat(parse.getCollections().stream().findFirst().get(), is("_apps"));
+		assertThat(parse.getAst().size(), is(1));
+		final AstNode root = parse.getAst().stream().findFirst().get();
+		assertThat(root.getType(), is("root"));
+		assertThat(root.getName().isPresent(), is(false));
+		assertThat(root.getSubNodes().isPresent(), is(true));
+		assertThat(root.getSubNodes().get().size(), is(2));
+		final Iterator<AstNode> iterator = root.getSubNodes().get().iterator();
+		final AstNode for_ = iterator.next();
+		assertThat(for_.getType(), is("for"));
+		assertThat(for_.getSubNodes().isPresent(), is(true));
+		assertThat(for_.getSubNodes().get().size(), is(2));
+		final Iterator<AstNode> iterator2 = for_.getSubNodes().get().iterator();
+		final AstNode first = iterator2.next();
+		assertThat(first.getType(), is("variable"));
+		assertThat(first.getName().isPresent(), is(true));
+		assertThat(first.getName().get(), is("i"));
+		final AstNode second = iterator2.next();
+		assertThat(second.getType(), is("collection"));
+		assertThat(second.getName().isPresent(), is(true));
+		assertThat(second.getName().get(), is("_apps"));
+		final AstNode return_ = iterator.next();
+		assertThat(return_.getType(), is("return"));
+		assertThat(return_.getSubNodes().isPresent(), is(true));
+		assertThat(return_.getSubNodes().get().size(), is(1));
+		assertThat(return_.getSubNodes().get().stream().findFirst().get().getType(), is("reference"));
+		assertThat(return_.getSubNodes().get().stream().findFirst().get().getName().isPresent(), is(true));
+		assertThat(return_.getSubNodes().get().stream().findFirst().get().getName().get(), is("i"));
 	}
 
 	@Test

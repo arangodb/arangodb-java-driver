@@ -14,6 +14,10 @@ public class AqlQueryExplainOptions {
 	private String query;
 	private Options options;
 
+	public AqlQueryExplainOptions() {
+		super();
+	}
+
 	protected Map<String, Object> getBindVars() {
 		return bindVars;
 	}

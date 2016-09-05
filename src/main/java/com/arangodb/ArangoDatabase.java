@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.AqlExecutionExplainResult;
 import com.arangodb.entity.AqlFunctionResult;
+import com.arangodb.entity.AqlParseResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.CursorResult;
 import com.arangodb.entity.DatabaseResult;
@@ -24,6 +25,7 @@ import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
 import com.arangodb.model.AqlQueryExplainOptions;
 import com.arangodb.model.AqlQueryOptions;
+import com.arangodb.model.AqlQueryParseOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.GraphCreateOptions;
@@ -374,7 +376,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	/**
 	 * Explain an AQL query and return information about it
 	 * 
-	 * @see <a href="https://docs.arangodb.com/3.0/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
+	 *      Documentation</a>
 	 * @param query
 	 *            the query which you want explained
 	 * @param bindVars
@@ -394,7 +397,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	/**
 	 * Explain an AQL query and return information about it
 	 * 
-	 * @see <a href="https://docs.arangodb.com/3.0/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
+	 *      Documentation</a>
 	 * @param query
 	 *            the query which you want explained
 	 * @param bindVars
@@ -417,6 +421,41 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_EXPLAIN);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryExplainOptions(), query, bindVars)));
+		return request;
+	}
+
+	/**
+	 * Parse an AQL query and return information about it This method is for query validation only. To actually query
+	 * the database, see {@link ArangoDatabase#query(String, Map, AqlQueryOptions, Class)}
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
+	 *      Documentation</a>
+	 * @param query
+	 *            the query which you want parse
+	 * @return imformation about the query
+	 * @throws ArangoDBException
+	 */
+	public AqlParseResult parseQuery(final String query) throws ArangoDBException {
+		return executeSync(parseQueryRequest(query), AqlParseResult.class);
+	}
+
+	/**
+	 * Parse an AQL query and return information about it This method is for query validation only. To actually query
+	 * the database, see {@link ArangoDatabase#queryAsync(String, Map, AqlQueryOptions, Class)}
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
+	 *      Documentation</a>
+	 * @param query
+	 *            the query which you want parse
+	 * @return imformation about the query
+	 */
+	public CompletableFuture<AqlParseResult> parseQueryAsync(final String query) {
+		return executeAsync(parseQueryRequest(query), AqlParseResult.class);
+	}
+
+	private Request parseQueryRequest(final String query) {
+		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_QUERY);
+		request.setBody(serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
 		return request;
 	}
 
