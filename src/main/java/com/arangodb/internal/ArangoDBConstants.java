@@ -41,6 +41,7 @@ public class ArangoDBConstants {
 	public static final String RETURN_OLD = "returnOld";
 	public static final String OLD = "old";
 	public static final String COLLECTION = "collection";
+	public static final String COLLECTIONS = "collections";
 	public static final String EXCLUDE_SYSTEM = "excludeSystem";
 	public static final String USER = "user";
 	public static final String RW = "rw";
@@ -60,4 +61,5 @@ public class ArangoDBConstants {
 	public static final String NAMESPACE = "namespace";
 	public static final String GRAPH = "graph";
 	public static final String GRAPHS = "graphs";
+	public static final String VERTEX = "vertex";
 }

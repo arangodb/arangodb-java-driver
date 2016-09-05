@@ -64,7 +64,7 @@ public class OptionsBuilder {
 	public static GraphCreateOptions build(
 		final GraphCreateOptions options,
 		final String name,
-		final EdgeDefinition... edgeDefinitions) {
+		final Collection<EdgeDefinition> edgeDefinitions) {
 		return options.name(name).edgeDefinitions(edgeDefinitions);
 	}
 

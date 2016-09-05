@@ -88,7 +88,16 @@ public class BaseDocument {
 
 	@Override
 	public String toString() {
-		return "BaseDocument [documentRevision=" + revision + ", documentHandle=" + id + ", documentKey=" + key
-				+ ", properties=" + properties + "]";
+		final StringBuilder sb = new StringBuilder();
+		sb.append("BaseDocument [documentRevision=");
+		sb.append(revision);
+		sb.append(", documentHandle=");
+		sb.append(id);
+		sb.append(", documentKey=");
+		sb.append(key);
+		sb.append(", properties=");
+		sb.append(properties);
+		sb.append("]");
+		return sb.toString();
 	}
 }

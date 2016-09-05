@@ -33,8 +33,8 @@ public class GraphCreateOptions {
 		return edgeDefinitions;
 	}
 
-	protected GraphCreateOptions edgeDefinitions(final EdgeDefinition... edgeDefinitions) {
-		this.edgeDefinitions = Arrays.asList(edgeDefinitions);
+	protected GraphCreateOptions edgeDefinitions(final Collection<EdgeDefinition> edgeDefinitions) {
+		this.edgeDefinitions = edgeDefinitions;
 		return this;
 	}
 

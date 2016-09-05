@@ -586,6 +586,10 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return request;
 	}
 
+	public ArangoGraph graph(final String name) {
+		return new ArangoGraph(this, name);
+	}
+
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
 	 * of its edges.
@@ -594,18 +598,18 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @param name
 	 *            Name of the graph
-	 * @param options
-	 *            Additional options, can be null
 	 * @param edgeDefinitions
 	 *            An array of definitions for the edge
+	 * @param options
+	 *            Additional options, can be null
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
 	public GraphResult createGraph(
 		final String name,
-		final GraphCreateOptions options,
-		final EdgeDefinition... edgeDefinitions) throws ArangoDBException {
-		return executeSync(createGraphRequest(name, options, edgeDefinitions), createGraphResponseDeserializer());
+		final Collection<EdgeDefinition> edgeDefinitions,
+		final GraphCreateOptions options) throws ArangoDBException {
+		return executeSync(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
 	}
 
 	/**
@@ -616,23 +620,23 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @param name
 	 *            Name of the graph
-	 * @param options
-	 *            Additional options, can be null
 	 * @param edgeDefinitions
 	 *            An array of definitions for the edge
+	 * @param options
+	 *            Additional options, can be null
 	 * @return information about the graph
 	 */
 	public CompletableFuture<GraphResult> createGraphAsync(
 		final String name,
-		final GraphCreateOptions options,
-		final EdgeDefinition... edgeDefinitions) {
-		return executeAsync(createGraphRequest(name, options, edgeDefinitions), createGraphResponseDeserializer());
+		final Collection<EdgeDefinition> edgeDefinitions,
+		final GraphCreateOptions options) {
+		return executeAsync(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
 	}
 
 	private Request createGraphRequest(
 		final String name,
-		final GraphCreateOptions options,
-		final EdgeDefinition... edgeDefinitions) {
+		final Collection<EdgeDefinition> edgeDefinitions,
+		final GraphCreateOptions options) {
 		final Request request;
 		request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_GHARIAL);
 		request.setBody(serialize(
