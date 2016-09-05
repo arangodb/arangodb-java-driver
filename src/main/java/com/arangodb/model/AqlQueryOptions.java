@@ -175,14 +175,14 @@ public class AqlQueryOptions {
 		return this;
 	}
 
-	protected Options getOptions() {
+	private Options getOptions() {
 		if (options == null) {
 			options = new Options();
 		}
 		return options;
 	}
 
-	public static class Options {
+	private static class Options {
 		private Boolean profile;
 		private Optimizer optimizer;
 		private Boolean fullCount;
@@ -197,7 +197,7 @@ public class AqlQueryOptions {
 
 	}
 
-	public static class Optimizer {
+	private static class Optimizer {
 		private Collection<String> rules;
 	}
 

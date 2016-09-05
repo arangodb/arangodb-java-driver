@@ -24,6 +24,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_GHARIAL = "/_api/gharial";
 	public static final String PATH_API_TRANSACTION = "/_api/transaction";
 	public static final String PATH_API_AQLFUNCTION = "/_api/aqlfunction";
+	public static final String PATH_API_EXPLAIN = "/_api/explain";
 
 	public static final String SYSTEM = "_system";
 	public static final String ID = "id";
@@ -56,4 +57,5 @@ public class ArangoDBConstants {
 	public static final String FULLCOUNT = "fullCount";
 	public static final String GROUP = "group";
 	public static final String NAMESPACE = "namespace";
+	public static final String GRAPH = "graph";
 }

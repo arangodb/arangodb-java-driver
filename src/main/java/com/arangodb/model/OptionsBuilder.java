@@ -50,6 +50,13 @@ public class OptionsBuilder {
 		return options.query(query).bindVars(bindVars);
 	}
 
+	public static AqlQueryExplainOptions build(
+		final AqlQueryExplainOptions options,
+		final String query,
+		final Map<String, Object> bindVars) {
+		return options.query(query).bindVars(bindVars);
+	}
+
 	public static GraphCreateOptions build(
 		final GraphCreateOptions options,
 		final String name,
@@ -79,4 +86,5 @@ public class OptionsBuilder {
 		final String code) {
 		return options.name(name).code(code);
 	}
+
 }

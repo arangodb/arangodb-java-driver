@@ -17,6 +17,9 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.arangodb.entity.AqlExecutionExplainResult;
+import com.arangodb.entity.AqlExecutionExplainResult.ExecutionNode;
+import com.arangodb.entity.AqlExecutionExplainResult.ExecutionPlan;
 import com.arangodb.entity.AqlFunctionResult;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionResult;
@@ -371,6 +374,38 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void explainQuery() {
+		final AqlExecutionExplainResult explain = arangoDB.db().explainQuery("for i in _apps return i", null, null);
+		assertThat(explain, is(notNullValue()));
+		assertThat(explain.getPlan().isPresent(), is(true));
+		assertThat(explain.getPlans().isPresent(), is(false));
+		final ExecutionPlan plan = explain.getPlan().get();
+		assertThat(plan.getCollections().size(), is(1));
+		assertThat(plan.getCollections().stream().findFirst().get().getName(), is("_apps"));
+		assertThat(plan.getCollections().stream().findFirst().get().getType(), is("read"));
+		assertThat(plan.getEstimatedCost(), is(5));
+		assertThat(plan.getEstimatedNrItems(), is(2));
+		assertThat(plan.getVariables().size(), is(1));
+		assertThat(plan.getVariables().stream().findFirst().get().getName(), is("i"));
+		assertThat(plan.getNodes().size(), is(3));
+		final Iterator<ExecutionNode> iterator = plan.getNodes().iterator();
+		final ExecutionNode singletonNode = iterator.next();
+		assertThat(singletonNode.getType(), is("SingletonNode"));
+		final ExecutionNode collectionNode = iterator.next();
+		assertThat(collectionNode.getType(), is("EnumerateCollectionNode"));
+		assertThat(collectionNode.getDatabase().isPresent(), is(true));
+		assertThat(collectionNode.getDatabase().get(), is("_system"));
+		assertThat(collectionNode.getCollection().isPresent(), is(true));
+		assertThat(collectionNode.getCollection().get(), is("_apps"));
+		assertThat(collectionNode.getOutVariable().isPresent(), is(true));
+		assertThat(collectionNode.getOutVariable().get().getName(), is("i"));
+		final ExecutionNode returnNode = iterator.next();
+		assertThat(returnNode.getType(), is("ReturnNode"));
+		assertThat(returnNode.getInVariable().isPresent(), is(true));
+		assertThat(returnNode.getInVariable().get().getName(), is("i"));
+	}
+
+	@Test
 	public void createGetDeleteAqlFunction() {
 		final Collection<AqlFunctionResult> aqlFunctionsInitial = db.getAqlFunctions(null);
 		assertThat(aqlFunctionsInitial, is(empty()));
@@ -407,7 +442,6 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
 	public void createGraph() {
 		final GraphResult result = db.createGraph(GRAPH_NAME, null);
 		assertThat(result, is(notNullValue()));

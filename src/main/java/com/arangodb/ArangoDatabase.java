@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import com.arangodb.entity.AqlExecutionExplainResult;
 import com.arangodb.entity.AqlFunctionResult;
 import com.arangodb.entity.CollectionResult;
 import com.arangodb.entity.CursorResult;
@@ -21,6 +22,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
+import com.arangodb.model.AqlQueryExplainOptions;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
@@ -370,6 +372,55 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
+	 * Explain an AQL query and return information about it
+	 * 
+	 * @see <a href="https://docs.arangodb.com/3.0/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+	 * @param query
+	 *            the query which you want explained
+	 * @param bindVars
+	 *            key/value pairs representing the bind parameters
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the query
+	 * @throws ArangoDBException
+	 */
+	public AqlExecutionExplainResult explainQuery(
+		final String query,
+		final Map<String, Object> bindVars,
+		final AqlQueryExplainOptions options) throws ArangoDBException {
+		return executeSync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainResult.class);
+	}
+
+	/**
+	 * Explain an AQL query and return information about it
+	 * 
+	 * @see <a href="https://docs.arangodb.com/3.0/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+	 * @param query
+	 *            the query which you want explained
+	 * @param bindVars
+	 *            key/value pairs representing the bind parameters
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the query
+	 */
+	public CompletableFuture<AqlExecutionExplainResult> explainQueryAsync(
+		final String query,
+		final Map<String, Object> bindVars,
+		final AqlQueryExplainOptions options) {
+		return executeAsync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainResult.class);
+	}
+
+	private Request explainQueryRequest(
+		final String query,
+		final Map<String, Object> bindVars,
+		final AqlQueryExplainOptions options) {
+		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_EXPLAIN);
+		request.setBody(
+			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryExplainOptions(), query, bindVars)));
+		return request;
+	}
+
+	/**
 	 * Create a new AQL user function
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
@@ -551,7 +602,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<GraphResult> createGraphResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), GraphResult.class);
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
 	}
 
 	/**
