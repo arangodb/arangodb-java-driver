@@ -645,6 +645,39 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
+	 * Lists all graphs known to the graph module
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
+	 *      Documentation</a>
+	 * @return graphs stored in this database
+	 * @throws ArangoDBException
+	 */
+	public Collection<GraphResult> getGraphs() throws ArangoDBException {
+		return executeSync(getGraphsRequest(), getGraphsResponseDeserializer());
+	}
+
+	/**
+	 * Lists all graphs known to the graph module
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
+	 *      Documentation</a>
+	 * @return graphs stored in this database
+	 */
+	public CompletableFuture<Collection<GraphResult>> getGraphsAsync() {
+		return executeAsync(getGraphsRequest(), getGraphsResponseDeserializer());
+	}
+
+	private Request getGraphsRequest() {
+		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_GHARIAL);
+	}
+
+	private ResponseDeserializer<Collection<GraphResult>> getGraphsResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPHS),
+			new Type<Collection<GraphResult>>() {
+			}.getType());
+	}
+
+	/**
 	 * Execute a server-side transaction
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API

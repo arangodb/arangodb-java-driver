@@ -59,4 +59,5 @@ public class ArangoDBConstants {
 	public static final String GROUP = "group";
 	public static final String NAMESPACE = "namespace";
 	public static final String GRAPH = "graph";
+	public static final String GRAPHS = "graphs";
 }

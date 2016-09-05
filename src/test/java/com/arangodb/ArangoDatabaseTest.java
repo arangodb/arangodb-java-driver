@@ -487,6 +487,14 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void getGraphs() {
+		db.createGraph(GRAPH_NAME, null);
+		final Collection<GraphResult> graphs = db.getGraphs();
+		assertThat(graphs, is(notNullValue()));
+		assertThat(graphs.size(), is(1));
+	}
+
+	@Test
 	public void transactionString() {
 		final TransactionOptions options = new TransactionOptions().params("test");
 		final String result = db.transaction("function (params) {return params;}", String.class, options);
