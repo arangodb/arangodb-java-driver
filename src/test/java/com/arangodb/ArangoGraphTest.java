@@ -132,4 +132,17 @@ public class ArangoGraphTest extends BaseTest {
 			assertThat(e.getTo(), hasItem(VERTEX_COL_2));
 		});
 	}
+
+	@Test
+	public void replaceEdgeDefinition() {
+		final GraphResult graph = db.graph(GRAPH_NAME)
+				.replaceEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_3).to(VERTEX_COL_4));
+		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
+		assertThat(edgeDefinitions.size(), is(2));
+		assertThat(edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_1)).count(), is(1L));
+		edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_1)).forEach(e -> {
+			assertThat(e.getFrom(), hasItem(VERTEX_COL_3));
+			assertThat(e.getTo(), hasItem(VERTEX_COL_4));
+		});
+	}
 }

@@ -241,4 +241,43 @@ public class ArangoGraph extends ArangoExecuteable {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
 	}
 
+	/**
+	 * Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to
+	 * your database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#replace-an-edge-definition">API
+	 *      Documentation</a>
+	 * @param definition
+	 *            The edge definition
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	public GraphResult replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+		return executeSync(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
+	}
+
+	/**
+	 * Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to
+	 * your database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#replace-an-edge-definition">API
+	 *      Documentation</a>
+	 * @param definition
+	 *            The edge definition
+	 * @return information about the graph
+	 */
+	public CompletableFuture<GraphResult> replaceEdgeDefinitionAsync(final EdgeDefinition definition) {
+		return executeAsync(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
+	}
+
+	private Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
+		final Request request = new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_GHARIAL,
+			name, ArangoDBConstants.EDGE, definition.getCollection()));
+		request.setBody(serialize(definition));
+		return request;
+	}
+
+	private ResponseDeserializer<GraphResult> replaceEdgeDefinitionResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	}
 }
