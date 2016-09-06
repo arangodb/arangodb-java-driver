@@ -21,6 +21,14 @@ public class BaseEdgeDocument extends BaseDocument {
 
 	public BaseEdgeDocument(final Map<String, Object> properties) {
 		super(properties);
+		final Object tmpFrom = properties.remove(DocumentField.Type.FROM.getSerializeName());
+		if (tmpFrom != null) {
+			from = tmpFrom.toString();
+		}
+		final Object tmpTo = properties.remove(DocumentField.Type.TO.getSerializeName());
+		if (tmpTo != null) {
+			to = tmpTo.toString();
+		}
 	}
 
 	public String getFrom() {

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.net.Request;
@@ -44,4 +45,14 @@ public class VPackSerializers {
 		context.serialize(builder, attribute, doc);
 	};
 
+	public static final VPackSerializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = (builder, attribute, value, context) -> {
+		final Map<String, Object> doc = new HashMap<>();
+		doc.putAll(value.getProperties());
+		doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
+		doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
+		doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
+		doc.put(DocumentField.Type.FROM.getSerializeName(), value.getFrom());
+		doc.put(DocumentField.Type.TO.getSerializeName(), value.getTo());
+		context.serialize(builder, attribute, doc);
+	};
 }

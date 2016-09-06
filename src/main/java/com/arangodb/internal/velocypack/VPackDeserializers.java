@@ -3,6 +3,7 @@ package com.arangodb.internal.velocypack;
 import java.util.Map;
 
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.internal.net.Response;
@@ -33,5 +34,11 @@ public class VPackDeserializers {
 	@SuppressWarnings("unchecked")
 	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = (parent, vpack, context) -> new BaseDocument(
 			context.deserialize(vpack, Map.class));
+
+	@SuppressWarnings("unchecked")
+	public static final VPackDeserializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = (
+		parent,
+		vpack,
+		context) -> new BaseEdgeDocument(context.deserialize(vpack, Map.class));
 
 }

@@ -3,6 +3,7 @@ package com.arangodb.internal.velocypack;
 import org.json.simple.JSONValue;
 
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
@@ -67,11 +68,13 @@ public class VPackConfigure {
 		builder.registerSerializer(Request.class, VPackSerializers.REQUEST);
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
 		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
+		builder.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
 
 		builder.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
 		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
 		builder.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
+		builder.registerDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
 	}
 
 }
