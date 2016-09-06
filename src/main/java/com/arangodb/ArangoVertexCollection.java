@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.DocumentField;
+import com.arangodb.entity.VertexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
-import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -68,8 +68,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentCreateResult<T> insertVertex(final T value, final DocumentCreateOptions options)
-			throws ArangoDBException {
+	public <T> VertexResult insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException {
 		return executeSync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
 	}
 
@@ -84,30 +83,23 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @return
 	 */
-	public <T> CompletableFuture<DocumentCreateResult<T>> insertVertexAsync(
-		final T value,
-		final DocumentCreateOptions options) {
+	public <T> CompletableFuture<VertexResult> insertVertexAsync(final T value, final VertexCreateOptions options) {
 		return executeAsync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
 	}
 
-	private <T> Request insertVertexRequest(final T value, final DocumentCreateOptions options) {
+	private <T> Request insertVertexRequest(final T value, final VertexCreateOptions options) {
 		final Request request = new Request(graph.db().name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name));
-		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
+		final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putParameter(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.setBody(serialize(value));
 		return request;
 	}
 
-	private <T> ResponseDeserializer<DocumentCreateResult<T>> insertVertexResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<VertexResult> insertVertexResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			final DocumentCreateResult<T> doc = deserialize(body, DocumentCreateResult.class);
-			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
-			if (newDoc.isObject()) {
-				doc.setNew(deserialize(newDoc, value.getClass()));
-			}
+			final VertexResult doc = deserialize(body, VertexResult.class);
 			final Map<DocumentField.Type, String> values = new HashMap<>();
 			values.put(DocumentField.Type.ID, doc.getId());
 			values.put(DocumentField.Type.KEY, doc.getKey());

@@ -19,9 +19,9 @@ import org.junit.Test;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.DocumentCreateResult;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
+import com.arangodb.entity.VertexResult;
 import com.arangodb.model.CollectionCreateOptions;
 
 /**
@@ -123,12 +123,13 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void insertVertex() {
-		final DocumentCreateResult<BaseDocument> vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1)
-				.insertVertex(new BaseDocument(), null);
+		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
+			null);
 		assertThat(vertex, is(notNullValue()));
 		final BaseDocument document = db.collection(VERTEX_COL_1).getDocument(vertex.getKey(), BaseDocument.class,
 			null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
+
 }
