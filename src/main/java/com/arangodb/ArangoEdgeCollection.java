@@ -9,6 +9,7 @@ import com.arangodb.entity.EdgeResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -77,5 +78,55 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 			documentCache.setValues(value, values);
 			return doc;
 		};
+	}
+
+	/**
+	 * Fetches an existing edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the edge identified by the key
+	 * @throws ArangoDBException
+	 */
+	public <T> T getEdge(final String key, final Class<T> type, final DocumentReadOptions options)
+			throws ArangoDBException {
+		return executeSync(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+	}
+
+	/**
+	 * Fetches an existing edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the edge identified by the key
+	 */
+	public <T> CompletableFuture<T> getEdgeAsync(
+		final String key,
+		final Class<T> type,
+		final DocumentReadOptions options) {
+		return executeAsync(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+	}
+
+	private Request getEdgeRequest(final String key, final DocumentReadOptions options) {
+		final Request request = new Request(graph.db().name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name, key));
+		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
+		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		return request;
+	}
+
+	private <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.EDGE), type);
 	}
 }

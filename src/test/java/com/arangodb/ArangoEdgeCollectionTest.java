@@ -3,6 +3,7 @@ package com.arangodb;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.EdgeResult;
 import com.arangodb.entity.VertexResult;
 import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.DocumentReadOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -57,8 +59,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		db.graph(GRAPH_NAME).drop();
 	}
 
-	@Test
-	public void insertEdge() {
+	private BaseEdgeDocument createEdgeValue() {
 		final VertexResult v1 = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final VertexResult v2 = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME)
@@ -67,11 +68,75 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument value = new BaseEdgeDocument();
 		value.setFrom(v1.getId());
 		value.setTo(v2.getId());
+		return value;
+	}
+
+	@Test
+	public void insertEdge() {
+		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeResult edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
 		assertThat(edge, is(notNullValue()));
 		final BaseDocument document = db.collection(EDGE_COLLECTION_NAME).getDocument(edge.getKey(), BaseDocument.class,
 			null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(edge.getKey()));
+	}
+
+	@Test
+	public void getEdge() {
+		final BaseEdgeDocument value = createEdgeValue();
+		final EdgeResult edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
+		final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
+			BaseDocument.class, null);
+		assertThat(document, is(notNullValue()));
+		assertThat(document.getKey(), is(edge.getKey()));
+	}
+
+	@Test
+	public void getEdgeIfMatch() {
+		final BaseEdgeDocument value = createEdgeValue();
+		final EdgeResult edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(edge.getRev());
+		final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
+			BaseDocument.class, options);
+		assertThat(document, is(notNullValue()));
+		assertThat(document.getKey(), is(edge.getKey()));
+	}
+
+	@Test
+	public void getEdgeIfMatchFail() {
+		final BaseEdgeDocument value = createEdgeValue();
+		final EdgeResult edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
+		try {
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(), BaseDocument.class,
+				options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void getEdgeIfNoneMatch() {
+		final BaseEdgeDocument value = createEdgeValue();
+		final EdgeResult edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
+		final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
+			BaseDocument.class, options);
+		assertThat(document, is(notNullValue()));
+		assertThat(document.getKey(), is(edge.getKey()));
+	}
+
+	@Test
+	public void getEdgeIfNoneMatchFail() {
+		final BaseEdgeDocument value = createEdgeValue();
+		final EdgeResult edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(edge.getRev());
+		try {
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(), BaseDocument.class,
+				options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
 	}
 }
