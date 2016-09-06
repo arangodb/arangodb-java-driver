@@ -9,7 +9,7 @@ import com.arangodb.ArangoExecuteable;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ExecutableTest {
+public class ArangoExecuteableTest {
 
 	@Test
 	public void validateDBNameValid() {
