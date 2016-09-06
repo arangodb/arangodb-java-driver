@@ -3,6 +3,7 @@ package com.arangodb;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
+import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
@@ -159,7 +160,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<GraphResult> addVertexCollectionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+		return addEdgeDefinitionResponseDeserializer();
 	}
 
 	public ArangoVertexCollection vertexCollection(final String name) {
@@ -203,4 +204,41 @@ public class ArangoGraph extends ArangoExecuteable {
 			new Type<Collection<String>>() {
 			}.getType());
 	}
+
+	/**
+	 * Add a new edge definition to the graph
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-edge-definition">API
+	 *      Documentation</a>
+	 * @param definition
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	public GraphResult addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+		return executeSync(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
+	}
+
+	/**
+	 * Add a new edge definition to the graph
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-edge-definition">API
+	 *      Documentation</a>
+	 * @param definition
+	 * @return information about the graph
+	 */
+	public CompletableFuture<GraphResult> addEdgeDefinitionAsync(final EdgeDefinition definition) {
+		return executeAsync(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
+	}
+
+	private Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
+		final Request request = new Request(db.name(), RequestType.POST,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
+		request.setBody(serialize(definition));
+		return request;
+	}
+
+	private ResponseDeserializer<GraphResult> addEdgeDefinitionResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	}
+
 }

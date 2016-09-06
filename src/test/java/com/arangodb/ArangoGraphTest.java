@@ -30,6 +30,7 @@ public class ArangoGraphTest extends BaseTest {
 	private static final String GRAPH_NAME = "db_collection_test";
 	private static final String EDGE_COL_1 = "db_edge1_collection_test";
 	private static final String EDGE_COL_2 = "db_edge2_collection_test";
+	private static final String EDGE_COL_3 = "db_edge3_collection_test";
 	private static final String VERTEX_COL_1 = "db_vertex1_collection_test";
 	private static final String VERTEX_COL_2 = "db_vertex2_collection_test";
 	private static final String VERTEX_COL_3 = "db_vertex3_collection_test";
@@ -118,4 +119,17 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(edgeCollections, hasItems(EDGE_COL_1, EDGE_COL_2));
 	}
 
+	@Test
+	public void addEdgeDefinition() {
+		final GraphResult graph = db.graph(GRAPH_NAME)
+				.addEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2));
+		assertThat(graph, is(notNullValue()));
+		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
+		assertThat(edgeDefinitions.size(), is(3));
+		assertThat(edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_3)).count(), is(1L));
+		edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_3)).forEach(e -> {
+			assertThat(e.getFrom(), hasItem(VERTEX_COL_1));
+			assertThat(e.getTo(), hasItem(VERTEX_COL_2));
+		});
+	}
 }
