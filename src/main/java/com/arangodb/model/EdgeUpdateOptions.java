@@ -3,15 +3,15 @@ package com.arangodb.model;
 /**
  * @author Mark - mark at arangodb.com
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
  */
-public class VertexUpdateOptions {
+public class EdgeUpdateOptions {
 
 	private Boolean keepNull;
 	private Boolean waitForSync;
 	private String ifMatch;
 
-	public VertexUpdateOptions() {
+	public EdgeUpdateOptions() {
 		super();
 	}
 
@@ -27,7 +27,7 @@ public class VertexUpdateOptions {
 	 *            attribute value of null.
 	 * @return options
 	 */
-	public VertexUpdateOptions keepNull(final Boolean keepNull) {
+	public EdgeUpdateOptions keepNull(final Boolean keepNull) {
 		this.keepNull = keepNull;
 		return this;
 	}
@@ -41,7 +41,7 @@ public class VertexUpdateOptions {
 	 *            Wait until document has been synced to disk.
 	 * @return options
 	 */
-	public VertexUpdateOptions waitForSync(final Boolean waitForSync) {
+	public EdgeUpdateOptions waitForSync(final Boolean waitForSync) {
 		this.waitForSync = waitForSync;
 		return this;
 	}
@@ -55,7 +55,7 @@ public class VertexUpdateOptions {
 	 *            replace a document based on target revision
 	 * @return options
 	 */
-	public VertexUpdateOptions ifMatch(final String ifMatch) {
+	public EdgeUpdateOptions ifMatch(final String ifMatch) {
 		this.ifMatch = ifMatch;
 		return this;
 	}

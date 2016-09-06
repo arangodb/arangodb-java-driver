@@ -2,7 +2,8 @@ package com.arangodb.model;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
  */
 public class VertexDeleteOptions {
 

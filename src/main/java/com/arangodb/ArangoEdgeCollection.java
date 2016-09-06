@@ -13,6 +13,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeReplaceOptions;
+import com.arangodb.model.EdgeUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -189,6 +190,67 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
 			return doc;
+		};
+	}
+
+	/**
+	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
+	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+	 * do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the edge
+	 * @throws ArangoDBException
+	 */
+	public <T> EdgeUpdateResult updateEdge(final String key, final T value, final EdgeUpdateOptions options)
+			throws ArangoDBException {
+		return executeSync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
+	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+	 * do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the edge
+	 */
+	public <T> CompletableFuture<EdgeUpdateResult> updateEdgeAsync(
+		final String key,
+		final T value,
+		final EdgeUpdateOptions options) {
+		return executeAsync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
+	}
+
+	private <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
+		final Request request;
+		request = new Request(graph.db().name(), RequestType.PATCH,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name, key));
+		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
+		final Boolean keepNull = params.getKeepNull();
+		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(value, true));
+		return request;
+	}
+
+	private <T> ResponseDeserializer<EdgeUpdateResult> updateEdgeResponseDeserializer(final T value) {
+		return response -> {
+			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
+			return deserialize(body, EdgeUpdateResult.class);
 		};
 	}
 }
