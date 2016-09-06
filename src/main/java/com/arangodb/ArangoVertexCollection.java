@@ -9,6 +9,7 @@ import com.arangodb.entity.VertexResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -109,4 +110,53 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		};
 	}
 
+	/**
+	 * Fetches an existing vertex
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param type
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the vertex identified by the key
+	 * @throws ArangoDBException
+	 */
+	public <T> T getVertex(final String key, final Class<T> type, final DocumentReadOptions options)
+			throws ArangoDBException {
+		return executeSync(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+	}
+
+	/**
+	 * Fetches an existing vertex
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param type
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the vertex identified by the key
+	 */
+	public <T> CompletableFuture<T> getVertexAsync(
+		final String key,
+		final Class<T> type,
+		final DocumentReadOptions options) {
+		return executeAsync(getVertexRequest(key, options), type);
+	}
+
+	private Request getVertexRequest(final String key, final DocumentReadOptions options) {
+		final Request request = new Request(graph.db().name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
+		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		return request;
+	}
+
+	private <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.VERTEX), type);
+	}
 }

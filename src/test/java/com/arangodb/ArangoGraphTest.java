@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +24,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.VertexResult;
 import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.DocumentReadOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -132,4 +134,59 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
 
+	@Test
+	public void getVertex() {
+		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
+			null);
+		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(),
+			BaseDocument.class, null);
+		assertThat(document, is(notNullValue()));
+		assertThat(document.getKey(), is(vertex.getKey()));
+	}
+
+	@Test
+	public void getVertexIfMatch() {
+		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
+			null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(vertex.getRev());
+		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(),
+			BaseDocument.class, options);
+		assertThat(document, is(notNullValue()));
+		assertThat(document.getKey(), is(vertex.getKey()));
+	}
+
+	@Test
+	public void getVertexIfMatchFail() {
+		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
+			null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
+		try {
+			db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(), BaseDocument.class, options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void getVertexIfNoneMatch() {
+		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
+			null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
+		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(),
+			BaseDocument.class, options);
+		assertThat(document, is(notNullValue()));
+		assertThat(document.getKey(), is(vertex.getKey()));
+	}
+
+	@Test
+	public void getVertexIfNoneMatchFail() {
+		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
+			null);
+		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(vertex.getRev());
+		try {
+			db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(), BaseDocument.class, options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
 }
