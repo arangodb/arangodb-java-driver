@@ -2,9 +2,11 @@ package com.arangodb.model;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API Documentation</a>
  */
 public class VertexReplaceOptions {
+
 	private Boolean waitForSync;
 	private String ifMatch;
 

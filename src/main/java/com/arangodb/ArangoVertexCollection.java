@@ -13,6 +13,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexReplaceOptions;
+import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -221,6 +222,68 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
 			return doc;
+		};
+	}
+
+	/**
+	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
+	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+	 * do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param type
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the vertex
+	 * @throws ArangoDBException
+	 */
+	public <T> VertexUpdateResult updateVertex(final String key, final T value, final VertexUpdateOptions options)
+			throws ArangoDBException {
+		return executeSync(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
+	}
+
+	/**
+	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
+	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+	 * do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param type
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the vertex
+	 * @throws ArangoDBException
+	 */
+	public <T> CompletableFuture<VertexUpdateResult> updateVertexAsync(
+		final String key,
+		final T value,
+		final VertexUpdateOptions options) throws ArangoDBException {
+		return executeAsync(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
+	}
+
+	private <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
+		final Request request;
+		request = new Request(graph.db().name(), RequestType.PATCH,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
+		final Boolean keepNull = params.getKeepNull();
+		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(value, true));
+		return request;
+	}
+
+	private <T> ResponseDeserializer<VertexUpdateResult> updateVertexResponseDeserializer(final T value) {
+		return response -> {
+			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
+			return deserialize(body, VertexUpdateResult.class);
 		};
 	}
 }

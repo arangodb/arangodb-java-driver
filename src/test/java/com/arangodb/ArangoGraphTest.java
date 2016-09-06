@@ -4,10 +4,8 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,15 +16,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
-import com.arangodb.entity.VertexResult;
-import com.arangodb.entity.VertexUpdateResult;
 import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.VertexReplaceOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -115,141 +108,6 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(graph, is(notNullValue()));
 		final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections();
 		assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4));
-	}
-
-	@Test
-	public void dropVertexCollection() {
-		db.graph(GRAPH_NAME).addVertexCollection(VERTEX_COL_4);
-		db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_4).drop();
-		final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections();
-		assertThat(vertexCollections, not(hasItem(VERTEX_COL_4)));
-	}
-
-	@Test
-	public void insertVertex() {
-		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
-			null);
-		assertThat(vertex, is(notNullValue()));
-		final BaseDocument document = db.collection(VERTEX_COL_1).getDocument(vertex.getKey(), BaseDocument.class,
-			null);
-		assertThat(document, is(notNullValue()));
-		assertThat(document.getKey(), is(vertex.getKey()));
-	}
-
-	@Test
-	public void getVertex() {
-		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
-			null);
-		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(),
-			BaseDocument.class, null);
-		assertThat(document, is(notNullValue()));
-		assertThat(document.getKey(), is(vertex.getKey()));
-	}
-
-	@Test
-	public void getVertexIfMatch() {
-		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
-			null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(vertex.getRev());
-		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(),
-			BaseDocument.class, options);
-		assertThat(document, is(notNullValue()));
-		assertThat(document.getKey(), is(vertex.getKey()));
-	}
-
-	@Test
-	public void getVertexIfMatchFail() {
-		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
-			null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
-		try {
-			db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(), BaseDocument.class, options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
-	}
-
-	@Test
-	public void getVertexIfNoneMatch() {
-		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
-			null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
-		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(),
-			BaseDocument.class, options);
-		assertThat(document, is(notNullValue()));
-		assertThat(document.getKey(), is(vertex.getKey()));
-	}
-
-	@Test
-	public void getVertexIfNoneMatchFail() {
-		final VertexResult vertex = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(new BaseDocument(),
-			null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(vertex.getRev());
-		try {
-			db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).getVertex(vertex.getKey(), BaseDocument.class, options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
-	}
-
-	@Test
-	public void replaceVertex() {
-		final BaseDocument doc = new BaseDocument();
-		doc.addAttribute("a", "test");
-		final VertexResult createResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(doc, null);
-		doc.getProperties().clear();
-		doc.addAttribute("b", "test");
-		final VertexUpdateResult replaceResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1)
-				.replaceVertex(createResult.getKey(), doc, null);
-		assertThat(replaceResult, is(notNullValue()));
-		assertThat(replaceResult.getId(), is(createResult.getId()));
-		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
-
-		final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1)
-				.getVertex(createResult.getKey(), BaseDocument.class, null);
-		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
-	}
-
-	@Test
-	public void replaceVertexIfMatch() {
-		final BaseDocument doc = new BaseDocument();
-		doc.addAttribute("a", "test");
-		final VertexResult createResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(doc, null);
-		doc.getProperties().clear();
-		doc.addAttribute("b", "test");
-		final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch(createResult.getRev());
-		final VertexUpdateResult replaceResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1)
-				.replaceVertex(createResult.getKey(), doc, options);
-		assertThat(replaceResult, is(notNullValue()));
-		assertThat(replaceResult.getId(), is(createResult.getId()));
-		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
-
-		final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1)
-				.getVertex(createResult.getKey(), BaseDocument.class, null);
-		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
-	}
-
-	@Test
-	public void replaceVertexIfMatchFail() {
-		final BaseDocument doc = new BaseDocument();
-		doc.addAttribute("a", "test");
-		final VertexResult createResult = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).insertVertex(doc, null);
-		doc.getProperties().clear();
-		doc.addAttribute("b", "test");
-		try {
-			final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch("no");
-			db.graph(GRAPH_NAME).vertexCollection(VERTEX_COL_1).replaceVertex(createResult.getKey(), doc, options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
 	}
 
 }
