@@ -18,6 +18,7 @@ import com.arangodb.entity.VertexResult;
 import com.arangodb.entity.VertexUpdateResult;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
 
@@ -302,5 +303,47 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getRevision(), is(notNullValue()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+	}
+
+	@Test
+	public void deleteVertex() {
+		final BaseDocument doc = new BaseDocument();
+		final VertexResult createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
+			null);
+		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), null);
+		try {
+			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(createResult.getKey(), BaseDocument.class,
+				null);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteVertexIfMatch() {
+		final BaseDocument doc = new BaseDocument();
+		final VertexResult createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
+			null);
+		final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch(createResult.getRev());
+		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
+		try {
+			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(createResult.getKey(), BaseDocument.class,
+				null);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteVertexIfMatchFail() {
+		final BaseDocument doc = new BaseDocument();
+		final VertexResult createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
+			null);
+		final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch("no");
+		try {
+			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
 	}
 }

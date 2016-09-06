@@ -12,6 +12,7 @@ import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
+import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
@@ -286,4 +287,41 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 			return deserialize(body, VertexUpdateResult.class);
 		};
 	}
+
+	/**
+	 * Removes a vertex
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param options
+	 *            Additional options, can be null
+	 * @throws ArangoDBException
+	 */
+	public void deleteVertex(final String key, final VertexDeleteOptions options) throws ArangoDBException {
+		executeSync(deleteVertexRequest(key, options), Void.class);
+	}
+
+	/**
+	 * Removes a vertex
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param options
+	 *            Additional options, can be null
+	 */
+	public CompletableFuture<VertexResult> deleteVertexAsync(final String key, final VertexDeleteOptions options) {
+		return executeAsync(deleteVertexRequest(key, options), Void.class);
+	}
+
+	private Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
+		final Request request = new Request(graph.db().name(), RequestType.DELETE,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		return request;
+	}
+
 }
