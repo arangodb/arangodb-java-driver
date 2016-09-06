@@ -481,17 +481,25 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createGraph() {
-		final GraphResult result = db.createGraph(GRAPH_NAME, null, null);
-		assertThat(result, is(notNullValue()));
-		assertThat(result.getName(), is(GRAPH_NAME));
+		try {
+			final GraphResult result = db.createGraph(GRAPH_NAME, null, null);
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getName(), is(GRAPH_NAME));
+		} finally {
+			db.graph(GRAPH_NAME).drop();
+		}
 	}
 
 	@Test
 	public void getGraphs() {
-		db.createGraph(GRAPH_NAME, null, null);
-		final Collection<GraphResult> graphs = db.getGraphs();
-		assertThat(graphs, is(notNullValue()));
-		assertThat(graphs.size(), is(1));
+		try {
+			db.createGraph(GRAPH_NAME, null, null);
+			final Collection<GraphResult> graphs = db.getGraphs();
+			assertThat(graphs, is(notNullValue()));
+			assertThat(graphs.size(), is(1));
+		} finally {
+			db.graph(GRAPH_NAME).drop();
+		}
 	}
 
 	@Test
