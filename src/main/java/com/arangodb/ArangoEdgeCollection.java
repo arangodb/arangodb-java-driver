@@ -12,6 +12,7 @@ import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
+import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
@@ -253,4 +254,41 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 			return deserialize(body, EdgeUpdateResult.class);
 		};
 	}
+
+	/**
+	 * Removes a edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param options
+	 *            Additional options, can be null
+	 * @throws ArangoDBException
+	 */
+	public void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException {
+		executeSync(deleteEdgeRequest(key, options), Void.class);
+	}
+
+	/**
+	 * Removes a edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param options
+	 *            Additional options, can be null
+	 */
+	public CompletableFuture<Void> deleteEdgeAsync(final String key, final EdgeDeleteOptions options) {
+		return executeAsync(deleteEdgeRequest(key, options), Void.class);
+	}
+
+	private Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
+		final Request request = new Request(graph.db().name(), RequestType.DELETE,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name, key));
+		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		return request;
+	}
+
 }

@@ -24,6 +24,7 @@ import com.arangodb.entity.EdgeUpdateResult;
 import com.arangodb.entity.VertexResult;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
 
@@ -316,4 +317,42 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
 	}
 
+	@Test
+	public void deleteEdge() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		final EdgeResult createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), null);
+		try {
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(createResult.getKey(),
+				BaseEdgeDocument.class, null);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteEdgeIfMatch() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		final EdgeResult createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch(createResult.getRev());
+		db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options);
+		try {
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(createResult.getKey(),
+				BaseEdgeDocument.class, null);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteEdgeIfMatchFail() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		final EdgeResult createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch("no");
+		try {
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
 }

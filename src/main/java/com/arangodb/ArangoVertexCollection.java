@@ -310,7 +310,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @param options
 	 *            Additional options, can be null
 	 */
-	public CompletableFuture<VertexResult> deleteVertexAsync(final String key, final VertexDeleteOptions options) {
+	public CompletableFuture<Void> deleteVertexAsync(final String key, final VertexDeleteOptions options) {
 		return executeAsync(deleteVertexRequest(key, options), Void.class);
 	}
 
