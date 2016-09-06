@@ -169,4 +169,38 @@ public class ArangoGraph extends ArangoExecuteable {
 	public ArangoEdgeCollection edgeCollection(final String name) {
 		return new ArangoEdgeCollection(this, name);
 	}
+
+	/**
+	 * Lists all edge collections used in this graph
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-edge-definitions">API
+	 *      Documentation</a>
+	 * @return all edge collections within this graph
+	 * @throws ArangoDBException
+	 */
+	public Collection<String> getEdgeCollections() throws ArangoDBException {
+		return executeSync(getEdgeCollectionsRequest(), getEdgeCollectionsResponseDeserializer());
+	}
+
+	/**
+	 * Lists all edge collections used in this graph
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-edge-definitions">API
+	 *      Documentation</a>
+	 * @return all edge collections within this graph
+	 */
+	public CompletableFuture<Collection<String>> getEdgeCollectionsAsync() {
+		return executeAsync(getEdgeCollectionsRequest(), getEdgeCollectionsResponseDeserializer());
+	}
+
+	private Request getEdgeCollectionsRequest() {
+		return new Request(db.name(), RequestType.GET,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
+	}
+
+	private ResponseDeserializer<Collection<String>> getEdgeCollectionsResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.COLLECTIONS),
+			new Type<Collection<String>>() {
+			}.getType());
+	}
 }

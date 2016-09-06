@@ -110,4 +110,12 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4));
 	}
 
+	@Test
+	public void getEdgeCollections() {
+		final Collection<String> edgeCollections = db.graph(GRAPH_NAME).getEdgeCollections();
+		assertThat(edgeCollections, is(notNullValue()));
+		assertThat(edgeCollections.size(), is(2));
+		assertThat(edgeCollections, hasItems(EDGE_COL_1, EDGE_COL_2));
+	}
+
 }
