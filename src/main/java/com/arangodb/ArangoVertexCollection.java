@@ -6,11 +6,13 @@ import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexResult;
+import com.arangodb.entity.VertexUpdateResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
+import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -158,5 +160,67 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 
 	private <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.VERTEX), type);
+	}
+
+	/**
+	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param type
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the vertex
+	 * @throws ArangoDBException
+	 */
+	public <T> VertexUpdateResult replaceVertex(final String key, final T value, final VertexReplaceOptions options)
+			throws ArangoDBException {
+		return executeSync(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
+	}
+
+	/**
+	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
+	 *      Documentation</a>
+	 * @param key
+	 *            The key of the vertex
+	 * @param type
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the vertex
+	 */
+	public <T> CompletableFuture<VertexUpdateResult> replaceVertexAsync(
+		final String key,
+		final T value,
+		final VertexReplaceOptions options) {
+		return executeAsync(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
+	}
+
+	private <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
+		final Request request = new Request(graph.db().name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(value));
+		return request;
+	}
+
+	private <T> ResponseDeserializer<VertexUpdateResult> replaceVertexResponseDeserializer(final T value) {
+		return response -> {
+			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
+			final VertexUpdateResult doc = deserialize(body, VertexUpdateResult.class);
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.REV, doc.getRev());
+			documentCache.setValues(value, values);
+			return doc;
+		};
 	}
 }
