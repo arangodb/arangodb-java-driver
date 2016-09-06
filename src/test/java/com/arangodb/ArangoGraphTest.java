@@ -113,7 +113,7 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void getEdgeCollections() {
-		final Collection<String> edgeCollections = db.graph(GRAPH_NAME).getEdgeCollections();
+		final Collection<String> edgeCollections = db.graph(GRAPH_NAME).getEdgeDefinitions();
 		assertThat(edgeCollections, is(notNullValue()));
 		assertThat(edgeCollections.size(), is(2));
 		assertThat(edgeCollections, hasItems(EDGE_COL_1, EDGE_COL_2));

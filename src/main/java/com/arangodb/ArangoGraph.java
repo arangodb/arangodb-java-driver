@@ -179,8 +179,8 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @return all edge collections within this graph
 	 * @throws ArangoDBException
 	 */
-	public Collection<String> getEdgeCollections() throws ArangoDBException {
-		return executeSync(getEdgeCollectionsRequest(), getEdgeCollectionsResponseDeserializer());
+	public Collection<String> getEdgeDefinitions() throws ArangoDBException {
+		return executeSync(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
 	}
 
 	/**
@@ -190,16 +190,16 @@ public class ArangoGraph extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return all edge collections within this graph
 	 */
-	public CompletableFuture<Collection<String>> getEdgeCollectionsAsync() {
-		return executeAsync(getEdgeCollectionsRequest(), getEdgeCollectionsResponseDeserializer());
+	public CompletableFuture<Collection<String>> getEdgeDefinitionsAsync() {
+		return executeAsync(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
 	}
 
-	private Request getEdgeCollectionsRequest() {
+	private Request getEdgeDefinitionsRequest() {
 		return new Request(db.name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
 	}
 
-	private ResponseDeserializer<Collection<String>> getEdgeCollectionsResponseDeserializer() {
+	private ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.COLLECTIONS),
 			new Type<Collection<String>>() {
 			}.getType());
