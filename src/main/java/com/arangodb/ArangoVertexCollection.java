@@ -102,7 +102,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 
 	private <T> ResponseDeserializer<DocumentCreateResult<T>> insertVertexResponseDeserializer(final T value) {
 		return response -> {
-			final VPackSlice body = response.getBody().get();
+			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
 			final DocumentCreateResult<T> doc = deserialize(body, DocumentCreateResult.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 			if (newDoc.isObject()) {

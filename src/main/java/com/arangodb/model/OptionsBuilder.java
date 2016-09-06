@@ -91,4 +91,10 @@ public class OptionsBuilder {
 		return options.name(name).code(code);
 	}
 
+	public static VertexCollectionCreateOptions build(
+		final VertexCollectionCreateOptions options,
+		final String collection) {
+		return options.collection(collection);
+	}
+
 }

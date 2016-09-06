@@ -7,6 +7,8 @@ import com.arangodb.entity.GraphResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.model.OptionsBuilder;
+import com.arangodb.model.VertexCollectionCreateOptions;
 import com.arangodb.velocypack.Type;
 
 /**
@@ -150,8 +152,10 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private Request addVertexCollectionRequest(final String name) {
-		return new Request(db.name(), RequestType.POST,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.VERTEX));
+		final Request request = new Request(db.name(), RequestType.POST,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, name(), ArangoDBConstants.VERTEX));
+		request.setBody(serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
+		return request;
 	}
 
 	private ResponseDeserializer<GraphResult> addVertexCollectionResponseDeserializer() {
