@@ -165,4 +165,8 @@ public class ArangoGraph extends ArangoExecuteable {
 	public ArangoVertexCollection vertexCollection(final String name) {
 		return new ArangoVertexCollection(this, name);
 	}
+
+	public ArangoEdgeCollection edgeCollection(final String name) {
+		return new ArangoEdgeCollection(this, name);
+	}
 }

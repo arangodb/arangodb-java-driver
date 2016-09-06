@@ -63,7 +63,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	/**
-	 * Adds a vertex to the given collection
+	 * Creates a new vertex in the collection
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
 	 * @param value
@@ -78,7 +78,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	/**
-	 * Adds a vertex to the given collection
+	 * Creates a new vertex in the collection
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
 	 * @param value
@@ -86,7 +86,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the vertex
-	 * @return
 	 */
 	public <T> CompletableFuture<VertexResult> insertVertexAsync(final T value, final VertexCreateOptions options) {
 		return executeAsync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));

@@ -28,12 +28,12 @@ import com.arangodb.model.CollectionCreateOptions;
 public class ArangoGraphTest extends BaseTest {
 
 	private static final String GRAPH_NAME = "db_collection_test";
-	private static final String EDGE_COL_1 = "edge1";
-	private static final String EDGE_COL_2 = "edge2";
-	private static final String VERTEX_COL_1 = "vertex1";
-	private static final String VERTEX_COL_2 = "vertex2";
-	private static final String VERTEX_COL_3 = "vertex3";
-	private static final String VERTEX_COL_4 = "vertex4";
+	private static final String EDGE_COL_1 = "db_edge1_collection_test";
+	private static final String EDGE_COL_2 = "db_edge2_collection_test";
+	private static final String VERTEX_COL_1 = "db_vertex1_collection_test";
+	private static final String VERTEX_COL_2 = "db_vertex2_collection_test";
+	private static final String VERTEX_COL_3 = "db_vertex3_collection_test";
+	private static final String VERTEX_COL_4 = "db_vertex4_collection_test";
 
 	@Before
 	public void setup() {
