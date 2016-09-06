@@ -280,4 +280,44 @@ public class ArangoGraph extends ArangoExecuteable {
 	private ResponseDeserializer<GraphResult> replaceEdgeDefinitionResponseDeserializer() {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
 	}
+
+	/**
+	 * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections
+	 * remain untouched and can still be used in your queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-an-edge-definition-from-the-graph">API
+	 *      Documentation</a>
+	 * @param definitionName
+	 *            The name of the edge collection used in the definition
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	public GraphResult removeEdgeDefinition(final String definitionName) throws ArangoDBException {
+		return executeSync(removeEdgeDefinitionRequest(definitionName), removeEdgeDefinitionResponseDeserializer());
+	}
+
+	/**
+	 * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections
+	 * remain untouched and can still be used in your queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-an-edge-definition-from-the-graph">API
+	 *      Documentation</a>
+	 * @param definitionName
+	 *            The name of the edge collection used in the definition
+	 * @return information about the graph
+	 */
+	public CompletableFuture<GraphResult> removeEdgeDefinitionAsync(final String definitionName) {
+		return executeAsync(removeEdgeDefinitionRequest(definitionName), removeEdgeDefinitionResponseDeserializer());
+	}
+
+	private Request removeEdgeDefinitionRequest(final String definitionName) {
+		return new Request(db.name(), RequestType.DELETE,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definitionName));
+	}
+
+	private ResponseDeserializer<GraphResult> removeEdgeDefinitionResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	}
 }
