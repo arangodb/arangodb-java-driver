@@ -6,11 +6,13 @@ import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeResult;
+import com.arangodb.entity.EdgeUpdateResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
+import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -128,5 +130,65 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 
 	private <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.EDGE), type);
+	}
+
+	/**
+	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the edge
+	 * @throws ArangoDBException
+	 */
+	public <T> EdgeUpdateResult replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
+			throws ArangoDBException {
+		return executeSync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the edge
+	 */
+	public <T> CompletableFuture<EdgeUpdateResult> replaceEdgeAsync(
+		final String key,
+		final T value,
+		final EdgeReplaceOptions options) {
+		return executeAsync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
+	}
+
+	private <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
+		final Request request = new Request(graph.db().name(), RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name, key));
+		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
+		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.setBody(serialize(value));
+		return request;
+	}
+
+	private <T> ResponseDeserializer<EdgeUpdateResult> replaceEdgeResponseDeserializer(final T value) {
+		return response -> {
+			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
+			final EdgeUpdateResult doc = deserialize(body, EdgeUpdateResult.class);
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.REV, doc.getRev());
+			documentCache.setValues(value, values);
+			return doc;
+		};
 	}
 }

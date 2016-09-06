@@ -1,6 +1,8 @@
 package com.arangodb;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -18,9 +20,11 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.EdgeResult;
+import com.arangodb.entity.EdgeUpdateResult;
 import com.arangodb.entity.VertexResult;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.EdgeReplaceOptions;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -139,4 +143,65 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		} catch (final ArangoDBException e) {
 		}
 	}
+
+	@Test
+	public void replaceEdge() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		doc.addAttribute("a", "test");
+		final EdgeResult createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		final EdgeUpdateResult replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.replaceEdge(createResult.getKey(), doc, null);
+		assertThat(replaceResult, is(notNullValue()));
+		assertThat(replaceResult.getId(), is(createResult.getId()));
+		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
+		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.getEdge(createResult.getKey(), BaseDocument.class, null);
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
+		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+		assertThat(readResult.getAttribute("b"), is("test"));
+	}
+
+	@Test
+	public void replaceEdgeIfMatch() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		doc.addAttribute("a", "test");
+		final EdgeResult createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch(createResult.getRev());
+		final EdgeUpdateResult replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.replaceEdge(createResult.getKey(), doc, options);
+		assertThat(replaceResult, is(notNullValue()));
+		assertThat(replaceResult.getId(), is(createResult.getId()));
+		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
+		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+
+		final BaseDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.getEdge(createResult.getKey(), BaseDocument.class, null);
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
+		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+		assertThat(readResult.getAttribute("b"), is("test"));
+	}
+
+	@Test
+	public void replaceEdgeIfMatchFail() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		doc.addAttribute("a", "test");
+		final EdgeResult createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		doc.getProperties().clear();
+		doc.addAttribute("b", "test");
+		try {
+			final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch("no");
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).replaceEdge(createResult.getKey(), doc, options);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
 }
