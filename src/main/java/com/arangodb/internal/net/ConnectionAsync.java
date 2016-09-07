@@ -94,11 +94,11 @@ public class ConnectionAsync extends Connection {
 
 	@Override
 	public synchronized void close() {
-		super.close();
 		messageStore.clear();
 		if (executor != null && !executor.isShutdown()) {
 			executor.shutdown();
 		}
+		super.close();
 	}
 
 	public synchronized CompletableFuture<Message> write(final Message message, final Collection<Chunk> chunks) {
