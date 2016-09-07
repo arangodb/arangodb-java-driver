@@ -464,8 +464,7 @@ public class ArangoCollection extends ArangoExecuteable {
 		request = new Request(db.name(), RequestType.PATCH,
 				createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
-		final Boolean keepNull = params.getKeepNull();
-		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
+		request.putParameter(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putParameter(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putParameter(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());

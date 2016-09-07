@@ -272,8 +272,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		request = new Request(graph.db().name(), RequestType.PATCH,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
-		final Boolean keepNull = params.getKeepNull();
-		request.putParameter(ArangoDBConstants.KEEP_NULL, keepNull);
+		request.putParameter(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value, true));

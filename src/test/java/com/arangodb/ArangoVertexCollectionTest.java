@@ -212,7 +212,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(readResult.getAttribute("a"), is("test1"));
 		assertThat(readResult.getAttribute("b"), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
-		assertThat(readResult.getProperties().keySet(), not(hasItem("c")));
+		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}
 
 	@Test
@@ -239,7 +239,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(readResult.getAttribute("a"), is("test1"));
 		assertThat(readResult.getAttribute("b"), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
-		assertThat(readResult.getProperties().keySet(), not(hasItem("c")));
+		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}
 
 	@Test
