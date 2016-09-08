@@ -72,6 +72,10 @@ public class VPackBuilder {
 		buffer[size++] = b;
 	}
 
+	private void addUnchecked(final byte b) {
+		buffer[size++] = b;
+	}
+
 	private void remove(final int index) {
 		final int numMoved = size - index - 1;
 		if (numMoved > 0) {
@@ -141,8 +145,9 @@ public class VPackBuilder {
 				final VPackSlice translate = VPackSlice.attributeTranslator.translate(attribute);
 				if (translate != null) {
 					final byte[] value = translate.getValue();
+					ensureCapacity(size + value.length);
 					for (int i = 0; i < value.length; i++) {
-						add(value[i]);
+						addUnchecked(value[i]);
 					}
 					keyWritten = true;
 					set(sub);
@@ -302,14 +307,16 @@ public class VPackBuilder {
 	}
 
 	private void append(final long value, final int length) {
+		ensureCapacity(size + length);
 		for (int i = length - 1; i >= 0; i--) {
-			add((byte) (value >> (length - i - 1 << 3)));
+			addUnchecked((byte) (value >> (length - i - 1 << 3)));
 		}
 	}
 
 	private void append(final BigInteger value, final int length) {
+		ensureCapacity(size + length);
 		for (int i = length - 1; i >= 0; i--) {
-			add(value.shiftRight(length - i - 1 << 3).byteValue());
+			addUnchecked(value.shiftRight(length - i - 1 << 3).byteValue());
 		}
 	}
 
@@ -450,8 +457,9 @@ public class VPackBuilder {
 		// final int tableBase = size;
 		for (int i = 0; i < in.size(); i++) {
 			long x = in.get(i);
+			ensureCapacity(size + offsetSize);
 			for (int j = 0; j < offsetSize; j++) {
-				add(/* tableBase + offsetSize * i + j, */ (byte) (x & 0xff));
+				addUnchecked(/* tableBase + offsetSize * i + j, */ (byte) (x & 0xff));
 				x >>= 8;
 			}
 		}
@@ -626,8 +634,9 @@ public class VPackBuilder {
 			// final int tableBase = size;
 			for (int i = 0; i < n; i++) {
 				long x = in.get(i);
+				ensureCapacity(size + offsetSize);
 				for (int j = 0; j < offsetSize; j++) {
-					add(/* tableBase + offsetSize * i + j, */ (byte) (x & 0xff));
+					addUnchecked(/* tableBase + offsetSize * i + j, */ (byte) (x & 0xff));
 					x >>= 8;
 				}
 			}
@@ -686,9 +695,6 @@ public class VPackBuilder {
 			@Override
 			public int compare(final SortEntry o1, final SortEntry o2) {
 				return o1.slice.getAsString().compareTo(o2.slice.getAsString());
-				// return compareTo(o1.slice.getValue(), 1,
-				// o1.slice.getValue().length - 1, o2.slice.getValue(), 1,
-				// o2.slice.getValue().length - 1);
 			}
 		};
 		Collections.sort(attributes, comparator);
@@ -723,10 +729,6 @@ public class VPackBuilder {
 		return stack.isEmpty();
 	}
 
-	/**
-	 * 
-	 * @return head of open object/array
-	 */
 	private byte head() {
 		final Integer in = stack.get(stack.size() - 1);
 		return buffer[in];
