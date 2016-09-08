@@ -1,7 +1,6 @@
 package com.arangodb.velocypack;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,33 +180,11 @@ public class VPackBuilder {
 			appendBoolean(item.getBoolean());
 			break;
 		case DOUBLE:
-			final double d;
-			if (clazz == Double.class) {
-				d = item.getDouble();
-			} else if (clazz == BigDecimal.class) {
-				d = item.getBigDecimal().doubleValue();
-			} else if (clazz == Float.class) {
-				d = item.getFloat().doubleValue();
-			} else {
-				throw new VPackBuilderUnexpectedValueException(ValueType.DOUBLE, Double.class, BigDecimal.class,
-						Float.class);
-			}
+			final double d = item.getNumber().doubleValue();
 			appendDouble(d);
 			break;
 		case SMALLINT:
-			final long vSmallInt;
-			if (clazz == Long.class) {
-				vSmallInt = item.getLong();
-			} else if (clazz == Integer.class) {
-				vSmallInt = item.getInteger();
-			} else if (clazz == BigInteger.class) {
-				vSmallInt = item.getBigInteger().longValue();
-			} else if (clazz == Short.class) {
-				vSmallInt = item.getShort();
-			} else {
-				throw new VPackBuilderUnexpectedValueException(ValueType.SMALLINT, Long.class, Integer.class,
-						BigInteger.class);
-			}
+			final long vSmallInt = item.getNumber().longValue();
 			if (vSmallInt < -6 || vSmallInt > 9) {
 				throw new VPackBuilderNumberOutOfRangeException(ValueType.SMALLINT);
 			}

@@ -154,6 +154,10 @@ public class Value {
 		return (Double) value;
 	}
 
+	public Number getNumber() {
+		return (Number) value;
+	}
+
 	public Long getLong() {
 		return (Long) value;
 	}
