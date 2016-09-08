@@ -150,7 +150,6 @@ public class ArangoDB extends ArangoExecuteable {
 	}
 
 	public ArangoDatabase db(final String name) {
-		validateDBName(name);
 		return new ArangoDatabase(this, name);
 	}
 
@@ -165,7 +164,6 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Boolean createDatabase(final String name) throws ArangoDBException {
-		validateDBName(name);
 		return executeSync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
 	}
 
@@ -179,7 +177,6 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return true if the database was created successfully.
 	 */
 	public CompletableFuture<Boolean> createDatabaseAsync(final String name) {
-		validateDBName(name);
 		return executeAsync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
 	}
 

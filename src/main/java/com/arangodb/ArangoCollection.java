@@ -1112,7 +1112,6 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	private Request dropRequest() {
-		validateCollectionName(name);
 		return new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
 	}
 

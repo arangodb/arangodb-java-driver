@@ -63,7 +63,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	public ArangoCollection collection(final String name) {
-		validateCollectionName(name);
 		return new ArangoCollection(this, name);
 	}
 
@@ -103,7 +102,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 
 	private Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
 		final Request request;
-		validateCollectionName(name);
 		request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));
@@ -239,7 +237,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request dropRequest() {
-		validateDBName(name);
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
 				createPath(ArangoDBConstants.PATH_API_DATABASE, name));
 	}

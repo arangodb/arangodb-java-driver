@@ -33,6 +33,11 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		this.name = name;
 	}
 
+	private String createDocumentHandle(final String key) {
+		validateDocumentKey(key);
+		return createPath(name, key);
+	}
+
 	/**
 	 * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
 	 * graph
@@ -151,8 +156,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private Request getVertexRequest(final String key, final DocumentReadOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final Request request = new Request(graph.db().name(), RequestType.GET, createPath(
+			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -205,8 +210,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final Request request = new Request(graph.db().name(), RequestType.PUT, createPath(
+			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -269,8 +274,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 
 	private <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
 		final Request request;
-		request = new Request(graph.db().name(), RequestType.PATCH,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		request = new Request(graph.db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_GHARIAL,
+			graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
 		request.putParameter(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -314,8 +319,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.DELETE,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name, key));
+		final Request request = new Request(graph.db().name(), RequestType.DELETE, createPath(
+			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
 		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());

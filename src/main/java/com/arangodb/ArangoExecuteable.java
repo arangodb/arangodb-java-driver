@@ -30,8 +30,6 @@ abstract class ArangoExecuteable {
 		T deserialize(Response response) throws VPackException;
 	}
 
-	private static final String REGEX_DB_NAME = ArangoDBConstants.SYSTEM + "|[a-zA-Z][\\w-]*";
-	private static final String REGEX_COLLECTION_NAME = "[0-9]+|[a-zA-Z_][\\w-]*";
 	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
 
 	protected final Communication communication;
@@ -87,14 +85,6 @@ abstract class ArangoExecuteable {
 		return sb.toString();
 	}
 
-	protected void validateDBName(final String name) throws ArangoDBException {
-		validateName(REGEX_DB_NAME, name);
-	}
-
-	protected void validateCollectionName(final String name) throws ArangoDBException {
-		validateName(REGEX_COLLECTION_NAME, name);
-	}
-
 	protected void validateDocumentKey(final String key) throws ArangoDBException {
 		validateName(REGEX_DOCUMENT_KEY, key);
 	}
@@ -106,9 +96,7 @@ abstract class ArangoExecuteable {
 	}
 
 	protected <T> CompletableFuture<T> executeAsync(final Request request, final Type type) {
-		return executeAsync(request, (response) -> {
-			return createResult(vpacker, vpackParser, type, response);
-		});
+		return executeAsync(request, (response) -> createResult(vpacker, vpackParser, type, response));
 	}
 
 	protected <T> CompletableFuture<T> executeAsync(
@@ -132,9 +120,7 @@ abstract class ArangoExecuteable {
 	}
 
 	protected <T> T executeSync(final Request request, final Type type) throws ArangoDBException {
-		return executeSync(request, (response) -> {
-			return createResult(vpacker, vpackParser, type, response);
-		});
+		return executeSync(request, (response) -> createResult(vpacker, vpackParser, type, response));
 	}
 
 	protected <T> T executeSync(final Request request, final ResponseDeserializer<T> responseDeserializer)
@@ -147,28 +133,13 @@ abstract class ArangoExecuteable {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> T createResult(
+	private <T> T createResult(
 		final VPack vpack,
 		final VPackParser vpackParser,
 		final Type type,
 		final Response response) {
-		T value = null;
-		if (type != Void.class) {
-			if (response.getBody().isPresent()) {
-				try {
-					final VPackSlice body = response.getBody().get();
-					if (type == String.class && !body.isString()) {
-						value = (T) vpackParser.toJson(body);
-					} else {
-						value = vpack.deserialize(body, type);
-					}
-				} catch (final VPackException e) {
-					throw new ArangoDBException(e);
-				}
-			}
-		}
-		return value;
+		return (type != Void.class && response.getBody().isPresent()) ? deserialize(response.getBody().get(), type)
+				: null;
 	}
 
 	@SuppressWarnings("unchecked")
