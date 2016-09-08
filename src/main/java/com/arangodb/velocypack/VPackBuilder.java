@@ -356,9 +356,9 @@ public class VPackBuilder {
 
 	private void append(final String value) throws UnsupportedEncodingException {
 		final byte[] bytes = value.getBytes("UTF-8");
-		for (final byte b : bytes) {
-			add(b);
-		}
+		ensureCapacity(size + bytes.length);
+		System.arraycopy(bytes, 0, buffer, size, bytes.length);
+		size += bytes.length;
 	}
 
 	private void addArray(final boolean unindexed) {
