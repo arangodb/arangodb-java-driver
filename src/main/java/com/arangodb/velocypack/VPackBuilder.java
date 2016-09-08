@@ -374,10 +374,9 @@ public class VPackBuilder {
 		stack.add(size);
 		index.put(stack.size() - 1, new ArrayList<Integer>());
 		add(head);
-		for (int i = 0; i < 8; i++) {
-			// Will be filled later with bytelength and nr subs
-			add((byte) 0x00);
-		}
+		// Will be filled later with bytelength and nr subs
+		size += 8;
+		ensureCapacity(size);
 	}
 
 	private void appendLength(final long length) {
