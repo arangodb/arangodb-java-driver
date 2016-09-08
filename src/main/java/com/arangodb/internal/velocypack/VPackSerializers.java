@@ -2,6 +2,7 @@ package com.arangodb.internal.velocypack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
@@ -25,8 +26,16 @@ public class VPackSerializers {
 		builder.add(new Value(value.getDatabase()));
 		builder.add(new Value(value.getRequestType().getType()));
 		builder.add(new Value(value.getRequest()));
-		context.serialize(builder, null, value.getParameter());
-		context.serialize(builder, null, value.getMeta());
+		builder.add(new Value(ValueType.OBJECT));
+		for (final Entry<String, String> entry : value.getParameter().entrySet()) {
+			builder.add(entry.getKey(), new Value(entry.getValue()));
+		}
+		builder.close();
+		builder.add(new Value(ValueType.OBJECT));
+		for (final Entry<String, String> entry : value.getMeta().entrySet()) {
+			builder.add(entry.getKey(), new Value(entry.getValue()));
+		}
+		builder.close();
 		builder.close();
 	};
 
