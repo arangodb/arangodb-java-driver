@@ -276,7 +276,7 @@ public class VPackBuilder {
 			break;
 		case VPACK:
 			final byte[] vpack = item.getBinary();
-			ensureCapacity(vpack.length);
+			ensureCapacity(size + vpack.length);
 			System.arraycopy(vpack, 0, buffer, size, vpack.length);
 			size += vpack.length;
 			break;
