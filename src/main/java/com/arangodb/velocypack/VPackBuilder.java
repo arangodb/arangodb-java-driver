@@ -39,11 +39,6 @@ public class VPackBuilder {
 		void setBuildUnindexedObjects(boolean buildUnindexedObjects);
 	}
 
-	private static final int DOUBLE_BYTES = 8;
-	private static final int LONG_BYTES = 8;
-	private static final int INT_BYTES = 4;
-	private static final int SHORT_BYTES = 2;
-
 	private byte[] buffer; // Here we collect the result
 	private int size;
 	private final List<Integer> stack; // Start positions of open
@@ -191,18 +186,21 @@ public class VPackBuilder {
 			appendSmallInt(vSmallInt);
 			break;
 		case INT:
-			if (clazz == Long.class) {
-				appendLong(item.getLong());
-			} else if (clazz == Integer.class) {
-				appendInt(item.getInteger());
-			} else if (clazz == BigInteger.class) {
-				appendLong(item.getBigInteger().longValue());
+			final int length;
+			if (clazz == Integer.class) {
+				add((byte) 0x23);
+				length = Integer.BYTES;
+			} else if (clazz == Long.class || clazz == BigInteger.class) {
+				add((byte) 0x27);
+				length = Long.BYTES;
 			} else if (clazz == Short.class) {
-				appendShort(item.getShort());
+				add((byte) 0x21);
+				length = Short.BYTES;
 			} else {
 				throw new VPackBuilderUnexpectedValueException(ValueType.INT, Long.class, Integer.class,
 						BigInteger.class, Short.class);
 			}
+			append(item.getNumber().longValue(), length);
 			break;
 		case UINT:
 			final BigInteger vUInt;
@@ -246,7 +244,7 @@ public class VPackBuilder {
 		case BINARY:
 			add((byte) 0xc3);
 			final byte[] binary = item.getBinary();
-			append(binary.length, INT_BYTES);
+			append(binary.length, Integer.BYTES);
 			ensureCapacity(size + binary.length);
 			System.arraycopy(binary, 0, buffer, size, binary.length);
 			size += binary.length;
@@ -287,7 +285,7 @@ public class VPackBuilder {
 	}
 
 	private void append(final double value) {
-		append(Double.doubleToRawLongBits(value), DOUBLE_BYTES);
+		append(Double.doubleToRawLongBits(value), Double.BYTES);
 	}
 
 	private void appendSmallInt(final long value) {
@@ -298,43 +296,26 @@ public class VPackBuilder {
 		}
 	}
 
-	private void appendLong(final long value) {
-		add((byte) 0x27);
-		append(value, LONG_BYTES);
-	}
-
-	private void appendInt(final int value) {
-		add((byte) 0x23);
-		append(value, INT_BYTES);
-	}
-
-	private void appendShort(final short value) {
-		add((byte) 0x21);
-		append(value, SHORT_BYTES);
-	}
-
 	private void appendUInt(final BigInteger value) {
 		add((byte) 0x2f);
-		append(value, LONG_BYTES);
+		append(value, Long.BYTES);
 	}
 
 	private void append(final long value, final int length) {
-		final long l = value;
 		for (int i = length - 1; i >= 0; i--) {
-			add((byte) (l >> (length - i - 1 << 3)));
+			add((byte) (value >> (length - i - 1 << 3)));
 		}
 	}
 
 	private void append(final BigInteger value, final int length) {
-		final BigInteger l = value;
 		for (int i = length - 1; i >= 0; i--) {
-			add(l.shiftRight(length - i - 1 << 3).byteValue());
+			add(value.shiftRight(length - i - 1 << 3).byteValue());
 		}
 	}
 
 	private void appendUTCDate(final Date value) {
 		add((byte) 0x1c);
-		append(value.getTime(), LONG_BYTES);
+		append(value.getTime(), Long.BYTES);
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {
@@ -380,7 +361,7 @@ public class VPackBuilder {
 	}
 
 	private void appendLength(final long length) {
-		append(length, LONG_BYTES);
+		append(length, Long.BYTES);
 	}
 
 	private void reportAdd() {
