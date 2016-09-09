@@ -1,6 +1,7 @@
 package com.arangodb.velocypack;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +21,9 @@ import com.arangodb.velocypack.exception.VPackBuilderNumberOutOfRangeException;
 import com.arangodb.velocypack.exception.VPackBuilderUnexpectedValueException;
 import com.arangodb.velocypack.exception.VPackKeyTypeException;
 import com.arangodb.velocypack.exception.VPackNeedAttributeTranslatorException;
+import com.arangodb.velocypack.exception.VPackValueTypeException;
 import com.arangodb.velocypack.internal.DefaultVPackBuilderOptions;
+import com.arangodb.velocypack.internal.Value;
 import com.arangodb.velocypack.internal.util.NumberUtil;
 
 /**
@@ -38,6 +41,89 @@ public class VPackBuilder {
 
 		void setBuildUnindexedObjects(boolean buildUnindexedObjects);
 	}
+
+	@FunctionalInterface
+	public static interface Appender<T> {
+		void append(VPackBuilder builder, T value) throws VPackBuilderException;
+	}
+
+	private static final Appender<Value> VALUE = (builder, value) -> {
+		builder.set(value);
+	};
+	private static final Appender<ValueType> VALUE_TYPE = (builder, value) -> {
+		switch (value) {
+		case NULL:
+			builder.appendNull();
+			break;
+		case ARRAY:
+			builder.addArray(false);
+			break;
+		case OBJECT:
+			builder.addObject(false);
+			break;
+		default:
+			throw new VPackValueTypeException(ValueType.ARRAY, ValueType.OBJECT, ValueType.NULL);
+		}
+	};
+	private static final Appender<Boolean> BOOLEAN = (builder, value) -> {
+		builder.appendBoolean(value);
+	};
+	private static final Appender<Double> DOUBLE = (builder, value) -> {
+		builder.appendDouble(value);
+	};
+	private static final Appender<Float> FLOAT = (builder, value) -> {
+		builder.appendDouble(value);
+	};
+	private static final Appender<BigDecimal> BIG_DECIMAL = (builder, value) -> {
+		builder.appendDouble(value.doubleValue());
+	};
+	private static final Appender<Long> LONG = (builder, value) -> {
+		if (value <= 9 && value >= -6) {
+			builder.appendSmallInt(value);
+		} else {
+			builder.add((byte) 0x23);
+			builder.append(value, Integer.BYTES);
+		}
+	};
+	private static final Appender<Integer> INTEGER = (builder, value) -> {
+		if (value <= 9 && value >= -6) {
+			builder.appendSmallInt(value);
+		} else {
+			builder.add((byte) 0x23);
+			builder.append(value, Integer.BYTES);
+		}
+	};
+	private static final Appender<Short> SHORT = (builder, value) -> {
+		if (value <= 9 && value >= -6) {
+			builder.appendSmallInt(value);
+		} else {
+			builder.add((byte) 0x23);
+			builder.append(value, Integer.BYTES);
+		}
+	};
+	private static final Appender<BigInteger> BIG_INTEGER = (builder, value) -> {
+		if (value.longValue() <= 9 && value.longValue() >= -6) {
+			builder.appendSmallInt(value.longValue());
+		} else {
+			builder.add((byte) 0x23);
+			builder.append(value, Integer.BYTES);
+		}
+	};
+	private static final Appender<Date> DATE = (builder, value) -> {
+		builder.appendUTCDate(value);
+	};
+	private static final Appender<String> STRING = (builder, value) -> {
+		builder.appendString(value);
+	};
+	private static final Appender<Character> CHARACTER = (builder, value) -> {
+		builder.appendString(String.valueOf(value));
+	};
+	private static final Appender<byte[]> BYTE_ARRAY = (builder, value) -> {
+		builder.appendBinary(value);
+	};
+	private static final Appender<VPackSlice> VPACK = (builder, value) -> {
+		builder.appendVPack(value);
+	};
 
 	private byte[] buffer; // Here we collect the result
 	private int size;
@@ -96,28 +182,157 @@ public class VPackBuilder {
 		}
 	}
 
-	public VPackBuilder add(final Value sub) throws VPackBuilderException {
-		addInternal(sub);
-		return this;
+	public VPackBuilder add(final ValueType value) throws VPackBuilderException {
+		return addInternal(VALUE_TYPE, value);
 	}
 
-	public VPackBuilder add(final String attribute, final Value sub) throws VPackBuilderException {
-		if (attribute != null) {
-			addInternal(attribute, sub);
-		} else {
-			addInternal(sub);
-		}
-		return this;
+	public VPackBuilder add(final ValueType value, final boolean unindexed) throws VPackBuilderException {
+		return addInternal(VALUE, new Value(value, unindexed));
 	}
 
-	private void addInternal(final Value sub) throws VPackBuilderException {
+	public VPackBuilder add(final Boolean value) throws VPackBuilderException {
+		return addInternal(BOOLEAN, value);
+	}
+
+	public VPackBuilder add(final Double value) throws VPackBuilderException {
+		return addInternal(DOUBLE, value);
+	}
+
+	public VPackBuilder add(final Float value) throws VPackBuilderException {
+		return addInternal(FLOAT, value);
+	}
+
+	public VPackBuilder add(final BigDecimal value) throws VPackBuilderException {
+		return addInternal(BIG_DECIMAL, value);
+	}
+
+	public VPackBuilder add(final Long value) throws VPackBuilderException {
+		return addInternal(LONG, value);
+	}
+
+	public VPackBuilder add(final Long value, final ValueType type) throws VPackBuilderException {
+		return addInternal(VALUE, new Value(value, type));
+	}
+
+	public VPackBuilder add(final Integer value) throws VPackBuilderException {
+		return addInternal(INTEGER, value);
+	}
+
+	public VPackBuilder add(final Short value) throws VPackBuilderException {
+		return addInternal(SHORT, value);
+	}
+
+	public VPackBuilder add(final BigInteger value) throws VPackBuilderException {
+		return addInternal(BIG_INTEGER, value);
+	}
+
+	public VPackBuilder add(final BigInteger value, final ValueType type) throws VPackBuilderException {
+		return addInternal(VALUE, new Value(value, type));
+	}
+
+	public VPackBuilder add(final Date value) throws VPackBuilderException {
+		return addInternal(DATE, value);
+	}
+
+	public VPackBuilder add(final String value) throws VPackBuilderException {
+		return addInternal(STRING, value);
+	}
+
+	public VPackBuilder add(final Character value) throws VPackBuilderException {
+		return addInternal(CHARACTER, value);
+	}
+
+	public VPackBuilder add(final byte[] value) throws VPackBuilderException {
+		return addInternal(BYTE_ARRAY, value);
+	}
+
+	public VPackBuilder add(final VPackSlice value) throws VPackBuilderException {
+		return addInternal(VPACK, value);
+	}
+
+	public VPackBuilder add(final String attribute, final ValueType value) throws VPackBuilderException {
+		return addInternal(attribute, VALUE_TYPE, value);
+	}
+
+	public VPackBuilder add(final String attribute, final ValueType value, final boolean unindexed)
+			throws VPackBuilderException {
+		return addInternal(attribute, VALUE, new Value(value, unindexed));
+	}
+
+	public VPackBuilder add(final String attribute, final Boolean value) throws VPackBuilderException {
+		return addInternal(attribute, BOOLEAN, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Double value) throws VPackBuilderException {
+		return addInternal(attribute, DOUBLE, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Float value) throws VPackBuilderException {
+		return addInternal(attribute, FLOAT, value);
+	}
+
+	public VPackBuilder add(final String attribute, final BigDecimal value) throws VPackBuilderException {
+		return addInternal(attribute, BIG_DECIMAL, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Long value) throws VPackBuilderException {
+		return addInternal(attribute, LONG, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Long value, final ValueType type)
+			throws VPackBuilderException {
+		return addInternal(attribute, VALUE, new Value(value, type));
+	}
+
+	public VPackBuilder add(final String attribute, final Integer value) throws VPackBuilderException {
+		return addInternal(attribute, INTEGER, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Short value) throws VPackBuilderException {
+		return addInternal(attribute, SHORT, value);
+	}
+
+	public VPackBuilder add(final String attribute, final BigInteger value) throws VPackBuilderException {
+		return addInternal(attribute, BIG_INTEGER, value);
+	}
+
+	public VPackBuilder add(final String attribute, final BigInteger value, final ValueType type)
+			throws VPackBuilderException {
+		return addInternal(attribute, VALUE, new Value(value, type));
+	}
+
+	public VPackBuilder add(final String attribute, final String value) throws VPackBuilderException {
+		return addInternal(attribute, STRING, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Character value) throws VPackBuilderException {
+		return addInternal(attribute, CHARACTER, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Date value) throws VPackBuilderException {
+		return addInternal(attribute, DATE, value);
+	}
+
+	public VPackBuilder add(final String attribute, final byte[] value) throws VPackBuilderException {
+		return addInternal(attribute, BYTE_ARRAY, value);
+	}
+
+	public VPackBuilder add(final String attribute, final VPackSlice value) throws VPackBuilderException {
+		return addInternal(attribute, VPACK, value);
+	}
+
+	private <T> VPackBuilder addInternal(final Appender<T> appender, final T value) throws VPackBuilderException {
 		boolean haveReported = false;
 		if (!stack.isEmpty() && !keyWritten) {
 			reportAdd();
 			haveReported = true;
 		}
 		try {
-			set(sub);
+			if (value == null) {
+				appendNull();
+			} else {
+				appender.append(this, value);
+			}
 		} catch (final VPackBuilderException e) {
 			// clean up in case of an exception
 			if (haveReported) {
@@ -125,48 +340,63 @@ public class VPackBuilder {
 			}
 			throw e;
 		}
+		return this;
 	}
 
-	private void addInternal(final String attribute, final Value sub) throws VPackBuilderException {
-		boolean haveReported = false;
-		if (!stack.isEmpty()) {
-			final byte head = head();
-			if (head != 0x0b && head != 0x14) {
-				throw new VPackBuilderNeedOpenObjectException();
-			}
-			if (keyWritten) {
-				throw new VPackBuilderKeyAlreadyWrittenException();
-			}
-			reportAdd();
-			haveReported = true;
-		}
-		try {
-			if (VPackSlice.attributeTranslator != null) {
-				final VPackSlice translate = VPackSlice.attributeTranslator.translate(attribute);
-				if (translate != null) {
-					final byte[] value = translate.getValue();
-					ensureCapacity(size + value.length);
-					for (int i = 0; i < value.length; i++) {
-						addUnchecked(value[i]);
-					}
-					keyWritten = true;
-					set(sub);
-					return;
+	private <T> VPackBuilder addInternal(final String attribute, final Appender<T> appender, final T value)
+			throws VPackBuilderException {
+		if (attribute != null) {
+			boolean haveReported = false;
+			if (!stack.isEmpty()) {
+				final byte head = head();
+				if (head != 0x0b && head != 0x14) {
+					throw new VPackBuilderNeedOpenObjectException();
 				}
-				// otherwise fall through to regular behavior
+				if (keyWritten) {
+					throw new VPackBuilderKeyAlreadyWrittenException();
+				}
+				reportAdd();
+				haveReported = true;
 			}
-			set(new Value(attribute));
-			keyWritten = true;
-			set(sub);
-		} catch (final VPackBuilderException e) {
-			// clean up in case of an exception
-			if (haveReported) {
-				cleanupAdd();
+			try {
+				if (VPackSlice.attributeTranslator != null) {
+					final VPackSlice translate = VPackSlice.attributeTranslator.translate(attribute);
+					if (translate != null) {
+						final byte[] trValue = translate.getValue();
+						ensureCapacity(size + trValue.length);
+						for (int i = 0; i < trValue.length; i++) {
+							addUnchecked(trValue[i]);
+						}
+						keyWritten = true;
+						if (value == null) {
+							appendNull();
+						} else {
+							appender.append(this, value);
+						}
+						return this;
+					}
+					// otherwise fall through to regular behavior
+				}
+				STRING.append(this, attribute);
+				keyWritten = true;
+				if (value == null) {
+					appendNull();
+				} else {
+					appender.append(this, value);
+				}
+			} catch (final VPackBuilderException e) {
+				// clean up in case of an exception
+				if (haveReported) {
+					cleanupAdd();
+				}
+				throw e;
+			} finally {
+				keyWritten = false;
 			}
-			throw e;
-		} finally {
-			keyWritten = false;
+		} else {
+			addInternal(appender, value);
 		}
+		return this;
 	}
 
 	private void set(final Value item) throws VPackBuilderException {
@@ -175,13 +405,11 @@ public class VPackBuilder {
 		case NULL:
 			appendNull();
 			break;
-		case BOOL:
-			checkClass(clazz, ValueType.BOOL, Boolean.class);
-			appendBoolean(item.getBoolean());
+		case ARRAY:
+			addArray(item.isUnindexed());
 			break;
-		case DOUBLE:
-			final double d = item.getNumber().doubleValue();
-			appendDouble(d);
+		case OBJECT:
+			addObject(item.isUnindexed());
 			break;
 		case SMALLINT:
 			final long vSmallInt = item.getNumber().longValue();
@@ -192,15 +420,9 @@ public class VPackBuilder {
 			break;
 		case INT:
 			final int length;
-			if (clazz == Integer.class) {
-				add((byte) 0x23);
-				length = Integer.BYTES;
-			} else if (clazz == Long.class || clazz == BigInteger.class) {
+			if (clazz == Long.class || clazz == BigInteger.class) {
 				add((byte) 0x27);
 				length = Long.BYTES;
-			} else if (clazz == Short.class) {
-				add((byte) 0x21);
-				length = Short.BYTES;
 			} else {
 				throw new VPackBuilderUnexpectedValueException(ValueType.INT, Long.class, Integer.class,
 						BigInteger.class, Short.class);
@@ -211,8 +433,6 @@ public class VPackBuilder {
 			final BigInteger vUInt;
 			if (clazz == Long.class) {
 				vUInt = BigInteger.valueOf(item.getLong());
-			} else if (clazz == Integer.class) {
-				vUInt = BigInteger.valueOf(item.getInteger());
 			} else if (clazz == BigInteger.class) {
 				vUInt = item.getBigInteger();
 			} else {
@@ -225,50 +445,8 @@ public class VPackBuilder {
 			}
 			appendUInt(vUInt);
 			break;
-		case UTC_DATE:
-			checkClass(clazz, ValueType.UTC_DATE, Date.class);
-			appendUTCDate(item.getDate());
-			break;
-		case STRING:
-			final String string;
-			if (clazz == String.class) {
-				string = item.getString();
-			} else if (clazz == Character.class) {
-				string = String.valueOf(item.getCharacter());
-			} else {
-				throw new VPackBuilderUnexpectedValueException(ValueType.STRING, String.class, Character.class);
-			}
-			appendString(string);
-			break;
-		case ARRAY:
-			addArray(item.isUnindexed());
-			break;
-		case OBJECT:
-			addObject(item.isUnindexed());
-			break;
-		case BINARY:
-			add((byte) 0xc3);
-			final byte[] binary = item.getBinary();
-			append(binary.length, Integer.BYTES);
-			ensureCapacity(size + binary.length);
-			System.arraycopy(binary, 0, buffer, size, binary.length);
-			size += binary.length;
-			break;
-		case VPACK:
-			final byte[] vpack = item.getBinary();
-			ensureCapacity(size + vpack.length);
-			System.arraycopy(vpack, 0, buffer, size, vpack.length);
-			size += vpack.length;
-			break;
 		default:
 			break;
-		}
-	}
-
-	private void checkClass(final Class<?> clazz, final ValueType type, final Class<?> expectedClass)
-			throws VPackBuilderUnexpectedValueException {
-		if (expectedClass != clazz) {
-			throw new VPackBuilderUnexpectedValueException(type, clazz);
 		}
 	}
 
@@ -340,6 +518,21 @@ public class VPackBuilder {
 		} catch (final UnsupportedEncodingException e) {
 			throw new VPackBuilderException(e);
 		}
+	}
+
+	private void appendBinary(final byte[] value) {
+		add((byte) 0xc3);
+		append(value.length, Integer.BYTES);
+		ensureCapacity(size + value.length);
+		System.arraycopy(value, 0, buffer, size, value.length);
+		size += value.length;
+	}
+
+	private void appendVPack(final VPackSlice value) {
+		final byte[] vpack = value.getVpack();
+		ensureCapacity(size + vpack.length);
+		System.arraycopy(vpack, 0, buffer, size, vpack.length);
+		size += vpack.length;
 	}
 
 	private void append(final String value) throws UnsupportedEncodingException {

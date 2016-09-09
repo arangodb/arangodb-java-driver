@@ -17,8 +17,8 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObject1Field() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "test");
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"test\"}"));
@@ -27,9 +27,9 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObject2Fields() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("test"));
-		builder.add("b", new Value(true));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "test");
+		builder.add("b", true);
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"test\",\"b\":true}"));
@@ -38,9 +38,9 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObjectStringField() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("test"));
-		builder.add("b", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "test");
+		builder.add("b", "test");
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"test\",\"b\":\"test\"}"));
@@ -49,9 +49,9 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObjectBooleanField() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(true));
-		builder.add("b", new Value(false));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", true);
+		builder.add("b", false);
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
 		assertThat(json, is("{\"a\":true,\"b\":false}"));
@@ -60,9 +60,9 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObjectNumberField() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(5));
-		builder.add("b", new Value(5.5));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", 5);
+		builder.add("b", 5.5);
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
 		assertThat(json, is("{\"a\":5,\"b\":5.5}"));
@@ -71,16 +71,16 @@ public class VPackParserTest {
 	@Test
 	public void toJsonArrayInObject() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(ValueType.ARRAY));
-		builder.add(new Value(1));
-		builder.add(new Value(2));
-		builder.add(new Value(3));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", ValueType.ARRAY);
+		builder.add(1);
+		builder.add(2);
+		builder.add(3);
 		builder.close();
-		builder.add("b", new Value(ValueType.ARRAY));
-		builder.add(new Value("a"));
-		builder.add(new Value("b"));
-		builder.add(new Value("c"));
+		builder.add("b", ValueType.ARRAY);
+		builder.add("a");
+		builder.add("b");
+		builder.add("c");
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
@@ -90,14 +90,14 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObjectInObject() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(ValueType.OBJECT));
-		builder.add("aa", new Value("test"));
-		builder.add("ab", new Value(true));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", ValueType.OBJECT);
+		builder.add("aa", "test");
+		builder.add("ab", true);
 		builder.close();
-		builder.add("b", new Value(ValueType.OBJECT));
-		builder.add("ba", new Value("test"));
-		builder.add("bb", new Value(5.5));
+		builder.add("b", ValueType.OBJECT);
+		builder.add("ba", "test");
+		builder.add("bb", 5.5);
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
@@ -107,12 +107,12 @@ public class VPackParserTest {
 	@Test
 	public void toJsonObjectInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("test"));
+		builder.add(ValueType.ARRAY);
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "test");
 		builder.close();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "test");
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
@@ -122,16 +122,16 @@ public class VPackParserTest {
 	@Test
 	public void toJsonArrayInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(1));
-		builder.add(new Value(2));
-		builder.add(new Value(3));
+		builder.add(ValueType.ARRAY);
+		builder.add(ValueType.ARRAY);
+		builder.add(1);
+		builder.add(2);
+		builder.add(3);
 		builder.close();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value("a"));
-		builder.add(new Value("b"));
-		builder.add(new Value("c"));
+		builder.add(ValueType.ARRAY);
+		builder.add("a");
+		builder.add("b");
+		builder.add("c");
 		builder.close();
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice());
@@ -141,11 +141,11 @@ public class VPackParserTest {
 	@Test
 	public void toJsonExcludeNullValueInObject() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(ValueType.NULL));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", ValueType.NULL);
 		final String b = null;
-		builder.add("b", new Value(b));
-		builder.add("c", new Value("test"));
+		builder.add("b", b);
+		builder.add("c", "test");
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), false);
 		assertThat(json, is("{\"c\":\"test\"}"));
@@ -154,11 +154,11 @@ public class VPackParserTest {
 	@Test
 	public void toJsonIncludeNullValueInObject() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(ValueType.NULL));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", ValueType.NULL);
 		final String b = null;
-		builder.add("b", new Value(b));
-		builder.add("c", new Value("test"));
+		builder.add("b", b);
+		builder.add("c", "test");
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), true);
 		assertThat(json, is("{\"a\":null,\"b\":null,\"c\":\"test\"}"));
@@ -167,11 +167,11 @@ public class VPackParserTest {
 	@Test
 	public void toJsonExcludeNullValueInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(ValueType.NULL));
+		builder.add(ValueType.ARRAY);
+		builder.add(ValueType.NULL);
 		final String s = null;
-		builder.add(new Value(s));
-		builder.add(new Value("test"));
+		builder.add(s);
+		builder.add("test");
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), false);
 		assertThat(json, is("[\"test\"]"));
@@ -180,11 +180,11 @@ public class VPackParserTest {
 	@Test
 	public void toJsonIncludeNullValueInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(ValueType.NULL));
+		builder.add(ValueType.ARRAY);
+		builder.add(ValueType.NULL);
 		final String s = null;
-		builder.add(new Value(s));
-		builder.add(new Value("test"));
+		builder.add(s);
+		builder.add("test");
 		builder.close();
 		final String json = new VPackParser().toJson(builder.slice(), true);
 		assertThat(json, is("[null,null,\"test\"]"));
@@ -386,9 +386,9 @@ public class VPackParserTest {
 	@Test
 	public void customDeserializer() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("a"));
-		builder.add("b", new Value("b"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "a");
+		builder.add("b", "b");
 		builder.close();
 		final VPackJsonDeserializer deserializer = (parent, attribute, vpack, jsonBuffer) -> {
 			jsonBuffer.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
@@ -401,9 +401,9 @@ public class VPackParserTest {
 	@Test
 	public void customDeserializerByName() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("a"));
-		builder.add("b", new Value("b"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "a");
+		builder.add("b", "b");
 		builder.close();
 		final String json = new VPackParser()
 				.registerDeserializer("a", ValueType.STRING, (parent, attribute, vpack, jsonBuffer) -> {

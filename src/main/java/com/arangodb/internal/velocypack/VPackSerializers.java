@@ -10,7 +10,6 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.net.Request;
 import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.Value;
 import com.arangodb.velocypack.ValueType;
 
 /**
@@ -20,20 +19,20 @@ import com.arangodb.velocypack.ValueType;
 public class VPackSerializers {
 
 	public static final VPackSerializer<Request> REQUEST = (builder, attribute, value, context) -> {
-		builder.add(attribute, new Value(ValueType.ARRAY));
-		builder.add(new Value(value.getVersion()));
-		builder.add(new Value(value.getType()));
-		builder.add(new Value(value.getDatabase()));
-		builder.add(new Value(value.getRequestType().getType()));
-		builder.add(new Value(value.getRequest()));
-		builder.add(new Value(ValueType.OBJECT));
+		builder.add(attribute, ValueType.ARRAY);
+		builder.add(value.getVersion());
+		builder.add(value.getType());
+		builder.add(value.getDatabase());
+		builder.add(value.getRequestType().getType());
+		builder.add(value.getRequest());
+		builder.add(ValueType.OBJECT);
 		for (final Entry<String, String> entry : value.getParameter().entrySet()) {
-			builder.add(entry.getKey(), new Value(entry.getValue()));
+			builder.add(entry.getKey(), entry.getValue());
 		}
 		builder.close();
-		builder.add(new Value(ValueType.OBJECT));
+		builder.add(ValueType.OBJECT);
 		for (final Entry<String, String> entry : value.getMeta().entrySet()) {
-			builder.add(entry.getKey(), new Value(entry.getValue()));
+			builder.add(entry.getKey(), entry.getValue());
 		}
 		builder.close();
 		builder.close();
@@ -43,7 +42,7 @@ public class VPackSerializers {
 		builder,
 		attribute,
 		value,
-		context) -> builder.add(attribute, new Value(value.getType()));
+		context) -> builder.add(attribute, value.getType());
 
 	public static final VPackSerializer<BaseDocument> BASE_DOCUMENT = (builder, attribute, value, context) -> {
 		final Map<String, Object> doc = new HashMap<>();

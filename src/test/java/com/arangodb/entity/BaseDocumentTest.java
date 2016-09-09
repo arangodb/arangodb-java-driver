@@ -12,7 +12,6 @@ import com.arangodb.velocypack.VPack.Builder;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.Value;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 
@@ -60,11 +59,11 @@ public class BaseDocumentTest {
 	@Test
 	public void deserialize() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("_id", new Value("test/test"));
-		builder.add("_key", new Value("test"));
-		builder.add("_rev", new Value("test"));
-		builder.add("a", new Value("a"));
+		builder.add(ValueType.OBJECT);
+		builder.add("_id", "test/test");
+		builder.add("_key", "test");
+		builder.add("_rev", "test");
+		builder.add("a", "a");
 		builder.close();
 
 		final VPack.Builder vbuilder = new VPack.Builder();

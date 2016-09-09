@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 import org.junit.Test;
 
-import com.arangodb.velocypack.Value;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackValueTypeException;
+import com.arangodb.velocypack.internal.Value;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -26,7 +26,7 @@ public class ValueTest {
 
 	@Test(expected = VPackValueTypeException.class)
 	public void wrongIntegerType() {
-		new Value(new Integer(1), ValueType.STRING);
+		new Value(new Long(1L), ValueType.STRING);
 	}
 
 	@Test(expected = VPackValueTypeException.class)

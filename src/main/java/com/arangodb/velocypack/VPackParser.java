@@ -178,7 +178,43 @@ public class VPackParser {
 			attribute = null;
 		}
 
-		private void add(final Value value) throws ParseException {
+		private void add(final ValueType value) throws ParseException {
+			try {
+				builder.add(attribute, value);
+				attribute = null;
+			} catch (final VPackBuilderException e) {
+				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
+			}
+		}
+
+		private void add(final String value) throws ParseException {
+			try {
+				builder.add(attribute, value);
+				attribute = null;
+			} catch (final VPackBuilderException e) {
+				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
+			}
+		}
+
+		private void add(final Boolean value) throws ParseException {
+			try {
+				builder.add(attribute, value);
+				attribute = null;
+			} catch (final VPackBuilderException e) {
+				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
+			}
+		}
+
+		private void add(final Double value) throws ParseException {
+			try {
+				builder.add(attribute, value);
+				attribute = null;
+			} catch (final VPackBuilderException e) {
+				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
+			}
+		}
+
+		private void add(final Long value) throws ParseException {
 			try {
 				builder.add(attribute, value);
 				attribute = null;
@@ -206,7 +242,7 @@ public class VPackParser {
 
 		@Override
 		public boolean startObject() throws ParseException, IOException {
-			add(new Value(ValueType.OBJECT));
+			add(ValueType.OBJECT);
 			return true;
 		}
 
@@ -229,7 +265,7 @@ public class VPackParser {
 
 		@Override
 		public boolean startArray() throws ParseException, IOException {
-			add(new Value(ValueType.ARRAY));
+			add(ValueType.ARRAY);
 			return true;
 		}
 
@@ -243,16 +279,16 @@ public class VPackParser {
 		public boolean primitive(final Object value) throws ParseException, IOException {
 			if (value == null) {
 				if (includeNullValues) {
-					add(new Value(ValueType.NULL));
+					add(ValueType.NULL);
 				}
 			} else if (String.class.isAssignableFrom(value.getClass())) {
-				add(new Value(String.class.cast(value)));
+				add(String.class.cast(value));
 			} else if (Boolean.class.isAssignableFrom(value.getClass())) {
-				add(new Value(Boolean.class.cast(value)));
+				add(Boolean.class.cast(value));
 			} else if (Double.class.isAssignableFrom(value.getClass())) {
-				add(new Value(Double.class.cast(value)));
+				add(Double.class.cast(value));
 			} else if (Number.class.isAssignableFrom(value.getClass())) {
-				add(new Value(Long.class.cast(value)));
+				add(Long.class.cast(value));
 			}
 			return true;
 		}

@@ -6,7 +6,6 @@ import java.util.Map;
 import com.arangodb.velocypack.VPackAttributeTranslator;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.Value;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 
@@ -36,8 +35,8 @@ public class VPackAttributeTranslatorImpl implements VPackAttributeTranslator {
 	public VPackAttributeTranslatorImpl() {
 		super();
 		builder = null;
-		attributeToKey = new HashMap<String, VPackSlice>();
-		keyToAttribute = new HashMap<Integer, VPackSlice>();
+		attributeToKey = new HashMap<>();
+		keyToAttribute = new HashMap<>();
 		try {
 			add(KEY, KEY_ATTRIBUTE - ATTRIBUTE_BASE);
 			add(REV, REV_ATTRIBUTE - ATTRIBUTE_BASE);
@@ -54,9 +53,9 @@ public class VPackAttributeTranslatorImpl implements VPackAttributeTranslator {
 	public void add(final String attribute, final int key) throws VPackException {
 		if (builder == null) {
 			builder = new VPackBuilder();
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 		}
-		builder.add(attribute, new Value(key, (key < -6 || key > 9) ? ValueType.INT : ValueType.SMALLINT));
+		builder.add(attribute, key);
 	}
 
 	@Override

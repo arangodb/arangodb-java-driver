@@ -451,7 +451,7 @@ public class VPack {
 		if (serializer != null) {
 			((VPackSerializer<Object>) serializer).serialize(builder, name, entity, serializationContext);
 		} else {
-			builder.add(name, new Value(ValueType.OBJECT));
+			builder.add(name, ValueType.OBJECT);
 			serializeFields(entity, builder, additionalFields);
 			if (!additionalFields.isEmpty()) {
 				additionalFields.clear();
@@ -506,7 +506,7 @@ public class VPack {
 
 		if (value == null) {
 			if (serializeNullValues) {
-				builder.add(name, new Value(ValueType.NULL));
+				builder.add(name, ValueType.NULL);
 			}
 		} else {
 			final VPackSerializer<?> serializer = serializers.get(type);
@@ -529,7 +529,7 @@ public class VPack {
 			} else if (((Class) type).isArray()) {
 				serializeArray(name, value, builder, additionalFields);
 			} else if (((Class) type).isEnum()) {
-				builder.add(name, new Value(Enum.class.cast(value).name()));
+				builder.add(name, Enum.class.cast(value).name());
 			} else {
 				serializeObject(name, value, builder, additionalFields);
 			}
@@ -542,7 +542,7 @@ public class VPack {
 		final VPackBuilder builder,
 		final Map<String, Object> additionalFields)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, VPackException {
-		builder.add(name, new Value(ValueType.ARRAY));
+		builder.add(name, ValueType.ARRAY);
 		for (int i = 0; i < Array.getLength(value); i++) {
 			final Object element = Array.get(value, i);
 			addValue(null, element.getClass(), element, builder, null, additionalFields);
@@ -556,7 +556,7 @@ public class VPack {
 		final VPackBuilder builder,
 		final Map<String, Object> additionalFields)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, VPackException {
-		builder.add(name, new Value(ValueType.ARRAY));
+		builder.add(name, ValueType.ARRAY);
 		for (final Iterator iterator = Iterable.class.cast(value).iterator(); iterator.hasNext();) {
 			final Object element = iterator.next();
 			addValue(null, element.getClass(), element, builder, null, additionalFields);
@@ -575,7 +575,7 @@ public class VPack {
 		if (map.size() > 0) {
 			final VPackKeyMapAdapter<Object> keyMapAdapter = getKeyMapAdapter(keyType);
 			if (keyMapAdapter != null) {
-				builder.add(name, new Value(ValueType.OBJECT));
+				builder.add(name, ValueType.OBJECT);
 				final Set<Entry<?, ?>> entrySet = map.entrySet();
 				for (final Entry<?, ?> entry : entrySet) {
 					final Object entryValue = entry.getValue();
@@ -585,10 +585,11 @@ public class VPack {
 				}
 				builder.close();
 			} else {
-				builder.add(name, new Value(ValueType.ARRAY));
+				builder.add(name, ValueType.ARRAY);
 				final Set<Entry<?, ?>> entrySet = map.entrySet();
 				for (final Entry<?, ?> entry : entrySet) {
-					builder.add(null, new Value(ValueType.OBJECT));
+					final String s = null;
+					builder.add(s, ValueType.OBJECT);
 					addValue(ATTR_KEY, entry.getKey().getClass(), entry.getKey(), builder, null, additionalFields);
 					addValue(ATTR_VALUE, entry.getValue().getClass(), entry.getValue(), builder, null,
 						additionalFields);
@@ -597,7 +598,7 @@ public class VPack {
 				builder.close();
 			}
 		} else {
-			builder.add(name, new Value(ValueType.OBJECT));
+			builder.add(name, ValueType.OBJECT);
 			builder.close();
 		}
 	}

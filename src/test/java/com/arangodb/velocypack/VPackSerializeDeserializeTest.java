@@ -103,11 +103,11 @@ public class VPackSerializeDeserializeTest {
 	public void toBoolean() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("a", new Value(false));
-			builder.add("b", new Value(true));
-			builder.add("c", new Value(Boolean.FALSE));
-			builder.add("d", new Value(Boolean.TRUE));
+			builder.add(ValueType.OBJECT);
+			builder.add("a", false);
+			builder.add("b", true);
+			builder.add("c", Boolean.FALSE);
+			builder.add("d", Boolean.TRUE);
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -175,10 +175,10 @@ public class VPackSerializeDeserializeTest {
 	public void toStrings() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("s", new Value("abc"));
-			builder.add("c1", new Value('d'));
-			builder.add("c2", new Value('d'));
+			builder.add(ValueType.OBJECT);
+			builder.add("s", "abc");
+			builder.add("c1", 'd');
+			builder.add("c2", 'd');
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -231,9 +231,9 @@ public class VPackSerializeDeserializeTest {
 	public void toInteger() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("i1", new Value(2));
-			builder.add("i2", new Value(3));
+			builder.add(ValueType.OBJECT);
+			builder.add("i1", 2);
+			builder.add("i2", 3);
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -285,9 +285,9 @@ public class VPackSerializeDeserializeTest {
 	public void toLong() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("l1", new Value(2));
-			builder.add("l2", new Value(3));
+			builder.add(ValueType.OBJECT);
+			builder.add("l1", 2);
+			builder.add("l2", 3);
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -339,9 +339,9 @@ public class VPackSerializeDeserializeTest {
 	public void toFloat() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("f1", new Value(2F));
-			builder.add("f2", new Value(3F));
+			builder.add(ValueType.OBJECT);
+			builder.add("f1", 2F);
+			builder.add("f2", 3F);
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -393,9 +393,9 @@ public class VPackSerializeDeserializeTest {
 	public void toShort() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("s1", new Value(2));
-			builder.add("s2", new Value(3));
+			builder.add(ValueType.OBJECT);
+			builder.add("s1", 2);
+			builder.add("s2", 3);
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -447,9 +447,9 @@ public class VPackSerializeDeserializeTest {
 	public void toDouble() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("d1", new Value(2.25));
-			builder.add("d2", new Value(3.75));
+			builder.add(ValueType.OBJECT);
+			builder.add("d1", 2.25);
+			builder.add("d2", 3.75);
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -501,9 +501,9 @@ public class VPackSerializeDeserializeTest {
 	public void toBigNumbers() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("bi", new Value(BigInteger.valueOf(2)));
-			builder.add("bd", new Value(BigDecimal.valueOf(3.75)));
+			builder.add(ValueType.OBJECT);
+			builder.add("bi", BigInteger.valueOf(2));
+			builder.add("bd", BigDecimal.valueOf(3.75));
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -597,32 +597,32 @@ public class VPackSerializeDeserializeTest {
 	public void toArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("a1", new Value(ValueType.ARRAY));
-				builder.add(new Value("a"));
-				builder.add(new Value("b"));
-				builder.add(new Value("c"));
+				builder.add("a1", ValueType.ARRAY);
+				builder.add("a");
+				builder.add("b");
+				builder.add("c");
 				builder.close();
 			}
 			{
-				builder.add("a2", new Value(ValueType.ARRAY));
-				builder.add(new Value(1));
-				builder.add(new Value(2));
-				builder.add(new Value(3));
-				builder.add(new Value(4));
+				builder.add("a2", ValueType.ARRAY);
+				builder.add(1);
+				builder.add(2);
+				builder.add(3);
+				builder.add(4);
 				builder.close();
 			}
 			{
-				builder.add("a3", new Value(ValueType.ARRAY));
-				builder.add(new Value(false));
-				builder.add(new Value(true));
+				builder.add("a3", ValueType.ARRAY);
+				builder.add(false);
+				builder.add(true);
 				builder.close();
 			}
 			{
-				builder.add("a4", new Value(ValueType.ARRAY));
-				builder.add(new Value(TestEnum.A.name()));
-				builder.add(new Value(TestEnum.B.name()));
+				builder.add("a4", ValueType.ARRAY);
+				builder.add(TestEnum.A.name());
+				builder.add(TestEnum.B.name());
 				builder.close();
 			}
 			builder.close();
@@ -687,8 +687,8 @@ public class VPackSerializeDeserializeTest {
 	public void toEnum() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("e1", new Value(TestEnum.B.name()));
+			builder.add(ValueType.OBJECT);
+			builder.add("e1", TestEnum.B.name());
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -780,40 +780,40 @@ public class VPackSerializeDeserializeTest {
 	public void toObject() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("o1", new Value(ValueType.OBJECT));
-				builder.add("l1", new Value(5L));
-				builder.add("l2", new Value(5L));
+				builder.add("o1", ValueType.OBJECT);
+				builder.add("l1", 5L);
+				builder.add("l2", 5L);
 				builder.close();
 			}
 			{
-				builder.add("o2", new Value(ValueType.OBJECT));
+				builder.add("o2", ValueType.OBJECT);
 				{
-					builder.add("a1", new Value(ValueType.ARRAY));
-					builder.add(new Value("a"));
-					builder.add(new Value("b"));
-					builder.add(new Value("c"));
+					builder.add("a1", ValueType.ARRAY);
+					builder.add("a");
+					builder.add("b");
+					builder.add("c");
 					builder.close();
 				}
 				{
-					builder.add("a2", new Value(ValueType.ARRAY));
-					builder.add(new Value(1));
-					builder.add(new Value(2));
-					builder.add(new Value(3));
-					builder.add(new Value(4));
+					builder.add("a2", ValueType.ARRAY);
+					builder.add(1);
+					builder.add(2);
+					builder.add(3);
+					builder.add(4);
 					builder.close();
 				}
 				{
-					builder.add("a3", new Value(ValueType.ARRAY));
-					builder.add(new Value(false));
-					builder.add(new Value(true));
+					builder.add("a3", ValueType.ARRAY);
+					builder.add(false);
+					builder.add(true);
 					builder.close();
 				}
 				{
-					builder.add("a4", new Value(ValueType.ARRAY));
-					builder.add(new Value(TestEnum.A.name()));
-					builder.add(new Value(TestEnum.B.name()));
+					builder.add("a4", ValueType.ARRAY);
+					builder.add(TestEnum.A.name());
+					builder.add(TestEnum.B.name());
 					builder.close();
 				}
 				builder.close();
@@ -892,21 +892,21 @@ public class VPackSerializeDeserializeTest {
 	public void toArrayInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("a1", new Value(ValueType.ARRAY));
+				builder.add("a1", ValueType.ARRAY);
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(1));
-					builder.add(new Value(2));
-					builder.add(new Value(3));
+					builder.add(ValueType.ARRAY);
+					builder.add(1);
+					builder.add(2);
+					builder.add(3);
 					builder.close();
 				}
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(4));
-					builder.add(new Value(5));
-					builder.add(new Value(6));
+					builder.add(ValueType.ARRAY);
+					builder.add(4);
+					builder.add(5);
+					builder.add(6);
 					builder.close();
 				}
 				builder.close();
@@ -978,52 +978,52 @@ public class VPackSerializeDeserializeTest {
 	public void toArrayInArrayInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("a1", new Value(ValueType.ARRAY));
-				builder.add(new Value(ValueType.ARRAY));
+				builder.add("a1", ValueType.ARRAY);
+				builder.add(ValueType.ARRAY);
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(1.5));
-					builder.add(new Value(2.5));
-					builder.add(new Value(3.5));
+					builder.add(ValueType.ARRAY);
+					builder.add(1.5);
+					builder.add(2.5);
+					builder.add(3.5);
 					builder.close();
 				}
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(4.5));
-					builder.add(new Value(5.5));
-					builder.add(new Value(6.5));
+					builder.add(ValueType.ARRAY);
+					builder.add(4.5);
+					builder.add(5.5);
+					builder.add(6.5);
 					builder.close();
 				}
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(7.5));
-					builder.add(new Value(8.5));
-					builder.add(new Value(9.5));
+					builder.add(ValueType.ARRAY);
+					builder.add(7.5);
+					builder.add(8.5);
+					builder.add(9.5);
 					builder.close();
 				}
 				builder.close();
-				builder.add(new Value(ValueType.ARRAY));
+				builder.add(ValueType.ARRAY);
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(1.5));
-					builder.add(new Value(2.5));
-					builder.add(new Value(3.5));
+					builder.add(ValueType.ARRAY);
+					builder.add(1.5);
+					builder.add(2.5);
+					builder.add(3.5);
 					builder.close();
 				}
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(4.5));
-					builder.add(new Value(5.5));
-					builder.add(new Value(6.5));
+					builder.add(ValueType.ARRAY);
+					builder.add(4.5);
+					builder.add(5.5);
+					builder.add(6.5);
 					builder.close();
 				}
 				{
-					builder.add(new Value(ValueType.ARRAY));
-					builder.add(new Value(7.5));
-					builder.add(new Value(8.5));
-					builder.add(new Value(9.5));
+					builder.add(ValueType.ARRAY);
+					builder.add(7.5);
+					builder.add(8.5);
+					builder.add(9.5);
 					builder.close();
 				}
 				builder.close();
@@ -1112,11 +1112,11 @@ public class VPackSerializeDeserializeTest {
 	public void toObjectInArray() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("a1", new Value(ValueType.ARRAY));
+			builder.add(ValueType.OBJECT);
+			builder.add("a1", ValueType.ARRAY);
 			{
-				builder.add(new Value(ValueType.OBJECT));
-				builder.add("s", new Value("abc"));
+				builder.add(ValueType.OBJECT);
+				builder.add("s", "abc");
 				builder.close();
 			}
 			builder.close();
@@ -1179,9 +1179,9 @@ public class VPackSerializeDeserializeTest {
 	public void toInheritance() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("a", new Value("test"));
-			builder.add("b", new Value("test"));
+			builder.add(ValueType.OBJECT);
+			builder.add("a", "test");
+			builder.add("b", "test");
 			builder.close();
 		}
 		final VPackSlice vpack = builder.slice();
@@ -1250,9 +1250,9 @@ public class VPackSerializeDeserializeTest {
 	public void toInterface() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("d", new Value(ValueType.OBJECT));
-			builder.add("d", new Value("test"));
+			builder.add(ValueType.OBJECT);
+			builder.add("d", ValueType.OBJECT);
+			builder.add("d", "test");
 			builder.close();
 			builder.close();
 		}
@@ -1371,35 +1371,35 @@ public class VPackSerializeDeserializeTest {
 	public void toCollection() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("c1", new Value(ValueType.ARRAY));
-				builder.add(new Value("test1"));
-				builder.add(new Value("test2"));
+				builder.add("c1", ValueType.ARRAY);
+				builder.add("test1");
+				builder.add("test2");
 				builder.close();
 			}
 			{
-				builder.add("c2", new Value(ValueType.ARRAY));
-				builder.add(new Value("test1"));
-				builder.add(new Value("test2"));
+				builder.add("c2", ValueType.ARRAY);
+				builder.add("test1");
+				builder.add("test2");
 				builder.close();
 			}
 			{
-				builder.add("c3", new Value(ValueType.ARRAY));
-				builder.add(new Value("test1"));
-				builder.add(new Value("test2"));
+				builder.add("c3", ValueType.ARRAY);
+				builder.add("test1");
+				builder.add("test2");
 				builder.close();
 			}
 			{
-				builder.add("c4", new Value(ValueType.ARRAY));
-				builder.add(new Value("test1"));
-				builder.add(new Value("test2"));
+				builder.add("c4", ValueType.ARRAY);
+				builder.add("test1");
+				builder.add("test2");
 				builder.close();
 			}
 			{
-				builder.add("c5", new Value(ValueType.ARRAY));
-				builder.add(new Value("test1"));
-				builder.add(new Value("test2"));
+				builder.add("c5", ValueType.ARRAY);
+				builder.add("test1");
+				builder.add("test2");
 				builder.close();
 			}
 			builder.close();
@@ -1495,20 +1495,20 @@ public class VPackSerializeDeserializeTest {
 	public void toCollectionWithObjects() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("c1", new Value(ValueType.ARRAY));
-				builder.add(new Value(ValueType.OBJECT));
-				builder.add("s", new Value("abc"));
+				builder.add("c1", ValueType.ARRAY);
+				builder.add(ValueType.OBJECT);
+				builder.add("s", "abc");
 				builder.close();
 				builder.close();
 			}
 			{
-				builder.add("c2", new Value(ValueType.ARRAY));
-				builder.add(new Value(ValueType.OBJECT));
-				builder.add("a2", new Value(ValueType.ARRAY));
+				builder.add("c2", ValueType.ARRAY);
+				builder.add(ValueType.OBJECT);
+				builder.add("a2", ValueType.ARRAY);
 				for (int i = 0; i < 10; i++) {
-					builder.add(new Value(i));
+					builder.add(i);
 				}
 				builder.close();
 				builder.close();
@@ -1632,23 +1632,23 @@ public class VPackSerializeDeserializeTest {
 	public void toMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
+			builder.add(ValueType.OBJECT);
 			{
-				builder.add("m1", new Value(ValueType.OBJECT));
-				builder.add("a", new Value("a"));
-				builder.add("b", new Value("b"));
+				builder.add("m1", ValueType.OBJECT);
+				builder.add("a", "a");
+				builder.add("b", "b");
 				builder.close();
 			}
 			{
-				builder.add("m2", new Value(ValueType.OBJECT));
-				builder.add("1", new Value("a"));
-				builder.add("-1", new Value("a"));
+				builder.add("m2", ValueType.OBJECT);
+				builder.add("1", "a");
+				builder.add("-1", "a");
 				builder.close();
 			}
 			{
-				builder.add("m3", new Value(ValueType.OBJECT));
-				builder.add("a", new Value(ValueType.OBJECT));
-				builder.add("s", new Value("abc"));
+				builder.add("m3", ValueType.OBJECT);
+				builder.add("a", ValueType.OBJECT);
+				builder.add("s", "abc");
 				builder.close();
 				builder.close();
 			}
@@ -1944,71 +1944,71 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toMapSringableKey() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
+		builder.add(ValueType.OBJECT);
 		{
-			builder.add("m1", new Value(ValueType.OBJECT));
-			builder.add("true", new Value("test"));
-			builder.add("false", new Value("test"));
+			builder.add("m1", ValueType.OBJECT);
+			builder.add("true", "test");
+			builder.add("false", "test");
 			builder.close();
 		}
 		{
-			builder.add("m2", new Value(ValueType.OBJECT));
-			builder.add("1", new Value("test"));
-			builder.add("2", new Value("test"));
+			builder.add("m2", ValueType.OBJECT);
+			builder.add("1", "test");
+			builder.add("2", "test");
 			builder.close();
 		}
 		{
-			builder.add("m3", new Value(ValueType.OBJECT));
-			builder.add("1", new Value("test"));
-			builder.add("2", new Value("test"));
+			builder.add("m3", ValueType.OBJECT);
+			builder.add("1", "test");
+			builder.add("2", "test");
 			builder.close();
 		}
 		{
-			builder.add("m4", new Value(ValueType.OBJECT));
-			builder.add("1.5", new Value("test"));
-			builder.add("2.25", new Value("test"));
+			builder.add("m4", ValueType.OBJECT);
+			builder.add("1.5", "test");
+			builder.add("2.25", "test");
 			builder.close();
 		}
 		{
-			builder.add("m5", new Value(ValueType.OBJECT));
-			builder.add("1", new Value("test"));
-			builder.add("2", new Value("test"));
+			builder.add("m5", ValueType.OBJECT);
+			builder.add("1", "test");
+			builder.add("2", "test");
 			builder.close();
 		}
 		{
-			builder.add("m6", new Value(ValueType.OBJECT));
-			builder.add("1.5", new Value("test"));
-			builder.add("2.25", new Value("test"));
+			builder.add("m6", ValueType.OBJECT);
+			builder.add("1.5", "test");
+			builder.add("2.25", "test");
 			builder.close();
 		}
 		{
-			builder.add("m7", new Value(ValueType.OBJECT));
-			builder.add("1.5", new Value("test"));
-			builder.add("1", new Value("test"));
+			builder.add("m7", ValueType.OBJECT);
+			builder.add("1.5", "test");
+			builder.add("1", "test");
 			builder.close();
 		}
 		{
-			builder.add("m8", new Value(ValueType.OBJECT));
-			builder.add("1", new Value("test"));
-			builder.add("2", new Value("test"));
+			builder.add("m8", ValueType.OBJECT);
+			builder.add("1", "test");
+			builder.add("2", "test");
 			builder.close();
 		}
 		{
-			builder.add("m9", new Value(ValueType.OBJECT));
-			builder.add("1.5", new Value("test"));
-			builder.add("2.25", new Value("test"));
+			builder.add("m9", ValueType.OBJECT);
+			builder.add("1.5", "test");
+			builder.add("2.25", "test");
 			builder.close();
 		}
 		{
-			builder.add("m10", new Value(ValueType.OBJECT));
-			builder.add("1", new Value("test"));
-			builder.add("a", new Value("test"));
+			builder.add("m10", ValueType.OBJECT);
+			builder.add("1", "test");
+			builder.add("a", "test");
 			builder.close();
 		}
 		{
-			builder.add("m11", new Value(ValueType.OBJECT));
-			builder.add(TestEnum.A.name(), new Value("test"));
-			builder.add(TestEnum.B.name(), new Value("test"));
+			builder.add("m11", ValueType.OBJECT);
+			builder.add(TestEnum.A.name(), "test");
+			builder.add(TestEnum.B.name(), "test");
 			builder.close();
 		}
 		builder.close();
@@ -2170,20 +2170,20 @@ public class VPackSerializeDeserializeTest {
 	public void toMapWithObjectKey() throws VPackException {
 		final int size = 2;
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
+		builder.add(ValueType.OBJECT);
 		{
-			builder.add("m1", new Value(ValueType.ARRAY));
+			builder.add("m1", ValueType.ARRAY);
 			for (int i = 0; i < size; i++) {
-				builder.add(new Value(ValueType.OBJECT));
+				builder.add(ValueType.OBJECT);
 				{
-					builder.add("key", new Value(ValueType.OBJECT));
-					builder.add("l1", new Value(5L));
+					builder.add("key", ValueType.OBJECT);
+					builder.add("l1", 5L);
 					builder.close();
 				}
 				{
-					builder.add("value", new Value(ValueType.OBJECT));
-					builder.add("c1", new Value(ValueType.ARRAY));
-					builder.add(new Value("test"));
+					builder.add("value", ValueType.OBJECT);
+					builder.add("c1", ValueType.ARRAY);
+					builder.add("test");
 					builder.close();
 					builder.close();
 				}
@@ -2192,16 +2192,16 @@ public class VPackSerializeDeserializeTest {
 			builder.close();
 		}
 		{
-			builder.add("m2", new Value(ValueType.ARRAY));
+			builder.add("m2", ValueType.ARRAY);
 			for (int i = 0; i < size; i++) {
-				builder.add(new Value(ValueType.OBJECT));
+				builder.add(ValueType.OBJECT);
 				{
-					builder.add("key", new Value(ValueType.OBJECT));
-					builder.add("l1", new Value(5L));
+					builder.add("key", ValueType.OBJECT);
+					builder.add("l1", 5L);
 					builder.close();
 				}
 				{
-					builder.add("value", new Value("test"));
+					builder.add("value", "test");
 				}
 				builder.close();
 			}
@@ -2245,7 +2245,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toEmptyObject() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
+		builder.add(ValueType.OBJECT);
 		builder.close();
 		final TestEntityEmpty entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityEmpty.class);
 		assertThat(entity, is(notNullValue()));
@@ -2279,8 +2279,8 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toEmptyMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("m", new Value(ValueType.OBJECT));
+		builder.add(ValueType.OBJECT);
+		builder.add("m", ValueType.OBJECT);
 		builder.close();
 		builder.close();
 		final TestEntityEmptyMap entity = new VPack.Builder().build().deserialize(builder.slice(),
@@ -2375,12 +2375,12 @@ public class VPackSerializeDeserializeTest {
 	public void toObjectWithAttributeAdapter() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("_key", new Value("a"));
-			builder.add("_rev", new Value("b"));
-			builder.add("_id", new Value("c"));
-			builder.add("_from", new Value("d"));
-			builder.add("_to", new Value("e"));
+			builder.add(ValueType.OBJECT);
+			builder.add("_key", "a");
+			builder.add("_rev", "b");
+			builder.add("_id", "c");
+			builder.add("_from", "d");
+			builder.add("_to", "e");
 			builder.close();
 		}
 		final TestEntityBaseAttributes entity = new VPack.Builder().build().deserialize(builder.slice(),
@@ -2441,13 +2441,13 @@ public class VPackSerializeDeserializeTest {
 	public void toMapWithAttributeAdapter() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		{
-			builder.add(new Value(ValueType.OBJECT));
-			builder.add("m1", new Value(ValueType.OBJECT));
-			builder.add("_key", new Value("a"));
-			builder.add("_rev", new Value("b"));
-			builder.add("_id", new Value("c"));
-			builder.add("_from", new Value("d"));
-			builder.add("_to", new Value("e"));
+			builder.add(ValueType.OBJECT);
+			builder.add("m1", ValueType.OBJECT);
+			builder.add("_key", "a");
+			builder.add("_rev", "b");
+			builder.add("_id", "c");
+			builder.add("_from", "d");
+			builder.add("_to", "e");
 			builder.close();
 			builder.close();
 		}
@@ -2468,8 +2468,8 @@ public class VPackSerializeDeserializeTest {
 						final String attribute,
 						final TestEntityString entity,
 						final VPackSerializationContext context) throws VPackException {
-						builder.add(attribute, new Value(ValueType.OBJECT));
-						builder.add("not-s", new Value(entity.s));
+						builder.add(attribute, ValueType.OBJECT);
+						builder.add("not-s", entity.s);
 						builder.close();
 					}
 				}).build();
@@ -2489,8 +2489,8 @@ public class VPackSerializeDeserializeTest {
 	public void customDeserializer() throws VPackException {
 		final String value = "abc";
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("not-s", new Value(value));
+		builder.add(ValueType.OBJECT);
+		builder.add("not-s", value);
 		builder.close();
 		final VPack vp = new VPack.Builder()
 				.registerDeserializer(TestEntityString.class, new VPackDeserializer<TestEntityString>() {
@@ -2516,8 +2516,8 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void customDeserializerByName() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("s", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("s", "test");
 		builder.close();
 		final TestEntityString entity = new VPack.Builder()
 				.registerDeserializer("s", String.class, (parent, vpack, context) -> {
@@ -2531,8 +2531,8 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void customDeserializerByNameWrongType() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("s", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("s", "test");
 		builder.close();
 		final TestEntityString entity = new VPack.Builder()
 				.registerDeserializer("s", Integer.class, (parent, vpack, context) -> {
@@ -2553,7 +2553,7 @@ public class VPackSerializeDeserializeTest {
 						final String attribute,
 						final TestEntityObject entity,
 						final VPackSerializationContext context) throws VPackException {
-						builder.add(attribute, new Value(ValueType.OBJECT));
+						builder.add(attribute, ValueType.OBJECT);
 						context.serialize(builder, "test", entity.o1);
 						builder.close();
 					}
@@ -2574,9 +2574,9 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void customDeserializerWithContext() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("test", new Value(ValueType.OBJECT));
-		builder.add("l1", new Value(5));
+		builder.add(ValueType.OBJECT);
+		builder.add("test", ValueType.OBJECT);
+		builder.add("l1", 5);
 		builder.close();
 		builder.close();
 		final VPack vp = new VPack.Builder()
@@ -2626,8 +2626,8 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toSerializedName() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("abc", new Value("test2"));
+		builder.add(ValueType.OBJECT);
+		builder.add("abc", "test2");
 		builder.close();
 		final TestEntitySerializeAnnotation entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntitySerializeAnnotation.class);
@@ -2730,13 +2730,13 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toExpose() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value("test"));
-		builder.add("b", new Value("test"));
-		builder.add("c", new Value("test"));
-		builder.add("d", new Value("test"));
-		builder.add("e", new Value("test"));
-		builder.add("f", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", "test");
+		builder.add("b", "test");
+		builder.add("c", "test");
+		builder.add("d", "test");
+		builder.add("e", "test");
+		builder.add("f", "test");
 		builder.close();
 		final TestEntityExpose entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntityExpose.class);
@@ -2790,9 +2790,9 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void directToCollection() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("s", new Value("abc"));
+		builder.add(ValueType.ARRAY);
+		builder.add(ValueType.OBJECT);
+		builder.add("s", "abc");
 		builder.close();
 		builder.close();
 		final List<TestEntityString> list = new VPack.Builder().build().deserialize(builder.slice(),
@@ -2822,9 +2822,9 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void directToStringMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(ValueType.OBJECT));
-		builder.add("s", new Value("abc"));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", ValueType.OBJECT);
+		builder.add("s", "abc");
 		builder.close();
 		builder.close();
 		final Map<String, TestEntityString> map = new VPack.Builder().build().deserialize(builder.slice(),
@@ -2910,13 +2910,13 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void directToObjectMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.ARRAY));
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("key", new Value(ValueType.OBJECT));
-		builder.add("s", new Value("abc"));
+		builder.add(ValueType.ARRAY);
+		builder.add(ValueType.OBJECT);
+		builder.add("key", ValueType.OBJECT);
+		builder.add("s", "abc");
 		builder.close();
-		builder.add("value", new Value(ValueType.OBJECT));
-		builder.add("s", new Value("abc"));
+		builder.add("value", ValueType.OBJECT);
+		builder.add("s", "abc");
 		builder.close();
 		builder.close();
 		builder.close();
@@ -2935,15 +2935,15 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void directToMapWithinMap() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("a", new Value(ValueType.OBJECT));
-		builder.add("b", new Value("test"));
-		builder.add("c", new Value(true));
-		builder.add("d", new Value(1L));
-		builder.add("e", new Value(1.5));
+		builder.add(ValueType.OBJECT);
+		builder.add("a", ValueType.OBJECT);
+		builder.add("b", "test");
+		builder.add("c", true);
+		builder.add("d", 1L);
+		builder.add("e", 1.5);
 		final Date date = new Date();
-		builder.add("f", new Value(date));
-		builder.add("g", new Value(ValueType.ARRAY));
+		builder.add("f", date);
+		builder.add("g", ValueType.ARRAY);
 		builder.close();
 		builder.close();
 		builder.close();
@@ -3000,8 +3000,8 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toNullValue() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("s", new Value(ValueType.NULL));
+		builder.add(ValueType.OBJECT);
+		builder.add("s", ValueType.NULL);
 		builder.close();
 		final TestEntityString entity = new VPack.Builder().build().deserialize(builder.slice(),
 			TestEntityString.class);
@@ -3072,7 +3072,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void toSimpleString() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value("test"));
+		builder.add("test");
 		final String s = new VPack.Builder().build().deserialize(builder.slice(), String.class);
 		assertThat(s, is(notNullValue()));
 		assertThat(s, is("test"));
@@ -3154,8 +3154,8 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void fieldNamingStrategyDeserialize() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value(ValueType.OBJECT));
-		builder.add("bla", new Value("test"));
+		builder.add(ValueType.OBJECT);
+		builder.add("bla", "test");
 		builder.close();
 		final TestEntityA entity = new VPack.Builder().fieldNamingStrategy(field -> {
 			return "bla";
@@ -3167,7 +3167,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void serializeVPack() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value("test"));
+		builder.add("test");
 		final VPackSlice slice = builder.slice();
 		final VPackSlice vpack = new VPack.Builder().build().serialize(slice);
 		assertThat(vpack, is(notNullValue()));
@@ -3178,7 +3178,7 @@ public class VPackSerializeDeserializeTest {
 	@Test
 	public void deserializeVPack() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
-		builder.add(new Value("test"));
+		builder.add("test");
 		final VPackSlice slice = builder.slice();
 		final VPackSlice vpack = new VPack.Builder().build().deserialize(slice, slice.getClass());
 		assertThat(vpack, is(notNullValue()));

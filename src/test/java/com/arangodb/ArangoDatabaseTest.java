@@ -34,7 +34,6 @@ import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.Value;
 import com.arangodb.velocypack.exception.VPackException;
 
 /**
@@ -518,8 +517,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void transactionVPack() throws VPackException {
-		final TransactionOptions options = new TransactionOptions()
-				.params(new VPackBuilder().add(new Value("test")).slice());
+		final TransactionOptions options = new TransactionOptions().params(new VPackBuilder().add("test").slice());
 		final VPackSlice result = db.transaction("function (params) {return params;}", VPackSlice.class, options);
 		assertThat(result.isString(), is(true));
 		assertThat(result.getAsString(), is("test"));
