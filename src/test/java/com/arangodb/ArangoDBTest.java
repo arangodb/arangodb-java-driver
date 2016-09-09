@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -199,6 +200,28 @@ public class ArangoDBTest {
 			assertThat(user2.getExtra().get("mund"), is(true));
 		} finally {
 			arangoDB.deleteUser(USER);
+		}
+	}
+
+	@Test
+	public void authenticationFailPassword() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().password("no").build();
+		try {
+			arangoDB.getVersion();
+			fail();
+		} catch (final ArangoDBException e) {
+
+		}
+	}
+
+	@Test
+	public void authenticationFailUser() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().user("no").build();
+		try {
+			arangoDB.getVersion();
+			fail();
+		} catch (final ArangoDBException e) {
+
 		}
 	}
 }

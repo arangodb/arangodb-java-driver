@@ -121,10 +121,7 @@ public class Communication {
 				throw new ArangoDBException(e);
 			}
 		}
-		if (response.getResponseCode() != 200) {
-			new ArangoDBException(
-					String.format("Authentication failed. Response Code: %s", response.getResponseCode()));
-		}
+		checkError(response);
 	}
 
 	public void disconnect() {
@@ -143,6 +140,16 @@ public class Communication {
 			final Message responseMessage = sendSync(requestMessage);
 			collectionCache.setDb(request.getDatabase());
 			final Response response = createResponse(responseMessage);
+			checkError(response);
+			return response;
+		} catch (VPackParserException | IOException e) {
+			throw new ArangoDBException(e);
+		}
+
+	}
+
+	private void checkError(final Response response) throws ArangoDBException {
+		try {
 			if (response.getResponseCode() >= SPARTA) {
 				if (response.getBody().isPresent()) {
 					throw new ArangoDBException(createErrorMessage(response));
@@ -150,11 +157,9 @@ public class Communication {
 					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()));
 				}
 			}
-			return response;
-		} catch (VPackParserException | IOException e) {
+		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}
-
 	}
 
 	private String createErrorMessage(final Response response) throws VPackParserException {
