@@ -8,6 +8,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
+import com.arangodb.internal.net.AuthenticationRequest;
 import com.arangodb.internal.net.Request;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.ValueType;
@@ -35,6 +36,16 @@ public class VPackSerializers {
 			builder.add(entry.getKey(), entry.getValue());
 		}
 		builder.close();
+		builder.close();
+	};
+
+	public static final VPackSerializer<AuthenticationRequest> AUTH_REQUEST = (builder, attribute, value, context) -> {
+		builder.add(attribute, ValueType.ARRAY);
+		builder.add(value.getVersion());
+		builder.add(value.getType());
+		builder.add(value.getEncryption());
+		builder.add(value.getUser());
+		builder.add(value.getPassword());
 		builder.close();
 	};
 

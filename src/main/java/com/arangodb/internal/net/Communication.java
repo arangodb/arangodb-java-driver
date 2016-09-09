@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
@@ -39,10 +40,15 @@ public class Communication {
 	private final MessageStore messageStore;
 	private final CollectionCache collectionCache;
 
+	private final Optional<String> user;
+	private final Optional<String> password;
+
 	public static class Builder {
 		private String host;
 		private Integer port;
 		private Integer timeout;
+		private String user;
+		private String password;
 
 		public Builder() {
 			super();
@@ -63,28 +69,61 @@ public class Communication {
 			return this;
 		}
 
+		public Builder user(final String user) {
+			this.user = user;
+			return this;
+		}
+
+		public Builder password(final String password) {
+			this.password = password;
+			return this;
+		}
+
 		public Communication build(final VPack vpack, final CollectionCache collectionCache) {
-			return new Communication(host, port, timeout, vpack, collectionCache);
+			return new Communication(host, port, timeout, user, password, vpack, collectionCache);
 		}
 	}
 
-	private Communication(final String host, final Integer port, final Integer timeout, final VPack vpack,
-		final CollectionCache collectionCache) {
+	private Communication(final String host, final Integer port, final Integer timeout, final String user,
+		final String password, final VPack vpack, final CollectionCache collectionCache) {
 		messageStore = new MessageStore();
+		this.user = Optional.ofNullable(user);
+		this.password = Optional.ofNullable(password);
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
 		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout).build();
 		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).build();
 	}
 
-	private void connect(final Connection connection) {
+	private void connect(final Connection connection, final boolean sync) {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
+				user.ifPresent(u -> authenticate(sync));
 			} catch (final IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				throw new ArangoDBException(e);
 			}
+		}
+	}
+
+	private void authenticate(final boolean sync) {
+		Response response = null;
+		if (sync) {
+			response = executeSync(
+				new AuthenticationRequest(user.get(), password.orElse(""), ArangoDBConstants.ENCRYPTION_PLAIN));
+		} else {
+			try {
+				response = executeAsync(
+					new AuthenticationRequest(user.get(), password.orElse(""), ArangoDBConstants.ENCRYPTION_PLAIN))
+							.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new ArangoDBException(e);
+			}
+		}
+		if (response.getResponseCode() != 200) {
+			new ArangoDBException(
+					String.format("Authentication failed. Response Code: %s", response.getResponseCode()));
 		}
 	}
 
@@ -98,7 +137,7 @@ public class Communication {
 	}
 
 	public Response executeSync(final Request request) throws ArangoDBException {
-		connect(connectionSync);
+		connect(connectionSync, true);
 		try {
 			final Message requestMessage = createMessage(request);
 			final Message responseMessage = sendSync(requestMessage);
@@ -127,7 +166,7 @@ public class Communication {
 	}
 
 	public CompletableFuture<Response> executeAsync(final Request request) {
-		connect(connectionAsync);
+		connect(connectionAsync, false);
 		final CompletableFuture<Response> rfuture = new CompletableFuture<>();
 		try {
 			final Message message = createMessage(request);

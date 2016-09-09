@@ -38,6 +38,8 @@ public class ArangoDB extends ArangoExecuteable {
 		private static final String PROPERTY_KEY_HOST = "arangodb.host";
 		private static final String PROPERTY_KEY_PORT = "arangodb.port";
 		private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
+		private static final String PROPERTY_KEY_USER = "arangodb.user";
+		private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
 		private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 		private String host;
@@ -68,6 +70,8 @@ public class ArangoDB extends ArangoExecuteable {
 							.parseInt(getProperty(properties, PROPERTY_KEY_PORT, port, ArangoDBConstants.DEFAULT_PORT));
 					timeout = Integer.parseInt(
 						getProperty(properties, PROPERTY_KEY_TIMEOUT, timeout, ArangoDBConstants.DEFAULT_TIMEOUT));
+					user = getProperty(properties, PROPERTY_KEY_USER, user, null);
+					password = getProperty(properties, PROPERTY_KEY_PASSWORD, password, null);
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}
@@ -81,7 +85,7 @@ public class ArangoDB extends ArangoExecuteable {
 			final T currentValue,
 			final T defaultValue) {
 			return properties.getProperty(key,
-				currentValue != null ? currentValue.toString() : defaultValue.toString());
+				currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
 		}
 
 		public Builder host(final String host) {
@@ -125,7 +129,8 @@ public class ArangoDB extends ArangoExecuteable {
 		}
 
 		public ArangoDB build() {
-			return new ArangoDB(new Communication.Builder().host(host).port(port).timeout(timeout),
+			return new ArangoDB(
+					new Communication.Builder().host(host).port(port).timeout(timeout).user(user).password(password),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 
