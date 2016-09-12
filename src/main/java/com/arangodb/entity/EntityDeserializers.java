@@ -2090,6 +2090,28 @@ public class EntityDeserializers {
 		}
 	}
 
+	public static class BaseDocumentDeserializer implements JsonDeserializer<BaseDocument> {
+		@Override
+		public BaseDocument deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			final JsonObject obj = json.getAsJsonObject();
+			final BaseDocument entity = deserializeDocumentParameter(obj, new BaseDocument());
+
+			if (entity instanceof BaseDocument) {
+				entity.setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
+			}
+
+			return entity;
+		}
+	}
+
 	public static class DeleteEntityDeserializer implements JsonDeserializer<DeletedEntity> {
 		@Override
 		public DeletedEntity deserialize(
