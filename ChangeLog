@@ -2,6 +2,7 @@ v3.0.3 (2016-XX-XX)
 ---------------------------
 * added error handling in getBatchResponseByRequestId()
 * added function createPersistentIndex() (issue #48)
+* added deserializer for BaseDocument (issue #50) 
 
 v3.0.2 (2016-08-05)
 ---------------------------
