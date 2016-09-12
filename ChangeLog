@@ -1,4 +1,4 @@
-v3.0.3 (2016-XX-XX)
+v3.0.3 (2016-09-12)
 ---------------------------
 * added error handling in getBatchResponseByRequestId()
 * added function createPersistentIndex() (issue #48)
