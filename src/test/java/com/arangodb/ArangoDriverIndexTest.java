@@ -16,6 +16,7 @@
 
 package com.arangodb;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -389,8 +390,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(indexes.getIndexes().get(0).getFields().get(0), is("_key"));
 		assertThat(indexes.getIndexes().get(1).getType(), is(IndexType.HASH));
 		assertThat(indexes.getIndexes().get(1).getFields().size(), is(2));
-		assertThat(indexes.getIndexes().get(1).getFields().get(1), is("name"));
-		assertThat(indexes.getIndexes().get(1).getFields().get(0), is("age"));
+		assertThat(indexes.getIndexes().get(1).getFields(), hasItems("name", "age"));
 
 		final String id1 = indexes.getIndexes().get(0).getId();
 		final String id2 = indexes.getIndexes().get(1).getId();
@@ -401,8 +401,7 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(indexes.getIdentifiers().get(id1).getFields().get(0), is("_key"));
 		assertThat(indexes.getIdentifiers().get(id2).getType(), is(IndexType.HASH));
 		assertThat(indexes.getIdentifiers().get(id2).getFields().size(), is(2));
-		assertThat(indexes.getIdentifiers().get(id2).getFields().get(1), is("name"));
-		assertThat(indexes.getIdentifiers().get(id2).getFields().get(0), is("age"));
+		assertThat(indexes.getIdentifiers().get(id2).getFields(), hasItems("name", "age"));
 
 	}
 
