@@ -138,7 +138,6 @@ public class ArangoDatabaseTest extends BaseTest {
 		} finally {
 			db.collection(COLLECTION_NAME + "1").drop();
 			db.collection(COLLECTION_NAME + "2").drop();
-
 		}
 	}
 
@@ -570,46 +569,52 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void executeTraversal() {
-		db.createCollection("person", null);
-		db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES));
-		Stream.of("Alice", "Bob", "Charlie", "Dave", "Eve").forEach(e -> {
-			final BaseDocument doc = new BaseDocument();
-			doc.setKey(e);
-			db.collection("person").insertDocument(doc, null);
-		});
-		Stream.of(new String[] { "Alice", "Bob" }, new String[] { "Bob", "Charlie" }, new String[] { "Bob", "Dave" },
-			new String[] { "Eve", "Alice" }, new String[] { "Eve", "Bob" }).forEach(e -> {
-				final BaseEdgeDocument edge = new BaseEdgeDocument();
-				edge.setKey(e[0] + "_knows_" + e[1]);
-				edge.setFrom("person/" + e[0]);
-				edge.setTo("person/" + e[1]);
-				db.collection("knows").insertDocument(edge, null);
+		try {
+			db.createCollection("person", null);
+			db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES));
+			Stream.of("Alice", "Bob", "Charlie", "Dave", "Eve").forEach(e -> {
+				final BaseDocument doc = new BaseDocument();
+				doc.setKey(e);
+				db.collection("person").insertDocument(doc, null);
+			});
+			Stream.of(new String[] { "Alice", "Bob" }, new String[] { "Bob", "Charlie" },
+				new String[] { "Bob", "Dave" }, new String[] { "Eve", "Alice" }, new String[] { "Eve", "Bob" })
+					.forEach(e -> {
+						final BaseEdgeDocument edge = new BaseEdgeDocument();
+						edge.setKey(e[0] + "_knows_" + e[1]);
+						edge.setFrom("person/" + e[0]);
+						edge.setTo("person/" + e[1]);
+						db.collection("knows").insertDocument(edge, null);
+					});
+
+			final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
+					.direction(Direction.outbound);
+			final TraversalResult<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
+				BaseEdgeDocument.class, options);
+
+			assertThat(traversal, is(notNullValue()));
+
+			final Collection<BaseDocument> vertices = traversal.getVertices();
+			assertThat(vertices, is(notNullValue()));
+			assertThat(vertices.size(), is(4));
+
+			final Iterator<BaseDocument> verticesIterator = vertices.iterator();
+			Stream.of("Alice", "Bob", "Charlie", "Dave").forEach(e -> {
+				assertThat(verticesIterator.next().getKey(), is(e));
 			});
 
-		final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
-				.direction(Direction.outbound);
-		final TraversalResult<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
-			BaseEdgeDocument.class, options);
+			final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
+			assertThat(paths, is(notNullValue()));
+			assertThat(paths.size(), is(4));
 
-		assertThat(traversal, is(notNullValue()));
-
-		final Collection<BaseDocument> vertices = traversal.getVertices();
-		assertThat(vertices, is(notNullValue()));
-		assertThat(vertices.size(), is(4));
-
-		final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-		Stream.of("Alice", "Bob", "Charlie", "Dave").forEach(e -> {
-			assertThat(verticesIterator.next().getKey(), is(e));
-		});
-
-		final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
-		assertThat(paths, is(notNullValue()));
-		assertThat(paths.size(), is(4));
-
-		assertThat(paths.stream().findFirst().isPresent(), is(true));
-		final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.stream().findFirst().get();
-		assertThat(first.getEdges().size(), is(0));
-		assertThat(first.getVertices().size(), is(1));
-		assertThat(first.getVertices().stream().findFirst().get().getKey(), is("Alice"));
+			assertThat(paths.stream().findFirst().isPresent(), is(true));
+			final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.stream().findFirst().get();
+			assertThat(first.getEdges().size(), is(0));
+			assertThat(first.getVertices().size(), is(1));
+			assertThat(first.getVertices().stream().findFirst().get().getKey(), is("Alice"));
+		} finally {
+			db.collection("person").drop();
+			db.collection("knows").drop();
+		}
 	}
 }
