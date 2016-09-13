@@ -53,7 +53,7 @@ If you want to test with a snapshot version (e.g. 4.0.0-SNAPSHOT), add the stagi
 ```
 # API Overview
 
-Overview of all important API calls are available [here](doc/api_overview.md).
+Overview of all important API calls are available [here](docs/api_overview.md).
 
 # Compile java driver
 ```
