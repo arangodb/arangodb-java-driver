@@ -32,7 +32,7 @@ To customize the configuration the parameters can be changed in the code...
 
 ``` Java
   InputStream in = MyClass.class.getResourceAsStream("my.properties");
-	ArangoDB arangoDB = new ArangoDB.Builder().loadProperties(in).build();
+  ArangoDB arangoDB = new ArangoDB.Builder().loadProperties(in).build();
   
 ```
 
@@ -100,9 +100,9 @@ public class MyObject {
 }  
 ```
 
-## create document
+## insert document
 ``` Java
-  // create document 
+  // insert document 
   MyObject myObject = new MyObject("Homer", 38);
   arangoDB.db("myDatabase").collection("myCollection").insertDocument(myObject, null);
   
@@ -143,13 +143,13 @@ E.g. get all Simpsons aged 3 or older in ascending order:
     collection.insertDocument(new MyObject("Maggie", 2), null);
     
     Map<String, Object> bindVars = new HashMap<>();
-		bindVars.put("age", 3);		
-		ArangoCursor<MyObject> cursor = db.query(query, bindVars, null, MyObject.class);
+    bindVars.put("age", 3);    
+    ArangoCursor<MyObject> cursor = db.query(query, bindVars, null, MyObject.class);
     
     for (Iterator<MyObject> iterator = cursor.iterator(); iterator.hasNext();) {
-			MyObject obj = iterator.next();
-			System.out.println(obj.getName());
-		}
+      MyObject obj = iterator.next();
+      System.out.println(obj.getName());
+    }
 ```
 
 #User Management
