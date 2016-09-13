@@ -1,0 +1,12 @@
+language: java
+
+before_script:
+  - chmod 777 ./tests/travis/setup_arangodb.sh
+  - ./tests/travis/setup_arangodb.sh
+
+install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
+
+jdk:
+  - oraclejdk8
+
+sudo: false
