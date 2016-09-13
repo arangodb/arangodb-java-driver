@@ -4,7 +4,7 @@
 
 	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 	<packaging>jar</packaging>
 
@@ -250,9 +250,9 @@
 	</dependencyManagement>
 
 	<scm>
-		<url>https://github.com/arangodb/arangodb-java-driver2</url>
-		<connection>scm:git:git://github.com/arangodb/arangodb-java-driver2.git</connection>
-		<developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver2.git</developerConnection>
+		<url>https://github.com/arangodb/arangodb-java-driver</url>
+		<connection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</connection>
+		<developerConnection>scm:git:git://github.com/arangodb/arangodb-java-driver.git</developerConnection>
 	</scm>
 
 	<organization>
