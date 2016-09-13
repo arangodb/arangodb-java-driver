@@ -1,9 +1,9 @@
 package com.arangodb;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,14 +25,21 @@ import com.arangodb.entity.AqlFunctionResult;
 import com.arangodb.entity.AqlParseResult;
 import com.arangodb.entity.AqlParseResult.AstNode;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
+import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.TraversalResult;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
+import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.TransactionOptions;
+import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -558,5 +566,50 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(info.getName(), is(TEST_DB));
 		assertThat(info.getPath(), is(notNullValue()));
 		assertThat(info.getIsSystem(), is(false));
+	}
+
+	@Test
+	public void executeTraversal() {
+		db.createCollection("person", null);
+		db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES));
+		Stream.of("Alice", "Bob", "Charlie", "Dave", "Eve").forEach(e -> {
+			final BaseDocument doc = new BaseDocument();
+			doc.setKey(e);
+			db.collection("person").insertDocument(doc, null);
+		});
+		Stream.of(new String[] { "Alice", "Bob" }, new String[] { "Bob", "Charlie" }, new String[] { "Bob", "Dave" },
+			new String[] { "Eve", "Alice" }, new String[] { "Eve", "Bob" }).forEach(e -> {
+				final BaseEdgeDocument edge = new BaseEdgeDocument();
+				edge.setKey(e[0] + "_knows_" + e[1]);
+				edge.setFrom("person/" + e[0]);
+				edge.setTo("person/" + e[1]);
+				db.collection("knows").insertDocument(edge, null);
+			});
+
+		final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
+				.direction(Direction.outbound);
+		final TraversalResult<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
+			BaseEdgeDocument.class, options);
+
+		assertThat(traversal, is(notNullValue()));
+
+		final Collection<BaseDocument> vertices = traversal.getVertices();
+		assertThat(vertices, is(notNullValue()));
+		assertThat(vertices.size(), is(4));
+
+		final Iterator<BaseDocument> verticesIterator = vertices.iterator();
+		Stream.of("Alice", "Bob", "Charlie", "Dave").forEach(e -> {
+			assertThat(verticesIterator.next().getKey(), is(e));
+		});
+
+		final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
+		assertThat(paths, is(notNullValue()));
+		assertThat(paths.size(), is(4));
+
+		assertThat(paths.stream().findFirst().isPresent(), is(true));
+		final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.stream().findFirst().get();
+		assertThat(first.getEdges().size(), is(0));
+		assertThat(first.getVertices().size(), is(1));
+		assertThat(first.getVertices().stream().findFirst().get().getKey(), is("Alice"));
 	}
 }

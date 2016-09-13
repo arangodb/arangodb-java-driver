@@ -11,6 +11,7 @@ import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.net.AuthenticationRequest;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.Response;
+import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
@@ -71,6 +72,7 @@ public class VPackConfigure {
 		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
 		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
 		builder.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
+		builder.registerSerializer(TraversalOptions.Order.class, VPackSerializers.TRAVERSAL_ORDER);
 
 		builder.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);

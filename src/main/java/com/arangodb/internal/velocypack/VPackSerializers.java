@@ -10,6 +10,7 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.net.AuthenticationRequest;
 import com.arangodb.internal.net.Request;
+import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.ValueType;
 
@@ -73,5 +74,17 @@ public class VPackSerializers {
 		doc.put(DocumentField.Type.FROM.getSerializeName(), value.getFrom());
 		doc.put(DocumentField.Type.TO.getSerializeName(), value.getTo());
 		context.serialize(builder, attribute, doc);
+	};
+
+	public static final VPackSerializer<TraversalOptions.Order> TRAVERSAL_ORDER = (
+		builder,
+		attribute,
+		value,
+		context) -> {
+		if (TraversalOptions.Order.preorder_expander == value) {
+			builder.add(attribute, "preorder-expander");
+		} else {
+			builder.add(attribute, value.name());
+		}
 	};
 }

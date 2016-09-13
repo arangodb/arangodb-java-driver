@@ -26,12 +26,16 @@ public class ArangoDBConstants {
 	public static final String PATH_API_AQLFUNCTION = "/_api/aqlfunction";
 	public static final String PATH_API_EXPLAIN = "/_api/explain";
 	public static final String PATH_API_QUERY = "/_api/query";
+	public static final String PATH_API_TRAVERSAL = "/_api/traversal";
 
 	public static final String ENCRYPTION_PLAIN = "plain";
 
 	public static final String SYSTEM = "_system";
 	public static final String ID = "id";
 	public static final String RESULT = "result";
+	public static final String VISITED = "visited";
+	public static final String VERTICES = "vertices";
+	public static final String EDGES = "edges";
 	public static final String WAIT_FOR_SYNC = "waitForSync";
 	public static final String IF_NONE_MATCH = "If-None-Match";
 	public static final String IF_MATCH = "If-Match";

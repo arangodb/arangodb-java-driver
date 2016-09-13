@@ -1,6 +1,8 @@
 package com.arangodb;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -14,6 +16,8 @@ import com.arangodb.entity.DatabaseResult;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphResult;
 import com.arangodb.entity.IndexResult;
+import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.TraversalResult;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
@@ -31,11 +35,13 @@ import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.TransactionOptions;
+import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.UserAccessOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -769,5 +775,95 @@ public class ArangoDatabase extends ArangoExecuteable {
 
 	private ResponseDeserializer<DatabaseResult> getInfoResponseDeserializer() {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), DatabaseResult.class);
+	}
+
+	/**
+	 * Execute a server-side traversal
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
+	 *      Documentation</a>
+	 * @param vertexClass
+	 *            The type of the vertex documents (POJO class, VPackSlice or String for Json)
+	 * @param edgeClass
+	 *            The type of the edge documents (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options
+	 * @return Result of the executed traversal
+	 * @throws ArangoDBException
+	 */
+	public <V, E> TraversalResult<V, E> executeTraversal(
+		final Class<V> vertexClass,
+		final Class<E> edgeClass,
+		final TraversalOptions options) throws ArangoDBException {
+		final Request request = executeTraversalRequest(options);
+		return executeSync(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
+	}
+
+	/**
+	 * Execute a server-side traversal
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
+	 *      Documentation</a>
+	 * @param vertexClass
+	 *            The type of the vertex documents (POJO class, VPackSlice or String for Json)
+	 * @param edgeClass
+	 *            The type of the edge documents (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options
+	 * @return Result of the executed traversal
+	 */
+	public <V, E> CompletableFuture<TraversalResult<V, E>> executeTraversalAsync(
+		final Class<V> vertexClass,
+		final Class<E> edgeClass,
+		final TraversalOptions options) {
+		final Request request = executeTraversalRequest(options);
+		return executeAsync(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
+	}
+
+	private Request executeTraversalRequest(final TraversalOptions options) {
+		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRAVERSAL);
+		request.setBody(serialize(options != null ? options : new TransactionOptions()));
+		return request;
+	}
+
+	private <E, V> ResponseDeserializer<TraversalResult<V, E>> executeTraversalResponseDeserializer(
+		final Class<V> vertexClass,
+		final Class<E> edgeClass) {
+		return response -> {
+			final TraversalResult<V, E> result = new TraversalResult<>();
+			final VPackSlice visited = response.getBody().get().get(ArangoDBConstants.RESULT)
+					.get(ArangoDBConstants.VISITED);
+			result.setVertices(deserializeVertices(vertexClass, visited));
+
+			final Collection<PathEntity<V, E>> paths = new ArrayList<>();
+			for (final Iterator<VPackSlice> iterator = visited.get("paths").arrayIterator(); iterator.hasNext();) {
+				final PathEntity<V, E> path = new PathEntity<>();
+				final VPackSlice next = iterator.next();
+				path.setEdges(deserializeEdges(edgeClass, next));
+				path.setVertices(deserializeVertices(vertexClass, next));
+				paths.add(path);
+			}
+			result.setPaths(paths);
+			return result;
+		};
+	}
+
+	private <V> Collection<V> deserializeVertices(final Class<V> vertexClass, final VPackSlice vpack)
+			throws VPackException {
+		final Collection<V> vertices = new ArrayList<>();
+		for (final Iterator<VPackSlice> iterator = vpack.get(ArangoDBConstants.VERTICES).arrayIterator(); iterator
+				.hasNext();) {
+			vertices.add(deserialize(iterator.next(), vertexClass));
+		}
+		return vertices;
+	}
+
+	private <E> Collection<E> deserializeEdges(final Class<E> edgeClass, final VPackSlice next) throws VPackException {
+		final Collection<E> edges = new ArrayList<>();
+		for (final Iterator<VPackSlice> iteratorEdge = next.get(ArangoDBConstants.EDGES).arrayIterator(); iteratorEdge
+				.hasNext();) {
+			edges.add(deserialize(iteratorEdge.next(), edgeClass));
+		}
+		return edges;
 	}
 }
