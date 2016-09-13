@@ -206,7 +206,13 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(entity.isGeoJson(), is(false));
 		assertThat(entity.getId(), is(notNullValue()));
 		assertThat(entity.getType(), is(IndexType.SKIPLIST));
-
+		assertThat(entity.getFields().get(0), is("a"));
+		assertThat(entity.getFields().get(1), is("b"));
+		assertThat(entity.getFields().get(2), is("c"));
+		assertThat(entity.getFields().get(3), is("d"));
+		assertThat(entity.getFields().get(4), is("e"));
+		assertThat(entity.getFields().get(5), is("f"));
+		assertThat(entity.getFields().get(6), is("g"));
 	}
 
 	@Test
@@ -222,7 +228,13 @@ public class ArangoDriverIndexTest extends BaseTest {
 		assertThat(entity.isGeoJson(), is(false));
 		assertThat(entity.getId(), is(notNullValue()));
 		assertThat(entity.getType(), is(IndexType.SKIPLIST));
-
+		assertThat(entity.getFields().get(0), is("a"));
+		assertThat(entity.getFields().get(1), is("b"));
+		assertThat(entity.getFields().get(2), is("c"));
+		assertThat(entity.getFields().get(3), is("d"));
+		assertThat(entity.getFields().get(4), is("e"));
+		assertThat(entity.getFields().get(5), is("f"));
+		assertThat(entity.getFields().get(6), is("g"));
 	}
 
 	@Test
