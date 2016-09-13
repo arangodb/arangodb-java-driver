@@ -112,6 +112,7 @@ public class EntityFactory {
 					new EntityDeserializers.ReplicationLoggerStateEntityDeserializer())
 				.registerTypeAdapter(ReplicationLoggerStateEntity.Client.class,
 					new EntityDeserializers.ReplicationLoggerStateEntityClientDeserializer())
+				.registerTypeAdapter(BaseDocument.class, new EntityDeserializers.BaseDocumentDeserializer())
 				.registerTypeAdapter(GraphEntity.class, new EntityDeserializers.GraphEntityDeserializer())
 				.registerTypeAdapter(GraphsEntity.class, new EntityDeserializers.GraphsEntityDeserializer())
 				.registerTypeAdapter(DeletedEntity.class, new EntityDeserializers.DeleteEntityDeserializer())
@@ -136,13 +137,10 @@ public class EntityFactory {
 	 * Configures instances of Gson used by this factory.
 	 * 
 	 * @param builders
-	 *            one or two GsonBuilder instances. If only one is provided it
-	 *            will be used for initializing both <code>gson</code> and
-	 *            <code>gsonNull</code> fields (latter with
-	 *            <code>serializeNulls()</code> called prior to creating). If
-	 *            two are given - first initializes <code>gson</code> field,
-	 *            second initializes <code>gsonNull</code> (used when
-	 *            serialization of nulls is requested).
+	 *            one or two GsonBuilder instances. If only one is provided it will be used for initializing both
+	 *            <code>gson</code> and <code>gsonNull</code> fields (latter with <code>serializeNulls()</code> called
+	 *            prior to creating). If two are given - first initializes <code>gson</code> field, second initializes
+	 *            <code>gsonNull</code> (used when serialization of nulls is requested).
 	 */
 	public static void configure(GsonBuilder... builders) {
 		if (builders.length < 1) {
