@@ -289,6 +289,22 @@ public class ArangoDB extends ArangoExecuteable {
 	 *            The name of the user
 	 * @param passwd
 	 *            The user password
+	 * @return information about the user
+	 * @throws ArangoDBException
+	 */
+	public UserResult createUser(final String user, final String passwd) throws ArangoDBException {
+		return executeSync(createUserRequest(user, passwd, new UserCreateOptions()), UserResult.class);
+	}
+
+	/**
+	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
+	 * order to execute this call.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param passwd
+	 *            The user password
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the user
@@ -297,6 +313,21 @@ public class ArangoDB extends ArangoExecuteable {
 	public UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException {
 		return executeSync(createUserRequest(user, passwd, options), UserResult.class);
+	}
+
+	/**
+	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
+	 * order to execute this call.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @param passwd
+	 *            The user password
+	 * @return information about the user
+	 */
+	public CompletableFuture<UserResult> createUserAsync(final String user, final String passwd) {
+		return executeAsync(createUserRequest(user, passwd, new UserCreateOptions()), UserResult.class);
 	}
 
 	/**

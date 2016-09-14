@@ -44,6 +44,19 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
 	 * @param value
 	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
+	 * @return information about the edge
+	 * @throws ArangoDBException
+	 */
+	public <T> EdgeResult insertEdge(final T value) throws ArangoDBException {
+		return executeSync(insertEdgeRequest(value, new EdgeCreateOptions()), insertEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Creates a new edge in the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+	 * @param value
+	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the edge
@@ -51,6 +64,18 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 */
 	public <T> EdgeResult insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException {
 		return executeSync(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Creates a new edge in the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+	 * @param value
+	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
+	 * @return information about the edge
+	 */
+	public <T> CompletableFuture<EdgeResult> insertEdgeAsync(final T value) {
+		return executeAsync(insertEdgeRequest(value, new EdgeCreateOptions()), insertEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -97,6 +122,21 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            The key of the edge
 	 * @param type
 	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @return the edge identified by the key
+	 * @throws ArangoDBException
+	 */
+	public <T> T getEdge(final String key, final Class<T> type) throws ArangoDBException {
+		return executeSync(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
+	}
+
+	/**
+	 * Fetches an existing edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the edge identified by the key
@@ -105,6 +145,20 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	public <T> T getEdge(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
 		return executeSync(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+	}
+
+	/**
+	 * Fetches an existing edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @return the edge identified by the key
+	 */
+	public <T> CompletableFuture<T> getEdgeAsync(final String key, final Class<T> type) {
+		return executeAsync(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
 	}
 
 	/**
@@ -148,6 +202,23 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            The key of the edge
 	 * @param type
 	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @return information about the edge
+	 * @throws ArangoDBException
+	 */
+	public <T> EdgeUpdateResult replaceEdge(final String key, final T value) throws ArangoDBException {
+		return executeSync(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
+			replaceEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the edge
@@ -156,6 +227,22 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	public <T> EdgeUpdateResult replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
 			throws ArangoDBException {
 		return executeSync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
+	 * violated
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @return information about the edge
+	 */
+	public <T> CompletableFuture<EdgeUpdateResult> replaceEdgeAsync(final String key, final T value) {
+		return executeAsync(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
+			replaceEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -209,6 +296,24 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            The key of the edge
 	 * @param type
 	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @return information about the edge
+	 * @throws ArangoDBException
+	 */
+	public <T> EdgeUpdateResult updateEdge(final String key, final T value) throws ArangoDBException {
+		return executeSync(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
+			updateEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
+	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+	 * do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the edge
@@ -217,6 +322,23 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	public <T> EdgeUpdateResult updateEdge(final String key, final T value, final EdgeUpdateOptions options)
 			throws ArangoDBException {
 		return executeSync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
+	}
+
+	/**
+	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
+	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+	 * do not yet exist, and overwritten in the existing document if they do exist there.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 * @param type
+	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 * @return information about the edge
+	 */
+	public <T> CompletableFuture<EdgeUpdateResult> updateEdgeAsync(final String key, final T value) {
+		return executeAsync(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
+			updateEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -265,12 +387,35 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
+	 * @throws ArangoDBException
+	 */
+	public void deleteEdge(final String key) throws ArangoDBException {
+		executeSync(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
+	}
+
+	/**
+	 * Removes a edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
 	 * @param options
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
 	 */
 	public void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException {
 		executeSync(deleteEdgeRequest(key, options), Void.class);
+	}
+
+	/**
+	 * Removes a edge
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+	 * @param key
+	 *            The key of the edge
+	 */
+	public CompletableFuture<Void> deleteEdgeAsync(final String key) {
+		return executeAsync(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
 	}
 
 	/**

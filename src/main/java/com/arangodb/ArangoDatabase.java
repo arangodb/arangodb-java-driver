@@ -79,6 +79,20 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @param name
 	 *            The name of the collection
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
+	public CollectionResult createCollection(final String name) throws ArangoDBException {
+		return executeSync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionResult.class);
+	}
+
+	/**
+	 * Creates a collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @param name
+	 *            The name of the collection
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the collection
@@ -87,6 +101,21 @@ public class ArangoDatabase extends ArangoExecuteable {
 	public CollectionResult createCollection(final String name, final CollectionCreateOptions options)
 			throws ArangoDBException {
 		return executeSync(createCollectionRequest(name, options), CollectionResult.class);
+	}
+
+	/**
+	 * Creates a collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @param name
+	 *            The name of the collection
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the collection
+	 */
+	public CompletableFuture<CollectionResult> createCollectionAsync(final String name) {
+		return executeAsync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionResult.class);
 	}
 
 	/**
@@ -119,6 +148,18 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
 	 *      Documentation</a>
+	 * @return list of information about all collections
+	 * @throws ArangoDBException
+	 */
+	public Collection<CollectionResult> getCollections() throws ArangoDBException {
+		return executeSync(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
+	}
+
+	/**
+	 * Returns all collections
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 *      Documentation</a>
 	 * @param options
 	 *            Additional options, can be null
 	 * @return list of information about all collections
@@ -126,6 +167,17 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public Collection<CollectionResult> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
 		return executeSync(getCollectionsRequest(options), getCollectionsResponseDeserializer());
+	}
+
+	/**
+	 * Returns all collections
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 *      Documentation</a>
+	 * @return list of information about all collections
+	 */
+	public CompletableFuture<Collection<CollectionResult>> getCollectionsAsync() {
+		return executeAsync(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
 	}
 
 	/**
@@ -603,6 +655,25 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Name of the graph
 	 * @param edgeDefinitions
 	 *            An array of definitions for the edge
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	public GraphResult createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
+			throws ArangoDBException {
+		return executeSync(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
+			createGraphResponseDeserializer());
+	}
+
+	/**
+	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
+	 * of its edges.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 *      Documentation</a>
+	 * @param name
+	 *            Name of the graph
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the graph
@@ -613,6 +684,25 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Collection<EdgeDefinition> edgeDefinitions,
 		final GraphCreateOptions options) throws ArangoDBException {
 		return executeSync(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
+	}
+
+	/**
+	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
+	 * of its edges.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 *      Documentation</a>
+	 * @param name
+	 *            Name of the graph
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
+	 * @return information about the graph
+	 */
+	public CompletableFuture<GraphResult> createGraphAsync(
+		final String name,
+		final Collection<EdgeDefinition> edgeDefinitions) {
+		return executeAsync(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
+			createGraphResponseDeserializer());
 	}
 
 	/**
