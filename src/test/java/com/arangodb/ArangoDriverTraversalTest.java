@@ -34,6 +34,7 @@ import org.junit.Test;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
+import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.entity.marker.VertexEntity;
@@ -123,6 +124,7 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 
 		assertThat(paths.get(3).getEdges().size(), is(2));
 		assertThat(paths.get(3).getVertices().size(), is(3));
+
 	}
 
 	@Test
@@ -158,6 +160,12 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 
 		assertThat(paths.get(3).getEdges().size(), is(2));
 		assertThat(paths.get(3).getVertices().size(), is(3));
+
+		assertThat(paths.get(1).getEdges().size(), is(1));
+		EdgeEntity<BaseDocument> edgeEntity = traversal.getPaths().get(1).getEdges().get(0);
+		assertThat(edgeEntity.getFromVertexHandle(), is("person/Alice"));
+		assertThat(edgeEntity.getToVertexHandle(), is("person/Bob"));
+
 	}
 
 	private VertexEntity<Person> createPerson(final String name) throws ArangoException {
