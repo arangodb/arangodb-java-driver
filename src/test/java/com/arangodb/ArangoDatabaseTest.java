@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import org.junit.Ignore;
@@ -211,6 +212,44 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void queryForEach() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
+			assertThat(cursor, is(notNullValue()));
+			final AtomicInteger i = new AtomicInteger(0);
+			cursor.forEach(e -> {
+				i.incrementAndGet();
+			});
+			assertThat(i.get(), is(10));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryStream() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
+			assertThat(cursor, is(notNullValue()));
+			final AtomicInteger i = new AtomicInteger(0);
+			cursor.stream().forEach(e -> {
+				i.incrementAndGet();
+			});
+			assertThat(i.get(), is(10));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
 	public void queryWithCount() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
@@ -277,6 +316,28 @@ public class ArangoDatabaseTest extends BaseTest {
 				assertThat(iterator.hasNext(), is(i != 10));
 			}
 
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryStreamWithBatchSize() {
+		try {
+			db.createCollection(COLLECTION_NAME, null);
+			for (int i = 0; i < 10; i++) {
+				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+			}
+
+			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null,
+				new AqlQueryOptions().batchSize(5).count(true), String.class);
+
+			assertThat(cursor, is(notNullValue()));
+			final AtomicInteger i = new AtomicInteger(0);
+			cursor.stream().forEach(e -> {
+				i.incrementAndGet();
+			});
+			assertThat(i.get(), is(10));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}

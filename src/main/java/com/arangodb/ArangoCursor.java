@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.arangodb.entity.CursorResult;
 import com.arangodb.entity.CursorResult.Extras;
@@ -98,6 +100,10 @@ public class ArangoCursor<T> implements Iterable<T>, Closeable {
 	public void close() throws IOException {
 		db.executeSync(new Request(db.name(), RequestType.DELETE, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
 			Void.class);
+	}
+
+	public Stream<T> stream() {
+		return StreamSupport.stream(spliterator(), false);
 	}
 
 }
