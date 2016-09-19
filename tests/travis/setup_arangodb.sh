@@ -30,8 +30,7 @@ ${ARANGOD} \
     --database.directory ${TMP_DIR} \
     --configuration none \
     --server.endpoint vpp+tcp://127.0.0.1:8529 \
-    --server.endpoint tcp://127.0.0.1:8531 \
-    --server.endpoint ssl://127.0.0.1:8530 \
+    --server.endpoint vpp+ssl://127.0.0.1:8530 \
     --ssl.keyfile ./server.pem \
     --javascript.app-path ${ARANGODB_DIR}/js/apps \
     --javascript.startup-directory ${ARANGODB_DIR}/js \
