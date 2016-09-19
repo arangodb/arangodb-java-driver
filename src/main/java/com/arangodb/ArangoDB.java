@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
+import javax.net.ssl.SSLContext;
+
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserResult;
 import com.arangodb.internal.ArangoDBConstants;
@@ -67,6 +69,8 @@ public class ArangoDB extends ArangoExecuteable {
 		private Integer timeout;
 		private String user;
 		private String password;
+		private Boolean useSsl;
+		private SSLContext sslContext;
 		private final VPack.Builder vpackBuilder;
 		private final CollectionCache collectionCache;
 		private final VPackParser vpackParser;
@@ -133,6 +137,16 @@ public class ArangoDB extends ArangoExecuteable {
 			return this;
 		}
 
+		public Builder useSsl(final boolean useSsl) {
+			this.useSsl = useSsl;
+			return this;
+		}
+
+		public Builder sslContext(final SSLContext sslContext) {
+			this.sslContext = sslContext;
+			return this;
+		}
+
 		public <T> Builder registerSerializer(final Class<T> clazz, final VPackSerializer<T> serializer) {
 			vpackBuilder.registerSerializer(clazz, serializer);
 			return this;
@@ -150,7 +164,8 @@ public class ArangoDB extends ArangoExecuteable {
 
 		public ArangoDB build() {
 			return new ArangoDB(
-					new Communication.Builder().host(host).port(port).timeout(timeout).user(user).password(password),
+					new Communication.Builder().host(host).port(port).timeout(timeout).user(user).password(password)
+							.useSsl(useSsl).sslContext(sslContext),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 

@@ -28,6 +28,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.net.ssl.SSLContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +71,8 @@ public class Communication {
 		private Integer timeout;
 		private String user;
 		private String password;
+		private boolean useSsl;
+		private SSLContext sslContext;
 
 		public Builder() {
 			super();
@@ -99,20 +103,33 @@ public class Communication {
 			return this;
 		}
 
+		public Builder useSsl(final boolean useSsl) {
+			this.useSsl = useSsl;
+			return this;
+		}
+
+		public Builder sslContext(final SSLContext sslContext) {
+			this.sslContext = sslContext;
+			return this;
+		}
+
 		public Communication build(final VPack vpack, final CollectionCache collectionCache) {
-			return new Communication(host, port, timeout, user, password, vpack, collectionCache);
+			return new Communication(host, port, timeout, user, password, useSsl, sslContext, vpack, collectionCache);
 		}
 	}
 
 	private Communication(final String host, final Integer port, final Integer timeout, final String user,
-		final String password, final VPack vpack, final CollectionCache collectionCache) {
+		final String password, final boolean useSsl, final SSLContext sslContext, final VPack vpack,
+		final CollectionCache collectionCache) {
 		messageStore = new MessageStore();
 		this.user = Optional.ofNullable(user);
 		this.password = Optional.ofNullable(password);
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
-		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout).build();
-		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).build();
+		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout)
+				.useSsl(useSsl).sslContext(sslContext).build();
+		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).useSsl(useSsl)
+				.sslContext(sslContext).build();
 	}
 
 	private void connect(final Connection connection, final boolean sync) {

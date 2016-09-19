@@ -32,6 +32,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,19 +53,24 @@ public abstract class Connection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 
-	protected Optional<String> host = Optional.empty();
-	protected Optional<Integer> port = Optional.empty();
-	protected Optional<Integer> timeout = Optional.empty();
+	protected final Optional<String> host;
+	protected final Optional<Integer> port;
+	protected final Optional<Integer> timeout;
+	protected final Optional<Boolean> useSsl;
+	protected final Optional<SSLContext> sslContext;
 
 	protected Socket socket;
 	protected OutputStream outputStream;
 	protected InputStream inputStream;
 
-	protected Connection(final String host, final Integer port, final Integer timeout) {
+	protected Connection(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
+		final SSLContext sslContext) {
 		super();
 		this.host = Optional.of(host);
 		this.port = Optional.of(port);
 		this.timeout = Optional.ofNullable(timeout);
+		this.useSsl = Optional.ofNullable(useSsl);
+		this.sslContext = Optional.ofNullable(sslContext);
 	}
 
 	public synchronized boolean isOpen() {
@@ -73,7 +81,15 @@ public abstract class Connection {
 		if (isOpen()) {
 			return;
 		}
-		socket = SocketFactory.getDefault().createSocket();
+		if (useSsl.orElse(false)) {
+			if (sslContext.isPresent()) {
+				socket = sslContext.get().getSocketFactory().createSocket();
+			} else {
+				socket = SSLSocketFactory.getDefault().createSocket();
+			}
+		} else {
+			socket = SocketFactory.getDefault().createSocket();
+		}
 		final String host = this.host.orElse(ArangoDBConstants.DEFAULT_HOST);
 		final Integer port = this.port.orElse(ArangoDBConstants.DEFAULT_PORT);
 		if (LOGGER.isDebugEnabled()) {
@@ -88,6 +104,13 @@ public abstract class Connection {
 
 		outputStream = new BufferedOutputStream(socket.getOutputStream());
 		inputStream = socket.getInputStream();
+
+		if (useSsl.orElse(false)) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(String.format("Start Handshake on %s", socket));
+			}
+			((SSLSocket) socket).startHandshake();
+		}
 	}
 
 	public synchronized void close() {

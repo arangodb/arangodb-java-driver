@@ -27,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.net.ssl.SSLContext;
+
 import com.arangodb.internal.net.velocystream.Chunk;
 import com.arangodb.internal.net.velocystream.ChunkStore;
 import com.arangodb.internal.net.velocystream.Message;
@@ -47,6 +49,8 @@ public class ConnectionAsync extends Connection {
 		private String host;
 		private Integer port;
 		private Integer timeout;
+		private boolean useSsl;
+		private SSLContext sslContext;
 
 		public Builder(final MessageStore messageStore) {
 			super();
@@ -68,14 +72,24 @@ public class ConnectionAsync extends Connection {
 			return this;
 		}
 
+		public Builder useSsl(final boolean useSsl) {
+			this.useSsl = useSsl;
+			return this;
+		}
+
+		public Builder sslContext(final SSLContext sslContext) {
+			this.sslContext = sslContext;
+			return this;
+		}
+
 		public ConnectionAsync build() {
-			return new ConnectionAsync(host, port, timeout, messageStore);
+			return new ConnectionAsync(host, port, timeout, useSsl, sslContext, messageStore);
 		}
 	}
 
-	private ConnectionAsync(final String host, final Integer port, final Integer timeout,
-		final MessageStore messageStore) {
-		super(host, port, timeout);
+	private ConnectionAsync(final String host, final Integer port, final Integer timeout, final boolean useSsl,
+		final SSLContext sslContext, final MessageStore messageStore) {
+		super(host, port, timeout, useSsl, sslContext);
 		this.messageStore = messageStore;
 	}
 

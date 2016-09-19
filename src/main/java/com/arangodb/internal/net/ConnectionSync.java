@@ -23,6 +23,8 @@ package com.arangodb.internal.net;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.net.ssl.SSLContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +45,8 @@ public class ConnectionSync extends Connection {
 		private String host;
 		private Integer port;
 		private Integer timeout;
+		private boolean useSsl;
+		private SSLContext sslContext;
 
 		public Builder() {
 			super();
@@ -63,13 +67,24 @@ public class ConnectionSync extends Connection {
 			return this;
 		}
 
+		public Builder useSsl(final boolean useSsl) {
+			this.useSsl = useSsl;
+			return this;
+		}
+
+		public Builder sslContext(final SSLContext sslContext) {
+			this.sslContext = sslContext;
+			return this;
+		}
+
 		public ConnectionSync build() {
-			return new ConnectionSync(host, port, timeout);
+			return new ConnectionSync(host, port, timeout, useSsl, sslContext);
 		}
 	}
 
-	private ConnectionSync(final String host, final Integer port, final Integer timeout) {
-		super(host, port, timeout);
+	private ConnectionSync(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
+		final SSLContext sslContext) {
+		super(host, port, timeout, useSsl, sslContext);
 	}
 
 	public synchronized Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
