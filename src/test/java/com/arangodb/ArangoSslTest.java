@@ -58,7 +58,7 @@ public class ArangoSslTest {
 		ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
 		final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-		kmf.init(ks, "keystorePassword".toCharArray());
+		kmf.init(ks, SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
 		final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		tmf.init(ks);
