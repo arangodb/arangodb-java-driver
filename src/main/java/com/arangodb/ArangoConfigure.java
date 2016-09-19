@@ -101,8 +101,6 @@ public class ArangoConfigure {
 
 	private SSLContext sslContext = null;
 
-	private String sslTrustStore = null;
-
 	/**
 	 * the default ArangoDB cursor batch size
 	 */
@@ -270,11 +268,6 @@ public class ArangoConfigure {
 		final String useSslProperty = prop.getProperty("useSsl");
 		if (useSslProperty != null) {
 			setUseSsl(Boolean.parseBoolean(useSslProperty));
-		}
-
-		final String sslTrustStoreProperty = prop.getProperty("sslTrustStore");
-		if (sslTrustStoreProperty != null) {
-			setSslTrustStore(sslTrustStoreProperty);
 		}
 	}
 
@@ -461,8 +454,7 @@ public class ArangoConfigure {
 	}
 
 	/**
-	 * Set the default database for the driver TODO: _system has to be a valid
-	 * parameter
+	 * Set the default database for the driver TODO: _system has to be a valid parameter
 	 * 
 	 * @param defaultDatabase
 	 */
@@ -549,21 +541,6 @@ public class ArangoConfigure {
 	 */
 	public void setSslContext(final SSLContext sslContext) {
 		this.sslContext = sslContext;
-	}
-
-	public String getSslTrustStore() {
-		return sslTrustStore;
-	}
-
-	/**
-	 * Set file name of trust store
-	 * 
-	 * (do not use setSslTrustStore() together with setSslContext())
-	 * 
-	 * @param sslTrustStore
-	 */
-	public void setSslTrustStore(final String sslTrustStore) {
-		this.sslTrustStore = sslTrustStore;
 	}
 
 }
