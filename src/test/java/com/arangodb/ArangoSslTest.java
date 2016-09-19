@@ -23,11 +23,13 @@ package com.arangodb;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.junit.Test;
@@ -69,6 +71,17 @@ public class ArangoSslTest {
 		final ArangoDB arangoDB = new ArangoDB.Builder().port(8530).useSsl(true).sslContext(sc).build();
 		final ArangoDBVersion version = arangoDB.getVersion();
 		assertThat(version, is(notNullValue()));
+	}
+
+	@Test
+	public void connectWithoutValidSslContext() throws Exception {
+		try {
+			final ArangoDB arangoDB = new ArangoDB.Builder().port(8530).useSsl(true).build();
+			arangoDB.getVersion();
+			fail("this should fail");
+		} catch (ArangoDBException ex) {
+			assertThat(ex.getCause() instanceof SSLHandshakeException, is(true));
+		}
 	}
 
 }
