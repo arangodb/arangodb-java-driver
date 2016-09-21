@@ -71,7 +71,7 @@ public class Communication {
 		private Integer timeout;
 		private String user;
 		private String password;
-		private boolean useSsl;
+		private Boolean useSsl;
 		private SSLContext sslContext;
 
 		public Builder() {
@@ -103,7 +103,7 @@ public class Communication {
 			return this;
 		}
 
-		public Builder useSsl(final boolean useSsl) {
+		public Builder useSsl(final Boolean useSsl) {
 			this.useSsl = useSsl;
 			return this;
 		}
@@ -119,7 +119,7 @@ public class Communication {
 	}
 
 	private Communication(final String host, final Integer port, final Integer timeout, final String user,
-		final String password, final boolean useSsl, final SSLContext sslContext, final VPack vpack,
+		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
 		final CollectionCache collectionCache) {
 		messageStore = new MessageStore();
 		this.user = Optional.ofNullable(user);

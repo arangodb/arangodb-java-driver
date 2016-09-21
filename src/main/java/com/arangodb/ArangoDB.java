@@ -137,7 +137,7 @@ public class ArangoDB extends ArangoExecuteable {
 			return this;
 		}
 
-		public Builder useSsl(final boolean useSsl) {
+		public Builder useSsl(final Boolean useSsl) {
 			this.useSsl = useSsl;
 			return this;
 		}

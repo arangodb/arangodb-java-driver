@@ -49,7 +49,7 @@ public class ConnectionAsync extends Connection {
 		private String host;
 		private Integer port;
 		private Integer timeout;
-		private boolean useSsl;
+		private Boolean useSsl;
 		private SSLContext sslContext;
 
 		public Builder(final MessageStore messageStore) {
@@ -72,7 +72,7 @@ public class ConnectionAsync extends Connection {
 			return this;
 		}
 
-		public Builder useSsl(final boolean useSsl) {
+		public Builder useSsl(final Boolean useSsl) {
 			this.useSsl = useSsl;
 			return this;
 		}
@@ -87,7 +87,7 @@ public class ConnectionAsync extends Connection {
 		}
 	}
 
-	private ConnectionAsync(final String host, final Integer port, final Integer timeout, final boolean useSsl,
+	private ConnectionAsync(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
 		super(host, port, timeout, useSsl, sslContext);
 		this.messageStore = messageStore;

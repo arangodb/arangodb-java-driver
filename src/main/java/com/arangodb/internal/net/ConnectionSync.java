@@ -45,7 +45,7 @@ public class ConnectionSync extends Connection {
 		private String host;
 		private Integer port;
 		private Integer timeout;
-		private boolean useSsl;
+		private Boolean useSsl;
 		private SSLContext sslContext;
 
 		public Builder() {
@@ -67,7 +67,7 @@ public class ConnectionSync extends Connection {
 			return this;
 		}
 
-		public Builder useSsl(final boolean useSsl) {
+		public Builder useSsl(final Boolean useSsl) {
 			this.useSsl = useSsl;
 			return this;
 		}
