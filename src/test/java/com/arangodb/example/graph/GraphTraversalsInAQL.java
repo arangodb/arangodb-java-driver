@@ -121,9 +121,9 @@ public class GraphTraversalsInAQL extends BaseGraphTest {
 		assertThat(collection, hasItems("F", "B", "C", "D", "A", "G"));
 	}
 
-	private <T> Collection<T> toCollection(ArangoCursor<T> cursor) {
-		List<T> result = new ArrayList<>();
-		cursor.iterator().forEachRemaining(result::add);
+	private <T> Collection<T> toCollection(final ArangoCursor<T> cursor) {
+		final List<T> result = new ArrayList<>();
+		cursor.forEachRemaining(result::add);
 		return result;
 	}
 

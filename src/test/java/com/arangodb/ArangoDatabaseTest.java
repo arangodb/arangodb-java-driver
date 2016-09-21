@@ -201,10 +201,8 @@ public class ArangoDatabaseTest extends BaseTest {
 			}
 			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));
-			final Iterator<String> iterator = cursor.iterator();
-			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 10; i++, iterator.next()) {
-				assertThat(iterator.hasNext(), is(i != 10));
+			for (int i = 0; i < 10; i++, cursor.next()) {
+				assertThat(cursor.hasNext(), is(i != 10));
 			}
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -221,7 +219,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));
 			final AtomicInteger i = new AtomicInteger(0);
-			cursor.forEach(e -> {
+			cursor.forEachRemaining(e -> {
 				i.incrementAndGet();
 			});
 			assertThat(i.get(), is(10));
@@ -240,7 +238,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));
 			final AtomicInteger i = new AtomicInteger(0);
-			cursor.stream().forEach(e -> {
+			cursor.streamRemaining().forEach(e -> {
 				i.incrementAndGet();
 			});
 			assertThat(i.get(), is(10));
@@ -260,10 +258,8 @@ public class ArangoDatabaseTest extends BaseTest {
 			final ArangoCursor<String> cursor = db.query("for i in db_test Limit 6 return i._id", null,
 				new AqlQueryOptions().count(true), String.class);
 			assertThat(cursor, is(notNullValue()));
-			final Iterator<String> iterator = cursor.iterator();
-			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 6; i++, iterator.next()) {
-				assertThat(iterator.hasNext(), is(i != 6));
+			for (int i = 0; i < 6; i++, cursor.next()) {
+				assertThat(cursor.hasNext(), is(i != 6));
 			}
 			assertThat(cursor.getCount().isPresent(), is(true));
 			assertThat(cursor.getCount().get(), is(6));
@@ -284,10 +280,8 @@ public class ArangoDatabaseTest extends BaseTest {
 			final ArangoCursor<String> cursor = db.query("for i in db_test Limit 5 return i._id", null,
 				new AqlQueryOptions().fullCount(true), String.class);
 			assertThat(cursor, is(notNullValue()));
-			final Iterator<String> iterator = cursor.iterator();
-			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 5; i++, iterator.next()) {
-				assertThat(iterator.hasNext(), is(i != 5));
+			for (int i = 0; i < 5; i++, cursor.next()) {
+				assertThat(cursor.hasNext(), is(i != 5));
 			}
 			assertThat(cursor.getStats().isPresent(), is(true));
 			assertThat(cursor.getStats().get().getFullCount(), is(10L));
@@ -309,11 +303,8 @@ public class ArangoDatabaseTest extends BaseTest {
 				new AqlQueryOptions().batchSize(5).count(true), String.class);
 
 			assertThat(cursor, is(notNullValue()));
-
-			final Iterator<String> iterator = cursor.iterator();
-			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 10; i++, iterator.next()) {
-				assertThat(iterator.hasNext(), is(i != 10));
+			for (int i = 0; i < 10; i++, cursor.next()) {
+				assertThat(cursor.hasNext(), is(i != 10));
 			}
 
 		} finally {
@@ -334,7 +325,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 			assertThat(cursor, is(notNullValue()));
 			final AtomicInteger i = new AtomicInteger(0);
-			cursor.stream().forEach(e -> {
+			cursor.streamRemaining().forEach(e -> {
 				i.incrementAndGet();
 			});
 			assertThat(i.get(), is(10));
@@ -363,10 +354,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
 			assertThat(cursor, is(notNullValue()));
 
-			final Iterator<String> iterator = cursor.iterator();
-			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 10; i++, iterator.next()) {
-				assertThat(iterator.hasNext(), is(i != 10));
+			for (int i = 0; i < 10; i++, cursor.next()) {
+				assertThat(cursor.hasNext(), is(i != 10));
 				if (i == 1) {
 					Thread.sleep(wait * 1000);
 				}
@@ -426,10 +415,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
 			assertThat(cursor, is(notNullValue()));
 
-			final Iterator<String> iterator = cursor.iterator();
-			assertThat(iterator, is(notNullValue()));
-			for (int i = 0; i < 5; i++, iterator.next()) {
-				assertThat(iterator.hasNext(), is(i != 5));
+			for (int i = 0; i < 5; i++, cursor.next()) {
+				assertThat(cursor.hasNext(), is(i != 5));
 			}
 
 		} finally {
@@ -453,7 +440,7 @@ public class ArangoDatabaseTest extends BaseTest {
 		cursor.close();
 		int count = 0;
 		try {
-			for (final Iterator<String> iterator = cursor.iterator(); iterator.hasNext(); iterator.next(), count++) {
+			for (; cursor.hasNext(); cursor.next(), count++) {
 			}
 			fail();
 		} catch (final ArangoDBException e) {

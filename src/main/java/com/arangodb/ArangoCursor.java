@@ -22,9 +22,12 @@ package com.arangodb;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -40,7 +43,7 @@ import com.arangodb.internal.net.velocystream.RequestType;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoCursor<T> implements Iterable<T>, Closeable {
+public class ArangoCursor<T> implements Iterator<T>, Closeable {
 
 	private final ArangoDatabase db;
 	private final Class<T> type;
@@ -92,18 +95,29 @@ public class ArangoCursor<T> implements Iterable<T>, Closeable {
 	}
 
 	@Override
-	public Iterator<T> iterator() {
-		return iterator;
-	}
-
-	@Override
 	public void close() throws IOException {
 		db.executeSync(new Request(db.name(), RequestType.DELETE, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
 			Void.class);
 	}
 
-	public Stream<T> stream() {
-		return StreamSupport.stream(spliterator(), false);
+	@Override
+	public boolean hasNext() {
+		return iterator.hasNext();
+	}
+
+	@Override
+	public T next() {
+		return iterator.next();
+	}
+
+	public Stream<T> streamRemaining() {
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
+	}
+
+	public List<T> asListRemaining() {
+		final List<T> remaining = new ArrayList<>();
+		forEachRemaining(remaining::add);
+		return remaining;
 	}
 
 }
