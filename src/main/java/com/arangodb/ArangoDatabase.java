@@ -333,8 +333,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	public void grandAccess(final String user) throws ArangoDBException {
-		executeSync(grandAccessRequest(user), Void.class);
+	public void grantAccess(final String user) throws ArangoDBException {
+		executeSync(grantAccessRequest(user), Void.class);
 	}
 
 	/**
@@ -347,11 +347,11 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            The name of the user
 	 * @return void
 	 */
-	public CompletableFuture<Void> grandAccessAync(final String user) {
-		return executeAsync(grandAccessRequest(user), Void.class);
+	public CompletableFuture<Void> grantAccessAync(final String user) {
+		return executeAsync(grantAccessRequest(user), Void.class);
 	}
 
-	private Request grandAccessRequest(final String user) {
+	private Request grantAccessRequest(final String user) {
 		final Request request;
 		request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));

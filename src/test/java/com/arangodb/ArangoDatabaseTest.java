@@ -166,7 +166,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	public void grantAccess() {
 		try {
 			arangoDB.createUser("user1", "1234", null);
-			db.grandAccess("user1");
+			db.grantAccess("user1");
 		} finally {
 			arangoDB.deleteUser("user1");
 		}
@@ -174,7 +174,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void grantAccessUserNotFound() {
-		db.grandAccess("user1");
+		db.grantAccess("user1");
 	}
 
 	@Test
