@@ -247,7 +247,7 @@ public class VPackBuilderTest {
 	}
 
 	@Test
-	public void addUTCDate() throws VPackException {
+	public void addDate() throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		final Date date = new Date();
 		builder.add(date);
@@ -255,6 +255,28 @@ public class VPackBuilderTest {
 		final VPackSlice slice = builder.slice();
 		assertThat(slice.isDate(), is(true));
 		assertThat(slice.getAsDate(), is(date));
+	}
+
+	@Test
+	public void addSqlDate() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		final java.sql.Date date = new java.sql.Date(new Date().getTime());
+		builder.add(date);
+
+		final VPackSlice slice = builder.slice();
+		assertThat(slice.isDate(), is(true));
+		assertThat(slice.getAsSQLDate(), is(date));
+	}
+
+	@Test
+	public void addSqlTimestamp() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		final java.sql.Timestamp timestamp = new java.sql.Timestamp(new Date().getTime());
+		builder.add(timestamp);
+
+		final VPackSlice slice = builder.slice();
+		assertThat(slice.isDate(), is(true));
+		assertThat(slice.getAsSQLTimestamp(), is(timestamp));
 	}
 
 	@Test

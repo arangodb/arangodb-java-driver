@@ -23,6 +23,7 @@ package com.arangodb.velocypack;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -130,7 +131,13 @@ public class VPackBuilder {
 		}
 	};
 	private static final Appender<Date> DATE = (builder, value) -> {
-		builder.appendUTCDate(value);
+		builder.appendDate(value);
+	};
+	private static final Appender<java.sql.Date> SQL_DATE = (builder, value) -> {
+		builder.appendSQLDate(value);
+	};
+	private static final Appender<Timestamp> SQL_TIMESTAMP = (builder, value) -> {
+		builder.appendSQLTimestamp(value);
 	};
 	private static final Appender<String> STRING = (builder, value) -> {
 		builder.appendString(value);
@@ -254,6 +261,14 @@ public class VPackBuilder {
 		return addInternal(DATE, value);
 	}
 
+	public VPackBuilder add(final java.sql.Date value) throws VPackBuilderException {
+		return addInternal(SQL_DATE, value);
+	}
+
+	public VPackBuilder add(final java.sql.Timestamp value) throws VPackBuilderException {
+		return addInternal(SQL_TIMESTAMP, value);
+	}
+
 	public VPackBuilder add(final String value) throws VPackBuilderException {
 		return addInternal(STRING, value);
 	}
@@ -331,6 +346,14 @@ public class VPackBuilder {
 
 	public VPackBuilder add(final String attribute, final Date value) throws VPackBuilderException {
 		return addInternal(attribute, DATE, value);
+	}
+
+	public VPackBuilder add(final String attribute, final java.sql.Date value) throws VPackBuilderException {
+		return addInternal(attribute, SQL_DATE, value);
+	}
+
+	public VPackBuilder add(final String attribute, final java.sql.Timestamp value) throws VPackBuilderException {
+		return addInternal(attribute, SQL_TIMESTAMP, value);
 	}
 
 	public VPackBuilder add(final String attribute, final byte[] value) throws VPackBuilderException {
@@ -518,7 +541,17 @@ public class VPackBuilder {
 		}
 	}
 
-	private void appendUTCDate(final Date value) {
+	private void appendDate(final Date value) {
+		add((byte) 0x1c);
+		append(value.getTime(), Long.BYTES);
+	}
+
+	private void appendSQLDate(final java.sql.Date value) {
+		add((byte) 0x1c);
+		append(value.getTime(), Long.BYTES);
+	}
+
+	private void appendSQLTimestamp(final Timestamp value) {
 		add((byte) 0x1c);
 		append(value.getTime(), Long.BYTES);
 	}

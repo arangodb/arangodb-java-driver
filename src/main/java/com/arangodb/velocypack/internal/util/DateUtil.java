@@ -20,8 +20,6 @@
 
 package com.arangodb.velocypack.internal.util;
 
-import java.util.Date;
-
 /**
  * @author Mark - mark at arangodb.com
  *
@@ -32,8 +30,19 @@ public class DateUtil {
 		super();
 	}
 
-	public static Date toDate(final byte[] array, final int offset, final int length) {
+	public static java.util.Date toDate(final byte[] array, final int offset, final int length) {
 		final long milliseconds = NumberUtil.toLong(array, offset, length);
-		return new Date(milliseconds);
+		return new java.util.Date(milliseconds);
 	}
+
+	public static java.sql.Date toSQLDate(final byte[] array, final int offset, final int length) {
+		final long milliseconds = NumberUtil.toLong(array, offset, length);
+		return new java.sql.Date(milliseconds);
+	}
+
+	public static java.sql.Timestamp toSQLTimestamp(final byte[] array, final int offset, final int length) {
+		final long milliseconds = NumberUtil.toLong(array, offset, length);
+		return new java.sql.Timestamp(milliseconds);
+	}
+
 }
