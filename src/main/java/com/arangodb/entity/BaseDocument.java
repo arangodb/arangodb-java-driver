@@ -20,6 +20,7 @@
 
 package com.arangodb.entity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,15 +30,17 @@ import com.arangodb.entity.DocumentField.Type;
  * @author Mark - mark at arangodb.com
  *
  */
-public class BaseDocument {
+public class BaseDocument implements Serializable {
+
+	private static final long serialVersionUID = -1824742667228719116L;
 
 	@DocumentField(Type.ID)
-	private String id;
+	protected String id;
 	@DocumentField(Type.KEY)
-	private String key;
+	protected String key;
 	@DocumentField(Type.REV)
-	private String revision;
-	private Map<String, Object> properties;
+	protected String revision;
+	protected Map<String, Object> properties;
 
 	public BaseDocument() {
 		super();
@@ -120,4 +123,59 @@ public class BaseDocument {
 		sb.append("]");
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
+		result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final BaseDocument other = (BaseDocument) obj;
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (key == null) {
+			if (other.key != null) {
+				return false;
+			}
+		} else if (!key.equals(other.key)) {
+			return false;
+		}
+		if (properties == null) {
+			if (other.properties != null) {
+				return false;
+			}
+		} else if (!properties.equals(other.properties)) {
+			return false;
+		}
+		if (revision == null) {
+			if (other.revision != null) {
+				return false;
+			}
+		} else if (!revision.equals(other.revision)) {
+			return false;
+		}
+		return true;
+	}
+
 }

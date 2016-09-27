@@ -30,6 +30,8 @@ import com.arangodb.entity.DocumentField.Type;
  */
 public class BaseEdgeDocument extends BaseDocument {
 
+	private static final long serialVersionUID = 6904923804449368783L;
+
 	@DocumentField(Type.FROM)
 	private String from;
 	@DocumentField(Type.TO)
@@ -71,18 +73,57 @@ public class BaseEdgeDocument extends BaseDocument {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("BaseDocument [documentRevision=");
-		sb.append(getRevision());
+		sb.append(revision);
 		sb.append(", documentHandle=");
-		sb.append(getId());
+		sb.append(id);
 		sb.append(", documentKey=");
-		sb.append(getKey());
+		sb.append(key);
 		sb.append(", from=");
-		sb.append(getFrom());
+		sb.append(from);
 		sb.append(", to=");
-		sb.append(getTo());
+		sb.append(to);
 		sb.append(", properties=");
-		sb.append(getProperties());
+		sb.append(properties);
 		sb.append("]");
 		return sb.toString();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((from == null) ? 0 : from.hashCode());
+		result = prime * result + ((to == null) ? 0 : to.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final BaseEdgeDocument other = (BaseEdgeDocument) obj;
+		if (from == null) {
+			if (other.from != null) {
+				return false;
+			}
+		} else if (!from.equals(other.from)) {
+			return false;
+		}
+		if (to == null) {
+			if (other.to != null) {
+				return false;
+			}
+		} else if (!to.equals(other.to)) {
+			return false;
+		}
+		return true;
+	}
+
 }
