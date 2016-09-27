@@ -69,7 +69,7 @@ public class ObjectIterator extends SliceIterator<Entry<String, VPackSlice>> {
 
 			@Override
 			public VPackSlice getValue() {
-				return new VPackSlice(currentField.getVpack(), currentField.getStart() + currentField.getByteSize());
+				return new VPackSlice(currentField.getBuffer(), currentField.getStart() + currentField.getByteSize());
 			}
 
 			@Override

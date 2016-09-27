@@ -32,10 +32,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.arangodb.velocypack.exception.VPackBuilderException;
-import com.arangodb.velocypack.exception.VPackBuilderNeedOpenCompoundException;
 import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocypack.exception.VPackKeyTypeException;
-import com.arangodb.velocypack.exception.VPackNeedAttributeTranslatorException;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -246,8 +243,7 @@ public class VPackParser {
 		private void close() throws ParseException {
 			try {
 				builder.close();
-			} catch (VPackBuilderNeedOpenCompoundException | VPackKeyTypeException
-					| VPackNeedAttributeTranslatorException e) {
+			} catch (final VPackBuilderException e) {
 				throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
 			}
 		}

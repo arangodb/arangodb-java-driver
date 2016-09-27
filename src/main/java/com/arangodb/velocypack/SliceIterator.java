@@ -48,7 +48,7 @@ public abstract class SliceIterator<E> implements Iterator<E> {
 	}
 
 	protected VPackSlice getCurrent() {
-		return new VPackSlice(slice.getVpack(), (int) current);
+		return new VPackSlice(slice.getBuffer(), (int) current);
 	}
 
 }

@@ -816,5 +816,53 @@ public class VPackBuilderTest {
 		assertThat(slice.isObject(), is(true));
 		assertThat(slice.get("s").isString(), is(true));
 		assertThat(slice.get("s").getAsString(), is("test"));
+		assertThat(slice.size(), is(1));
 	}
+
+	@Test
+	public void addVPackObject() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(ValueType.OBJECT);
+		{
+			final VPackBuilder builder2 = new VPackBuilder();
+			builder2.add(ValueType.OBJECT);
+			builder2.add("s", "test");
+			builder2.close();
+			builder.add("o", builder2.slice());
+		}
+		builder.close();
+		final VPackSlice slice = builder.slice();
+		assertThat(slice, is(notNullValue()));
+		assertThat(slice.isObject(), is(true));
+		assertThat(slice.get("o").isObject(), is(true));
+		assertThat(slice.get("o").get("s").isString(), is(true));
+		assertThat(slice.get("o").get("s").getAsString(), is("test"));
+		assertThat(slice.size(), is(1));
+		assertThat(slice.get("o").size(), is(1));
+	}
+
+	@Test
+	public void addVPackObjectInArray() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(ValueType.ARRAY);
+		for (int i = 0; i < 10; i++) {
+			final VPackBuilder builder2 = new VPackBuilder();
+			builder2.add(ValueType.OBJECT);
+			builder2.add("s", "test");
+			builder2.close();
+			builder.add(builder2.slice());
+		}
+		builder.close();
+		final VPackSlice slice = builder.slice();
+		assertThat(slice, is(notNullValue()));
+		assertThat(slice.isArray(), is(true));
+		assertThat(slice.size(), is(10));
+		for (int i = 0; i < 10; i++) {
+			assertThat(slice.get(i).isObject(), is(true));
+			assertThat(slice.get(i).get("s").isString(), is(true));
+			assertThat(slice.get(i).get("s").getAsString(), is("test"));
+			assertThat(slice.get(i).size(), is(1));
+		}
+	}
+
 }

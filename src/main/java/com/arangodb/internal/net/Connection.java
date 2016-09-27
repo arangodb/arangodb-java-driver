@@ -141,11 +141,11 @@ public abstract class Connection {
 				int written = 0;
 				if (contentOffset < headLength) {
 					written = Math.min(contentLength, headLength - contentOffset);
-					outputStream.write(head.getVpack(), contentOffset, written);
+					outputStream.write(head.getBuffer(), contentOffset, written);
 				}
 				if (written < contentLength) {
 					final VPackSlice body = message.getBody().get();
-					outputStream.write(body.getVpack(), contentOffset + written - headLength, contentLength - written);
+					outputStream.write(body.getBuffer(), contentOffset + written - headLength, contentLength - written);
 				}
 				outputStream.flush();
 			} catch (final IOException e) {

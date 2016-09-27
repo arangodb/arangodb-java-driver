@@ -61,7 +61,7 @@ public class VPackConfigure {
 		builder.registerDeserializer(ID, String.class, (parent, vpack, context) -> {
 			final String id;
 			if (vpack.isCustom()) {
-				final long idLong = NumberUtil.toLong(vpack.getVpack(), vpack.getStart() + 1, vpack.getByteSize() - 1);
+				final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1, vpack.getByteSize() - 1);
 				final String collectionName = cache.getCollectionName(idLong);
 				if (collectionName != null) {
 					final VPackSlice key = parent.get("_key");
@@ -76,7 +76,7 @@ public class VPackConfigure {
 		});
 		vpackParser.registerDeserializer(ID, ValueType.CUSTOM, (parent, attribute, vpack, json) -> {
 			final String id;
-			final long idLong = NumberUtil.toLong(vpack.getVpack(), vpack.getStart() + 1, vpack.getByteSize() - 1);
+			final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1, vpack.getByteSize() - 1);
 			final String collectionName = cache.getCollectionName(idLong);
 			if (collectionName != null) {
 				final VPackSlice key = parent.get("_key");

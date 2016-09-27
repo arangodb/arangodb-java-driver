@@ -20,6 +20,7 @@
 
 package com.arangodb.velocypack;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -44,7 +45,9 @@ import com.arangodb.velocypack.internal.util.ValueTypeUtil;
  * @author Mark - mark at arangodb.com
  *
  */
-public class VPackSlice {
+public class VPackSlice implements Serializable {
+
+	private static final long serialVersionUID = -3452953589283603980L;
 
 	public static final VPackAttributeTranslator attributeTranslator = new VPackAttributeTranslatorImpl();
 
@@ -69,7 +72,7 @@ public class VPackSlice {
 		return vpack[start];
 	}
 
-	public byte[] getVpack() {
+	public byte[] getBuffer() {
 		return vpack;
 	}
 
@@ -747,7 +750,7 @@ public class VPackSlice {
 		}
 	}
 
-	protected byte[] getValue() {
+	protected byte[] getRawVPack() {
 		return Arrays.copyOfRange(vpack, start, start + getByteSize());
 	}
 
@@ -759,4 +762,35 @@ public class VPackSlice {
 			return super.toString();
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + start;
+		result = prime * result + Arrays.hashCode(getRawVPack());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final VPackSlice other = (VPackSlice) obj;
+		if (start != other.start) {
+			return false;
+		}
+		if (!Arrays.equals(getRawVPack(), other.getRawVPack())) {
+			return false;
+		}
+		return true;
+	}
+
 }

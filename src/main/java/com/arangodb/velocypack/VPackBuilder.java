@@ -382,7 +382,7 @@ public class VPackBuilder {
 				if (VPackSlice.attributeTranslator != null) {
 					final VPackSlice translate = VPackSlice.attributeTranslator.translate(attribute);
 					if (translate != null) {
-						final byte[] trValue = translate.getValue();
+						final byte[] trValue = translate.getRawVPack();
 						ensureCapacity(size + trValue.length);
 						for (int i = 0; i < trValue.length; i++) {
 							addUnchecked(trValue[i]);
@@ -549,7 +549,7 @@ public class VPackBuilder {
 	}
 
 	private void appendVPack(final VPackSlice value) {
-		final byte[] vpack = value.getVpack();
+		final byte[] vpack = value.getRawVPack();
 		ensureCapacity(size + vpack.length);
 		System.arraycopy(vpack, 0, buffer, size, vpack.length);
 		size += vpack.length;
@@ -594,9 +594,12 @@ public class VPackBuilder {
 		depth.remove(depth.size() - 1);
 	}
 
-	public VPackBuilder close()
-			throws VPackBuilderNeedOpenCompoundException, VPackKeyTypeException, VPackNeedAttributeTranslatorException {
-		return close(true);
+	public VPackBuilder close() throws VPackBuilderException {
+		try {
+			return close(true);
+		} catch (VPackKeyTypeException | VPackNeedAttributeTranslatorException e) {
+			throw new VPackBuilderException(e);
+		}
 	}
 
 	protected VPackBuilder close(final boolean sort)
