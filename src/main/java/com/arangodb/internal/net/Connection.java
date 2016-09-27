@@ -66,8 +66,8 @@ public abstract class Connection {
 	protected Connection(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext) {
 		super();
-		this.host = Optional.of(host);
-		this.port = Optional.of(port);
+		this.host = Optional.ofNullable(host);
+		this.port = Optional.ofNullable(port);
 		this.timeout = Optional.ofNullable(timeout);
 		this.useSsl = Optional.ofNullable(useSsl);
 		this.sslContext = Optional.ofNullable(sslContext);

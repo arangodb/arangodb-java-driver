@@ -62,7 +62,7 @@ public class ConnectionAsync extends Connection {
 			return this;
 		}
 
-		public Builder port(final int port) {
+		public Builder port(final Integer port) {
 			this.port = port;
 			return this;
 		}
