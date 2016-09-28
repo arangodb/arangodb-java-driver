@@ -57,6 +57,10 @@ public class VPackSerializers {
 	public static VPackSerializer<Character> CHARACTER = (builder, attribute, value, context) -> builder.add(attribute,
 		value);
 	public static VPackSerializer<Date> DATE = (builder, attribute, value, context) -> builder.add(attribute, value);
+	public static VPackSerializer<java.sql.Date> SQL_DATE = (builder, attribute, value, context) -> builder
+			.add(attribute, value);
+	public static VPackSerializer<java.sql.Timestamp> SQL_TIMESTAMP = (builder, attribute, value, context) -> builder
+			.add(attribute, value);
 	public static VPackSerializer<VPackSlice> VPACK = (builder, attribute, value, context) -> builder.add(attribute,
 		value);
 }

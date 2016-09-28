@@ -110,6 +110,8 @@ public class VPack {
 			serializers.put(Character.class, VPackSerializers.CHARACTER);
 			serializers.put(char.class, VPackSerializers.CHARACTER);
 			serializers.put(Date.class, VPackSerializers.DATE);
+			serializers.put(java.sql.Date.class, VPackSerializers.SQL_DATE);
+			serializers.put(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
 			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
@@ -131,6 +133,8 @@ public class VPack {
 			deserializers.put(Character.class, VPackDeserializers.CHARACTER);
 			deserializers.put(char.class, VPackDeserializers.CHARACTER);
 			deserializers.put(Date.class, VPackDeserializers.DATE);
+			deserializers.put(java.sql.Date.class, VPackDeserializers.SQL_DATE);
+			deserializers.put(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 		}
 

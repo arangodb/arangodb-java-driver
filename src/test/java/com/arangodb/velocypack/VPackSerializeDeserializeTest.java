@@ -3206,4 +3206,70 @@ public class VPackSerializeDeserializeTest {
 		assertThat(vpack.getAsString(), is("test"));
 	}
 
+	protected static class TestEntityDate {
+		private java.util.Date utilDate = new Date(1474988621);
+		private java.sql.Date sqlDate = new java.sql.Date(1474988621);
+		private java.sql.Timestamp timestamp = new java.sql.Timestamp(1474988621);
+
+		public java.util.Date getUtilDate() {
+			return utilDate;
+		}
+
+		public void setUtilDate(final java.util.Date utilDate) {
+			this.utilDate = utilDate;
+		}
+
+		public java.sql.Date getSqlDate() {
+			return sqlDate;
+		}
+
+		public void setSqlDate(final java.sql.Date sqlDate) {
+			this.sqlDate = sqlDate;
+		}
+
+		public java.sql.Timestamp getTimestamp() {
+			return timestamp;
+		}
+
+		public void setTimestamp(final java.sql.Timestamp timestamp) {
+			this.timestamp = timestamp;
+		}
+
+	}
+
+	@Test
+	public void fromDate() throws VPackException {
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityDate());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		{
+			assertThat(vpack.get("utilDate").isDate(), is(true));
+			assertThat(vpack.get("utilDate").getAsDate(), is(new Date(1474988621)));
+		}
+		{
+			assertThat(vpack.get("sqlDate").isDate(), is(true));
+			assertThat(vpack.get("sqlDate").getAsDate(), is(new java.sql.Date(1474988621)));
+		}
+		{
+			assertThat(vpack.get("timestamp").isDate(), is(true));
+			assertThat(vpack.get("timestamp").getAsSQLTimestamp(), is(new java.sql.Timestamp(1474988621)));
+		}
+	}
+
+	@Test
+	public void toDate() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(ValueType.OBJECT);
+		builder.add("utilDate", new Date(1475062216));
+		builder.add("sqlDate", new java.sql.Date(1475062216));
+		builder.add("timestamp", new java.sql.Timestamp(1475062216));
+		builder.close();
+
+		final TestEntityDate entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityDate.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.utilDate, is(new Date(1475062216)));
+		assertThat(entity.sqlDate, is(new java.sql.Date(1475062216)));
+		assertThat(entity.timestamp, is(new java.sql.Timestamp(1475062216)));
+	}
+
 }

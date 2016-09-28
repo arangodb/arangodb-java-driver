@@ -49,6 +49,9 @@ public class VPackDeserializers {
 	public static final VPackDeserializer<Number> NUMBER = (parent, vpack, context) -> vpack.getAsNumber();
 	public static final VPackDeserializer<Character> CHARACTER = (parent, vpack, context) -> vpack.getAsChar();
 	public static final VPackDeserializer<Date> DATE = (parent, vpack, context) -> vpack.getAsDate();
+	public static final VPackDeserializer<java.sql.Date> SQL_DATE = (parent, vpack, context) -> vpack.getAsSQLDate();
+	public static final VPackDeserializer<java.sql.Timestamp> SQL_TIMESTAMP = (parent, vpack, context) -> vpack
+			.getAsSQLTimestamp();
 	public static final VPackDeserializer<VPackSlice> VPACK = (parent, vpack, context) -> vpack;
 
 }
