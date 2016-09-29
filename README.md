@@ -62,10 +62,7 @@ Overview of all important API calls are available [here](docs/api_overview.md).
 
 # Learn more
 * [ArangoDB](https://www.arangodb.com/)
-* [ChangeLog](https://github.com/arangodb/arangodb-java-driver/tree/master/ChangeLog)
-* [Examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example)
-* [Document examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/document)
-* [Graph examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/graph)
-* [HTTPS examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/ssl)
+* [ChangeLog](https://github.com/arangodb/arangodb-java-driver/tree/4.0/ChangeLog)
+* [Examples](https://github.com/arangodb/arangodb-java-driver/tree/4.0/src/test/java/com/arangodb/example)
 * [Tutorial](https://www.arangodb.com/tutorial-java/)
 
