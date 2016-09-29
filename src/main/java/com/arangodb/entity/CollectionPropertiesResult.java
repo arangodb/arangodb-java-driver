@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import java.util.Collection;
+
 /**
  * @author Mark - mark at arangodb.com
  *
@@ -31,6 +33,8 @@ public class CollectionPropertiesResult extends CollectionResult {
 	private Integer indexBuckets;
 	private KeyOptions keyOptions;
 	private Long count;
+	private Integer numberOfShards;
+	private Collection<String> shardKeys;
 
 	public CollectionPropertiesResult() {
 		super();
@@ -74,6 +78,22 @@ public class CollectionPropertiesResult extends CollectionResult {
 
 	public void setCount(final Long count) {
 		this.count = count;
+	}
+
+	public Integer getNumberOfShards() {
+		return numberOfShards;
+	}
+
+	public void setNumberOfShards(final Integer numberOfShards) {
+		this.numberOfShards = numberOfShards;
+	}
+
+	public Collection<String> getShardKeys() {
+		return shardKeys;
+	}
+
+	public void setShardKeys(final Collection<String> shardKeys) {
+		this.shardKeys = shardKeys;
 	}
 
 }
