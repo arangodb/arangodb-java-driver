@@ -3,22 +3,15 @@
 
 # arangodb-java-driver
 
-2.7: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=2.7)](https://travis-ci.org/arangodb/arangodb-java-driver) 
-3.0: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.0)](https://travis-ci.org/arangodb/arangodb-java-driver) 
-3.1: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.1)](https://travis-ci.org/arangodb/arangodb-java-driver) 
-4.0: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=4.0)](https://travis-ci.org/arangodb/arangodb-java-driver) 
-
-# Supported versions
+## Supported versions
 
 <table>
-<tr><th>arangodb-java-driver</th><th>ArangoDB</th><th>network protocol</th><th>Java version</th></tr>
-<tr><td>4.x.x</td><td>3.1.x</td><td>VelocyStream</td><td>1.8</td></tr>
-<tr><td>3.1.x</td><td>3.1.x</td><td>HTTP</td><td>1.6</td></tr>
-<tr><td>3.0.x</td><td>3.0.x</td><td>HTTP</td><td>1.6</td></tr>
-<tr><td>2.7.4</td><td>2.7.x and 2.8.x</td><td>HTTP</td><td>1.6</td></tr>
+<tr><th>arangodb-java-driver</th><th>ArangoDB</th><th>network protocol</th><th>Java version</th><th>build status</th></tr>
+<tr><td>4.0.x</td><td>3.1.x</td><td>VelocyStream</td><td>1.8</td><td>[![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=4.0)](https://travis-ci.org/arangodb/arangodb-java-driver)</td></tr>
+<tr><td>3.1.x</td><td>3.1.x</td><td>HTTP</td><td>1.6</td><td>[![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.1)](https://travis-ci.org/arangodb/arangodb-java-driver)</td></tr>
+<tr><td>3.0.x</td><td>3.0.x</td><td>HTTP</td><td>1.6</td><td>[![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.0)](https://travis-ci.org/arangodb/arangodb-java-driver)</td></tr>
+<tr><td>2.7.4</td><td>2.7.x and 2.8.x</td><td>HTTP</td><td>1.6</td><td>[![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=2.7)](https://travis-ci.org/arangodb/arangodb-java-driver)</td></tr>
 </table>
-
-# Basics
 
 ## Maven
 
@@ -48,7 +41,8 @@ If you want to test with a snapshot version (e.g. 4.0.0-SNAPSHOT), add the stagi
 </repositories>
 ```
 
-# Compile java driver
+## Compile java driver
+
 ```
 mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
 ```	
