@@ -8,19 +8,15 @@
 3.1: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.1)](https://travis-ci.org/arangodb/arangodb-java-driver) 
 4.0: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=4.0)](https://travis-ci.org/arangodb/arangodb-java-driver) 
 
-master: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=master)](https://travis-ci.org/arangodb/arangodb-java-driver)
-
 # Supported versions
 
-* ```arangodb-java-driver 4.0.0``` for ArangoDB 3.1.x with VelocyStream
-* ```arangodb-java-driver 3.1.0``` for ArangoDB 3.1.x with HTTP
-* ```arangodb-java-driver 3.0.0``` for ArangoDB 3.0.x
-* ```arangodb-java-driver 2.7.4``` for ArangoDB 2.7.x and ArangoDB 2.8.x
-
-# Required
-
-* [ArangoDB](https://github.com/arangodb/arangodb) version 3.1.X
-* since ```arangodb-java-driver 4.0.0``` Java 1.8, otherwise Java 1.6
+<table>
+<tr><th>arangodb-java-driver</th><th>ArangoDB</th><th>network protocol</th><th>Java version</th></tr>
+<tr><td>4.x.x</td><td>3.1.x</td><td>VelocyStream</td><td>1.8</td></tr>
+<tr><td>3.1.x</td><td>3.1.x</td><td>HTTP</td><td>1.6</td></tr>
+<tr><td>3.0.x</td><td>3.0.x</td><td>HTTP</td><td>1.6</td></tr>
+<tr><td>2.7.4</td><td>2.7.x and 2.8.x</td><td>HTTP</td><td>1.6</td></tr>
+</table>
 
 # Basics
 
@@ -51,18 +47,16 @@ If you want to test with a snapshot version (e.g. 4.0.0-SNAPSHOT), add the stagi
   </repository>
 </repositories>
 ```
-# API Overview
-
-Overview of all important API calls are available [here](docs/api_overview.md).
 
 # Compile java driver
 ```
-	mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
+mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
 ```	
 
 # Learn more
 * [ArangoDB](https://www.arangodb.com/)
-* [ChangeLog](https://github.com/arangodb/arangodb-java-driver/tree/4.0/ChangeLog)
-* [Examples](https://github.com/arangodb/arangodb-java-driver/tree/4.0/src/test/java/com/arangodb/example)
+* [ChangeLog](ChangeLog)
+* [API-Overview](docs/api_overview.md)
+* [Examples](src/test/java/com/arangodb/example)
 * [Tutorial](https://www.arangodb.com/tutorial-java/)
 
