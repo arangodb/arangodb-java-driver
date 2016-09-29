@@ -1,11 +1,15 @@
-v3.1.0 (2016-09-XX)
+v3.1.0 (2016-XX-XX)
 ---------------------------
 * removed Methods with collectionId (long) from ArangoDriver (Id is only for internal usage)
 * changed Revision from long to String
 * removed Methods with documentId (long) from ArangoDriver
 * added profile flag to AqlQueryOptions (issue #47)
 
-v3.0.3 (2016-XX-XX)
+v3.0.4 (2016-XX-XX)
+---------------------------
+* fixed edges deserializer (issue #50)
+
+v3.0.3 (2016-09-12)
 ---------------------------
 * added error handling in getBatchResponseByRequestId()
 * added function createPersistentIndex() (issue #48)
