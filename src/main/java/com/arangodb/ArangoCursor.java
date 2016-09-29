@@ -31,10 +31,10 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.arangodb.entity.CursorResult;
-import com.arangodb.entity.CursorResult.Extras;
-import com.arangodb.entity.CursorResult.Stats;
-import com.arangodb.entity.CursorResult.Warning;
+import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.CursorEntity.Extras;
+import com.arangodb.entity.CursorEntity.Stats;
+import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -53,7 +53,7 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	private final Optional<Extras> extra;
 	private final boolean cached;
 
-	public ArangoCursor(final ArangoDatabase db, final Class<T> type, final CursorResult result) {
+	public ArangoCursor(final ArangoDatabase db, final Class<T> type, final CursorEntity result) {
 		super();
 		this.db = db;
 		this.type = type;
@@ -88,10 +88,10 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		return cached;
 	}
 
-	protected CursorResult executeNext() {
+	protected CursorEntity executeNext() {
 		return db.executeSync(
 			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
-			CursorResult.class);
+			CursorEntity.class);
 	}
 
 	@Override

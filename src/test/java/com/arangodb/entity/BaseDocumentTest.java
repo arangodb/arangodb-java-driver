@@ -44,10 +44,8 @@ public class BaseDocumentTest {
 	@Test
 	public void serialize() throws VPackException {
 		final BaseDocument entity = new BaseDocument();
-		entity.setId("test/test");
 		entity.setKey("test");
 		entity.setRevision("test");
-		entity.addAttribute("_id", "test");
 		entity.addAttribute("a", "a");
 
 		final Builder builder = new VPack.Builder();
@@ -57,11 +55,7 @@ public class BaseDocumentTest {
 		final VPackSlice vpack = vpacker.serialize(entity);
 		assertThat(vpack, is(notNullValue()));
 		assertThat(vpack.isObject(), is(true));
-		assertThat(vpack.size(), is(4));
-
-		final VPackSlice id = vpack.get("_id");
-		assertThat(id.isString(), is(true));
-		assertThat(id.getAsString(), is("test/test"));
+		assertThat(vpack.size(), is(3));
 
 		final VPackSlice key = vpack.get("_key");
 		assertThat(key.isString(), is(true));

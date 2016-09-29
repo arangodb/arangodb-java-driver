@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.net.ssl.SSLContext;
 
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.UserResult;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
@@ -337,8 +337,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserResult createUser(final String user, final String passwd) throws ArangoDBException {
-		return executeSync(createUserRequest(user, passwd, new UserCreateOptions()), UserResult.class);
+	public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
+		return executeSync(createUserRequest(user, passwd, new UserCreateOptions()), UserEntity.class);
 	}
 
 	/**
@@ -355,9 +355,9 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserResult createUser(final String user, final String passwd, final UserCreateOptions options)
+	public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException {
-		return executeSync(createUserRequest(user, passwd, options), UserResult.class);
+		return executeSync(createUserRequest(user, passwd, options), UserEntity.class);
 	}
 
 	/**
@@ -371,8 +371,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 *            The user password
 	 * @return information about the user
 	 */
-	public CompletableFuture<UserResult> createUserAsync(final String user, final String passwd) {
-		return executeAsync(createUserRequest(user, passwd, new UserCreateOptions()), UserResult.class);
+	public CompletableFuture<UserEntity> createUserAsync(final String user, final String passwd) {
+		return executeAsync(createUserRequest(user, passwd, new UserCreateOptions()), UserEntity.class);
 	}
 
 	/**
@@ -388,11 +388,11 @@ public class ArangoDB extends ArangoExecuteable {
 	 *            Additional properties of the user, can be null
 	 * @return information about the user
 	 */
-	public CompletableFuture<UserResult> createUserAsync(
+	public CompletableFuture<UserEntity> createUserAsync(
 		final String user,
 		final String passwd,
 		final UserCreateOptions options) {
-		return executeAsync(createUserRequest(user, passwd, options), UserResult.class);
+		return executeAsync(createUserRequest(user, passwd, options), UserEntity.class);
 	}
 
 	private Request createUserRequest(final String user, final String passwd, final UserCreateOptions options) {
@@ -441,8 +441,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserResult getUser(final String user) throws ArangoDBException {
-		return executeSync(getUserRequest(user), UserResult.class);
+	public UserEntity getUser(final String user) throws ArangoDBException {
+		return executeSync(getUserRequest(user), UserEntity.class);
 	}
 
 	/**
@@ -454,8 +454,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 *            The name of the user
 	 * @return information about the user
 	 */
-	public CompletableFuture<UserResult> getUserAsync(final String user) {
-		return executeAsync(getUserRequest(user), UserResult.class);
+	public CompletableFuture<UserEntity> getUserAsync(final String user) {
+		return executeAsync(getUserRequest(user), UserEntity.class);
 	}
 
 	private Request getUserRequest(final String user) {
@@ -470,7 +470,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return informations about all users
 	 * @throws ArangoDBException
 	 */
-	public Collection<UserResult> getUsers() throws ArangoDBException {
+	public Collection<UserEntity> getUsers() throws ArangoDBException {
 		return executeSync(getUsersRequest(), getUsersResponseDeserializer());
 	}
 
@@ -481,7 +481,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return informations about all users
 	 */
-	public CompletableFuture<Collection<UserResult>> getUsersAsync() {
+	public CompletableFuture<Collection<UserEntity>> getUsersAsync() {
 		return executeAsync(getUsersRequest(), getUsersResponseDeserializer());
 	}
 
@@ -489,10 +489,10 @@ public class ArangoDB extends ArangoExecuteable {
 		return new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER);
 	}
 
-	private ResponseDeserializer<Collection<UserResult>> getUsersResponseDeserializer() {
+	private ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
 		return (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
-			return deserialize(result, new Type<Collection<UserResult>>() {
+			return deserialize(result, new Type<Collection<UserEntity>>() {
 			}.getType());
 		};
 	}
@@ -509,8 +509,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserResult updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return executeSync(updateUserRequest(user, options), UserResult.class);
+	public UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
+		return executeSync(updateUserRequest(user, options), UserEntity.class);
 	}
 
 	/**
@@ -524,8 +524,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 *            Properties of the user to be changed
 	 * @return information about the user
 	 */
-	public CompletableFuture<UserResult> updateUserAsync(final String user, final UserUpdateOptions options) {
-		return executeAsync(updateUserRequest(user, options), UserResult.class);
+	public CompletableFuture<UserEntity> updateUserAsync(final String user, final UserUpdateOptions options) {
+		return executeAsync(updateUserRequest(user, options), UserEntity.class);
 	}
 
 	private Request updateUserRequest(final String user, final UserUpdateOptions options) {
@@ -548,8 +548,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserResult replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return executeSync(replaceUserRequest(user, options), UserResult.class);
+	public UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
+		return executeSync(replaceUserRequest(user, options), UserEntity.class);
 	}
 
 	/**
@@ -564,8 +564,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 *            Additional properties of the user, can be null
 	 * @return information about the user
 	 */
-	public CompletableFuture<UserResult> replaceUserAsync(final String user, final UserUpdateOptions options) {
-		return executeAsync(replaceUserRequest(user, options), UserResult.class);
+	public CompletableFuture<UserEntity> replaceUserAsync(final String user, final UserUpdateOptions options) {
+		return executeAsync(replaceUserRequest(user, options), UserEntity.class);
 	}
 
 	private Request replaceUserRequest(final String user, final UserUpdateOptions options) {

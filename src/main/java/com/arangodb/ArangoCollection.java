@@ -29,14 +29,14 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import com.arangodb.entity.CollectionPropertiesResult;
-import com.arangodb.entity.CollectionResult;
-import com.arangodb.entity.CollectionRevisionResult;
-import com.arangodb.entity.DocumentCreateResult;
-import com.arangodb.entity.DocumentDeleteResult;
+import com.arangodb.entity.CollectionPropertiesEntity;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionRevisionEntity;
+import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.entity.DocumentDeleteEntity;
 import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.DocumentUpdateResult;
-import com.arangodb.entity.IndexResult;
+import com.arangodb.entity.DocumentUpdateEntity;
+import com.arangodb.entity.IndexEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.Response;
@@ -98,7 +98,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentCreateResult<T> insertDocument(final T value) throws ArangoDBException {
+	public <T> DocumentCreateEntity<T> insertDocument(final T value) throws ArangoDBException {
 		return executeSync(insertDocumentRequest(value, new DocumentCreateOptions()),
 			insertDocumentResponseDeserializer(value));
 	}
@@ -116,7 +116,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentCreateResult<T> insertDocument(final T value, final DocumentCreateOptions options)
+	public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
 			throws ArangoDBException {
 		return executeSync(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value));
 	}
@@ -131,7 +131,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A representation of a single document (POJO, VPackSlice or String for Json)
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentCreateResult<T>> insertDocumentAsync(final T value) {
+	public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocumentAsync(final T value) {
 		return executeAsync(insertDocumentRequest(value, new DocumentCreateOptions()),
 			insertDocumentResponseDeserializer(value));
 	}
@@ -148,7 +148,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentCreateResult<T>> insertDocumentAsync(
+	public <T> CompletableFuture<DocumentCreateEntity<T>> insertDocumentAsync(
 		final T value,
 		final DocumentCreateOptions options) {
 		return executeAsync(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value));
@@ -164,10 +164,10 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<DocumentCreateResult<T>> insertDocumentResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get();
-			final DocumentCreateResult<T> doc = deserialize(body, DocumentCreateResult.class);
+			final DocumentCreateEntity<T> doc = deserialize(body, DocumentCreateEntity.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 			if (newDoc.isObject()) {
 				doc.setNew(deserialize(newDoc, value.getClass()));
@@ -192,7 +192,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentCreateResult<T>> insertDocuments(final Collection<T> values)
+	public <T> Collection<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
 			throws ArangoDBException {
 		final DocumentCreateOptions params = new DocumentCreateOptions();
 		return executeSync(insertDocumentsRequest(values, params), insertDocumentsResponseDeserializer(values, params));
@@ -211,7 +211,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentCreateResult<T>> insertDocuments(
+	public <T> Collection<DocumentCreateEntity<T>> insertDocuments(
 		final Collection<T> values,
 		final DocumentCreateOptions options) throws ArangoDBException {
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
@@ -228,7 +228,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A List of documents (POJO, VPackSlice or String for Json)
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertDocumentsAsync(final Collection<T> values) {
+	public <T> CompletableFuture<Collection<DocumentCreateEntity<T>>> insertDocumentsAsync(final Collection<T> values) {
 		final DocumentCreateOptions params = new DocumentCreateOptions();
 		return executeAsync(insertDocumentsRequest(values, params),
 			insertDocumentsResponseDeserializer(values, params));
@@ -246,7 +246,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentCreateResult<T>>> insertDocumentsAsync(
+	public <T> CompletableFuture<Collection<DocumentCreateEntity<T>>> insertDocumentsAsync(
 		final Collection<T> values,
 		final DocumentCreateOptions options) {
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
@@ -264,7 +264,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ResponseDeserializer<Collection<DocumentCreateResult<T>>> insertDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<Collection<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentCreateOptions params) {
 		return response -> {
@@ -275,11 +275,11 @@ public class ArangoCollection extends ArangoExecuteable {
 					type = (Class<T>) first.get().getClass();
 				}
 			}
-			final Collection<DocumentCreateResult<T>> docs = new ArrayList<>();
+			final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentCreateResult<T> doc = deserialize(next, DocumentCreateResult.class);
+				final DocumentCreateEntity<T> doc = deserialize(next, DocumentCreateEntity.class);
 				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
 					doc.setNew(deserialize(newDoc, type));
@@ -382,7 +382,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateResult<T> replaceDocument(final String key, final T value) throws ArangoDBException {
+	public <T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException {
 		return executeSync(replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
 			replaceDocumentResponseDeserializer(value));
 	}
@@ -402,7 +402,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateResult<T> replaceDocument(
+	public <T> DocumentUpdateEntity<T> replaceDocument(
 		final String key,
 		final T value,
 		final DocumentReplaceOptions options) throws ArangoDBException {
@@ -421,7 +421,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A representation of a single document (POJO, VPackSlice or String for Json)
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentUpdateResult<T>> replaceDocumentAsync(final String key, final T value) {
+	public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocumentAsync(final String key, final T value) {
 		return executeAsync(replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
 			replaceDocumentResponseDeserializer(value));
 	}
@@ -440,7 +440,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentUpdateResult<T>> replaceDocumentAsync(
+	public <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocumentAsync(
 		final String key,
 		final T value,
 		final DocumentReplaceOptions options) {
@@ -460,10 +460,10 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<DocumentUpdateResult<T>> replaceDocumentResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get();
-			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
+			final DocumentUpdateEntity<T> doc = deserialize(body, DocumentUpdateEntity.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 			if (newDoc.isObject()) {
 				doc.setNew(deserialize(newDoc, value.getClass()));
@@ -490,7 +490,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateResult<T>> replaceDocuments(final Collection<T> values)
+	public <T> Collection<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
 			throws ArangoDBException {
 		final DocumentReplaceOptions params = new DocumentReplaceOptions();
 		return executeSync(replaceDocumentsRequest(values, params),
@@ -510,7 +510,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateResult<T>> replaceDocuments(
+	public <T> Collection<DocumentUpdateEntity<T>> replaceDocuments(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) throws ArangoDBException {
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
@@ -528,7 +528,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A List of documents (POJO, VPackSlice or String for Json)
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceDocumentsAsync(
+	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> replaceDocumentsAsync(
 		final Collection<T> values) {
 		final DocumentReplaceOptions params = new DocumentReplaceOptions();
 		return executeAsync(replaceDocumentsRequest(values, params),
@@ -547,7 +547,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> replaceDocumentsAsync(
+	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> replaceDocumentsAsync(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) {
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
@@ -568,7 +568,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ResponseDeserializer<Collection<DocumentUpdateResult<T>>> replaceDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<Collection<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentReplaceOptions params) {
 		return response -> {
@@ -580,11 +580,11 @@ public class ArangoCollection extends ArangoExecuteable {
 					type = (Class<T>) first.get().getClass();
 				}
 			}
-			final Collection<DocumentUpdateResult<T>> docs = new ArrayList<>();
+			final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentUpdateResult<T> doc = deserialize(next, DocumentUpdateResult.class);
+				final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
 				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
 					doc.setNew(deserialize(newDoc, type));
@@ -613,7 +613,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateResult<T> updateDocument(final String key, final T value) throws ArangoDBException {
+	public <T> DocumentUpdateEntity<T> updateDocument(final String key, final T value) throws ArangoDBException {
 		return executeSync(updateDocumentRequest(key, value, new DocumentUpdateOptions()),
 			updateDocumentResponseDeserializer(value));
 	}
@@ -634,7 +634,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateResult<T> updateDocument(
+	public <T> DocumentUpdateEntity<T> updateDocument(
 		final String key,
 		final T value,
 		final DocumentUpdateOptions options) throws ArangoDBException {
@@ -654,7 +654,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A representation of a single document (POJO, VPackSlice or String for Json)
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentUpdateResult<T>> updateDocumentAsync(final String key, final T value) {
+	public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocumentAsync(final String key, final T value) {
 		return executeAsync(updateDocumentRequest(key, value, new DocumentUpdateOptions()),
 			updateDocumentResponseDeserializer(value));
 	}
@@ -674,7 +674,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentUpdateResult<T>> updateDocumentAsync(
+	public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocumentAsync(
 		final String key,
 		final T value,
 		final DocumentUpdateOptions options) {
@@ -697,10 +697,10 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<DocumentUpdateResult<T>> updateDocumentResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<DocumentUpdateEntity<T>> updateDocumentResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get();
-			final DocumentUpdateResult<T> doc = deserialize(body, DocumentUpdateResult.class);
+			final DocumentUpdateEntity<T> doc = deserialize(body, DocumentUpdateEntity.class);
 			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 			if (newDoc.isObject()) {
 				doc.setNew(deserialize(newDoc, value.getClass()));
@@ -726,7 +726,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateResult<T>> updateDocuments(final Collection<T> values)
+	public <T> Collection<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
 			throws ArangoDBException {
 		final DocumentUpdateOptions params = new DocumentUpdateOptions();
 		return executeSync(updateDocumentsRequest(values, params), updateDocumentsResponseDeserializer(values, params));
@@ -747,7 +747,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateResult<T>> updateDocuments(
+	public <T> Collection<DocumentUpdateEntity<T>> updateDocuments(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) throws ArangoDBException {
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
@@ -766,7 +766,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A list of documents (POJO, VPackSlice or String for Json)
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateDocumentsAsync(final Collection<T> values) {
+	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> updateDocumentsAsync(final Collection<T> values) {
 		final DocumentUpdateOptions params = new DocumentUpdateOptions();
 		return executeAsync(updateDocumentsRequest(values, params),
 			updateDocumentsResponseDeserializer(values, params));
@@ -786,7 +786,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateResult<T>>> updateDocumentsAsync(
+	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> updateDocumentsAsync(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) {
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
@@ -810,7 +810,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ResponseDeserializer<Collection<DocumentUpdateResult<T>>> updateDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<Collection<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentUpdateOptions params) {
 		return response -> {
@@ -822,11 +822,11 @@ public class ArangoCollection extends ArangoExecuteable {
 					type = (Class<T>) first.get().getClass();
 				}
 			}
-			final Collection<DocumentUpdateResult<T>> docs = new ArrayList<>();
+			final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentUpdateResult<T> doc = deserialize(next, DocumentUpdateResult.class);
+				final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
 				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
 					doc.setNew(deserialize(newDoc, type));
@@ -856,7 +856,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public DocumentDeleteResult<Void> deleteDocument(final String key) throws ArangoDBException {
+	public DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException {
 		return executeSync(deleteDocumentRequest(key, new DocumentDeleteOptions()),
 			deleteDocumentResponseDeserializer(Void.class));
 	}
@@ -876,7 +876,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentDeleteResult<T> deleteDocument(
+	public <T> DocumentDeleteEntity<T> deleteDocument(
 		final String key,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
@@ -895,7 +895,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @return information about the document
 	 */
-	public CompletableFuture<DocumentDeleteResult<Void>> deleteDocumentAsync(final String key) {
+	public CompletableFuture<DocumentDeleteEntity<Void>> deleteDocumentAsync(final String key) {
 		return executeAsync(deleteDocumentRequest(key, new DocumentDeleteOptions()),
 			deleteDocumentResponseDeserializer(Void.class));
 	}
@@ -914,7 +914,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the document
 	 */
-	public <T> CompletableFuture<DocumentDeleteResult<T>> deleteDocumentAsync(
+	public <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocumentAsync(
 		final String key,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
@@ -932,10 +932,10 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<DocumentDeleteResult<T>> deleteDocumentResponseDeserializer(final Class<T> type) {
+	private <T> ResponseDeserializer<DocumentDeleteEntity<T>> deleteDocumentResponseDeserializer(final Class<T> type) {
 		return response -> {
 			final VPackSlice body = response.getBody().get();
-			final DocumentDeleteResult<T> doc = deserialize(body, DocumentDeleteResult.class);
+			final DocumentDeleteEntity<T> doc = deserialize(body, DocumentDeleteEntity.class);
 			final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
 			if (oldDoc.isObject()) {
 				doc.setOld(deserialize(oldDoc, type));
@@ -958,7 +958,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public Collection<DocumentDeleteResult<Void>> deleteDocuments(final Collection<String> keys)
+	public Collection<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<String> keys)
 			throws ArangoDBException {
 		return executeSync(deleteDocumentsRequest(keys, new DocumentDeleteOptions()),
 			deleteDocumentsResponseDeserializer(Void.class));
@@ -980,7 +980,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentDeleteResult<T>> deleteDocuments(
+	public <T> Collection<DocumentDeleteEntity<T>> deleteDocuments(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
@@ -1000,7 +1000,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @return information about the documents
 	 */
-	public CompletableFuture<Collection<DocumentDeleteResult<Void>>> deleteDocumentsAsync(
+	public CompletableFuture<Collection<DocumentDeleteEntity<Void>>> deleteDocumentsAsync(
 		final Collection<String> keys) {
 		return executeAsync(deleteDocumentsRequest(keys, new DocumentDeleteOptions()),
 			deleteDocumentsResponseDeserializer(Void.class));
@@ -1021,7 +1021,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentDeleteResult<T>>> deleteDocumentsAsync(
+	public <T> CompletableFuture<Collection<DocumentDeleteEntity<T>>> deleteDocumentsAsync(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
@@ -1038,14 +1038,14 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<Collection<DocumentDeleteResult<T>>> deleteDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<Collection<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
 		final Class<T> type) {
 		return response -> {
-			final Collection<DocumentDeleteResult<T>> docs = new ArrayList<>();
+			final Collection<DocumentDeleteEntity<T>> docs = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentDeleteResult<T> doc = deserialize(next, DocumentDeleteResult.class);
+				final DocumentDeleteEntity<T> doc = deserialize(next, DocumentDeleteEntity.class);
 				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
 				if (oldDoc.isObject()) {
 					doc.setOld(deserialize(oldDoc, type));
@@ -1158,9 +1158,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexResult createHashIndex(final Collection<String> fields, final HashIndexOptions options)
+	public IndexEntity createHashIndex(final Collection<String> fields, final HashIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(createHashIndexRequest(fields, options), IndexResult.class);
+		return executeSync(createHashIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -1173,10 +1173,10 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the index
 	 */
-	public CompletableFuture<IndexResult> createHashIndexAsync(
+	public CompletableFuture<IndexEntity> createHashIndexAsync(
 		final Collection<String> fields,
 		final HashIndexOptions options) {
-		return executeAsync(createHashIndexRequest(fields, options), IndexResult.class);
+		return executeAsync(createHashIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	private Request createHashIndexRequest(final Collection<String> fields, final HashIndexOptions options) {
@@ -1199,9 +1199,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexResult createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
+	public IndexEntity createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(createSkiplistIndexRequest(fields, options), IndexResult.class);
+		return executeSync(createSkiplistIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -1215,10 +1215,10 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the index
 	 */
-	public CompletableFuture<IndexResult> createSkiplistIndexAsync(
+	public CompletableFuture<IndexEntity> createSkiplistIndexAsync(
 		final Collection<String> fields,
 		final SkiplistIndexOptions options) {
-		return executeAsync(createSkiplistIndexRequest(fields, options), IndexResult.class);
+		return executeAsync(createSkiplistIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	private Request createSkiplistIndexRequest(final Collection<String> fields, final SkiplistIndexOptions options) {
@@ -1242,9 +1242,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexResult createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
+	public IndexEntity createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(createPersistentIndexRequest(fields, options), IndexResult.class);
+		return executeSync(createPersistentIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -1258,10 +1258,10 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the index
 	 */
-	public CompletableFuture<IndexResult> createPersistentIndexAsync(
+	public CompletableFuture<IndexEntity> createPersistentIndexAsync(
 		final Collection<String> fields,
 		final PersistentIndexOptions options) {
-		return executeAsync(createPersistentIndexRequest(fields, options), IndexResult.class);
+		return executeAsync(createPersistentIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	private Request createPersistentIndexRequest(
@@ -1287,9 +1287,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexResult createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
+	public IndexEntity createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(createGeoIndexRequest(fields, options), IndexResult.class);
+		return executeSync(createGeoIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -1303,10 +1303,10 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the index
 	 */
-	public CompletableFuture<IndexResult> createGeoIndexAsync(
+	public CompletableFuture<IndexEntity> createGeoIndexAsync(
 		final Collection<String> fields,
 		final GeoIndexOptions options) {
-		return executeAsync(createGeoIndexRequest(fields, options), IndexResult.class);
+		return executeAsync(createGeoIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	private Request createGeoIndexRequest(final Collection<String> fields, final GeoIndexOptions options) {
@@ -1329,9 +1329,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexResult createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
+	public IndexEntity createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
 			throws ArangoDBException {
-		return executeSync(createFulltextIndexRequest(fields, options), IndexResult.class);
+		return executeSync(createFulltextIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -1345,10 +1345,10 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the index
 	 */
-	public CompletableFuture<IndexResult> createFulltextIndexAsync(
+	public CompletableFuture<IndexEntity> createFulltextIndexAsync(
 		final Collection<String> fields,
 		final FulltextIndexOptions options) {
-		return executeAsync(createFulltextIndexRequest(fields, options), IndexResult.class);
+		return executeAsync(createFulltextIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	private Request createFulltextIndexRequest(final Collection<String> fields, final FulltextIndexOptions options) {
@@ -1369,7 +1369,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the indexes
 	 * @throws ArangoDBException
 	 */
-	public Collection<IndexResult> getIndexes() throws ArangoDBException {
+	public Collection<IndexEntity> getIndexes() throws ArangoDBException {
 		return executeSync(getIndexesRequest(), getIndexesResponseDeserializer());
 	}
 
@@ -1381,7 +1381,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the indexes
 	 */
-	public CompletableFuture<Collection<IndexResult>> getIndexesAsync() {
+	public CompletableFuture<Collection<IndexEntity>> getIndexesAsync() {
 		return executeAsync(getIndexesRequest(), getIndexesResponseDeserializer());
 	}
 
@@ -1392,9 +1392,9 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private ResponseDeserializer<Collection<IndexResult>> getIndexesResponseDeserializer() {
+	private ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.INDEXES),
-			new Type<Collection<IndexResult>>() {
+			new Type<Collection<IndexEntity>>() {
 			}.getType());
 	}
 
@@ -1406,8 +1406,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult truncate() throws ArangoDBException {
-		return executeSync(truncateRequest(), CollectionResult.class);
+	public CollectionEntity truncate() throws ArangoDBException {
+		return executeSync(truncateRequest(), CollectionEntity.class);
 	}
 
 	/**
@@ -1417,8 +1417,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> truncateAsync() {
-		return executeAsync(truncateRequest(), CollectionResult.class);
+	public CompletableFuture<CollectionEntity> truncateAsync() {
+		return executeAsync(truncateRequest(), CollectionEntity.class);
 	}
 
 	private Request truncateRequest() {
@@ -1435,8 +1435,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection, including the number of documents
 	 * @throws ArangoDBException
 	 */
-	public CollectionPropertiesResult count() throws ArangoDBException {
-		return executeSync(countRequest(), CollectionPropertiesResult.class);
+	public CollectionPropertiesEntity count() throws ArangoDBException {
+		return executeSync(countRequest(), CollectionPropertiesEntity.class);
 	}
 
 	/**
@@ -1447,8 +1447,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the collection, including the number of documents
 	 */
-	public CompletableFuture<CollectionPropertiesResult> countAsync() {
-		return executeAsync(countRequest(), CollectionPropertiesResult.class);
+	public CompletableFuture<CollectionPropertiesEntity> countAsync() {
+		return executeAsync(countRequest(), CollectionPropertiesEntity.class);
 	}
 
 	private Request countRequest() {
@@ -1490,8 +1490,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult load() throws ArangoDBException {
-		return executeSync(loadRequest(), CollectionResult.class);
+	public CollectionEntity load() throws ArangoDBException {
+		return executeSync(loadRequest(), CollectionEntity.class);
 	}
 
 	/**
@@ -1501,8 +1501,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> loadAsync() {
-		return executeAsync(loadRequest(), CollectionResult.class);
+	public CompletableFuture<CollectionEntity> loadAsync() {
+		return executeAsync(loadRequest(), CollectionEntity.class);
 	}
 
 	private Request loadRequest() {
@@ -1519,8 +1519,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult unload() throws ArangoDBException {
-		return executeSync(unloadRequest(), CollectionResult.class);
+	public CollectionEntity unload() throws ArangoDBException {
+		return executeSync(unloadRequest(), CollectionEntity.class);
 	}
 
 	/**
@@ -1531,8 +1531,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> unloadAsync() {
-		return executeAsync(unloadRequest(), CollectionResult.class);
+	public CompletableFuture<CollectionEntity> unloadAsync() {
+		return executeAsync(unloadRequest(), CollectionEntity.class);
 	}
 
 	private Request unloadRequest() {
@@ -1549,8 +1549,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult getInfo() throws ArangoDBException {
-		return executeSync(getInfoRequest(), CollectionResult.class);
+	public CollectionEntity getInfo() throws ArangoDBException {
+		return executeSync(getInfoRequest(), CollectionEntity.class);
 	}
 
 	/**
@@ -1561,8 +1561,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> getInfoAsync() {
-		return executeAsync(getInfoRequest(), CollectionResult.class);
+	public CompletableFuture<CollectionEntity> getInfoAsync() {
+		return executeAsync(getInfoRequest(), CollectionEntity.class);
 	}
 
 	private Request getInfoRequest() {
@@ -1578,8 +1578,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionPropertiesResult getProperties() throws ArangoDBException {
-		return executeSync(getPropertiesRequest(), CollectionPropertiesResult.class);
+	public CollectionPropertiesEntity getProperties() throws ArangoDBException {
+		return executeSync(getPropertiesRequest(), CollectionPropertiesEntity.class);
 	}
 
 	/**
@@ -1590,8 +1590,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return properties of the collection
 	 */
-	public CompletableFuture<CollectionPropertiesResult> getPropertiesAsync() {
-		return executeAsync(getPropertiesRequest(), CollectionPropertiesResult.class);
+	public CompletableFuture<CollectionPropertiesEntity> getPropertiesAsync() {
+		return executeAsync(getPropertiesRequest(), CollectionPropertiesEntity.class);
 	}
 
 	private Request getPropertiesRequest() {
@@ -1610,9 +1610,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionPropertiesResult changeProperties(final CollectionPropertiesOptions options)
+	public CollectionPropertiesEntity changeProperties(final CollectionPropertiesOptions options)
 			throws ArangoDBException {
-		return executeSync(changePropertiesRequest(options), CollectionPropertiesResult.class);
+		return executeSync(changePropertiesRequest(options), CollectionPropertiesEntity.class);
 	}
 
 	/**
@@ -1625,9 +1625,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return properties of the collection
 	 */
-	public CompletableFuture<CollectionPropertiesResult> changePropertiesAsync(
+	public CompletableFuture<CollectionPropertiesEntity> changePropertiesAsync(
 		final CollectionPropertiesOptions options) {
-		return executeAsync(changePropertiesRequest(options), CollectionPropertiesResult.class);
+		return executeAsync(changePropertiesRequest(options), CollectionPropertiesEntity.class);
 	}
 
 	private Request changePropertiesRequest(final CollectionPropertiesOptions options) {
@@ -1648,8 +1648,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult rename(final String newName) throws ArangoDBException {
-		return executeSync(renameRequest(newName), CollectionResult.class);
+	public CollectionEntity rename(final String newName) throws ArangoDBException {
+		return executeSync(renameRequest(newName), CollectionEntity.class);
 	}
 
 	/**
@@ -1661,8 +1661,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            The new name
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> renameAsync(final String newName) {
-		return executeAsync(renameRequest(newName), CollectionResult.class);
+	public CompletableFuture<CollectionEntity> renameAsync(final String newName) {
+		return executeAsync(renameRequest(newName), CollectionEntity.class);
 	}
 
 	private Request renameRequest(final String newName) {
@@ -1681,8 +1681,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the collection, including the collections revision
 	 * @throws ArangoDBException
 	 */
-	public CollectionRevisionResult getRevision() throws ArangoDBException {
-		return executeSync(getRevisionRequest(), CollectionRevisionResult.class);
+	public CollectionRevisionEntity getRevision() throws ArangoDBException {
+		return executeSync(getRevisionRequest(), CollectionRevisionEntity.class);
 	}
 
 	/**
@@ -1692,8 +1692,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the collection, including the collections revision
 	 */
-	public CompletableFuture<CollectionRevisionResult> getRevisionAsync() {
-		return executeAsync(getRevisionRequest(), CollectionRevisionResult.class);
+	public CompletableFuture<CollectionRevisionEntity> getRevisionAsync() {
+		return executeAsync(getRevisionRequest(), CollectionRevisionEntity.class);
 	}
 
 	private Request getRevisionRequest() {

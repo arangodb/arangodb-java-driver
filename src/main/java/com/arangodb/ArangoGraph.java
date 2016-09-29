@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.GraphResult;
+import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -87,7 +87,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @return the definition content of this graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult getInfo() throws ArangoDBException {
+	public GraphEntity getInfo() throws ArangoDBException {
 		return executeSync(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
@@ -97,7 +97,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#get-a-graph">API Documentation</a>
 	 * @return the definition content of this graph
 	 */
-	public CompletableFuture<GraphResult> getInfoAsync() {
+	public CompletableFuture<GraphEntity> getInfoAsync() {
 		return executeAsync(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
@@ -105,7 +105,7 @@ public class ArangoGraph extends ArangoExecuteable {
 		return new Request(db.name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
 	}
 
-	private ResponseDeserializer<GraphResult> getInfoResponseDeserializer() {
+	private ResponseDeserializer<GraphEntity> getInfoResponseDeserializer() {
 		return addVertexCollectionResponseDeserializer();
 	}
 
@@ -154,7 +154,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult addVertexCollection(final String name) throws ArangoDBException {
+	public GraphEntity addVertexCollection(final String name) throws ArangoDBException {
 		return executeSync(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
 	}
 
@@ -168,7 +168,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 *            The name of the collection
 	 * @return information about the graph
 	 */
-	public CompletableFuture<GraphResult> addVertexCollectionAsync(final String name) {
+	public CompletableFuture<GraphEntity> addVertexCollectionAsync(final String name) {
 		return executeAsync(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
 	}
 
@@ -179,7 +179,7 @@ public class ArangoGraph extends ArangoExecuteable {
 		return request;
 	}
 
-	private ResponseDeserializer<GraphResult> addVertexCollectionResponseDeserializer() {
+	private ResponseDeserializer<GraphEntity> addVertexCollectionResponseDeserializer() {
 		return addEdgeDefinitionResponseDeserializer();
 	}
 
@@ -234,7 +234,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+	public GraphEntity addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
 		return executeSync(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
 	}
 
@@ -246,7 +246,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @param definition
 	 * @return information about the graph
 	 */
-	public CompletableFuture<GraphResult> addEdgeDefinitionAsync(final EdgeDefinition definition) {
+	public CompletableFuture<GraphEntity> addEdgeDefinitionAsync(final EdgeDefinition definition) {
 		return executeAsync(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
 	}
 
@@ -257,8 +257,8 @@ public class ArangoGraph extends ArangoExecuteable {
 		return request;
 	}
 
-	private ResponseDeserializer<GraphResult> addEdgeDefinitionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	private ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+	public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
 		return executeSync(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
 	}
 
@@ -286,7 +286,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 *            The edge definition
 	 * @return information about the graph
 	 */
-	public CompletableFuture<GraphResult> replaceEdgeDefinitionAsync(final EdgeDefinition definition) {
+	public CompletableFuture<GraphEntity> replaceEdgeDefinitionAsync(final EdgeDefinition definition) {
 		return executeAsync(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
 	}
 
@@ -297,8 +297,8 @@ public class ArangoGraph extends ArangoExecuteable {
 		return request;
 	}
 
-	private ResponseDeserializer<GraphResult> replaceEdgeDefinitionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	private ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult removeEdgeDefinition(final String definitionName) throws ArangoDBException {
+	public GraphEntity removeEdgeDefinition(final String definitionName) throws ArangoDBException {
 		return executeSync(removeEdgeDefinitionRequest(definitionName), removeEdgeDefinitionResponseDeserializer());
 	}
 
@@ -328,7 +328,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 *            The name of the edge collection used in the definition
 	 * @return information about the graph
 	 */
-	public CompletableFuture<GraphResult> removeEdgeDefinitionAsync(final String definitionName) {
+	public CompletableFuture<GraphEntity> removeEdgeDefinitionAsync(final String definitionName) {
 		return executeAsync(removeEdgeDefinitionRequest(definitionName), removeEdgeDefinitionResponseDeserializer());
 	}
 
@@ -337,7 +337,7 @@ public class ArangoGraph extends ArangoExecuteable {
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definitionName));
 	}
 
-	private ResponseDeserializer<GraphResult> removeEdgeDefinitionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	private ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 	}
 }

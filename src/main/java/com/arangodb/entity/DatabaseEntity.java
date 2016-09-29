@@ -20,33 +20,31 @@
 
 package com.arangodb.entity;
 
-import java.util.Map;
-
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class UserResult {
+public class DatabaseEntity {
 
-	private String user;
-	private Boolean active;
-	private Map<String, Object> extra;
-	private Boolean changePassword;
+	private String id;
+	private String name;
+	private String path;
+	private Boolean isSystem;
 
-	public String getUser() {
-		return user;
+	public String getId() {
+		return id;
 	}
 
-	public Boolean getActive() {
-		return active;
+	public String getName() {
+		return name;
 	}
 
-	public Map<String, Object> getExtra() {
-		return extra;
+	public String getPath() {
+		return path;
 	}
 
-	public Boolean getChangePassword() {
-		return changePassword;
+	public Boolean getIsSystem() {
+		return isSystem;
 	}
 
 }

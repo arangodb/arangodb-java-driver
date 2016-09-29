@@ -26,7 +26,7 @@ import java.util.Optional;
 /**
  * @author Mark - mark at arangodb.com
  */
-public class AqlExecutionExplainResult {
+public class AqlExecutionExplainEntity {
 
 	public static class ExecutionPlan {
 		private Collection<ExecutionNode> nodes;
@@ -81,7 +81,7 @@ public class AqlExecutionExplainResult {
 		private Boolean isConst;
 		private Boolean canThrow;
 		private String expressionType;
-		private IndexResult indexes;
+		private IndexEntity indexes;
 		private ExecutionExpression expression;
 		private ExecutionCollection condition;
 		private Boolean reverse;
@@ -162,7 +162,7 @@ public class AqlExecutionExplainResult {
 			return Optional.ofNullable(expressionType);
 		}
 
-		public Optional<IndexResult> getIndexes() {
+		public Optional<IndexEntity> getIndexes() {
 			return Optional.ofNullable(indexes);
 		}
 

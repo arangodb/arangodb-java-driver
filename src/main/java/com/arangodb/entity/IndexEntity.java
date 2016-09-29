@@ -27,7 +27,7 @@ import java.util.Optional;
  * @author Mark - mark at arangodb.com
  *
  */
-public class IndexResult {
+public class IndexEntity {
 
 	private String id;
 	private IndexType type;
@@ -40,7 +40,7 @@ public class IndexResult {
 	private Boolean geoJson;
 	private Boolean constraint;
 
-	public IndexResult() {
+	public IndexEntity() {
 		super();
 	}
 

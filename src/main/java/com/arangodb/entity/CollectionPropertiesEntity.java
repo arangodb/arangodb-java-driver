@@ -26,7 +26,7 @@ import java.util.Collection;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CollectionPropertiesResult extends CollectionResult {
+public class CollectionPropertiesEntity extends CollectionEntity {
 
 	private Boolean doCompact;
 	private Long journalSize;
@@ -36,7 +36,7 @@ public class CollectionPropertiesResult extends CollectionResult {
 	private Integer numberOfShards;
 	private Collection<String> shardKeys;
 
-	public CollectionPropertiesResult() {
+	public CollectionPropertiesEntity() {
 		super();
 	}
 

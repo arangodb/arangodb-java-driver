@@ -20,28 +20,23 @@
 
 package com.arangodb.entity;
 
-import java.util.Optional;
-
-import com.arangodb.velocypack.annotations.Expose;
+import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DocumentDeleteResult<T> extends DocumentResult {
+public class VertexUpdateEntity extends DocumentEntity {
 
-	@Expose(deserialize = false)
-	private T oldDocument;
+	@SerializedName("_oldRev")
+	private String oldRev;
 
-	public DocumentDeleteResult() {
+	public VertexUpdateEntity() {
 		super();
 	}
 
-	public Optional<T> getOld() {
-		return Optional.ofNullable(oldDocument);
+	public String getOldRev() {
+		return oldRev;
 	}
 
-	public void setOld(final T oldDocument) {
-		this.oldDocument = oldDocument;
-	}
 }

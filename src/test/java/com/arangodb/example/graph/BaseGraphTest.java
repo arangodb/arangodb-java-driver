@@ -30,8 +30,8 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.EdgeResult;
-import com.arangodb.entity.VertexResult;
+import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.VertexEntity;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -80,17 +80,17 @@ public abstract class BaseGraphTest {
 	private static void addExampleElements() throws ArangoDBException {
 
 		// Add circle circles
-		final VertexResult vA = createVertex(new Circle("A", "1"));
-		final VertexResult vB = createVertex(new Circle("B", "2"));
-		final VertexResult vC = createVertex(new Circle("C", "3"));
-		final VertexResult vD = createVertex(new Circle("D", "4"));
-		final VertexResult vE = createVertex(new Circle("E", "5"));
-		final VertexResult vF = createVertex(new Circle("F", "6"));
-		final VertexResult vG = createVertex(new Circle("G", "7"));
-		final VertexResult vH = createVertex(new Circle("H", "8"));
-		final VertexResult vI = createVertex(new Circle("I", "9"));
-		final VertexResult vJ = createVertex(new Circle("J", "10"));
-		final VertexResult vK = createVertex(new Circle("K", "11"));
+		final VertexEntity vA = createVertex(new Circle("A", "1"));
+		final VertexEntity vB = createVertex(new Circle("B", "2"));
+		final VertexEntity vC = createVertex(new Circle("C", "3"));
+		final VertexEntity vD = createVertex(new Circle("D", "4"));
+		final VertexEntity vE = createVertex(new Circle("E", "5"));
+		final VertexEntity vF = createVertex(new Circle("F", "6"));
+		final VertexEntity vG = createVertex(new Circle("G", "7"));
+		final VertexEntity vH = createVertex(new Circle("H", "8"));
+		final VertexEntity vI = createVertex(new Circle("I", "9"));
+		final VertexEntity vJ = createVertex(new Circle("J", "10"));
+		final VertexEntity vK = createVertex(new Circle("K", "11"));
 
 		// Add relevant edges - left branch:
 		saveEdge(new CircleEdge(vA.getId(), vB.getId(), false, true, "left_bar"));
@@ -107,11 +107,11 @@ public abstract class BaseGraphTest {
 		saveEdge(new CircleEdge(vJ.getId(), vK.getId(), false, true, "right_zup"));
 	}
 
-	private static EdgeResult saveEdge(final CircleEdge edge) throws ArangoDBException {
+	private static EdgeEntity saveEdge(final CircleEdge edge) throws ArangoDBException {
 		return db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(edge);
 	}
 
-	private static VertexResult createVertex(final Circle vertex) throws ArangoDBException {
+	private static VertexEntity createVertex(final Circle vertex) throws ArangoDBException {
 		return db.graph(GRAPH_NAME).vertexCollection(VERTEXT_COLLECTION_NAME).insertVertex(vertex);
 	}
 

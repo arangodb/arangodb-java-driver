@@ -24,7 +24,7 @@ package com.arangodb.entity;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CollectionRevisionResult extends CollectionResult {
+public class CollectionRevisionEntity extends CollectionEntity {
 
 	private String revision;
 

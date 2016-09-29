@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.VertexResult;
-import com.arangodb.entity.VertexUpdateResult;
+import com.arangodb.entity.VertexEntity;
+import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -96,7 +96,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexResult insertVertex(final T value) throws ArangoDBException {
+	public <T> VertexEntity insertVertex(final T value) throws ArangoDBException {
 		return executeSync(insertVertexRequest(value, new VertexCreateOptions()),
 			insertVertexResponseDeserializer(value));
 	}
@@ -112,7 +112,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexResult insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException {
+	public <T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException {
 		return executeSync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
 	}
 
@@ -124,7 +124,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
 	 * @return information about the vertex
 	 */
-	public <T> CompletableFuture<VertexResult> insertVertexAsync(final T value) {
+	public <T> CompletableFuture<VertexEntity> insertVertexAsync(final T value) {
 		return executeAsync(insertVertexRequest(value, new VertexCreateOptions()),
 			insertVertexResponseDeserializer(value));
 	}
@@ -139,7 +139,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the vertex
 	 */
-	public <T> CompletableFuture<VertexResult> insertVertexAsync(final T value, final VertexCreateOptions options) {
+	public <T> CompletableFuture<VertexEntity> insertVertexAsync(final T value, final VertexCreateOptions options) {
 		return executeAsync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
 	}
 
@@ -152,10 +152,10 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<VertexResult> insertVertexResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			final VertexResult doc = deserialize(body, VertexResult.class);
+			final VertexEntity doc = deserialize(body, VertexEntity.class);
 			final Map<DocumentField.Type, String> values = new HashMap<>();
 			values.put(DocumentField.Type.ID, doc.getId());
 			values.put(DocumentField.Type.KEY, doc.getKey());
@@ -257,7 +257,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateResult replaceVertex(final String key, final T value) throws ArangoDBException {
+	public <T> VertexUpdateEntity replaceVertex(final String key, final T value) throws ArangoDBException {
 		return executeSync(replaceVertexRequest(key, value, new VertexReplaceOptions()),
 			replaceVertexResponseDeserializer(value));
 	}
@@ -277,7 +277,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateResult replaceVertex(final String key, final T value, final VertexReplaceOptions options)
+	public <T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
 			throws ArangoDBException {
 		return executeSync(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
 	}
@@ -294,7 +294,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
 	 * @return information about the vertex
 	 */
-	public <T> CompletableFuture<VertexUpdateResult> replaceVertexAsync(final String key, final T value) {
+	public <T> CompletableFuture<VertexUpdateEntity> replaceVertexAsync(final String key, final T value) {
 		return executeAsync(replaceVertexRequest(key, value, new VertexReplaceOptions()),
 			replaceVertexResponseDeserializer(value));
 	}
@@ -313,7 +313,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the vertex
 	 */
-	public <T> CompletableFuture<VertexUpdateResult> replaceVertexAsync(
+	public <T> CompletableFuture<VertexUpdateEntity> replaceVertexAsync(
 		final String key,
 		final T value,
 		final VertexReplaceOptions options) {
@@ -330,10 +330,10 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<VertexUpdateResult> replaceVertexResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			final VertexUpdateResult doc = deserialize(body, VertexUpdateResult.class);
+			final VertexUpdateEntity doc = deserialize(body, VertexUpdateEntity.class);
 			final Map<DocumentField.Type, String> values = new HashMap<>();
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
@@ -354,7 +354,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateResult updateVertex(final String key, final T value) throws ArangoDBException {
+	public <T> VertexUpdateEntity updateVertex(final String key, final T value) throws ArangoDBException {
 		return executeSync(updateVertexRequest(key, value, new VertexUpdateOptions()),
 			updateVertexResponseDeserializer(value));
 	}
@@ -374,7 +374,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateResult updateVertex(final String key, final T value, final VertexUpdateOptions options)
+	public <T> VertexUpdateEntity updateVertex(final String key, final T value, final VertexUpdateOptions options)
 			throws ArangoDBException {
 		return executeSync(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
 	}
@@ -392,7 +392,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> CompletableFuture<VertexUpdateResult> updateVertexAsync(final String key, final T value)
+	public <T> CompletableFuture<VertexUpdateEntity> updateVertexAsync(final String key, final T value)
 			throws ArangoDBException {
 		return executeAsync(updateVertexRequest(key, value, new VertexUpdateOptions()),
 			updateVertexResponseDeserializer(value));
@@ -413,7 +413,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> CompletableFuture<VertexUpdateResult> updateVertexAsync(
+	public <T> CompletableFuture<VertexUpdateEntity> updateVertexAsync(
 		final String key,
 		final T value,
 		final VertexUpdateOptions options) throws ArangoDBException {
@@ -432,10 +432,10 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<VertexUpdateResult> updateVertexResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			return deserialize(body, VertexUpdateResult.class);
+			return deserialize(body, VertexUpdateEntity.class);
 		};
 	}
 

@@ -20,31 +20,47 @@
 
 package com.arangodb.entity;
 
+import java.util.Optional;
+
+import com.arangodb.velocypack.annotations.Expose;
+import com.arangodb.velocypack.annotations.SerializedName;
+
 /**
  * @author Mark - mark at arangodb.com
+ * @param <T>
  *
  */
-public class DatabaseResult {
+public class DocumentUpdateEntity<T> extends DocumentEntity {
 
-	private String id;
-	private String name;
-	private String path;
-	private Boolean isSystem;
+	@SerializedName("_oldRev")
+	private String oldRev;
+	@Expose(deserialize = false)
+	private T newDocument;
+	@Expose(deserialize = false)
+	private T oldDocument;
 
-	public String getId() {
-		return id;
+	public DocumentUpdateEntity() {
+		super();
 	}
 
-	public String getName() {
-		return name;
+	public String getOldRev() {
+		return oldRev;
 	}
 
-	public String getPath() {
-		return path;
+	public Optional<T> getNew() {
+		return Optional.ofNullable(newDocument);
 	}
 
-	public Boolean getIsSystem() {
-		return isSystem;
+	public void setNew(final T newDocument) {
+		this.newDocument = newDocument;
+	}
+
+	public Optional<T> getOld() {
+		return Optional.ofNullable(oldDocument);
+	}
+
+	public void setOld(final T oldDocument) {
+		this.oldDocument = oldDocument;
 	}
 
 }

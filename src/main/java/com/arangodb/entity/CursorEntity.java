@@ -28,7 +28,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CursorResult {
+public class CursorEntity {
 
 	public static class Warning {
 

@@ -39,21 +39,21 @@ import java.util.stream.Stream;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.arangodb.entity.AqlExecutionExplainResult;
-import com.arangodb.entity.AqlExecutionExplainResult.ExecutionNode;
-import com.arangodb.entity.AqlExecutionExplainResult.ExecutionPlan;
-import com.arangodb.entity.AqlFunctionResult;
-import com.arangodb.entity.AqlParseResult;
-import com.arangodb.entity.AqlParseResult.AstNode;
+import com.arangodb.entity.AqlExecutionExplainEntity;
+import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionNode;
+import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
+import com.arangodb.entity.AqlFunctionEntity;
+import com.arangodb.entity.AqlParseEntity;
+import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.DatabaseResult;
-import com.arangodb.entity.GraphResult;
-import com.arangodb.entity.IndexResult;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
-import com.arangodb.entity.TraversalResult;
+import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionCreateOptions;
@@ -77,7 +77,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test
 	public void createCollection() {
 		try {
-			final CollectionResult result = db.createCollection(COLLECTION_NAME, null);
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, null);
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 		} finally {
@@ -102,8 +102,8 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.createCollection(COLLECTION_NAME, null);
 			final Collection<String> fields = new ArrayList<>();
 			fields.add("a");
-			final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
-			final IndexResult readResult = db.getIndex(createResult.getId());
+			final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+			final IndexEntity readResult = db.getIndex(createResult.getId());
 			assertThat(readResult.getId(), is(createResult.getId()));
 			assertThat(readResult.getType(), is(createResult.getType()));
 		} finally {
@@ -117,7 +117,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.createCollection(COLLECTION_NAME, null);
 			final Collection<String> fields = new ArrayList<>();
 			fields.add("a");
-			final IndexResult createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+			final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
 			final String id = db.deleteIndex(createResult.getId());
 			assertThat(id, is(createResult.getId()));
 			try {
@@ -133,10 +133,10 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test
 	public void getCollections() {
 		try {
-			final Collection<CollectionResult> systemCollections = db.getCollections(null);
+			final Collection<CollectionEntity> systemCollections = db.getCollections(null);
 			db.createCollection(COLLECTION_NAME + "1", null);
 			db.createCollection(COLLECTION_NAME + "2", null);
-			final Collection<CollectionResult> collections = db.getCollections(null);
+			final Collection<CollectionEntity> collections = db.getCollections(null);
 			assertThat(collections.size(), is(2 + systemCollections.size()));
 			assertThat(collections, is(notNullValue()));
 		} finally {
@@ -149,11 +149,11 @@ public class ArangoDatabaseTest extends BaseTest {
 	public void getCollectionsExcludeSystem() {
 		try {
 			final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
-			final Collection<CollectionResult> systemCollections = db.getCollections(options);
+			final Collection<CollectionEntity> systemCollections = db.getCollections(options);
 			assertThat(systemCollections.size(), is(0));
 			db.createCollection(COLLECTION_NAME + "1", null);
 			db.createCollection(COLLECTION_NAME + "2", null);
-			final Collection<CollectionResult> collections = db.getCollections(options);
+			final Collection<CollectionEntity> collections = db.getCollections(options);
 			assertThat(collections.size(), is(2));
 			assertThat(collections, is(notNullValue()));
 		} finally {
@@ -451,7 +451,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void explainQuery() {
-		final AqlExecutionExplainResult explain = arangoDB.db().explainQuery("for i in _apps return i", null, null);
+		final AqlExecutionExplainEntity explain = arangoDB.db().explainQuery("for i in _apps return i", null, null);
 		assertThat(explain, is(notNullValue()));
 		assertThat(explain.getPlan().isPresent(), is(true));
 		assertThat(explain.getPlans().isPresent(), is(false));
@@ -483,7 +483,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void parseQuery() {
-		final AqlParseResult parse = arangoDB.db().parseQuery("for i in _apps return i");
+		final AqlParseEntity parse = arangoDB.db().parseQuery("for i in _apps return i");
 		assertThat(parse, is(notNullValue()));
 		assertThat(parse.getBindVars(), is(empty()));
 		assertThat(parse.getCollections().size(), is(1));
@@ -519,25 +519,25 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createGetDeleteAqlFunction() {
-		final Collection<AqlFunctionResult> aqlFunctionsInitial = db.getAqlFunctions(null);
+		final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
 		assertThat(aqlFunctionsInitial, is(empty()));
 		try {
 			db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit",
 				"function (celsius) { return celsius * 1.8 + 32; }", null);
 
-			final Collection<AqlFunctionResult> aqlFunctions = db.getAqlFunctions(null);
+			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(greaterThan(aqlFunctionsInitial.size())));
 		} finally {
 			db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
 
-			final Collection<AqlFunctionResult> aqlFunctions = db.getAqlFunctions(null);
+			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
 		}
 	}
 
 	@Test
 	public void createGetDeleteAqlFunctionWithNamespace() {
-		final Collection<AqlFunctionResult> aqlFunctionsInitial = db.getAqlFunctions(null);
+		final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
 		assertThat(aqlFunctionsInitial, is(empty()));
 		try {
 			db.createAqlFunction("myfunctions::temperature::celsiustofahrenheit1",
@@ -548,7 +548,7 @@ public class ArangoDatabaseTest extends BaseTest {
 		} finally {
 			db.deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true));
 
-			final Collection<AqlFunctionResult> aqlFunctions = db.getAqlFunctions(null);
+			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
 		}
 	}
@@ -556,7 +556,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test
 	public void createGraph() {
 		try {
-			final GraphResult result = db.createGraph(GRAPH_NAME, null, null);
+			final GraphEntity result = db.createGraph(GRAPH_NAME, null, null);
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getName(), is(GRAPH_NAME));
 		} finally {
@@ -568,7 +568,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	public void getGraphs() {
 		try {
 			db.createGraph(GRAPH_NAME, null, null);
-			final Collection<GraphResult> graphs = db.getGraphs();
+			final Collection<GraphEntity> graphs = db.getGraphs();
 			assertThat(graphs, is(notNullValue()));
 			assertThat(graphs.size(), is(1));
 		} finally {
@@ -627,7 +627,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void getInfo() {
-		final DatabaseResult info = db.getInfo();
+		final DatabaseEntity info = db.getInfo();
 		assertThat(info, is(notNullValue()));
 		assertThat(info.getId(), is(notNullValue()));
 		assertThat(info.getName(), is(TEST_DB));
@@ -657,7 +657,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 			final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
 					.direction(Direction.outbound);
-			final TraversalResult<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
+			final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
 				BaseEdgeDocument.class, options);
 
 			assertThat(traversal, is(notNullValue()));

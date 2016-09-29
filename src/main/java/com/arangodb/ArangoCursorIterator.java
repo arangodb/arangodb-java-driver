@@ -23,7 +23,7 @@ package com.arangodb;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.arangodb.entity.CursorResult;
+import com.arangodb.entity.CursorEntity;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -32,12 +32,12 @@ import com.arangodb.entity.CursorResult;
  */
 public class ArangoCursorIterator<T> implements Iterator<T> {
 
-	private CursorResult result;
+	private CursorEntity result;
 	private int pos;
 
 	private final ArangoCursor<T> cursor;
 
-	public ArangoCursorIterator(final ArangoCursor<T> cursor, final CursorResult result) {
+	public ArangoCursorIterator(final ArangoCursor<T> cursor, final CursorEntity result) {
 		super();
 		this.cursor = cursor;
 		this.result = result;

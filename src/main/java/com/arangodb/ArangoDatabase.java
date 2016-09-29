@@ -27,17 +27,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import com.arangodb.entity.AqlExecutionExplainResult;
-import com.arangodb.entity.AqlFunctionResult;
-import com.arangodb.entity.AqlParseResult;
-import com.arangodb.entity.CollectionResult;
-import com.arangodb.entity.CursorResult;
-import com.arangodb.entity.DatabaseResult;
+import com.arangodb.entity.AqlExecutionExplainEntity;
+import com.arangodb.entity.AqlFunctionEntity;
+import com.arangodb.entity.AqlParseEntity;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.GraphResult;
-import com.arangodb.entity.IndexResult;
+import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
-import com.arangodb.entity.TraversalResult;
+import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
@@ -102,8 +102,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult createCollection(final String name) throws ArangoDBException {
-		return executeSync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionResult.class);
+	public CollectionEntity createCollection(final String name) throws ArangoDBException {
+		return executeSync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
 	}
 
 	/**
@@ -118,9 +118,9 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionResult createCollection(final String name, final CollectionCreateOptions options)
+	public CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
 			throws ArangoDBException {
-		return executeSync(createCollectionRequest(name, options), CollectionResult.class);
+		return executeSync(createCollectionRequest(name, options), CollectionEntity.class);
 	}
 
 	/**
@@ -134,8 +134,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> createCollectionAsync(final String name) {
-		return executeAsync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionResult.class);
+	public CompletableFuture<CollectionEntity> createCollectionAsync(final String name) {
+		return executeAsync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
 	}
 
 	/**
@@ -149,10 +149,10 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the collection
 	 */
-	public CompletableFuture<CollectionResult> createCollectionAsync(
+	public CompletableFuture<CollectionEntity> createCollectionAsync(
 		final String name,
 		final CollectionCreateOptions options) {
-		return executeAsync(createCollectionRequest(name, options), CollectionResult.class);
+		return executeAsync(createCollectionRequest(name, options), CollectionEntity.class);
 	}
 
 	private Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
@@ -171,7 +171,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
 	 */
-	public Collection<CollectionResult> getCollections() throws ArangoDBException {
+	public Collection<CollectionEntity> getCollections() throws ArangoDBException {
 		return executeSync(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
 	}
 
@@ -185,7 +185,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
 	 */
-	public Collection<CollectionResult> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
+	public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
 		return executeSync(getCollectionsRequest(options), getCollectionsResponseDeserializer());
 	}
 
@@ -196,7 +196,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return list of information about all collections
 	 */
-	public CompletableFuture<Collection<CollectionResult>> getCollectionsAsync() {
+	public CompletableFuture<Collection<CollectionEntity>> getCollectionsAsync() {
 		return executeAsync(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
 	}
 
@@ -209,7 +209,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return list of information about all collections
 	 */
-	public CompletableFuture<Collection<CollectionResult>> getCollectionsAsync(final CollectionsReadOptions options) {
+	public CompletableFuture<Collection<CollectionEntity>> getCollectionsAsync(final CollectionsReadOptions options) {
 		return executeAsync(getCollectionsRequest(options), getCollectionsResponseDeserializer());
 	}
 
@@ -221,10 +221,10 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return request;
 	}
 
-	private ResponseDeserializer<Collection<CollectionResult>> getCollectionsResponseDeserializer() {
+	private ResponseDeserializer<Collection<CollectionEntity>> getCollectionsResponseDeserializer() {
 		return (response) -> {
 			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
-			return deserialize(result, new Type<Collection<CollectionResult>>() {
+			return deserialize(result, new Type<Collection<CollectionEntity>>() {
 			}.getType());
 		};
 	}
@@ -238,8 +238,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexResult getIndex(final String id) throws ArangoDBException {
-		return executeSync(getIndexRequest(id), IndexResult.class);
+	public IndexEntity getIndex(final String id) throws ArangoDBException {
+		return executeSync(getIndexRequest(id), IndexEntity.class);
 	}
 
 	/**
@@ -250,8 +250,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            The index-handle
 	 * @return information about the index
 	 */
-	public CompletableFuture<IndexResult> getIndexAsync(final String id) {
-		return executeAsync(getIndexRequest(id), IndexResult.class);
+	public CompletableFuture<IndexEntity> getIndexAsync(final String id) {
+		return executeAsync(getIndexRequest(id), IndexEntity.class);
 	}
 
 	private Request getIndexRequest(final String id) {
@@ -442,7 +442,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
 		request.setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
-		final CompletableFuture<CursorResult> execution = executeAsync(request, CursorResult.class);
+		final CompletableFuture<CursorEntity> execution = executeAsync(request, CursorEntity.class);
 		return execution.thenApply(result -> {
 			return new ArangoCursor<>(this, type, result);
 		});
@@ -462,11 +462,11 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the query
 	 * @throws ArangoDBException
 	 */
-	public AqlExecutionExplainResult explainQuery(
+	public AqlExecutionExplainEntity explainQuery(
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryExplainOptions options) throws ArangoDBException {
-		return executeSync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainResult.class);
+		return executeSync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
 	}
 
 	/**
@@ -482,11 +482,11 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the query
 	 */
-	public CompletableFuture<AqlExecutionExplainResult> explainQueryAsync(
+	public CompletableFuture<AqlExecutionExplainEntity> explainQueryAsync(
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryExplainOptions options) {
-		return executeAsync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainResult.class);
+		return executeAsync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
 	}
 
 	private Request explainQueryRequest(
@@ -510,8 +510,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return imformation about the query
 	 * @throws ArangoDBException
 	 */
-	public AqlParseResult parseQuery(final String query) throws ArangoDBException {
-		return executeSync(parseQueryRequest(query), AqlParseResult.class);
+	public AqlParseEntity parseQuery(final String query) throws ArangoDBException {
+		return executeSync(parseQueryRequest(query), AqlParseEntity.class);
 	}
 
 	/**
@@ -524,8 +524,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            the query which you want parse
 	 * @return imformation about the query
 	 */
-	public CompletableFuture<AqlParseResult> parseQueryAsync(final String query) {
-		return executeAsync(parseQueryRequest(query), AqlParseResult.class);
+	public CompletableFuture<AqlParseEntity> parseQueryAsync(final String query) {
+		return executeAsync(parseQueryRequest(query), AqlParseEntity.class);
 	}
 
 	private Request parseQueryRequest(final String query) {
@@ -634,8 +634,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return all reqistered AQL user functions
 	 * @throws ArangoDBException
 	 */
-	public Collection<AqlFunctionResult> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
-		return executeSync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionResult>>() {
+	public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
+		return executeSync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
 		}.getType());
 	}
 
@@ -649,8 +649,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return all reqistered AQL user functions
 	 */
-	public CompletableFuture<Collection<AqlFunctionResult>> getAqlFunctionsAsync(final AqlFunctionGetOptions options) {
-		return executeAsync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionResult>>() {
+	public CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctionsAsync(final AqlFunctionGetOptions options) {
+		return executeAsync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
 		}.getType());
 	}
 
@@ -678,7 +678,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
+	public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
 			throws ArangoDBException {
 		return executeSync(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
 			createGraphResponseDeserializer());
@@ -699,7 +699,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphResult createGraph(
+	public GraphEntity createGraph(
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions,
 		final GraphCreateOptions options) throws ArangoDBException {
@@ -718,7 +718,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            An array of definitions for the edge
 	 * @return information about the graph
 	 */
-	public CompletableFuture<GraphResult> createGraphAsync(
+	public CompletableFuture<GraphEntity> createGraphAsync(
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions) {
 		return executeAsync(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
@@ -739,7 +739,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the graph
 	 */
-	public CompletableFuture<GraphResult> createGraphAsync(
+	public CompletableFuture<GraphEntity> createGraphAsync(
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions,
 		final GraphCreateOptions options) {
@@ -757,8 +757,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return request;
 	}
 
-	private ResponseDeserializer<GraphResult> createGraphResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphResult.class);
+	private ResponseDeserializer<GraphEntity> createGraphResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 	}
 
 	/**
@@ -769,7 +769,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return graphs stored in this database
 	 * @throws ArangoDBException
 	 */
-	public Collection<GraphResult> getGraphs() throws ArangoDBException {
+	public Collection<GraphEntity> getGraphs() throws ArangoDBException {
 		return executeSync(getGraphsRequest(), getGraphsResponseDeserializer());
 	}
 
@@ -780,7 +780,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return graphs stored in this database
 	 */
-	public CompletableFuture<Collection<GraphResult>> getGraphsAsync() {
+	public CompletableFuture<Collection<GraphEntity>> getGraphsAsync() {
 		return executeAsync(getGraphsRequest(), getGraphsResponseDeserializer());
 	}
 
@@ -788,9 +788,9 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_GHARIAL);
 	}
 
-	private ResponseDeserializer<Collection<GraphResult>> getGraphsResponseDeserializer() {
+	private ResponseDeserializer<Collection<GraphEntity>> getGraphsResponseDeserializer() {
 		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPHS),
-			new Type<Collection<GraphResult>>() {
+			new Type<Collection<GraphEntity>>() {
 			}.getType());
 	}
 
@@ -862,7 +862,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return information about the current database
 	 * @throws ArangoDBException
 	 */
-	public DatabaseResult getInfo() throws ArangoDBException {
+	public DatabaseEntity getInfo() throws ArangoDBException {
 		return executeSync(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
@@ -874,7 +874,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *      Documentation</a>
 	 * @return information about the current database
 	 */
-	public CompletableFuture<DatabaseResult> getInfoAsync() {
+	public CompletableFuture<DatabaseEntity> getInfoAsync() {
 		return executeAsync(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
@@ -883,8 +883,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.CURRENT));
 	}
 
-	private ResponseDeserializer<DatabaseResult> getInfoResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), DatabaseResult.class);
+	private ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
+		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.RESULT), DatabaseEntity.class);
 	}
 
 	/**
@@ -901,7 +901,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @return Result of the executed traversal
 	 * @throws ArangoDBException
 	 */
-	public <V, E> TraversalResult<V, E> executeTraversal(
+	public <V, E> TraversalEntity<V, E> executeTraversal(
 		final Class<V> vertexClass,
 		final Class<E> edgeClass,
 		final TraversalOptions options) throws ArangoDBException {
@@ -922,7 +922,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 *            Additional options
 	 * @return Result of the executed traversal
 	 */
-	public <V, E> CompletableFuture<TraversalResult<V, E>> executeTraversalAsync(
+	public <V, E> CompletableFuture<TraversalEntity<V, E>> executeTraversalAsync(
 		final Class<V> vertexClass,
 		final Class<E> edgeClass,
 		final TraversalOptions options) {
@@ -936,11 +936,11 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return request;
 	}
 
-	private <E, V> ResponseDeserializer<TraversalResult<V, E>> executeTraversalResponseDeserializer(
+	private <E, V> ResponseDeserializer<TraversalEntity<V, E>> executeTraversalResponseDeserializer(
 		final Class<V> vertexClass,
 		final Class<E> edgeClass) {
 		return response -> {
-			final TraversalResult<V, E> result = new TraversalResult<>();
+			final TraversalEntity<V, E> result = new TraversalEntity<>();
 			final VPackSlice visited = response.getBody().get().get(ArangoDBConstants.RESULT)
 					.get(ArangoDBConstants.VISITED);
 			result.setVertices(deserializeVertices(vertexClass, visited));

@@ -20,50 +20,28 @@
 
 package com.arangodb.entity;
 
+import java.util.Collection;
+
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class CollectionResult {
+public class GraphEntity {
 
-	private String id;
 	private String name;
-	private Boolean waitForSync;
-	private Boolean isVolatile;
-	private Boolean isSystem;
-	private CollectionStatus status;
-	private CollectionType type;
-
-	public CollectionResult() {
-		super();
-	}
-
-	public String getId() {
-		return id;
-	}
+	private Collection<EdgeDefinition> edgeDefinitions;
+	private Collection<String> orphanCollections;
 
 	public String getName() {
 		return name;
 	}
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
+	public Collection<EdgeDefinition> getEdgeDefinitions() {
+		return edgeDefinitions;
 	}
 
-	public Boolean getIsVolatile() {
-		return isVolatile;
-	}
-
-	public Boolean getIsSystem() {
-		return isSystem;
-	}
-
-	public CollectionStatus getStatus() {
-		return status;
-	}
-
-	public CollectionType getType() {
-		return type;
+	public Collection<String> getOrphanCollections() {
+		return orphanCollections;
 	}
 
 }

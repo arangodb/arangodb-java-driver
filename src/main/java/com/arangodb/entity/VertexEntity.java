@@ -24,29 +24,10 @@ package com.arangodb.entity;
  * @author Mark - mark at arangodb.com
  *
  */
-public class AqlFunctionResult {
+public class VertexEntity extends DocumentEntity {
 
-	private String name;
-	private String code;
-
-	public AqlFunctionResult() {
+	public VertexEntity() {
 		super();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(final String code) {
-		this.code = code;
 	}
 
 }

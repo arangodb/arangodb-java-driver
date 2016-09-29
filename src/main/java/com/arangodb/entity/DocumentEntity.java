@@ -20,28 +20,35 @@
 
 package com.arangodb.entity;
 
-import java.util.Collection;
+import com.arangodb.entity.DocumentField.Type;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class GraphResult {
+public class DocumentEntity {
 
-	private String name;
-	private Collection<EdgeDefinition> edgeDefinitions;
-	private Collection<String> orphanCollections;
+	@DocumentField(Type.KEY)
+	private String key;
+	@DocumentField(Type.ID)
+	private String id;
+	@DocumentField(Type.REV)
+	private String rev;
 
-	public String getName() {
-		return name;
+	public DocumentEntity() {
+		super();
 	}
 
-	public Collection<EdgeDefinition> getEdgeDefinitions() {
-		return edgeDefinitions;
+	public String getKey() {
+		return key;
 	}
 
-	public Collection<String> getOrphanCollections() {
-		return orphanCollections;
+	public String getId() {
+		return id;
+	}
+
+	public String getRev() {
+		return rev;
 	}
 
 }

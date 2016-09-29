@@ -34,7 +34,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.UserResult;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 
@@ -108,7 +108,7 @@ public class ArangoDBTest {
 	public void createUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			final UserResult result = arangoDB.createUser(USER, PW, null);
+			final UserEntity result = arangoDB.createUser(USER, PW, null);
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getUser(), is(USER));
 			assertThat(result.getChangePassword(), is(false));
@@ -127,7 +127,7 @@ public class ArangoDBTest {
 	@Test
 	public void getUserRoot() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final UserResult user = arangoDB.getUser(ROOT);
+		final UserEntity user = arangoDB.getUser(ROOT);
 		assertThat(user, is(notNullValue()));
 		assertThat(user.getUser(), is(ROOT));
 	}
@@ -137,7 +137,7 @@ public class ArangoDBTest {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.createUser(USER, PW, null);
-			final UserResult user = arangoDB.getUser(USER);
+			final UserEntity user = arangoDB.getUser(USER);
 			assertThat(user.getUser(), is(USER));
 		} finally {
 			arangoDB.deleteUser(USER);
@@ -148,7 +148,7 @@ public class ArangoDBTest {
 	@Test
 	public void getUsersOnlyRoot() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final Collection<UserResult> users = arangoDB.getUsers();
+		final Collection<UserEntity> users = arangoDB.getUsers();
 		assertThat(users, is(notNullValue()));
 		assertThat(users.size(), is(1));
 		assertThat(users.stream().findFirst().get().getUser(), is(ROOT));
@@ -159,7 +159,7 @@ public class ArangoDBTest {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.createUser(USER, PW, null);
-			final Collection<UserResult> users = arangoDB.getUsers();
+			final Collection<UserEntity> users = arangoDB.getUsers();
 			assertThat(users, is(notNullValue()));
 			assertThat(users.size(), is(2));
 			users.stream().forEach(user -> {
@@ -190,11 +190,11 @@ public class ArangoDBTest {
 			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
 			extra.put("hund", true);
 			extra.put("mund", true);
-			final UserResult user = arangoDB.updateUser(USER, new UserUpdateOptions().extra(extra));
+			final UserEntity user = arangoDB.updateUser(USER, new UserUpdateOptions().extra(extra));
 			assertThat(user, is(notNullValue()));
 			assertThat(user.getExtra().size(), is(2));
 			assertThat(user.getExtra().get("hund"), is(true));
-			final UserResult user2 = arangoDB.getUser(USER);
+			final UserEntity user2 = arangoDB.getUser(USER);
 			assertThat(user2.getExtra().size(), is(2));
 			assertThat(user2.getExtra().get("hund"), is(true));
 		} finally {
@@ -211,11 +211,11 @@ public class ArangoDBTest {
 			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
 			extra.remove("hund");
 			extra.put("mund", true);
-			final UserResult user = arangoDB.replaceUser(USER, new UserUpdateOptions().extra(extra));
+			final UserEntity user = arangoDB.replaceUser(USER, new UserUpdateOptions().extra(extra));
 			assertThat(user, is(notNullValue()));
 			assertThat(user.getExtra().size(), is(1));
 			assertThat(user.getExtra().get("mund"), is(true));
-			final UserResult user2 = arangoDB.getUser(USER);
+			final UserEntity user2 = arangoDB.getUser(USER);
 			assertThat(user2.getExtra().size(), is(1));
 			assertThat(user2.getExtra().get("mund"), is(true));
 		} finally {

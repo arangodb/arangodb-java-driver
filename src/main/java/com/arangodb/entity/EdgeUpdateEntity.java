@@ -20,35 +20,23 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DocumentResult {
+public class EdgeUpdateEntity extends DocumentEntity {
 
-	@DocumentField(Type.KEY)
-	private String key;
-	@DocumentField(Type.ID)
-	private String id;
-	@DocumentField(Type.REV)
-	private String rev;
+	@SerializedName("_oldRev")
+	private String oldRev;
 
-	public DocumentResult() {
+	public EdgeUpdateEntity() {
 		super();
 	}
 
-	public String getKey() {
-		return key;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getRev() {
-		return rev;
+	public String getOldRev() {
+		return oldRev;
 	}
 
 }

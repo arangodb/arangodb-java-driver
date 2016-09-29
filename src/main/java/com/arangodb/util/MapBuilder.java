@@ -18,31 +18,30 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.entity;
+package com.arangodb.util;
 
-import java.util.Optional;
-
-import com.arangodb.velocypack.annotations.Expose;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class DocumentCreateResult<T> extends DocumentResult {
+public class MapBuilder {
 
-	@Expose(deserialize = false)
-	private T newDocument;
+	private final Map<String, Object> map;
 
-	public DocumentCreateResult() {
+	public MapBuilder() {
 		super();
+		map = new LinkedHashMap<>();
 	}
 
-	public Optional<T> getNew() {
-		return Optional.ofNullable(newDocument);
+	public MapBuilder put(final String key, final Object value) {
+		map.put(key, value);
+		return this;
 	}
 
-	public void setNew(final T newDocument) {
-		this.newDocument = newDocument;
+	public Map<String, Object> get() {
+		return map;
 	}
-
 }

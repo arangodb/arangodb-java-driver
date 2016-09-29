@@ -20,47 +20,33 @@
 
 package com.arangodb.entity;
 
-import java.util.Optional;
-
-import com.arangodb.velocypack.annotations.Expose;
-import com.arangodb.velocypack.annotations.SerializedName;
+import java.util.Map;
 
 /**
  * @author Mark - mark at arangodb.com
- * @param <T>
  *
  */
-public class DocumentUpdateResult<T> extends DocumentResult {
+public class UserEntity {
 
-	@SerializedName("_oldRev")
-	private String oldRev;
-	@Expose(deserialize = false)
-	private T newDocument;
-	@Expose(deserialize = false)
-	private T oldDocument;
+	private String user;
+	private Boolean active;
+	private Map<String, Object> extra;
+	private Boolean changePassword;
 
-	public DocumentUpdateResult() {
-		super();
+	public String getUser() {
+		return user;
 	}
 
-	public String getOldRev() {
-		return oldRev;
+	public Boolean getActive() {
+		return active;
 	}
 
-	public Optional<T> getNew() {
-		return Optional.ofNullable(newDocument);
+	public Map<String, Object> getExtra() {
+		return extra;
 	}
 
-	public void setNew(final T newDocument) {
-		this.newDocument = newDocument;
-	}
-
-	public Optional<T> getOld() {
-		return Optional.ofNullable(oldDocument);
-	}
-
-	public void setOld(final T oldDocument) {
-		this.oldDocument = oldDocument;
+	public Boolean getChangePassword() {
+		return changePassword;
 	}
 
 }

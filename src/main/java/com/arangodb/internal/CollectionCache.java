@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.entity.CollectionResult;
+import com.arangodb.entity.CollectionEntity;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -97,7 +97,7 @@ public class CollectionCache {
 	}
 
 	private String execute(final long id) throws ArangoDBException {
-		final CollectionResult result = access.db(db).collection(String.valueOf(id)).getInfo();
+		final CollectionEntity result = access.db(db).collection(String.valueOf(id)).getInfo();
 		return result.getName();
 	}
 

@@ -27,7 +27,7 @@ import java.util.Optional;
  * @author Mark - mark at arangodb.com
  *
  */
-public class AqlParseResult {
+public class AqlParseEntity {
 
 	public static class AstNode {
 		private String type;

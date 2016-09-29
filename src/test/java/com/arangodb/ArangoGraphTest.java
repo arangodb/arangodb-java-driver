@@ -38,7 +38,7 @@ import org.junit.Test;
 
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.GraphResult;
+import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.CollectionCreateOptions;
 
 /**
@@ -92,14 +92,14 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void getGraphs() {
-		final Collection<GraphResult> graphs = db.getGraphs();
+		final Collection<GraphEntity> graphs = db.getGraphs();
 		assertThat(graphs, is(notNullValue()));
 		assertThat(graphs.size(), is(1));
 	}
 
 	@Test
 	public void getInfo() {
-		final GraphResult info = db.graph(GRAPH_NAME).getInfo();
+		final GraphEntity info = db.graph(GRAPH_NAME).getInfo();
 		assertThat(info, is(notNullValue()));
 		assertThat(info.getName(), is(GRAPH_NAME));
 		assertThat(info.getEdgeDefinitions().size(), is(2));
@@ -125,7 +125,7 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void addVertexCollection() {
-		final GraphResult graph = db.graph(GRAPH_NAME).addVertexCollection(VERTEX_COL_4);
+		final GraphEntity graph = db.graph(GRAPH_NAME).addVertexCollection(VERTEX_COL_4);
 		assertThat(graph, is(notNullValue()));
 		final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections();
 		assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4));
@@ -141,7 +141,7 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void addEdgeDefinition() {
-		final GraphResult graph = db.graph(GRAPH_NAME)
+		final GraphEntity graph = db.graph(GRAPH_NAME)
 				.addEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2));
 		assertThat(graph, is(notNullValue()));
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
@@ -155,7 +155,7 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void replaceEdgeDefinition() {
-		final GraphResult graph = db.graph(GRAPH_NAME)
+		final GraphEntity graph = db.graph(GRAPH_NAME)
 				.replaceEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_3).to(VERTEX_COL_4));
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
 		assertThat(edgeDefinitions.size(), is(2));
@@ -168,7 +168,7 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void removeEdgeDefinition() {
-		final GraphResult graph = db.graph(GRAPH_NAME).removeEdgeDefinition(EDGE_COL_1);
+		final GraphEntity graph = db.graph(GRAPH_NAME).removeEdgeDefinition(EDGE_COL_1);
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
 		assertThat(edgeDefinitions.size(), is(1));
 		assertThat(edgeDefinitions.stream().findFirst().get().getCollection(), is(EDGE_COL_2));

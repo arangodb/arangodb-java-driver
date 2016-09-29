@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.EdgeResult;
-import com.arangodb.entity.EdgeUpdateResult;
+import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.net.Request;
 import com.arangodb.internal.net.velocystream.RequestType;
@@ -67,7 +67,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	public <T> EdgeResult insertEdge(final T value) throws ArangoDBException {
+	public <T> EdgeEntity insertEdge(final T value) throws ArangoDBException {
 		return executeSync(insertEdgeRequest(value, new EdgeCreateOptions()), insertEdgeResponseDeserializer(value));
 	}
 
@@ -82,7 +82,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	public <T> EdgeResult insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException {
+	public <T> EdgeEntity insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException {
 		return executeSync(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
 	}
 
@@ -94,7 +94,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
 	 * @return information about the edge
 	 */
-	public <T> CompletableFuture<EdgeResult> insertEdgeAsync(final T value) {
+	public <T> CompletableFuture<EdgeEntity> insertEdgeAsync(final T value) {
 		return executeAsync(insertEdgeRequest(value, new EdgeCreateOptions()), insertEdgeResponseDeserializer(value));
 	}
 
@@ -108,7 +108,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the edge
 	 */
-	public <T> CompletableFuture<EdgeResult> insertEdgeAsync(final T value, final EdgeCreateOptions options) {
+	public <T> CompletableFuture<EdgeEntity> insertEdgeAsync(final T value, final EdgeCreateOptions options) {
 		return executeAsync(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
 	}
 
@@ -121,10 +121,10 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<EdgeResult> insertEdgeResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
-			final EdgeResult doc = deserialize(body, EdgeResult.class);
+			final EdgeEntity doc = deserialize(body, EdgeEntity.class);
 			final Map<DocumentField.Type, String> values = new HashMap<>();
 			values.put(DocumentField.Type.ID, doc.getId());
 			values.put(DocumentField.Type.KEY, doc.getKey());
@@ -225,7 +225,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	public <T> EdgeUpdateResult replaceEdge(final String key, final T value) throws ArangoDBException {
+	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value) throws ArangoDBException {
 		return executeSync(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
 			replaceEdgeResponseDeserializer(value));
 	}
@@ -244,7 +244,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	public <T> EdgeUpdateResult replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
+	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
 			throws ArangoDBException {
 		return executeSync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
 	}
@@ -260,7 +260,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
 	 * @return information about the edge
 	 */
-	public <T> CompletableFuture<EdgeUpdateResult> replaceEdgeAsync(final String key, final T value) {
+	public <T> CompletableFuture<EdgeUpdateEntity> replaceEdgeAsync(final String key, final T value) {
 		return executeAsync(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
 			replaceEdgeResponseDeserializer(value));
 	}
@@ -278,7 +278,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the edge
 	 */
-	public <T> CompletableFuture<EdgeUpdateResult> replaceEdgeAsync(
+	public <T> CompletableFuture<EdgeUpdateEntity> replaceEdgeAsync(
 		final String key,
 		final T value,
 		final EdgeReplaceOptions options) {
@@ -295,10 +295,10 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<EdgeUpdateResult> replaceEdgeResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
-			final EdgeUpdateResult doc = deserialize(body, EdgeUpdateResult.class);
+			final EdgeUpdateEntity doc = deserialize(body, EdgeUpdateEntity.class);
 			final Map<DocumentField.Type, String> values = new HashMap<>();
 			values.put(DocumentField.Type.REV, doc.getRev());
 			documentCache.setValues(value, values);
@@ -319,7 +319,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	public <T> EdgeUpdateResult updateEdge(final String key, final T value) throws ArangoDBException {
+	public <T> EdgeUpdateEntity updateEdge(final String key, final T value) throws ArangoDBException {
 		return executeSync(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
 			updateEdgeResponseDeserializer(value));
 	}
@@ -339,7 +339,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	public <T> EdgeUpdateResult updateEdge(final String key, final T value, final EdgeUpdateOptions options)
+	public <T> EdgeUpdateEntity updateEdge(final String key, final T value, final EdgeUpdateOptions options)
 			throws ArangoDBException {
 		return executeSync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
 	}
@@ -356,7 +356,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
 	 * @return information about the edge
 	 */
-	public <T> CompletableFuture<EdgeUpdateResult> updateEdgeAsync(final String key, final T value) {
+	public <T> CompletableFuture<EdgeUpdateEntity> updateEdgeAsync(final String key, final T value) {
 		return executeAsync(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
 			updateEdgeResponseDeserializer(value));
 	}
@@ -375,7 +375,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the edge
 	 */
-	public <T> CompletableFuture<EdgeUpdateResult> updateEdgeAsync(
+	public <T> CompletableFuture<EdgeUpdateEntity> updateEdgeAsync(
 		final String key,
 		final T value,
 		final EdgeUpdateOptions options) {
@@ -394,10 +394,10 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<EdgeUpdateResult> updateEdgeResponseDeserializer(final T value) {
+	private <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
 		return response -> {
 			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
-			return deserialize(body, EdgeUpdateResult.class);
+			return deserialize(body, EdgeUpdateEntity.class);
 		};
 	}
 
