@@ -168,6 +168,7 @@ public class ArangoDriverTransactionTest extends BaseTest {
 			assertThat(result.getCode(), is(200));
 			assertThat(result.isError(), is(false));
 		}
+		driver.deleteQueryCache();
 		{
 			transaction.setAllowImplicit(false);
 			try {

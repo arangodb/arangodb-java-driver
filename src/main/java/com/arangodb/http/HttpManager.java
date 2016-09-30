@@ -485,7 +485,11 @@ public class HttpManager {
 		// // TODO etag特殊処理は削除する。
 		final Header etagHeader = response.getLastHeader("etag");
 		if (etagHeader != null) {
-			responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
+			try {
+				responseEntity.etag = Long.parseLong(etagHeader.getValue().replace("\"", ""));
+			} catch (NumberFormatException e) {
+				responseEntity.etag = 0;
+			}
 		}
 		// ヘッダをMapに変換する
 		responseEntity.headers = new TreeMap<String, String>();

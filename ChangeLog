@@ -1,3 +1,19 @@
+v3.0.4 (2016-XX-XX)
+---------------------------
+* fixed edges deserializer (issue #50)
+
+v3.0.3 (2016-09-12)
+---------------------------
+* added error handling in getBatchResponseByRequestId()
+* added function createPersistentIndex() (issue #48)
+* added deserializer for BaseDocument (issue #50) 
+
+v3.0.2 (2016-08-05)
+---------------------------
+* added profile flag to AqlQueryOptions (issue #47)
+* added getExtra() to DocumentCursor<> (issue #47)
+* added IndexType.PERSISTENT (issue #48)
+
 v3.0.1 (2016-07-08)
 ---------------------------
 * added flag complete and details in ImportOptions

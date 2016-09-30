@@ -1,5 +1,5 @@
 
-![ArangoDB-Logo](https://www.arangodb.com/wp-content/uploads/2012/10/logo_arangodb_transp.png)
+![ArangoDB-Logo](https://docs.arangodb.com/assets/arangodb_logo_2016_inverted.png)
 
 # arangodb-java-driver
 
@@ -33,7 +33,7 @@ ArangoDB 3.0.X
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.3</version>
   </dependency>
 	....
 </dependencies>
@@ -387,10 +387,10 @@ Now an edge can be created to set a relation between vertices
 
 # Learn more
 * [ArangoDB](https://www.arangodb.com/)
-* [ChangeLog](https://github.com/arangodb/arangodb-java-driver/tree/master/ChangeLog)
-* [Examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example)
-* [Document examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/document)
-* [Graph examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/graph)
-* [HTTPS examples](https://github.com/arangodb/arangodb-java-driver/tree/master/src/test/java/com/arangodb/example/ssl)
+* [ChangeLog](ChangeLog)
+* [Examples](src/test/java/com/arangodb/example)
+* [Document examples](src/test/java/com/arangodb/example/document)
+* [Graph examples](src/test/java/com/arangodb/example/graph)
+* [HTTPS examples](src/test/java/com/arangodb/example/ssl)
 * [Tutorial](https://www.arangodb.com/tutorial-java/)
 

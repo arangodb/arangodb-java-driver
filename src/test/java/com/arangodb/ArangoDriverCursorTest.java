@@ -18,6 +18,8 @@ package com.arangodb;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -26,7 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.CursorEntity;
@@ -39,6 +42,25 @@ import com.arangodb.util.MapBuilder;
  * @author mrbatista
  */
 public class ArangoDriverCursorTest extends BaseTest {
+
+	final static String collectionName = "unit_test_query_test";
+
+	@Before
+	public void setup() throws ArangoException {
+		try {
+			driver.createCollection(collectionName);
+		} catch (final ArangoException e) {
+		}
+		driver.truncateCollection(collectionName);
+	}
+
+	@After
+	public void tearDown() {
+		try {
+			driver.deleteCollection(collectionName);
+		} catch (final ArangoException e) {
+		}
+	}
 
 	@Test
 	public void test_validateQuery() throws ArangoException {
@@ -56,7 +78,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 	}
 
 	@Test
-	public void test_validateQuery_400_1() throws ArangoException {
+	public void test_validateQuery_400() throws ArangoException {
 
 		// =じゃなくて==じゃないとダメ。文法間違いエラー
 		try {
@@ -72,21 +94,7 @@ public class ArangoDriverCursorTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
-	public void test_validateQuery_400_2() throws ArangoException {
-	}
-
-	@Test
 	public void test_executeQuery() throws ArangoException {
-
-		// Collectionを作る
-		final String collectionName = "unit_test_query_test";
-		try {
-			driver.createCollection(collectionName);
-		} catch (final ArangoException e) {
-		}
-		driver.truncateCollection(collectionName);
-
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
@@ -114,15 +122,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	@Test
 	public void test_executeQuery_2() throws ArangoException {
-
-		// Collectionを作る
-		final String collectionName = "unit_test_query_test";
-		try {
-			driver.createCollection(collectionName);
-		} catch (final ArangoException e) {
-		}
-		driver.truncateCollection(collectionName);
-
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
@@ -183,15 +182,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	@Test
 	public void test_executeQueryFullCount() throws ArangoException {
-
-		// Collectionを作る
-		final String collectionName = "unit_test_query_test";
-		try {
-			driver.createCollection(collectionName);
-		} catch (final ArangoException e) {
-		}
-		driver.truncateCollection(collectionName);
-
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
@@ -220,15 +210,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	@Test
 	public void test_executeQueryUniqueResult() throws ArangoException {
-
-		// Collectionを作る
-		final String collectionName = "unit_test_query_test";
-		try {
-			driver.createCollection(collectionName);
-		} catch (final ArangoException e) {
-		}
-		driver.truncateCollection(collectionName);
-
 		// テストデータを作る
 		for (int i = 0; i < 100; i++) {
 			final TestComplexEntity01 value = new TestComplexEntity01("user_" + (i % 10), "desc" + (i % 10), i);
@@ -276,13 +257,6 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 	@Test
 	public void test_warning() throws ArangoException {
-		final String collectionName = "unit_test_query_test";
-		try {
-			driver.createCollection(collectionName);
-		} catch (final ArangoException e) {
-		}
-		driver.truncateCollection(collectionName);
-
 		driver.setDefaultDatabase(null);
 		final String query = "return _users + 1";
 		final Map<String, Object> bindVars = new HashMap<String, Object>();
@@ -291,6 +265,66 @@ public class ArangoDriverCursorTest extends BaseTest {
 
 		final List<WarningEntity> warnings = cursor.getWarnings();
 		assertThat(warnings.size(), is(1));
+	}
+
+	@Test
+	public void test_CursorResult_profile() throws ArangoException {
+		driver.setDefaultDatabase(null);
+		final Map<String, Object> bindVars = new HashMap<String, Object>();
+		final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+		{
+			// without profiling
+			aqlQueryOptions.setProfile(false);
+			final String query = "for p in _users return p._key";
+			final CursorResult<String> cursor = driver.executeAqlQuery(query, bindVars, aqlQueryOptions, String.class);
+			Map<String, Object> extra = cursor.getExtra();
+			assertThat(extra, is(notNullValue()));
+			Object object = extra.get("profile");
+			// extra.profile has to be null
+			assertThat(object, is(nullValue()));
+		}
+		driver.deleteQueryCache();
+		{
+			// with profiling
+			aqlQueryOptions.setProfile(true);
+			final String query = "for p in _users return p._id";
+			final CursorResult<String> cursor = driver.executeAqlQuery(query, bindVars, aqlQueryOptions, String.class);
+			Map<String, Object> extra = cursor.getExtra();
+			assertThat(extra, is(notNullValue()));
+			Object object = extra.get("profile");
+			assertThat(object, is(notNullValue()));
+		}
+	}
+
+	@Test
+	public void test_DocumentCursor_profile() throws ArangoException {
+		driver.setDefaultDatabase(null);
+		final Map<String, Object> bindVars = new HashMap<String, Object>();
+		final AqlQueryOptions aqlQueryOptions = new AqlQueryOptions();
+		{
+			// without profiling
+			aqlQueryOptions.setProfile(false);
+			final String query = "for p in _users return p._key";
+			final DocumentCursor<String> cursor = driver.executeDocumentQuery(query, bindVars, aqlQueryOptions,
+				String.class);
+			Map<String, Object> extra = cursor.getExtra();
+			assertThat(extra, is(notNullValue()));
+			Object object = extra.get("profile");
+			// extra.profile has to be null
+			assertThat(object, is(nullValue()));
+		}
+		driver.deleteQueryCache();
+		{
+			// with profiling
+			aqlQueryOptions.setProfile(true);
+			final String query = "for p in _users return p._id";
+			final DocumentCursor<String> cursor = driver.executeDocumentQuery(query, bindVars, aqlQueryOptions,
+				String.class);
+			Map<String, Object> extra = cursor.getExtra();
+			assertThat(extra, is(notNullValue()));
+			Object object = extra.get("profile");
+			assertThat(object, is(notNullValue()));
+		}
 	}
 
 }
