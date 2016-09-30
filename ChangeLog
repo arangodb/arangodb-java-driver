@@ -2,8 +2,10 @@ v4.0.0 (2016-XX-XX)
 ---------------------------
 * replaced API with new (inspired by arango shell)
 * replaced protocol http with VelocyStream
-* changed required Java version from 1.6 to 1.8
+* added VelocyPack support
 * added asynchronous support
+* added multi document operations (insert, delete, update, replace)
+* changed required Java version from 1.6 to 1.8
 
 v3.1.0 (2016-XX-XX)
 ---------------------------
