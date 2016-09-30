@@ -1,5 +1,5 @@
 
-## Driver Setup
+# Driver Setup
 
 Setup with default configuration, this automatically loads a properties file arangodb.properties if exists in the classpath:
 
@@ -39,13 +39,12 @@ To customize the configuration the parameters can be changed in the code...
 
 Example for arangodb.properties:
 ``` Java
-arangodb.host=127.0.0.1
-arangodb.port=8529
-arangodb.user=root
-arangodb.password=
+  arangodb.host=127.0.0.1
+  arangodb.port=8529
+  arangodb.user=root
+  arangodb.password=
 
 ```
-
 
 # Basic database operations
 ## create database
@@ -77,12 +76,19 @@ arangodb.password=
   
 ```
 
+## delete all documents in the collection
+``` Java
+  arangoDB.db("myDatabase").collection("myCollection").truncate();
+```
+
 # Basic document operations
+
+Every document operations works with POJOs (e.g. MyObject), VelocyPack (VPackSlice) and Json (String).
 
 For the next examples we use a small object:
 
 ``` Java
-public class MyObject {
+  public class MyObject {
 
     private String key;
     private String name;
@@ -98,65 +104,104 @@ public class MyObject {
       super();
     }
 
-    
     /*
      *  + getter and setter
      */
-   
-
-}  
+  
+  }  
 ```
 
 ## insert document
 ``` Java
-  // insert document 
   MyObject myObject = new MyObject("Homer", 38);
   arangoDB.db("myDatabase").collection("myCollection").insertDocument(myObject);
-  
-  
+    
 ```
 
 When creating a document, the attributes of the object will be stored as key-value pair
 E.g. in the previous example the object was stored as follows:
 ``` properties
-"name" : "Homer"
-"age" : "38"
+  "name" : "Homer"
+  "age" : "38"
 ```
   
 
 ## delete document
 ``` Java
-  // delete document 
   arangoDB.db("myDatabase").collection("myCollection").deleteDocument(myObject.getKey);
   
 ```
 
-# AQL
-## Executing an AQL statement
-
-E.g. get all Simpsons aged 3 or older in ascending order:
-
+## update document
 ``` Java
-    arangoDB.createDatabase("myDatabase");
-    ArangoDatabase db = arangoDB.db("myDatabase");
-    
-    db.createCollection("myCollection");
-    ArangoCollection collection = db.collection("myCollection");
-    
-    collection.insertDocument(new MyObject("Homer", 38));
-    collection.insertDocument(new MyObject("Marge", 36));
-    collection.insertDocument(new MyObject("Bart", 10));
-    collection.insertDocument(new MyObject("Lisa", 8));
-    collection.insertDocument(new MyObject("Maggie", 2));
-    
-    Map<String, Object> bindVars = new HashMap<>();
-    bindVars.put("age", 3);    
-    ArangoCursor<MyObject> cursor = db.query(query, bindVars, null, MyObject.class);
-    
-    for (Iterator<MyObject> iterator = cursor.iterator(); iterator.hasNext();) {
-      MyObject obj = iterator.next();
-      System.out.println(obj.getName());
-    }
+  arangoDB.db("myDatabase").collection("myCollection").updateDocument(myObject.getKey, myUpdatedObject);
+  
+```
+
+## replace document
+``` Java
+  arangoDB.db("myDatabase").collection("myCollection").replaceDocument(myObject.getKey, myObject2);
+  
+```
+
+## read document (as JavaBean)
+``` Java
+  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, MyObject.class);
+  
+```
+
+## read document (as VelocyPack)
+``` Java
+  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, VPackSlice.class);
+  
+```
+
+## read document (as Json)
+``` Java
+  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, String.class);
+  
+```
+
+# Multi document operations
+
+## insert documents
+``` Java
+  Collection<MyObject> documents = new ArrayList<>;
+  documents.add(myObject1);
+  documents.add(myObject2);
+  documents.add(myObject3);
+  arangoDB.db("myDatabase").collection("myCollection").insertDocuments(documents);
+  
+```
+
+## delete documents
+``` Java
+  Collection<String> keys = new ArrayList<>;
+  keys.add(myObject1.getKey());
+  keys.add(myObject2.getKey());
+  keys.add(myObject3.getKey());
+  arangoDB.db("myDatabase").collection("myCollection").deleteDocuments(keys);
+  
+```
+
+## update documents
+``` Java
+  Collection<MyObject> documents = new ArrayList<>;
+  documents.add(myObject1);
+  documents.add(myObject2);
+  documents.add(myObject3);
+  arangoDB.db("myDatabase").collection("myCollection").updateDocuments(documents);
+  
+```
+
+## replace documents
+``` Java
+  Collection<MyObject> documents = new ArrayList<>;
+  documents.add(myObject1);
+  documents.add(myObject2);
+  documents.add(myObject3);
+  arangoDB.db("myDatabase").collection("myCollection").replaceDocuments(documents);
+  
 ```
 
 #User Management
@@ -164,9 +209,19 @@ If you are using [authentication] (https://docs.arangodb.com/Manual/GettingStart
 
 ##add user
 ``` Java
-  //username, password, extras
+  //username, password
   arangoDB.createUser("myUser", "myPassword");
 ```
+
+##grant user access to database
+``` Java
+  arangoDB.db("myDatabase").grantAccess("myUser");
+````
+
+##revoke user access to database
+``` Java
+  arangoDB.db("myDatabase").revokeAccess("myUser");
+````
 
 ##list users
 ``` Java
@@ -176,12 +231,50 @@ If you are using [authentication] (https://docs.arangodb.com/Manual/GettingStart
   }
 ```
 
-
-##DELETE user
+##delete user
 ``` Java
   arangoDB.deleteUser("myUser");
 ```
 
+# AQL
+## Executing an AQL statement
+
+Every AQL operations works with POJOs (e.g. MyObject), VelocyPack (VPackSlice) and Json (String).
+
+E.g. get all Simpsons aged 3 or older in ascending order:
+
+``` Java
+  arangoDB.createDatabase("myDatabase");
+  ArangoDatabase db = arangoDB.db("myDatabase");
+  
+  db.createCollection("myCollection");
+  ArangoCollection collection = db.collection("myCollection");
+  
+  collection.insertDocument(new MyObject("Homer", 38));
+  collection.insertDocument(new MyObject("Marge", 36));
+  collection.insertDocument(new MyObject("Bart", 10));
+  collection.insertDocument(new MyObject("Lisa", 8));
+  collection.insertDocument(new MyObject("Maggie", 2));
+  
+  Map<String, Object> bindVars = new HashMap<>();
+  bindVars.put("age", 3);
+  
+  ArangoCursor<MyObject> cursor = db.query(query, bindVars, null, MyObject.class);
+  
+  cursor.forEachRemaining(obj -> {
+	  System.out.println(obj.getName());
+	});
+```
+
+or return the AQL result as VelocyPack:
+
+``` Java
+  ArangoCursor<VPackSlice> cursor = db.query(query, bindVars, null, VPackSlice.class);
+  
+  cursor.forEachRemaining(obj -> {
+	  System.out.println(obj.get("name").getAsString());
+	});
+```
 
 #Graphs
 This driver supports the [graph api](https://docs.arangodb.com/HTTP/Gharial/index.html).
