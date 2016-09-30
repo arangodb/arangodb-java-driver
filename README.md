@@ -1,5 +1,5 @@
 
-![ArangoDB-Logo](https://www.arangodb.com/wp-content/uploads/2012/10/logo_arangodb_transp.png)
+![ArangoDB-Logo](https://docs.arangodb.com/assets/arangodb_logo_2016_inverted.png)
 
 # arangodb-java-driver
 
