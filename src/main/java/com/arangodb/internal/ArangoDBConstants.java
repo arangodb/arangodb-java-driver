@@ -29,6 +29,7 @@ public class ArangoDBConstants {
 	public static final String DEFAULT_HOST = "127.0.0.1";
 	public static final Integer DEFAULT_PORT = 8529;
 	public static final Integer DEFAULT_TIMEOUT = 0;
+	public static final Boolean DEFAULT_USE_SSL = false;
 
 	public static final int CHUNK_MIN_HEADER_SIZE = Integer.BYTES + Integer.BYTES + Long.BYTES;
 	public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + Long.BYTES;

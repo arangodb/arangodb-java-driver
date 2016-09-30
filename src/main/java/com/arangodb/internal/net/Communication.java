@@ -65,7 +65,7 @@ public class Communication {
 	private final Optional<String> user;
 	private final Optional<String> password;
 
-	private final Integer vStreamChunkContentSize;
+	private final Integer chunksize;
 
 	public static class Builder {
 		private String host;
@@ -75,7 +75,7 @@ public class Communication {
 		private String password;
 		private Boolean useSsl;
 		private SSLContext sslContext;
-		private Integer vStreamChunkContentSize;
+		private Integer chunksize;
 
 		public Builder() {
 			super();
@@ -116,26 +116,26 @@ public class Communication {
 			return this;
 		}
 
-		public Builder vStreamChunkContentSize(final Integer vStreamChunkContentSize) {
-			this.vStreamChunkContentSize = vStreamChunkContentSize;
+		public Builder chunksize(final Integer chunksize) {
+			this.chunksize = chunksize;
 			return this;
 		}
 
 		public Communication build(final VPack vpack, final CollectionCache collectionCache) {
 			return new Communication(host, port, timeout, user, password, useSsl, sslContext, vpack, collectionCache,
-					vStreamChunkContentSize);
+					chunksize);
 		}
 	}
 
 	private Communication(final String host, final Integer port, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
-		final CollectionCache collectionCache, final Integer vstreamChunkContentSize) {
+		final CollectionCache collectionCache, final Integer chunksize) {
 		messageStore = new MessageStore();
 		this.user = Optional.ofNullable(user);
 		this.password = Optional.ofNullable(password);
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
-		this.vStreamChunkContentSize = Optional.ofNullable(vstreamChunkContentSize)
+		this.chunksize = Optional.ofNullable(chunksize)
 				.orElse(ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE);
 		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout)
 				.useSsl(useSsl).sslContext(sslContext).build();
@@ -298,11 +298,11 @@ public class Communication {
 		if (body.isPresent()) {
 			size += body.get().getByteSize();
 		}
-		final int n = size / vStreamChunkContentSize;
-		final int numberOfChunks = (size % vStreamChunkContentSize != 0) ? (n + 1) : n;
+		final int n = size / chunksize;
+		final int numberOfChunks = (size % chunksize != 0) ? (n + 1) : n;
 		int off = 0;
 		for (int i = 0; size > 0; i++) {
-			final int len = Math.min(vStreamChunkContentSize, size);
+			final int len = Math.min(chunksize, size);
 			final long messageLength = (i == 0 && numberOfChunks > 1) ? size : -1L;
 			final Chunk chunk = new Chunk(message.getId(), i, numberOfChunks, messageLength, off, len);
 			size -= len;

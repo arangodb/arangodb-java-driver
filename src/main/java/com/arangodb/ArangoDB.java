@@ -62,7 +62,8 @@ public class ArangoDB extends ArangoExecuteable {
 		private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
 		private static final String PROPERTY_KEY_USER = "arangodb.user";
 		private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
-		private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.vstream.chunk.content.size";
+		private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
+		private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
 		private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 		private String host;
@@ -72,7 +73,7 @@ public class ArangoDB extends ArangoExecuteable {
 		private String password;
 		private Boolean useSsl;
 		private SSLContext sslContext;
-		private Integer vStreamChunkContentSize;
+		private Integer chunksize;
 		private final VPack.Builder vpackBuilder;
 		private final CollectionCache collectionCache;
 		private final VPackParser vpackParser;
@@ -98,9 +99,10 @@ public class ArangoDB extends ArangoExecuteable {
 						getProperty(properties, PROPERTY_KEY_TIMEOUT, timeout, ArangoDBConstants.DEFAULT_TIMEOUT));
 					user = getProperty(properties, PROPERTY_KEY_USER, user, null);
 					password = getProperty(properties, PROPERTY_KEY_PASSWORD, password, null);
-					vStreamChunkContentSize = Integer
-							.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE,
-								vStreamChunkContentSize, ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
+					useSsl = Boolean.parseBoolean(
+						getProperty(properties, PROPERTY_KEY_USE_SSL, useSsl, ArangoDBConstants.DEFAULT_USE_SSL));
+					chunksize = Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE,
+						chunksize, ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}
@@ -152,8 +154,8 @@ public class ArangoDB extends ArangoExecuteable {
 			return this;
 		}
 
-		public Builder vStreamChunkContentSize(final Integer vStreamChunkContentSize) {
-			this.vStreamChunkContentSize = vStreamChunkContentSize;
+		public Builder chunksize(final Integer chunksize) {
+			this.chunksize = chunksize;
 			return this;
 		}
 
@@ -175,7 +177,7 @@ public class ArangoDB extends ArangoExecuteable {
 		public ArangoDB build() {
 			return new ArangoDB(
 					new Communication.Builder().host(host).port(port).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).vStreamChunkContentSize(vStreamChunkContentSize),
+							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 
