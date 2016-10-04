@@ -55,7 +55,7 @@ mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
 # Learn more
 * [ArangoDB](https://www.arangodb.com/)
 * [ChangeLog](ChangeLog)
-* [Documentation](docs/api_overview.md)
+* [Documentation](docs/documentation.md)
 * [Examples](src/test/java/com/arangodb/example)
 * [Tutorial](https://www.arangodb.com/tutorial-java/)
 
