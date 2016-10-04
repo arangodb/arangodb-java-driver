@@ -210,6 +210,11 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(document.isPresent(), is(false));
 	}
 
+	@Test(expected = ArangoDBException.class)
+	public void getDocumentWrongKey() {
+		db.collection(COLLECTION_NAME).getDocument("no/no", BaseDocument.class);
+	}
+
 	@Test
 	public void getDocumentAsyncNotFound() {
 		try {

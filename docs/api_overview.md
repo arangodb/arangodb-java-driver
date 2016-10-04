@@ -144,7 +144,7 @@ E.g. in the previous example the object was stored as follows:
   
 ```
 
-## read document (as JavaBean)
+## read document by key (as JavaBean)
 ``` Java
   MyObject document = arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, MyObject.class).get();
   document.getName();
@@ -163,6 +163,12 @@ E.g. in the previous example the object was stored as follows:
 ## read document (as Json)
 ``` Java
   arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, String.class).get();
+  
+```
+
+## read document by id
+``` Java
+  arangoDB.db("myDatabase").getDocument("myCollection/myKey", MyObject.class).get();
   
 ```
 

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -684,5 +685,22 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.collection("person").drop();
 			db.collection("knows").drop();
 		}
+	}
+
+	@Test
+	public void getDocument() {
+		db.createCollection(COLLECTION_NAME);
+		final BaseDocument value = new BaseDocument();
+		value.setKey("123");
+		db.collection(COLLECTION_NAME).insertDocument(value);
+
+		final Optional<BaseDocument> document = db.getDocument(COLLECTION_NAME + "/123", BaseDocument.class);
+		assertThat(document.isPresent(), is(true));
+		assertThat(document.get().getKey(), is("123"));
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void getDocumentWrongId() {
+		db.getDocument("123", BaseDocument.class);
 	}
 }

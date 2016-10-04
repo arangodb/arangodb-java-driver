@@ -52,6 +52,7 @@ import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.AqlQueryParseOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
+import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.TransactionOptions;
@@ -975,5 +976,84 @@ public class ArangoDatabase extends ArangoExecuteable {
 			edges.add(deserialize(iteratorEdge.next(), edgeClass));
 		}
 		return edges;
+	}
+
+	/**
+	 * Reads a single document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 *      Documentation</a>
+	 * @param id
+	 *            The id of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 * @return the document identified by the id
+	 * @throws ArangoDBException
+	 */
+	public <T> Optional<T> getDocument(final String id, final Class<T> type) throws ArangoDBException {
+		validateDocumentId(id);
+		final String[] split = id.split("/");
+		return collection(split[0]).getDocument(split[1], type);
+	}
+
+	/**
+	 * Reads a single document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 *      Documentation</a>
+	 * @param id
+	 *            The id of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the document identified by the id
+	 * @throws ArangoDBException
+	 */
+	public <T> Optional<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
+			throws ArangoDBException {
+		validateDocumentId(id);
+		final String[] split = id.split("/");
+		return collection(split[0]).getDocument(split[1], type, options);
+	}
+
+	/**
+	 * Reads a single document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 *      Documentation</a>
+	 * @param id
+	 *            The id of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 * @return the document identified by the id
+	 */
+	public <T> CompletableFuture<Optional<T>> getDocumentAsync(final String id, final Class<T> type)
+			throws ArangoDBException {
+		validateDocumentId(id);
+		final String[] split = id.split("/");
+		return collection(split[0]).getDocumentAsync(split[1], type);
+	}
+
+	/**
+	 * Reads a single document
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 *      Documentation</a>
+	 * @param id
+	 *            The id of the document
+	 * @param type
+	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the document identified by the id
+	 */
+	public <T> CompletableFuture<Optional<T>> getDocumentAsync(
+		final String id,
+		final Class<T> type,
+		final DocumentReadOptions options) throws ArangoDBException {
+		validateDocumentId(id);
+		final String[] split = id.split("/");
+		return collection(split[0]).getDocumentAsync(split[1], type, options);
 	}
 }

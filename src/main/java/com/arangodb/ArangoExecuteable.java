@@ -50,6 +50,7 @@ abstract class ArangoExecuteable {
 	}
 
 	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
+	private static final String REGEX_DOCUMENT_ID = "[^/]+/[^/]+";
 
 	protected final Communication communication;
 	protected final VPack vpacker;
@@ -105,12 +106,17 @@ abstract class ArangoExecuteable {
 	}
 
 	protected void validateDocumentKey(final String key) throws ArangoDBException {
-		validateName(REGEX_DOCUMENT_KEY, key);
+		validateName("document key", REGEX_DOCUMENT_KEY, key);
 	}
 
-	protected void validateName(final String regex, final CharSequence name) throws ArangoDBException {
+	protected void validateDocumentId(final String id) throws ArangoDBException {
+		validateName("document id", REGEX_DOCUMENT_ID, id);
+	}
+
+	protected void validateName(final String type, final String regex, final CharSequence name)
+			throws ArangoDBException {
 		if (!Pattern.matches(regex, name)) {
-			throw new ArangoDBException(String.format("Name %s is not valid.", name));
+			throw new ArangoDBException(String.format("%s %s is not valid.", type, name));
 		}
 	}
 

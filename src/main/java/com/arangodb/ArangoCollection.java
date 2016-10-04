@@ -308,6 +308,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> Optional<T> getDocument(final String key, final Class<T> type) {
+		validateDocumentKey(key);
 		try {
 			return Optional.ofNullable(executeSync(getDocumentRequest(key, new DocumentReadOptions()), type));
 		} catch (final ArangoDBException e) {
@@ -334,6 +335,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 */
 	public <T> Optional<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
+		validateDocumentKey(key);
 		try {
 			return Optional.ofNullable(executeSync(getDocumentRequest(key, options), type));
 		} catch (final ArangoDBException e) {
@@ -355,7 +357,9 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            The type of the document (POJO class, VPackSlice or String for Json)
 	 * @return the document identified by the key
 	 */
-	public <T> CompletableFuture<Optional<T>> getDocumentAsync(final String key, final Class<T> type) {
+	public <T> CompletableFuture<Optional<T>> getDocumentAsync(final String key, final Class<T> type)
+			throws ArangoDBException {
+		validateDocumentKey(key);
 		final CompletableFuture<Optional<T>> result = new CompletableFuture<>();
 		final CompletableFuture<T> execute = executeAsync(getDocumentRequest(key, new DocumentReadOptions()), type);
 		execute.whenComplete(
@@ -379,7 +383,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	public <T> CompletableFuture<Optional<T>> getDocumentAsync(
 		final String key,
 		final Class<T> type,
-		final DocumentReadOptions options) {
+		final DocumentReadOptions options) throws ArangoDBException {
+		validateDocumentKey(key);
 		final CompletableFuture<Optional<T>> result = new CompletableFuture<>();
 		final CompletableFuture<T> execute = executeAsync(getDocumentRequest(key, options), type);
 		execute.whenComplete(
