@@ -1,3 +1,10 @@
+* [Driver Setup](docs/api_overview.md#driver-setup)
+* [Basic database operations](docs/api_overview.md#basic-database-operations)
+* [Multi document operations](docs/api_overview.md#multi-document-operations)
+* [AQL](docs/api_overview.md#aql)
+* [Graphs](docs/api_overview.md#graphs)
+* [Foxx](docs/api_overview.md#foxx)
+
 
 # Driver Setup
 
