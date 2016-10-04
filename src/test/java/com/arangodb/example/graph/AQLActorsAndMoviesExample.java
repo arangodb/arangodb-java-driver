@@ -65,7 +65,8 @@ public class AQLActorsAndMoviesExample {
 
 	@AfterClass
 	public static void tearDown() {
-		arangoDB.db(TEST_DB).drop();
+		db.drop();
+		arangoDB.shutdown();
 	}
 
 	@Test
