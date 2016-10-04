@@ -39,7 +39,7 @@ import com.arangodb.ArangoDBException;
  * @author a-brandt
  *
  */
-public class GraphTraversalsInAQL extends BaseGraphTest {
+public class GraphTraversalsInAQLExample extends BaseGraphTest {
 
 	@Test
 	public void queryAllVertices() throws ArangoDBException {

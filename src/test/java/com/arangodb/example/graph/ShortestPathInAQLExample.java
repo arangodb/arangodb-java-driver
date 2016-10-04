@@ -41,7 +41,7 @@ import com.arangodb.ArangoDBException;
  * @author a-brandt
  *
  */
-public class ShortestPathInAQL extends BaseGraphTest {
+public class ShortestPathInAQLExample extends BaseGraphTest {
 
 	public static class Pair {
 
