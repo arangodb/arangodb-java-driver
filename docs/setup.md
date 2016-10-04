@@ -12,15 +12,15 @@ Setup with default configuration, this automatically loads a properties file ara
 The driver is configured with some default values:
 
 <table>
-<tr><th>property-key</th><th>description</th><th>default value</th></tr>
-<tr><td>arangodb.host</td><td>ArangoDB host</td><td>127.0.0.1</td></tr>
-<tr><td>arangodb.port</td><td>ArangoDB port</td><td>8529</td></tr>
-<tr><td>arangodb.timeout</td><td>socket connect timeout(millisecond)</td><td>0</td></tr>
-<tr><td>arangodb.user</td><td>Basic Authentication User</td><td></td></tr>
-<tr><td>arangodb.password</td><td>Basic Authentication Password</td><td></td></tr>
-<tr><td>arangodb.useSsl</td><td>use SSL connection</td><td>false</td></tr>
-<tr><td>harangodb.chunksize</td><td>VelocyStream Chunk content-size(bytes)</td><td>30000</td></tr>
-</table>
+<tr><th>property-key<  h><th>description<  h><th>default value<  h><  r>
+<tr><td>arangodb.host<  d><td>ArangoDB host<  d><td>127.0.0.1<  d><  r>
+<tr><td>arangodb.port<  d><td>ArangoDB port<  d><td>8529<  d><  r>
+<tr><td>arangodb.timeout<  d><td>socket connect timeout(millisecond)<  d><td>0<  d><  r>
+<tr><td>arangodb.user<  d><td>Basic Authentication User<  d><td><  d><  r>
+<tr><td>arangodb.password<  d><td>Basic Authentication Password<  d><td><  d><  r>
+<tr><td>arangodb.useSsl<  d><td>use SSL connection<  d><td>false<  d><  r>
+<tr><td>harangodb.chunksize<  d><td>VelocyStream Chunk content-size(bytes)<  d><td>30000<  d><  r>
+<  able>
 
 To customize the configuration the parameters can be changed in the code...
 
