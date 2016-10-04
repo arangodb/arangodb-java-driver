@@ -28,11 +28,11 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
-import com.arangodb.internal.net.AuthenticationRequest;
-import com.arangodb.internal.net.Request;
+import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocystream.Request;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -48,12 +48,12 @@ public class VPackSerializers {
 		builder.add(value.getRequestType().getType());
 		builder.add(value.getRequest());
 		builder.add(ValueType.OBJECT);
-		for (final Entry<String, String> entry : value.getParameter().entrySet()) {
+		for (final Entry<String, String> entry : value.getQueryParam().entrySet()) {
 			builder.add(entry.getKey(), entry.getValue());
 		}
 		builder.close();
 		builder.add(ValueType.OBJECT);
-		for (final Entry<String, String> entry : value.getMeta().entrySet()) {
+		for (final Entry<String, String> entry : value.getHeaderParam().entrySet()) {
 			builder.add(entry.getKey(), entry.getValue());
 		}
 		builder.close();

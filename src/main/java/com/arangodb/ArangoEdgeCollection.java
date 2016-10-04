@@ -28,14 +28,14 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -116,7 +116,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name));
 		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(serialize(value));
 		return request;
 	}
@@ -204,8 +204,8 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.GET, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
-		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 
@@ -289,8 +289,8 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.PUT, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
 		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value));
 		return request;
 	}
@@ -387,9 +387,9 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		request = new Request(graph.db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_GHARIAL,
 			graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
 		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
-		request.putParameter(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value, true));
 		return request;
 	}
@@ -455,8 +455,8 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.DELETE, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
 		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 

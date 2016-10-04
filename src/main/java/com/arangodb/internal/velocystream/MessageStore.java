@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net.velocystream;
+package com.arangodb.internal.velocystream;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

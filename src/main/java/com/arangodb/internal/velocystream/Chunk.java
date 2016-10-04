@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net.velocystream;
+package com.arangodb.internal.velocystream;
 
 /**
  * @author Mark - mark at arangodb.com

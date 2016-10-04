@@ -41,9 +41,7 @@ import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
-import com.arangodb.internal.net.Communication;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
@@ -63,6 +61,8 @@ import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -218,7 +218,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Request request;
 		request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
 		final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
-		request.putParameter(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
+		request.putQueryParam(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
 		return request;
 	}
 
@@ -620,7 +620,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Request request = new Request(name(), RequestType.DELETE,
 				createPath(ArangoDBConstants.PATH_API_AQLFUNCTION, name));
 		final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
-		request.putParameter(ArangoDBConstants.GROUP, params.getGroup());
+		request.putQueryParam(ArangoDBConstants.GROUP, params.getGroup());
 		return request;
 	}
 
@@ -658,7 +658,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	private Request getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_AQLFUNCTION);
 		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
-		request.putParameter(ArangoDBConstants.NAMESPACE, params.getNamespace());
+		request.putQueryParam(ArangoDBConstants.NAMESPACE, params.getNamespace());
 		return request;
 	}
 

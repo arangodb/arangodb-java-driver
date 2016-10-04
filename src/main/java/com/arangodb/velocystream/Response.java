@@ -18,52 +18,59 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net.velocystream;
+package com.arangodb.velocystream;
 
-import java.nio.BufferUnderflowException;
 import java.util.Optional;
 
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class Message {
+public class Response {
 
-	private final long id;
-	private final VPackSlice head;
-	private final Optional<VPackSlice> body;
+	private int version = 1;
+	private int type = 2;
+	private int responseCode;
+	@Expose(deserialize = false)
+	private Optional<VPackSlice> body = Optional.empty();
 
-	public Message(final long id, final byte[] chunkBuffer) throws BufferUnderflowException, IndexOutOfBoundsException {
+	public Response() {
 		super();
-		this.id = id;
-		head = new VPackSlice(chunkBuffer);
-		final int headSize = head.getByteSize();
-		if (chunkBuffer.length > headSize) {
-			body = Optional.of(new VPackSlice(chunkBuffer, headSize));
-		} else {
-			body = Optional.empty();
-		}
 	}
 
-	public Message(final long id, final VPackSlice head, final VPackSlice body) {
-		super();
-		this.id = id;
-		this.head = head;
-		this.body = Optional.ofNullable(body);
+	public int getVersion() {
+		return version;
 	}
 
-	public long getId() {
-		return id;
+	public void setVersion(final int version) {
+		this.version = version;
 	}
 
-	public VPackSlice getHead() {
-		return head;
+	public int getType() {
+		return type;
+	}
+
+	public void setType(final int type) {
+		this.type = type;
+	}
+
+	public int getResponseCode() {
+		return responseCode;
+	}
+
+	public void setResponseCode(final int responseCode) {
+		this.responseCode = responseCode;
 	}
 
 	public Optional<VPackSlice> getBody() {
 		return body;
+	}
+
+	public void setBody(final VPackSlice body) {
+		this.body = Optional.ofNullable(body);
 	}
 
 }

@@ -28,15 +28,15 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.internal.net.AuthenticationRequest;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.Response;
+import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.internal.util.NumberUtil;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com

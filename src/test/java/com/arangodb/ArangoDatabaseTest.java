@@ -689,14 +689,17 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void getDocument() {
-		db.createCollection(COLLECTION_NAME);
-		final BaseDocument value = new BaseDocument();
-		value.setKey("123");
-		db.collection(COLLECTION_NAME).insertDocument(value);
-
-		final Optional<BaseDocument> document = db.getDocument(COLLECTION_NAME + "/123", BaseDocument.class);
-		assertThat(document.isPresent(), is(true));
-		assertThat(document.get().getKey(), is("123"));
+		try {
+			db.createCollection(COLLECTION_NAME);
+			final BaseDocument value = new BaseDocument();
+			value.setKey("123");
+			db.collection(COLLECTION_NAME).insertDocument(value);
+			final Optional<BaseDocument> document = db.getDocument(COLLECTION_NAME + "/123", BaseDocument.class);
+			assertThat(document.isPresent(), is(true));
+			assertThat(document.get().getKey(), is("123"));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
 	}
 
 	@Test(expected = ArangoDBException.class)

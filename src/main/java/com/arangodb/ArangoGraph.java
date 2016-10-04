@@ -26,11 +26,11 @@ import java.util.concurrent.CompletableFuture;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import com.arangodb.velocypack.Type;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark - mark at arangodb.com

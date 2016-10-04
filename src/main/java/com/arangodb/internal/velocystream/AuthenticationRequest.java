@@ -18,42 +18,38 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net.velocystream;
+package com.arangodb.internal.velocystream;
+
+import com.arangodb.velocystream.Request;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public enum RequestType {
+public class AuthenticationRequest extends Request {
 
-	DELETE(0),
-	GET(1),
-	POST(2),
-	PUT(3),
-	HEAD(4),
-	PATCH(5),
-	OPTIONS(6),
-	VSTREAM_CRED(7),
-	VSTREAM_REGISTER(8),
-	VSTREAM_STATUS(9),
-	ILLEGAL(10);
+	private final String user;
+	private final String password;
+	private final String encryption;// "plain"
 
-	private final int type;
-
-	private RequestType(final int type) {
-		this.type = type;
+	public AuthenticationRequest(final String user, final String password, final String encryption) {
+		super(null, null, null);
+		this.user = user;
+		this.password = password;
+		this.encryption = encryption;
+		setType(1000);
 	}
 
-	public int getType() {
-		return type;
+	public String getUser() {
+		return user;
 	}
 
-	public static RequestType fromType(final int type) {
-		for (final RequestType rType : RequestType.values()) {
-			if (rType.type == type) {
-				return rType;
-			}
-		}
-		return null;
+	public String getPassword() {
+		return password;
 	}
+
+	public String getEncryption() {
+		return encryption;
+	}
+
 }

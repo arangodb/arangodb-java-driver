@@ -30,14 +30,14 @@ import java.util.regex.Pattern;
 
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
-import com.arangodb.internal.net.Communication;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.Response;
+import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com

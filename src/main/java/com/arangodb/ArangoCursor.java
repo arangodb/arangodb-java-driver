@@ -36,8 +36,8 @@ import com.arangodb.entity.CursorEntity.Extras;
 import com.arangodb.entity.CursorEntity.Stats;
 import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark - mark at arangodb.com

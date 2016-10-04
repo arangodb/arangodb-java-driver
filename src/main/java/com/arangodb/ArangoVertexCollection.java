@@ -28,14 +28,14 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -147,7 +147,7 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name));
 		final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(serialize(value));
 		return request;
 	}
@@ -235,8 +235,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.GET, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
-		request.putMeta(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 
@@ -324,8 +324,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.PUT, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value));
 		return request;
 	}
@@ -425,9 +425,9 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		request = new Request(graph.db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_GHARIAL,
 			graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
-		request.putParameter(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.setBody(serialize(value, true));
 		return request;
 	}
@@ -493,8 +493,8 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		final Request request = new Request(graph.db().name(), RequestType.DELETE, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
 		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
-		request.putParameter(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putMeta(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 

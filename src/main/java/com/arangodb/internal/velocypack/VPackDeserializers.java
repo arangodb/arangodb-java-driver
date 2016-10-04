@@ -26,8 +26,8 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
-import com.arangodb.internal.net.Response;
 import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com

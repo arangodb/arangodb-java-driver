@@ -33,10 +33,8 @@ import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
-import com.arangodb.internal.net.Communication;
-import com.arangodb.internal.net.Request;
-import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.internal.velocypack.VPackConfigure;
+import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserCreateOptions;
@@ -48,6 +46,9 @@ import com.arangodb.velocypack.VPackInstanceCreator;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -577,4 +578,11 @@ public class ArangoDB extends ArangoExecuteable {
 		return request;
 	}
 
+	public Response execute(final Request request) {
+		return executeSync(request, response -> response);
+	}
+
+	public CompletableFuture<Response> executeAsync(final Request request) {
+		return executeAsync(request, response -> response);
+	}
 }

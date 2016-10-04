@@ -18,13 +18,12 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
+package com.arangodb.velocystream;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.arangodb.internal.net.velocystream.RequestType;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
@@ -36,11 +35,11 @@ public class Request {
 
 	private int version = 1;
 	private int type = 1;
-	private String database;
-	private RequestType requestType;
-	private String request;
-	private Map<String, String> parameter;
-	private Map<String, String> meta;
+	private final String database;
+	private final RequestType requestType;
+	private final String request;
+	private Map<String, String> queryParam;
+	private Map<String, String> headerParam;
 	@Expose(serialize = false)
 	private Optional<VPackSlice> body;
 
@@ -50,8 +49,8 @@ public class Request {
 		this.requestType = requestType;
 		this.request = path;
 		body = Optional.empty();
-		parameter = new HashMap<>();
-		meta = new HashMap<>();
+		queryParam = new HashMap<>();
+		headerParam = new HashMap<>();
 	}
 
 	public int getVersion() {
@@ -74,49 +73,37 @@ public class Request {
 		return database;
 	}
 
-	public void setDatabase(final String database) {
-		this.database = database;
-	}
-
 	public RequestType getRequestType() {
 		return requestType;
-	}
-
-	public void setRequestType(final RequestType requestType) {
-		this.requestType = requestType;
 	}
 
 	public String getRequest() {
 		return request;
 	}
 
-	public void setRequest(final String request) {
-		this.request = request;
-	}
-
-	public Map<String, String> getParameter() {
-		if (parameter == null) {
-			parameter = new HashMap<>();
+	public Map<String, String> getQueryParam() {
+		if (queryParam == null) {
+			queryParam = new HashMap<>();
 		}
-		return parameter;
+		return queryParam;
 	}
 
-	public void putParameter(final String key, final Object value) {
+	public void putQueryParam(final String key, final Object value) {
 		if (value != null) {
-			getParameter().put(key, value.toString());
+			getQueryParam().put(key, value.toString());
 		}
 	}
 
-	public Map<String, String> getMeta() {
-		if (meta == null) {
-			meta = new HashMap<>();
+	public Map<String, String> getHeaderParam() {
+		if (headerParam == null) {
+			headerParam = new HashMap<>();
 		}
-		return meta;
+		return headerParam;
 	}
 
-	public void putMeta(final String key, final String value) {
+	public void putHeaderParam(final String key, final String value) {
 		if (value != null) {
-			getMeta().put(key, value);
+			getHeaderParam().put(key, value);
 		}
 	}
 

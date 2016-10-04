@@ -37,6 +37,10 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -243,5 +247,13 @@ public class ArangoDBTest {
 		} catch (final ArangoDBException e) {
 
 		}
+	}
+
+	@Test
+	public void execute() throws VPackException {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final Response response = arangoDB.execute(new Request("_system", RequestType.GET, "/_api/version"));
+		assertThat(response.getBody().isPresent(), is(true));
+		assertThat(response.getBody().get().get("version").isString(), is(true));
 	}
 }

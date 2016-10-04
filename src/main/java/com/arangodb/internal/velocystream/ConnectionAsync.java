@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
+package com.arangodb.internal.velocystream;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -28,11 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.net.ssl.SSLContext;
-
-import com.arangodb.internal.net.velocystream.Chunk;
-import com.arangodb.internal.net.velocystream.ChunkStore;
-import com.arangodb.internal.net.velocystream.Message;
-import com.arangodb.internal.net.velocystream.MessageStore;
 
 /**
  * @author Mark - mark at arangodb.com
