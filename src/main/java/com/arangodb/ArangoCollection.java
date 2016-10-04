@@ -29,8 +29,11 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import com.arangodb.entity.CollectionPropertiesEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionRevisionEntity;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentDeleteEntity;
@@ -63,6 +66,8 @@ import com.arangodb.velocypack.VPackSlice;
  *
  */
 public class ArangoCollection extends ArangoExecuteable {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollection.class);
 
 	private final ArangoDatabase db;
 	private final String name;
@@ -302,8 +307,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String key, final Class<T> type) throws ArangoDBException {
-		return executeSync(getDocumentRequest(key, new DocumentReadOptions()), type);
+	public <T> Optional<T> getDocument(final String key, final Class<T> type) {
+		try {
+			return Optional.ofNullable(executeSync(getDocumentRequest(key, new DocumentReadOptions()), type));
+		} catch (final ArangoDBException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(e.getMessage(), e);
+			}
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -320,9 +332,16 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
+	public <T> Optional<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return executeSync(getDocumentRequest(key, options), type);
+		try {
+			return Optional.ofNullable(executeSync(getDocumentRequest(key, options), type));
+		} catch (final ArangoDBException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(e.getMessage(), e);
+			}
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -336,8 +355,12 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            The type of the document (POJO class, VPackSlice or String for Json)
 	 * @return the document identified by the key
 	 */
-	public <T> CompletableFuture<T> getDocumentAsync(final String key, final Class<T> type) {
-		return executeAsync(getDocumentRequest(key, new DocumentReadOptions()), type);
+	public <T> CompletableFuture<Optional<T>> getDocumentAsync(final String key, final Class<T> type) {
+		final CompletableFuture<Optional<T>> result = new CompletableFuture<>();
+		final CompletableFuture<T> execute = executeAsync(getDocumentRequest(key, new DocumentReadOptions()), type);
+		execute.whenComplete(
+			(response, ex) -> result.complete((response != null) ? Optional.ofNullable(response) : Optional.empty()));
+		return result;
 	}
 
 	/**
@@ -353,11 +376,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return the document identified by the key
 	 */
-	public <T> CompletableFuture<T> getDocumentAsync(
+	public <T> CompletableFuture<Optional<T>> getDocumentAsync(
 		final String key,
 		final Class<T> type,
 		final DocumentReadOptions options) {
-		return executeAsync(getDocumentRequest(key, options), type);
+		final CompletableFuture<Optional<T>> result = new CompletableFuture<>();
+		final CompletableFuture<T> execute = executeAsync(getDocumentRequest(key, options), type);
+		execute.whenComplete(
+			(response, ex) -> result.complete((response != null) ? Optional.ofNullable(response) : Optional.empty()));
+		return result;
 	}
 
 	private Request getDocumentRequest(final String key, final DocumentReadOptions options) {

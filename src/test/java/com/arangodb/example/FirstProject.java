@@ -49,8 +49,8 @@ public class FirstProject {
 
 		// read a document
 		try {
-			final BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
-				BaseDocument.class);
+			final BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName)
+					.getDocument("myKey", BaseDocument.class).get();
 			System.out.println("Key: " + myDocument.getKey());
 			System.out.println("Attribute a: " + myDocument.getAttribute("a"));
 			System.out.println("Attribute b: " + myDocument.getAttribute("b"));
@@ -60,8 +60,8 @@ public class FirstProject {
 
 		// read a document as VPack
 		try {
-			final VPackSlice myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
-				VPackSlice.class);
+			final VPackSlice myDocument = arangoDB.db(dbName).collection(collectionName)
+					.getDocument("myKey", VPackSlice.class).get();
 			System.out.println("Key: " + myDocument.get("_key").getAsString());
 			System.out.println("Attribute a: " + myDocument.get("a").getAsString());
 			System.out.println("Attribute b: " + myDocument.get("b").getAsInt());
@@ -79,8 +79,8 @@ public class FirstProject {
 
 		// read the document again
 		try {
-			final BaseDocument myUpdatedDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
-				BaseDocument.class);
+			final BaseDocument myUpdatedDocument = arangoDB.db(dbName).collection(collectionName)
+					.getDocument("myKey", BaseDocument.class).get();
 			System.out.println("Key: " + myUpdatedDocument.getKey());
 			System.out.println("Attribute a: " + myUpdatedDocument.getAttribute("a"));
 			System.out.println("Attribute b: " + myUpdatedDocument.getAttribute("b"));

@@ -82,8 +82,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		assertThat(vertex, is(notNullValue()));
-		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(vertex.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument document = db.collection(COLLECTION_NAME)
+				.getDocument(vertex.getKey(), BaseDocument.class, null).get();
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}

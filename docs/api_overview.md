@@ -146,19 +146,23 @@ E.g. in the previous example the object was stored as follows:
 
 ## read document (as JavaBean)
 ``` Java
-  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, MyObject.class);
+  MyObject document = arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, MyObject.class).get();
+  document.getName();
+  document.getAge();
   
 ```
 
 ## read document (as VelocyPack)
 ``` Java
-  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, VPackSlice.class);
+  VPackSlice document = arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, VPackSlice.class).get();
+  document.get("name").getAsString();
+  document.get("age").getAsInt();
   
 ```
 
 ## read document (as Json)
 ``` Java
-  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, String.class);
+  arangoDB.db("myDatabase").collection("myCollection").getDocument(myObject.getKey, String.class).get();
   
 ```
 
