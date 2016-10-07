@@ -26,7 +26,7 @@ import com.arangodb.velocypack.ValueType;
  * @author Mark - mark at arangodb.com
  *
  */
-public class VPackValueTypeException extends IllegalStateException {
+public class VPackValueTypeException extends VPackException {
 
 	private static final long serialVersionUID = 8128171173539033177L;
 
