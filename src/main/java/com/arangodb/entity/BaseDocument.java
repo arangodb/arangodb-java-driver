@@ -47,7 +47,13 @@ public class BaseDocument implements Serializable {
 		properties = new HashMap<>();
 	}
 
+	public BaseDocument(final String key) {
+		this();
+		this.key = key;
+	}
+
 	public BaseDocument(final Map<String, Object> properties) {
+		this();
 		final Object tmpId = properties.remove(DocumentField.Type.ID.getSerializeName());
 		if (tmpId != null) {
 			id = tmpId.toString();

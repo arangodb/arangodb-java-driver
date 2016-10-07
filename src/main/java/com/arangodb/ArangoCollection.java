@@ -39,7 +39,9 @@ import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentDeleteEntity;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.DocumentUpdateEntity;
+import com.arangodb.entity.ErrorEntity;
 import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
@@ -197,7 +199,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
+	public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
 			throws ArangoDBException {
 		final DocumentCreateOptions params = new DocumentCreateOptions();
 		return executeSync(insertDocumentsRequest(values, params), insertDocumentsResponseDeserializer(values, params));
@@ -216,7 +218,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentCreateEntity<T>> insertDocuments(
+	public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
 		final Collection<T> values,
 		final DocumentCreateOptions options) throws ArangoDBException {
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
@@ -233,7 +235,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A List of documents (POJO, VPackSlice or String for Json)
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentCreateEntity<T>>> insertDocumentsAsync(final Collection<T> values) {
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsAsync(
+		final Collection<T> values) {
 		final DocumentCreateOptions params = new DocumentCreateOptions();
 		return executeAsync(insertDocumentsRequest(values, params),
 			insertDocumentsResponseDeserializer(values, params));
@@ -251,7 +254,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentCreateEntity<T>>> insertDocumentsAsync(
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsAsync(
 		final Collection<T> values,
 		final DocumentCreateOptions options) {
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
@@ -269,7 +272,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ResponseDeserializer<Collection<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentCreateOptions params) {
 		return response -> {
@@ -280,18 +283,26 @@ public class ArangoCollection extends ArangoExecuteable {
 					type = (Class<T>) first.get().getClass();
 				}
 			}
+			final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
 			final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
+			final Collection<ErrorEntity> errors = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentCreateEntity<T> doc = deserialize(next, DocumentCreateEntity.class);
-				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
-				if (newDoc.isObject()) {
-					doc.setNew(deserialize(newDoc, type));
+				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+					errors.add(deserialize(next, ErrorEntity.class));
+				} else {
+					final DocumentCreateEntity<T> doc = deserialize(next, DocumentCreateEntity.class);
+					final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+					if (newDoc.isObject()) {
+						doc.setNew(deserialize(newDoc, type));
+					}
+					docs.add(doc);
 				}
-				docs.add(doc);
 			}
-			return docs;
+			multiDocument.setDocuments(docs);
+			multiDocument.setErrors(errors);
+			return multiDocument;
 		};
 	}
 
@@ -522,7 +533,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
+	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
 			throws ArangoDBException {
 		final DocumentReplaceOptions params = new DocumentReplaceOptions();
 		return executeSync(replaceDocumentsRequest(values, params),
@@ -542,7 +553,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateEntity<T>> replaceDocuments(
+	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) throws ArangoDBException {
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
@@ -560,7 +571,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A List of documents (POJO, VPackSlice or String for Json)
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> replaceDocumentsAsync(
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsAsync(
 		final Collection<T> values) {
 		final DocumentReplaceOptions params = new DocumentReplaceOptions();
 		return executeAsync(replaceDocumentsRequest(values, params),
@@ -579,7 +590,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> replaceDocumentsAsync(
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsAsync(
 		final Collection<T> values,
 		final DocumentReplaceOptions options) {
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
@@ -600,7 +611,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ResponseDeserializer<Collection<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentReplaceOptions params) {
 		return response -> {
@@ -612,22 +623,30 @@ public class ArangoCollection extends ArangoExecuteable {
 					type = (Class<T>) first.get().getClass();
 				}
 			}
+			final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
 			final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
+			final Collection<ErrorEntity> errors = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
-				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
-				if (newDoc.isObject()) {
-					doc.setNew(deserialize(newDoc, type));
+				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+					errors.add(deserialize(next, ErrorEntity.class));
+				} else {
+					final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
+					final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+					if (newDoc.isObject()) {
+						doc.setNew(deserialize(newDoc, type));
+					}
+					final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+					if (oldDoc.isObject()) {
+						doc.setOld(deserialize(oldDoc, type));
+					}
+					docs.add(doc);
 				}
-				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
-				if (oldDoc.isObject()) {
-					doc.setOld(deserialize(oldDoc, type));
-				}
-				docs.add(doc);
 			}
-			return docs;
+			multiDocument.setDocuments(docs);
+			multiDocument.setErrors(errors);
+			return multiDocument;
 		};
 	}
 
@@ -758,7 +777,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
+	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
 			throws ArangoDBException {
 		final DocumentUpdateOptions params = new DocumentUpdateOptions();
 		return executeSync(updateDocumentsRequest(values, params), updateDocumentsResponseDeserializer(values, params));
@@ -779,7 +798,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentUpdateEntity<T>> updateDocuments(
+	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) throws ArangoDBException {
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
@@ -798,7 +817,8 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            A list of documents (POJO, VPackSlice or String for Json)
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> updateDocumentsAsync(final Collection<T> values) {
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsAsync(
+		final Collection<T> values) {
 		final DocumentUpdateOptions params = new DocumentUpdateOptions();
 		return executeAsync(updateDocumentsRequest(values, params),
 			updateDocumentsResponseDeserializer(values, params));
@@ -818,7 +838,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentUpdateEntity<T>>> updateDocumentsAsync(
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsAsync(
 		final Collection<T> values,
 		final DocumentUpdateOptions options) {
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
@@ -842,7 +862,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ResponseDeserializer<Collection<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentUpdateOptions params) {
 		return response -> {
@@ -854,22 +874,30 @@ public class ArangoCollection extends ArangoExecuteable {
 					type = (Class<T>) first.get().getClass();
 				}
 			}
+			final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
 			final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
+			final Collection<ErrorEntity> errors = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
-				final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
-				if (newDoc.isObject()) {
-					doc.setNew(deserialize(newDoc, type));
+				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+					errors.add(deserialize(next, ErrorEntity.class));
+				} else {
+					final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
+					final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+					if (newDoc.isObject()) {
+						doc.setNew(deserialize(newDoc, type));
+					}
+					final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+					if (oldDoc.isObject()) {
+						doc.setOld(deserialize(oldDoc, type));
+					}
+					docs.add(doc);
 				}
-				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
-				if (oldDoc.isObject()) {
-					doc.setOld(deserialize(oldDoc, type));
-				}
-				docs.add(doc);
 			}
-			return docs;
+			multiDocument.setDocuments(docs);
+			multiDocument.setErrors(errors);
+			return multiDocument;
 		};
 	}
 
@@ -990,7 +1018,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public Collection<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<String> keys)
+	public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<String> keys)
 			throws ArangoDBException {
 		return executeSync(deleteDocumentsRequest(keys, new DocumentDeleteOptions()),
 			deleteDocumentsResponseDeserializer(Void.class));
@@ -1012,7 +1040,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> Collection<DocumentDeleteEntity<T>> deleteDocuments(
+	public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) throws ArangoDBException {
@@ -1032,7 +1060,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @return information about the documents
 	 */
-	public CompletableFuture<Collection<DocumentDeleteEntity<Void>>> deleteDocumentsAsync(
+	public CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocumentsAsync(
 		final Collection<String> keys) {
 		return executeAsync(deleteDocumentsRequest(keys, new DocumentDeleteOptions()),
 			deleteDocumentsResponseDeserializer(Void.class));
@@ -1053,7 +1081,7 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return information about the documents
 	 */
-	public <T> CompletableFuture<Collection<DocumentDeleteEntity<T>>> deleteDocumentsAsync(
+	public <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocumentsAsync(
 		final Collection<String> keys,
 		final Class<T> type,
 		final DocumentDeleteOptions options) {
@@ -1070,21 +1098,29 @@ public class ArangoCollection extends ArangoExecuteable {
 		return request;
 	}
 
-	private <T> ResponseDeserializer<Collection<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
+	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
 		final Class<T> type) {
 		return response -> {
+			final MultiDocumentEntity<DocumentDeleteEntity<T>> multiDocument = new MultiDocumentEntity<>();
 			final Collection<DocumentDeleteEntity<T>> docs = new ArrayList<>();
+			final Collection<ErrorEntity> errors = new ArrayList<>();
 			final VPackSlice body = response.getBody().get();
 			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
 				final VPackSlice next = iterator.next();
-				final DocumentDeleteEntity<T> doc = deserialize(next, DocumentDeleteEntity.class);
-				final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
-				if (oldDoc.isObject()) {
-					doc.setOld(deserialize(oldDoc, type));
+				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+					errors.add(deserialize(next, ErrorEntity.class));
+				} else {
+					final DocumentDeleteEntity<T> doc = deserialize(next, DocumentDeleteEntity.class);
+					final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+					if (oldDoc.isObject()) {
+						doc.setOld(deserialize(oldDoc, type));
+					}
+					docs.add(doc);
 				}
-				docs.add(doc);
 			}
-			return docs;
+			multiDocument.setDocuments(docs);
+			multiDocument.setErrors(errors);
+			return multiDocument;
 		};
 	}
 

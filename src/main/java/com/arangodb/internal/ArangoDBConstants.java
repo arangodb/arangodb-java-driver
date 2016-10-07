@@ -90,4 +90,5 @@ public class ArangoDBConstants {
 	public static final String GRAPHS = "graphs";
 	public static final String VERTEX = "vertex";
 	public static final String EDGE = "edge";
+	public static final String ERROR = "error";
 }
