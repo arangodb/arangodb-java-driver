@@ -57,16 +57,18 @@ public class Request {
 		return version;
 	}
 
-	public void setVersion(final int version) {
+	public Request setVersion(final int version) {
 		this.version = version;
+		return this;
 	}
 
 	public int getType() {
 		return type;
 	}
 
-	public void setType(final int type) {
+	public Request setType(final int type) {
 		this.type = type;
+		return this;
 	}
 
 	public String getDatabase() {
@@ -88,10 +90,11 @@ public class Request {
 		return queryParam;
 	}
 
-	public void putQueryParam(final String key, final Object value) {
+	public Request putQueryParam(final String key, final Object value) {
 		if (value != null) {
 			getQueryParam().put(key, value.toString());
 		}
+		return this;
 	}
 
 	public Map<String, String> getHeaderParam() {
@@ -101,18 +104,20 @@ public class Request {
 		return headerParam;
 	}
 
-	public void putHeaderParam(final String key, final String value) {
+	public Request putHeaderParam(final String key, final String value) {
 		if (value != null) {
 			getHeaderParam().put(key, value);
 		}
+		return this;
 	}
 
 	public Optional<VPackSlice> getBody() {
 		return body;
 	}
 
-	public void setBody(final VPackSlice body) {
+	public Request setBody(final VPackSlice body) {
 		this.body = Optional.ofNullable(body);
+		return this;
 	}
 
 }

@@ -47,6 +47,8 @@ public class ArangoDBConstants {
 	public static final String PATH_API_AQLFUNCTION = "/_api/aqlfunction";
 	public static final String PATH_API_EXPLAIN = "/_api/explain";
 	public static final String PATH_API_QUERY = "/_api/query";
+	public static final String PATH_API_QUERY_CACHE = "/_api/query-cache";
+	public static final String PATH_API_QUERY_CACHE_PROPERTIES = "/_api/query-cache/properties";
 	public static final String PATH_API_TRAVERSAL = "/_api/traversal";
 
 	public static final String ENCRYPTION_PLAIN = "plain";

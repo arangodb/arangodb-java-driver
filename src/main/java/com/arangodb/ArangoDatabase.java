@@ -37,6 +37,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
@@ -157,11 +158,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
-		final Request request;
-		request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION);
-		request.setBody(
+		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION).setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));
-		return request;
 	}
 
 	/**
@@ -353,11 +351,9 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request grantAccessRequest(final String user) {
-		final Request request;
-		request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
-		request.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.RW)));
-		return request;
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
+						.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.RW)));
 	}
 
 	/**
@@ -389,11 +385,9 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request revokeAccessRequest(final String user) {
-		final Request request;
-		request = new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
-		request.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.NONE)));
-		return request;
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
+						.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.NONE)));
 	}
 
 	/**
@@ -440,8 +434,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
-		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR);
-		request.setBody(
+		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
 		final CompletableFuture<CursorEntity> execution = executeAsync(request, CursorEntity.class);
 		return execution.thenApply(result -> {
@@ -494,10 +487,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryExplainOptions options) {
-		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_EXPLAIN);
-		request.setBody(
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_EXPLAIN).setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryExplainOptions(), query, bindVars)));
-		return request;
 	}
 
 	/**
@@ -530,9 +521,103 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request parseQueryRequest(final String query) {
-		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_QUERY);
-		request.setBody(serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
-		return request;
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_QUERY)
+				.setBody(serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
+	}
+
+	/**
+	 * Clears the AQL query cache
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
+	 *      Documentation</a>
+	 * @throws ArangoDBException
+	 */
+	public void clearQueryCache() throws ArangoDBException {
+		executeSync(clearQueryCacheRequest(), Void.class);
+	}
+
+	/**
+	 * Clears the AQL query cache
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
+	 *      Documentation</a>
+	 * @return void
+	 */
+	public CompletableFuture<Void> clearQueryCacheAsync() {
+		return executeAsync(clearQueryCacheRequest(), Void.class);
+	}
+
+	private Request clearQueryCacheRequest() {
+		return new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_QUERY_CACHE);
+	}
+
+	/**
+	 * Returns the global configuration for the AQL query cache
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
+	 *      Documentation</a>
+	 * @return configuration for the AQL query cache
+	 * @throws ArangoDBException
+	 */
+	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException {
+		return executeSync(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
+	}
+
+	/**
+	 * Returns the global configuration for the AQL query cache
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
+	 *      Documentation</a>
+	 * @return configuration for the AQL query cache
+	 */
+	public CompletableFuture<QueryCachePropertiesEntity> getQueryCachePropertiesAsync() {
+		return executeAsync(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
+	}
+
+	private Request getQueryCachePropertiesRequest() {
+		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_CACHE_PROPERTIES);
+	}
+
+	/**
+	 * Changes the configuration for the AQL query cache. Note: changing the properties may invalidate all results in
+	 * the cache.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
+	 *      Documentation</a>
+	 * @param properties
+	 *            properties to be set
+	 * @return current set of properties
+	 * @throws ArangoDBException
+	 */
+	public QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
+			throws ArangoDBException {
+		return executeSync(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
+	}
+
+	/**
+	 * Changes the configuration for the AQL query cache. Note: changing the properties may invalidate all results in
+	 * the cache.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
+	 *      Documentation</a>
+	 * @param properties
+	 *            properties to be set
+	 * @return current set of properties
+	 */
+	public CompletableFuture<QueryCachePropertiesEntity> setQueryCachePropertiesAsync(
+		final QueryCachePropertiesEntity properties) {
+		return executeAsync(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
+	}
+
+	private Request setQueryCachePropertiesRequest(final QueryCachePropertiesEntity properties) {
+		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_CACHE_PROPERTIES)
+				.setBody(serialize(properties));
 	}
 
 	/**
@@ -578,10 +663,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final String name,
 		final String code,
 		final AqlFunctionCreateOptions options) {
-		final Request request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_AQLFUNCTION);
-		request.setBody(
+		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_AQLFUNCTION).setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
-		return request;
 	}
 
 	/**
@@ -751,11 +834,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions,
 		final GraphCreateOptions options) {
-		final Request request;
-		request = new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_GHARIAL);
-		request.setBody(serialize(
+		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_GHARIAL).setBody(serialize(
 			OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name, edgeDefinitions)));
-		return request;
 	}
 
 	private ResponseDeserializer<GraphEntity> createGraphResponseDeserializer() {
@@ -835,10 +915,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request transactionRequest(final String action, final TransactionOptions options) {
-		final Request request;
-		request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRANSACTION);
-		request.setBody(serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
-		return request;
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRANSACTION)
+				.setBody(serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
 	}
 
 	private <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
@@ -932,9 +1010,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	private Request executeTraversalRequest(final TraversalOptions options) {
-		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRAVERSAL);
-		request.setBody(serialize(options != null ? options : new TransactionOptions()));
-		return request;
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRAVERSAL)
+				.setBody(serialize(options != null ? options : new TransactionOptions()));
 	}
 
 	private <E, V> ResponseDeserializer<TraversalEntity<V, E>> executeTraversalResponseDeserializer(

@@ -54,6 +54,8 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
@@ -370,7 +372,28 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
+	public void changeQueryCache() {
+		try {
+			QueryCachePropertiesEntity properties = db.getQueryCacheProperties();
+			assertThat(properties, is(notNullValue()));
+			assertThat(properties.getMode(), is(CacheMode.off));
+			assertThat(properties.getMaxResults(), greaterThan(0L));
+
+			properties.setMode(CacheMode.on);
+			properties = db.setQueryCacheProperties(properties);
+			assertThat(properties, is(notNullValue()));
+			assertThat(properties.getMode(), is(CacheMode.on));
+
+			properties = db.getQueryCacheProperties();
+			assertThat(properties.getMode(), is(CacheMode.on));
+		} finally {
+			final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
+			properties.setMode(CacheMode.off);
+			db.setQueryCacheProperties(properties);
+		}
+	}
+
+	@Test
 	public void queryWithCache() throws InterruptedException {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
@@ -378,7 +401,9 @@ public class ArangoDatabaseTest extends BaseTest {
 				db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
 			}
 
-			// TODO: set query cache property to "on"!
+			final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
+			properties.setMode(CacheMode.on);
+			db.setQueryCacheProperties(properties);
 
 			final ArangoCursor<String> cursor = db.query("FOR t IN db_test FILTER t.age >= 10 SORT t.age RETURN t._id",
 				null, new AqlQueryOptions().cache(true), String.class);
@@ -395,6 +420,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
+			final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
+			properties.setMode(CacheMode.off);
+			db.setQueryCacheProperties(properties);
 		}
 	}
 
