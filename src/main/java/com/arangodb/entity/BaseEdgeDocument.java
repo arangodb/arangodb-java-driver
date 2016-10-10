@@ -41,6 +41,12 @@ public class BaseEdgeDocument extends BaseDocument {
 		super();
 	}
 
+	public BaseEdgeDocument(final String from, final String to) {
+		super();
+		this.from = from;
+		this.to = to;
+	}
+
 	public BaseEdgeDocument(final Map<String, Object> properties) {
 		super(properties);
 		final Object tmpFrom = properties.remove(DocumentField.Type.FROM.getSerializeName());
