@@ -284,7 +284,7 @@ public class ArangoDBTest {
 		final LogEntity logs = arangoDB.getLogs(null);
 		final LogEntity logsUpto = arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING));
 		assertThat(logsUpto, is(notNullValue()));
-		assertThat(logs.getTotalAmount(), greaterThan(logsUpto.getTotalAmount()));
+		assertThat(logs.getTotalAmount() >= logsUpto.getTotalAmount(), is(true));
 		assertThat(logsUpto.getLevel(), not(contains(LogLevel.INFO)));
 	}
 
@@ -294,7 +294,7 @@ public class ArangoDBTest {
 		final LogEntity logs = arangoDB.getLogs(null);
 		final LogEntity logsInfo = arangoDB.getLogs(new LogOptions().level(LogLevel.INFO));
 		assertThat(logsInfo, is(notNullValue()));
-		assertThat(logs.getTotalAmount(), greaterThan(logsInfo.getTotalAmount()));
+		assertThat(logs.getTotalAmount() >= logsInfo.getTotalAmount(), is(true));
 		assertThat(logsInfo.getLevel(), everyItem(is(LogLevel.INFO)));
 	}
 
