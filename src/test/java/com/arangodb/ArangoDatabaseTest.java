@@ -815,4 +815,9 @@ public class ArangoDatabaseTest extends BaseTest {
 	public void getDocumentWrongId() {
 		db.getDocument("123", BaseDocument.class);
 	}
+
+	@Test
+	public void reloadRouting() {
+		db.reloadRouting();
+	}
 }

@@ -54,6 +54,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_QUERY_SLOW = "/_api/query/slow";
 	public static final String PATH_API_TRAVERSAL = "/_api/traversal";
 	public static final String PATH_API_ADMIN_LOG = "/_admin/log";
+	public static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
 
 	public static final String ENCRYPTION_PLAIN = "plain";
 

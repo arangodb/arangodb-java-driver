@@ -1320,4 +1320,32 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final String[] split = id.split("/");
 		return collection(split[0]).getDocumentAsync(split[1], type, options);
 	}
+
+	/**
+	 * Reload the routing table.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
+	 *      Documentation</a>
+	 * @throws ArangoDBException
+	 */
+	public void reloadRouting() throws ArangoDBException {
+		executeSync(reloadRoutingRequest(), Void.class);
+	}
+
+	/**
+	 * Reload the routing table.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
+	 *      Documentation</a>
+	 * @return void
+	 */
+	public CompletableFuture<Void> reloadRoutingAsync() {
+		return executeAsync(reloadRoutingRequest(), Void.class);
+	}
+
+	private Request reloadRoutingRequest() {
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_ADMIN_ROUTING_RELOAD);
+	}
 }
