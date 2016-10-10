@@ -778,6 +778,36 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
+	 * Kills a running query. The query will be terminated at the next cancelation point.
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
+	 *      Documentation</a>
+	 * @param id
+	 *            The id of the query
+	 * @throws ArangoDBException
+	 */
+	public void killQuery(final String id) throws ArangoDBException {
+		executeSync(killQueryRequest(id), Void.class);
+	}
+
+	/**
+	 * Kills a running query. The query will be terminated at the next cancelation point.
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
+	 *      Documentation</a>
+	 * @param id
+	 *            The id of the query
+	 * @return void
+	 */
+	public CompletableFuture<Void> killQueryAsync(final String id) {
+		return executeAsync(killQueryRequest(id), Void.class);
+	}
+
+	private Request killQueryRequest(final String id) {
+		return new Request(name, RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_QUERY, id));
+	}
+
+	/**
 	 * Create a new AQL user function
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API

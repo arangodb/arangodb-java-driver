@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -608,6 +609,22 @@ public class ArangoDatabaseTest extends BaseTest {
 			properties.setSlowQueryThreshold(slowQueryThreshold);
 			db.setQueryTrackingProperties(properties);
 		}
+	}
+
+	@Test
+	public void killQuery() throws InterruptedException, ExecutionException {
+		final CompletableFuture<ArangoCursor<Void>> query = db.queryAsync("return sleep(0.1)", null, null, Void.class);
+		query.whenComplete((r, e) -> {
+			assertThat(r, is(nullValue()));
+			assertThat(e, is(notNullValue()));
+		});
+
+		final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
+		assertThat(currentlyRunningQueries, is(notNullValue()));
+		assertThat(currentlyRunningQueries.size(), is(1));
+
+		final QueryEntity queryEntity = currentlyRunningQueries.stream().findFirst().get();
+		db.killQuery(queryEntity.getId());
 	}
 
 	@Test
