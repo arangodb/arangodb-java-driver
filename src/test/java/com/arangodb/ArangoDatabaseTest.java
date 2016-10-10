@@ -588,6 +588,29 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void getAndClearSlowQueries() throws InterruptedException, ExecutionException {
+		final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties();
+		final Long slowQueryThreshold = properties.getSlowQueryThreshold();
+		try {
+			properties.setSlowQueryThreshold(1L);
+			db.setQueryTrackingProperties(properties);
+
+			db.query("return sleep(1.1)", null, null, Void.class);
+			final Collection<QueryEntity> slowQueries = db.getSlowQueries();
+			assertThat(slowQueries, is(notNullValue()));
+			assertThat(slowQueries.size(), is(1));
+			final QueryEntity queryEntity = slowQueries.stream().findFirst().get();
+			assertThat(queryEntity.getQuery(), is("return sleep(1.1)"));
+
+			db.clearSlowQueries();
+			assertThat(db.getSlowQueries().size(), is(0));
+		} finally {
+			properties.setSlowQueryThreshold(slowQueryThreshold);
+			db.setQueryTrackingProperties(properties);
+		}
+	}
+
+	@Test
 	public void createGetDeleteAqlFunction() {
 		final Collection<AqlFunctionEntity> aqlFunctionsInitial = db.getAqlFunctions(null);
 		assertThat(aqlFunctionsInitial, is(empty()));

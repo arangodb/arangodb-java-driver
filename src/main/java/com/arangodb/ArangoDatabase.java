@@ -719,6 +719,65 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
+	 * Returns a list of slow running AQL queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
+	 *      Documentation</a>
+	 * @return a list of slow running AQL queries
+	 * @throws ArangoDBException
+	 */
+	public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
+		return executeSync(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
+		}.getType());
+	}
+
+	/**
+	 * Returns a list of slow running AQL queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
+	 *      Documentation</a>
+	 * @return a list of slow running AQL queries
+	 */
+	public CompletableFuture<Collection<QueryEntity>> getSlowQueriesAsync() {
+		return executeAsync(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
+		}.getType());
+	}
+
+	private Request getSlowQueriesRequest() {
+		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_SLOW);
+	}
+
+	/**
+	 * Clears the list of slow AQL queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
+	 *      Documentation</a>
+	 * @throws ArangoDBException
+	 */
+	public void clearSlowQueries() throws ArangoDBException {
+		executeSync(clearSlowQueriesRequest(), Void.class);
+	}
+
+	/**
+	 * Clears the list of slow AQL queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
+	 *      Documentation</a>
+	 * @return void
+	 */
+	public CompletableFuture<Void> clearSlowQueriesAsync() {
+		return executeAsync(clearSlowQueriesRequest(), Void.class);
+	}
+
+	private Request clearSlowQueriesRequest() {
+		return new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_QUERY_SLOW);
+	}
+
+	/**
 	 * Create a new AQL user function
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
