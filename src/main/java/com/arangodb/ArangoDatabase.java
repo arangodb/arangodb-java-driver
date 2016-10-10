@@ -38,6 +38,8 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.entity.QueryEntity;
+import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
@@ -618,6 +620,102 @@ public class ArangoDatabase extends ArangoExecuteable {
 	private Request setQueryCachePropertiesRequest(final QueryCachePropertiesEntity properties) {
 		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_CACHE_PROPERTIES)
 				.setBody(serialize(properties));
+	}
+
+	/**
+	 * Returns the configuration for the AQL query tracking
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
+	 *      Documentation</a>
+	 * @return configuration for the AQL query tracking
+	 * @throws ArangoDBException
+	 */
+	public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException {
+		return executeSync(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
+	}
+
+	/**
+	 * Returns the configuration for the AQL query tracking
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
+	 *      Documentation</a>
+	 * @return configuration for the AQL query tracking
+	 */
+	public CompletableFuture<QueryTrackingPropertiesEntity> getQueryTrackingPropertiesAsync() {
+		return executeAsync(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
+	}
+
+	private Request getQueryTrackingPropertiesRequest() {
+		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_PROPERTIES);
+	}
+
+	/**
+	 * Changes the configuration for the AQL query tracking
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
+	 *      Documentation</a>
+	 * @param properties
+	 *            properties to be set
+	 * @return current set of properties
+	 * @throws ArangoDBException
+	 */
+	public QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
+			throws ArangoDBException {
+		return executeSync(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
+	}
+
+	/**
+	 * Changes the configuration for the AQL query tracking
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
+	 *      Documentation</a>
+	 * @param properties
+	 *            properties to be set
+	 * @return current set of properties
+	 */
+	public CompletableFuture<QueryTrackingPropertiesEntity> setQueryTrackingPropertiesAsync(
+		final QueryTrackingPropertiesEntity properties) {
+		return executeAsync(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
+	}
+
+	private Request setQueryTrackingPropertiesRequest(final QueryTrackingPropertiesEntity properties) {
+		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_PROPERTIES)
+				.setBody(serialize(properties));
+	}
+
+	/**
+	 * Returns a list of currently running AQL queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
+	 *      Documentation</a>
+	 * @return a list of currently running AQL queries
+	 * @throws ArangoDBException
+	 */
+	public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
+		return executeSync(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
+		}.getType());
+	}
+
+	/**
+	 * Returns a list of currently running AQL queries
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
+	 *      Documentation</a>
+	 * @return a list of currently running AQL queries
+	 */
+	public CompletableFuture<Collection<QueryEntity>> getCurrentlyRunningQueriesAsync() {
+		return executeAsync(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
+		}.getType());
+	}
+
+	private Request getCurrentlyRunningQueriesRequest() {
+		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_CURRENT);
 	}
 
 	/**

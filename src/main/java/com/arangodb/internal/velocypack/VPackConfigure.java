@@ -20,6 +20,8 @@
 
 package com.arangodb.internal.velocypack;
 
+import java.util.Date;
+
 import org.json.simple.JSONValue;
 
 import com.arangodb.entity.BaseDocument;
@@ -27,6 +29,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
+import com.arangodb.entity.QueryEntity;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
@@ -99,6 +102,7 @@ public class VPackConfigure {
 		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
 		builder.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
 		builder.registerDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
+		builder.registerDeserializer(QueryEntity.PROPERTY_STARTED, Date.class, VPackDeserializers.DATE_STRING);
 	}
 
 }

@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -56,6 +58,8 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
+import com.arangodb.entity.QueryEntity;
+import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
@@ -427,6 +431,29 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void changeQueryTrackingProperties() {
+		try {
+			QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties();
+			assertThat(properties, is(notNullValue()));
+			assertThat(properties.getEnabled(), is(true));
+			assertThat(properties.getTrackSlowQueries(), is(true));
+			assertThat(properties.getMaxQueryStringLength(), greaterThan(0L));
+			assertThat(properties.getMaxSlowQueries(), greaterThan(0L));
+			assertThat(properties.getSlowQueryThreshold(), greaterThan(0L));
+			properties.setEnabled(false);
+			properties = db.setQueryTrackingProperties(properties);
+			assertThat(properties, is(notNullValue()));
+			assertThat(properties.getEnabled(), is(false));
+			properties = db.getQueryTrackingProperties();
+			assertThat(properties.getEnabled(), is(false));
+		} finally {
+			final QueryTrackingPropertiesEntity properties = new QueryTrackingPropertiesEntity();
+			properties.setEnabled(true);
+			db.setQueryTrackingProperties(properties);
+		}
+	}
+
+	@Test
 	public void queryWithBindVars() throws InterruptedException {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
@@ -544,6 +571,20 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(return_.getSubNodes().get().stream().findFirst().get().getType(), is("reference"));
 		assertThat(return_.getSubNodes().get().stream().findFirst().get().getName().isPresent(), is(true));
 		assertThat(return_.getSubNodes().get().stream().findFirst().get().getName().get(), is("i"));
+	}
+
+	@Test
+	public void getCurrentlyRunningQueries() throws InterruptedException, ExecutionException {
+		final CompletableFuture<ArangoCursor<Void>> query = db.queryAsync("return sleep(0.1)", null, null, Void.class);
+		try {
+			final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
+			assertThat(currentlyRunningQueries, is(notNullValue()));
+			assertThat(currentlyRunningQueries.size(), is(1));
+			final QueryEntity queryEntity = currentlyRunningQueries.stream().findFirst().get();
+			assertThat(queryEntity.getQuery(), is("return sleep(0.1)"));
+		} finally {
+			query.get();
+		}
 	}
 
 	@Test

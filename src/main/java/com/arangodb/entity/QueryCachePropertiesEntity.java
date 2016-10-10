@@ -40,6 +40,9 @@ public class QueryCachePropertiesEntity {
 		super();
 	}
 
+	/**
+	 * @return the mode the AQL query cache operates in. The mode is one of the following values: off, on or demand
+	 */
 	public CacheMode getMode() {
 		return mode;
 	}
@@ -52,6 +55,9 @@ public class QueryCachePropertiesEntity {
 		this.mode = mode;
 	}
 
+	/**
+	 * @return the maximum number of query results that will be stored per database-specific cache
+	 */
 	public Long getMaxResults() {
 		return maxResults;
 	}

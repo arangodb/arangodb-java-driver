@@ -20,7 +20,13 @@
 
 package com.arangodb.internal.velocypack;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
@@ -34,6 +40,9 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class VPackDeserializers {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(VPackDeserializers.class);
+	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	public static final VPackDeserializer<Response> RESPONSE = (parent, vpack, context) -> {
 		final Response response = new Response();
@@ -61,4 +70,14 @@ public class VPackDeserializers {
 		vpack,
 		context) -> new BaseEdgeDocument(context.deserialize(vpack, Map.class));
 
+	public static final VPackDeserializer<Date> DATE_STRING = (parent, vpack, context) -> {
+		try {
+			return new SimpleDateFormat(DATE_TIME_FORMAT).parse(vpack.getAsString());
+		} catch (final ParseException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug("got ParseException for date string: " + vpack.getAsString());
+			}
+		}
+		return null;
+	};
 }
