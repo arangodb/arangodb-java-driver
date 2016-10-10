@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.net.ssl.SSLContext;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
@@ -36,6 +37,7 @@ import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.model.DBCreateOptions;
+import com.arangodb.model.LogOptions;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -585,4 +587,46 @@ public class ArangoDB extends ArangoExecuteable {
 	public CompletableFuture<Response> executeAsync(final Request request) {
 		return executeAsync(request, response -> response);
 	}
+
+	/**
+	 * Returns fatal, error, warning or info log messages from the server's global log.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the log messages
+	 * @throws ArangoDBException
+	 */
+	public LogEntity getLogs(final LogOptions options) throws ArangoDBException {
+		return executeSync(getLogsRequest(options), LogEntity.class);
+	}
+
+	/**
+	 * Returns fatal, error, warning or info log messages from the server's global log.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the log messages
+	 */
+	public CompletableFuture<LogEntity> getLogsAsync(final LogOptions options) {
+		return executeAsync(getLogsRequest(options), LogEntity.class);
+	}
+
+	private Request getLogsRequest(final LogOptions options) {
+		final LogOptions params = options != null ? options : new LogOptions();
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ADMIN_LOG)
+				.putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
+				.putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
+				.putQueryParam(LogOptions.PROPERTY_START, params.getStart())
+				.putQueryParam(LogOptions.PROPERTY_SIZE, params.getSize())
+				.putQueryParam(LogOptions.PROPERTY_OFFSET, params.getOffset())
+				.putQueryParam(LogOptions.PROPERTY_SEARCH, params.getSearch())
+				.putQueryParam(LogOptions.PROPERTY_SORT, params.getSort());
+	}
+
 }

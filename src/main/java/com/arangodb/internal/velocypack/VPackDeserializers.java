@@ -32,6 +32,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.LogLevel;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocystream.Response;
 
@@ -80,4 +81,7 @@ public class VPackDeserializers {
 		}
 		return null;
 	};
+
+	public static final VPackDeserializer<LogLevel> LOG_LEVEL = (parent, vpack, context) -> LogLevel
+			.fromLevel(vpack.getAsInt());
 }

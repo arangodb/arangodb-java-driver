@@ -21,8 +21,13 @@
 package com.arangodb;
 
 import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -34,7 +39,11 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.UserEntity;
+import com.arangodb.model.LogOptions;
+import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
@@ -256,4 +265,100 @@ public class ArangoDBTest {
 		assertThat(response.getBody().isPresent(), is(true));
 		assertThat(response.getBody().get().get("version").isString(), is(true));
 	}
+
+	@Test
+	public void getLogs() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		assertThat(logs, is(notNullValue()));
+		assertThat(logs.getTotalAmount(), greaterThan(0L));
+		assertThat((long) logs.getLid().size(), is(logs.getTotalAmount()));
+		assertThat((long) logs.getLevel().size(), is(logs.getTotalAmount()));
+		assertThat((long) logs.getTimestamp().size(), is(logs.getTotalAmount()));
+		assertThat((long) logs.getText().size(), is(logs.getTotalAmount()));
+	}
+
+	@Test
+	public void getLogsUpto() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		final LogEntity logsUpto = arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING));
+		assertThat(logsUpto, is(notNullValue()));
+		assertThat(logs.getTotalAmount(), greaterThan(logsUpto.getTotalAmount()));
+		assertThat(logsUpto.getLevel(), not(contains(LogLevel.INFO)));
+	}
+
+	@Test
+	public void getLogsLevel() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		final LogEntity logsInfo = arangoDB.getLogs(new LogOptions().level(LogLevel.INFO));
+		assertThat(logsInfo, is(notNullValue()));
+		assertThat(logs.getTotalAmount(), greaterThan(logsInfo.getTotalAmount()));
+		assertThat(logsInfo.getLevel(), everyItem(is(LogLevel.INFO)));
+	}
+
+	@Test
+	public void getLogsStart() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		assertThat(logs.getLid(), not(empty()));
+		final LogEntity logsStart = arangoDB.getLogs(new LogOptions().start(logs.getLid().get(0) + 1));
+		assertThat(logsStart, is(notNullValue()));
+		assertThat(logsStart.getLid(), not(contains(logs.getLid().get(0))));
+	}
+
+	@Test
+	public void getLogsSize() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		assertThat(logs.getLid().size(), greaterThan(0));
+		final LogEntity logsSize = arangoDB.getLogs(new LogOptions().size(logs.getLid().size() - 1));
+		assertThat(logsSize, is(notNullValue()));
+		assertThat(logsSize.getLid().size(), is(logs.getLid().size() - 1));
+	}
+
+	@Test
+	public void getLogsOffset() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		assertThat(logs.getTotalAmount(), greaterThan(0L));
+		final LogEntity logsOffset = arangoDB.getLogs(new LogOptions().offset((int) (logs.getTotalAmount() - 1)));
+		assertThat(logsOffset, is(notNullValue()));
+		assertThat(logsOffset.getLid().size(), is(1));
+	}
+
+	@Test
+	public void getLogsSearch() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(null);
+		final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB));
+		assertThat(logsSearch, is(notNullValue()));
+		assertThat(logs.getTotalAmount(), greaterThan(logsSearch.getTotalAmount()));
+	}
+
+	@Test
+	public void getLogsSortAsc() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.asc));
+		assertThat(logs, is(notNullValue()));
+		long lastId = -1;
+		for (final Long id : logs.getLid()) {
+			assertThat(id, greaterThan(lastId));
+			lastId = id;
+		}
+	}
+
+	@Test
+	public void getLogsSortDesc() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.desc));
+		assertThat(logs, is(notNullValue()));
+		long lastId = Long.MAX_VALUE;
+		for (final Long id : logs.getLid()) {
+			assertThat(lastId, greaterThan(id));
+			lastId = id;
+		}
+	}
+
 }

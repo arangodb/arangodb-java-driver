@@ -29,6 +29,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
+import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.velocystream.AuthenticationRequest;
@@ -96,6 +97,7 @@ public class VPackConfigure {
 		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
 		builder.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
 		builder.registerSerializer(TraversalOptions.Order.class, VPackSerializers.TRAVERSAL_ORDER);
+		builder.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
 
 		builder.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
@@ -103,6 +105,7 @@ public class VPackConfigure {
 		builder.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
 		builder.registerDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
 		builder.registerDeserializer(QueryEntity.PROPERTY_STARTED, Date.class, VPackDeserializers.DATE_STRING);
+		builder.registerDeserializer(LogLevel.class, VPackDeserializers.LOG_LEVEL);
 	}
 
 }

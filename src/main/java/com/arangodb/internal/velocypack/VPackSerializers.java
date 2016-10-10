@@ -28,6 +28,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
+import com.arangodb.entity.LogLevel;
 import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPackSerializer;
@@ -107,4 +108,7 @@ public class VPackSerializers {
 			builder.add(attribute, value.name());
 		}
 	};
+
+	public static final VPackSerializer<LogLevel> LOG_LEVEL = (builder, attribute, value, context) -> builder
+			.add(attribute, value.getLevel());
 }
