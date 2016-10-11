@@ -7,6 +7,7 @@
 3.0: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.0)](https://travis-ci.org/arangodb/arangodb-java-driver) 
 3.1: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=3.1)](https://travis-ci.org/arangodb/arangodb-java-driver) 
 4.0: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=4.0)](https://travis-ci.org/arangodb/arangodb-java-driver) 
+master: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-driver.svg?branch=master)](https://travis-ci.org/arangodb/arangodb-java-driver)
 
 ## Supported versions
 
