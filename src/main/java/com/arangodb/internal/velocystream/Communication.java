@@ -50,7 +50,7 @@ import com.arangodb.velocystream.Response;
  */
 public class Communication {
 
-	private static final int ERROR_STATUS = 400;
+	private static final int ERROR_STATUS = 300;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
