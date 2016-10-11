@@ -28,15 +28,12 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.arangodb.ArangoCursor;
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.example.ExampleBase;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -45,31 +42,11 @@ import com.arangodb.velocypack.exception.VPackException;
  * @author Mark - mark at arangodb.com
  *
  */
-public class AqlQueryWithSpecialReturnTypesExample {
-
-	private static final String DB_NAME = "document_example_db";
-	private static final String COLLECTION_NAME = "document_example_collection";
-
-	private static ArangoDB arangoDB;
-	private static ArangoDatabase db;
+public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 
 	@BeforeClass
-	public static void setUp() {
-		arangoDB = new ArangoDB.Builder().build();
-		try {
-			arangoDB.db(DB_NAME).drop();
-		} catch (final ArangoDBException e) {
-		}
-		arangoDB.createDatabase(DB_NAME);
-		db = arangoDB.db(DB_NAME);
-		db.createCollection(COLLECTION_NAME);
+	public static void before() {
 		createExamples();
-	}
-
-	@AfterClass
-	public static void tearDown() {
-		db.drop();
-		arangoDB.shutdown();
 	}
 
 	public enum Gender {

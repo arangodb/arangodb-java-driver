@@ -69,6 +69,11 @@ public class AQLActorsAndMoviesExample {
 		arangoDB.shutdown();
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-movie1-or-movie2">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void allActorsActsInMovie1or2() {
 		final ArangoCursor<String> cursor = db.query(
@@ -78,6 +83,11 @@ public class AQLActorsAndMoviesExample {
 			hasItems("actors/Keanu", "actors/Hugo", "actors/Emil", "actors/Carrie", "actors/Laurence"));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-movie1-or-movie2">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void allActorsActsInMovie1or2UnionDistinct() {
 		final ArangoCursor<String> cursor = db.query(
@@ -87,6 +97,11 @@ public class AQLActorsAndMoviesExample {
 			"actors/Keanu", "actors/Al", "actors/Charlize"));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-both-movie1-and-movie2-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void allActorsActsInMovie1and2() {
 		final ArangoCursor<String> cursor = db.query(
@@ -95,6 +110,11 @@ public class AQLActorsAndMoviesExample {
 		assertThat(cursor.asListRemaining(), hasItems("actors/Keanu"));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-common-movies-between-actor1-and-actor2-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void allMoviesBetweenActor1andActor2() {
 		final ArangoCursor<String> cursor = db.query(
@@ -104,6 +124,11 @@ public class AQLActorsAndMoviesExample {
 			hasItems("movies/TheMatrixRevolutions", "movies/TheMatrixReloaded", "movies/TheMatrix"));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-3-or-more-movies-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void allActorsWhoActedIn3orMoreMovies() {
 		final ArangoCursor<Actor> cursor = db.query(
@@ -115,6 +140,11 @@ public class AQLActorsAndMoviesExample {
 				new Actor("actors/TomC", 3), new Actor("actors/TomH", 3)));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-movies-where-exactly-6-actors-acted-in-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void allMoviesWhereExactly6ActorsActedIn() {
 		final ArangoCursor<String> cursor = db.query(
@@ -124,6 +154,11 @@ public class AQLActorsAndMoviesExample {
 			hasItems("movies/SleeplessInSeattle", "movies/TopGun", "movies/YouveGotMail"));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#the-number-of-actors-by-movie-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void theNumberOfActorsByMovie() {
 		final ArangoCursor<Movie> cursor = db.query(
@@ -140,6 +175,11 @@ public class AQLActorsAndMoviesExample {
 				new Movie("movies/YouveGotMail", 6)));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#the-number-of-movies-by-actor-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void theNumberOfMoviesByActor() {
 		final ArangoCursor<Actor> cursor = db.query(
@@ -167,6 +207,11 @@ public class AQLActorsAndMoviesExample {
 				new Actor("actors/WernerH", 1), new Actor("actors/WilW", 1)));
 	}
 
+	/**
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#the-number-of-movies-acted-in-between-2005-and-2010-by-actor-">AQL
+	 *      Example Queries on an Actors and Movies Database</a>
+	 */
 	@Test
 	public void theNumberOfMoviesActedInBetween2005and2010byActor() {
 		final ArangoCursor<Actor> cursor = db.query(
