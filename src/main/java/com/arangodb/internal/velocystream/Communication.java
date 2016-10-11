@@ -50,7 +50,7 @@ import com.arangodb.velocystream.Response;
  */
 public class Communication {
 
-	private static final int SPARTA = 300;
+	private static final int ERROR_STATUS = 400;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
@@ -134,8 +134,7 @@ public class Communication {
 		this.password = Optional.ofNullable(password);
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
-		this.chunksize = Optional.ofNullable(chunksize)
-				.orElse(ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE);
+		this.chunksize = Optional.ofNullable(chunksize).orElse(ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE);
 		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout)
 				.useSsl(useSsl).sslContext(sslContext).build();
 		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).useSsl(useSsl)
@@ -197,7 +196,7 @@ public class Communication {
 
 	private void checkError(final Response response) throws ArangoDBException {
 		try {
-			if (response.getResponseCode() >= SPARTA) {
+			if (response.getResponseCode() >= ERROR_STATUS) {
 				if (response.getBody().isPresent()) {
 					throw new ArangoDBException(createErrorMessage(response));
 				} else {
