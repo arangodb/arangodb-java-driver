@@ -154,16 +154,16 @@
 				</executions>
 			</plugin>
 
-<!-- 			<plugin> -->
-<!-- 				<artifactId>maven-surefire-plugin</artifactId> -->
-<!-- 				<version>2.19.1</version> -->
-<!-- 				<configuration> -->
-<!-- 					<forkCount>0</forkCount> -->
-<!-- 					<includes> -->
-<!-- 						<include>com/arangodb/ArangoTestSuite.java</include> -->
-<!-- 					</includes> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*Example.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
