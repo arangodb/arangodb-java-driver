@@ -1,0 +1,7 @@
+com.arangodb
+com.arangodb.annotations
+com.arangodb.entity
+com.arangodb.entity.marker
+com.arangodb.http
+com.arangodb.impl
+com.arangodb.util
