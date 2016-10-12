@@ -27,6 +27,7 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -3210,6 +3211,7 @@ public class VPackSerializeDeserializeTest {
 		private java.util.Date utilDate = new Date(1474988621);
 		private java.sql.Date sqlDate = new java.sql.Date(1474988621);
 		private java.sql.Timestamp timestamp = new java.sql.Timestamp(1474988621);
+		private Instant instant = Instant.ofEpochMilli(1474988621);
 
 		public java.util.Date getUtilDate() {
 			return utilDate;
@@ -3235,6 +3237,14 @@ public class VPackSerializeDeserializeTest {
 			this.timestamp = timestamp;
 		}
 
+		public Instant getInstant() {
+			return instant;
+		}
+
+		public void setInstant(final Instant instant) {
+			this.instant = instant;
+		}
+
 	}
 
 	@Test
@@ -3254,6 +3264,10 @@ public class VPackSerializeDeserializeTest {
 			assertThat(vpack.get("timestamp").isDate(), is(true));
 			assertThat(vpack.get("timestamp").getAsSQLTimestamp(), is(new java.sql.Timestamp(1474988621)));
 		}
+		{
+			assertThat(vpack.get("instant").isDate(), is(true));
+			assertThat(vpack.get("instant").getAsInstant(), is(Instant.ofEpochMilli(1474988621)));
+		}
 	}
 
 	@Test
@@ -3263,6 +3277,7 @@ public class VPackSerializeDeserializeTest {
 		builder.add("utilDate", new Date(1475062216));
 		builder.add("sqlDate", new java.sql.Date(1475062216));
 		builder.add("timestamp", new java.sql.Timestamp(1475062216));
+		builder.add("instant", Instant.ofEpochMilli(1475062216));
 		builder.close();
 
 		final TestEntityDate entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityDate.class);
@@ -3270,6 +3285,7 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.utilDate, is(new Date(1475062216)));
 		assertThat(entity.sqlDate, is(new java.sql.Date(1475062216)));
 		assertThat(entity.timestamp, is(new java.sql.Timestamp(1475062216)));
+		assertThat(entity.instant, is(Instant.ofEpochMilli(1475062216)));
 	}
 
 }

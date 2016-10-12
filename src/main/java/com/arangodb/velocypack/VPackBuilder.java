@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -138,6 +139,9 @@ public class VPackBuilder {
 	};
 	private static final Appender<Timestamp> SQL_TIMESTAMP = (builder, value) -> {
 		builder.appendSQLTimestamp(value);
+	};
+	private static final Appender<Instant> INSTANT = (builder, value) -> {
+		builder.appendInstant(value);
 	};
 	private static final Appender<String> STRING = (builder, value) -> {
 		builder.appendString(value);
@@ -269,6 +273,10 @@ public class VPackBuilder {
 		return addInternal(SQL_TIMESTAMP, value);
 	}
 
+	public VPackBuilder add(final Instant value) throws VPackBuilderException {
+		return addInternal(INSTANT, value);
+	}
+
 	public VPackBuilder add(final String value) throws VPackBuilderException {
 		return addInternal(STRING, value);
 	}
@@ -354,6 +362,10 @@ public class VPackBuilder {
 
 	public VPackBuilder add(final String attribute, final java.sql.Timestamp value) throws VPackBuilderException {
 		return addInternal(attribute, SQL_TIMESTAMP, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Instant value) throws VPackBuilderException {
+		return addInternal(attribute, INSTANT, value);
 	}
 
 	public VPackBuilder add(final String attribute, final byte[] value) throws VPackBuilderException {
@@ -554,6 +566,11 @@ public class VPackBuilder {
 	private void appendSQLTimestamp(final Timestamp value) {
 		add((byte) 0x1c);
 		append(value.getTime(), Long.BYTES);
+	}
+
+	private void appendInstant(final Instant value) {
+		add((byte) 0x1c);
+		append(value.toEpochMilli(), Long.BYTES);
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {

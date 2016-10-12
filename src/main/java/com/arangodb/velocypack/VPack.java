@@ -26,6 +26,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,6 +113,7 @@ public class VPack {
 			serializers.put(Date.class, VPackSerializers.DATE);
 			serializers.put(java.sql.Date.class, VPackSerializers.SQL_DATE);
 			serializers.put(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
+			serializers.put(Instant.class, VPackSerializers.INSTANT);
 			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
@@ -135,6 +137,7 @@ public class VPack {
 			deserializers.put(Date.class, VPackDeserializers.DATE);
 			deserializers.put(java.sql.Date.class, VPackDeserializers.SQL_DATE);
 			deserializers.put(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
+			deserializers.put(Instant.class, VPackDeserializers.INSTANT);
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 		}
 

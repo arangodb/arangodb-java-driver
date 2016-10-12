@@ -22,6 +22,7 @@ package com.arangodb.velocypack.internal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Date;
 
 import com.arangodb.velocypack.VPackDeserializer;
@@ -52,6 +53,7 @@ public class VPackDeserializers {
 	public static final VPackDeserializer<java.sql.Date> SQL_DATE = (parent, vpack, context) -> vpack.getAsSQLDate();
 	public static final VPackDeserializer<java.sql.Timestamp> SQL_TIMESTAMP = (parent, vpack, context) -> vpack
 			.getAsSQLTimestamp();
+	public static final VPackDeserializer<Instant> INSTANT = (parent, vpack, context) -> vpack.getAsInstant();
 	public static final VPackDeserializer<VPackSlice> VPACK = (parent, vpack, context) -> vpack;
 
 }

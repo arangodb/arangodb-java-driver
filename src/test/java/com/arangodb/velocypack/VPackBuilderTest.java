@@ -26,6 +26,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Date;
 
 import org.junit.Test;
@@ -277,6 +278,17 @@ public class VPackBuilderTest {
 		final VPackSlice slice = builder.slice();
 		assertThat(slice.isDate(), is(true));
 		assertThat(slice.getAsSQLTimestamp(), is(timestamp));
+	}
+
+	@Test
+	public void addInstant() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		final Instant now = Instant.now();
+		builder.add(now);
+
+		final VPackSlice slice = builder.slice();
+		assertThat(slice.isDate(), is(true));
+		assertThat(slice.getAsInstant(), is(now));
 	}
 
 	@Test

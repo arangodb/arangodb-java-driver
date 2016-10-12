@@ -22,6 +22,7 @@ package com.arangodb.velocypack.internal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Date;
 
 import com.arangodb.velocypack.VPackSerializer;
@@ -61,6 +62,8 @@ public class VPackSerializers {
 			.add(attribute, value);
 	public static VPackSerializer<java.sql.Timestamp> SQL_TIMESTAMP = (builder, attribute, value, context) -> builder
 			.add(attribute, value);
+	public static VPackSerializer<Instant> INSTANT = (builder, attribute, value, context) -> builder.add(attribute,
+		value);
 	public static VPackSerializer<VPackSlice> VPACK = (builder, attribute, value, context) -> builder.add(attribute,
 		value);
 }
