@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -87,7 +86,7 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(doc.getId(), is(notNullValue()));
 		assertThat(doc.getKey(), is(notNullValue()));
 		assertThat(doc.getRev(), is(notNullValue()));
-		assertThat(doc.getNew().isPresent(), is(false));
+		assertThat(doc.getNew(), is(nullValue()));
 		assertThat(doc.getId(), is(COLLECTION_NAME + "/" + doc.getKey()));
 	}
 
@@ -101,7 +100,7 @@ public class ArangoCollectionTest extends BaseTest {
 			assertThat(doc.getId(), is(notNullValue()));
 			assertThat(doc.getKey(), is(notNullValue()));
 			assertThat(doc.getRev(), is(notNullValue()));
-			assertThat(doc.getNew().isPresent(), is(false));
+			assertThat(doc.getNew(), is(nullValue()));
 		});
 		f.get();
 	}
@@ -115,7 +114,7 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(doc.getId(), is(notNullValue()));
 		assertThat(doc.getKey(), is(notNullValue()));
 		assertThat(doc.getRev(), is(notNullValue()));
-		assertThat(doc.getNew().isPresent(), is(true));
+		assertThat(doc.getNew(), is(notNullValue()));
 	}
 
 	@Test
@@ -127,7 +126,7 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(doc.getId(), is(notNullValue()));
 		assertThat(doc.getKey(), is(notNullValue()));
 		assertThat(doc.getRev(), is(notNullValue()));
-		assertThat(doc.getNew().isPresent(), is(false));
+		assertThat(doc.getNew(), is(nullValue()));
 	}
 
 	@Test
@@ -145,8 +144,8 @@ public class ArangoCollectionTest extends BaseTest {
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
@@ -157,8 +156,8 @@ public class ArangoCollectionTest extends BaseTest {
 				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(createResult.getRev());
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, options).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, options);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
@@ -169,9 +168,9 @@ public class ArangoCollectionTest extends BaseTest {
 				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
-		final Optional<BaseDocument> document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
 			BaseDocument.class, options);
-		assertThat(document.isPresent(), is(false));
+		assertThat(document, is(nullValue()));
 	}
 
 	@Test
@@ -180,8 +179,8 @@ public class ArangoCollectionTest extends BaseTest {
 				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, options).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, options);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
 	}
@@ -192,23 +191,23 @@ public class ArangoCollectionTest extends BaseTest {
 				.insertDocument(new BaseDocument(), null);
 		assertThat(createResult.getKey(), is(notNullValue()));
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(createResult.getRev());
-		final Optional<BaseDocument> document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
 			BaseDocument.class, options);
-		assertThat(document.isPresent(), is(false));
+		assertThat(document, is(nullValue()));
 	}
 
 	@Test
 	public void getDocumentAsJson() {
 		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
-		final String readResult = db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null).get();
+		final String readResult = db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null);
 		assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
 		assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
 	}
 
 	@Test
 	public void getDocumentNotFound() {
-		final Optional<BaseDocument> document = db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class);
-		assertThat(document.isPresent(), is(false));
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class);
+		assertThat(document, is(nullValue()));
 	}
 
 	@Test(expected = ArangoDBException.class)
@@ -219,9 +218,9 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void getDocumentAsyncNotFound() {
 		try {
-			final Optional<BaseDocument> document = db.collection(COLLECTION_NAME)
-					.getDocumentAsync("no", BaseDocument.class).get();
-			assertThat(document.isPresent(), is(false));
+			final BaseDocument document = db.collection(COLLECTION_NAME).getDocumentAsync("no", BaseDocument.class)
+					.get();
+			assertThat(document, is(nullValue()));
 		} catch (InterruptedException | ExecutionException e) {
 			fail();
 		}
@@ -241,16 +240,18 @@ public class ArangoCollectionTest extends BaseTest {
 				.updateDocument(createResult.getKey(), doc, null);
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
-		assertThat(updateResult.getNew().isPresent(), is(false));
-		assertThat(updateResult.getOld().isPresent(), is(false));
+		assertThat(updateResult.getNew(), is(nullValue()));
+		assertThat(updateResult.getOld(), is(nullValue()));
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getAttribute("a"), is("test1"));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}
@@ -273,11 +274,13 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getAttribute("a"), is("test1"));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}
@@ -314,11 +317,13 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
-		assertThat(updateResult.getNew().isPresent(), is(true));
-		assertThat(updateResult.getNew().get().getKey(), is(createResult.getKey()));
-		assertThat(updateResult.getNew().get().getRevision(), is(not(createResult.getRev())));
-		assertThat(updateResult.getNew().get().getAttribute("a"), is("test1"));
-		assertThat(updateResult.getNew().get().getAttribute("b"), is("test"));
+		assertThat(updateResult.getNew(), is(notNullValue()));
+		assertThat(updateResult.getNew().getKey(), is(createResult.getKey()));
+		assertThat(updateResult.getNew().getRevision(), is(not(createResult.getRev())));
+		assertThat(updateResult.getNew().getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(updateResult.getNew().getAttribute("a")), is("test1"));
+		assertThat(updateResult.getNew().getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(updateResult.getNew().getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -335,11 +340,12 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult, is(notNullValue()));
 		assertThat(updateResult.getId(), is(createResult.getId()));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
-		assertThat(updateResult.getOld().isPresent(), is(true));
-		assertThat(updateResult.getOld().get().getKey(), is(createResult.getKey()));
-		assertThat(updateResult.getOld().get().getRevision(), is(createResult.getRev()));
-		assertThat(updateResult.getOld().get().getAttribute("a"), is("test"));
-		assertThat(updateResult.getOld().get().getProperties().keySet(), not(hasItem("b")));
+		assertThat(updateResult.getOld(), is(notNullValue()));
+		assertThat(updateResult.getOld().getKey(), is(createResult.getKey()));
+		assertThat(updateResult.getOld().getRevision(), is(createResult.getRev()));
+		assertThat(updateResult.getOld().getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(updateResult.getOld().getAttribute("a")), is("test"));
+		assertThat(updateResult.getOld().getProperties().keySet(), not(hasItem("b")));
 	}
 
 	@Test
@@ -357,8 +363,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getProperties().keySet(), hasItem("a"));
 	}
@@ -378,8 +384,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getRevision(), is(notNullValue()));
@@ -406,8 +412,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		final Object aResult = readResult.getAttribute("a");
 		assertThat(aResult, instanceOf(Map.class));
@@ -436,8 +442,8 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
 		assertThat(updateResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		final Object aResult = readResult.getAttribute("a");
 		assertThat(aResult, instanceOf(Map.class));
@@ -474,17 +480,18 @@ public class ArangoCollectionTest extends BaseTest {
 				.replaceDocument(createResult.getKey(), doc, null);
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
-		assertThat(replaceResult.getNew().isPresent(), is(false));
-		assertThat(replaceResult.getOld().isPresent(), is(false));
+		assertThat(replaceResult.getNew(), is(nullValue()));
+		assertThat(replaceResult.getOld(), is(nullValue()));
 		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -503,12 +510,13 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
 
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(createResult.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -558,11 +566,12 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
-		assertThat(replaceResult.getNew().isPresent(), is(true));
-		assertThat(replaceResult.getNew().get().getKey(), is(createResult.getKey()));
-		assertThat(replaceResult.getNew().get().getRevision(), is(not(createResult.getRev())));
-		assertThat(replaceResult.getNew().get().getProperties().keySet(), not(hasItem("a")));
-		assertThat(replaceResult.getNew().get().getAttribute("b"), is("test"));
+		assertThat(replaceResult.getNew(), is(notNullValue()));
+		assertThat(replaceResult.getNew().getKey(), is(createResult.getKey()));
+		assertThat(replaceResult.getNew().getRevision(), is(not(createResult.getRev())));
+		assertThat(replaceResult.getNew().getProperties().keySet(), not(hasItem("a")));
+		assertThat(replaceResult.getNew().getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(replaceResult.getNew().getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -579,11 +588,12 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(replaceResult, is(notNullValue()));
 		assertThat(replaceResult.getId(), is(createResult.getId()));
 		assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
-		assertThat(replaceResult.getOld().isPresent(), is(true));
-		assertThat(replaceResult.getOld().get().getKey(), is(createResult.getKey()));
-		assertThat(replaceResult.getOld().get().getRevision(), is(createResult.getRev()));
-		assertThat(replaceResult.getOld().get().getAttribute("a"), is("test"));
-		assertThat(replaceResult.getOld().get().getProperties().keySet(), not(hasItem("b")));
+		assertThat(replaceResult.getOld(), is(notNullValue()));
+		assertThat(replaceResult.getOld().getKey(), is(createResult.getKey()));
+		assertThat(replaceResult.getOld().getRevision(), is(createResult.getRev()));
+		assertThat(replaceResult.getOld().getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(replaceResult.getOld().getAttribute("a")), is("test"));
+		assertThat(replaceResult.getOld().getProperties().keySet(), not(hasItem("b")));
 	}
 
 	@Test
@@ -592,9 +602,9 @@ public class ArangoCollectionTest extends BaseTest {
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
 			null);
 		db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, null);
-		final Optional<BaseDocument> document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
 			BaseDocument.class, null);
-		assertThat(document.isPresent(), is(false));
+		assertThat(document, is(nullValue()));
 	}
 
 	@Test
@@ -606,9 +616,10 @@ public class ArangoCollectionTest extends BaseTest {
 		final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
 		final DocumentDeleteEntity<BaseDocument> deleteResult = db.collection(COLLECTION_NAME)
 				.deleteDocument(createResult.getKey(), BaseDocument.class, options);
-		assertThat(deleteResult.getOld().isPresent(), is(true));
-		assertThat(deleteResult.getOld().get(), instanceOf(BaseDocument.class));
-		assertThat(deleteResult.getOld().get().getAttribute("a"), is("test"));
+		assertThat(deleteResult.getOld(), is(notNullValue()));
+		assertThat(deleteResult.getOld(), instanceOf(BaseDocument.class));
+		assertThat(deleteResult.getOld().getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(deleteResult.getOld().getAttribute("a")), is("test"));
 	}
 
 	@Test
@@ -618,9 +629,9 @@ public class ArangoCollectionTest extends BaseTest {
 			null);
 		final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
 		db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options);
-		final Optional<BaseDocument> document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
 			BaseDocument.class, null);
-		assertThat(document.isPresent(), is(false));
+		assertThat(document, is(nullValue()));
 	}
 
 	@Test
@@ -643,21 +654,17 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("b");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint().isPresent(), is(false));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson().isPresent(), is(false));
+		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
-		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
-		assertThat(indexResult.getMinLength().isPresent(), is(false));
-		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(true));
-		assertThat(indexResult.getSelectivityEstimate().get(), is(1));
-		assertThat(indexResult.getSparse().isPresent(), is(true));
-		assertThat(indexResult.getSparse().get(), is(false));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSelectivityEstimate(), is(1));
+		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.hash));
-		assertThat(indexResult.getUnique().isPresent(), is(true));
-		assertThat(indexResult.getUnique().get(), is(false));
+		assertThat(indexResult.getUnique(), is(false));
 	}
 
 	@Test
@@ -666,21 +673,16 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("a");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint().isPresent(), is(true));
-		assertThat(indexResult.getConstraint().get(), is(false));
+		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
-		assertThat(indexResult.getGeoJson().isPresent(), is(true));
-		assertThat(indexResult.getGeoJson().get(), is(false));
+		assertThat(indexResult.getGeoJson(), is(false));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
-		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
-		assertThat(indexResult.getMinLength().isPresent(), is(false));
-		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(false));
-		assertThat(indexResult.getSparse().isPresent(), is(true));
-		assertThat(indexResult.getSparse().get(), is(true));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.geo1));
-		assertThat(indexResult.getUnique().isPresent(), is(true));
-		assertThat(indexResult.getUnique().get(), is(false));
+		assertThat(indexResult.getUnique(), is(false));
 	}
 
 	@Test
@@ -690,21 +692,17 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("b");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint().isPresent(), is(true));
-		assertThat(indexResult.getConstraint().get(), is(false));
+		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson().isPresent(), is(false));
+		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
-		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
-		assertThat(indexResult.getMinLength().isPresent(), is(false));
-		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(false));
-		assertThat(indexResult.getSparse().isPresent(), is(true));
-		assertThat(indexResult.getSparse().get(), is(true));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.geo2));
-		assertThat(indexResult.getUnique().isPresent(), is(true));
-		assertThat(indexResult.getUnique().get(), is(false));
+		assertThat(indexResult.getUnique(), is(false));
 	}
 
 	@Test
@@ -714,20 +712,17 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("b");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createSkiplistIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint().isPresent(), is(false));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson().isPresent(), is(false));
+		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
-		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
-		assertThat(indexResult.getMinLength().isPresent(), is(false));
-		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(false));
-		assertThat(indexResult.getSparse().isPresent(), is(true));
-		assertThat(indexResult.getSparse().get(), is(false));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.skiplist));
-		assertThat(indexResult.getUnique().isPresent(), is(true));
-		assertThat(indexResult.getUnique().get(), is(false));
+		assertThat(indexResult.getUnique(), is(false));
 	}
 
 	@Test
@@ -737,20 +732,17 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("b");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createPersistentIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint().isPresent(), is(false));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson().isPresent(), is(false));
+		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
-		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
-		assertThat(indexResult.getMinLength().isPresent(), is(false));
-		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(false));
-		assertThat(indexResult.getSparse().isPresent(), is(true));
-		assertThat(indexResult.getSparse().get(), is(false));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.persistent));
-		assertThat(indexResult.getUnique().isPresent(), is(true));
-		assertThat(indexResult.getUnique().get(), is(false));
+		assertThat(indexResult.getUnique(), is(false));
 	}
 
 	@Test
@@ -759,19 +751,15 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("a");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createFulltextIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint().isPresent(), is(false));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
-		assertThat(indexResult.getGeoJson().isPresent(), is(false));
+		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
-		assertThat(indexResult.getIsNewlyCreated().isPresent(), is(true));
-		assertThat(indexResult.getIsNewlyCreated().get(), is(true));
-		assertThat(indexResult.getMinLength().isPresent(), is(true));
-		assertThat(indexResult.getSelectivityEstimate().isPresent(), is(false));
-		assertThat(indexResult.getSparse().isPresent(), is(true));
-		assertThat(indexResult.getSparse().get(), is(true));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.fulltext));
-		assertThat(indexResult.getUnique().isPresent(), is(true));
-		assertThat(indexResult.getUnique().get(), is(false));
+		assertThat(indexResult.getUnique(), is(false));
 	}
 
 	@Test
@@ -782,28 +770,28 @@ public class ArangoCollectionTest extends BaseTest {
 		final Collection<IndexEntity> indexes = db.collection(COLLECTION_NAME).getIndexes();
 		assertThat(indexes, is(notNullValue()));
 		assertThat(indexes.size(), is(2));
-		indexes.stream().forEach((i) -> {
+		for (final IndexEntity i : indexes) {
 			assertThat(i.getType(), anyOf(is(IndexType.primary), is(IndexType.hash)));
 			if (i.getType() == IndexType.hash) {
 				assertThat(i.getFields().size(), is(1));
 				assertThat(i.getFields(), hasItem("a"));
 			}
-		});
+		}
 	}
 
 	@Test
 	public void truncate() {
 		final BaseDocument doc = new BaseDocument();
 		db.collection(COLLECTION_NAME).insertDocument(doc, null);
-		final BaseDocument readResult = db.collection(COLLECTION_NAME)
-				.getDocument(doc.getKey(), BaseDocument.class, null).get();
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class,
+			null);
 		assertThat(readResult.getKey(), is(doc.getKey()));
 		final CollectionEntity truncateResult = db.collection(COLLECTION_NAME).truncate();
 		assertThat(truncateResult, is(notNullValue()));
 		assertThat(truncateResult.getId(), is(notNullValue()));
-		final Optional<BaseDocument> document = db.collection(COLLECTION_NAME).getDocument(doc.getKey(),
-			BaseDocument.class, null);
-		assertThat(document.isPresent(), is(false));
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class,
+			null);
+		assertThat(document, is(nullValue()));
 	}
 
 	@Test
@@ -927,11 +915,12 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(docs.getDocuments().size(), is(3));
 		assertThat(docs.getErrors(), is(notNullValue()));
 		assertThat(docs.getErrors().size(), is(0));
-		docs.getDocuments().stream().forEach(doc -> {
-			assertThat(doc.getNew().isPresent(), is(true));
-			final BaseDocument baseDocument = doc.getNew().get();
+		for (final DocumentCreateEntity<BaseDocument> doc : docs.getDocuments()) {
+			assertThat(doc.getNew(), is(notNullValue()));
+			final BaseDocument baseDocument = doc.getNew();
 			assertThat(baseDocument.getKey(), is(notNullValue()));
-		});
+		}
+
 	}
 
 	@Test
@@ -947,7 +936,7 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(docs.getDocuments().size(), is(2));
 		assertThat(docs.getErrors(), is(notNullValue()));
 		assertThat(docs.getErrors().size(), is(1));
-		assertThat(docs.getErrors().stream().findFirst().get().getErrorNum(), is(1210));
+		assertThat(docs.getErrors().iterator().next().getErrorNum(), is(1210));
 	}
 
 	@Test
@@ -971,9 +960,9 @@ public class ArangoCollectionTest extends BaseTest {
 				.deleteDocuments(keys, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.getDocuments().size(), is(2));
-		deleteResult.getDocuments().stream().forEach(i -> {
+		for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
 			assertThat(i.getKey(), anyOf(is("1"), is("2")));
-		});
+		}
 		assertThat(deleteResult.getErrors().size(), is(0));
 	}
 
@@ -992,9 +981,9 @@ public class ArangoCollectionTest extends BaseTest {
 				.deleteDocuments(keys, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.getDocuments().size(), is(1));
-		deleteResult.getDocuments().stream().forEach(i -> {
+		for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
 			assertThat(i.getKey(), is("1"));
-		});
+		}
 		assertThat(deleteResult.getErrors().size(), is(0));
 	}
 
@@ -1039,10 +1028,10 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
-		values.stream().forEach(i -> {
+		for (final BaseDocument i : values) {
 			i.addAttribute("a", "test");
 			updatedValues.add(i);
-		});
+		}
 		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
 				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.getDocuments().size(), is(2));
@@ -1059,7 +1048,7 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
-		final BaseDocument first = values.stream().findFirst().get();
+		final BaseDocument first = values.iterator().next();
 		first.addAttribute("a", "test");
 		updatedValues.add(first);
 		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
@@ -1085,10 +1074,10 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
-		values.stream().forEach(i -> {
+		for (final BaseDocument i : values) {
 			i.addAttribute("a", "test");
 			updatedValues.add(i);
-		});
+		}
 		updatedValues.add(new BaseDocument());
 		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
 				.updateDocuments(updatedValues, null);
@@ -1105,10 +1094,10 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
-		values.stream().forEach(i -> {
+		for (final BaseDocument i : values) {
 			i.addAttribute("a", "test");
 			updatedValues.add(i);
-		});
+		}
 		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
 				.replaceDocuments(updatedValues, null);
 		assertThat(updateResult.getDocuments().size(), is(2));
@@ -1125,7 +1114,7 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
-		final BaseDocument first = values.stream().findFirst().get();
+		final BaseDocument first = values.iterator().next();
 		first.addAttribute("a", "test");
 		updatedValues.add(first);
 		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
@@ -1151,10 +1140,10 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<BaseDocument> updatedValues = new ArrayList<>();
-		values.stream().forEach(i -> {
+		for (final BaseDocument i : values) {
 			i.addAttribute("a", "test");
 			updatedValues.add(i);
-		});
+		}
 		updatedValues.add(new BaseDocument());
 		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = db.collection(COLLECTION_NAME)
 				.updateDocuments(updatedValues, null);

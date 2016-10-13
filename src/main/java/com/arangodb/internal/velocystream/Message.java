@@ -21,7 +21,6 @@
 package com.arangodb.internal.velocystream;
 
 import java.nio.BufferUnderflowException;
-import java.util.Optional;
 
 import com.arangodb.velocypack.VPackSlice;
 
@@ -33,7 +32,7 @@ public class Message {
 
 	private final long id;
 	private final VPackSlice head;
-	private final Optional<VPackSlice> body;
+	private final VPackSlice body;
 
 	public Message(final long id, final byte[] chunkBuffer) throws BufferUnderflowException, IndexOutOfBoundsException {
 		super();
@@ -41,9 +40,9 @@ public class Message {
 		head = new VPackSlice(chunkBuffer);
 		final int headSize = head.getByteSize();
 		if (chunkBuffer.length > headSize) {
-			body = Optional.of(new VPackSlice(chunkBuffer, headSize));
+			body = new VPackSlice(chunkBuffer, headSize);
 		} else {
-			body = Optional.empty();
+			body = null;
 		}
 	}
 
@@ -51,7 +50,7 @@ public class Message {
 		super();
 		this.id = id;
 		this.head = head;
-		this.body = Optional.ofNullable(body);
+		this.body = body;
 	}
 
 	public long getId() {
@@ -62,7 +61,7 @@ public class Message {
 		return head;
 	}
 
-	public Optional<VPackSlice> getBody() {
+	public VPackSlice getBody() {
 		return body;
 	}
 

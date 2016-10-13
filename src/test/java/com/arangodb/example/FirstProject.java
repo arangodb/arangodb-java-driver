@@ -10,7 +10,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 
 public class FirstProject {
 
@@ -49,8 +48,8 @@ public class FirstProject {
 
 		// read a document
 		try {
-			final BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName)
-					.getDocument("myKey", BaseDocument.class).get();
+			final BaseDocument myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
+				BaseDocument.class);
 			System.out.println("Key: " + myDocument.getKey());
 			System.out.println("Attribute a: " + myDocument.getAttribute("a"));
 			System.out.println("Attribute b: " + myDocument.getAttribute("b"));
@@ -60,12 +59,12 @@ public class FirstProject {
 
 		// read a document as VPack
 		try {
-			final VPackSlice myDocument = arangoDB.db(dbName).collection(collectionName)
-					.getDocument("myKey", VPackSlice.class).get();
+			final VPackSlice myDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
+				VPackSlice.class);
 			System.out.println("Key: " + myDocument.get("_key").getAsString());
 			System.out.println("Attribute a: " + myDocument.get("a").getAsString());
 			System.out.println("Attribute b: " + myDocument.get("b").getAsInt());
-		} catch (final ArangoDBException | VPackException e) {
+		} catch (final ArangoDBException e) {
 			System.err.println("Failed to get document: myKey; " + e.getMessage());
 		}
 
@@ -79,8 +78,8 @@ public class FirstProject {
 
 		// read the document again
 		try {
-			final BaseDocument myUpdatedDocument = arangoDB.db(dbName).collection(collectionName)
-					.getDocument("myKey", BaseDocument.class).get();
+			final BaseDocument myUpdatedDocument = arangoDB.db(dbName).collection(collectionName).getDocument("myKey",
+				BaseDocument.class);
 			System.out.println("Key: " + myUpdatedDocument.getKey());
 			System.out.println("Attribute a: " + myUpdatedDocument.getAttribute("a"));
 			System.out.println("Attribute b: " + myUpdatedDocument.getAttribute("b"));
@@ -111,9 +110,9 @@ public class FirstProject {
 			final Map<String, Object> bindVars = new MapBuilder().put("name", "Homer").get();
 			final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
 				BaseDocument.class);
-			cursor.forEachRemaining(aDocument -> {
-				System.out.println("Key: " + aDocument.getKey());
-			});
+			for (; cursor.hasNext();) {
+				System.out.println("Key: " + cursor.next().getKey());
+			}
 		} catch (final ArangoDBException e) {
 			System.err.println("Failed to execute query. " + e.getMessage());
 		}
@@ -125,9 +124,9 @@ public class FirstProject {
 			final Map<String, Object> bindVars = new MapBuilder().put("name", "Homer").get();
 			final ArangoCursor<BaseDocument> cursor = arangoDB.db(dbName).query(query, bindVars, null,
 				BaseDocument.class);
-			cursor.forEachRemaining(aDocument -> {
-				System.out.println("Removed document " + aDocument.getKey());
-			});
+			for (; cursor.hasNext();) {
+				System.out.println("Removed document " + cursor.next().getKey());
+			}
 		} catch (final ArangoDBException e) {
 			System.err.println("Failed to execute query. " + e.getMessage());
 		}

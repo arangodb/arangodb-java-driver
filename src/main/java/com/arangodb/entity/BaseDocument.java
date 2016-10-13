@@ -44,7 +44,7 @@ public class BaseDocument implements Serializable {
 
 	public BaseDocument() {
 		super();
-		properties = new HashMap<>();
+		properties = new HashMap<String, Object>();
 	}
 
 	public BaseDocument(final String key) {

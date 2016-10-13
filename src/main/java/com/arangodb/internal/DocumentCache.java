@@ -43,7 +43,7 @@ public class DocumentCache {
 
 	public DocumentCache() {
 		super();
-		cache = new HashMap<>();
+		cache = new HashMap<Class<?>, Map<Type, Field>>();
 	}
 
 	public void setValues(final Object doc, final Map<DocumentField.Type, String> values) throws ArangoDBException {
@@ -55,13 +55,15 @@ public class DocumentCache {
 					field.set(doc, value.getValue());
 				}
 			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (final IllegalArgumentException e) {
+			throw new ArangoDBException(e);
+		} catch (final IllegalAccessException e) {
 			throw new ArangoDBException(e);
 		}
 	}
 
 	private Map<DocumentField.Type, Field> getFields(final Class<?> clazz) {
-		Map<DocumentField.Type, Field> fields = new HashMap<>();
+		Map<DocumentField.Type, Field> fields = new HashMap<DocumentField.Type, Field>();
 		if (!isTypeRestricted(clazz)) {
 			fields = cache.get(clazz);
 			if (fields == null) {
@@ -77,9 +79,10 @@ public class DocumentCache {
 	}
 
 	private Map<DocumentField.Type, Field> createFields(final Class<?> clazz) {
-		final Map<DocumentField.Type, Field> fields = new HashMap<>();
+		final Map<DocumentField.Type, Field> fields = new HashMap<DocumentField.Type, Field>();
 		Class<?> tmp = clazz;
-		final Collection<DocumentField.Type> values = new ArrayList<>(Arrays.asList(DocumentField.Type.values()));
+		final Collection<DocumentField.Type> values = new ArrayList<DocumentField.Type>(
+				Arrays.asList(DocumentField.Type.values()));
 		while (tmp != null && tmp != Object.class && values.size() > 0) {
 			final Field[] declaredFields = tmp.getDeclaredFields();
 			for (int i = 0; i < declaredFields.length && values.size() > 0; i++) {

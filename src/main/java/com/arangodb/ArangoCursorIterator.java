@@ -61,4 +61,9 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 		return cursor.getDb().deserialize(result.getResult().get(pos++), cursor.getType());
 	}
 
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
+
 }

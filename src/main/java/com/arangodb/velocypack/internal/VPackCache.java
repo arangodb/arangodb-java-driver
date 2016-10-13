@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,24 +83,24 @@ public class VPackCache {
 
 	private final Map<Type, Map<String, FieldInfo>> cache;
 	private final Comparator<Entry<String, FieldInfo>> fieldComparator;
-	private final Optional<VPackFieldNamingStrategy> fieldNamingStrategy;
+	private final VPackFieldNamingStrategy fieldNamingStrategy;
 
 	public VPackCache(final VPackFieldNamingStrategy fieldNamingStrategy) {
 		super();
-		cache = new ConcurrentHashMap<>();
+		cache = new ConcurrentHashMap<Type, Map<String, FieldInfo>>();
 		fieldComparator = new Comparator<Map.Entry<String, FieldInfo>>() {
 			@Override
 			public int compare(final Entry<String, FieldInfo> o1, final Entry<String, FieldInfo> o2) {
 				return o1.getKey().compareTo(o2.getKey());
 			}
 		};
-		this.fieldNamingStrategy = Optional.ofNullable(fieldNamingStrategy);
+		this.fieldNamingStrategy = fieldNamingStrategy;
 	}
 
 	public Map<String, FieldInfo> getFields(final Type entityClass) {
 		Map<String, FieldInfo> fields = cache.get(entityClass);
 		if (fields == null) {
-			fields = new HashMap<>();
+			fields = new HashMap<String, VPackCache.FieldInfo>();
 			Class<?> tmp = (Class<?>) entityClass;
 			while (tmp != null && tmp != Object.class) {
 				final Field[] declaredFields = tmp.getDeclaredFields();
@@ -123,8 +122,8 @@ public class VPackCache {
 	}
 
 	private Map<String, FieldInfo> sort(final Set<Entry<String, FieldInfo>> entrySet) {
-		final Map<String, FieldInfo> sorted = new LinkedHashMap<>();
-		final List<Entry<String, FieldInfo>> tmp = new ArrayList<>(entrySet);
+		final Map<String, FieldInfo> sorted = new LinkedHashMap<String, VPackCache.FieldInfo>();
+		final List<Entry<String, FieldInfo>> tmp = new ArrayList<Map.Entry<String, FieldInfo>>(entrySet);
 		Collections.sort(tmp, fieldComparator);
 		for (final Entry<String, FieldInfo> entry : tmp) {
 			sorted.put(entry.getKey(), entry.getValue());
@@ -134,8 +133,8 @@ public class VPackCache {
 
 	private FieldInfo createFieldInfo(final Field field) {
 		String fieldName = field.getName();
-		if (fieldNamingStrategy.isPresent()) {
-			fieldName = fieldNamingStrategy.get().translateName(field);
+		if (fieldNamingStrategy != null) {
+			fieldName = fieldNamingStrategy.translateName(field);
 		}
 		final SerializedName annotationName = field.getAnnotation(SerializedName.class);
 		if (annotationName != null) {

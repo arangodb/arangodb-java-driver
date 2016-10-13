@@ -23,7 +23,6 @@ package com.arangodb.internal.velocystream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -61,8 +60,8 @@ public class Communication {
 	private final MessageStore messageStore;
 	private final CollectionCache collectionCache;
 
-	private final Optional<String> user;
-	private final Optional<String> password;
+	private final String user;
+	private final String password;
 
 	private final Integer chunksize;
 
@@ -130,11 +129,11 @@ public class Communication {
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
 		final CollectionCache collectionCache, final Integer chunksize) {
 		messageStore = new MessageStore();
-		this.user = Optional.ofNullable(user);
-		this.password = Optional.ofNullable(password);
+		this.user = user;
+		this.password = password;
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
-		this.chunksize = Optional.ofNullable(chunksize).orElse(ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE);
+		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
 		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout)
 				.useSsl(useSsl).sslContext(sslContext).build();
 		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).useSsl(useSsl)
@@ -145,7 +144,9 @@ public class Communication {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
-				user.ifPresent(u -> authenticate(sync));
+				if (user != null) {
+					authenticate(sync);
+				}
 			} catch (final IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				throw new ArangoDBException(e);
@@ -157,13 +158,14 @@ public class Communication {
 		Response response = null;
 		if (sync) {
 			response = executeSync(
-				new AuthenticationRequest(user.get(), password.orElse(""), ArangoDBConstants.ENCRYPTION_PLAIN));
+				new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN));
 		} else {
 			try {
-				response = executeAsync(
-					new AuthenticationRequest(user.get(), password.orElse(""), ArangoDBConstants.ENCRYPTION_PLAIN))
-							.get();
-			} catch (InterruptedException | ExecutionException e) {
+				response = executeAsync(new AuthenticationRequest(user, password != null ? password : "",
+						ArangoDBConstants.ENCRYPTION_PLAIN)).get();
+			} catch (final InterruptedException e) {
+				throw new ArangoDBException(e);
+			} catch (final ExecutionException e) {
 				throw new ArangoDBException(e);
 			}
 		}
@@ -188,7 +190,9 @@ public class Communication {
 			final Response response = createResponse(responseMessage);
 			checkError(response);
 			return response;
-		} catch (VPackParserException | IOException e) {
+		} catch (final VPackParserException e) {
+			throw new ArangoDBException(e);
+		} catch (final IOException e) {
 			throw new ArangoDBException(e);
 		}
 
@@ -197,7 +201,7 @@ public class Communication {
 	private void checkError(final Response response) throws ArangoDBException {
 		try {
 			if (response.getResponseCode() >= ERROR_STATUS) {
-				if (response.getBody().isPresent()) {
+				if (response.getBody() != null) {
 					throw new ArangoDBException(createErrorMessage(response));
 				} else {
 					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()));
@@ -210,7 +214,7 @@ public class Communication {
 
 	private String createErrorMessage(final Response response) throws VPackParserException {
 		String errorMessage;
-		final ErrorEntity errorEntity = vpack.deserialize(response.getBody().get(), ErrorEntity.class);
+		final ErrorEntity errorEntity = vpack.deserialize(response.getBody(), ErrorEntity.class);
 		errorMessage = String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
 			errorEntity.getErrorMessage());
 		return errorMessage;
@@ -227,8 +231,8 @@ public class Communication {
 						collectionCache.setDb(request.getDatabase());
 						final Response response = createResponse(m);
 						if (response.getResponseCode() >= 300) {
-							if (response.getBody().isPresent()) {
-								final ErrorEntity errorEntity = vpack.deserialize(response.getBody().get(),
+							if (response.getBody() != null) {
+								final ErrorEntity errorEntity = vpack.deserialize(response.getBody(),
 									ErrorEntity.class);
 								final String errorMessage = String.format("Response: %s, Error: %s - %s",
 									errorEntity.getCode(), errorEntity.getErrorNum(), errorEntity.getErrorMessage());
@@ -260,22 +264,21 @@ public class Communication {
 
 	private Response createResponse(final Message messsage) throws VPackParserException {
 		final Response response = vpack.deserialize(messsage.getHead(), Response.class);
-		if (messsage.getBody().isPresent()) {
-			response.setBody(messsage.getBody().get());
+		if (messsage.getBody() != null) {
+			response.setBody(messsage.getBody());
 		}
 		return response;
 	}
 
 	private Message createMessage(final Request request) throws VPackParserException {
 		final long id = mId.incrementAndGet();
-		final VPackSlice body = request.getBody().isPresent() ? request.getBody().get() : null;
-		return new Message(id, vpack.serialize(request), body);
+		return new Message(id, vpack.serialize(request), request.getBody());
 	}
 
 	private CompletableFuture<Message> sendAsync(final Message message) throws IOException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-				message.getBody().isPresent() ? message.getBody().get() : "{}"));
+				message.getBody() != null ? message.getBody() : "{}"));
 		}
 		return connectionAsync.write(message, buildChunks(message));
 	}
@@ -283,7 +286,7 @@ public class Communication {
 	private Message sendSync(final Message message) throws IOException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-				message.getBody().isPresent() ? message.getBody().get() : "{}"));
+				message.getBody() != null ? message.getBody() : "{}"));
 		}
 		return connectionSync.write(message, buildChunks(message));
 	}
@@ -292,9 +295,9 @@ public class Communication {
 		final Collection<Chunk> chunks = new ArrayList<>();
 		final VPackSlice head = message.getHead();
 		int size = head.getByteSize();
-		final Optional<VPackSlice> body = message.getBody();
-		if (body.isPresent()) {
-			size += body.get().getByteSize();
+		final VPackSlice body = message.getBody();
+		if (body != null) {
+			size += body.getByteSize();
 		}
 		final int n = size / chunksize;
 		final int numberOfChunks = (size % chunksize != 0) ? (n + 1) : n;

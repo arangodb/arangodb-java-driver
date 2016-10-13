@@ -76,11 +76,18 @@ public class ObjectIterator extends SliceIterator<Entry<String, VPackSlice>> {
 			public String getKey() {
 				try {
 					return currentField.makeKey().getAsString();
-				} catch (VPackKeyTypeException | VPackNeedAttributeTranslatorException e) {
+				} catch (final VPackKeyTypeException e) {
+					throw new NoSuchElementException();
+				} catch (final VPackNeedAttributeTranslatorException e) {
 					throw new NoSuchElementException();
 				}
 			}
 		};
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 
 }

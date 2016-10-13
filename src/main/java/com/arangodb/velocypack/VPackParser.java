@@ -52,8 +52,8 @@ public class VPackParser {
 
 	public VPackParser() {
 		super();
-		deserializers = new HashMap<>();
-		deserializersByName = new HashMap<>();
+		deserializers = new HashMap<ValueType, VPackJsonDeserializer>();
+		deserializersByName = new HashMap<String, Map<ValueType, VPackJsonDeserializer>>();
 	}
 
 	public String toJson(final VPackSlice vpack) throws VPackException {
@@ -72,7 +72,7 @@ public class VPackParser {
 		final VPackJsonDeserializer deserializer) {
 		Map<ValueType, VPackJsonDeserializer> byName = deserializersByName.get(attribute);
 		if (byName == null) {
-			byName = new HashMap<>();
+			byName = new HashMap<ValueType, VPackJsonDeserializer>();
 			deserializersByName.put(attribute, byName);
 		}
 		byName.put(type, deserializer);

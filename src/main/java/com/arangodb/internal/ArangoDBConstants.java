@@ -31,8 +31,10 @@ public class ArangoDBConstants {
 	public static final Integer DEFAULT_TIMEOUT = 0;
 	public static final Boolean DEFAULT_USE_SSL = false;
 
-	public static final int CHUNK_MIN_HEADER_SIZE = Integer.BYTES + Integer.BYTES + Long.BYTES;
-	public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + Long.BYTES;
+	public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+	public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
+	public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
+	public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
 	public static final int CHUNK_DEFAULT_CONTENT_SIZE = 30000;
 
 	public static final String PATH_API_DOCUMENT = "/_api/document";

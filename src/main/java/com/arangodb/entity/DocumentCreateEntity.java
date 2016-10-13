@@ -20,8 +20,6 @@
 
 package com.arangodb.entity;
 
-import java.util.Optional;
-
 import com.arangodb.velocypack.annotations.Expose;
 
 /**
@@ -37,8 +35,8 @@ public class DocumentCreateEntity<T> extends DocumentEntity {
 		super();
 	}
 
-	public Optional<T> getNew() {
-		return Optional.ofNullable(newDocument);
+	public T getNew() {
+		return newDocument;
 	}
 
 	public void setNew(final T newDocument) {

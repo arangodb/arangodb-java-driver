@@ -29,7 +29,6 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
-import java.util.Optional;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
@@ -51,11 +50,11 @@ public abstract class Connection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 
-	protected final Optional<String> host;
-	protected final Optional<Integer> port;
-	protected final Optional<Integer> timeout;
-	protected final Optional<Boolean> useSsl;
-	protected final Optional<SSLContext> sslContext;
+	protected final String host;
+	protected final Integer port;
+	protected final Integer timeout;
+	protected final Boolean useSsl;
+	protected final SSLContext sslContext;
 
 	protected Socket socket;
 	protected OutputStream outputStream;
@@ -64,11 +63,11 @@ public abstract class Connection {
 	protected Connection(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext) {
 		super();
-		this.host = Optional.ofNullable(host);
-		this.port = Optional.ofNullable(port);
-		this.timeout = Optional.ofNullable(timeout);
-		this.useSsl = Optional.ofNullable(useSsl);
-		this.sslContext = Optional.ofNullable(sslContext);
+		this.host = host;
+		this.port = port;
+		this.timeout = timeout;
+		this.useSsl = useSsl;
+		this.sslContext = sslContext;
 	}
 
 	public synchronized boolean isOpen() {
@@ -79,21 +78,22 @@ public abstract class Connection {
 		if (isOpen()) {
 			return;
 		}
-		if (useSsl.orElse(false)) {
-			if (sslContext.isPresent()) {
-				socket = sslContext.get().getSocketFactory().createSocket();
+		if (useSsl != null && useSsl) {
+			if (sslContext != null) {
+				socket = sslContext.getSocketFactory().createSocket();
 			} else {
 				socket = SSLSocketFactory.getDefault().createSocket();
 			}
 		} else {
 			socket = SocketFactory.getDefault().createSocket();
 		}
-		final String host = this.host.orElse(ArangoDBConstants.DEFAULT_HOST);
-		final Integer port = this.port.orElse(ArangoDBConstants.DEFAULT_PORT);
+		final String host = this.host != null ? this.host : ArangoDBConstants.DEFAULT_HOST;
+		final Integer port = this.port != null ? this.port : ArangoDBConstants.DEFAULT_PORT;
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Open connection to addr=%s,port=%s", host, port));
 		}
-		socket.connect(new InetSocketAddress(host, port), timeout.orElse(ArangoDBConstants.DEFAULT_TIMEOUT));
+		socket.connect(new InetSocketAddress(host, port),
+			timeout != null ? timeout : ArangoDBConstants.DEFAULT_TIMEOUT);
 		socket.setKeepAlive(true);
 		socket.setTcpNoDelay(true);
 		if (LOGGER.isDebugEnabled()) {
@@ -103,7 +103,7 @@ public abstract class Connection {
 		outputStream = new BufferedOutputStream(socket.getOutputStream());
 		inputStream = socket.getInputStream();
 
-		if (useSsl.orElse(false)) {
+		if (useSsl != null && useSsl) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(String.format("Start Handshake on %s", socket));
 			}
@@ -125,7 +125,7 @@ public abstract class Connection {
 	}
 
 	protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) {
-		chunks.stream().forEach(chunk -> {
+		for (final Chunk chunk : chunks) {
 			try {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
@@ -142,14 +142,14 @@ public abstract class Connection {
 					outputStream.write(head.getBuffer(), contentOffset, written);
 				}
 				if (written < contentLength) {
-					final VPackSlice body = message.getBody().get();
+					final VPackSlice body = message.getBody();
 					outputStream.write(body.getBuffer(), contentOffset + written - headLength, contentLength - written);
 				}
 				outputStream.flush();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
 			}
-		});
+		}
 	}
 
 	private void writeChunkHead(final Chunk chunk) throws IOException {
@@ -175,7 +175,7 @@ public abstract class Connection {
 		final long messageLength;
 		final int contentLength;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-			messageLength = readBytes(Long.BYTES).getLong();
+			messageLength = readBytes(ArangoDBConstants.LONG_BYTES).getLong();
 			contentLength = length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE;
 		} else {
 			messageLength = -1L;

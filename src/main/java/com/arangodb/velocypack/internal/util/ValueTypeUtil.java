@@ -34,7 +34,7 @@ public class ValueTypeUtil {
 	private static final Map<Byte, ValueType> MAP;
 
 	static {
-		MAP = new HashMap<>();
+		MAP = new HashMap<Byte, ValueType>();
 
 		MAP.put((byte) 0x00, ValueType.NONE);
 		MAP.put((byte) 0x01, ValueType.ARRAY);

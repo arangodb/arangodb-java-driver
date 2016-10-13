@@ -33,6 +33,7 @@ import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
+import com.arangodb.internal.CollectionCache.DBAccess;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.internal.velocystream.Communication;
@@ -48,6 +49,7 @@ import com.arangodb.velocypack.VPackInstanceCreator;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -191,8 +193,11 @@ public class ArangoDB extends ArangoExecuteable {
 		super(commBuilder.build(vpack, collectionCache), vpack, vpackNull, vpackParser, new DocumentCache(),
 				collectionCache);
 		final Communication cacheCom = commBuilder.build(vpack, collectionCache);
-		collectionCache.init(name -> {
-			return new ArangoDatabase(cacheCom, vpackNull, vpack, vpackParser, documentCache, null, name);
+		collectionCache.init(new DBAccess() {
+			@Override
+			public ArangoDatabase db(final String name) {
+				return new ArangoDatabase(cacheCom, vpackNull, vpack, vpackParser, documentCache, null, name);
+			}
 		});
 	}
 
@@ -243,7 +248,12 @@ public class ArangoDB extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-		return response -> response.getBody().get().get(ArangoDBConstants.RESULT).getAsBoolean();
+		return new ResponseDeserializer<Boolean>() {
+			@Override
+			public Boolean deserialize(final Response response) throws VPackException {
+				return response.getBody().get(ArangoDBConstants.RESULT).getAsBoolean();
+			}
+		};
 	}
 
 	/**
@@ -270,10 +280,13 @@ public class ArangoDB extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-		return response -> {
-			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
-			return deserialize(result, new Type<Collection<String>>() {
-			}.getType());
+		return new ResponseDeserializer<Collection<String>>() {
+			@Override
+			public Collection<String> deserialize(final Response response) throws VPackException {
+				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				return ArangoDB.this.deserialize(result, new Type<Collection<String>>() {
+				}.getType());
+			}
 		};
 	}
 
@@ -495,10 +508,13 @@ public class ArangoDB extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-		return (response) -> {
-			final VPackSlice result = response.getBody().get().get(ArangoDBConstants.RESULT);
-			return deserialize(result, new Type<Collection<UserEntity>>() {
-			}.getType());
+		return new ResponseDeserializer<Collection<UserEntity>>() {
+			@Override
+			public Collection<UserEntity> deserialize(final Response response) throws VPackException {
+				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				return ArangoDB.this.deserialize(result, new Type<Collection<UserEntity>>() {
+				}.getType());
+			}
 		};
 	}
 
@@ -581,7 +597,12 @@ public class ArangoDB extends ArangoExecuteable {
 	}
 
 	public Response execute(final Request request) {
-		return executeSync(request, response -> response);
+		return executeSync(request, new ResponseDeserializer<Response>() {
+			@Override
+			public Response deserialize(final Response response) throws VPackException {
+				return response;
+			}
+		});
 	}
 
 	public CompletableFuture<Response> executeAsync(final Request request) {

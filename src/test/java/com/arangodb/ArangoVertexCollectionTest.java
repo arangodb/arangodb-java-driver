@@ -82,8 +82,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		assertThat(vertex, is(notNullValue()));
-		final BaseDocument document = db.collection(COLLECTION_NAME)
-				.getDocument(vertex.getKey(), BaseDocument.class, null).get();
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(vertex.getKey(), BaseDocument.class,
+			null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
@@ -166,7 +166,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -190,7 +191,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -229,8 +231,10 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.getVertex(createResult.getKey(), BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getAttribute("a"), is("test1"));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}
@@ -256,8 +260,10 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final BaseDocument readResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.getVertex(createResult.getKey(), BaseDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getAttribute("a"), is("test1"));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}

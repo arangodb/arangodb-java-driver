@@ -20,8 +20,6 @@
 
 package com.arangodb.velocypack.internal.util;
 
-import java.time.Instant;
-
 /**
  * @author Mark - mark at arangodb.com
  *
@@ -45,11 +43,6 @@ public class DateUtil {
 	public static java.sql.Timestamp toSQLTimestamp(final byte[] array, final int offset, final int length) {
 		final long milliseconds = NumberUtil.toLong(array, offset, length);
 		return new java.sql.Timestamp(milliseconds);
-	}
-
-	public static Instant toInstant(final byte[] array, final int offset, final int length) {
-		final long milliseconds = NumberUtil.toLong(array, offset, length);
-		return Instant.ofEpochMilli(milliseconds);
 	}
 
 }

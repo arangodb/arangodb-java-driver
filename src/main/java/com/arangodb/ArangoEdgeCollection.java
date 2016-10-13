@@ -34,8 +34,10 @@ import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -122,15 +124,18 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
-			final EdgeEntity doc = deserialize(body, EdgeEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.ID, doc.getId());
-			values.put(DocumentField.Type.KEY, doc.getKey());
-			values.put(DocumentField.Type.REV, doc.getRev());
-			documentCache.setValues(value, values);
-			return doc;
+		return new ResponseDeserializer<EdgeEntity>() {
+			@Override
+			public EdgeEntity deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
+				final EdgeEntity doc = ArangoEdgeCollection.this.deserialize(body, EdgeEntity.class);
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.ID, doc.getId());
+				values.put(DocumentField.Type.KEY, doc.getKey());
+				values.put(DocumentField.Type.REV, doc.getRev());
+				documentCache.setValues(value, values);
+				return doc;
+			}
 		};
 	}
 
@@ -210,7 +215,12 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.EDGE), type);
+		return new ResponseDeserializer<T>() {
+			@Override
+			public T deserialize(final Response response) throws VPackException {
+				return ArangoEdgeCollection.this.deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
+			}
+		};
 	}
 
 	/**
@@ -296,13 +306,16 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
-			final EdgeUpdateEntity doc = deserialize(body, EdgeUpdateEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.REV, doc.getRev());
-			documentCache.setValues(value, values);
-			return doc;
+		return new ResponseDeserializer<EdgeUpdateEntity>() {
+			@Override
+			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
+				final EdgeUpdateEntity doc = ArangoEdgeCollection.this.deserialize(body, EdgeUpdateEntity.class);
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.REV, doc.getRev());
+				documentCache.setValues(value, values);
+				return doc;
+			}
 		};
 	}
 
@@ -395,9 +408,12 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.EDGE);
-			return deserialize(body, EdgeUpdateEntity.class);
+		return new ResponseDeserializer<EdgeUpdateEntity>() {
+			@Override
+			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
+				return ArangoEdgeCollection.this.deserialize(body, EdgeUpdateEntity.class);
+			}
 		};
 	}
 

@@ -29,7 +29,6 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -68,7 +67,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 			db.createCollection(EDGE_COLLECTION_NAME, new CollectionCreateOptions().type(CollectionType.EDGES));
 		} catch (final ArangoDBException e) {
 		}
-		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
 		edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COLLECTION_NAME).from(VERTEX_COLLECTION_NAME)
 				.to(VERTEX_COLLECTION_NAME));
 		db.createGraph(GRAPH_NAME, edgeDefinitions, null);
@@ -76,12 +75,12 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 
 	@After
 	public void teardown() {
-		Stream.of(VERTEX_COLLECTION_NAME, EDGE_COLLECTION_NAME).forEach(collection -> {
+		for (final String collection : new String[] { VERTEX_COLLECTION_NAME, EDGE_COLLECTION_NAME }) {
 			try {
 				db.collection(collection).drop();
 			} catch (final ArangoDBException e) {
 			}
-		});
+		}
 		db.graph(GRAPH_NAME).drop();
 	}
 
@@ -102,8 +101,8 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
 		assertThat(edge, is(notNullValue()));
-		final BaseEdgeDocument document = db.collection(EDGE_COLLECTION_NAME)
-				.getDocument(edge.getKey(), BaseEdgeDocument.class, null).get();
+		final BaseEdgeDocument document = db.collection(EDGE_COLLECTION_NAME).getDocument(edge.getKey(),
+			BaseEdgeDocument.class, null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(edge.getKey()));
 	}
@@ -185,7 +184,8 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -208,7 +208,8 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		assertThat(readResult.getKey(), is(createResult.getKey()));
 		assertThat(readResult.getRevision(), is(replaceResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 	}
 
 	@Test
@@ -245,8 +246,10 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
 				.getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getAttribute("a"), is("test1"));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}
@@ -271,8 +274,10 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument readResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
 				.getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
 		assertThat(readResult.getKey(), is(createResult.getKey()));
-		assertThat(readResult.getAttribute("a"), is("test1"));
-		assertThat(readResult.getAttribute("b"), is("test"));
+		assertThat(readResult.getAttribute("a"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
+		assertThat(readResult.getAttribute("b"), is(notNullValue()));
+		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
 	}

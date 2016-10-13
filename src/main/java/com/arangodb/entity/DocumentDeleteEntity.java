@@ -20,8 +20,6 @@
 
 package com.arangodb.entity;
 
-import java.util.Optional;
-
 import com.arangodb.velocypack.annotations.Expose;
 
 /**
@@ -37,8 +35,8 @@ public class DocumentDeleteEntity<T> extends DocumentEntity {
 		super();
 	}
 
-	public Optional<T> getOld() {
-		return Optional.ofNullable(oldDocument);
+	public T getOld() {
+		return oldDocument;
 	}
 
 	public void setOld(final T oldDocument) {

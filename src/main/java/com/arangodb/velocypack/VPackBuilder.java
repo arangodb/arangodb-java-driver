@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,6 +53,10 @@ import com.arangodb.velocypack.internal.util.NumberUtil;
  */
 public class VPackBuilder {
 
+	private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+	private static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
+	private static final int DOUBLE_BYTES = Double.SIZE / Byte.SIZE;
+
 	public static interface BuilderOptions {
 		boolean isBuildUnindexedArrays();
 
@@ -64,96 +67,143 @@ public class VPackBuilder {
 		void setBuildUnindexedObjects(boolean buildUnindexedObjects);
 	}
 
-	@FunctionalInterface
 	public static interface Appender<T> {
 		void append(VPackBuilder builder, T value) throws VPackBuilderException;
 	}
 
-	private static final Appender<Value> VALUE = (builder, value) -> {
-		builder.set(value);
-	};
-	private static final Appender<ValueType> VALUE_TYPE = (builder, value) -> {
-		switch (value) {
-		case NULL:
-			builder.appendNull();
-			break;
-		case ARRAY:
-			builder.addArray(false);
-			break;
-		case OBJECT:
-			builder.addObject(false);
-			break;
-		default:
-			throw new VPackValueTypeException(ValueType.ARRAY, ValueType.OBJECT, ValueType.NULL);
+	private static final Appender<Value> VALUE = new Appender<Value>() {
+		@Override
+		public void append(final VPackBuilder builder, final Value value) throws VPackBuilderException {
+			builder.set(value);
 		}
 	};
-	private static final Appender<Boolean> BOOLEAN = (builder, value) -> {
-		builder.appendBoolean(value);
-	};
-	private static final Appender<Double> DOUBLE = (builder, value) -> {
-		builder.appendDouble(value);
-	};
-	private static final Appender<Float> FLOAT = (builder, value) -> {
-		builder.appendDouble(value);
-	};
-	private static final Appender<BigDecimal> BIG_DECIMAL = (builder, value) -> {
-		builder.appendDouble(value.doubleValue());
-	};
-	private static final Appender<Long> LONG = (builder, value) -> {
-		if (value <= 9 && value >= -6) {
-			builder.appendSmallInt(value);
-		} else {
-			builder.add((byte) 0x23);
-			builder.append(value, Integer.BYTES);
+	private static final Appender<ValueType> VALUE_TYPE = new Appender<ValueType>() {
+		@Override
+		public void append(final VPackBuilder builder, final ValueType value) throws VPackBuilderException {
+			switch (value) {
+			case NULL:
+				builder.appendNull();
+				break;
+			case ARRAY:
+				builder.addArray(false);
+				break;
+			case OBJECT:
+				builder.addObject(false);
+				break;
+			default:
+				throw new VPackValueTypeException(ValueType.ARRAY, ValueType.OBJECT, ValueType.NULL);
+			}
 		}
 	};
-	private static final Appender<Integer> INTEGER = (builder, value) -> {
-		if (value <= 9 && value >= -6) {
-			builder.appendSmallInt(value);
-		} else {
-			builder.add((byte) 0x23);
-			builder.append(value, Integer.BYTES);
+	private static final Appender<Boolean> BOOLEAN = new Appender<Boolean>() {
+		@Override
+		public void append(final VPackBuilder builder, final Boolean value) throws VPackBuilderException {
+			builder.appendBoolean(value);
 		}
 	};
-	private static final Appender<Short> SHORT = (builder, value) -> {
-		if (value <= 9 && value >= -6) {
-			builder.appendSmallInt(value);
-		} else {
-			builder.add((byte) 0x23);
-			builder.append(value, Integer.BYTES);
+	private static final Appender<Double> DOUBLE = new Appender<Double>() {
+		@Override
+		public void append(final VPackBuilder builder, final Double value) throws VPackBuilderException {
+			builder.appendDouble(value);
 		}
 	};
-	private static final Appender<BigInteger> BIG_INTEGER = (builder, value) -> {
-		if (value.longValue() <= 9 && value.longValue() >= -6) {
-			builder.appendSmallInt(value.longValue());
-		} else {
-			builder.add((byte) 0x23);
-			builder.append(value, Integer.BYTES);
+	private static final Appender<Float> FLOAT = new Appender<Float>() {
+		@Override
+		public void append(final VPackBuilder builder, final Float value) throws VPackBuilderException {
+			builder.appendDouble(value);
 		}
 	};
-	private static final Appender<Date> DATE = (builder, value) -> {
-		builder.appendDate(value);
+	private static final Appender<BigDecimal> BIG_DECIMAL = new Appender<BigDecimal>() {
+		@Override
+		public void append(final VPackBuilder builder, final BigDecimal value) throws VPackBuilderException {
+			builder.appendDouble(value.doubleValue());
+		}
 	};
-	private static final Appender<java.sql.Date> SQL_DATE = (builder, value) -> {
-		builder.appendSQLDate(value);
+	private static final Appender<Long> LONG = new Appender<Long>() {
+		@Override
+		public void append(final VPackBuilder builder, final Long value) throws VPackBuilderException {
+			if (value <= 9 && value >= -6) {
+				builder.appendSmallInt(value);
+			} else {
+				builder.add((byte) 0x23);
+				builder.append(value, INTEGER_BYTES);
+			}
+		}
 	};
-	private static final Appender<Timestamp> SQL_TIMESTAMP = (builder, value) -> {
-		builder.appendSQLTimestamp(value);
+	private static final Appender<Integer> INTEGER = new Appender<Integer>() {
+		@Override
+		public void append(final VPackBuilder builder, final Integer value) throws VPackBuilderException {
+			if (value <= 9 && value >= -6) {
+				builder.appendSmallInt(value);
+			} else {
+				builder.add((byte) 0x23);
+				builder.append(value, INTEGER_BYTES);
+			}
+		}
 	};
-	private static final Appender<Instant> INSTANT = (builder, value) -> {
-		builder.appendInstant(value);
+	private static final Appender<Short> SHORT = new Appender<Short>() {
+		@Override
+		public void append(final VPackBuilder builder, final Short value) throws VPackBuilderException {
+			if (value <= 9 && value >= -6) {
+				builder.appendSmallInt(value);
+			} else {
+				builder.add((byte) 0x23);
+				builder.append(value, INTEGER_BYTES);
+			}
+		}
 	};
-	private static final Appender<String> STRING = (builder, value) -> {
-		builder.appendString(value);
+	private static final Appender<BigInteger> BIG_INTEGER = new Appender<BigInteger>() {
+		@Override
+		public void append(final VPackBuilder builder, final BigInteger value) throws VPackBuilderException {
+			if (value.longValue() <= 9 && value.longValue() >= -6) {
+				builder.appendSmallInt(value.longValue());
+			} else {
+				builder.add((byte) 0x23);
+				builder.append(value, INTEGER_BYTES);
+			}
+		}
 	};
-	private static final Appender<Character> CHARACTER = (builder, value) -> {
-		builder.appendString(String.valueOf(value));
+	private static final Appender<Date> DATE = new Appender<Date>() {
+		@Override
+		public void append(final VPackBuilder builder, final Date value) throws VPackBuilderException {
+			builder.appendDate(value);
+		}
 	};
-	private static final Appender<byte[]> BYTE_ARRAY = (builder, value) -> {
-		builder.appendBinary(value);
+	private static final Appender<java.sql.Date> SQL_DATE = new Appender<java.sql.Date>() {
+		@Override
+		public void append(final VPackBuilder builder, final java.sql.Date value) throws VPackBuilderException {
+			builder.appendSQLDate(value);
+		}
 	};
-	private static final Appender<VPackSlice> VPACK = (builder, value) -> {
-		builder.appendVPack(value);
+	private static final Appender<Timestamp> SQL_TIMESTAMP = new Appender<Timestamp>() {
+		@Override
+		public void append(final VPackBuilder builder, final Timestamp value) throws VPackBuilderException {
+			builder.appendSQLTimestamp(value);
+		}
+	};
+	private static final Appender<String> STRING = new Appender<String>() {
+		@Override
+		public void append(final VPackBuilder builder, final String value) throws VPackBuilderException {
+			builder.appendString(value);
+		}
+	};
+	private static final Appender<Character> CHARACTER = new Appender<Character>() {
+		@Override
+		public void append(final VPackBuilder builder, final Character value) throws VPackBuilderException {
+			builder.appendString(String.valueOf(value));
+		}
+	};
+	private static final Appender<byte[]> BYTE_ARRAY = new Appender<byte[]>() {
+		@Override
+		public void append(final VPackBuilder builder, final byte[] value) throws VPackBuilderException {
+			builder.appendBinary(value);
+		}
+	};
+	private static final Appender<VPackSlice> VPACK = new Appender<VPackSlice>() {
+		@Override
+		public void append(final VPackBuilder builder, final VPackSlice value) throws VPackBuilderException {
+			builder.appendVPack(value);
+		}
 	};
 
 	private byte[] buffer; // Here we collect the result
@@ -176,8 +226,8 @@ public class VPackBuilder {
 		this.options = options;
 		size = 0;
 		buffer = new byte[10];
-		stack = new ArrayList<>();
-		index = new HashMap<>();
+		stack = new ArrayList<Integer>();
+		index = new HashMap<Integer, List<Integer>>();
 	}
 
 	public BuilderOptions getOptions() {
@@ -273,10 +323,6 @@ public class VPackBuilder {
 		return addInternal(SQL_TIMESTAMP, value);
 	}
 
-	public VPackBuilder add(final Instant value) throws VPackBuilderException {
-		return addInternal(INSTANT, value);
-	}
-
 	public VPackBuilder add(final String value) throws VPackBuilderException {
 		return addInternal(STRING, value);
 	}
@@ -362,10 +408,6 @@ public class VPackBuilder {
 
 	public VPackBuilder add(final String attribute, final java.sql.Timestamp value) throws VPackBuilderException {
 		return addInternal(attribute, SQL_TIMESTAMP, value);
-	}
-
-	public VPackBuilder add(final String attribute, final Instant value) throws VPackBuilderException {
-		return addInternal(attribute, INSTANT, value);
 	}
 
 	public VPackBuilder add(final String attribute, final byte[] value) throws VPackBuilderException {
@@ -477,7 +519,7 @@ public class VPackBuilder {
 			final int length;
 			if (clazz == Long.class || clazz == BigInteger.class) {
 				add((byte) 0x27);
-				length = Long.BYTES;
+				length = LONG_BYTES;
 			} else {
 				throw new VPackBuilderUnexpectedValueException(ValueType.INT, Long.class, Integer.class,
 						BigInteger.class, Short.class);
@@ -523,7 +565,7 @@ public class VPackBuilder {
 	}
 
 	private void append(final double value) {
-		append(Double.doubleToRawLongBits(value), Double.BYTES);
+		append(Double.doubleToRawLongBits(value), DOUBLE_BYTES);
 	}
 
 	private void appendSmallInt(final long value) {
@@ -536,7 +578,7 @@ public class VPackBuilder {
 
 	private void appendUInt(final BigInteger value) {
 		add((byte) 0x2f);
-		append(value, Long.BYTES);
+		append(value, LONG_BYTES);
 	}
 
 	private void append(final long value, final int length) {
@@ -555,22 +597,17 @@ public class VPackBuilder {
 
 	private void appendDate(final Date value) {
 		add((byte) 0x1c);
-		append(value.getTime(), Long.BYTES);
+		append(value.getTime(), LONG_BYTES);
 	}
 
 	private void appendSQLDate(final java.sql.Date value) {
 		add((byte) 0x1c);
-		append(value.getTime(), Long.BYTES);
+		append(value.getTime(), LONG_BYTES);
 	}
 
 	private void appendSQLTimestamp(final Timestamp value) {
 		add((byte) 0x1c);
-		append(value.getTime(), Long.BYTES);
-	}
-
-	private void appendInstant(final Instant value) {
-		add((byte) 0x1c);
-		append(value.toEpochMilli(), Long.BYTES);
+		append(value.getTime(), LONG_BYTES);
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {
@@ -592,7 +629,7 @@ public class VPackBuilder {
 
 	private void appendBinary(final byte[] value) {
 		add((byte) 0xc3);
-		append(value.length, Integer.BYTES);
+		append(value.length, INTEGER_BYTES);
 		ensureCapacity(size + value.length);
 		System.arraycopy(value, 0, buffer, size, value.length);
 		size += value.length;
@@ -631,7 +668,7 @@ public class VPackBuilder {
 	}
 
 	private void appendLength(final long length) {
-		append(length, Long.BYTES);
+		append(length, LONG_BYTES);
 	}
 
 	private void reportAdd() {
@@ -647,7 +684,9 @@ public class VPackBuilder {
 	public VPackBuilder close() throws VPackBuilderException {
 		try {
 			return close(true);
-		} catch (VPackKeyTypeException | VPackNeedAttributeTranslatorException e) {
+		} catch (final VPackKeyTypeException e) {
+			throw new VPackBuilderException(e);
+		} catch (final VPackNeedAttributeTranslatorException e) {
 			throw new VPackBuilderException(e);
 		}
 	}
@@ -953,7 +992,7 @@ public class VPackBuilder {
 
 	private void sortObjectIndex(final int start, final List<Integer> offsets)
 			throws VPackKeyTypeException, VPackNeedAttributeTranslatorException {
-		final List<VPackBuilder.SortEntry> attributes = new ArrayList<>();
+		final List<VPackBuilder.SortEntry> attributes = new ArrayList<VPackBuilder.SortEntry>();
 		for (final Integer offset : offsets) {
 			attributes.add(new SortEntry(new VPackSlice(buffer, start + offset).makeKey(), offset));
 		}

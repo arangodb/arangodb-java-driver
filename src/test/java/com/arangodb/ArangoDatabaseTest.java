@@ -25,6 +25,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -34,11 +35,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -227,9 +225,9 @@ public class ArangoDatabaseTest extends BaseTest {
 			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));
 			final AtomicInteger i = new AtomicInteger(0);
-			cursor.forEachRemaining(e -> {
+			for (; cursor.hasNext(); cursor.next()) {
 				i.incrementAndGet();
-			});
+			}
 			assertThat(i.get(), is(10));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -246,9 +244,9 @@ public class ArangoDatabaseTest extends BaseTest {
 			final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
 			assertThat(cursor, is(notNullValue()));
 			final AtomicInteger i = new AtomicInteger(0);
-			cursor.streamRemaining().forEach(e -> {
+			for (; cursor.hasNext(); cursor.next()) {
 				i.incrementAndGet();
-			});
+			}
 			assertThat(i.get(), is(10));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -269,8 +267,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			for (int i = 0; i < 6; i++, cursor.next()) {
 				assertThat(cursor.hasNext(), is(i != 6));
 			}
-			assertThat(cursor.getCount().isPresent(), is(true));
-			assertThat(cursor.getCount().get(), is(6));
+			assertThat(cursor.getCount(), is(6));
 
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -291,8 +288,8 @@ public class ArangoDatabaseTest extends BaseTest {
 			for (int i = 0; i < 5; i++, cursor.next()) {
 				assertThat(cursor.hasNext(), is(i != 5));
 			}
-			assertThat(cursor.getStats().isPresent(), is(true));
-			assertThat(cursor.getStats().get().getFullCount(), is(10L));
+			assertThat(cursor.getStats(), is(notNullValue()));
+			assertThat(cursor.getStats().getFullCount(), is(10L));
 
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -333,9 +330,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 			assertThat(cursor, is(notNullValue()));
 			final AtomicInteger i = new AtomicInteger(0);
-			cursor.streamRemaining().forEach(e -> {
+			for (; cursor.hasNext(); cursor.next()) {
 				i.incrementAndGet();
-			});
+			}
 			assertThat(i.get(), is(10));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -486,8 +483,8 @@ public class ArangoDatabaseTest extends BaseTest {
 		final ArangoCursor<String> cursor = arangoDB.db().query("return _users + 1", null, null, String.class);
 
 		assertThat(cursor, is(notNullValue()));
-		assertThat(cursor.getWarnings().isPresent(), is(true));
-		assertThat(cursor.getWarnings().get().isEmpty(), is(false));
+		assertThat(cursor.getWarnings(), is(notNullValue()));
+		assertThat(cursor.getWarnings(), is(not(empty())));
 	}
 
 	@Test
@@ -510,32 +507,30 @@ public class ArangoDatabaseTest extends BaseTest {
 	public void explainQuery() {
 		final AqlExecutionExplainEntity explain = arangoDB.db().explainQuery("for i in _apps return i", null, null);
 		assertThat(explain, is(notNullValue()));
-		assertThat(explain.getPlan().isPresent(), is(true));
-		assertThat(explain.getPlans().isPresent(), is(false));
-		final ExecutionPlan plan = explain.getPlan().get();
+		assertThat(explain.getPlan(), is(notNullValue()));
+		assertThat(explain.getPlans(), is(nullValue()));
+		final ExecutionPlan plan = explain.getPlan();
 		assertThat(plan.getCollections().size(), is(1));
-		assertThat(plan.getCollections().stream().findFirst().get().getName(), is("_apps"));
-		assertThat(plan.getCollections().stream().findFirst().get().getType(), is("read"));
+		assertThat(plan.getCollections().iterator().next().getName(), is("_apps"));
+		assertThat(plan.getCollections().iterator().next().getType(), is("read"));
 		assertThat(plan.getEstimatedCost(), is(5));
 		assertThat(plan.getEstimatedNrItems(), is(2));
 		assertThat(plan.getVariables().size(), is(1));
-		assertThat(plan.getVariables().stream().findFirst().get().getName(), is("i"));
+		assertThat(plan.getVariables().iterator().next().getName(), is("i"));
 		assertThat(plan.getNodes().size(), is(3));
 		final Iterator<ExecutionNode> iterator = plan.getNodes().iterator();
 		final ExecutionNode singletonNode = iterator.next();
 		assertThat(singletonNode.getType(), is("SingletonNode"));
 		final ExecutionNode collectionNode = iterator.next();
 		assertThat(collectionNode.getType(), is("EnumerateCollectionNode"));
-		assertThat(collectionNode.getDatabase().isPresent(), is(true));
-		assertThat(collectionNode.getDatabase().get(), is("_system"));
-		assertThat(collectionNode.getCollection().isPresent(), is(true));
-		assertThat(collectionNode.getCollection().get(), is("_apps"));
-		assertThat(collectionNode.getOutVariable().isPresent(), is(true));
-		assertThat(collectionNode.getOutVariable().get().getName(), is("i"));
+		assertThat(collectionNode.getDatabase(), is("_system"));
+		assertThat(collectionNode.getCollection(), is("_apps"));
+		assertThat(collectionNode.getOutVariable(), is(notNullValue()));
+		assertThat(collectionNode.getOutVariable().getName(), is("i"));
 		final ExecutionNode returnNode = iterator.next();
 		assertThat(returnNode.getType(), is("ReturnNode"));
-		assertThat(returnNode.getInVariable().isPresent(), is(true));
-		assertThat(returnNode.getInVariable().get().getName(), is("i"));
+		assertThat(returnNode.getInVariable(), is(notNullValue()));
+		assertThat(returnNode.getInVariable().getName(), is("i"));
 	}
 
 	@Test
@@ -544,47 +539,52 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(parse, is(notNullValue()));
 		assertThat(parse.getBindVars(), is(empty()));
 		assertThat(parse.getCollections().size(), is(1));
-		assertThat(parse.getCollections().stream().findFirst().get(), is("_apps"));
+		assertThat(parse.getCollections().iterator().next(), is("_apps"));
 		assertThat(parse.getAst().size(), is(1));
-		final AstNode root = parse.getAst().stream().findFirst().get();
+		final AstNode root = parse.getAst().iterator().next();
 		assertThat(root.getType(), is("root"));
-		assertThat(root.getName().isPresent(), is(false));
-		assertThat(root.getSubNodes().isPresent(), is(true));
-		assertThat(root.getSubNodes().get().size(), is(2));
-		final Iterator<AstNode> iterator = root.getSubNodes().get().iterator();
+		assertThat(root.getName(), is(nullValue()));
+		assertThat(root.getSubNodes(), is(notNullValue()));
+		assertThat(root.getSubNodes().size(), is(2));
+		final Iterator<AstNode> iterator = root.getSubNodes().iterator();
 		final AstNode for_ = iterator.next();
 		assertThat(for_.getType(), is("for"));
-		assertThat(for_.getSubNodes().isPresent(), is(true));
-		assertThat(for_.getSubNodes().get().size(), is(2));
-		final Iterator<AstNode> iterator2 = for_.getSubNodes().get().iterator();
+		assertThat(for_.getSubNodes(), is(notNullValue()));
+		assertThat(for_.getSubNodes().size(), is(2));
+		final Iterator<AstNode> iterator2 = for_.getSubNodes().iterator();
 		final AstNode first = iterator2.next();
 		assertThat(first.getType(), is("variable"));
-		assertThat(first.getName().isPresent(), is(true));
-		assertThat(first.getName().get(), is("i"));
+		assertThat(first.getName(), is("i"));
 		final AstNode second = iterator2.next();
 		assertThat(second.getType(), is("collection"));
-		assertThat(second.getName().isPresent(), is(true));
-		assertThat(second.getName().get(), is("_apps"));
+		assertThat(second.getName(), is("_apps"));
 		final AstNode return_ = iterator.next();
 		assertThat(return_.getType(), is("return"));
-		assertThat(return_.getSubNodes().isPresent(), is(true));
-		assertThat(return_.getSubNodes().get().size(), is(1));
-		assertThat(return_.getSubNodes().get().stream().findFirst().get().getType(), is("reference"));
-		assertThat(return_.getSubNodes().get().stream().findFirst().get().getName().isPresent(), is(true));
-		assertThat(return_.getSubNodes().get().stream().findFirst().get().getName().get(), is("i"));
+		assertThat(return_.getSubNodes(), is(notNullValue()));
+		assertThat(return_.getSubNodes().size(), is(1));
+		assertThat(return_.getSubNodes().iterator().next().getType(), is("reference"));
+		assertThat(return_.getSubNodes().iterator().next().getName(), is("i"));
 	}
 
 	@Test
 	public void getCurrentlyRunningQueries() throws InterruptedException, ExecutionException {
-		final CompletableFuture<ArangoCursor<Void>> query = db.queryAsync("return sleep(0.1)", null, null, Void.class);
+		final Thread t = new Thread() {
+			@Override
+			public void run() {
+				super.run();
+				db.query("return sleep(0.2)", null, null, Void.class);
+			}
+		};
+		t.start();
+		Thread.sleep(100);
 		try {
 			final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
 			assertThat(currentlyRunningQueries, is(notNullValue()));
 			assertThat(currentlyRunningQueries.size(), is(1));
-			final QueryEntity queryEntity = currentlyRunningQueries.stream().findFirst().get();
-			assertThat(queryEntity.getQuery(), is("return sleep(0.1)"));
+			final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
+			assertThat(queryEntity.getQuery(), is("return sleep(0.2)"));
 		} finally {
-			query.get();
+			t.join();
 		}
 	}
 
@@ -600,7 +600,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			final Collection<QueryEntity> slowQueries = db.getSlowQueries();
 			assertThat(slowQueries, is(notNullValue()));
 			assertThat(slowQueries.size(), is(1));
-			final QueryEntity queryEntity = slowQueries.stream().findFirst().get();
+			final QueryEntity queryEntity = slowQueries.iterator().next();
 			assertThat(queryEntity.getQuery(), is("return sleep(1.1)"));
 
 			db.clearSlowQueries();
@@ -613,17 +613,23 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void killQuery() throws InterruptedException, ExecutionException {
-		final CompletableFuture<ArangoCursor<Void>> query = db.queryAsync("return sleep(0.1)", null, null, Void.class);
-		query.whenComplete((r, e) -> {
-			assertThat(r, is(nullValue()));
-			assertThat(e, is(notNullValue()));
-		});
-
+		final Thread t = new Thread() {
+			@Override
+			public void run() {
+				super.run();
+				try {
+					db.query("return sleep(0.1)", null, null, Void.class);
+					fail();
+				} catch (final ArangoDBException e) {
+				}
+			}
+		};
+		t.start();
 		final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
 		assertThat(currentlyRunningQueries, is(notNullValue()));
 		assertThat(currentlyRunningQueries.size(), is(1));
 
-		final QueryEntity queryEntity = currentlyRunningQueries.stream().findFirst().get();
+		final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
 		db.killQuery(queryEntity.getId());
 	}
 
@@ -750,21 +756,19 @@ public class ArangoDatabaseTest extends BaseTest {
 		try {
 			db.createCollection("person", null);
 			db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES));
-			Stream.of("Alice", "Bob", "Charlie", "Dave", "Eve").forEach(e -> {
+			for (final String e : new String[] { "Alice", "Bob", "Charlie", "Dave", "Eve" }) {
 				final BaseDocument doc = new BaseDocument();
 				doc.setKey(e);
 				db.collection("person").insertDocument(doc, null);
-			});
-			Stream.of(new String[] { "Alice", "Bob" }, new String[] { "Bob", "Charlie" },
-				new String[] { "Bob", "Dave" }, new String[] { "Eve", "Alice" }, new String[] { "Eve", "Bob" })
-					.forEach(e -> {
-						final BaseEdgeDocument edge = new BaseEdgeDocument();
-						edge.setKey(e[0] + "_knows_" + e[1]);
-						edge.setFrom("person/" + e[0]);
-						edge.setTo("person/" + e[1]);
-						db.collection("knows").insertDocument(edge, null);
-					});
-
+			}
+			for (final String[] e : new String[][] { new String[] { "Alice", "Bob" }, new String[] { "Bob", "Charlie" },
+					new String[] { "Bob", "Dave" }, new String[] { "Eve", "Alice" }, new String[] { "Eve", "Bob" } }) {
+				final BaseEdgeDocument edge = new BaseEdgeDocument();
+				edge.setKey(e[0] + "_knows_" + e[1]);
+				edge.setFrom("person/" + e[0]);
+				edge.setTo("person/" + e[1]);
+				db.collection("knows").insertDocument(edge, null);
+			}
 			final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
 					.direction(Direction.outbound);
 			final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class,
@@ -777,19 +781,20 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(vertices.size(), is(4));
 
 			final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-			Stream.of("Alice", "Bob", "Charlie", "Dave").forEach(e -> {
+			for (final String e : new String[] { "Alice", "Bob", "Charlie", "Dave" }) {
 				assertThat(verticesIterator.next().getKey(), is(e));
-			});
+			}
 
 			final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
 			assertThat(paths, is(notNullValue()));
 			assertThat(paths.size(), is(4));
 
-			assertThat(paths.stream().findFirst().isPresent(), is(true));
-			final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.stream().findFirst().get();
+			assertThat(paths.iterator().hasNext(), is(true));
+			final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.iterator().next();
+			assertThat(first, is(notNullValue()));
 			assertThat(first.getEdges().size(), is(0));
 			assertThat(first.getVertices().size(), is(1));
-			assertThat(first.getVertices().stream().findFirst().get().getKey(), is("Alice"));
+			assertThat(first.getVertices().iterator().next().getKey(), is("Alice"));
 		} finally {
 			db.collection("person").drop();
 			db.collection("knows").drop();
@@ -803,9 +808,9 @@ public class ArangoDatabaseTest extends BaseTest {
 			final BaseDocument value = new BaseDocument();
 			value.setKey("123");
 			db.collection(COLLECTION_NAME).insertDocument(value);
-			final Optional<BaseDocument> document = db.getDocument(COLLECTION_NAME + "/123", BaseDocument.class);
-			assertThat(document.isPresent(), is(true));
-			assertThat(document.get().getKey(), is("123"));
+			final BaseDocument document = db.getDocument(COLLECTION_NAME + "/123", BaseDocument.class);
+			assertThat(document, is(notNullValue()));
+			assertThat(document.getKey(), is("123"));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}

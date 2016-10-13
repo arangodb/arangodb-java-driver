@@ -145,7 +145,12 @@ abstract class ArangoExecuteable {
 	}
 
 	protected <T> T executeSync(final Request request, final Type type) throws ArangoDBException {
-		return executeSync(request, (response) -> createResult(vpacker, vpackParser, type, response));
+		return executeSync(request, new ResponseDeserializer<T>() {
+			@Override
+			public T deserialize(final Response response) throws VPackException {
+				return createResult(vpacker, vpackParser, type, response);
+			}
+		});
 	}
 
 	protected <T> T executeSync(final Request request, final ResponseDeserializer<T> responseDeserializer)
@@ -158,13 +163,13 @@ abstract class ArangoExecuteable {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> T createResult(
 		final VPack vpack,
 		final VPackParser vpackParser,
 		final Type type,
 		final Response response) {
-		return (type != Void.class && response.getBody().isPresent()) ? deserialize(response.getBody().get(), type)
-				: null;
+		return (T) ((type != Void.class && response.getBody() != null) ? deserialize(response.getBody(), type) : null);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -241,7 +246,7 @@ abstract class ArangoExecuteable {
 	protected <T> T unwrap(final Future<T> future) throws ArangoDBException {
 		try {
 			return future.get();
-		} catch (InterruptedException | ExecutionException | CancellationException e) {
+		} catch (final Exception e) {
 			final Throwable cause = e.getCause();
 			if (cause != null && ArangoDBException.class.isAssignableFrom(cause.getClass())) {
 				throw ArangoDBException.class.cast(cause);

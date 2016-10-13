@@ -58,14 +58,14 @@ public abstract class BaseGraphTest {
 		arangoDB.createDatabase(TEST_DB);
 		BaseGraphTest.db = arangoDB.db(TEST_DB);
 
-		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
-		EdgeDefinition edgeDefinition = new EdgeDefinition().collection(EDGE_COLLECTION_NAME)
+		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+		final EdgeDefinition edgeDefinition = new EdgeDefinition().collection(EDGE_COLLECTION_NAME)
 				.from(VERTEXT_COLLECTION_NAME).to(VERTEXT_COLLECTION_NAME);
 		edgeDefinitions.add(edgeDefinition);
 		try {
 			db.createGraph(GRAPH_NAME, edgeDefinitions, null);
 			addExampleElements();
-		} catch (ArangoDBException ex) {
+		} catch (final ArangoDBException ex) {
 
 		}
 	}

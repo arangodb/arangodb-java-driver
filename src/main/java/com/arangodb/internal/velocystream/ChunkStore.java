@@ -37,7 +37,7 @@ public class ChunkStore {
 	public ChunkStore(final MessageStore messageStore) {
 		super();
 		this.messageStore = messageStore;
-		data = new HashMap<>();
+		data = new HashMap<Long, ByteBuffer>();
 	}
 
 	public ByteBuffer storeChunk(final Chunk chunk) throws BufferUnderflowException, IndexOutOfBoundsException {

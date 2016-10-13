@@ -51,7 +51,7 @@ public class MessageStore {
 		if (future != null) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(String.format("Received Message (id=%s, head=%s, body=%s)", message.getId(),
-					message.getHead(), message.getBody().isPresent() ? message.getBody().get() : "{}"));
+					message.getHead(), message.getBody() != null ? message.getBody() : "{}"));
 			}
 			future.complete(message);
 		}

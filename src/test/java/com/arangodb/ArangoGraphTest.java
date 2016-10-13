@@ -30,7 +30,6 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,20 +57,21 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Before
 	public void setup() {
-		Stream.of(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4).forEach(collection -> {
+		for (final String collection : new String[] { VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_2, VERTEX_COL_3,
+				VERTEX_COL_4 }) {
 			try {
 				db.createCollection(collection, null);
 			} catch (final ArangoDBException e) {
 			}
-		});
-		Stream.of(EDGE_COL_1, EDGE_COL_2).forEach(collection -> {
+		}
+		for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2 }) {
 			try {
 				final CollectionCreateOptions options = new CollectionCreateOptions().type(CollectionType.EDGES);
 				db.createCollection(collection, options);
 			} catch (final ArangoDBException e) {
 			}
-		});
-		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+		}
+		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
 		edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
 		edgeDefinitions
 				.add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
@@ -80,13 +80,13 @@ public class ArangoGraphTest extends BaseTest {
 
 	@After
 	public void teardown() {
-		Stream.of(EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4)
-				.forEach(collection -> {
-					try {
-						db.collection(collection).drop();
-					} catch (final ArangoDBException e) {
-					}
-				});
+		for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3,
+				VERTEX_COL_4 }) {
+			try {
+				db.collection(collection).drop();
+			} catch (final ArangoDBException e) {
+			}
+		}
 		db.graph(GRAPH_NAME).drop();
 	}
 
@@ -146,11 +146,19 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(graph, is(notNullValue()));
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
 		assertThat(edgeDefinitions.size(), is(3));
-		assertThat(edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_3)).count(), is(1L));
-		edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_3)).forEach(e -> {
-			assertThat(e.getFrom(), hasItem(VERTEX_COL_1));
-			assertThat(e.getTo(), hasItem(VERTEX_COL_2));
-		});
+		int count = 0;
+		for (final EdgeDefinition e : edgeDefinitions) {
+			if (e.getCollection().equals(EDGE_COL_3)) {
+				count++;
+			}
+		}
+		assertThat(count, is(1));
+		for (final EdgeDefinition e : edgeDefinitions) {
+			if (e.getCollection().equals(EDGE_COL_3)) {
+				assertThat(e.getFrom(), hasItem(VERTEX_COL_1));
+				assertThat(e.getTo(), hasItem(VERTEX_COL_2));
+			}
+		}
 	}
 
 	@Test
@@ -159,11 +167,19 @@ public class ArangoGraphTest extends BaseTest {
 				.replaceEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_3).to(VERTEX_COL_4));
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
 		assertThat(edgeDefinitions.size(), is(2));
-		assertThat(edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_1)).count(), is(1L));
-		edgeDefinitions.stream().filter(e -> e.getCollection().equals(EDGE_COL_1)).forEach(e -> {
-			assertThat(e.getFrom(), hasItem(VERTEX_COL_3));
-			assertThat(e.getTo(), hasItem(VERTEX_COL_4));
-		});
+		int count = 0;
+		for (final EdgeDefinition e : edgeDefinitions) {
+			if (e.getCollection().equals(EDGE_COL_1)) {
+				count++;
+			}
+		}
+		assertThat(count, is(1));
+		for (final EdgeDefinition e : edgeDefinitions) {
+			if (e.getCollection().equals(EDGE_COL_1)) {
+				assertThat(e.getFrom(), hasItem(VERTEX_COL_3));
+				assertThat(e.getTo(), hasItem(VERTEX_COL_4));
+			}
+		}
 	}
 
 	@Test
@@ -171,6 +187,6 @@ public class ArangoGraphTest extends BaseTest {
 		final GraphEntity graph = db.graph(GRAPH_NAME).removeEdgeDefinition(EDGE_COL_1);
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
 		assertThat(edgeDefinitions.size(), is(1));
-		assertThat(edgeDefinitions.stream().findFirst().get().getCollection(), is(EDGE_COL_2));
+		assertThat(edgeDefinitions.iterator().next().getCollection(), is(EDGE_COL_2));
 	}
 }

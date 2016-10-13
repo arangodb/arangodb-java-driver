@@ -61,7 +61,7 @@ public class CollectionCache {
 
 	public CollectionCache() {
 		super();
-		cache = new HashMap<>();
+		cache = new HashMap<String, Map<Long, CollectionInfo>>();
 	}
 
 	public void init(final DBAccess access) {
@@ -80,7 +80,7 @@ public class CollectionCache {
 	private CollectionInfo getInfo(final long id) {
 		Map<Long, CollectionInfo> dbCache = cache.get(db);
 		if (dbCache == null) {
-			dbCache = new HashMap<>();
+			dbCache = new HashMap<Long, CollectionCache.CollectionInfo>();
 			cache.put(db, dbCache);
 		}
 		CollectionInfo info = dbCache.get(id);

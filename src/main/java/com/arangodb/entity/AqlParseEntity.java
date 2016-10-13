@@ -21,7 +21,6 @@
 package com.arangodb.entity;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -40,20 +39,20 @@ public class AqlParseEntity {
 			return type;
 		}
 
-		public Optional<Collection<AstNode>> getSubNodes() {
-			return Optional.ofNullable(subNodes);
+		public Collection<AstNode> getSubNodes() {
+			return subNodes;
 		}
 
-		public Optional<String> getName() {
-			return Optional.ofNullable(name);
+		public String getName() {
+			return name;
 		}
 
-		public Optional<Long> getId() {
-			return Optional.ofNullable(id);
+		public Long getId() {
+			return id;
 		}
 
-		public Optional<Object> getValue() {
-			return Optional.ofNullable(value);
+		public Object getValue() {
+			return value;
 		}
 
 	}

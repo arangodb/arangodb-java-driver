@@ -20,8 +20,6 @@
 
 package com.arangodb.velocystream;
 
-import java.util.Optional;
-
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
@@ -35,7 +33,7 @@ public class Response {
 	private int type = 2;
 	private int responseCode;
 	@Expose(deserialize = false)
-	private Optional<VPackSlice> body = Optional.empty();
+	private VPackSlice body = null;
 
 	public Response() {
 		super();
@@ -65,12 +63,12 @@ public class Response {
 		this.responseCode = responseCode;
 	}
 
-	public Optional<VPackSlice> getBody() {
+	public VPackSlice getBody() {
 		return body;
 	}
 
 	public void setBody(final VPackSlice body) {
-		this.body = Optional.ofNullable(body);
+		this.body = body;
 	}
 
 }

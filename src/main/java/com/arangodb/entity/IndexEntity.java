@@ -21,7 +21,6 @@
 package com.arangodb.entity;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -56,32 +55,32 @@ public class IndexEntity {
 		return fields;
 	}
 
-	public Optional<Integer> getSelectivityEstimate() {
-		return Optional.ofNullable(selectivityEstimate);
+	public Integer getSelectivityEstimate() {
+		return selectivityEstimate;
 	}
 
-	public Optional<Boolean> getUnique() {
-		return Optional.ofNullable(unique);
+	public Boolean getUnique() {
+		return unique;
 	}
 
-	public Optional<Boolean> getSparse() {
-		return Optional.ofNullable(sparse);
+	public Boolean getSparse() {
+		return sparse;
 	}
 
-	public Optional<Integer> getMinLength() {
-		return Optional.ofNullable(minLength);
+	public Integer getMinLength() {
+		return minLength;
 	}
 
-	public Optional<Boolean> getIsNewlyCreated() {
-		return Optional.ofNullable(isNewlyCreated);
+	public Boolean getIsNewlyCreated() {
+		return isNewlyCreated;
 	}
 
-	public Optional<Boolean> getGeoJson() {
-		return Optional.ofNullable(geoJson);
+	public Boolean getGeoJson() {
+		return geoJson;
 	}
 
-	public Optional<Boolean> getConstraint() {
-		return Optional.ofNullable(constraint);
+	public Boolean getConstraint() {
+		return constraint;
 	}
 
 }

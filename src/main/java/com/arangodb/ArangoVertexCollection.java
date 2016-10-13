@@ -34,8 +34,10 @@ import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -153,15 +155,18 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			final VertexEntity doc = deserialize(body, VertexEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.ID, doc.getId());
-			values.put(DocumentField.Type.KEY, doc.getKey());
-			values.put(DocumentField.Type.REV, doc.getRev());
-			documentCache.setValues(value, values);
-			return doc;
+		return new ResponseDeserializer<VertexEntity>() {
+			@Override
+			public VertexEntity deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
+				final VertexEntity doc = ArangoVertexCollection.this.deserialize(body, VertexEntity.class);
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.ID, doc.getId());
+				values.put(DocumentField.Type.KEY, doc.getKey());
+				values.put(DocumentField.Type.REV, doc.getRev());
+				documentCache.setValues(value, values);
+				return doc;
+			}
 		};
 	}
 
@@ -241,7 +246,12 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.VERTEX), type);
+		return new ResponseDeserializer<T>() {
+			@Override
+			public T deserialize(final Response response) throws VPackException {
+				return ArangoVertexCollection.this.deserialize(response.getBody().get(ArangoDBConstants.VERTEX), type);
+			}
+		};
 	}
 
 	/**
@@ -331,13 +341,16 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			final VertexUpdateEntity doc = deserialize(body, VertexUpdateEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.REV, doc.getRev());
-			documentCache.setValues(value, values);
-			return doc;
+		return new ResponseDeserializer<VertexUpdateEntity>() {
+			@Override
+			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
+				final VertexUpdateEntity doc = ArangoVertexCollection.this.deserialize(body, VertexUpdateEntity.class);
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.REV, doc.getRev());
+				documentCache.setValues(value, values);
+				return doc;
+			}
 		};
 	}
 
@@ -433,9 +446,12 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get().get(ArangoDBConstants.VERTEX);
-			return deserialize(body, VertexUpdateEntity.class);
+		return new ResponseDeserializer<VertexUpdateEntity>() {
+			@Override
+			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
+				return ArangoVertexCollection.this.deserialize(body, VertexUpdateEntity.class);
+			}
 		};
 	}
 

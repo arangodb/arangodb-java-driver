@@ -410,8 +410,15 @@ public class VPackParserTest {
 		builder.add("a", "a");
 		builder.add("b", "b");
 		builder.close();
-		final VPackJsonDeserializer deserializer = (parent, attribute, vpack, jsonBuffer) -> {
-			jsonBuffer.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
+		final VPackJsonDeserializer deserializer = new VPackJsonDeserializer() {
+			@Override
+			public void deserialize(
+				final VPackSlice parent,
+				final String attribute,
+				final VPackSlice vpack,
+				final StringBuilder json) throws VPackException {
+				json.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
+			}
 		};
 		final String json = new VPackParser().registerDeserializer(ValueType.STRING, deserializer)
 				.toJson(builder.slice());
@@ -425,10 +432,16 @@ public class VPackParserTest {
 		builder.add("a", "a");
 		builder.add("b", "b");
 		builder.close();
-		final String json = new VPackParser()
-				.registerDeserializer("a", ValueType.STRING, (parent, attribute, vpack, jsonBuffer) -> {
-					jsonBuffer.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
-				}).toJson(builder.slice());
+		final String json = new VPackParser().registerDeserializer("a", ValueType.STRING, new VPackJsonDeserializer() {
+			@Override
+			public void deserialize(
+				final VPackSlice parent,
+				final String attribute,
+				final VPackSlice vpack,
+				final StringBuilder json) throws VPackException {
+				json.append(JSONValue.toJSONString(vpack.getAsString() + "1"));
+			}
+		}).toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"a1\",\"b\":\"b\"}"));
 	}
 

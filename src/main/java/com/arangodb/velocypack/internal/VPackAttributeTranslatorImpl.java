@@ -55,8 +55,8 @@ public class VPackAttributeTranslatorImpl implements VPackAttributeTranslator {
 	public VPackAttributeTranslatorImpl() {
 		super();
 		builder = null;
-		attributeToKey = new HashMap<>();
-		keyToAttribute = new HashMap<>();
+		attributeToKey = new HashMap<String, VPackSlice>();
+		keyToAttribute = new HashMap<Integer, VPackSlice>();
 		try {
 			add(KEY, KEY_ATTRIBUTE - ATTRIBUTE_BASE);
 			add(REV, REV_ATTRIBUTE - ATTRIBUTE_BASE);

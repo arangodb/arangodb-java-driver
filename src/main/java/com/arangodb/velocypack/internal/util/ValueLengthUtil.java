@@ -36,7 +36,7 @@ public class ValueLengthUtil {
 	private static final Map<Byte, Integer> MAP;
 
 	static {
-		MAP = new HashMap<>();
+		MAP = new HashMap<Byte, Integer>();
 		MAP.put((byte) 0x00, 1);
 		MAP.put((byte) 0x01, 1);
 		MAP.put((byte) 0x02, 0);

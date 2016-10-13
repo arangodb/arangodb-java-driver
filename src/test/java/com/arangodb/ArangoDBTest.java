@@ -97,7 +97,7 @@ public class ArangoDBTest {
 			Collection<String> dbs = arangoDB.getDatabases();
 			assertThat(dbs, is(notNullValue()));
 			assertThat(dbs.size(), is(1));
-			assertThat(dbs.stream().findFirst().get(), is("_system"));
+			assertThat(dbs.iterator().next(), is("_system"));
 			arangoDB.createDatabase(BaseTest.TEST_DB);
 			dbs = arangoDB.getDatabases();
 			assertThat(dbs.size(), is(2));
@@ -114,7 +114,7 @@ public class ArangoDBTest {
 		final Collection<String> dbs = arangoDB.getAccessibleDatabases();
 		assertThat(dbs, is(notNullValue()));
 		assertThat(dbs.size(), is(1));
-		assertThat(dbs.stream().findFirst().get(), is("_system"));
+		assertThat(dbs.iterator().next(), is("_system"));
 	}
 
 	@Test
@@ -164,7 +164,7 @@ public class ArangoDBTest {
 		final Collection<UserEntity> users = arangoDB.getUsers();
 		assertThat(users, is(notNullValue()));
 		assertThat(users.size(), is(1));
-		assertThat(users.stream().findFirst().get().getUser(), is(ROOT));
+		assertThat(users.iterator().next().getUser(), is(ROOT));
 	}
 
 	@Test
@@ -175,9 +175,9 @@ public class ArangoDBTest {
 			final Collection<UserEntity> users = arangoDB.getUsers();
 			assertThat(users, is(notNullValue()));
 			assertThat(users.size(), is(2));
-			users.stream().forEach(user -> {
+			for (final UserEntity user : users) {
 				assertThat(user.getUser(), anyOf(is(ROOT), is(USER)));
-			});
+			}
 		} finally {
 			arangoDB.deleteUser(USER);
 		}
@@ -198,7 +198,7 @@ public class ArangoDBTest {
 	public void updateUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			final Map<String, Object> extra = new HashMap<>();
+			final Map<String, Object> extra = new HashMap<String, Object>();
 			extra.put("hund", false);
 			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
 			extra.put("hund", true);
@@ -206,10 +206,12 @@ public class ArangoDBTest {
 			final UserEntity user = arangoDB.updateUser(USER, new UserUpdateOptions().extra(extra));
 			assertThat(user, is(notNullValue()));
 			assertThat(user.getExtra().size(), is(2));
-			assertThat(user.getExtra().get("hund"), is(true));
+			assertThat(user.getExtra().get("hund"), is(notNullValue()));
+			assertThat(Boolean.valueOf(String.valueOf(user.getExtra().get("hund"))), is(true));
 			final UserEntity user2 = arangoDB.getUser(USER);
 			assertThat(user2.getExtra().size(), is(2));
-			assertThat(user2.getExtra().get("hund"), is(true));
+			assertThat(user2.getExtra().get("hund"), is(notNullValue()));
+			assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("hund"))), is(true));
 		} finally {
 			arangoDB.deleteUser(USER);
 		}
@@ -219,7 +221,7 @@ public class ArangoDBTest {
 	public void replaceUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
-			final Map<String, Object> extra = new HashMap<>();
+			final Map<String, Object> extra = new HashMap<String, Object>();
 			extra.put("hund", false);
 			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
 			extra.remove("hund");
@@ -227,10 +229,12 @@ public class ArangoDBTest {
 			final UserEntity user = arangoDB.replaceUser(USER, new UserUpdateOptions().extra(extra));
 			assertThat(user, is(notNullValue()));
 			assertThat(user.getExtra().size(), is(1));
-			assertThat(user.getExtra().get("mund"), is(true));
+			assertThat(user.getExtra().get("mund"), is(notNullValue()));
+			assertThat(Boolean.valueOf(String.valueOf(user.getExtra().get("mund"))), is(true));
 			final UserEntity user2 = arangoDB.getUser(USER);
 			assertThat(user2.getExtra().size(), is(1));
-			assertThat(user2.getExtra().get("mund"), is(true));
+			assertThat(user2.getExtra().get("mund"), is(notNullValue()));
+			assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("mund"))), is(true));
 		} finally {
 			arangoDB.deleteUser(USER);
 		}
@@ -262,8 +266,8 @@ public class ArangoDBTest {
 	public void execute() throws VPackException {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Response response = arangoDB.execute(new Request("_system", RequestType.GET, "/_api/version"));
-		assertThat(response.getBody().isPresent(), is(true));
-		assertThat(response.getBody().get().get("version").isString(), is(true));
+		assertThat(response.getBody(), is(notNullValue()));
+		assertThat(response.getBody().get("version").isString(), is(true));
 	}
 
 	@Test

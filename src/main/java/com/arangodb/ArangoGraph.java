@@ -29,8 +29,10 @@ import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import com.arangodb.velocypack.Type;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -138,9 +140,14 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.COLLECTIONS),
-			new Type<Collection<String>>() {
-			}.getType());
+		return new ResponseDeserializer<Collection<String>>() {
+			@Override
+			public Collection<String> deserialize(final Response response) throws VPackException {
+				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
+					new Type<Collection<String>>() {
+					}.getType());
+			}
+		};
 	}
 
 	/**
@@ -220,9 +227,14 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.COLLECTIONS),
-			new Type<Collection<String>>() {
-			}.getType());
+		return new ResponseDeserializer<Collection<String>>() {
+			@Override
+			public Collection<String> deserialize(final Response response) throws VPackException {
+				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
+					new Type<Collection<String>>() {
+					}.getType());
+			}
+		};
 	}
 
 	/**
@@ -258,7 +270,12 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+		return new ResponseDeserializer<GraphEntity>() {
+			@Override
+			public GraphEntity deserialize(final Response response) throws VPackException {
+				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+			}
+		};
 	}
 
 	/**
@@ -298,7 +315,12 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+		return new ResponseDeserializer<GraphEntity>() {
+			@Override
+			public GraphEntity deserialize(final Response response) throws VPackException {
+				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+			}
+		};
 	}
 
 	/**
@@ -338,6 +360,11 @@ public class ArangoGraph extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+		return new ResponseDeserializer<GraphEntity>() {
+			@Override
+			public GraphEntity deserialize(final Response response) throws VPackException {
+				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+			}
+		};
 	}
 }

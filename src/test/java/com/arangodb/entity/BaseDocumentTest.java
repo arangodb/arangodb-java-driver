@@ -92,7 +92,7 @@ public class BaseDocumentTest {
 		assertThat(entity.getRevision(), is(notNullValue()));
 		assertThat(entity.getRevision(), is("test"));
 		assertThat(entity.getProperties().size(), is(1));
-		assertThat(entity.getAttribute("a"), is("a"));
+		assertThat(String.valueOf(entity.getAttribute("a")), is("a"));
 	}
 
 }

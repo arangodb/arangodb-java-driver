@@ -95,8 +95,7 @@ public class ShortestPathInAQLExample extends BaseGraphTest {
 	}
 
 	protected Collection<String> toVertexCollection(final ArangoCursor<Pair> cursor) {
-		final List<String> result = new ArrayList<>();
-
+		final List<String> result = new ArrayList<String>();
 		for (; cursor.hasNext();) {
 			final Pair pair = cursor.next();
 			result.add(pair.getVertex());

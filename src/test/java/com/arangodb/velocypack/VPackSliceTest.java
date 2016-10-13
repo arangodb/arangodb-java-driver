@@ -463,12 +463,12 @@ public class VPackSliceTest {
 		{
 			final byte[] vpack = { 0x1b, 0x66, 0x66, 0x66, 0x66, 0x66, (byte) 0xb6, 0x60, 0x40 };
 			final VPackSlice slice = new VPackSlice(vpack);
-			assertThat(slice.getAsNumber(), is(133.7));
+			assertThat(slice.getAsNumber().doubleValue(), is(133.7));
 		}
 		{
 			final byte[] vpack = { 0x1b, 0x66, 0x66, 0x66, 0x66, 0x66, (byte) 0xb6, 0x60, (byte) 0xc0 };
 			final VPackSlice slice = new VPackSlice(vpack);
-			assertThat(slice.getAsNumber(), is(-133.7));
+			assertThat(slice.getAsNumber().doubleValue(), is(-133.7));
 		}
 	}
 

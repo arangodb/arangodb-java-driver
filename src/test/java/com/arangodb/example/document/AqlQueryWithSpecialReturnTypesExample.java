@@ -70,7 +70,8 @@ public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 		final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
 		final ArangoCursor<VPackSlice> cursor = db.query(query, bindVars, null, VPackSlice.class);
 		assertThat(cursor, is(notNullValue()));
-		cursor.forEachRemaining(vpack -> {
+		for (; cursor.hasNext();) {
+			final VPackSlice vpack = cursor.next();
 			try {
 				assertThat(vpack.get("name").getAsString(),
 					isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
@@ -78,7 +79,7 @@ public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 				assertThat(vpack.get("age").getAsInt(), isOneOf(21, 23, 25, 27, 29));
 			} catch (final VPackException e) {
 			}
-		});
+		}
 	}
 
 	@Test
@@ -88,12 +89,13 @@ public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 		final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
 		final ArangoCursor<VPackSlice> cursor = db.query(query, bindVars, null, VPackSlice.class);
 		assertThat(cursor, is(notNullValue()));
-		cursor.forEachRemaining(vpack -> {
+		for (; cursor.hasNext();) {
+			final VPackSlice vpack = cursor.next();
 			assertThat(vpack.get(0).getAsString(),
 				isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
 			assertThat(vpack.get(1).getAsString(), is(Gender.FEMALE.name()));
 			assertThat(vpack.get(2).getAsInt(), isOneOf(21, 23, 25, 27, 29));
-		});
+		}
 	}
 
 	@Test
@@ -104,11 +106,16 @@ public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 		final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
 		final ArangoCursor<Map> cursor = db.query(query, bindVars, null, Map.class);
 		assertThat(cursor, is(notNullValue()));
-		cursor.forEachRemaining(map -> {
-			assertThat(map.get("name"), isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
-			assertThat(map.get("gender"), is(Gender.FEMALE.name()));
-			assertThat(map.get("age"), isOneOf(21L, 23L, 25L, 27L, 29L));
-		});
+		for (; cursor.hasNext();) {
+			final Map map = cursor.next();
+			assertThat(map.get("name"), is(notNullValue()));
+			assertThat(String.valueOf(map.get("name")),
+				isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
+			assertThat(map.get("gender"), is(notNullValue()));
+			assertThat(String.valueOf(map.get("gender")), is(Gender.FEMALE.name()));
+			assertThat(map.get("age"), is(notNullValue()));
+			assertThat(Long.valueOf(map.get("age").toString()), isOneOf(21L, 23L, 25L, 27L, 29L));
+		}
 	}
 
 	@Test
@@ -119,10 +126,15 @@ public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 		final Map<String, Object> bindVars = new MapBuilder().put("gender", Gender.FEMALE).get();
 		final ArangoCursor<List> cursor = db.query(query, bindVars, null, List.class);
 		assertThat(cursor, is(notNullValue()));
-		cursor.forEachRemaining(vpack -> {
-			assertThat(vpack.get(0), isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
-			assertThat(vpack.get(1), is(Gender.FEMALE.name()));
-			assertThat(vpack.get(2), isOneOf(21L, 23L, 25L, 27L, 29L));
-		});
+		for (; cursor.hasNext();) {
+			final List vpack = cursor.next();
+			assertThat(vpack.get(0), is(notNullValue()));
+			assertThat(String.valueOf(vpack.get(0)),
+				isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
+			assertThat(vpack.get(1), is(notNullValue()));
+			assertThat(Gender.valueOf(String.valueOf(vpack.get(1))), is(Gender.FEMALE));
+			assertThat(vpack.get(2), is(notNullValue()));
+			assertThat(Long.valueOf(String.valueOf(vpack.get(2))), isOneOf(21L, 23L, 25L, 27L, 29L));
+		}
 	}
 }

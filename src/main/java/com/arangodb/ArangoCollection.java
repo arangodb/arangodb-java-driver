@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
@@ -59,6 +58,7 @@ import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
@@ -172,19 +172,22 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get();
-			final DocumentCreateEntity<T> doc = deserialize(body, DocumentCreateEntity.class);
-			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
-			if (newDoc.isObject()) {
-				doc.setNew(deserialize(newDoc, value.getClass()));
+		return new ResponseDeserializer<DocumentCreateEntity<T>>() {
+			@Override
+			public DocumentCreateEntity<T> deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				final DocumentCreateEntity<T> doc = ArangoCollection.this.deserialize(body, DocumentCreateEntity.class);
+				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
+				if (newDoc.isObject()) {
+					doc.setNew((T) ArangoCollection.this.deserialize(newDoc, value.getClass()));
+				}
+				final Map<DocumentField.Type, String> values = new HashMap<>();
+				values.put(DocumentField.Type.ID, doc.getId());
+				values.put(DocumentField.Type.KEY, doc.getKey());
+				values.put(DocumentField.Type.REV, doc.getRev());
+				documentCache.setValues(value, values);
+				return doc;
 			}
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.ID, doc.getId());
-			values.put(DocumentField.Type.KEY, doc.getKey());
-			values.put(DocumentField.Type.REV, doc.getRev());
-			documentCache.setValues(value, values);
-			return doc;
 		};
 	}
 
@@ -275,34 +278,38 @@ public class ArangoCollection extends ArangoExecuteable {
 	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentCreateOptions params) {
-		return response -> {
-			Class<T> type = null;
-			if (params.getReturnNew() != null && params.getReturnNew()) {
-				final Optional<T> first = values.stream().findFirst();
-				if (first.isPresent()) {
-					type = (Class<T>) first.get().getClass();
-				}
-			}
-			final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
-			final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
-			final Collection<ErrorEntity> errors = new ArrayList<>();
-			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
-				final VPackSlice next = iterator.next();
-				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
-					errors.add(deserialize(next, ErrorEntity.class));
-				} else {
-					final DocumentCreateEntity<T> doc = deserialize(next, DocumentCreateEntity.class);
-					final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
-					if (newDoc.isObject()) {
-						doc.setNew(deserialize(newDoc, type));
+		return new ResponseDeserializer<MultiDocumentEntity<DocumentCreateEntity<T>>>() {
+			@Override
+			public MultiDocumentEntity<DocumentCreateEntity<T>> deserialize(final Response response)
+					throws VPackException {
+				Class<T> type = null;
+				if (params.getReturnNew() != null && params.getReturnNew()) {
+					if (!values.isEmpty()) {
+						type = (Class<T>) values.iterator().next().getClass();
 					}
-					docs.add(doc);
 				}
+				final MultiDocumentEntity<DocumentCreateEntity<T>> multiDocument = new MultiDocumentEntity<>();
+				final Collection<DocumentCreateEntity<T>> docs = new ArrayList<>();
+				final Collection<ErrorEntity> errors = new ArrayList<>();
+				final VPackSlice body = response.getBody();
+				for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
+					final VPackSlice next = iterator.next();
+					if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+						errors.add((ErrorEntity) ArangoCollection.this.deserialize(next, ErrorEntity.class));
+					} else {
+						final DocumentCreateEntity<T> doc = ArangoCollection.this.deserialize(next,
+							DocumentCreateEntity.class);
+						final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+						if (newDoc.isObject()) {
+							doc.setNew((T) ArangoCollection.this.deserialize(newDoc, type));
+						}
+						docs.add(doc);
+					}
+				}
+				multiDocument.setDocuments(docs);
+				multiDocument.setErrors(errors);
+				return multiDocument;
 			}
-			multiDocument.setDocuments(docs);
-			multiDocument.setErrors(errors);
-			return multiDocument;
 		};
 	}
 
@@ -318,15 +325,15 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> Optional<T> getDocument(final String key, final Class<T> type) {
+	public <T> T getDocument(final String key, final Class<T> type) {
 		validateDocumentKey(key);
 		try {
-			return Optional.ofNullable(executeSync(getDocumentRequest(key, new DocumentReadOptions()), type));
+			return executeSync(getDocumentRequest(key, new DocumentReadOptions()), type);
 		} catch (final ArangoDBException e) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
-			return Optional.empty();
+			return null;
 		}
 	}
 
@@ -344,16 +351,16 @@ public class ArangoCollection extends ArangoExecuteable {
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> Optional<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
+	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
 		validateDocumentKey(key);
 		try {
-			return Optional.ofNullable(executeSync(getDocumentRequest(key, options), type));
+			return executeSync(getDocumentRequest(key, options), type);
 		} catch (final ArangoDBException e) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
-			return Optional.empty();
+			return null;
 		}
 	}
 
@@ -368,13 +375,11 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            The type of the document (POJO class, VPackSlice or String for Json)
 	 * @return the document identified by the key
 	 */
-	public <T> CompletableFuture<Optional<T>> getDocumentAsync(final String key, final Class<T> type)
-			throws ArangoDBException {
+	public <T> CompletableFuture<T> getDocumentAsync(final String key, final Class<T> type) throws ArangoDBException {
 		validateDocumentKey(key);
-		final CompletableFuture<Optional<T>> result = new CompletableFuture<>();
+		final CompletableFuture<T> result = new CompletableFuture<>();
 		final CompletableFuture<T> execute = executeAsync(getDocumentRequest(key, new DocumentReadOptions()), type);
-		execute.whenComplete(
-			(response, ex) -> result.complete((response != null) ? Optional.ofNullable(response) : Optional.empty()));
+		execute.whenComplete((response, ex) -> result.complete(response));
 		return result;
 	}
 
@@ -391,15 +396,14 @@ public class ArangoCollection extends ArangoExecuteable {
 	 *            Additional options, can be null
 	 * @return the document identified by the key
 	 */
-	public <T> CompletableFuture<Optional<T>> getDocumentAsync(
+	public <T> CompletableFuture<T> getDocumentAsync(
 		final String key,
 		final Class<T> type,
 		final DocumentReadOptions options) throws ArangoDBException {
 		validateDocumentKey(key);
-		final CompletableFuture<Optional<T>> result = new CompletableFuture<>();
+		final CompletableFuture<T> result = new CompletableFuture<>();
 		final CompletableFuture<T> execute = executeAsync(getDocumentRequest(key, options), type);
-		execute.whenComplete(
-			(response, ex) -> result.complete((response != null) ? Optional.ofNullable(response) : Optional.empty()));
+		execute.whenComplete((response, ex) -> result.complete(response));
 		return result;
 	}
 
@@ -504,21 +508,24 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get();
-			final DocumentUpdateEntity<T> doc = deserialize(body, DocumentUpdateEntity.class);
-			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
-			if (newDoc.isObject()) {
-				doc.setNew(deserialize(newDoc, value.getClass()));
+		return new ResponseDeserializer<DocumentUpdateEntity<T>>() {
+			@Override
+			public DocumentUpdateEntity<T> deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				final DocumentUpdateEntity<T> doc = ArangoCollection.this.deserialize(body, DocumentUpdateEntity.class);
+				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
+				if (newDoc.isObject()) {
+					doc.setNew((T) ArangoCollection.this.deserialize(newDoc, value.getClass()));
+				}
+				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld((T) ArangoCollection.this.deserialize(oldDoc, value.getClass()));
+				}
+				final Map<DocumentField.Type, String> values = new HashMap<>();
+				values.put(DocumentField.Type.REV, doc.getRev());
+				documentCache.setValues(value, values);
+				return doc;
 			}
-			final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
-			if (oldDoc.isObject()) {
-				doc.setOld(deserialize(oldDoc, value.getClass()));
-			}
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.REV, doc.getRev());
-			documentCache.setValues(value, values);
-			return doc;
 		};
 	}
 
@@ -614,39 +621,43 @@ public class ArangoCollection extends ArangoExecuteable {
 	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentReplaceOptions params) {
-		return response -> {
-			Class<T> type = null;
-			if ((params.getReturnNew() != null && params.getReturnNew())
-					|| (params.getReturnOld() != null && params.getReturnOld())) {
-				final Optional<T> first = values.stream().findFirst();
-				if (first.isPresent()) {
-					type = (Class<T>) first.get().getClass();
-				}
-			}
-			final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
-			final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
-			final Collection<ErrorEntity> errors = new ArrayList<>();
-			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
-				final VPackSlice next = iterator.next();
-				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
-					errors.add(deserialize(next, ErrorEntity.class));
-				} else {
-					final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
-					final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
-					if (newDoc.isObject()) {
-						doc.setNew(deserialize(newDoc, type));
+		return new ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>>() {
+			@Override
+			public MultiDocumentEntity<DocumentUpdateEntity<T>> deserialize(final Response response)
+					throws VPackException {
+				Class<T> type = null;
+				if ((params.getReturnNew() != null && params.getReturnNew())
+						|| (params.getReturnOld() != null && params.getReturnOld())) {
+					if (!values.isEmpty()) {
+						type = (Class<T>) values.iterator().next().getClass();
 					}
-					final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
-					if (oldDoc.isObject()) {
-						doc.setOld(deserialize(oldDoc, type));
-					}
-					docs.add(doc);
 				}
+				final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
+				final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
+				final Collection<ErrorEntity> errors = new ArrayList<>();
+				final VPackSlice body = response.getBody();
+				for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
+					final VPackSlice next = iterator.next();
+					if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+						errors.add((ErrorEntity) ArangoCollection.this.deserialize(next, ErrorEntity.class));
+					} else {
+						final DocumentUpdateEntity<T> doc = ArangoCollection.this.deserialize(next,
+							DocumentUpdateEntity.class);
+						final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+						if (newDoc.isObject()) {
+							doc.setNew((T) ArangoCollection.this.deserialize(newDoc, type));
+						}
+						final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+						if (oldDoc.isObject()) {
+							doc.setOld((T) ArangoCollection.this.deserialize(oldDoc, type));
+						}
+						docs.add(doc);
+					}
+				}
+				multiDocument.setDocuments(docs);
+				multiDocument.setErrors(errors);
+				return multiDocument;
 			}
-			multiDocument.setDocuments(docs);
-			multiDocument.setErrors(errors);
-			return multiDocument;
 		};
 	}
 
@@ -749,18 +760,21 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<DocumentUpdateEntity<T>> updateDocumentResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get();
-			final DocumentUpdateEntity<T> doc = deserialize(body, DocumentUpdateEntity.class);
-			final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
-			if (newDoc.isObject()) {
-				doc.setNew(deserialize(newDoc, value.getClass()));
+		return new ResponseDeserializer<DocumentUpdateEntity<T>>() {
+			@Override
+			public DocumentUpdateEntity<T> deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				final DocumentUpdateEntity<T> doc = ArangoCollection.this.deserialize(body, DocumentUpdateEntity.class);
+				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
+				if (newDoc.isObject()) {
+					doc.setNew((T) ArangoCollection.this.deserialize(newDoc, value.getClass()));
+				}
+				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld((T) ArangoCollection.this.deserialize(oldDoc, value.getClass()));
+				}
+				return doc;
 			}
-			final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
-			if (oldDoc.isObject()) {
-				doc.setOld(deserialize(oldDoc, value.getClass()));
-			}
-			return doc;
 		};
 	}
 
@@ -865,39 +879,43 @@ public class ArangoCollection extends ArangoExecuteable {
 	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
 		final Collection<T> values,
 		final DocumentUpdateOptions params) {
-		return response -> {
-			Class<T> type = null;
-			if ((params.getReturnNew() != null && params.getReturnNew())
-					|| (params.getReturnOld() != null && params.getReturnOld())) {
-				final Optional<T> first = values.stream().findFirst();
-				if (first.isPresent()) {
-					type = (Class<T>) first.get().getClass();
-				}
-			}
-			final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
-			final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
-			final Collection<ErrorEntity> errors = new ArrayList<>();
-			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
-				final VPackSlice next = iterator.next();
-				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
-					errors.add(deserialize(next, ErrorEntity.class));
-				} else {
-					final DocumentUpdateEntity<T> doc = deserialize(next, DocumentUpdateEntity.class);
-					final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
-					if (newDoc.isObject()) {
-						doc.setNew(deserialize(newDoc, type));
+		return new ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>>() {
+			@Override
+			public MultiDocumentEntity<DocumentUpdateEntity<T>> deserialize(final Response response)
+					throws VPackException {
+				Class<T> type = null;
+				if ((params.getReturnNew() != null && params.getReturnNew())
+						|| (params.getReturnOld() != null && params.getReturnOld())) {
+					if (!values.isEmpty()) {
+						type = (Class<T>) values.iterator().next().getClass();
 					}
-					final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
-					if (oldDoc.isObject()) {
-						doc.setOld(deserialize(oldDoc, type));
-					}
-					docs.add(doc);
 				}
+				final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
+				final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
+				final Collection<ErrorEntity> errors = new ArrayList<>();
+				final VPackSlice body = response.getBody();
+				for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
+					final VPackSlice next = iterator.next();
+					if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+						errors.add((ErrorEntity) ArangoCollection.this.deserialize(next, ErrorEntity.class));
+					} else {
+						final DocumentUpdateEntity<T> doc = ArangoCollection.this.deserialize(next,
+							DocumentUpdateEntity.class);
+						final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
+						if (newDoc.isObject()) {
+							doc.setNew((T) ArangoCollection.this.deserialize(newDoc, type));
+						}
+						final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+						if (oldDoc.isObject()) {
+							doc.setOld((T) ArangoCollection.this.deserialize(oldDoc, type));
+						}
+						docs.add(doc);
+					}
+				}
+				multiDocument.setDocuments(docs);
+				multiDocument.setErrors(errors);
+				return multiDocument;
 			}
-			multiDocument.setDocuments(docs);
-			multiDocument.setErrors(errors);
-			return multiDocument;
 		};
 	}
 
@@ -993,14 +1011,17 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	private <T> ResponseDeserializer<DocumentDeleteEntity<T>> deleteDocumentResponseDeserializer(final Class<T> type) {
-		return response -> {
-			final VPackSlice body = response.getBody().get();
-			final DocumentDeleteEntity<T> doc = deserialize(body, DocumentDeleteEntity.class);
-			final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
-			if (oldDoc.isObject()) {
-				doc.setOld(deserialize(oldDoc, type));
+		return new ResponseDeserializer<DocumentDeleteEntity<T>>() {
+			@Override
+			public DocumentDeleteEntity<T> deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				final DocumentDeleteEntity<T> doc = ArangoCollection.this.deserialize(body, DocumentDeleteEntity.class);
+				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld((T) ArangoCollection.this.deserialize(oldDoc, type));
+				}
+				return doc;
 			}
-			return doc;
 		};
 	}
 
@@ -1100,27 +1121,32 @@ public class ArangoCollection extends ArangoExecuteable {
 
 	private <T> ResponseDeserializer<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocumentsResponseDeserializer(
 		final Class<T> type) {
-		return response -> {
-			final MultiDocumentEntity<DocumentDeleteEntity<T>> multiDocument = new MultiDocumentEntity<>();
-			final Collection<DocumentDeleteEntity<T>> docs = new ArrayList<>();
-			final Collection<ErrorEntity> errors = new ArrayList<>();
-			final VPackSlice body = response.getBody().get();
-			for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
-				final VPackSlice next = iterator.next();
-				if (next.get(ArangoDBConstants.ERROR).isTrue()) {
-					errors.add(deserialize(next, ErrorEntity.class));
-				} else {
-					final DocumentDeleteEntity<T> doc = deserialize(next, DocumentDeleteEntity.class);
-					final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
-					if (oldDoc.isObject()) {
-						doc.setOld(deserialize(oldDoc, type));
+		return new ResponseDeserializer<MultiDocumentEntity<DocumentDeleteEntity<T>>>() {
+			@Override
+			public MultiDocumentEntity<DocumentDeleteEntity<T>> deserialize(final Response response)
+					throws VPackException {
+				final MultiDocumentEntity<DocumentDeleteEntity<T>> multiDocument = new MultiDocumentEntity<>();
+				final Collection<DocumentDeleteEntity<T>> docs = new ArrayList<>();
+				final Collection<ErrorEntity> errors = new ArrayList<>();
+				final VPackSlice body = response.getBody();
+				for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
+					final VPackSlice next = iterator.next();
+					if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+						errors.add((ErrorEntity) ArangoCollection.this.deserialize(next, ErrorEntity.class));
+					} else {
+						final DocumentDeleteEntity<T> doc = ArangoCollection.this.deserialize(next,
+							DocumentDeleteEntity.class);
+						final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
+						if (oldDoc.isObject()) {
+							doc.setOld((T) ArangoCollection.this.deserialize(oldDoc, type));
+						}
+						docs.add(doc);
 					}
-					docs.add(doc);
 				}
+				multiDocument.setDocuments(docs);
+				multiDocument.setErrors(errors);
+				return multiDocument;
 			}
-			multiDocument.setDocuments(docs);
-			multiDocument.setErrors(errors);
-			return multiDocument;
 		};
 	}
 
@@ -1461,9 +1487,14 @@ public class ArangoCollection extends ArangoExecuteable {
 	}
 
 	private ResponseDeserializer<Collection<IndexEntity>> getIndexesResponseDeserializer() {
-		return response -> deserialize(response.getBody().get().get(ArangoDBConstants.INDEXES),
-			new Type<Collection<IndexEntity>>() {
-			}.getType());
+		return new ResponseDeserializer<Collection<IndexEntity>>() {
+			@Override
+			public Collection<IndexEntity> deserialize(final Response response) throws VPackException {
+				return ArangoCollection.this.deserialize(response.getBody().get(ArangoDBConstants.INDEXES),
+					new Type<Collection<IndexEntity>>() {
+					}.getType());
+			}
+		};
 	}
 
 	/**

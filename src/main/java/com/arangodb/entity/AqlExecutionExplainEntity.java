@@ -21,7 +21,6 @@
 package com.arangodb.entity;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -106,76 +105,76 @@ public class AqlExecutionExplainEntity {
 			return estimatedNrItems;
 		}
 
-		public Optional<Long> getDepth() {
-			return Optional.ofNullable(depth);
+		public Long getDepth() {
+			return depth;
 		}
 
-		public Optional<String> getDatabase() {
-			return Optional.ofNullable(database);
+		public String getDatabase() {
+			return database;
 		}
 
-		public Optional<String> getCollection() {
-			return Optional.ofNullable(collection);
+		public String getCollection() {
+			return collection;
 		}
 
-		public Optional<ExecutionVariable> getInVariable() {
-			return Optional.ofNullable(inVariable);
+		public ExecutionVariable getInVariable() {
+			return inVariable;
 		}
 
-		public Optional<ExecutionVariable> getOutVariable() {
-			return Optional.ofNullable(outVariable);
+		public ExecutionVariable getOutVariable() {
+			return outVariable;
 		}
 
-		public Optional<ExecutionVariable> getConditionVariable() {
-			return Optional.ofNullable(conditionVariable);
+		public ExecutionVariable getConditionVariable() {
+			return conditionVariable;
 		}
 
-		public Optional<Boolean> getRandom() {
-			return Optional.ofNullable(random);
+		public Boolean getRandom() {
+			return random;
 		}
 
-		public Optional<Long> getOffset() {
-			return Optional.ofNullable(offset);
+		public Long getOffset() {
+			return offset;
 		}
 
-		public Optional<Long> getLimit() {
-			return Optional.ofNullable(limit);
+		public Long getLimit() {
+			return limit;
 		}
 
-		public Optional<Boolean> getFullCount() {
-			return Optional.ofNullable(fullCount);
+		public Boolean getFullCount() {
+			return fullCount;
 		}
 
-		public Optional<ExecutionNode> getSubquery() {
-			return Optional.ofNullable(subquery);
+		public ExecutionNode getSubquery() {
+			return subquery;
 		}
 
-		public Optional<Boolean> getIsConst() {
-			return Optional.ofNullable(isConst);
+		public Boolean getIsConst() {
+			return isConst;
 		}
 
-		public Optional<Boolean> getCanThrow() {
-			return Optional.ofNullable(canThrow);
+		public Boolean getCanThrow() {
+			return canThrow;
 		}
 
-		public Optional<String> getExpressionType() {
-			return Optional.ofNullable(expressionType);
+		public String getExpressionType() {
+			return expressionType;
 		}
 
-		public Optional<IndexEntity> getIndexes() {
-			return Optional.ofNullable(indexes);
+		public IndexEntity getIndexes() {
+			return indexes;
 		}
 
-		public Optional<ExecutionExpression> getExpression() {
-			return Optional.ofNullable(expression);
+		public ExecutionExpression getExpression() {
+			return expression;
 		}
 
-		public Optional<ExecutionCollection> getCondition() {
-			return Optional.ofNullable(condition);
+		public ExecutionCollection getCondition() {
+			return condition;
 		}
 
-		public Optional<Boolean> getReverse() {
-			return Optional.ofNullable(reverse);
+		public Boolean getReverse() {
+			return reverse;
 		}
 	}
 
@@ -214,24 +213,24 @@ public class AqlExecutionExplainEntity {
 			return id;
 		}
 
-		public Optional<Object> getValue() {
-			return Optional.ofNullable(value);
+		public Object getValue() {
+			return value;
 		}
 
-		public Optional<Boolean> getSorted() {
-			return Optional.ofNullable(sorted);
+		public Boolean getSorted() {
+			return sorted;
 		}
 
-		public Optional<String> getQuantifier() {
-			return Optional.ofNullable(quantifier);
+		public String getQuantifier() {
+			return quantifier;
 		}
 
-		public Optional<Collection<Long>> getLevels() {
-			return Optional.ofNullable(levels);
+		public Collection<Long> getLevels() {
+			return levels;
 		}
 
-		public Optional<Collection<ExecutionExpression>> getSubNodes() {
-			return Optional.ofNullable(subNodes);
+		public Collection<ExecutionExpression> getSubNodes() {
+			return subNodes;
 		}
 	}
 
@@ -273,12 +272,12 @@ public class AqlExecutionExplainEntity {
 	private ExecutionStats stats;
 	private Boolean cacheable;
 
-	public Optional<ExecutionPlan> getPlan() {
-		return Optional.ofNullable(plan);
+	public ExecutionPlan getPlan() {
+		return plan;
 	}
 
-	public Optional<Collection<ExecutionPlan>> getPlans() {
-		return Optional.ofNullable(plans);
+	public Collection<ExecutionPlan> getPlans() {
+		return plans;
 	}
 
 	public Collection<String> getWarnings() {

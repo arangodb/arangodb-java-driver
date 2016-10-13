@@ -26,7 +26,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,10 +79,10 @@ public class VPack {
 
 		public Builder() {
 			super();
-			serializers = new HashMap<>();
-			deserializers = new HashMap<>();
-			deserializersByName = new HashMap<>();
-			instanceCreators = new HashMap<>();
+			serializers = new HashMap<Type, VPackSerializer<?>>();
+			deserializers = new HashMap<Type, VPackDeserializer<?>>();
+			deserializersByName = new HashMap<String, Map<Type, VPackDeserializer<?>>>();
+			instanceCreators = new HashMap<Type, VPackInstanceCreator<?>>();
 			builderOptions = new DefaultVPackBuilderOptions();
 			serializeNullValues = false;
 
@@ -113,7 +112,6 @@ public class VPack {
 			serializers.put(Date.class, VPackSerializers.DATE);
 			serializers.put(java.sql.Date.class, VPackSerializers.SQL_DATE);
 			serializers.put(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
-			serializers.put(Instant.class, VPackSerializers.INSTANT);
 			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
@@ -137,7 +135,6 @@ public class VPack {
 			deserializers.put(Date.class, VPackDeserializers.DATE);
 			deserializers.put(java.sql.Date.class, VPackDeserializers.SQL_DATE);
 			deserializers.put(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
-			deserializers.put(Instant.class, VPackDeserializers.INSTANT);
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 		}
 
@@ -157,7 +154,7 @@ public class VPack {
 			final VPackDeserializer<T> deserializer) {
 			Map<Type, VPackDeserializer<?>> byName = deserializersByName.get(fieldName);
 			if (byName == null) {
-				byName = new HashMap<>();
+				byName = new HashMap<Type, VPackDeserializer<?>>();
 				deserializersByName.put(fieldName, byName);
 			}
 			byName.put(type, deserializer);
@@ -207,10 +204,15 @@ public class VPack {
 		this.builderOptions = builderOptions;
 		this.serializeNullValues = serializeNullValues;
 		this.deserializersByName = deserializersByName;
-		keyMapAdapters = new HashMap<>();
+		keyMapAdapters = new HashMap<Type, VPackKeyMapAdapter<?>>();
 		cache = new VPackCache(fieldNamingStrategy);
-		serializationContext = (builder, attribute, entity) -> VPack.this.serialize(attribute, entity,
-			entity.getClass(), builder, new HashMap<String, Object>());
+		serializationContext = new VPackSerializationContext() {
+			@Override
+			public void serialize(final VPackBuilder builder, final String attribute, final Object entity)
+					throws VPackParserException {
+				VPack.this.serialize(attribute, entity, entity.getClass(), builder, new HashMap<String, Object>());
+			}
+		};
 		deserializationContext = new VPackDeserializationContext() {
 			@Override
 			public <T> T deserialize(final VPackSlice vpack, final Class<T> type) throws VPackParserException {
@@ -441,7 +443,7 @@ public class VPack {
 	}
 
 	public VPackSlice serialize(final Object entity, final Type type) throws VPackParserException {
-		return serialize(entity, type, new HashMap<>());
+		return serialize(entity, type, new HashMap<String, Object>());
 	}
 
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
@@ -450,7 +452,7 @@ public class VPack {
 			return (VPackSlice) entity;
 		}
 		final VPackBuilder builder = new VPackBuilder(builderOptions);
-		serialize(null, entity, type, builder, new HashMap<>(additionalFields));
+		serialize(null, entity, type, builder, new HashMap<String, Object>(additionalFields));
 		return builder.slice();
 	}
 

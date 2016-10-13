@@ -114,8 +114,7 @@ public class ConnectionSync extends Connection {
 		final Message responseMessage = new Message(message.getId(), chunkBuffer);
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Received Message (id=%s, head=%s, body=%s)", responseMessage.getId(),
-				responseMessage.getHead(),
-				responseMessage.getBody().isPresent() ? responseMessage.getBody().get() : "{}"));
+				responseMessage.getHead(), responseMessage.getBody() != null ? responseMessage.getBody() : "{}"));
 		}
 		return responseMessage;
 	}

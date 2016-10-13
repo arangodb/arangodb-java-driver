@@ -21,9 +21,8 @@
 package com.arangodb.example.document;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-
-import java.util.Optional;
 
 import org.json.simple.parser.ParseException;
 import org.junit.BeforeClass;
@@ -52,32 +51,33 @@ public class GetDocumentExample extends ExampleBase {
 
 	@Test
 	public void getAsBean() {
-		final Optional<TestEntity> doc = collection.getDocument(key, TestEntity.class);
-		assertThat(doc.isPresent(), is(true));
-		assertThat(doc.get().getFoo(), is("bar"));
+		final TestEntity doc = collection.getDocument(key, TestEntity.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.getFoo(), is("bar"));
 	}
 
 	@Test
 	public void getAsBaseDocument() {
-		final Optional<BaseDocument> doc = collection.getDocument(key, BaseDocument.class);
-		assertThat(doc.isPresent(), is(true));
-		assertThat(doc.get().getAttribute("foo"), is("bar"));
+		final BaseDocument doc = collection.getDocument(key, BaseDocument.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.getAttribute("foo"), is(notNullValue()));
+		assertThat(String.valueOf(doc.getAttribute("foo")), is("bar"));
 	}
 
 	@Test
 	public void getAsVPack() {
-		final Optional<VPackSlice> doc = collection.getDocument(key, VPackSlice.class);
-		assertThat(doc.isPresent(), is(true));
-		assertThat(doc.get().get("foo").isString(), is(true));
-		assertThat(doc.get().get("foo").getAsString(), is("bar"));
+		final VPackSlice doc = collection.getDocument(key, VPackSlice.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.get("foo").isString(), is(true));
+		assertThat(doc.get("foo").getAsString(), is("bar"));
 	}
 
 	@Test
 	public void getAsJson() throws ParseException {
-		final Optional<String> doc = collection.getDocument(key, String.class);
-		assertThat(doc.isPresent(), is(true));
-		assertThat(doc.get().contains("foo"), is(true));
-		assertThat(doc.get().contains("bar"), is(true));
+		final String doc = collection.getDocument(key, String.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.contains("foo"), is(true));
+		assertThat(doc.contains("bar"), is(true));
 	}
 
 }

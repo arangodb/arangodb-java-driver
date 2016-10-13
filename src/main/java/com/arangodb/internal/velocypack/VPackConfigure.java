@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.velocypack;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 
 import org.json.simple.JSONValue;
@@ -35,9 +36,14 @@ import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackDeserializationContext;
+import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackFieldNamingStrategy;
+import com.arangodb.velocypack.VPackJsonDeserializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.internal.util.NumberUtil;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -55,16 +61,47 @@ public class VPackConfigure {
 		final VPackParser vpackParser,
 		final CollectionCache cache) {
 
-		builder.fieldNamingStrategy(field -> {
-			final DocumentField annotation = field.getAnnotation(DocumentField.class);
-			if (annotation != null) {
-				return annotation.value().getSerializeName();
+		builder.fieldNamingStrategy(new VPackFieldNamingStrategy() {
+			@Override
+			public String translateName(final Field field) {
+				final DocumentField annotation = field.getAnnotation(DocumentField.class);
+				if (annotation != null) {
+					return annotation.value().getSerializeName();
+				}
+				return field.getName();
 			}
-			return field.getName();
 		});
-		builder.registerDeserializer(ID, String.class, (parent, vpack, context) -> {
-			final String id;
-			if (vpack.isCustom()) {
+		builder.registerDeserializer(ID, String.class, new VPackDeserializer<String>() {
+			@Override
+			public String deserialize(
+				final VPackSlice parent,
+				final VPackSlice vpack,
+				final VPackDeserializationContext context) throws VPackException {
+				final String id;
+				if (vpack.isCustom()) {
+					final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1,
+						vpack.getByteSize() - 1);
+					final String collectionName = cache.getCollectionName(idLong);
+					if (collectionName != null) {
+						final VPackSlice key = parent.get("_key");
+						id = String.format("%s/%s", collectionName, key.getAsString());
+					} else {
+						id = null;
+					}
+				} else {
+					id = vpack.getAsString();
+				}
+				return id;
+			}
+		});
+		vpackParser.registerDeserializer(ID, ValueType.CUSTOM, new VPackJsonDeserializer() {
+			@Override
+			public void deserialize(
+				final VPackSlice parent,
+				final String attribute,
+				final VPackSlice vpack,
+				final StringBuilder json) throws VPackException {
+				final String id;
 				final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1, vpack.getByteSize() - 1);
 				final String collectionName = cache.getCollectionName(idLong);
 				if (collectionName != null) {
@@ -73,22 +110,8 @@ public class VPackConfigure {
 				} else {
 					id = null;
 				}
-			} else {
-				id = vpack.getAsString();
+				json.append(JSONValue.toJSONString(id));
 			}
-			return id;
-		});
-		vpackParser.registerDeserializer(ID, ValueType.CUSTOM, (parent, attribute, vpack, json) -> {
-			final String id;
-			final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1, vpack.getByteSize() - 1);
-			final String collectionName = cache.getCollectionName(idLong);
-			if (collectionName != null) {
-				final VPackSlice key = parent.get("_key");
-				id = String.format("%s/%s", collectionName, key.getAsString());
-			} else {
-				id = null;
-			}
-			json.append(JSONValue.toJSONString(id));
 		});
 
 		builder.registerSerializer(Request.class, VPackSerializers.REQUEST);

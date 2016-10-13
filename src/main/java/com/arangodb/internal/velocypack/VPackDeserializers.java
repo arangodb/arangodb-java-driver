@@ -33,7 +33,10 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.LogLevel;
+import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
 
 /**
@@ -45,43 +48,86 @@ public class VPackDeserializers {
 	private static final Logger LOGGER = LoggerFactory.getLogger(VPackDeserializers.class);
 	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
-	public static final VPackDeserializer<Response> RESPONSE = (parent, vpack, context) -> {
-		final Response response = new Response();
-		response.setVersion(vpack.get(0).getAsInt());
-		response.setType(vpack.get(1).getAsInt());
-		response.setResponseCode(vpack.get(2).getAsInt());
-		return response;
-	};
-
-	public static final VPackDeserializer<CollectionType> COLLECTION_TYPE = (parent, vpack, context) -> CollectionType
-			.fromType(vpack.getAsInt());
-
-	public static final VPackDeserializer<CollectionStatus> COLLECTION_STATUS = (
-		parent,
-		vpack,
-		context) -> CollectionStatus.fromStatus(vpack.getAsInt());
-
-	@SuppressWarnings("unchecked")
-	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = (parent, vpack, context) -> new BaseDocument(
-			context.deserialize(vpack, Map.class));
-
-	@SuppressWarnings("unchecked")
-	public static final VPackDeserializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = (
-		parent,
-		vpack,
-		context) -> new BaseEdgeDocument(context.deserialize(vpack, Map.class));
-
-	public static final VPackDeserializer<Date> DATE_STRING = (parent, vpack, context) -> {
-		try {
-			return new SimpleDateFormat(DATE_TIME_FORMAT).parse(vpack.getAsString());
-		} catch (final ParseException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("got ParseException for date string: " + vpack.getAsString());
-			}
+	public static final VPackDeserializer<Response> RESPONSE = new VPackDeserializer<Response>() {
+		@Override
+		public Response deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final Response response = new Response();
+			response.setVersion(vpack.get(0).getAsInt());
+			response.setType(vpack.get(1).getAsInt());
+			response.setResponseCode(vpack.get(2).getAsInt());
+			return response;
 		}
-		return null;
 	};
 
-	public static final VPackDeserializer<LogLevel> LOG_LEVEL = (parent, vpack, context) -> LogLevel
-			.fromLevel(vpack.getAsInt());
+	public static final VPackDeserializer<CollectionType> COLLECTION_TYPE = new VPackDeserializer<CollectionType>() {
+		@Override
+		public CollectionType deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return CollectionType.fromType(vpack.getAsInt());
+		}
+	};
+
+	public static final VPackDeserializer<CollectionStatus> COLLECTION_STATUS = new VPackDeserializer<CollectionStatus>() {
+		@Override
+		public CollectionStatus deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return CollectionStatus.fromStatus(vpack.getAsInt());
+		}
+	};
+
+	@SuppressWarnings("unchecked")
+	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = new VPackDeserializer<BaseDocument>() {
+		@Override
+		public BaseDocument deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return new BaseDocument(context.deserialize(vpack, Map.class));
+		}
+	};
+
+	@SuppressWarnings("unchecked")
+	public static final VPackDeserializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = new VPackDeserializer<BaseEdgeDocument>() {
+		@Override
+		public BaseEdgeDocument deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return new BaseEdgeDocument(context.deserialize(vpack, Map.class));
+		}
+	};
+
+	public static final VPackDeserializer<Date> DATE_STRING = new VPackDeserializer<Date>() {
+		@Override
+		public Date deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			try {
+				return new SimpleDateFormat(DATE_TIME_FORMAT).parse(vpack.getAsString());
+			} catch (final ParseException e) {
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("got ParseException for date string: " + vpack.getAsString());
+				}
+			}
+			return null;
+		}
+	};
+
+	public static final VPackDeserializer<LogLevel> LOG_LEVEL = new VPackDeserializer<LogLevel>() {
+		@Override
+		public LogLevel deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return LogLevel.fromLevel(vpack.getAsInt());
+		}
+	};
 }

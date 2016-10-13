@@ -23,7 +23,6 @@ package com.arangodb.velocypack;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -283,13 +282,6 @@ public class VPackSlice implements Serializable {
 			throw new VPackValueTypeException(ValueType.UTC_DATE);
 		}
 		return DateUtil.toSQLTimestamp(vpack, start + 1, length());
-	}
-
-	public Instant getAsInstant() {
-		if (!isDate()) {
-			throw new VPackValueTypeException(ValueType.UTC_DATE);
-		}
-		return DateUtil.toInstant(vpack, start + 1, length());
 	}
 
 	public String getAsString() {

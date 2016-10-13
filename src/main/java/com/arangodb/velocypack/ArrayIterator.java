@@ -48,4 +48,9 @@ public class ArrayIterator extends SliceIterator<VPackSlice> {
 		return next;
 	}
 
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
+
 }

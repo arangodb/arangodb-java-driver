@@ -32,7 +32,7 @@ public class ObjectArrayUtil {
 	private static final Map<Byte, Integer> FIRST_SUB_MAP;
 
 	static {
-		FIRST_SUB_MAP = new HashMap<>();
+		FIRST_SUB_MAP = new HashMap<Byte, Integer>();
 
 		FIRST_SUB_MAP.put((byte) 0x00, 0); // None
 		FIRST_SUB_MAP.put((byte) 0x01, 1); // empty array
@@ -61,7 +61,7 @@ public class ObjectArrayUtil {
 
 	private static final Map<Byte, Integer> OFFSET_SIZE;
 	static {
-		OFFSET_SIZE = new HashMap<>();
+		OFFSET_SIZE = new HashMap<Byte, Integer>();
 
 		OFFSET_SIZE.put((byte) 0x00, 0); // None
 		OFFSET_SIZE.put((byte) 0x01, 1); // empty array

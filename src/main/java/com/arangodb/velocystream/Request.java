@@ -22,7 +22,6 @@ package com.arangodb.velocystream;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
@@ -41,16 +40,16 @@ public class Request {
 	private Map<String, String> queryParam;
 	private Map<String, String> headerParam;
 	@Expose(serialize = false)
-	private Optional<VPackSlice> body;
+	private VPackSlice body;
 
 	public Request(final String database, final RequestType requestType, final String path) {
 		super();
 		this.database = database;
 		this.requestType = requestType;
 		this.request = path;
-		body = Optional.empty();
-		queryParam = new HashMap<>();
-		headerParam = new HashMap<>();
+		body = null;
+		queryParam = new HashMap<String, String>();
+		headerParam = new HashMap<String, String>();
 	}
 
 	public int getVersion() {
@@ -85,7 +84,7 @@ public class Request {
 
 	public Map<String, String> getQueryParam() {
 		if (queryParam == null) {
-			queryParam = new HashMap<>();
+			queryParam = new HashMap<String, String>();
 		}
 		return queryParam;
 	}
@@ -99,7 +98,7 @@ public class Request {
 
 	public Map<String, String> getHeaderParam() {
 		if (headerParam == null) {
-			headerParam = new HashMap<>();
+			headerParam = new HashMap<String, String>();
 		}
 		return headerParam;
 	}
@@ -111,12 +110,12 @@ public class Request {
 		return this;
 	}
 
-	public Optional<VPackSlice> getBody() {
+	public VPackSlice getBody() {
 		return body;
 	}
 
 	public Request setBody(final VPackSlice body) {
-		this.body = Optional.ofNullable(body);
+		this.body = body;
 		return this;
 	}
 
