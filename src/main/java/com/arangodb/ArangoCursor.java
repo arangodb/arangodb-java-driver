@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.CursorEntity.Extras;
@@ -109,9 +106,9 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		return iterator.next();
 	}
 
-	public Stream<T> streamRemaining() {
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
-	}
+	// public Stream<T> streamRemaining() {
+	// return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
+	// }
 
 	public List<T> asListRemaining() {
 		final List<T> remaining = new ArrayList<T>();
@@ -119,6 +116,11 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 			remaining.add(next());
 		}
 		return remaining;
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 
 }

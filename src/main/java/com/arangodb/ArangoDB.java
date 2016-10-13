@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
 
 import javax.net.ssl.SSLContext;
 
@@ -227,19 +226,6 @@ public class ArangoDB extends ArangoExecuteable {
 		return executeSync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
 	}
 
-	/**
-	 * creates a new database
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
-	 *      Documentation</a>
-	 * @param name
-	 *            Has to contain a valid database name
-	 * @return true if the database was created successfully.
-	 */
-	public CompletableFuture<Boolean> createDatabaseAsync(final String name) {
-		return executeAsync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
-	}
-
 	private Request createDatabaseRequest(final String name) {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
@@ -264,15 +250,6 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public Collection<String> getDatabases() throws ArangoDBException {
 		return executeSync(getDatabasesRequest(), getDatabaseResponseDeserializer());
-	}
-
-	/**
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-databases">API
-	 *      Documentation</a>
-	 * @return a list of all existing databases
-	 */
-	public CompletableFuture<Collection<String>> getDatabasesAsync() {
-		return executeAsync(getDatabasesRequest(), getDatabaseResponseDeserializer());
 	}
 
 	private Request getDatabasesRequest() {
@@ -301,16 +278,6 @@ public class ArangoDB extends ArangoExecuteable {
 		return executeSync(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
 	}
 
-	/**
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
-	 *      Documentation</a>
-	 * @return a list of all databases the current user can access
-	 */
-	public CompletableFuture<Collection<String>> getAccessibleDatabasesAsync() {
-		return executeAsync(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
-	}
-
 	private Request getAccessibleDatabasesRequest() {
 		return new Request(db().name(), RequestType.GET,
 				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER));
@@ -326,17 +293,6 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
 		return executeSync(getVersionRequest(), ArangoDBVersion.class);
-	}
-
-	/**
-	 * Returns the server name and version number.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
-	 *      Documentation</a>
-	 * @return the server version, number
-	 */
-	public CompletableFuture<ArangoDBVersion> getVersionAsync() {
-		return executeAsync(getVersionRequest(), ArangoDBVersion.class);
 	}
 
 	private Request getVersionRequest() {
@@ -378,41 +334,6 @@ public class ArangoDB extends ArangoExecuteable {
 		return executeSync(createUserRequest(user, passwd, options), UserEntity.class);
 	}
 
-	/**
-	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
-	 * order to execute this call.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @param passwd
-	 *            The user password
-	 * @return information about the user
-	 */
-	public CompletableFuture<UserEntity> createUserAsync(final String user, final String passwd) {
-		return executeAsync(createUserRequest(user, passwd, new UserCreateOptions()), UserEntity.class);
-	}
-
-	/**
-	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
-	 * order to execute this call.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @param passwd
-	 *            The user password
-	 * @param options
-	 *            Additional properties of the user, can be null
-	 * @return information about the user
-	 */
-	public CompletableFuture<UserEntity> createUserAsync(
-		final String user,
-		final String passwd,
-		final UserCreateOptions options) {
-		return executeAsync(createUserRequest(user, passwd, options), UserEntity.class);
-	}
-
 	private Request createUserRequest(final String user, final String passwd, final UserCreateOptions options) {
 		final Request request;
 		request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
@@ -433,18 +354,6 @@ public class ArangoDB extends ArangoExecuteable {
 		executeSync(deleteUserRequest(user), Void.class);
 	}
 
-	/**
-	 * Removes an existing user, identified by user. You need access to the _system database.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#remove-user">API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @return void
-	 */
-	public CompletableFuture<Void> deleteUserAsync(final String user) {
-		return executeAsync(deleteUserRequest(user), Void.class);
-	}
-
 	private Request deleteUserRequest(final String user) {
 		return new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user));
 	}
@@ -463,19 +372,6 @@ public class ArangoDB extends ArangoExecuteable {
 		return executeSync(getUserRequest(user), UserEntity.class);
 	}
 
-	/**
-	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
-	 * _system database in order to execute this call.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#fetch-user">API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @return information about the user
-	 */
-	public CompletableFuture<UserEntity> getUserAsync(final String user) {
-		return executeAsync(getUserRequest(user), UserEntity.class);
-	}
-
 	private Request getUserRequest(final String user) {
 		return new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user));
 	}
@@ -490,17 +386,6 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public Collection<UserEntity> getUsers() throws ArangoDBException {
 		return executeSync(getUsersRequest(), getUsersResponseDeserializer());
-	}
-
-	/**
-	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-available-users">API
-	 *      Documentation</a>
-	 * @return informations about all users
-	 */
-	public CompletableFuture<Collection<UserEntity>> getUsersAsync() {
-		return executeAsync(getUsersRequest(), getUsersResponseDeserializer());
 	}
 
 	private Request getUsersRequest() {
@@ -534,21 +419,6 @@ public class ArangoDB extends ArangoExecuteable {
 		return executeSync(updateUserRequest(user, options), UserEntity.class);
 	}
 
-	/**
-	 * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
-	 * only change the password of your self. You need access to the _system database to change the active flag.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#update-user">API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @param options
-	 *            Properties of the user to be changed
-	 * @return information about the user
-	 */
-	public CompletableFuture<UserEntity> updateUserAsync(final String user, final UserUpdateOptions options) {
-		return executeAsync(updateUserRequest(user, options), UserEntity.class);
-	}
-
 	private Request updateUserRequest(final String user, final UserUpdateOptions options) {
 		final Request request;
 		request = new Request(db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_USER, user));
@@ -573,22 +443,6 @@ public class ArangoDB extends ArangoExecuteable {
 		return executeSync(replaceUserRequest(user, options), UserEntity.class);
 	}
 
-	/**
-	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
-	 * change the password of your self. You need access to the _system database to change the active flag.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#replace-user">API
-	 *      Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @param options
-	 *            Additional properties of the user, can be null
-	 * @return information about the user
-	 */
-	public CompletableFuture<UserEntity> replaceUserAsync(final String user, final UserUpdateOptions options) {
-		return executeAsync(replaceUserRequest(user, options), UserEntity.class);
-	}
-
 	private Request replaceUserRequest(final String user, final UserUpdateOptions options) {
 		final Request request;
 		request = new Request(db().name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_USER, user));
@@ -605,10 +459,6 @@ public class ArangoDB extends ArangoExecuteable {
 		});
 	}
 
-	public CompletableFuture<Response> executeAsync(final Request request) {
-		return executeAsync(request, response -> response);
-	}
-
 	/**
 	 * Returns fatal, error, warning or info log messages from the server's global log.
 	 * 
@@ -622,20 +472,6 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public LogEntity getLogs(final LogOptions options) throws ArangoDBException {
 		return executeSync(getLogsRequest(options), LogEntity.class);
-	}
-
-	/**
-	 * Returns fatal, error, warning or info log messages from the server's global log.
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
-	 *      Documentation</a>
-	 * @param options
-	 *            Additional options, can be null
-	 * @return the log messages
-	 */
-	public CompletableFuture<LogEntity> getLogsAsync(final LogOptions options) {
-		return executeAsync(getLogsRequest(options), LogEntity.class);
 	}
 
 	private Request getLogsRequest(final LogOptions options) {

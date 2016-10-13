@@ -79,7 +79,7 @@ public class ArangoSslTest {
 			final ArangoDB arangoDB = new ArangoDB.Builder().port(8530).useSsl(true).build();
 			arangoDB.getVersion();
 			fail("this should fail");
-		} catch (ArangoDBException ex) {
+		} catch (final ArangoDBException ex) {
 			assertThat(ex.getCause() instanceof SSLHandshakeException, is(true));
 		}
 	}

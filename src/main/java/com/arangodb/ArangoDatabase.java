@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.AqlExecutionExplainEntity;
 import com.arangodb.entity.AqlFunctionEntity;
@@ -127,38 +126,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(createCollectionRequest(name, options), CollectionEntity.class);
 	}
 
-	/**
-	 * Creates a collection
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
-	 *      Documentation</a>
-	 * @param name
-	 *            The name of the collection
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the collection
-	 */
-	public CompletableFuture<CollectionEntity> createCollectionAsync(final String name) {
-		return executeAsync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
-	}
-
-	/**
-	 * Creates a collection
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
-	 *      Documentation</a>
-	 * @param name
-	 *            The name of the collection
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the collection
-	 */
-	public CompletableFuture<CollectionEntity> createCollectionAsync(
-		final String name,
-		final CollectionCreateOptions options) {
-		return executeAsync(createCollectionRequest(name, options), CollectionEntity.class);
-	}
-
 	private Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
 		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION).setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));
@@ -188,30 +155,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
 		return executeSync(getCollectionsRequest(options), getCollectionsResponseDeserializer());
-	}
-
-	/**
-	 * Returns all collections
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
-	 *      Documentation</a>
-	 * @return list of information about all collections
-	 */
-	public CompletableFuture<Collection<CollectionEntity>> getCollectionsAsync() {
-		return executeAsync(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
-	}
-
-	/**
-	 * Returns all collections
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
-	 *      Documentation</a>
-	 * @param options
-	 *            Additional options, can be null
-	 * @return list of information about all collections
-	 */
-	public CompletableFuture<Collection<CollectionEntity>> getCollectionsAsync(final CollectionsReadOptions options) {
-		return executeAsync(getCollectionsRequest(options), getCollectionsResponseDeserializer());
 	}
 
 	private Request getCollectionsRequest(final CollectionsReadOptions options) {
@@ -246,18 +189,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(getIndexRequest(id), IndexEntity.class);
 	}
 
-	/**
-	 * Returns an index
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
-	 * @param id
-	 *            The index-handle
-	 * @return information about the index
-	 */
-	public CompletableFuture<IndexEntity> getIndexAsync(final String id) {
-		return executeAsync(getIndexRequest(id), IndexEntity.class);
-	}
-
 	private Request getIndexRequest(final String id) {
 		return new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_INDEX, id));
 	}
@@ -273,18 +204,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public String deleteIndex(final String id) throws ArangoDBException {
 		return executeSync(deleteIndexRequest(id), deleteIndexResponseDeserializer());
-	}
-
-	/**
-	 * Deletes an index
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
-	 * @param id
-	 *            The index handle
-	 * @return the id of the index
-	 */
-	public CompletableFuture<String> deleteIndexAsync(final String id) {
-		return executeAsync(deleteIndexRequest(id), deleteIndexResponseDeserializer());
 	}
 
 	private Request deleteIndexRequest(final String id) {
@@ -310,17 +229,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public Boolean drop() throws ArangoDBException {
 		return executeSync(dropRequest(), createDropResponseDeserializer());
-	}
-
-	/**
-	 * Drop an existing database
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
-	 *      Documentation</a>
-	 * @return true if the database was dropped successfully
-	 */
-	public CompletableFuture<Boolean> dropAsync() {
-		return executeAsync(dropRequest(), createDropResponseDeserializer());
 	}
 
 	private Request dropRequest() {
@@ -351,20 +259,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		executeSync(grantAccessRequest(user), Void.class);
 	}
 
-	/**
-	 * Grants access to the database dbname for user user. You need permission to the _system database in order to
-	 * execute this call.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
-	 *      API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @return void
-	 */
-	public CompletableFuture<Void> grantAccessAync(final String user) {
-		return executeAsync(grantAccessRequest(user), Void.class);
-	}
-
 	private Request grantAccessRequest(final String user) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
 				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
@@ -383,20 +277,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public void revokeAccess(final String user) throws ArangoDBException {
 		executeSync(revokeAccessRequest(user), Void.class);
-	}
-
-	/**
-	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
-	 * execute this call.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
-	 *      API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @return void
-	 */
-	public CompletableFuture<Void> revokeAccessAsync(final String user) {
-		return executeAsync(revokeAccessRequest(user), Void.class);
 	}
 
 	private Request revokeAccessRequest(final String user) {
@@ -426,35 +306,10 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
-		return unwrap(queryAsync(query, bindVars, options, type));
-	}
-
-	/**
-	 * Create a cursor and return the first results
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
-	 *      Documentation</a>
-	 * @param query
-	 *            contains the query string to be executed
-	 * @param bindVars
-	 *            key/value pairs representing the bind parameters
-	 * @param options
-	 *            Additional options, can be null
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
-	 * @return cursor of the results
-	 */
-	public <T> CompletableFuture<ArangoCursor<T>> queryAsync(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryOptions options,
-		final Class<T> type) throws ArangoDBException {
 		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(
 			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
-		final CompletableFuture<CursorEntity> execution = executeAsync(request, CursorEntity.class);
-		return execution.thenApply(result -> {
-			return new ArangoCursor<>(this, type, result);
-		});
+		final CursorEntity result = executeSync(request, CursorEntity.class);
+		return new ArangoCursor<T>(this, type, result);
 	}
 
 	/**
@@ -476,26 +331,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Map<String, Object> bindVars,
 		final AqlQueryExplainOptions options) throws ArangoDBException {
 		return executeSync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
-	}
-
-	/**
-	 * Explain an AQL query and return information about it
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
-	 *      Documentation</a>
-	 * @param query
-	 *            the query which you want explained
-	 * @param bindVars
-	 *            key/value pairs representing the bind parameters
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the query
-	 */
-	public CompletableFuture<AqlExecutionExplainEntity> explainQueryAsync(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryExplainOptions options) {
-		return executeAsync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
 	}
 
 	private Request explainQueryRequest(
@@ -521,20 +356,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(parseQueryRequest(query), AqlParseEntity.class);
 	}
 
-	/**
-	 * Parse an AQL query and return information about it This method is for query validation only. To actually query
-	 * the database, see {@link ArangoDatabase#queryAsync(String, Map, AqlQueryOptions, Class)}
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
-	 *      Documentation</a>
-	 * @param query
-	 *            the query which you want parse
-	 * @return imformation about the query
-	 */
-	public CompletableFuture<AqlParseEntity> parseQueryAsync(final String query) {
-		return executeAsync(parseQueryRequest(query), AqlParseEntity.class);
-	}
-
 	private Request parseQueryRequest(final String query) {
 		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_QUERY)
 				.setBody(serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
@@ -552,18 +373,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		executeSync(clearQueryCacheRequest(), Void.class);
 	}
 
-	/**
-	 * Clears the AQL query cache
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
-	 *      Documentation</a>
-	 * @return void
-	 */
-	public CompletableFuture<Void> clearQueryCacheAsync() {
-		return executeAsync(clearQueryCacheRequest(), Void.class);
-	}
-
 	private Request clearQueryCacheRequest() {
 		return new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_QUERY_CACHE);
 	}
@@ -579,18 +388,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException {
 		return executeSync(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
-	}
-
-	/**
-	 * Returns the global configuration for the AQL query cache
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
-	 *      Documentation</a>
-	 * @return configuration for the AQL query cache
-	 */
-	public CompletableFuture<QueryCachePropertiesEntity> getQueryCachePropertiesAsync() {
-		return executeAsync(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
 	}
 
 	private Request getQueryCachePropertiesRequest() {
@@ -614,22 +411,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
 	}
 
-	/**
-	 * Changes the configuration for the AQL query cache. Note: changing the properties may invalidate all results in
-	 * the cache.
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
-	 *      Documentation</a>
-	 * @param properties
-	 *            properties to be set
-	 * @return current set of properties
-	 */
-	public CompletableFuture<QueryCachePropertiesEntity> setQueryCachePropertiesAsync(
-		final QueryCachePropertiesEntity properties) {
-		return executeAsync(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
-	}
-
 	private Request setQueryCachePropertiesRequest(final QueryCachePropertiesEntity properties) {
 		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_CACHE_PROPERTIES)
 				.setBody(serialize(properties));
@@ -646,18 +427,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException {
 		return executeSync(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
-	}
-
-	/**
-	 * Returns the configuration for the AQL query tracking
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
-	 *      Documentation</a>
-	 * @return configuration for the AQL query tracking
-	 */
-	public CompletableFuture<QueryTrackingPropertiesEntity> getQueryTrackingPropertiesAsync() {
-		return executeAsync(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
 	}
 
 	private Request getQueryTrackingPropertiesRequest() {
@@ -680,21 +449,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
 	}
 
-	/**
-	 * Changes the configuration for the AQL query tracking
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
-	 *      Documentation</a>
-	 * @param properties
-	 *            properties to be set
-	 * @return current set of properties
-	 */
-	public CompletableFuture<QueryTrackingPropertiesEntity> setQueryTrackingPropertiesAsync(
-		final QueryTrackingPropertiesEntity properties) {
-		return executeAsync(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
-	}
-
 	private Request setQueryTrackingPropertiesRequest(final QueryTrackingPropertiesEntity properties) {
 		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_PROPERTIES)
 				.setBody(serialize(properties));
@@ -711,19 +465,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
 		return executeSync(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
-		}.getType());
-	}
-
-	/**
-	 * Returns a list of currently running AQL queries
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
-	 *      Documentation</a>
-	 * @return a list of currently running AQL queries
-	 */
-	public CompletableFuture<Collection<QueryEntity>> getCurrentlyRunningQueriesAsync() {
-		return executeAsync(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
 		}.getType());
 	}
 
@@ -745,19 +486,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		}.getType());
 	}
 
-	/**
-	 * Returns a list of slow running AQL queries
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
-	 *      Documentation</a>
-	 * @return a list of slow running AQL queries
-	 */
-	public CompletableFuture<Collection<QueryEntity>> getSlowQueriesAsync() {
-		return executeAsync(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
-		}.getType());
-	}
-
 	private Request getSlowQueriesRequest() {
 		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_SLOW);
 	}
@@ -772,18 +500,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public void clearSlowQueries() throws ArangoDBException {
 		executeSync(clearSlowQueriesRequest(), Void.class);
-	}
-
-	/**
-	 * Clears the list of slow AQL queries
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
-	 *      Documentation</a>
-	 * @return void
-	 */
-	public CompletableFuture<Void> clearSlowQueriesAsync() {
-		return executeAsync(clearSlowQueriesRequest(), Void.class);
 	}
 
 	private Request clearSlowQueriesRequest() {
@@ -801,19 +517,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public void killQuery(final String id) throws ArangoDBException {
 		executeSync(killQueryRequest(id), Void.class);
-	}
-
-	/**
-	 * Kills a running query. The query will be terminated at the next cancelation point.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
-	 *      Documentation</a>
-	 * @param id
-	 *            The id of the query
-	 * @return void
-	 */
-	public CompletableFuture<Void> killQueryAsync(final String id) {
-		return executeAsync(killQueryRequest(id), Void.class);
 	}
 
 	private Request killQueryRequest(final String id) {
@@ -836,27 +539,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
 			throws ArangoDBException {
 		executeSync(createAqlFunctionRequest(name, code, options), Void.class);
-	}
-
-	/**
-	 * Create a new AQL user function
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
-	 *      Documentation</a>
-	 * @param name
-	 *            the fully qualified name of the user functions
-	 * @param code
-	 *            a string representation of the function body
-	 * @param options
-	 *            Additional options, can be null
-	 * @return void
-	 */
-	public CompletableFuture<Void> createAqlFunctionAsync(
-		final String name,
-		final String code,
-		final AqlFunctionCreateOptions options) {
-		return executeAsync(createAqlFunctionRequest(name, code, options), Void.class);
-
 	}
 
 	private Request createAqlFunctionRequest(
@@ -883,22 +565,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		executeSync(deleteAqlFunctionRequest(name, options), Void.class);
 	}
 
-	/**
-	 * Remove an existing AQL user function
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
-	 *      Documentation</a>
-	 * @param name
-	 *            the name of the AQL user function
-	 * @param options
-	 *            Additional options, can be null
-	 * @return void
-	 */
-	public CompletableFuture<Void> deleteAqlFunctionAsync(final String name, final AqlFunctionDeleteOptions options) {
-		return executeAsync(deleteAqlFunctionRequest(name, options), Void.class);
-	}
-
 	private Request deleteAqlFunctionRequest(final String name, final AqlFunctionDeleteOptions options) {
 		final Request request = new Request(name(), RequestType.DELETE,
 				createPath(ArangoDBConstants.PATH_API_AQLFUNCTION, name));
@@ -920,21 +586,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
 		return executeSync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
-		}.getType());
-	}
-
-	/**
-	 * Gets all reqistered AQL user functions
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
-	 *      Documentation</a>
-	 * @param options
-	 *            Additional options, can be null
-	 * @return all reqistered AQL user functions
-	 */
-	public CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctionsAsync(final AqlFunctionGetOptions options) {
-		return executeAsync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
 		}.getType());
 	}
 
@@ -990,46 +641,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
 	}
 
-	/**
-	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
-	 * of its edges.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
-	 *      Documentation</a>
-	 * @param name
-	 *            Name of the graph
-	 * @param edgeDefinitions
-	 *            An array of definitions for the edge
-	 * @return information about the graph
-	 */
-	public CompletableFuture<GraphEntity> createGraphAsync(
-		final String name,
-		final Collection<EdgeDefinition> edgeDefinitions) {
-		return executeAsync(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
-			createGraphResponseDeserializer());
-	}
-
-	/**
-	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
-	 * of its edges.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
-	 *      Documentation</a>
-	 * @param name
-	 *            Name of the graph
-	 * @param edgeDefinitions
-	 *            An array of definitions for the edge
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the graph
-	 */
-	public CompletableFuture<GraphEntity> createGraphAsync(
-		final String name,
-		final Collection<EdgeDefinition> edgeDefinitions,
-		final GraphCreateOptions options) {
-		return executeAsync(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
-	}
-
 	private Request createGraphRequest(
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions,
@@ -1058,17 +669,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public Collection<GraphEntity> getGraphs() throws ArangoDBException {
 		return executeSync(getGraphsRequest(), getGraphsResponseDeserializer());
-	}
-
-	/**
-	 * Lists all graphs known to the graph module
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
-	 *      Documentation</a>
-	 * @return graphs stored in this database
-	 */
-	public CompletableFuture<Collection<GraphEntity>> getGraphsAsync() {
-		return executeAsync(getGraphsRequest(), getGraphsResponseDeserializer());
 	}
 
 	private Request getGraphsRequest() {
@@ -1105,26 +705,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(transactionRequest(action, options), transactionResponseDeserializer(type));
 	}
 
-	/**
-	 * Execute a server-side transaction
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
-	 *      Documentation</a>
-	 * @param action
-	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return the result of the transaction if it succeeded
-	 */
-	public <T> CompletableFuture<T> transactionAsync(
-		final String action,
-		final Class<T> type,
-		final TransactionOptions options) {
-		return executeAsync(transactionRequest(action, options), transactionResponseDeserializer(type));
-	}
-
 	private Request transactionRequest(final String action, final TransactionOptions options) {
 		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRANSACTION)
 				.setBody(serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
@@ -1157,18 +737,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public DatabaseEntity getInfo() throws ArangoDBException {
 		return executeSync(getInfoRequest(), getInfoResponseDeserializer());
-	}
-
-	/**
-	 * Retrieves information about the current database
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
-	 *      Documentation</a>
-	 * @return information about the current database
-	 */
-	public CompletableFuture<DatabaseEntity> getInfoAsync() {
-		return executeAsync(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
 	private Request getInfoRequest() {
@@ -1208,27 +776,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return executeSync(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
 	}
 
-	/**
-	 * Execute a server-side traversal
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
-	 *      Documentation</a>
-	 * @param vertexClass
-	 *            The type of the vertex documents (POJO class, VPackSlice or String for Json)
-	 * @param edgeClass
-	 *            The type of the edge documents (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options
-	 * @return Result of the executed traversal
-	 */
-	public <V, E> CompletableFuture<TraversalEntity<V, E>> executeTraversalAsync(
-		final Class<V> vertexClass,
-		final Class<E> edgeClass,
-		final TraversalOptions options) {
-		final Request request = executeTraversalRequest(options);
-		return executeAsync(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
-	}
-
 	private Request executeTraversalRequest(final TraversalOptions options) {
 		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRAVERSAL)
 				.setBody(serialize(options != null ? options : new TransactionOptions()));
@@ -1240,14 +787,14 @@ public class ArangoDatabase extends ArangoExecuteable {
 		return new ResponseDeserializer<TraversalEntity<V, E>>() {
 			@Override
 			public TraversalEntity<V, E> deserialize(final Response response) throws VPackException {
-				final TraversalEntity<V, E> result = new TraversalEntity<>();
+				final TraversalEntity<V, E> result = new TraversalEntity<V, E>();
 				final VPackSlice visited = response.getBody().get(ArangoDBConstants.RESULT)
 						.get(ArangoDBConstants.VISITED);
 				result.setVertices(deserializeVertices(vertexClass, visited));
 
-				final Collection<PathEntity<V, E>> paths = new ArrayList<>();
+				final Collection<PathEntity<V, E>> paths = new ArrayList<PathEntity<V, E>>();
 				for (final Iterator<VPackSlice> iterator = visited.get("paths").arrayIterator(); iterator.hasNext();) {
-					final PathEntity<V, E> path = new PathEntity<>();
+					final PathEntity<V, E> path = new PathEntity<V, E>();
 					final VPackSlice next = iterator.next();
 					path.setEdges(deserializeEdges(edgeClass, next));
 					path.setVertices(deserializeVertices(vertexClass, next));
@@ -1262,7 +809,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	@SuppressWarnings("unchecked")
 	private <V> Collection<V> deserializeVertices(final Class<V> vertexClass, final VPackSlice vpack)
 			throws VPackException {
-		final Collection<V> vertices = new ArrayList<>();
+		final Collection<V> vertices = new ArrayList<V>();
 		for (final Iterator<VPackSlice> iterator = vpack.get(ArangoDBConstants.VERTICES).arrayIterator(); iterator
 				.hasNext();) {
 			vertices.add((V) deserialize(iterator.next(), vertexClass));
@@ -1272,7 +819,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 
 	@SuppressWarnings("unchecked")
 	private <E> Collection<E> deserializeEdges(final Class<E> edgeClass, final VPackSlice next) throws VPackException {
-		final Collection<E> edges = new ArrayList<>();
+		final Collection<E> edges = new ArrayList<E>();
 		for (final Iterator<VPackSlice> iteratorEdge = next.get(ArangoDBConstants.EDGES).arrayIterator(); iteratorEdge
 				.hasNext();) {
 			edges.add((E) deserialize(iteratorEdge.next(), edgeClass));
@@ -1320,45 +867,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	}
 
 	/**
-	 * Reads a single document
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
-	 *      Documentation</a>
-	 * @param id
-	 *            The id of the document
-	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json)
-	 * @return the document identified by the id
-	 */
-	public <T> CompletableFuture<T> getDocumentAsync(final String id, final Class<T> type) throws ArangoDBException {
-		validateDocumentId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getDocumentAsync(split[1], type);
-	}
-
-	/**
-	 * Reads a single document
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
-	 *      Documentation</a>
-	 * @param id
-	 *            The id of the document
-	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return the document identified by the id
-	 */
-	public <T> CompletableFuture<T> getDocumentAsync(
-		final String id,
-		final Class<T> type,
-		final DocumentReadOptions options) throws ArangoDBException {
-		validateDocumentId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getDocumentAsync(split[1], type, options);
-	}
-
-	/**
 	 * Reload the routing table.
 	 * 
 	 * @see <a href=
@@ -1368,18 +876,6 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public void reloadRouting() throws ArangoDBException {
 		executeSync(reloadRoutingRequest(), Void.class);
-	}
-
-	/**
-	 * Reload the routing table.
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
-	 *      Documentation</a>
-	 * @return void
-	 */
-	public CompletableFuture<Void> reloadRoutingAsync() {
-		return executeAsync(reloadRoutingRequest(), Void.class);
 	}
 
 	private Request reloadRoutingRequest() {

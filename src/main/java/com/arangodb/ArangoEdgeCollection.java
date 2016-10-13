@@ -22,7 +22,6 @@ package com.arangodb;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeEntity;
@@ -88,32 +87,6 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		return executeSync(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
 	}
 
-	/**
-	 * Creates a new edge in the collection
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
-	 * @param value
-	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
-	 * @return information about the edge
-	 */
-	public <T> CompletableFuture<EdgeEntity> insertEdgeAsync(final T value) {
-		return executeAsync(insertEdgeRequest(value, new EdgeCreateOptions()), insertEdgeResponseDeserializer(value));
-	}
-
-	/**
-	 * Creates a new edge in the collection
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
-	 * @param value
-	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the edge
-	 */
-	public <T> CompletableFuture<EdgeEntity> insertEdgeAsync(final T value, final EdgeCreateOptions options) {
-		return executeAsync(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
-	}
-
 	private <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
 		final Request request = new Request(graph.db().name(), RequestType.POST,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name));
@@ -172,39 +145,6 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		return executeSync(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
 	}
 
-	/**
-	 * Fetches an existing edge
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
-	 * @return the edge identified by the key
-	 */
-	public <T> CompletableFuture<T> getEdgeAsync(final String key, final Class<T> type) {
-		return executeAsync(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
-	}
-
-	/**
-	 * Fetches an existing edge
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return the edge identified by the key
-	 */
-	public <T> CompletableFuture<T> getEdgeAsync(
-		final String key,
-		final Class<T> type,
-		final DocumentReadOptions options) {
-		return executeAsync(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
-	}
-
 	private Request getEdgeRequest(final String key, final DocumentReadOptions options) {
 		final Request request = new Request(graph.db().name(), RequestType.GET, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
@@ -257,42 +197,6 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
 			throws ArangoDBException {
 		return executeSync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
-	}
-
-	/**
-	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
-	 * violated
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
-	 * @return information about the edge
-	 */
-	public <T> CompletableFuture<EdgeUpdateEntity> replaceEdgeAsync(final String key, final T value) {
-		return executeAsync(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
-			replaceEdgeResponseDeserializer(value));
-	}
-
-	/**
-	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
-	 * violated
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the edge
-	 */
-	public <T> CompletableFuture<EdgeUpdateEntity> replaceEdgeAsync(
-		final String key,
-		final T value,
-		final EdgeReplaceOptions options) {
-		return executeAsync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
 	}
 
 	private <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
@@ -357,44 +261,6 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 		return executeSync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
 	}
 
-	/**
-	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
-	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
-	 * do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
-	 * @return information about the edge
-	 */
-	public <T> CompletableFuture<EdgeUpdateEntity> updateEdgeAsync(final String key, final T value) {
-		return executeAsync(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
-			updateEdgeResponseDeserializer(value));
-	}
-
-	/**
-	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
-	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
-	 * do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the edge
-	 */
-	public <T> CompletableFuture<EdgeUpdateEntity> updateEdgeAsync(
-		final String key,
-		final T value,
-		final EdgeUpdateOptions options) {
-		return executeAsync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
-	}
-
 	private <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
 		final Request request;
 		request = new Request(graph.db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_GHARIAL,
@@ -441,30 +307,6 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 */
 	public void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException {
 		executeSync(deleteEdgeRequest(key, options), Void.class);
-	}
-
-	/**
-	 * Removes a edge
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 */
-	public CompletableFuture<Void> deleteEdgeAsync(final String key) {
-		return executeAsync(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
-	}
-
-	/**
-	 * Removes a edge
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param options
-	 *            Additional options, can be null
-	 */
-	public CompletableFuture<Void> deleteEdgeAsync(final String key, final EdgeDeleteOptions options) {
-		return executeAsync(deleteEdgeRequest(key, options), Void.class);
 	}
 
 	private Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {

@@ -22,7 +22,6 @@ package com.arangodb;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
@@ -72,18 +71,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		executeSync(dropRequest(), Void.class);
 	}
 
-	/**
-	 * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
-	 * graph
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-vertex-collection">API
-	 *      Documentation</a>
-	 * @return void
-	 */
-	public CompletableFuture<Void> dropAsync() {
-		return executeAsync(dropRequest(), Void.class);
-	}
-
 	private Request dropRequest() {
 		return new Request(graph.db().name(), RequestType.DELETE,
 				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name));
@@ -116,33 +103,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 */
 	public <T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException {
 		return executeSync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
-	}
-
-	/**
-	 * Creates a new vertex in the collection
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
-	 * @param value
-	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
-	 * @return information about the vertex
-	 */
-	public <T> CompletableFuture<VertexEntity> insertVertexAsync(final T value) {
-		return executeAsync(insertVertexRequest(value, new VertexCreateOptions()),
-			insertVertexResponseDeserializer(value));
-	}
-
-	/**
-	 * Creates a new vertex in the collection
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
-	 * @param value
-	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the vertex
-	 */
-	public <T> CompletableFuture<VertexEntity> insertVertexAsync(final T value, final VertexCreateOptions options) {
-		return executeAsync(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
 	}
 
 	private <T> Request insertVertexRequest(final T value, final VertexCreateOptions options) {
@@ -203,39 +163,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		return executeSync(getVertexRequest(key, options), getVertexResponseDeserializer(type));
 	}
 
-	/**
-	 * Fetches an existing vertex
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
-	 * @return the vertex identified by the key
-	 */
-	public <T> CompletableFuture<T> getVertexAsync(final String key, final Class<T> type) {
-		return executeAsync(getVertexRequest(key, new DocumentReadOptions()), type);
-	}
-
-	/**
-	 * Fetches an existing vertex
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return the vertex identified by the key
-	 */
-	public <T> CompletableFuture<T> getVertexAsync(
-		final String key,
-		final Class<T> type,
-		final DocumentReadOptions options) {
-		return executeAsync(getVertexRequest(key, options), type);
-	}
-
 	private Request getVertexRequest(final String key, final DocumentReadOptions options) {
 		final Request request = new Request(graph.db().name(), RequestType.GET, createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, createDocumentHandle(key)));
@@ -290,44 +217,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	public <T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
 			throws ArangoDBException {
 		return executeSync(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
-	}
-
-	/**
-	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
-	 * violated
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
-	 *      Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
-	 * @return information about the vertex
-	 */
-	public <T> CompletableFuture<VertexUpdateEntity> replaceVertexAsync(final String key, final T value) {
-		return executeAsync(replaceVertexRequest(key, value, new VertexReplaceOptions()),
-			replaceVertexResponseDeserializer(value));
-	}
-
-	/**
-	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
-	 * violated
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
-	 *      Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the vertex
-	 */
-	public <T> CompletableFuture<VertexUpdateEntity> replaceVertexAsync(
-		final String key,
-		final T value,
-		final VertexReplaceOptions options) {
-		return executeAsync(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
 	}
 
 	private <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
@@ -392,47 +281,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 		return executeSync(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
 	}
 
-	/**
-	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
-	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
-	 * do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
-	 * @return information about the vertex
-	 * @throws ArangoDBException
-	 */
-	public <T> CompletableFuture<VertexUpdateEntity> updateVertexAsync(final String key, final T value)
-			throws ArangoDBException {
-		return executeAsync(updateVertexRequest(key, value, new VertexUpdateOptions()),
-			updateVertexResponseDeserializer(value));
-	}
-
-	/**
-	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
-	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
-	 * do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the vertex
-	 * @throws ArangoDBException
-	 */
-	public <T> CompletableFuture<VertexUpdateEntity> updateVertexAsync(
-		final String key,
-		final T value,
-		final VertexUpdateOptions options) throws ArangoDBException {
-		return executeAsync(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
-	}
-
 	private <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
 		final Request request;
 		request = new Request(graph.db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_GHARIAL,
@@ -479,30 +327,6 @@ public class ArangoVertexCollection extends ArangoExecuteable {
 	 */
 	public void deleteVertex(final String key, final VertexDeleteOptions options) throws ArangoDBException {
 		executeSync(deleteVertexRequest(key, options), Void.class);
-	}
-
-	/**
-	 * Removes a vertex
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 */
-	public CompletableFuture<Void> deleteVertexAsync(final String key) {
-		return executeAsync(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
-	}
-
-	/**
-	 * Removes a vertex
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
-	 * @param key
-	 *            The key of the vertex
-	 * @param options
-	 *            Additional options, can be null
-	 */
-	public CompletableFuture<Void> deleteVertexAsync(final String key, final VertexDeleteOptions options) {
-		return executeAsync(deleteVertexRequest(key, options), Void.class);
 	}
 
 	private Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {

@@ -23,8 +23,6 @@ package com.arangodb.internal.velocystream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.SSLContext;
@@ -38,7 +36,6 @@ import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -56,8 +53,6 @@ public class Communication {
 	private static final AtomicLong mId = new AtomicLong(0L);
 	private final VPack vpack;
 	private final ConnectionSync connectionSync;
-	private final ConnectionAsync connectionAsync;
-	private final MessageStore messageStore;
 	private final CollectionCache collectionCache;
 
 	private final String user;
@@ -128,24 +123,21 @@ public class Communication {
 	private Communication(final String host, final Integer port, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
 		final CollectionCache collectionCache, final Integer chunksize) {
-		messageStore = new MessageStore();
 		this.user = user;
 		this.password = password;
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
 		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
-		connectionAsync = new ConnectionAsync.Builder(messageStore).host(host).port(port).timeout(timeout)
-				.useSsl(useSsl).sslContext(sslContext).build();
 		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).useSsl(useSsl)
 				.sslContext(sslContext).build();
 	}
 
-	private void connect(final Connection connection, final boolean sync) {
+	private void connect(final Connection connection) {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
 				if (user != null) {
-					authenticate(sync);
+					authenticate();
 				}
 			} catch (final IOException e) {
 				LOGGER.error(e.getMessage(), e);
@@ -154,26 +146,13 @@ public class Communication {
 		}
 	}
 
-	private void authenticate(final boolean sync) {
-		Response response = null;
-		if (sync) {
-			response = executeSync(
-				new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN));
-		} else {
-			try {
-				response = executeAsync(new AuthenticationRequest(user, password != null ? password : "",
-						ArangoDBConstants.ENCRYPTION_PLAIN)).get();
-			} catch (final InterruptedException e) {
-				throw new ArangoDBException(e);
-			} catch (final ExecutionException e) {
-				throw new ArangoDBException(e);
-			}
-		}
+	private void authenticate() {
+		final Response response = executeSync(
+			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN));
 		checkError(response);
 	}
 
 	public void disconnect() {
-		disconnect(connectionAsync);
 		disconnect(connectionSync);
 	}
 
@@ -182,7 +161,7 @@ public class Communication {
 	}
 
 	public Response executeSync(final Request request) throws ArangoDBException {
-		connect(connectionSync, true);
+		connect(connectionSync);
 		try {
 			final Message requestMessage = createMessage(request);
 			final Message responseMessage = sendSync(requestMessage);
@@ -220,48 +199,6 @@ public class Communication {
 		return errorMessage;
 	}
 
-	public CompletableFuture<Response> executeAsync(final Request request) {
-		connect(connectionAsync, false);
-		final CompletableFuture<Response> rfuture = new CompletableFuture<>();
-		try {
-			final Message message = createMessage(request);
-			sendAsync(message).whenComplete((m, ex) -> {
-				if (m != null) {
-					try {
-						collectionCache.setDb(request.getDatabase());
-						final Response response = createResponse(m);
-						if (response.getResponseCode() >= 300) {
-							if (response.getBody() != null) {
-								final ErrorEntity errorEntity = vpack.deserialize(response.getBody(),
-									ErrorEntity.class);
-								final String errorMessage = String.format("Response: %s, Error: %s - %s",
-									errorEntity.getCode(), errorEntity.getErrorNum(), errorEntity.getErrorMessage());
-								rfuture.completeExceptionally(new ArangoDBException(errorMessage));
-							} else {
-								rfuture.completeExceptionally(new ArangoDBException(
-										String.format("Response Code: %s", response.getResponseCode())));
-							}
-						} else {
-							rfuture.complete(response);
-						}
-					} catch (final VPackParserException e) {
-						LOGGER.error(e.getMessage(), e);
-						rfuture.completeExceptionally(e);
-					}
-				} else if (ex != null) {
-					LOGGER.error(ex.getMessage(), ex);
-					rfuture.completeExceptionally(ex);
-				} else {
-					rfuture.cancel(true);
-				}
-			});
-		} catch (final IOException | VPackException e) {
-			LOGGER.error(e.getMessage(), e);
-			rfuture.completeExceptionally(e);
-		}
-		return rfuture;
-	}
-
 	private Response createResponse(final Message messsage) throws VPackParserException {
 		final Response response = vpack.deserialize(messsage.getHead(), Response.class);
 		if (messsage.getBody() != null) {
@@ -275,14 +212,6 @@ public class Communication {
 		return new Message(id, vpack.serialize(request), request.getBody());
 	}
 
-	private CompletableFuture<Message> sendAsync(final Message message) throws IOException {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-				message.getBody() != null ? message.getBody() : "{}"));
-		}
-		return connectionAsync.write(message, buildChunks(message));
-	}
-
 	private Message sendSync(final Message message) throws IOException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
@@ -292,7 +221,7 @@ public class Communication {
 	}
 
 	private Collection<Chunk> buildChunks(final Message message) throws IOException {
-		final Collection<Chunk> chunks = new ArrayList<>();
+		final Collection<Chunk> chunks = new ArrayList<Chunk>();
 		final VPackSlice head = message.getHead();
 		int size = head.getByteSize();
 		final VPackSlice body = message.getBody();

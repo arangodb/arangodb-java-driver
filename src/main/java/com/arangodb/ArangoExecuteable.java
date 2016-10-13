@@ -22,9 +22,6 @@ package com.arangodb;
 
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
@@ -118,30 +115,6 @@ abstract class ArangoExecuteable {
 		if (!Pattern.matches(regex, name)) {
 			throw new ArangoDBException(String.format("%s %s is not valid.", type, name));
 		}
-	}
-
-	protected <T> CompletableFuture<T> executeAsync(final Request request, final Type type) {
-		return executeAsync(request, (response) -> createResult(vpacker, vpackParser, type, response));
-	}
-
-	protected <T> CompletableFuture<T> executeAsync(
-		final Request request,
-		final ResponseDeserializer<T> responseDeserializer) {
-		final CompletableFuture<T> result = new CompletableFuture<>();
-		communication.executeAsync(request).whenComplete((response, ex) -> {
-			if (response != null) {
-				try {
-					result.complete(responseDeserializer.deserialize(response));
-				} catch (final VPackException | ArangoDBException e) {
-					result.completeExceptionally(e);
-				}
-			} else if (ex != null) {
-				result.completeExceptionally(ex);
-			} else {
-				result.cancel(true);
-			}
-		});
-		return result;
 	}
 
 	protected <T> T executeSync(final Request request, final Type type) throws ArangoDBException {
