@@ -23,9 +23,10 @@ E.g. get all Simpsons aged 3 or older in ascending order:
   
   ArangoCursor<MyObject> cursor = db.query(query, bindVars, null, MyObject.class);
   
-  cursor.forEachRemaining(obj -> {
+  for(; cursor.hasNext;) {
+    MyObject obj = cursor.next();
     System.out.println(obj.getName());
-  });
+  }
 ```
 
 or return the AQL result as VelocyPack:
@@ -33,7 +34,8 @@ or return the AQL result as VelocyPack:
 ``` Java
   ArangoCursor<VPackSlice> cursor = db.query(query, bindVars, null, VPackSlice.class);
   
-  cursor.forEachRemaining(obj -> {
+  for(; cursor.hasNext;) {
+    VPackSlice obj = cursor.next();
     System.out.println(obj.get("name").getAsString());
-  });
+  }
 ```
