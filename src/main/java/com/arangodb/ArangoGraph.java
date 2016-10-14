@@ -91,10 +91,24 @@ public class ArangoGraph extends InternalArangoGraph<ArangoExecutorSync, Respons
 		return executor.execute(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
 	}
 
+	/**
+	 * Returns a handler of the vertex collection by the given name
+	 * 
+	 * @param name
+	 *            Name of the vertex collection
+	 * @return collection handler
+	 */
 	public ArangoVertexCollection vertexCollection(final String name) {
 		return new ArangoVertexCollection(this, name);
 	}
 
+	/**
+	 * Returns a handler of the edge collection by the given name
+	 * 
+	 * @param name
+	 *            Name of the edge collection
+	 * @return collection handler
+	 */
 	public ArangoEdgeCollection edgeCollection(final String name) {
 		return new ArangoEdgeCollection(this, name);
 	}

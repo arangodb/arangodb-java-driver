@@ -61,6 +61,9 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		id = result.getId();
 	}
 
+	/**
+	 * @return id of temporary cursor created on the server
+	 */
 	public String getId() {
 		return id;
 	}
@@ -69,6 +72,10 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		return type;
 	}
 
+	/**
+	 * @return the total number of result documents available (only available if the query was executed with the count
+	 *         attribute set)
+	 */
 	public Integer getCount() {
 		return count;
 	}
@@ -81,6 +88,9 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		return extra != null ? extra.getWarnings() : null;
 	}
 
+	/**
+	 * @return indicating whether the query result was served from the query cache or not
+	 */
 	public boolean isCached() {
 		return cached;
 	}

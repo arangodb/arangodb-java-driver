@@ -37,10 +37,10 @@ import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoCursorExecute;
-import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
+import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
@@ -81,6 +81,13 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoExecutorSync, R
 		return executor;
 	}
 
+	/**
+	 * Returns a handler of the collection by the given name
+	 * 
+	 * @param name
+	 *            Name of the collection
+	 * @return collection handler
+	 */
 	public ArangoCollection collection(final String name) {
 		return new ArangoCollection(this, name);
 	}
@@ -233,10 +240,12 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoExecutorSync, R
 		final Request request = queryRequest(query, bindVars, options);
 		final CursorEntity result = executor.execute(request, CursorEntity.class);
 		return new ArangoCursor<T>(this, new ArangoCursorExecute() {
+			@Override
 			public CursorEntity next(final String id) {
 				return executor.execute(queryNextRequest(id), CursorEntity.class);
 			}
 
+			@Override
 			public void close(final String id) {
 				executor.execute(queryCloseRequest(id), Void.class);
 			}
@@ -453,6 +462,13 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoExecutorSync, R
 		}.getType());
 	}
 
+	/**
+	 * Returns a handler of the graph by the given name
+	 * 
+	 * @param name
+	 *            Name of the graph
+	 * @return graph handler
+	 */
 	public ArangoGraph graph(final String name) {
 		return new ArangoGraph(this, name);
 	}

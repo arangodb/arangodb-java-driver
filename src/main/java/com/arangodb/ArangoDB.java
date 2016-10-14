@@ -31,12 +31,12 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.InternalArangoDB;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.CollectionCache.DBAccess;
 import com.arangodb.internal.DocumentCache;
+import com.arangodb.internal.InternalArangoDB;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.CommunicationSync;
@@ -209,10 +209,22 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		executor.communication().disconnect();
 	}
 
+	/**
+	 * Returns a handler of the system database
+	 * 
+	 * @return database handler
+	 */
 	public ArangoDatabase db() {
 		return db(ArangoDBConstants.SYSTEM);
 	}
 
+	/**
+	 * Returns a handler of the database by the given name
+	 * 
+	 * @param name
+	 *            Name of the database
+	 * @return database handler
+	 */
 	public ArangoDatabase db(final String name) {
 		return new ArangoDatabase(this, name);
 	}
@@ -371,7 +383,15 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
 	}
 
-	public Response execute(final Request request) {
+	/**
+	 * Generic Execute. Use this method to execute custom FOXX services.
+	 * 
+	 * @param request
+	 *            VelocyStream request
+	 * @return VelocyStream response
+	 * @throws ArangoDBException
+	 */
+	public Response execute(final Request request) throws ArangoDBException {
 		return executor.execute(request, new ResponseDeserializer<Response>() {
 			@Override
 			public Response deserialize(final Response response) throws VPackException {
