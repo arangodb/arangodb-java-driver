@@ -18,11 +18,12 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package com.arangodb.internal;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.entity.CursorEntity;
 
 /**
@@ -36,10 +37,15 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 	private int pos;
 
 	private final ArangoCursor<T> cursor;
+	private final InternalArangoDatabase<?, ?, ?> db;
+	private final ArangoCursorExecute execute;
 
-	public ArangoCursorIterator(final ArangoCursor<T> cursor, final CursorEntity result) {
+	public ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
+		final InternalArangoDatabase<?, ?, ?> db, final CursorEntity result) {
 		super();
 		this.cursor = cursor;
+		this.execute = execute;
+		this.db = db;
 		this.result = result;
 		pos = 0;
 	}
@@ -52,13 +58,13 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 	@Override
 	public T next() {
 		if (pos >= result.getResult().size() && result.getHasMore()) {
-			result = cursor.executeNext();
+			result = execute.next(cursor.getId());
 			pos = 0;
 		}
 		if (!hasNext()) {
 			throw new NoSuchElementException();
 		}
-		return cursor.getDb().deserialize(result.getResult().get(pos++), cursor.getType());
+		return db.executor.deserialize(result.getResult().get(pos++), cursor.getType());
 	}
 
 	@Override

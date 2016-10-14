@@ -20,9 +20,7 @@
 
 package com.arangodb;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.arangodb.entity.AqlExecutionExplainEntity;
@@ -34,61 +32,53 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
-import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.ArangoCursorExecute;
+import com.arangodb.internal.InternalArangoDatabase;
+import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.velocystream.Communication;
+import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
 import com.arangodb.model.AqlQueryExplainOptions;
 import com.arangodb.model.AqlQueryOptions;
-import com.arangodb.model.AqlQueryParseOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
-import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
-import com.arangodb.model.UserAccessOptions;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDatabase extends ArangoExecuteable {
-
-	private final String name;
+public class ArangoDatabase extends InternalArangoDatabase<ArangoExecutorSync, Response, ConnectionSync> {
 
 	protected ArangoDatabase(final ArangoDB arangoDB, final String name) {
-		super(arangoDB.communication(), arangoDB.vpack(), arangoDB.vpackNull(), arangoDB.vpackParser(),
-				arangoDB.documentCache(), arangoDB.collectionCache());
-		this.name = name;
+		super(arangoDB.executor(), name);
 	}
 
-	protected ArangoDatabase(final Communication communication, final VPack vpacker, final VPack vpackerNull,
-		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache,
-		final String name) {
-		super(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache);
-		this.name = name;
+	protected ArangoDatabase(final Communication<Response, ConnectionSync> communication, final VPack vpacker,
+		final VPack vpackerNull, final VPackParser vpackParser, final DocumentCache documentCache,
+		final CollectionCache collectionCache, final String name) {
+		super(new ArangoExecutorSync(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache),
+				name);
 	}
 
-	protected String name() {
-		return name;
+	protected ArangoExecutorSync executor() {
+		return executor;
 	}
 
 	public ArangoCollection collection(final String name) {
@@ -106,7 +96,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public CollectionEntity createCollection(final String name) throws ArangoDBException {
-		return executeSync(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
+		return executor.execute(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
 	}
 
 	/**
@@ -123,12 +113,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
 			throws ArangoDBException {
-		return executeSync(createCollectionRequest(name, options), CollectionEntity.class);
-	}
-
-	private Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
-		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION).setBody(
-			serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));
+		return executor.execute(createCollectionRequest(name, options), CollectionEntity.class);
 	}
 
 	/**
@@ -140,7 +125,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<CollectionEntity> getCollections() throws ArangoDBException {
-		return executeSync(getCollectionsRequest(new CollectionsReadOptions()), getCollectionsResponseDeserializer());
+		return executor.execute(getCollectionsRequest(new CollectionsReadOptions()),
+			getCollectionsResponseDeserializer());
 	}
 
 	/**
@@ -154,26 +140,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
-		return executeSync(getCollectionsRequest(options), getCollectionsResponseDeserializer());
-	}
-
-	private Request getCollectionsRequest(final CollectionsReadOptions options) {
-		final Request request;
-		request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_COLLECTION);
-		final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
-		request.putQueryParam(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
-		return request;
-	}
-
-	private ResponseDeserializer<Collection<CollectionEntity>> getCollectionsResponseDeserializer() {
-		return new ResponseDeserializer<Collection<CollectionEntity>>() {
-			@Override
-			public Collection<CollectionEntity> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
-				return ArangoDatabase.this.deserialize(result, new Type<Collection<CollectionEntity>>() {
-				}.getType());
-			}
-		};
+		return executor.execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
 	}
 
 	/**
@@ -186,11 +153,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public IndexEntity getIndex(final String id) throws ArangoDBException {
-		return executeSync(getIndexRequest(id), IndexEntity.class);
-	}
-
-	private Request getIndexRequest(final String id) {
-		return new Request(name, RequestType.GET, createPath(ArangoDBConstants.PATH_API_INDEX, id));
+		return executor.execute(getIndexRequest(id), IndexEntity.class);
 	}
 
 	/**
@@ -203,20 +166,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public String deleteIndex(final String id) throws ArangoDBException {
-		return executeSync(deleteIndexRequest(id), deleteIndexResponseDeserializer());
-	}
-
-	private Request deleteIndexRequest(final String id) {
-		return new Request(name, RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_INDEX, id));
-	}
-
-	private ResponseDeserializer<String> deleteIndexResponseDeserializer() {
-		return new ResponseDeserializer<String>() {
-			@Override
-			public String deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoDBConstants.ID).getAsString();
-			}
-		};
+		return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
 	}
 
 	/**
@@ -228,21 +178,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Boolean drop() throws ArangoDBException {
-		return executeSync(dropRequest(), createDropResponseDeserializer());
-	}
-
-	private Request dropRequest() {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
-				createPath(ArangoDBConstants.PATH_API_DATABASE, name));
-	}
-
-	private ResponseDeserializer<Boolean> createDropResponseDeserializer() {
-		return new ResponseDeserializer<Boolean>() {
-			@Override
-			public Boolean deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoDBConstants.RESULT).getAsBoolean();
-			}
-		};
+		return executor.execute(dropRequest(), createDropResponseDeserializer());
 	}
 
 	/**
@@ -256,13 +192,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void grantAccess(final String user) throws ArangoDBException {
-		executeSync(grantAccessRequest(user), Void.class);
-	}
-
-	private Request grantAccessRequest(final String user) {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
-						.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.RW)));
+		executor.execute(grantAccessRequest(user), Void.class);
 	}
 
 	/**
@@ -276,13 +206,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void revokeAccess(final String user) throws ArangoDBException {
-		executeSync(revokeAccessRequest(user), Void.class);
-	}
-
-	private Request revokeAccessRequest(final String user) {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
-						.setBody(serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.NONE)));
+		executor.execute(revokeAccessRequest(user), Void.class);
 	}
 
 	/**
@@ -306,10 +230,17 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
-		final Request request = new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(
-			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
-		final CursorEntity result = executeSync(request, CursorEntity.class);
-		return new ArangoCursor<T>(this, type, result);
+		final Request request = queryRequest(query, bindVars, options);
+		final CursorEntity result = executor.execute(request, CursorEntity.class);
+		return new ArangoCursor<T>(this, new ArangoCursorExecute() {
+			public CursorEntity next(final String id) {
+				return executor.execute(queryNextRequest(id), CursorEntity.class);
+			}
+
+			public void close(final String id) {
+				executor.execute(queryCloseRequest(id), Void.class);
+			}
+		}, type, result);
 	}
 
 	/**
@@ -330,15 +261,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryExplainOptions options) throws ArangoDBException {
-		return executeSync(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
-	}
-
-	private Request explainQueryRequest(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryExplainOptions options) {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_EXPLAIN).setBody(
-			serialize(OptionsBuilder.build(options != null ? options : new AqlQueryExplainOptions(), query, bindVars)));
+		return executor.execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
 	}
 
 	/**
@@ -353,12 +276,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public AqlParseEntity parseQuery(final String query) throws ArangoDBException {
-		return executeSync(parseQueryRequest(query), AqlParseEntity.class);
-	}
-
-	private Request parseQueryRequest(final String query) {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_QUERY)
-				.setBody(serialize(OptionsBuilder.build(new AqlQueryParseOptions(), query)));
+		return executor.execute(parseQueryRequest(query), AqlParseEntity.class);
 	}
 
 	/**
@@ -370,11 +288,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void clearQueryCache() throws ArangoDBException {
-		executeSync(clearQueryCacheRequest(), Void.class);
-	}
-
-	private Request clearQueryCacheRequest() {
-		return new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_QUERY_CACHE);
+		executor.execute(clearQueryCacheRequest(), Void.class);
 	}
 
 	/**
@@ -387,11 +301,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException {
-		return executeSync(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
-	}
-
-	private Request getQueryCachePropertiesRequest() {
-		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_CACHE_PROPERTIES);
+		return executor.execute(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
 	}
 
 	/**
@@ -408,12 +318,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
 			throws ArangoDBException {
-		return executeSync(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
-	}
-
-	private Request setQueryCachePropertiesRequest(final QueryCachePropertiesEntity properties) {
-		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_CACHE_PROPERTIES)
-				.setBody(serialize(properties));
+		return executor.execute(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
 	}
 
 	/**
@@ -426,11 +331,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException {
-		return executeSync(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
-	}
-
-	private Request getQueryTrackingPropertiesRequest() {
-		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_PROPERTIES);
+		return executor.execute(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
 	}
 
 	/**
@@ -446,12 +347,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
 			throws ArangoDBException {
-		return executeSync(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
-	}
-
-	private Request setQueryTrackingPropertiesRequest(final QueryTrackingPropertiesEntity properties) {
-		return new Request(name, RequestType.PUT, ArangoDBConstants.PATH_API_QUERY_PROPERTIES)
-				.setBody(serialize(properties));
+		return executor.execute(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
 	}
 
 	/**
@@ -464,12 +360,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
-		return executeSync(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
+		return executor.execute(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
 		}.getType());
-	}
-
-	private Request getCurrentlyRunningQueriesRequest() {
-		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_CURRENT);
 	}
 
 	/**
@@ -482,12 +374,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
-		return executeSync(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
+		return executor.execute(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
 		}.getType());
-	}
-
-	private Request getSlowQueriesRequest() {
-		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_QUERY_SLOW);
 	}
 
 	/**
@@ -499,11 +387,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void clearSlowQueries() throws ArangoDBException {
-		executeSync(clearSlowQueriesRequest(), Void.class);
-	}
-
-	private Request clearSlowQueriesRequest() {
-		return new Request(name, RequestType.DELETE, ArangoDBConstants.PATH_API_QUERY_SLOW);
+		executor.execute(clearSlowQueriesRequest(), Void.class);
 	}
 
 	/**
@@ -516,11 +400,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void killQuery(final String id) throws ArangoDBException {
-		executeSync(killQueryRequest(id), Void.class);
-	}
-
-	private Request killQueryRequest(final String id) {
-		return new Request(name, RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_QUERY, id));
+		executor.execute(killQueryRequest(id), Void.class);
 	}
 
 	/**
@@ -538,15 +418,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
 			throws ArangoDBException {
-		executeSync(createAqlFunctionRequest(name, code, options), Void.class);
-	}
-
-	private Request createAqlFunctionRequest(
-		final String name,
-		final String code,
-		final AqlFunctionCreateOptions options) {
-		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_AQLFUNCTION).setBody(
-			serialize(OptionsBuilder.build(options != null ? options : new AqlFunctionCreateOptions(), name, code)));
+		executor.execute(createAqlFunctionRequest(name, code, options), Void.class);
 	}
 
 	/**
@@ -562,15 +434,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) throws ArangoDBException {
-		executeSync(deleteAqlFunctionRequest(name, options), Void.class);
-	}
-
-	private Request deleteAqlFunctionRequest(final String name, final AqlFunctionDeleteOptions options) {
-		final Request request = new Request(name(), RequestType.DELETE,
-				createPath(ArangoDBConstants.PATH_API_AQLFUNCTION, name));
-		final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
-		request.putQueryParam(ArangoDBConstants.GROUP, params.getGroup());
-		return request;
+		executor.execute(deleteAqlFunctionRequest(name, options), Void.class);
 	}
 
 	/**
@@ -585,15 +449,8 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
-		return executeSync(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
+		return executor.execute(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
 		}.getType());
-	}
-
-	private Request getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
-		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_AQLFUNCTION);
-		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
-		request.putQueryParam(ArangoDBConstants.NAMESPACE, params.getNamespace());
-		return request;
 	}
 
 	public ArangoGraph graph(final String name) {
@@ -615,7 +472,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
 			throws ArangoDBException {
-		return executeSync(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
+		return executor.execute(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
 			createGraphResponseDeserializer());
 	}
 
@@ -638,25 +495,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions,
 		final GraphCreateOptions options) throws ArangoDBException {
-		return executeSync(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
-	}
-
-	private Request createGraphRequest(
-		final String name,
-		final Collection<EdgeDefinition> edgeDefinitions,
-		final GraphCreateOptions options) {
-		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_GHARIAL).setBody(serialize(
-			OptionsBuilder.build(options != null ? options : new GraphCreateOptions(), name, edgeDefinitions)));
-	}
-
-	private ResponseDeserializer<GraphEntity> createGraphResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return ArangoDatabase.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH),
-					GraphEntity.class);
-			}
-		};
+		return executor.execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
 	}
 
 	/**
@@ -668,22 +507,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<GraphEntity> getGraphs() throws ArangoDBException {
-		return executeSync(getGraphsRequest(), getGraphsResponseDeserializer());
-	}
-
-	private Request getGraphsRequest() {
-		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_GHARIAL);
-	}
-
-	private ResponseDeserializer<Collection<GraphEntity>> getGraphsResponseDeserializer() {
-		return new ResponseDeserializer<Collection<GraphEntity>>() {
-			@Override
-			public Collection<GraphEntity> deserialize(final Response response) throws VPackException {
-				return ArangoDatabase.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPHS),
-					new Type<Collection<GraphEntity>>() {
-					}.getType());
-			}
-		};
+		return executor.execute(getGraphsRequest(), getGraphsResponseDeserializer());
 	}
 
 	/**
@@ -702,28 +526,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
 			throws ArangoDBException {
-		return executeSync(transactionRequest(action, options), transactionResponseDeserializer(type));
-	}
-
-	private Request transactionRequest(final String action, final TransactionOptions options) {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRANSACTION)
-				.setBody(serialize(OptionsBuilder.build(options != null ? options : new TransactionOptions(), action)));
-	}
-
-	private <T> ResponseDeserializer<T> transactionResponseDeserializer(final Class<T> type) {
-		return new ResponseDeserializer<T>() {
-			@Override
-			public T deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody();
-				if (body != null) {
-					final VPackSlice result = body.get(ArangoDBConstants.RESULT);
-					if (!result.isNone()) {
-						return ArangoDatabase.this.deserialize(result, type);
-					}
-				}
-				return null;
-			}
-		};
+		return executor.execute(transactionRequest(action, options), transactionResponseDeserializer(type));
 	}
 
 	/**
@@ -736,22 +539,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public DatabaseEntity getInfo() throws ArangoDBException {
-		return executeSync(getInfoRequest(), getInfoResponseDeserializer());
-	}
-
-	private Request getInfoRequest() {
-		return new Request(name, RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.CURRENT));
-	}
-
-	private ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
-		return new ResponseDeserializer<DatabaseEntity>() {
-			@Override
-			public DatabaseEntity deserialize(final Response response) throws VPackException {
-				return ArangoDatabase.this.deserialize(response.getBody().get(ArangoDBConstants.RESULT),
-					DatabaseEntity.class);
-			}
-		};
+		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
 	/**
@@ -773,58 +561,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 		final Class<E> edgeClass,
 		final TraversalOptions options) throws ArangoDBException {
 		final Request request = executeTraversalRequest(options);
-		return executeSync(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
-	}
-
-	private Request executeTraversalRequest(final TraversalOptions options) {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_TRAVERSAL)
-				.setBody(serialize(options != null ? options : new TransactionOptions()));
-	}
-
-	private <E, V> ResponseDeserializer<TraversalEntity<V, E>> executeTraversalResponseDeserializer(
-		final Class<V> vertexClass,
-		final Class<E> edgeClass) {
-		return new ResponseDeserializer<TraversalEntity<V, E>>() {
-			@Override
-			public TraversalEntity<V, E> deserialize(final Response response) throws VPackException {
-				final TraversalEntity<V, E> result = new TraversalEntity<V, E>();
-				final VPackSlice visited = response.getBody().get(ArangoDBConstants.RESULT)
-						.get(ArangoDBConstants.VISITED);
-				result.setVertices(deserializeVertices(vertexClass, visited));
-
-				final Collection<PathEntity<V, E>> paths = new ArrayList<PathEntity<V, E>>();
-				for (final Iterator<VPackSlice> iterator = visited.get("paths").arrayIterator(); iterator.hasNext();) {
-					final PathEntity<V, E> path = new PathEntity<V, E>();
-					final VPackSlice next = iterator.next();
-					path.setEdges(deserializeEdges(edgeClass, next));
-					path.setVertices(deserializeVertices(vertexClass, next));
-					paths.add(path);
-				}
-				result.setPaths(paths);
-				return result;
-			}
-		};
-	}
-
-	@SuppressWarnings("unchecked")
-	private <V> Collection<V> deserializeVertices(final Class<V> vertexClass, final VPackSlice vpack)
-			throws VPackException {
-		final Collection<V> vertices = new ArrayList<V>();
-		for (final Iterator<VPackSlice> iterator = vpack.get(ArangoDBConstants.VERTICES).arrayIterator(); iterator
-				.hasNext();) {
-			vertices.add((V) deserialize(iterator.next(), vertexClass));
-		}
-		return vertices;
-	}
-
-	@SuppressWarnings("unchecked")
-	private <E> Collection<E> deserializeEdges(final Class<E> edgeClass, final VPackSlice next) throws VPackException {
-		final Collection<E> edges = new ArrayList<E>();
-		for (final Iterator<VPackSlice> iteratorEdge = next.get(ArangoDBConstants.EDGES).arrayIterator(); iteratorEdge
-				.hasNext();) {
-			edges.add((E) deserialize(iteratorEdge.next(), edgeClass));
-		}
-		return edges;
+		return executor.execute(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
 	}
 
 	/**
@@ -840,7 +577,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> T getDocument(final String id, final Class<T> type) throws ArangoDBException {
-		validateDocumentId(id);
+		executor.validateDocumentId(id);
 		final String[] split = id.split("/");
 		return collection(split[0]).getDocument(split[1], type);
 	}
@@ -861,7 +598,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 */
 	public <T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		validateDocumentId(id);
+		executor.validateDocumentId(id);
 		final String[] split = id.split("/");
 		return collection(split[0]).getDocument(split[1], type, options);
 	}
@@ -875,10 +612,7 @@ public class ArangoDatabase extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void reloadRouting() throws ArangoDBException {
-		executeSync(reloadRoutingRequest(), Void.class);
+		executor.execute(reloadRoutingRequest(), Void.class);
 	}
 
-	private Request reloadRoutingRequest() {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_ADMIN_ROUTING_RELOAD);
-	}
 }

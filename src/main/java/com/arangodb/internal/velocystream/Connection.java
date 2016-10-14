@@ -50,15 +50,15 @@ public abstract class Connection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 
-	protected final String host;
-	protected final Integer port;
-	protected final Integer timeout;
-	protected final Boolean useSsl;
-	protected final SSLContext sslContext;
+	private final String host;
+	private final Integer port;
+	private final Integer timeout;
+	private final Boolean useSsl;
+	private final SSLContext sslContext;
 
-	protected Socket socket;
-	protected OutputStream outputStream;
-	protected InputStream inputStream;
+	private Socket socket;
+	private OutputStream outputStream;
+	private InputStream inputStream;
 
 	protected Connection(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext) {

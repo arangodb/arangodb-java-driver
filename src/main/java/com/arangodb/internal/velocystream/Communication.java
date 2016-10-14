@@ -44,95 +44,34 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class Communication {
+public abstract class Communication<R, C extends Connection> {
 
 	private static final int ERROR_STATUS = 300;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
-	private static final AtomicLong mId = new AtomicLong(0L);
-	private final VPack vpack;
-	private final ConnectionSync connectionSync;
-	private final CollectionCache collectionCache;
+	protected static final AtomicLong mId = new AtomicLong(0L);
+	protected final VPack vpack;
+	protected final C connection;
+	protected final CollectionCache collectionCache;
 
-	private final String user;
-	private final String password;
+	protected final String user;
+	protected final String password;
 
-	private final Integer chunksize;
+	protected final Integer chunksize;
 
-	public static class Builder {
-		private String host;
-		private Integer port;
-		private Integer timeout;
-		private String user;
-		private String password;
-		private Boolean useSsl;
-		private SSLContext sslContext;
-		private Integer chunksize;
-
-		public Builder() {
-			super();
-		}
-
-		public Builder host(final String host) {
-			this.host = host;
-			return this;
-		}
-
-		public Builder port(final Integer port) {
-			this.port = port;
-			return this;
-		}
-
-		public Builder timeout(final Integer timeout) {
-			this.timeout = timeout;
-			return this;
-		}
-
-		public Builder user(final String user) {
-			this.user = user;
-			return this;
-		}
-
-		public Builder password(final String password) {
-			this.password = password;
-			return this;
-		}
-
-		public Builder useSsl(final Boolean useSsl) {
-			this.useSsl = useSsl;
-			return this;
-		}
-
-		public Builder sslContext(final SSLContext sslContext) {
-			this.sslContext = sslContext;
-			return this;
-		}
-
-		public Builder chunksize(final Integer chunksize) {
-			this.chunksize = chunksize;
-			return this;
-		}
-
-		public Communication build(final VPack vpack, final CollectionCache collectionCache) {
-			return new Communication(host, port, timeout, user, password, useSsl, sslContext, vpack, collectionCache,
-					chunksize);
-		}
-	}
-
-	private Communication(final String host, final Integer port, final Integer timeout, final String user,
+	protected Communication(final String host, final Integer port, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
-		final CollectionCache collectionCache, final Integer chunksize) {
+		final CollectionCache collectionCache, final Integer chunksize, final C connection) {
 		this.user = user;
 		this.password = password;
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
+		this.connection = connection;
 		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
-		connectionSync = new ConnectionSync.Builder().host(host).port(port).timeout(timeout).useSsl(useSsl)
-				.sslContext(sslContext).build();
 	}
 
-	private void connect(final Connection connection) {
+	protected void connect(final Connection connection) {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
@@ -146,38 +85,19 @@ public class Communication {
 		}
 	}
 
-	private void authenticate() {
-		final Response response = executeSync(
-			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN));
-		checkError(response);
-	}
+	protected abstract void authenticate();
 
 	public void disconnect() {
-		disconnect(connectionSync);
+		disconnect(connection);
 	}
 
 	public void disconnect(final Connection connection) {
 		connection.close();
 	}
 
-	public Response executeSync(final Request request) throws ArangoDBException {
-		connect(connectionSync);
-		try {
-			final Message requestMessage = createMessage(request);
-			final Message responseMessage = sendSync(requestMessage);
-			collectionCache.setDb(request.getDatabase());
-			final Response response = createResponse(responseMessage);
-			checkError(response);
-			return response;
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		} catch (final IOException e) {
-			throw new ArangoDBException(e);
-		}
+	public abstract R execute(final Request request) throws ArangoDBException;
 
-	}
-
-	private void checkError(final Response response) throws ArangoDBException {
+	protected void checkError(final Response response) throws ArangoDBException {
 		try {
 			if (response.getResponseCode() >= ERROR_STATUS) {
 				if (response.getBody() != null) {
@@ -199,7 +119,7 @@ public class Communication {
 		return errorMessage;
 	}
 
-	private Response createResponse(final Message messsage) throws VPackParserException {
+	protected Response createResponse(final Message messsage) throws VPackParserException {
 		final Response response = vpack.deserialize(messsage.getHead(), Response.class);
 		if (messsage.getBody() != null) {
 			response.setBody(messsage.getBody());
@@ -207,20 +127,12 @@ public class Communication {
 		return response;
 	}
 
-	private Message createMessage(final Request request) throws VPackParserException {
+	protected Message createMessage(final Request request) throws VPackParserException {
 		final long id = mId.incrementAndGet();
 		return new Message(id, vpack.serialize(request), request.getBody());
 	}
 
-	private Message sendSync(final Message message) throws IOException {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
-				message.getBody() != null ? message.getBody() : "{}"));
-		}
-		return connectionSync.write(message, buildChunks(message));
-	}
-
-	private Collection<Chunk> buildChunks(final Message message) throws IOException {
+	protected Collection<Chunk> buildChunks(final Message message) throws IOException {
 		final Collection<Chunk> chunks = new ArrayList<Chunk>();
 		final VPackSlice head = message.getHead();
 		int size = head.getByteSize();

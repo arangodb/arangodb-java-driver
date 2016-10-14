@@ -567,7 +567,6 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
 	public void getCurrentlyRunningQueries() throws InterruptedException, ExecutionException {
 		final Thread t = new Thread() {
 			@Override
@@ -613,7 +612,6 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
 	public void killQuery() throws InterruptedException, ExecutionException {
 		final Thread t = new Thread() {
 			@Override

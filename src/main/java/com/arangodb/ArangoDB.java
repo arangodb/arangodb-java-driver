@@ -31,33 +31,33 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.InternalArangoDB;
+import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.CollectionCache.DBAccess;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.internal.velocystream.Communication;
-import com.arangodb.model.DBCreateOptions;
+import com.arangodb.internal.velocystream.CommunicationSync;
+import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.LogOptions;
-import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDB extends ArangoExecuteable {
+public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, ConnectionSync> {
 
 	public static class Builder {
 
@@ -180,28 +180,33 @@ public class ArangoDB extends ArangoExecuteable {
 
 		public ArangoDB build() {
 			return new ArangoDB(
-					new Communication.Builder().host(host).port(port).timeout(timeout).user(user).password(password)
+					new CommunicationSync.Builder().host(host).port(port).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 
 	}
 
-	public ArangoDB(final Communication.Builder commBuilder, final VPack vpack, final VPack vpackNull,
+	public ArangoDB(final CommunicationSync.Builder commBuilder, final VPack vpack, final VPack vpackNull,
 		final VPackParser vpackParser, final CollectionCache collectionCache) {
-		super(commBuilder.build(vpack, collectionCache), vpack, vpackNull, vpackParser, new DocumentCache(),
-				collectionCache);
-		final Communication cacheCom = commBuilder.build(vpack, collectionCache);
+		super(new ArangoExecutorSync(commBuilder.build(vpack, collectionCache), vpack, vpackNull, vpackParser,
+				new DocumentCache(), collectionCache));
+		final Communication<Response, ConnectionSync> cacheCom = commBuilder.build(vpack, collectionCache);
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
-				return new ArangoDatabase(cacheCom, vpackNull, vpack, vpackParser, documentCache, null, name);
+				return new ArangoDatabase(cacheCom, vpackNull, vpack, vpackParser, executor.documentCache(), null,
+						name);
 			}
 		});
 	}
 
+	protected ArangoExecutorSync executor() {
+		return executor;
+	}
+
 	public void shutdown() {
-		communication.disconnect();
+		executor.communication().disconnect();
 	}
 
 	public ArangoDatabase db() {
@@ -223,23 +228,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Boolean createDatabase(final String name) throws ArangoDBException {
-		return executeSync(createDatabaseRequest(name), createDatabaseResponseDeserializer());
-	}
-
-	private Request createDatabaseRequest(final String name) {
-		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
-				ArangoDBConstants.PATH_API_DATABASE);
-		request.setBody(serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
-		return request;
-	}
-
-	private ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-		return new ResponseDeserializer<Boolean>() {
-			@Override
-			public Boolean deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoDBConstants.RESULT).getAsBoolean();
-			}
-		};
+		return executor.execute(createDatabaseRequest(name), createDatabaseResponseDeserializer());
 	}
 
 	/**
@@ -249,22 +238,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getDatabases() throws ArangoDBException {
-		return executeSync(getDatabasesRequest(), getDatabaseResponseDeserializer());
-	}
-
-	private Request getDatabasesRequest() {
-		return new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_DATABASE);
-	}
-
-	private ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
-				return ArangoDB.this.deserialize(result, new Type<Collection<String>>() {
-				}.getType());
-			}
-		};
+		return executor.execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
 	}
 
 	/**
@@ -275,12 +249,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
-		return executeSync(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
-	}
-
-	private Request getAccessibleDatabasesRequest() {
-		return new Request(db().name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER));
+		return executor.execute(getAccessibleDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
 	}
 
 	/**
@@ -292,11 +261,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
-		return executeSync(getVersionRequest(), ArangoDBVersion.class);
-	}
-
-	private Request getVersionRequest() {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION);
+		return executor.execute(getVersionRequest(), ArangoDBVersion.class);
 	}
 
 	/**
@@ -312,7 +277,8 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
-		return executeSync(createUserRequest(user, passwd, new UserCreateOptions()), UserEntity.class);
+		return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
+			UserEntity.class);
 	}
 
 	/**
@@ -331,15 +297,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 */
 	public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
 			throws ArangoDBException {
-		return executeSync(createUserRequest(user, passwd, options), UserEntity.class);
-	}
-
-	private Request createUserRequest(final String user, final String passwd, final UserCreateOptions options) {
-		final Request request;
-		request = new Request(db().name(), RequestType.POST, ArangoDBConstants.PATH_API_USER);
-		request.setBody(
-			serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
-		return request;
+		return executor.execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
 	}
 
 	/**
@@ -351,11 +309,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void deleteUser(final String user) throws ArangoDBException {
-		executeSync(deleteUserRequest(user), Void.class);
-	}
-
-	private Request deleteUserRequest(final String user) {
-		return new Request(db().name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_USER, user));
+		executor.execute(deleteUserRequest(db().name(), user), Void.class);
 	}
 
 	/**
@@ -369,11 +323,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserEntity getUser(final String user) throws ArangoDBException {
-		return executeSync(getUserRequest(user), UserEntity.class);
-	}
-
-	private Request getUserRequest(final String user) {
-		return new Request(db().name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_USER, user));
+		return executor.execute(getUserRequest(db().name(), user), UserEntity.class);
 	}
 
 	/**
@@ -385,22 +335,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<UserEntity> getUsers() throws ArangoDBException {
-		return executeSync(getUsersRequest(), getUsersResponseDeserializer());
-	}
-
-	private Request getUsersRequest() {
-		return new Request(db().name(), RequestType.GET, ArangoDBConstants.PATH_API_USER);
-	}
-
-	private ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-		return new ResponseDeserializer<Collection<UserEntity>>() {
-			@Override
-			public Collection<UserEntity> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
-				return ArangoDB.this.deserialize(result, new Type<Collection<UserEntity>>() {
-				}.getType());
-			}
-		};
+		return executor.execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
 	}
 
 	/**
@@ -416,14 +351,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return executeSync(updateUserRequest(user, options), UserEntity.class);
-	}
-
-	private Request updateUserRequest(final String user, final UserUpdateOptions options) {
-		final Request request;
-		request = new Request(db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_USER, user));
-		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
-		return request;
+		return executor.execute(updateUserRequest(db().name(), user, options), UserEntity.class);
 	}
 
 	/**
@@ -440,18 +368,11 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return executeSync(replaceUserRequest(user, options), UserEntity.class);
-	}
-
-	private Request replaceUserRequest(final String user, final UserUpdateOptions options) {
-		final Request request;
-		request = new Request(db().name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_USER, user));
-		request.setBody(serialize(options != null ? options : new UserUpdateOptions()));
-		return request;
+		return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
 	}
 
 	public Response execute(final Request request) {
-		return executeSync(request, new ResponseDeserializer<Response>() {
+		return executor.execute(request, new ResponseDeserializer<Response>() {
 			@Override
 			public Response deserialize(final Response response) throws VPackException {
 				return response;
@@ -471,19 +392,7 @@ public class ArangoDB extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public LogEntity getLogs(final LogOptions options) throws ArangoDBException {
-		return executeSync(getLogsRequest(options), LogEntity.class);
-	}
-
-	private Request getLogsRequest(final LogOptions options) {
-		final LogOptions params = options != null ? options : new LogOptions();
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ADMIN_LOG)
-				.putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
-				.putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
-				.putQueryParam(LogOptions.PROPERTY_START, params.getStart())
-				.putQueryParam(LogOptions.PROPERTY_SIZE, params.getSize())
-				.putQueryParam(LogOptions.PROPERTY_OFFSET, params.getOffset())
-				.putQueryParam(LogOptions.PROPERTY_SEARCH, params.getSearch())
-				.putQueryParam(LogOptions.PROPERTY_SORT, params.getSort());
+		return executor.execute(getLogsRequest(options), LogEntity.class);
 	}
 
 }

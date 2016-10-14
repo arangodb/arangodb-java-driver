@@ -20,43 +20,26 @@
 
 package com.arangodb;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
-import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.InternalArangoEdgeCollection;
+import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoEdgeCollection extends ArangoExecuteable {
-
-	private final ArangoGraph graph;
-	private final String name;
+public class ArangoEdgeCollection extends InternalArangoEdgeCollection<ArangoExecutorSync, Response, ConnectionSync> {
 
 	protected ArangoEdgeCollection(final ArangoGraph graph, final String name) {
-		super(graph.communication(), graph.vpack(), graph.vpackNull(), graph.vpackParser(), graph.documentCache(),
-				graph.collectionCache());
-		this.graph = graph;
-		this.name = name;
-	}
-
-	private String createDocumentHandle(final String key) {
-		validateDocumentKey(key);
-		return createPath(name, key);
+		super(graph.executor(), graph.db(), graph.name(), name);
 	}
 
 	/**
@@ -69,7 +52,8 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> EdgeEntity insertEdge(final T value) throws ArangoDBException {
-		return executeSync(insertEdgeRequest(value, new EdgeCreateOptions()), insertEdgeResponseDeserializer(value));
+		return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
+			insertEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -84,32 +68,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> EdgeEntity insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException {
-		return executeSync(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
-	}
-
-	private <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.POST,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name));
-		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.setBody(serialize(value));
-		return request;
-	}
-
-	private <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
-		return new ResponseDeserializer<EdgeEntity>() {
-			@Override
-			public EdgeEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				final EdgeEntity doc = ArangoEdgeCollection.this.deserialize(body, EdgeEntity.class);
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.ID, doc.getId());
-				values.put(DocumentField.Type.KEY, doc.getKey());
-				values.put(DocumentField.Type.REV, doc.getRev());
-				documentCache.setValues(value, values);
-				return doc;
-			}
-		};
+		return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -124,7 +83,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> T getEdge(final String key, final Class<T> type) throws ArangoDBException {
-		return executeSync(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
+		return executor.execute(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
 	}
 
 	/**
@@ -142,25 +101,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 */
 	public <T> T getEdge(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return executeSync(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
-	}
-
-	private Request getEdgeRequest(final String key, final DocumentReadOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.GET, createPath(
-			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
-		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
-		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return request;
-	}
-
-	private <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-		return new ResponseDeserializer<T>() {
-			@Override
-			public T deserialize(final Response response) throws VPackException {
-				return ArangoEdgeCollection.this.deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
-			}
-		};
+		return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
 	}
 
 	/**
@@ -176,7 +117,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value) throws ArangoDBException {
-		return executeSync(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
+		return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
 			replaceEdgeResponseDeserializer(value));
 	}
 
@@ -196,31 +137,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 */
 	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
 			throws ArangoDBException {
-		return executeSync(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
-	}
-
-	private <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.PUT, createPath(
-			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
-		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(serialize(value));
-		return request;
-	}
-
-	private <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
-		return new ResponseDeserializer<EdgeUpdateEntity>() {
-			@Override
-			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				final EdgeUpdateEntity doc = ArangoEdgeCollection.this.deserialize(body, EdgeUpdateEntity.class);
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.REV, doc.getRev());
-				documentCache.setValues(value, values);
-				return doc;
-			}
-		};
+		return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -237,7 +154,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public <T> EdgeUpdateEntity updateEdge(final String key, final T value) throws ArangoDBException {
-		return executeSync(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
+		return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
 			updateEdgeResponseDeserializer(value));
 	}
 
@@ -258,29 +175,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 */
 	public <T> EdgeUpdateEntity updateEdge(final String key, final T value, final EdgeUpdateOptions options)
 			throws ArangoDBException {
-		return executeSync(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
-	}
-
-	private <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
-		final Request request;
-		request = new Request(graph.db().name(), RequestType.PATCH, createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
-		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
-		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(serialize(value, true));
-		return request;
-	}
-
-	private <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
-		return new ResponseDeserializer<EdgeUpdateEntity>() {
-			@Override
-			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				return ArangoEdgeCollection.this.deserialize(body, EdgeUpdateEntity.class);
-			}
-		};
+		return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
 	}
 
 	/**
@@ -292,7 +187,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void deleteEdge(final String key) throws ArangoDBException {
-		executeSync(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
+		executor.execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
 	}
 
 	/**
@@ -306,16 +201,7 @@ public class ArangoEdgeCollection extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException {
-		executeSync(deleteEdgeRequest(key, options), Void.class);
-	}
-
-	private Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.DELETE, createPath(
-			ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, createDocumentHandle(key)));
-		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		return request;
+		executor.execute(deleteEdgeRequest(key, options), Void.class);
 	}
 
 }

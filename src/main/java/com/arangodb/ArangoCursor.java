@@ -31,9 +31,9 @@ import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.CursorEntity.Extras;
 import com.arangodb.entity.CursorEntity.Stats;
 import com.arangodb.entity.CursorEntity.Warning;
-import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.internal.ArangoCursorExecute;
+import com.arangodb.internal.ArangoCursorIterator;
+import com.arangodb.internal.InternalArangoDatabase;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -41,27 +41,28 @@ import com.arangodb.velocystream.RequestType;
  */
 public class ArangoCursor<T> implements Iterator<T>, Closeable {
 
-	private final ArangoDatabase db;
 	private final Class<T> type;
 	private final ArangoCursorIterator<T> iterator;
 	private final String id;
 	private final Integer count;
 	private final Extras extra;
 	private final boolean cached;
+	private final ArangoCursorExecute execute;
 
-	public ArangoCursor(final ArangoDatabase db, final Class<T> type, final CursorEntity result) {
+	public ArangoCursor(final InternalArangoDatabase<?, ?, ?> db, final ArangoCursorExecute execute,
+		final Class<T> type, final CursorEntity result) {
 		super();
-		this.db = db;
+		this.execute = execute;
 		this.type = type;
 		count = result.getCount();
 		extra = result.getExtra();
 		cached = result.getCached().booleanValue();
-		iterator = new ArangoCursorIterator<T>(this, result);
+		iterator = new ArangoCursorIterator<T>(this, execute, db, result);
 		id = result.getId();
 	}
 
-	protected ArangoDatabase getDb() {
-		return db;
+	public String getId() {
+		return id;
 	}
 
 	public Class<T> getType() {
@@ -85,15 +86,12 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	}
 
 	protected CursorEntity executeNext() {
-		return db.executeSync(
-			new Request(db.name(), RequestType.PUT, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
-			CursorEntity.class);
+		return execute.next(id);
 	}
 
 	@Override
 	public void close() throws IOException {
-		db.executeSync(new Request(db.name(), RequestType.DELETE, db.createPath(ArangoDBConstants.PATH_API_CURSOR, id)),
-			Void.class);
+		execute.close(id);
 	}
 
 	@Override

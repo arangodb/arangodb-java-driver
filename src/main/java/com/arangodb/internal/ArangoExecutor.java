@@ -18,29 +18,28 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package com.arangodb.internal;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
-import com.arangodb.internal.CollectionCache;
-import com.arangodb.internal.DocumentCache;
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.velocystream.Communication;
+import com.arangodb.internal.velocystream.Connection;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
-import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-abstract class ArangoExecuteable {
+public abstract class ArangoExecutor<R, C extends Connection> {
 
 	public static interface ResponseDeserializer<T> {
 		T deserialize(Response response) throws VPackException;
@@ -49,14 +48,14 @@ abstract class ArangoExecuteable {
 	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
 	private static final String REGEX_DOCUMENT_ID = "[^/]+/[^/]+";
 
-	protected final Communication communication;
+	protected final Communication<R, C> communication;
 	protected final VPack vpacker;
 	protected final VPack vpackerNull;
 	protected final VPackParser vpackParser;
 	protected final DocumentCache documentCache;
 	protected final CollectionCache collectionCache;
 
-	protected ArangoExecuteable(final Communication communication, final VPack vpacker, final VPack vpackerNull,
+	protected ArangoExecutor(final Communication<R, C> communication, final VPack vpacker, final VPack vpackerNull,
 		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super();
 		this.communication = communication;
@@ -67,7 +66,7 @@ abstract class ArangoExecuteable {
 		this.collectionCache = collectionCache;
 	}
 
-	protected Communication communication() {
+	public Communication<R, C> communication() {
 		return communication;
 	}
 
@@ -83,7 +82,7 @@ abstract class ArangoExecuteable {
 		return vpackParser;
 	}
 
-	protected DocumentCache documentCache() {
+	public DocumentCache documentCache() {
 		return documentCache;
 	}
 
@@ -102,11 +101,11 @@ abstract class ArangoExecuteable {
 		return sb.toString();
 	}
 
-	protected void validateDocumentKey(final String key) throws ArangoDBException {
+	public void validateDocumentKey(final String key) throws ArangoDBException {
 		validateName("document key", REGEX_DOCUMENT_KEY, key);
 	}
 
-	protected void validateDocumentId(final String id) throws ArangoDBException {
+	public void validateDocumentId(final String id) throws ArangoDBException {
 		validateName("document id", REGEX_DOCUMENT_ID, id);
 	}
 
@@ -117,27 +116,8 @@ abstract class ArangoExecuteable {
 		}
 	}
 
-	protected <T> T executeSync(final Request request, final Type type) throws ArangoDBException {
-		return executeSync(request, new ResponseDeserializer<T>() {
-			@Override
-			public T deserialize(final Response response) throws VPackException {
-				return createResult(vpacker, vpackParser, type, response);
-			}
-		});
-	}
-
-	protected <T> T executeSync(final Request request, final ResponseDeserializer<T> responseDeserializer)
-			throws ArangoDBException {
-		try {
-			final Response response = communication.executeSync(request);
-			return responseDeserializer.deserialize(response);
-		} catch (final VPackException e) {
-			throw new ArangoDBException(e);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
-	private <T> T createResult(
+	protected <T> T createResult(
 		final VPack vpack,
 		final VPackParser vpackParser,
 		final Type type,

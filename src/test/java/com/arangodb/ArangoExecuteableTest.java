@@ -22,6 +22,8 @@ package com.arangodb;
 
 import org.junit.Test;
 
+import com.arangodb.internal.ArangoExecutor;
+
 /**
  * @author Mark - mark at arangodb.com
  *
@@ -47,9 +49,36 @@ public class ArangoExecuteableTest {
 		checkDocumentKey("");
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void checkDocumentKey(final String key) throws ArangoDBException {
-		final ArangoExecuteable executeBase = new ArangoExecuteable(null, null, null, null, null, null) {
+		final ArangoExecutor executeBase = new ArangoExecutor(null, null, null, null, null, null) {
 		};
 		executeBase.validateDocumentKey(key);
+	}
+
+	@Test
+	public void validateDocumentIdValid() {
+		checkDocumentId("1test/1test");
+		checkDocumentId("test1/test1");
+		checkDocumentId("test-1/test-1");
+		checkDocumentId("test_1/test_1");
+		checkDocumentId("_test/_test");
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void validateDocumentIdInvalidWithoutSlash() {
+		checkDocumentId("test");
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void validateDocumentIdEmpty() {
+		checkDocumentId("");
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void checkDocumentId(final String id) throws ArangoDBException {
+		final ArangoExecutor executeBase = new ArangoExecutor(null, null, null, null, null, null) {
+		};
+		executeBase.validateDocumentId(id);
 	}
 }

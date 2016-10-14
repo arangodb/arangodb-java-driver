@@ -13,10 +13,10 @@ master: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-dri
 
 <table>
 <tr><th>arangodb-java-driver</th><th>ArangoDB</th><th>network protocol</th><th>Java version</th></tr>
-<tr><td>4.0.x</td><td>3.1.x</td><td>VelocyStream</td><td>1.8</td></tr>
-<tr><td>3.1.x</td><td>3.1.x</td><td>HTTP</td><td>1.6</td></tr>
-<tr><td>3.0.x</td><td>3.0.x</td><td>HTTP</td><td>1.6</td></tr>
-<tr><td>2.7.4</td><td>2.7.x and 2.8.x</td><td>HTTP</td><td>1.6</td></tr>
+<tr><td>4.0.x</td><td>3.1.x</td><td>VelocyStream</td><td>1.6+</td></tr>
+<tr><td>3.1.x</td><td>3.1.x</td><td>HTTP</td><td>1.6+</td></tr>
+<tr><td>3.0.x</td><td>3.0.x</td><td>HTTP</td><td>1.6+</td></tr>
+<tr><td>2.7.4</td><td>2.7.x and 2.8.x</td><td>HTTP</td><td>1.6+</td></tr>
 </table>
 
 ## Maven

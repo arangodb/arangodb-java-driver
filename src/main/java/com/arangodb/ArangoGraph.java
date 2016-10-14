@@ -24,37 +24,23 @@ import java.util.Collection;
 
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
-import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.model.OptionsBuilder;
-import com.arangodb.model.VertexCollectionCreateOptions;
-import com.arangodb.velocypack.Type;
-import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.InternalArangoGraph;
+import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoGraph extends ArangoExecuteable {
-
-	private final ArangoDatabase db;
-	private final String name;
+public class ArangoGraph extends InternalArangoGraph<ArangoExecutorSync, Response, ConnectionSync> {
 
 	protected ArangoGraph(final ArangoDatabase db, final String name) {
-		super(db.communication(), db.vpack(), db.vpackNull(), db.vpackParser(), db.documentCache(),
-				db.collectionCache());
-		this.db = db;
-		this.name = name;
+		super(db.executor(), db.name(), name);
 	}
 
-	protected ArangoDatabase db() {
-		return db;
-	}
-
-	protected String name() {
-		return name;
+	protected ArangoExecutorSync executor() {
+		return executor;
 	}
 
 	/**
@@ -64,11 +50,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public void drop() throws ArangoDBException {
-		executeSync(dropRequest(), Void.class);
-	}
-
-	private Request dropRequest() {
-		return new Request(db.name(), RequestType.DELETE, createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
+		executor.execute(dropRequest(), Void.class);
 	}
 
 	/**
@@ -79,15 +61,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public GraphEntity getInfo() throws ArangoDBException {
-		return executeSync(getInfoRequest(), getInfoResponseDeserializer());
-	}
-
-	private Request getInfoRequest() {
-		return new Request(db.name(), RequestType.GET, createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
-	}
-
-	private ResponseDeserializer<GraphEntity> getInfoResponseDeserializer() {
-		return addVertexCollectionResponseDeserializer();
+		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
 	}
 
 	/**
@@ -99,23 +73,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getVertexCollections() throws ArangoDBException {
-		return executeSync(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
-	}
-
-	private Request getVertexCollectionsRequest() {
-		return new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.VERTEX));
-	}
-
-	private ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
-					new Type<Collection<String>>() {
-					}.getType());
-			}
-		};
+		return executor.execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
 	}
 
 	/**
@@ -130,18 +88,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public GraphEntity addVertexCollection(final String name) throws ArangoDBException {
-		return executeSync(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
-	}
-
-	private Request addVertexCollectionRequest(final String name) {
-		final Request request = new Request(db.name(), RequestType.POST,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, name(), ArangoDBConstants.VERTEX));
-		request.setBody(serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
-		return request;
-	}
-
-	private ResponseDeserializer<GraphEntity> addVertexCollectionResponseDeserializer() {
-		return addEdgeDefinitionResponseDeserializer();
+		return executor.execute(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
 	}
 
 	public ArangoVertexCollection vertexCollection(final String name) {
@@ -161,23 +108,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getEdgeDefinitions() throws ArangoDBException {
-		return executeSync(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
-	}
-
-	private Request getEdgeDefinitionsRequest() {
-		return new Request(db.name(), RequestType.GET,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
-	}
-
-	private ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
-					new Type<Collection<String>>() {
-					}.getType());
-			}
-		};
+		return executor.execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
 	}
 
 	/**
@@ -190,23 +121,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public GraphEntity addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
-		return executeSync(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
-	}
-
-	private Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = new Request(db.name(), RequestType.POST,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
-		request.setBody(serialize(definition));
-		return request;
-	}
-
-	private ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
-			}
-		};
+		return executor.execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
 	}
 
 	/**
@@ -221,23 +136,7 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
-		return executeSync(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
-	}
-
-	private Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = new Request(db.name(), RequestType.PUT, createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			name, ArangoDBConstants.EDGE, definition.getCollection()));
-		request.setBody(serialize(definition));
-		return request;
-	}
-
-	private ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
-			}
-		};
+		return executor.execute(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
 	}
 
 	/**
@@ -253,20 +152,8 @@ public class ArangoGraph extends ArangoExecuteable {
 	 * @throws ArangoDBException
 	 */
 	public GraphEntity removeEdgeDefinition(final String definitionName) throws ArangoDBException {
-		return executeSync(removeEdgeDefinitionRequest(definitionName), removeEdgeDefinitionResponseDeserializer());
+		return executor.execute(removeEdgeDefinitionRequest(definitionName),
+			removeEdgeDefinitionResponseDeserializer());
 	}
 
-	private Request removeEdgeDefinitionRequest(final String definitionName) {
-		return new Request(db.name(), RequestType.DELETE,
-				createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definitionName));
-	}
-
-	private ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return ArangoGraph.this.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
-			}
-		};
-	}
 }
