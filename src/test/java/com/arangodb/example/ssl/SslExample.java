@@ -30,6 +30,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arangodb.ArangoDB;
@@ -54,6 +55,7 @@ public class SslExample {
 	private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
 	@Test
+	@Ignore
 	public void connect() throws Exception {
 		final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());

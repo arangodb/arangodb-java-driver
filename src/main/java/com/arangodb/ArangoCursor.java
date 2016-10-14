@@ -42,7 +42,7 @@ import com.arangodb.internal.InternalArangoDatabase;
 public class ArangoCursor<T> implements Iterator<T>, Closeable {
 
 	private final Class<T> type;
-	private final ArangoCursorIterator<T> iterator;
+	protected final ArangoCursorIterator<T> iterator;
 	private final String id;
 	private final Integer count;
 	private final Extras extra;
@@ -85,10 +85,6 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		return cached;
 	}
 
-	protected CursorEntity executeNext() {
-		return execute.next(id);
-	}
-
 	@Override
 	public void close() throws IOException {
 		execute.close(id);
@@ -103,10 +99,6 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	public T next() {
 		return iterator.next();
 	}
-
-	// public Stream<T> streamRemaining() {
-	// return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
-	// }
 
 	public List<T> asListRemaining() {
 		final List<T> remaining = new ArrayList<T>();

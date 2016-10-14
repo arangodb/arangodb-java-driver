@@ -32,6 +32,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arangodb.entity.ArangoDBVersion;
@@ -55,6 +56,7 @@ public class ArangoSslTest {
 	private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
 	@Test
+	@Ignore
 	public void connect() throws Exception {
 		final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
@@ -74,6 +76,7 @@ public class ArangoSslTest {
 	}
 
 	@Test
+	@Ignore
 	public void connectWithoutValidSslContext() throws Exception {
 		try {
 			final ArangoDB arangoDB = new ArangoDB.Builder().port(8530).useSsl(true).build();

@@ -567,6 +567,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void getCurrentlyRunningQueries() throws InterruptedException, ExecutionException {
 		final Thread t = new Thread() {
 			@Override
@@ -589,6 +590,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void getAndClearSlowQueries() throws InterruptedException, ExecutionException {
 		final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties();
 		final Long slowQueryThreshold = properties.getSlowQueryThreshold();
@@ -612,6 +614,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void killQuery() throws InterruptedException, ExecutionException {
 		final Thread t = new Thread() {
 			@Override

@@ -127,14 +127,14 @@ public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 		final ArangoCursor<List> cursor = db.query(query, bindVars, null, List.class);
 		assertThat(cursor, is(notNullValue()));
 		for (; cursor.hasNext();) {
-			final List vpack = cursor.next();
-			assertThat(vpack.get(0), is(notNullValue()));
-			assertThat(String.valueOf(vpack.get(0)),
+			final List list = cursor.next();
+			assertThat(list.get(0), is(notNullValue()));
+			assertThat(String.valueOf(list.get(0)),
 				isOneOf("TestUser11", "TestUser13", "TestUser15", "TestUser17", "TestUser19"));
-			assertThat(vpack.get(1), is(notNullValue()));
-			assertThat(Gender.valueOf(String.valueOf(vpack.get(1))), is(Gender.FEMALE));
-			assertThat(vpack.get(2), is(notNullValue()));
-			assertThat(Long.valueOf(String.valueOf(vpack.get(2))), isOneOf(21L, 23L, 25L, 27L, 29L));
+			assertThat(list.get(1), is(notNullValue()));
+			assertThat(Gender.valueOf(String.valueOf(list.get(1))), is(Gender.FEMALE));
+			assertThat(list.get(2), is(notNullValue()));
+			assertThat(Long.valueOf(String.valueOf(list.get(2))), isOneOf(21L, 23L, 25L, 27L, 29L));
 		}
 	}
 }
