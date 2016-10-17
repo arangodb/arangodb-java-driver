@@ -1,19 +1,18 @@
-v4.0.0 (2016-XX-XX)
+v4.0.0 (2016-10-17)
 ---------------------------
-* replaced API with new (inspired by arango shell)
+* replaced API
 * replaced protocol http with VelocyStream
 * added VelocyPack support
 * added multi document operations (insert, delete, update, replace)
-* changed required Java version from 1.6 to 1.8
 
-v3.1.0 (2016-XX-XX)
+v3.1.0 (2016-10-17)
 ---------------------------
 * removed Methods with collectionId (long) from ArangoDriver (Id is only for internal usage)
 * changed Revision from long to String
 * removed Methods with documentId (long) from ArangoDriver
 * added profile flag to AqlQueryOptions (issue #47)
 
-v3.0.4 (2016-XX-XX)
+v3.0.4 (2016-10-17)
 ---------------------------
 * fixed edges deserializer (issue #50)
 
