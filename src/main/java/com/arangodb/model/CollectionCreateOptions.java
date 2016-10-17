@@ -52,6 +52,11 @@ public class CollectionCreateOptions {
 		return name;
 	}
 
+	/**
+	 * @param name
+	 *            The name of the collection
+	 * @return options
+	 */
 	protected CollectionCreateOptions name(final String name) {
 		this.name = name;
 		return this;

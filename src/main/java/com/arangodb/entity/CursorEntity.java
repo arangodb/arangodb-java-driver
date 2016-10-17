@@ -26,9 +26,63 @@ import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+ *      Documentation</a>
  */
 public class CursorEntity {
+
+	private String id;
+	private Integer count;
+	private Extras extra;
+	private Boolean cached;
+	private Boolean hasMore;
+	private VPackSlice result;
+
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @return the total number of result documents available (only available if the query was executed with the count
+	 *         attribute set)
+	 */
+	public Integer getCount() {
+		return count;
+	}
+
+	/**
+	 * @return an optional object with extra information about the query result contained in its stats sub-attribute.
+	 *         For data-modification queries, the extra.stats sub-attribute will contain the number of modified
+	 *         documents and the number of documents that could not be modified due to an error (if ignoreErrors query
+	 *         option is specified)
+	 */
+	public Extras getExtra() {
+		return extra;
+	}
+
+	/**
+	 * @return a boolean flag indicating whether the query result was served from the query cache or not. If the query
+	 *         result is served from the query cache, the extra return attribute will not contain any stats
+	 *         sub-attribute and no profile sub-attribute.
+	 */
+	public Boolean getCached() {
+		return cached;
+	}
+
+	/**
+	 * @return A boolean indicator whether there are more results available for the cursor on the server
+	 */
+	public Boolean getHasMore() {
+		return hasMore;
+	}
+
+	/**
+	 * @return an vpack-array of result documents (might be empty if query has no results)
+	 */
+	public VPackSlice getResult() {
+		return result;
+	}
 
 	public static class Warning {
 
@@ -53,16 +107,8 @@ public class CursorEntity {
 			return stats;
 		}
 
-		public void setStats(final Stats stats) {
-			this.stats = stats;
-		}
-
 		public Collection<Warning> getWarnings() {
 			return warnings;
-		}
-
-		public void setWarnings(final Collection<Warning> warnings) {
-			this.warnings = warnings;
 		}
 
 	}
@@ -80,113 +126,29 @@ public class CursorEntity {
 			return writesExecuted;
 		}
 
-		public void setWritesExecuted(final Long writesExecuted) {
-			this.writesExecuted = writesExecuted;
-		}
-
 		public Long getWritesIgnored() {
 			return writesIgnored;
-		}
-
-		public void setWritesIgnored(final Long writesIgnored) {
-			this.writesIgnored = writesIgnored;
 		}
 
 		public Long getScannedFull() {
 			return scannedFull;
 		}
 
-		public void setScannedFull(final Long scannedFull) {
-			this.scannedFull = scannedFull;
-		}
-
 		public Long getScannedIndex() {
 			return scannedIndex;
-		}
-
-		public void setScannedIndex(final Long scannedIndex) {
-			this.scannedIndex = scannedIndex;
 		}
 
 		public Long getFiltered() {
 			return filtered;
 		}
 
-		public void setFiltered(final Long filtered) {
-			this.filtered = filtered;
-		}
-
 		public Long getFullCount() {
 			return fullCount;
-		}
-
-		public void setFullCount(final Long fullCount) {
-			this.fullCount = fullCount;
 		}
 
 		public Double getExecutionTime() {
 			return executionTime;
 		}
 
-		public void setExecutionTime(final Double executionTime) {
-			this.executionTime = executionTime;
-		}
-
 	}
-
-	private String id;
-	private Integer count;
-	private Extras extra;
-	private Boolean cached;
-	private Boolean hasMore;
-	private VPackSlice result;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(final String id) {
-		this.id = id;
-	}
-
-	public Integer getCount() {
-		return count;
-	}
-
-	public void setCount(final Integer count) {
-		this.count = count;
-	}
-
-	public Extras getExtra() {
-		return extra;
-	}
-
-	public void setExtra(final Extras extra) {
-		this.extra = extra;
-	}
-
-	public Boolean getCached() {
-		return cached;
-	}
-
-	public void setCached(final Boolean cached) {
-		this.cached = cached;
-	}
-
-	public Boolean getHasMore() {
-		return hasMore;
-	}
-
-	public void setHasMore(final Boolean hasMore) {
-		this.hasMore = hasMore;
-	}
-
-	public VPackSlice getResult() {
-		return result;
-	}
-
-	public void setResult(final VPackSlice result) {
-		this.result = result;
-	}
-
 }

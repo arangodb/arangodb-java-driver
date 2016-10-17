@@ -25,6 +25,8 @@ import com.arangodb.velocypack.annotations.Expose;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+ *      Documentation</a>
  */
 public class DocumentCreateEntity<T> extends DocumentEntity {
 
@@ -35,6 +37,9 @@ public class DocumentCreateEntity<T> extends DocumentEntity {
 		super();
 	}
 
+	/**
+	 * @return If the query parameter returnNew is true, then the complete new document is returned.
+	 */
 	public T getNew() {
 		return newDocument;
 	}

@@ -22,7 +22,9 @@ package com.arangodb.model;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
+ *      Documentation</a>
  */
 public class AqlFunctionCreateOptions {
 
@@ -34,6 +36,11 @@ public class AqlFunctionCreateOptions {
 		super();
 	}
 
+	/**
+	 * @param name
+	 *            the fully qualified name of the user functions
+	 * @return options
+	 */
 	protected AqlFunctionCreateOptions name(final String name) {
 		this.name = name;
 		return this;
@@ -43,6 +50,11 @@ public class AqlFunctionCreateOptions {
 		return name;
 	}
 
+	/**
+	 * @param code
+	 *            a string representation of the function body
+	 * @return options
+	 */
 	protected AqlFunctionCreateOptions code(final String code) {
 		this.code = code;
 		return this;
@@ -52,6 +64,13 @@ public class AqlFunctionCreateOptions {
 		return code;
 	}
 
+	/**
+	 * @param isDeterministic
+	 *            an optional boolean value to indicate that the function results are fully deterministic (function
+	 *            return value solely depends on the input value and return value is the same for repeated calls with
+	 *            same input)
+	 * @return options
+	 */
 	public AqlFunctionCreateOptions isDeterministic(final Boolean isDeterministic) {
 		this.isDeterministic = isDeterministic;
 		return this;

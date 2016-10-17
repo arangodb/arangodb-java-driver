@@ -46,6 +46,11 @@ public class GraphCreateOptions {
 		return name;
 	}
 
+	/**
+	 * @param name
+	 *            Name of the graph
+	 * @return options
+	 */
 	protected GraphCreateOptions name(final String name) {
 		this.name = name;
 		return this;
@@ -55,6 +60,11 @@ public class GraphCreateOptions {
 		return edgeDefinitions;
 	}
 
+	/**
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
+	 * @return options
+	 */
 	protected GraphCreateOptions edgeDefinitions(final Collection<EdgeDefinition> edgeDefinitions) {
 		this.edgeDefinitions = edgeDefinitions;
 		return this;

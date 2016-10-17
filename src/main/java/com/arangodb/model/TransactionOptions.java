@@ -46,6 +46,11 @@ public class TransactionOptions {
 		return action;
 	}
 
+	/**
+	 * @param action
+	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
+	 * @return options
+	 */
 	protected TransactionOptions action(final String action) {
 		this.action = action;
 		return this;

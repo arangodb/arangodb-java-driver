@@ -22,7 +22,9 @@ package com.arangodb.entity;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+ *      Documentation</a>
  */
 public class ArangoDBVersion {
 
@@ -33,10 +35,17 @@ public class ArangoDBVersion {
 		super();
 	}
 
+	/**
+	 * @return will always contain arango
+	 */
 	public String getServer() {
 		return server;
 	}
 
+	/**
+	 * @return the server version string. The string has the format "major.minor.sub". major and minor will be numeric,
+	 *         and sub may contain a number or a textual version.
+	 */
 	public String getVersion() {
 		return version;
 	}

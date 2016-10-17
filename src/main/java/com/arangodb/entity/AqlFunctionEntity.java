@@ -22,7 +22,10 @@ package com.arangodb.entity;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href=
+ *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+ *      Documentation</a>
  */
 public class AqlFunctionEntity {
 
@@ -33,20 +36,18 @@ public class AqlFunctionEntity {
 		super();
 	}
 
+	/**
+	 * @return The fully qualified name of the user function
+	 */
 	public String getName() {
 		return name;
 	}
 
-	public void setName(final String name) {
-		this.name = name;
-	}
-
+	/**
+	 * @return A string representation of the function body
+	 */
 	public String getCode() {
 		return code;
-	}
-
-	public void setCode(final String code) {
-		this.code = code;
 	}
 
 }

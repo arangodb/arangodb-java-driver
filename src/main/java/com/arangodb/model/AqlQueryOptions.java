@@ -112,6 +112,11 @@ public class AqlQueryOptions {
 		return bindVars;
 	}
 
+	/**
+	 * @param bindVars
+	 *            key/value pairs representing the bind parameters
+	 * @return options
+	 */
 	protected AqlQueryOptions bindVars(final Map<String, Object> bindVars) {
 		this.bindVars = bindVars;
 		return this;
@@ -121,11 +126,20 @@ public class AqlQueryOptions {
 		return query;
 	}
 
+	/**
+	 * @param query
+	 *            the query which you want parse
+	 * @return options
+	 */
 	protected AqlQueryOptions query(final String query) {
 		this.query = query;
 		return this;
 	}
 
+	/**
+	 * @return If set to true, then the additional query profiling information will be returned in the sub-attribute
+	 *         profile of the extra return attribute if the query result is not served from the query cache.
+	 */
 	public Boolean getProfile() {
 		return options != null ? options.profile : null;
 	}

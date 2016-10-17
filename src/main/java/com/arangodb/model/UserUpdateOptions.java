@@ -51,15 +51,16 @@ public class UserUpdateOptions {
 		return this;
 	}
 
-	/**
-	 * An optional flag that specifies whether the user is active. If not specified, this will default to true
-	 * 
-	 * @return true, if the user is active
-	 */
 	public Boolean getActive() {
 		return active;
 	}
 
+	/**
+	 * @param active
+	 *            An optional flag that specifies whether the user is active. If not specified, this will default to
+	 *            true
+	 * @return options
+	 */
 	public UserUpdateOptions active(final Boolean active) {
 		this.active = active;
 		return this;

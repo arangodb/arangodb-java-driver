@@ -23,6 +23,8 @@ package com.arangodb.entity;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
+ *      Documentation</a>
  */
 public class CollectionRevisionEntity extends CollectionEntity {
 

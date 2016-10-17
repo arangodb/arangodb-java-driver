@@ -44,6 +44,11 @@ public class HashIndexOptions {
 		return fields;
 	}
 
+	/**
+	 * @param fields
+	 *            A list of attribute paths
+	 * @return options
+	 */
 	protected HashIndexOptions fields(final Collection<String> fields) {
 		this.fields = fields;
 		return this;

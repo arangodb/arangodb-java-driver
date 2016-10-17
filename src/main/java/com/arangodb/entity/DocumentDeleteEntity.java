@@ -25,6 +25,8 @@ import com.arangodb.velocypack.annotations.Expose;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+ *      Documentation</a>
  */
 public class DocumentDeleteEntity<T> extends DocumentEntity {
 
@@ -35,6 +37,10 @@ public class DocumentDeleteEntity<T> extends DocumentEntity {
 		super();
 	}
 
+	/**
+	 * @return If the query parameter returnOld is true, then the complete previous revision of the document is
+	 *         returned.
+	 */
 	public T getOld() {
 		return oldDocument;
 	}

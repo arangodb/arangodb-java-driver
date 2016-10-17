@@ -22,7 +22,10 @@ package com.arangodb.entity;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href=
+ *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+ *      Documentation</a>
  */
 public class DatabaseEntity {
 
@@ -31,18 +34,30 @@ public class DatabaseEntity {
 	private String path;
 	private Boolean isSystem;
 
+	/**
+	 * @return the id of the database
+	 */
 	public String getId() {
 		return id;
 	}
 
+	/**
+	 * @return the name of the database
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @return the filesystem path of the database
+	 */
 	public String getPath() {
 		return path;
 	}
 
+	/**
+	 * @return whether or not the database is the _system database
+	 */
 	public Boolean getIsSystem() {
 		return isSystem;
 	}

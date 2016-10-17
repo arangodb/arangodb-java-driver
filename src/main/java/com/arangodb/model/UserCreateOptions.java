@@ -42,6 +42,11 @@ public class UserCreateOptions {
 		return user;
 	}
 
+	/**
+	 * @param user
+	 *            The name of the user
+	 * @return options
+	 */
 	protected UserCreateOptions user(final String user) {
 		this.user = user;
 		return this;
@@ -51,6 +56,11 @@ public class UserCreateOptions {
 		return passwd;
 	}
 
+	/**
+	 * @param passwd
+	 *            The user password
+	 * @return options
+	 */
 	protected UserCreateOptions passwd(final String passwd) {
 		this.passwd = passwd;
 		return this;

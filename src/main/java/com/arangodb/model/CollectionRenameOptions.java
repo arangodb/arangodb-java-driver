@@ -36,6 +36,11 @@ public class CollectionRenameOptions {
 		return name;
 	}
 
+	/**
+	 * @param name
+	 *            The new name
+	 * @return options
+	 */
 	protected CollectionRenameOptions name(final String name) {
 		this.name = name;
 		return this;

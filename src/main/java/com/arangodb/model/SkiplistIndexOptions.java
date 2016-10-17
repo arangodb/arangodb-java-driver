@@ -44,6 +44,11 @@ public class SkiplistIndexOptions {
 		return fields;
 	}
 
+	/**
+	 * @param fields
+	 *            A list of attribute paths
+	 * @return options
+	 */
 	protected SkiplistIndexOptions fields(final Collection<String> fields) {
 		this.fields = fields;
 		return this;

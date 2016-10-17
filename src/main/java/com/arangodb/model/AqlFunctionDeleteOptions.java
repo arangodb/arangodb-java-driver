@@ -22,7 +22,10 @@ package com.arangodb.model;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href=
+ *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
+ *      Documentation</a>
  */
 public class AqlFunctionDeleteOptions {
 
@@ -36,6 +39,13 @@ public class AqlFunctionDeleteOptions {
 		return group;
 	}
 
+	/**
+	 * @param group
+	 *            If set to true, then the function name provided in name is treated as a namespace prefix, and all
+	 *            functions in the specified namespace will be deleted. If set to false, the function name provided in
+	 *            name must be fully qualified, including any namespaces.
+	 * @return options
+	 */
 	public AqlFunctionDeleteOptions group(final Boolean group) {
 		this.group = group;
 		return this;

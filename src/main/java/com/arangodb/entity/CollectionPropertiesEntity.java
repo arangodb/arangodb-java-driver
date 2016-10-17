@@ -25,6 +25,8 @@ import java.util.Collection;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href= "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
+ *      Documentation</a>
  */
 public class CollectionPropertiesEntity extends CollectionEntity {
 
@@ -80,6 +82,10 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 		this.count = count;
 	}
 
+	/**
+	 * @return contains the names of document attributes that are used to determine the target shard for documents. Only
+	 *         in a cluster setup
+	 */
 	public Integer getNumberOfShards() {
 		return numberOfShards;
 	}
@@ -88,6 +94,9 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 		this.numberOfShards = numberOfShards;
 	}
 
+	/**
+	 * @return the number of shards of the collection. Only in a cluster setup.
+	 */
 	public Collection<String> getShardKeys() {
 		return shardKeys;
 	}

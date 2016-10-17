@@ -36,6 +36,11 @@ public class VertexCollectionCreateOptions {
 		return collection;
 	}
 
+	/**
+	 * @param collection
+	 *            The name of the collection
+	 * @return options
+	 */
 	protected VertexCollectionCreateOptions collection(final String collection) {
 		this.collection = collection;
 		return this;

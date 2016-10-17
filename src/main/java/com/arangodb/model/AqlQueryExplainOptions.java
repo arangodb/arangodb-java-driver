@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * @author Mark - mark at arangodb.com
  * 
- * @see <a href="https://docs.arangodb.com/3.0/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
  */
 public class AqlQueryExplainOptions {
 
@@ -42,6 +42,11 @@ public class AqlQueryExplainOptions {
 		return bindVars;
 	}
 
+	/**
+	 * @param bindVars
+	 *            key/value pairs representing the bind parameters
+	 * @return options
+	 */
 	protected AqlQueryExplainOptions bindVars(final Map<String, Object> bindVars) {
 		this.bindVars = bindVars;
 		return this;
@@ -51,6 +56,11 @@ public class AqlQueryExplainOptions {
 		return query;
 	}
 
+	/**
+	 * @param query
+	 *            the query which you want explained
+	 * @return options
+	 */
 	protected AqlQueryExplainOptions query(final String query) {
 		this.query = query;
 		return this;

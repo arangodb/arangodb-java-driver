@@ -23,6 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html">API Documentation</a>
  */
 public class CollectionEntity {
 

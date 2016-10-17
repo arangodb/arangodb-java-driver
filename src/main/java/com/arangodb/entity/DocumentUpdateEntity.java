@@ -26,6 +26,9 @@ import com.arangodb.velocypack.annotations.SerializedName;
 /**
  * @author Mark - mark at arangodb.com
  * @param <T>
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+ *      Documentation</a>
  *
  */
 public class DocumentUpdateEntity<T> extends DocumentEntity {
@@ -45,6 +48,9 @@ public class DocumentUpdateEntity<T> extends DocumentEntity {
 		return oldRev;
 	}
 
+	/**
+	 * @return If the query parameter returnNew is true, then the complete new document is returned.
+	 */
 	public T getNew() {
 		return newDocument;
 	}
@@ -53,6 +59,10 @@ public class DocumentUpdateEntity<T> extends DocumentEntity {
 		this.newDocument = newDocument;
 	}
 
+	/**
+	 * @return If the query parameter returnOld is true, then the complete previous revision of the document is
+	 *         returned.
+	 */
 	public T getOld() {
 		return oldDocument;
 	}

@@ -25,6 +25,8 @@ import java.util.Collection;
 /**
  * @author Mark - mark at arangodb.com
  *
+ * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
+ *      Documentation</a>
  */
 public class PathEntity<V, E> {
 

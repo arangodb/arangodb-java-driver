@@ -22,7 +22,10 @@ package com.arangodb.model;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href=
+ *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+ *      Documentation</a>
  */
 public class AqlFunctionGetOptions {
 
@@ -36,6 +39,11 @@ public class AqlFunctionGetOptions {
 		return namespace;
 	}
 
+	/**
+	 * @param namespace
+	 *            Returns all registered AQL user functions from namespace namespace
+	 * @return options
+	 */
 	public AqlFunctionGetOptions namespace(final String namespace) {
 		this.namespace = namespace;
 		return this;

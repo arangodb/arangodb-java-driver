@@ -36,6 +36,11 @@ public class DBCreateOptions {
 		return name;
 	}
 
+	/**
+	 * @param name
+	 *            Has to contain a valid database name
+	 * @return options
+	 */
 	protected DBCreateOptions name(final String name) {
 		this.name = name;
 		return this;

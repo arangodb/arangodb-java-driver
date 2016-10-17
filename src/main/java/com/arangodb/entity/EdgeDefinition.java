@@ -25,7 +25,8 @@ import java.util.Collection;
 
 /**
  * @author Mark - mark at arangodb.com
- *
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API Documentation</a>
  */
 public class EdgeDefinition {
 
