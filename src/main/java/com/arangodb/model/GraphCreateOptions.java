@@ -35,6 +35,8 @@ public class GraphCreateOptions {
 	private String name;
 	private Collection<EdgeDefinition> edgeDefinitions;
 	private Collection<String> orphanCollections;
+	private Boolean isSmart;
+	private SmartOptions options;
 
 	public GraphCreateOptions() {
 		super();
@@ -70,6 +72,64 @@ public class GraphCreateOptions {
 	public GraphCreateOptions orphanCollections(final String... orphanCollections) {
 		this.orphanCollections = Arrays.asList(orphanCollections);
 		return this;
+	}
+
+	public Boolean getIsSmart() {
+		return isSmart;
+	}
+
+	public GraphCreateOptions isSmart(final Boolean isSmart) {
+		this.isSmart = isSmart;
+		return this;
+	}
+
+	public Integer getNumberOfShards() {
+		return getOptions().getNumberOfShards();
+	}
+
+	public void numberOfShards(final Integer numberOfShards) {
+		getOptions().setNumberOfShards(numberOfShards);
+	}
+
+	public String getSmartGraphAttribute() {
+		return getOptions().getSmartGraphAttribute();
+	}
+
+	public void smartGraphAttribute(final String smartGraphAttribute) {
+		getOptions().setSmartGraphAttribute(smartGraphAttribute);
+	}
+
+	private SmartOptions getOptions() {
+		if (options == null) {
+			options = new SmartOptions();
+		}
+		return options;
+	}
+
+	public static class SmartOptions {
+		private Integer numberOfShards;
+		private String smartGraphAttribute;
+
+		public SmartOptions() {
+			super();
+		}
+
+		public Integer getNumberOfShards() {
+			return numberOfShards;
+		}
+
+		public void setNumberOfShards(final Integer numberOfShards) {
+			this.numberOfShards = numberOfShards;
+		}
+
+		public String getSmartGraphAttribute() {
+			return smartGraphAttribute;
+		}
+
+		public void setSmartGraphAttribute(final String smartGraphAttribute) {
+			this.smartGraphAttribute = smartGraphAttribute;
+		}
+
 	}
 
 }

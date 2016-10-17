@@ -31,6 +31,9 @@ public class GraphEntity {
 	private String name;
 	private Collection<EdgeDefinition> edgeDefinitions;
 	private Collection<String> orphanCollections;
+	private Boolean isSmart;
+	private Integer numberOfShards;
+	private String smartGraphAttribute;
 
 	public String getName() {
 		return name;
@@ -42,6 +45,18 @@ public class GraphEntity {
 
 	public Collection<String> getOrphanCollections() {
 		return orphanCollections;
+	}
+
+	public Boolean getIsSmart() {
+		return isSmart;
+	}
+
+	public Integer getNumberOfShards() {
+		return numberOfShards;
+	}
+
+	public String getSmartGraphAttribute() {
+		return smartGraphAttribute;
 	}
 
 }
