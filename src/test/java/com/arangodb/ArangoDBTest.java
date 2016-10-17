@@ -285,7 +285,6 @@ public class ArangoDBTest {
 	@Test
 	public void getLogsUpto() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final LogEntity logs = arangoDB.getLogs(null);
 		final LogEntity logsUpto = arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING));
 		assertThat(logsUpto, is(notNullValue()));
 		assertThat(logsUpto.getLevel(), not(contains(LogLevel.INFO)));
@@ -294,7 +293,6 @@ public class ArangoDBTest {
 	@Test
 	public void getLogsLevel() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		final LogEntity logs = arangoDB.getLogs(null);
 		final LogEntity logsInfo = arangoDB.getLogs(new LogOptions().level(LogLevel.INFO));
 		assertThat(logsInfo, is(notNullValue()));
 		assertThat(logsInfo.getLevel(), everyItem(is(LogLevel.INFO)));
