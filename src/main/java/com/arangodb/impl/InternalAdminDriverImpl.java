@@ -36,22 +36,22 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 
 	// MEMO: ADMINはdatabase関係ない
 
-	InternalAdminDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+	InternalAdminDriverImpl(final ArangoConfigure configure, final HttpManager httpManager) {
 		super(configure, httpManager);
 	}
 
 	@Override
 	public AdminLogEntity getServerLog(
-		Integer logLevel,
-		Boolean logLevelUpTo,
-		Integer start,
-		Integer size,
-		Integer offset,
-		Boolean sortAsc,
-		String text) throws ArangoException {
+		final Integer logLevel,
+		final Boolean logLevelUpTo,
+		final Integer start,
+		final Integer size,
+		final Integer offset,
+		final Boolean sortAsc,
+		final String text) throws ArangoException {
 
 		// パラメータを作る
-		MapBuilder param = new MapBuilder();
+		final MapBuilder param = new MapBuilder();
 		if (logLevel != null) {
 			if (logLevelUpTo != null && logLevelUpTo.booleanValue()) {
 				param.put("upto", logLevel);
@@ -67,7 +67,7 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 		}
 		param.put("search", text);
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/log"), param.get());
+		final HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/log"), param.get());
 
 		return createEntity(res, AdminLogEntity.class);
 	}
@@ -75,7 +75,7 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	@Override
 	public StatisticsEntity getStatistics() throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/statistics"));
+		final HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/statistics"));
 
 		return createEntity(res, StatisticsEntity.class);
 	}
@@ -83,7 +83,7 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	@Override
 	public StatisticsDescriptionEntity getStatisticsDescription() throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/statistics-description"));
+		final HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/statistics-description"));
 
 		return createEntity(res, StatisticsDescriptionEntity.class);
 	}
@@ -93,14 +93,13 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	 * 
 	 * @return a ArangoVersion object
 	 * @throws ArangoException
-	 * @see <a href=
-	 *      "http://www.arangodb.com/manuals/current/HttpMisc.html#HttpMiscVersion">
-	 *      HttpMiscVersion documentation</a>
+	 * @see <a href= "http://www.arangodb.com/manuals/current/HttpMisc.html#HttpMiscVersion"> HttpMiscVersion
+	 *      documentation</a>
 	 */
 	@Override
 	public ArangoVersion getVersion() throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_api/version"));
+		final HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_api/version"));
 
 		return createEntity(res, ArangoVersion.class);
 	}
@@ -108,24 +107,24 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	@Override
 	public ArangoUnixTime getTime() throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/time"));
+		final HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_admin/time"));
 
 		return createEntity(res, ArangoUnixTime.class);
 	}
 
 	@Override
-	public DefaultEntity reloadRouting() throws ArangoException {
+	public DefaultEntity reloadRouting(final String database) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, "/_admin/routing/reload"), null,
+		final HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_admin/routing/reload"), null,
 			(String) null);
 
 		return createEntity(res, DefaultEntity.class, null, false);
 	}
 
 	@Override
-	public DefaultEntity executeScript(String database, String jsCode) throws ArangoException {
+	public DefaultEntity executeScript(final String database, final String jsCode) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_admin/execute"), null, jsCode);
+		final HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_admin/execute"), null, jsCode);
 
 		return createEntity(res, DefaultEntity.class);
 	}

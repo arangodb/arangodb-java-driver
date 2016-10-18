@@ -1,3 +1,11 @@
+v3.0.5 (2016-10-18)
+---------------------------
+* fixed ArangoDriver.getCurrentDatabase() (does not use the defaultDatabase)
+* fixed ArangoDriver.deleteQueryCache() (does not use the defaultDatabase)
+* fixed ArangoDriver.getQueryCacheProperties() (does not use the defaultDatabase)
+* fixed ArangoDriver.setQueryCacheProperties() (does not use the defaultDatabase)
+* fixed ArangoDriver.reloadRouting() (does not use the defaultDatabase)
+
 v3.0.4 (2016-10-17)
 ---------------------------
 * fixed edges deserializer (issue #50)
