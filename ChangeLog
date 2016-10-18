@@ -1,4 +1,4 @@
-v3.1.1 (2016-xx-xx)
+v3.1.1 (2016-10-18)
 ---------------------------
 * fixed ArangoDriver.getCurrentDatabase() (does not use the defaultDatabase)
 * fixed ArangoDriver.deleteQueryCache() (does not use the defaultDatabase)
