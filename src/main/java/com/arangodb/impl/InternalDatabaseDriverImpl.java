@@ -36,22 +36,24 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 
 	private static final String API_DATABASE = "/_api/database";
 
-	InternalDatabaseDriverImpl(ArangoConfigure configure, HttpManager httpManager) {
+	InternalDatabaseDriverImpl(final ArangoConfigure configure, final HttpManager httpManager) {
 		super(configure, httpManager);
 	}
 
 	@Override
-	public DatabaseEntity getCurrentDatabase() throws ArangoException {
+	public DatabaseEntity getCurrentDatabase(final String database) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_api/database/current"));
+		final HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/database/current"));
 		return createEntity(res, DatabaseEntity.class);
 
 	}
 
 	@Override
-	public StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password)
-			throws ArangoException {
-		HttpResponseEntity res = httpManager.doGet(
+	public StringsResultEntity getDatabases(
+		final boolean currentUserAccessableOnly,
+		final String username,
+		final String password) throws ArangoException {
+		final HttpResponseEntity res = httpManager.doGet(
 			createEndpointUrl(null, API_DATABASE, currentUserAccessableOnly ? "user" : null), null, null, username,
 			password);
 		return createEntity(res, StringsResultEntity.class);
@@ -59,17 +61,17 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public BooleanResultEntity createDatabase(String database, UserEntity... users) throws ArangoException {
+	public BooleanResultEntity createDatabase(final String database, final UserEntity... users) throws ArangoException {
 
 		validateDatabaseName(database, false);
 
-		TreeMap<String, Object> body = new TreeMap<String, Object>();
+		final TreeMap<String, Object> body = new TreeMap<String, Object>();
 		body.put("name", database);
 		if (users != null && users.length > 0) {
 			body.put("users", users);
 		}
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, API_DATABASE), null,
+		final HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, API_DATABASE), null,
 			EntityFactory.toJsonString(body));
 
 		return createEntity(res, BooleanResultEntity.class);
@@ -77,14 +79,14 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public BooleanResultEntity deleteDatabase(String database) throws ArangoException {
+	public BooleanResultEntity deleteDatabase(final String database) throws ArangoException {
 
 		validateDatabaseName(database, false);
 
-		TreeMap<String, Object> body = new TreeMap<String, Object>();
+		final TreeMap<String, Object> body = new TreeMap<String, Object>();
 		body.put("name", database);
 
-		HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(null, API_DATABASE, database), null);
+		final HttpResponseEntity res = httpManager.doDelete(createEndpointUrl(null, API_DATABASE, database), null);
 
 		return createEntity(res, BooleanResultEntity.class);
 
