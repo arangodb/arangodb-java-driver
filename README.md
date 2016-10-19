@@ -29,6 +29,15 @@ unix> ./arangod --server.endpoint vpp+tcp://127.0.0.1:8529
                 --ssl.keyfile server.pem /tmp/vocbase
 ```
 
+Note: The web interface needs only endpoint tcp. If you want to use both, the driver and the web interface you have to use both endpoints.
+
+```
+unix> ./arangod --server.endpoint vpp+tcp://127.0.0.1:8529
+                --server.endpoint vpp+ssl://127.0.0.1:8530
+                --server.endpoint tcp://127.0.0.1:8531
+                --ssl.keyfile server.pem /tmp/vocbase
+```
+
 ## Maven
 
 To add the driver to your project with maven, add the following code to your pom.xml
