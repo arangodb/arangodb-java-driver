@@ -19,6 +19,16 @@ master: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-dri
 <tr><td>2.7.4</td><td>2.7.x and 2.8.x</td><td>HTTP</td><td>1.6+</td></tr>
 </table>
 
+##Server Configuration
+
+To use the driver version 4.0.0 and above, you need to run ArangoDB server with an endpoint using VelocyStream protocol. (see [documentation](https://docs.arangodb.com/current/Manual/Administration/Configuration/Endpoint.html#server-endpoints))
+
+```
+unix> ./arangod --server.endpoint vpp+tcp://127.0.0.1:8529
+                --server.endpoint vpp+ssl://127.0.0.1:8530
+                --ssl.keyfile server.pem /tmp/vocbase
+```
+
 ## Maven
 
 To add the driver to your project with maven, add the following code to your pom.xml
