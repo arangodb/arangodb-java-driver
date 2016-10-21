@@ -161,7 +161,7 @@ public class VPack {
 			return this;
 		}
 
-		public <T> VPack.Builder regitserInstanceCreator(final Type type, final VPackInstanceCreator<T> creator) {
+		public <T> VPack.Builder registerInstanceCreator(final Type type, final VPackInstanceCreator<T> creator) {
 			instanceCreators.put(type, creator);
 			return this;
 		}

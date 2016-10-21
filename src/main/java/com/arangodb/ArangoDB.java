@@ -173,8 +173,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
-		public <T> Builder regitserInstanceCreator(final Class<T> clazz, final VPackInstanceCreator<T> creator) {
-			vpackBuilder.regitserInstanceCreator(clazz, creator);
+		public <T> Builder registerInstanceCreator(final Class<T> clazz, final VPackInstanceCreator<T> creator) {
+			vpackBuilder.registerInstanceCreator(clazz, creator);
 			return this;
 		}
 
