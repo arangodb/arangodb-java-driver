@@ -1,3 +1,7 @@
+v3.0.6 (2016-xx-xx)
+---------------------------
+* fixed importing BaseDocuments
+
 v3.0.5 (2016-10-18)
 ---------------------------
 * fixed ArangoDriver.getCurrentDatabase() (does not use the defaultDatabase)
