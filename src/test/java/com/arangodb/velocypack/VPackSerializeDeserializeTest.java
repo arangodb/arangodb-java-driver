@@ -1279,7 +1279,7 @@ public class VPackSerializeDeserializeTest {
 		}
 		final VPackSlice slice = builder.slice();
 		final VPack vPack = new VPack.Builder()
-				.regitserInstanceCreator(TestEntityD.class, new VPackInstanceCreator<TestEntityD>() {
+				.registerInstanceCreator(TestEntityD.class, new VPackInstanceCreator<TestEntityD>() {
 					@Override
 					public TestEntityD createInstance() {
 						return new TestEntityDImpl();
