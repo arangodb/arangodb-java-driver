@@ -389,5 +389,5 @@ Now an edge can be created to set a relation between vertices
 * [ArangoDB](https://www.arangodb.com/)
 * [ChangeLog](ChangeLog)
 * [Examples](src/test/java/com/arangodb/example)
-* [Tutorial](https://www.arangodb.com/tutorial-java/)
+* [Tutorial](https://www.arangodb.com/tutorial-java-old/)
 * [JavaDoc](http://arangodb.github.io/arangodb-java-driver/javadoc-3_1/index.html)
