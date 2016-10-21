@@ -35,9 +35,6 @@ import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 /**
  * Entity factory , internally used.
@@ -113,6 +110,7 @@ public class EntityFactory {
 				.registerTypeAdapter(ReplicationLoggerStateEntity.Client.class,
 					new EntityDeserializers.ReplicationLoggerStateEntityClientDeserializer())
 				.registerTypeAdapter(BaseDocument.class, new EntityDeserializers.BaseDocumentDeserializer())
+				.registerTypeAdapter(BaseDocument.class, new EntitySerializers.BaseDocumentSerializer())
 				.registerTypeAdapter(GraphEntity.class, new EntityDeserializers.GraphEntityDeserializer())
 				.registerTypeAdapter(GraphsEntity.class, new EntityDeserializers.GraphsEntityDeserializer())
 				.registerTypeAdapter(DeletedEntity.class, new EntityDeserializers.DeleteEntityDeserializer())
@@ -142,7 +140,7 @@ public class EntityFactory {
 	 *            prior to creating). If two are given - first initializes <code>gson</code> field, second initializes
 	 *            <code>gsonNull</code> (used when serialization of nulls is requested).
 	 */
-	public static void configure(GsonBuilder... builders) {
+	public static void configure(final GsonBuilder... builders) {
 		if (builders.length < 1) {
 			throw new IllegalArgumentException("builders");
 		}
@@ -157,21 +155,21 @@ public class EntityFactory {
 		}
 	}
 
-	public static <T> T createEntity(String jsonText, Type type) {
+	public static <T> T createEntity(final String jsonText, final Type type) {
 		return gson.fromJson(jsonText, type);
 	}
 
-	public static <T> String toJsonString(T obj) {
+	public static <T> String toJsonString(final T obj) {
 		return toJsonString(obj, false);
 	}
 
-	public static <T> JsonSequenceEntity toJsonSequenceEntity(Iterator<T> itr) {
+	public static <T> JsonSequenceEntity toJsonSequenceEntity(final Iterator<T> itr) {
 		return new JsonSequenceEntity(itr, gson);
 	}
 
-	public static String toImportHeaderValues(Collection<? extends Collection<?>> headerValues) {
-		StringWriter writer = new StringWriter();
-		for (Collection<?> array : headerValues) {
+	public static String toImportHeaderValues(final Collection<? extends Collection<?>> headerValues) {
+		final StringWriter writer = new StringWriter();
+		for (final Collection<?> array : headerValues) {
 			gson.toJson(array, writer);
 			writer.write('\n');
 		}
@@ -179,25 +177,7 @@ public class EntityFactory {
 		return writer.toString();
 	}
 
-	public static <T> String toJsonString(T obj, boolean includeNullValue) {
-		if (obj != null && obj.getClass().equals(BaseDocument.class)) {
-			String tmp = includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
-			JsonParser jsonParser = new JsonParser();
-			JsonElement jsonElement = jsonParser.parse(tmp);
-			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			JsonObject result = jsonObject.getAsJsonObject("properties");
-			JsonElement keyObject = jsonObject.get("_key");
-			if (keyObject != null && keyObject.getClass() != JsonNull.class) {
-				result.add("_key", jsonObject.get("_key"));
-			}
-			JsonElement handleObject = jsonObject.get("_id");
-			if (handleObject != null && handleObject.getClass() != JsonNull.class) {
-				result.add("_id", jsonObject.get("_id"));
-			}
-			// JsonElement revisionValue = jsonObject.get("documentRevision");
-			// result.add("_rev", revisionValue);
-			return result.toString();
-		}
+	public static <T> String toJsonString(final T obj, final boolean includeNullValue) {
 		return includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
 	}
 
@@ -207,7 +187,7 @@ public class EntityFactory {
 	 * @return a JsonElement object
 	 * @since 1.4.0
 	 */
-	public static <T> JsonElement toJsonElement(T obj, boolean includeNullValue) {
+	public static <T> JsonElement toJsonElement(final T obj, final boolean includeNullValue) {
 		return includeNullValue ? gsonNull.toJsonTree(obj) : gson.toJsonTree(obj);
 	}
 
@@ -216,15 +196,15 @@ public class EntityFactory {
 	 * @since 1.4.0
 	 */
 	private static class ExcludeExclusionStrategy implements ExclusionStrategy {
-		private boolean serialize;
+		private final boolean serialize;
 
-		public ExcludeExclusionStrategy(boolean serialize) {
+		public ExcludeExclusionStrategy(final boolean serialize) {
 			this.serialize = serialize;
 		}
 
 		@Override
-		public boolean shouldSkipField(FieldAttributes f) {
-			Exclude annotation = f.getAnnotation(Exclude.class);
+		public boolean shouldSkipField(final FieldAttributes f) {
+			final Exclude annotation = f.getAnnotation(Exclude.class);
 			if (annotation != null && (serialize ? annotation.serialize() : annotation.deserialize())) {
 				return true;
 			}
@@ -232,7 +212,7 @@ public class EntityFactory {
 		}
 
 		@Override
-		public boolean shouldSkipClass(Class<?> clazz) {
+		public boolean shouldSkipClass(final Class<?> clazz) {
 			return false;
 		}
 	}
@@ -241,8 +221,8 @@ public class EntityFactory {
 		private static final String KEY = "_key";
 
 		@Override
-		public String translateName(Field f) {
-			DocumentKey key = f.getAnnotation(DocumentKey.class);
+		public String translateName(final Field f) {
+			final DocumentKey key = f.getAnnotation(DocumentKey.class);
 			if (key == null) {
 				return FieldNamingPolicy.IDENTITY.translateName(f);
 			}
