@@ -73,3 +73,32 @@ To ignore fields at serialization/deserialization, use the annotation `Expose`
 
   }  
 ```
+
+## custom de-/serializer
+``` Java
+final ArangoDB arangoDB = new ArangoDB.Builder()
+    .registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
+      @Override
+      public MyObject deserialize(
+        final VPackSlice parent,
+        final VPackSlice vpack,
+        final VPackDeserializationContext context) throws VPackException {
+        
+          final MyObject obj = new MyObject();
+          obj.setName(vpack.get("name").getAsString());
+          return obj;
+      }
+    }).registerSerializer(MyObject.class, new VPackSerializer<MyObject>() {
+      @Override
+      public void serialize(
+        final VPackBuilder builder,
+        final String attribute,
+        final MyObject value,
+        final VPackSerializationContext context) throws VPackException {
+        
+          builder.add(attribute, ValueType.OBJECT);
+          builder.add("name", value.getName());
+          builder.close();
+      }
+    }).build();
+``` 
