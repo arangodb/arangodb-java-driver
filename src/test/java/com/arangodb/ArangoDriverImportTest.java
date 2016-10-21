@@ -35,6 +35,7 @@ import org.junit.Test;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionOptions;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
@@ -70,7 +71,7 @@ public class ArangoDriverImportTest extends BaseTest {
 		} catch (final ArangoException e) {
 		}
 		try {
-			CollectionOptions options = new CollectionOptions();
+			final CollectionOptions options = new CollectionOptions();
 			options.setType(CollectionType.EDGE);
 			driver.createCollection(UT_IMPORT_TEST_EDGE, options);
 		} catch (final ArangoException e) {
@@ -89,6 +90,29 @@ public class ArangoDriverImportTest extends BaseTest {
 		assertThat(result.getErrors(), is(0));
 		assertThat(result.getEmpty(), is(0));
 
+	}
+
+	@Test
+	public void test_import_base_documents() throws ArangoException {
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		for (int i = 0; i < 100; i++) {
+			final BaseDocument doc = new BaseDocument();
+			doc.setDocumentKey("Key" + i);
+			doc.addAttribute("foo", "bar");
+			docs.add(doc);
+		}
+
+		final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs);
+
+		assertThat(result.getStatusCode(), is(201));
+		assertThat(result.isError(), is(false));
+		assertThat(result.getCreated(), is(100));
+		assertThat(result.getErrors(), is(0));
+		assertThat(result.getEmpty(), is(0));
+
+		final DocumentEntity<BaseDocument> zero = driver.getDocument(UT_IMPORT_TEST, "Key0", BaseDocument.class);
+		assertThat(zero.isError(), is(false));
+		assertThat(zero.getEntity().getAttribute("foo").toString(), is("bar"));
 	}
 
 	@Test
@@ -136,13 +160,13 @@ public class ArangoDriverImportTest extends BaseTest {
 	@Test
 	public void test_import_updateOnDuplicate() throws ArangoException, IOException {
 
-		Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 		for (int i = 0; i < 100; i++) {
-			BaseDocument doc = new BaseDocument();
+			final BaseDocument doc = new BaseDocument();
 			doc.setDocumentKey(String.valueOf(i));
 			docs.add(doc);
 		}
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
 			final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, options);
 			assertThat(result.getStatusCode(), is(201));
@@ -162,13 +186,13 @@ public class ArangoDriverImportTest extends BaseTest {
 	@Test
 	public void test_import_ignoreOnDuplicate() throws ArangoException, IOException {
 
-		Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 		for (int i = 0; i < 100; i++) {
-			BaseDocument doc = new BaseDocument();
+			final BaseDocument doc = new BaseDocument();
 			doc.setDocumentKey(String.valueOf(i));
 			docs.add(doc);
 		}
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
 			final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, options);
 			assertThat(result.getStatusCode(), is(201));
@@ -188,13 +212,13 @@ public class ArangoDriverImportTest extends BaseTest {
 	@Test
 	public void test_import_replaceOnDuplicate() throws ArangoException, IOException {
 
-		Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 		for (int i = 0; i < 100; i++) {
-			BaseDocument doc = new BaseDocument();
+			final BaseDocument doc = new BaseDocument();
 			doc.setDocumentKey(String.valueOf(i));
 			docs.add(doc);
 		}
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
 			final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, options);
 			assertThat(result.getStatusCode(), is(201));
@@ -214,13 +238,13 @@ public class ArangoDriverImportTest extends BaseTest {
 	@Test
 	public void test_import_errorOnDuplicate() throws ArangoException, IOException {
 
-		Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 		for (int i = 0; i < 100; i++) {
-			BaseDocument doc = new BaseDocument();
+			final BaseDocument doc = new BaseDocument();
 			doc.setDocumentKey(String.valueOf(i));
 			docs.add(doc);
 		}
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
 			final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, options);
 			assertThat(result.getStatusCode(), is(201));
@@ -239,11 +263,11 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	@Test
 	public void test_import_overwrite() throws ArangoException, IOException {
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
-			Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+			final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 			for (int i = 0; i < 100; i++) {
-				BaseDocument doc = new BaseDocument();
+				final BaseDocument doc = new BaseDocument();
 				doc.setDocumentKey(String.valueOf(i));
 				docs.add(doc);
 			}
@@ -256,9 +280,9 @@ public class ArangoDriverImportTest extends BaseTest {
 			}
 		}
 		{
-			Collection<BaseDocument> docs2 = new ArrayList<BaseDocument>();
+			final Collection<BaseDocument> docs2 = new ArrayList<BaseDocument>();
 			for (int i = 0; i < 50; i++) {
-				BaseDocument doc = new BaseDocument();
+				final BaseDocument doc = new BaseDocument();
 				doc.setDocumentKey(String.valueOf(-i));
 				docs2.add(doc);
 			}
@@ -275,11 +299,11 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	@Test
 	public void test_import_from_to_Prefix() throws ArangoException, IOException {
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
-			Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+			final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 			for (int i = 0; i < 100; i++) {
-				BaseDocument doc = new BaseDocument();
+				final BaseDocument doc = new BaseDocument();
 				doc.setDocumentKey(String.valueOf(i));
 				docs.add(doc);
 			}
@@ -291,7 +315,7 @@ public class ArangoDriverImportTest extends BaseTest {
 			}
 		}
 		{
-			Collection<Map<String, Object>> edgeDocs = new ArrayList<Map<String, Object>>();
+			final Collection<Map<String, Object>> edgeDocs = new ArrayList<Map<String, Object>>();
 			for (int i = 0; i < 100; i++) {
 				final HashMap<String, Object> doc = new HashMap<String, Object>();
 				doc.put(BaseDocument.KEY, String.valueOf(i));
@@ -310,11 +334,11 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	@Test
 	public void test_import_from_to_Prefix_with_errors_details() throws ArangoException, IOException {
-		ImportOptionsJson options = new ImportOptionsJson();
+		final ImportOptionsJson options = new ImportOptionsJson();
 		{
-			Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+			final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 			for (int i = 0; i < 100; i++) {
-				BaseDocument doc = new BaseDocument();
+				final BaseDocument doc = new BaseDocument();
 				doc.setDocumentKey(String.valueOf(i));
 				docs.add(doc);
 			}
@@ -326,7 +350,7 @@ public class ArangoDriverImportTest extends BaseTest {
 			}
 		}
 		{
-			Collection<Map<String, Object>> edgeDocs = new ArrayList<Map<String, Object>>();
+			final Collection<Map<String, Object>> edgeDocs = new ArrayList<Map<String, Object>>();
 			for (int i = 0; i < 100; i++) {
 				final HashMap<String, Object> doc = new HashMap<String, Object>();
 				doc.put(BaseDocument.KEY, String.valueOf(i));
@@ -350,27 +374,27 @@ public class ArangoDriverImportTest extends BaseTest {
 		final IndexEntity index = driver.createIndex(UT_IMPORT_TEST, IndexType.HASH, true, "pk_id");
 		Assert.assertFalse(index.isError());
 
-		Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
 		for (int i = 0; i < 2; i++) {
-			BaseDocument doc = new BaseDocument();
+			final BaseDocument doc = new BaseDocument();
 			doc.addAttribute("pk_id", "test");
 			docs.add(doc);
 		}
-		ImportOptionsJson importOptions = new ImportOptionsJson();
+		final ImportOptionsJson importOptions = new ImportOptionsJson();
 		importOptions.setDetails(true);
 		final ImportResultEntity result = driver.importDocuments(UT_IMPORT_TEST, docs, importOptions);
 		Assert.assertFalse(result.isError());
 		Assert.assertEquals(1, result.getCreated());
 		Assert.assertEquals(1, result.getErrors());
 		Assert.assertEquals(1, result.getDetails().size());
-		String expectedErrorDetail = "at position 1: creating document failed with error 'unique constraint violated'";
+		final String expectedErrorDetail = "at position 1: creating document failed with error 'unique constraint violated'";
 		Assert.assertTrue(result.getDetails().get(0).startsWith(expectedErrorDetail));
 	}
 
 	@Test
 	public void test_import_rawList() throws ArangoException {
-		String values = "[{\"_key\":\"a\"},{\"_key\":\"b\"}]";
-		ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.LIST);
+		final String values = "[{\"_key\":\"a\"},{\"_key\":\"b\"}]";
+		final ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.LIST);
 		final ImportResultEntity result = driver.importDocumentsRaw(UT_IMPORT_TEST, values, importOptionsRaw);
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
@@ -379,8 +403,8 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	@Test
 	public void test_import_rawDocuments() throws ArangoException {
-		String values = "{\"_key\":\"a\"}\n{\"_key\":\"b\"}";
-		ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.DOCUMENTS);
+		final String values = "{\"_key\":\"a\"}\n{\"_key\":\"b\"}";
+		final ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.DOCUMENTS);
 		final ImportResultEntity result = driver.importDocumentsRaw(UT_IMPORT_TEST, values, importOptionsRaw);
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
@@ -389,8 +413,8 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	@Test
 	public void test_import_rawAutoList() throws ArangoException {
-		String values = "[{\"_key\":\"a\"},{\"_key\":\"b\"}]";
-		ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.LIST);
+		final String values = "[{\"_key\":\"a\"},{\"_key\":\"b\"}]";
+		final ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.LIST);
 		final ImportResultEntity result = driver.importDocumentsRaw(UT_IMPORT_TEST, values, importOptionsRaw);
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
@@ -399,8 +423,8 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	@Test
 	public void test_import_rawAutoDocuments() throws ArangoException {
-		String values = "{\"_key\":\"a\"}\n{\"_key\":\"b\"}";
-		ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.AUTO);
+		final String values = "{\"_key\":\"a\"}\n{\"_key\":\"b\"}";
+		final ImportOptionsRaw importOptionsRaw = new ImportOptionsRaw(ImportType.AUTO);
 		final ImportResultEntity result = driver.importDocumentsRaw(UT_IMPORT_TEST, values, importOptionsRaw);
 		assertThat(result.getStatusCode(), is(201));
 		assertThat(result.isError(), is(false));
