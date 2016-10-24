@@ -41,6 +41,7 @@ import org.junit.Test;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
@@ -361,4 +362,26 @@ public class ArangoDBTest {
 		}
 	}
 
+	@Test
+	public void getLogLevel() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogLevelEntity logLevel = arangoDB.getLogLevel();
+		assertThat(logLevel, is(notNullValue()));
+		assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.INFO));
+	}
+
+	@Test
+	public void setLogLevel() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final LogLevelEntity entity = new LogLevelEntity();
+		try {
+			entity.setAgency(LogLevelEntity.LogLevel.ERROR);
+			final LogLevelEntity logLevel = arangoDB.setLogLevel(entity);
+			assertThat(logLevel, is(notNullValue()));
+			assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.ERROR));
+		} finally {
+			entity.setAgency(LogLevelEntity.LogLevel.INFO);
+			arangoDB.setLogLevel(entity);
+		}
+	}
 }
