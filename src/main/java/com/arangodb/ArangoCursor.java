@@ -49,7 +49,7 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	private final boolean cached;
 	private final ArangoCursorExecute execute;
 
-	public ArangoCursor(final InternalArangoDatabase<?, ?, ?> db, final ArangoCursorExecute execute,
+	protected ArangoCursor(final InternalArangoDatabase<?, ?, ?> db, final ArangoCursorExecute execute,
 		final Class<T> type, final CursorEntity result) {
 		super();
 		this.execute = execute;
