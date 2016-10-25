@@ -49,8 +49,7 @@ import com.arangodb.velocypack.VPackSlice;
 public abstract class Connection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
-	private static final byte[] ACCEPT_HEADER = ByteBuffer.wrap("VST/1.0\r\n\r\n".getBytes())
-			.order(ByteOrder.LITTLE_ENDIAN).array();
+	private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
 
 	private final String host;
 	private final Integer port;
@@ -111,7 +110,7 @@ public abstract class Connection {
 			}
 			((SSLSocket) socket).startHandshake();
 		}
-		sendAcceptHeader();
+		sendProtocolHeader();
 	}
 
 	public synchronized void close() {
@@ -127,8 +126,8 @@ public abstract class Connection {
 		}
 	}
 
-	private void sendAcceptHeader() throws IOException {
-		outputStream.write(ACCEPT_HEADER);
+	private void sendProtocolHeader() throws IOException {
+		outputStream.write(PROTOCOL_HEADER);
 		outputStream.flush();
 	}
 
