@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import java.util.Collection;
 
+import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.velocystream.Connection;
@@ -149,5 +150,14 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 				.putQueryParam(LogOptions.PROPERTY_OFFSET, params.getOffset())
 				.putQueryParam(LogOptions.PROPERTY_SEARCH, params.getSearch())
 				.putQueryParam(LogOptions.PROPERTY_SORT, params.getSort());
+	}
+
+	protected Request getLogLevelRequest() {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ADMIN_LOG_LEVEL);
+	}
+
+	protected Request setLogLevelRequest(final LogLevelEntity entity) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT, ArangoDBConstants.PATH_API_ADMIN_LOG_LEVEL)
+				.setBody(executor.serialize(entity));
 	}
 }
