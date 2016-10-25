@@ -44,3 +44,13 @@ Example for arangodb.properties:
   arangodb.password=
 
 ```
+
+## SSL
+
+To use SSL, you have to set the configuration `useSsl` to `true` and set a `SSLContext`. (see [example code](../src/test/java/com/arangodb/example/ssl/SslExample.java))
+
+``` Java
+  
+  ArangoDB arangoDB = new ArangoDB.Builder().useSsl(true).sslContext(sc).build();
+  
+```
