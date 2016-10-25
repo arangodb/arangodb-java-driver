@@ -114,8 +114,8 @@ public class ArangoDBTest {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Collection<String> dbs = arangoDB.getAccessibleDatabases();
 		assertThat(dbs, is(notNullValue()));
-		assertThat(dbs.size(), is(1));
-		assertThat(dbs.iterator().next(), is("_system"));
+		assertThat(dbs.size(), greaterThan(0));
+		assertThat(dbs, hasItem("_system"));
 	}
 
 	@Test
@@ -164,8 +164,7 @@ public class ArangoDBTest {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Collection<UserEntity> users = arangoDB.getUsers();
 		assertThat(users, is(notNullValue()));
-		assertThat(users.size(), is(1));
-		assertThat(users.iterator().next().getUser(), is(ROOT));
+		assertThat(users.size(), greaterThan(0));
 	}
 
 	@Test
