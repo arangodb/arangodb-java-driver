@@ -76,7 +76,7 @@ To ignore fields at serialization/deserialization, use the annotation `Expose`
 
 ## custom de-/serializer
 ``` Java
-final ArangoDB arangoDB = new ArangoDB.Builder()
+  ArangoDB arangoDB = new ArangoDB.Builder()
     .registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
       @Override
       public MyObject deserialize(
@@ -102,3 +102,11 @@ final ArangoDB arangoDB = new ArangoDB.Builder()
       }
     }).build();
 ``` 
+
+## manually de-/serialization
+To de-/serialize from and to VelocyPack before or after a database call, use the `ArangoUtil` from the method `util()` in `ArangoDB`, `ArangoDatabase`, `ArangoCollection`, `ArangoGraph`, `ArangoEdgeCollection`or `ArangoVertexCollection`.
+
+``` Java
+  ArangoDB arangoDB = new ArangoDB.Builder();
+  arangoDB.util().deserialize(vpack, type);
+```
