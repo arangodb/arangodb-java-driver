@@ -20,7 +20,10 @@
 
 package com.arangodb.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.UserEntity;
@@ -85,6 +88,26 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	protected Request getAccessibleDatabasesRequest(final String database) {
 		return new Request(database, RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER));
+	}
+
+	protected Request getAccessibleDatabasesForRequest(final String database, final String user) {
+		return new Request(database, RequestType.GET,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE));
+	}
+
+	protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
+		return new ResponseDeserializer<Collection<String>>() {
+			@Override
+			public Collection<String> deserialize(final Response response) throws VPackException {
+				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				final Collection<String> dbs = new ArrayList<String>();
+				for (final Iterator<Entry<String, VPackSlice>> iterator = result.objectIterator(); iterator
+						.hasNext();) {
+					dbs.add(iterator.next().getKey());
+				}
+				return dbs;
+			}
+		};
 	}
 
 	protected Request getVersionRequest() {
@@ -160,4 +183,5 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT, ArangoDBConstants.PATH_API_ADMIN_LOG_LEVEL)
 				.setBody(executor.serialize(entity));
 	}
+
 }

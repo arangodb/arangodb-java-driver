@@ -119,6 +119,15 @@ public class ArangoDBTest {
 	}
 
 	@Test
+	public void getAccessibleDatabasesFor() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		final Collection<String> dbs = arangoDB.getAccessibleDatabasesFor("root");
+		assertThat(dbs, is(notNullValue()));
+		assertThat(dbs.size(), greaterThan(0));
+		assertThat(dbs, hasItem("_system"));
+	}
+
+	@Test
 	public void createUser() {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
