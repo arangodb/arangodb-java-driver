@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.internal.velocystream.Connection;
+import com.arangodb.util.ArangoUtil;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -35,4 +36,7 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor<R, C>, R, C ext
 		this.executor = executor;
 	}
 
+	public ArangoUtil util() {
+		return executor.util();
+	}
 }
