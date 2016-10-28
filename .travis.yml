@@ -1,8 +1,12 @@
 language: java
 
-before_script:
-  - chmod 777 ./tests/travis/setup_arangodb.sh
-  - ./tests/travis/setup_arangodb.sh
+before_install:
+  - docker run -d -e ARANGO_NO_AUTH=1 -p 8529:8529 m0ppers/arangodb:hihi
+  - CONTINUE=1
+  - while [ $CONTINUE -eq 1 ]; do sleep 1 && curl -s 127.0.0.1:8529/_api/version && CONTINUE=0; done
+
+services:
+  - docker
 
 install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
 
