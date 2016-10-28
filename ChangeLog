@@ -1,4 +1,4 @@
-v4.1.0 (2016-10-xx)
+v4.1.0 (2016-10-28)
 ---------------------------
 * changed VelocyStream communication (send protocol header)
 * added ArangoUtil for manually de-/serialization
