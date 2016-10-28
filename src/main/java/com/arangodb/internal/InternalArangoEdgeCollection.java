@@ -85,7 +85,7 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 				values.put(DocumentField.Type.ID, doc.getId());
 				values.put(DocumentField.Type.KEY, doc.getKey());
 				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache.setValues(value, values);
+				executor.documentCache().setValues(value, values);
 				return doc;
 			}
 		};
@@ -127,7 +127,7 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 				final EdgeUpdateEntity doc = executor.deserialize(body, EdgeUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache.setValues(value, values);
+				executor.documentCache().setValues(value, values);
 				return doc;
 			}
 		};

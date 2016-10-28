@@ -127,6 +127,9 @@ public abstract class Connection {
 	}
 
 	private void sendProtocolHeader() throws IOException {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Send velocystream protocol header to %s", socket));
+		}
 		outputStream.write(PROTOCOL_HEADER);
 		outputStream.flush();
 	}

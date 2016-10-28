@@ -47,7 +47,7 @@ public class ArangoExecutorSync extends ArangoExecutor<Response, ConnectionSync>
 		return execute(request, new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return createResult(vpacker, vpackParser, type, response);
+				return createResult(type, response);
 			}
 		});
 	}
@@ -55,7 +55,7 @@ public class ArangoExecutorSync extends ArangoExecutor<Response, ConnectionSync>
 	public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer)
 			throws ArangoDBException {
 		try {
-			final Response response = communication.execute(request);
+			final Response response = communication().execute(request);
 			return responseDeserializer.deserialize(response);
 		} catch (final VPackException e) {
 			throw new ArangoDBException(e);

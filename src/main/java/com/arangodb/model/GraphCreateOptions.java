@@ -88,6 +88,12 @@ public class GraphCreateOptions {
 		return isSmart;
 	}
 
+	/**
+	 * 
+	 * @param isSmart
+	 *            Define if the created graph should be smart. This only has effect in Enterprise version.
+	 * @return options
+	 */
 	public GraphCreateOptions isSmart(final Boolean isSmart) {
 		this.isSmart = isSmart;
 		return this;
@@ -97,16 +103,29 @@ public class GraphCreateOptions {
 		return getOptions().getNumberOfShards();
 	}
 
-	public void numberOfShards(final Integer numberOfShards) {
+	/**
+	 * @param numberOfShards
+	 *            The number of shards that is used for every collection within this graph. Cannot be modified later.
+	 * @return options
+	 */
+	public GraphCreateOptions numberOfShards(final Integer numberOfShards) {
 		getOptions().setNumberOfShards(numberOfShards);
+		return this;
 	}
 
 	public String getSmartGraphAttribute() {
 		return getOptions().getSmartGraphAttribute();
 	}
 
-	public void smartGraphAttribute(final String smartGraphAttribute) {
+	/**
+	 * @param smartGraphAttribute
+	 *            The attribute name that is used to smartly shard the vertices of a graph. Every vertex in this Graph
+	 *            has to have this attribute. Cannot be modified later.
+	 * @return options
+	 */
+	public GraphCreateOptions smartGraphAttribute(final String smartGraphAttribute) {
 		getOptions().setSmartGraphAttribute(smartGraphAttribute);
+		return this;
 	}
 
 	private SmartOptions getOptions() {

@@ -39,3 +39,5 @@ or return the AQL result as VelocyPack:
     System.out.println(obj.get("name").getAsString());
   }
 ```
+
+**Note**: The parameter `type` in `query()` has to match the result of the query, otherwise you get an VPackParserException. E.g. you set `type` to `BaseDocument` or a POJO and the query result is an array or simple type, you get an VPackParserException caused by VPackValueTypeException: Expecting type OBJECT.
