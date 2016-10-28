@@ -3,7 +3,6 @@ language: java
 before_script:
   - chmod 777 ./tests/travis/setup_arangodb.sh
   - ./tests/travis/setup_arangodb.sh
-  - curl -v root@127.0.0.1:8529/_api/version
   
 install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
 

@@ -47,8 +47,8 @@ if [ "x$process" == "x" ]; then
   exit 1
 fi
 
-echo "Waiting until ArangoDB is ready on port 8531"
-while [[ -z `curl -uroot: -s 'http://127.0.0.1:8531/_api/version' ` ]] ; do
+echo "Waiting until ArangoDB is ready on port 8529"
+while [[ -z `curl -uroot: -s 'http://127.0.0.1:8529/_api/version' ` ]] ; do
   echo -n "."
   sleep 2s
 done
