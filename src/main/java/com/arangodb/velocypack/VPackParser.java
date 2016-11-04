@@ -47,6 +47,7 @@ public class VPackParser {
 	private static final char FIELD = ':';
 	private static final char SEPARATOR = ',';
 	private static final String NULL = "null";
+	private static final String NON_REPRESENTABLE_TYPE = "(non-representable type)";
 	private final Map<ValueType, VPackJsonDeserializer> deserializers;
 	private final Map<String, Map<ValueType, VPackJsonDeserializer>> deserializersByName;
 
@@ -124,7 +125,7 @@ public class VPackParser {
 			} else if (value.isNull()) {
 				json.append(NULL);
 			} else {
-				json.append(NULL);
+				json.append(JSONValue.toJSONString(NON_REPRESENTABLE_TYPE));
 			}
 		}
 	}
