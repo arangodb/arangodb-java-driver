@@ -611,7 +611,7 @@ public class VPackBuilder {
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {
-		final int length = value.length();
+		final int length = value.getBytes().length;
 		if (length <= 126) {
 			// short string
 			add((byte) (0x40 + length));
