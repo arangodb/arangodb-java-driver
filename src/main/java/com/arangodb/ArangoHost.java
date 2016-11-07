@@ -61,4 +61,20 @@ public class ArangoHost {
 		return true;
 	}
 
+	/**
+	 * Returns a string representation in the form <code>host:port</code>,
+	 * adding square brackets if needed
+	 */
+	@Override
+	public String toString() {
+	    // "[]:12345" requires 8 extra bytes.
+	    StringBuilder builder = new StringBuilder(host.length() + 8);
+	    if (host.indexOf(':') >= 0) {
+	      builder.append('[').append(host).append(']');
+	    } else {
+	      builder.append(host);
+	    }
+	    builder.append(':').append(port);
+	    return builder.toString();
+	}
 }
