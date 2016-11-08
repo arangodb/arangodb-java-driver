@@ -1,3 +1,10 @@
+v4.1.1 (2016-xx-xx)
+---------------------------
+* changed json parsing of VelocyPack types not known in json
+* fixed VelocyPack bug with non-ASCII characters
+* added missing replicationFactor in CollectionCreateOptions
+* added missing replicationFactor in CollectionPropertiesEntity
+
 v4.1.0 (2016-10-28)
 ---------------------------
 * changed VelocyStream communication (send protocol header)
