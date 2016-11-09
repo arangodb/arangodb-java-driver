@@ -1,4 +1,4 @@
-v3.1.3 (2016-xx-xx)
+v3.1.3 (2016-11-09)
 ---------------------------
 * added better toString representation of ArangoHost
 * added missing replicationFactor in CollectionOptions
