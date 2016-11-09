@@ -22,6 +22,7 @@ package com.arangodb;
 
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -362,6 +363,52 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getRevision(), is(notNullValue()));
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+	}
+
+	private static class TestUpdateEntity {
+		@SuppressWarnings("unused")
+		private String a, b;
+	}
+
+	@Test
+	public void updateDocumentSerializeNullTrue() {
+		final TestUpdateEntity doc = new TestUpdateEntity();
+		doc.a = "foo";
+		doc.b = "foo";
+		final DocumentCreateEntity<TestUpdateEntity> createResult = db.collection(COLLECTION_NAME).insertDocument(doc);
+		final TestUpdateEntity patchDoc = new TestUpdateEntity();
+		patchDoc.a = "bar";
+		final DocumentUpdateEntity<TestUpdateEntity> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), patchDoc);
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getKey(), is(createResult.getKey()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class);
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getProperties().keySet(), hasItem("a"));
+		assertThat(readResult.getAttribute("a").toString(), is("bar"));
+	}
+
+	@Test
+	public void updateDocumentSerializeNullFalse() {
+		final TestUpdateEntity doc = new TestUpdateEntity();
+		doc.a = "foo";
+		doc.b = "foo";
+		final DocumentCreateEntity<TestUpdateEntity> createResult = db.collection(COLLECTION_NAME).insertDocument(doc);
+		final TestUpdateEntity patchDoc = new TestUpdateEntity();
+		patchDoc.a = "bar";
+		final DocumentUpdateEntity<TestUpdateEntity> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), patchDoc, new DocumentUpdateOptions().serializeNull(false));
+		assertThat(updateResult, is(notNullValue()));
+		assertThat(updateResult.getKey(), is(createResult.getKey()));
+
+		final BaseDocument readResult = db.collection(COLLECTION_NAME).getDocument(createResult.getKey(),
+			BaseDocument.class);
+		assertThat(readResult.getKey(), is(createResult.getKey()));
+		assertThat(readResult.getProperties().keySet(), hasItems("a", "b"));
+		assertThat(readResult.getAttribute("a").toString(), is("bar"));
+		assertThat(readResult.getAttribute("b").toString(), is("foo"));
 	}
 
 	@SuppressWarnings("unchecked")
