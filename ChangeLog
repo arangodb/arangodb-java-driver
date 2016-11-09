@@ -1,3 +1,11 @@
+v4.1.1 (2016-11-09)
+---------------------------
+* changed json parsing of VelocyPack types not known in json
+* fixed VelocyPack bug with non-ASCII characters
+* added missing replicationFactor in CollectionCreateOptions
+* added missing replicationFactor in CollectionPropertiesEntity
+* added option serializeNull in DocumentUpdateOptions
+
 v4.1.0 (2016-10-28)
 ---------------------------
 * changed VelocyStream communication (send protocol header)

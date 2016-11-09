@@ -887,4 +887,12 @@ public class VPackBuilderTest {
 		}
 	}
 
+	@Test
+	public void nonASCII() {
+		final String s = "·ÃÂ";
+		final VPackSlice vpack = new VPackBuilder().add(s).slice();
+		assertThat(vpack.isString(), is(true));
+		assertThat(vpack.getAsString(), is(s));
+	}
+
 }

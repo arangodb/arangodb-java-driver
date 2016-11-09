@@ -35,6 +35,7 @@ public class DocumentUpdateOptions {
 	private String ifMatch;
 	private Boolean returnNew;
 	private Boolean returnOld;
+	private Boolean serializeNull;
 
 	public DocumentUpdateOptions() {
 		super();
@@ -143,6 +144,22 @@ public class DocumentUpdateOptions {
 	 */
 	public DocumentUpdateOptions returnOld(final Boolean returnOld) {
 		this.returnOld = returnOld;
+		return this;
+	}
+
+	public Boolean getSerializeNull() {
+		return serializeNull;
+	}
+
+	/**
+	 * @param serializeNull
+	 *            By default, or if this is set to true, all fields of the document which have null values are
+	 *            serialized to VelocyPack otherwise they are excluded from serialization. Use this to update single
+	 *            fields from a stored document.
+	 * @return options
+	 */
+	public DocumentUpdateOptions serializeNull(final Boolean serializeNull) {
+		this.serializeNull = serializeNull;
 		return this;
 	}
 

@@ -37,6 +37,7 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	private Long count;
 	private Integer numberOfShards;
 	private Collection<String> shardKeys;
+	private Integer replicationFactor;
 
 	public CollectionPropertiesEntity() {
 		super();
@@ -103,6 +104,14 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 
 	public void setShardKeys(final Collection<String> shardKeys) {
 		this.shardKeys = shardKeys;
+	}
+
+	public Integer getReplicationFactor() {
+		return replicationFactor;
+	}
+
+	public void setReplicationFactor(final Integer replicationFactor) {
+		this.replicationFactor = replicationFactor;
 	}
 
 }
