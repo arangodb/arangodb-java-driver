@@ -116,6 +116,8 @@ public class EntityDeserializers {
 
 	private static final String DO_COMPACT = "doCompact";
 
+	private static final String REPLICATION_FACTOR = "replicationFactor";
+
 	private static final String CHECKSUM = "checksum";
 
 	private static final String KEY_OPTIONS = "keyOptions";
@@ -534,7 +536,9 @@ public class EntityDeserializers {
 			if (obj.has(DO_COMPACT)) {
 				entity.doCompact = obj.getAsJsonPrimitive(DO_COMPACT).getAsBoolean();
 			}
-
+			if (obj.has(REPLICATION_FACTOR)) {
+				entity.replicationFactor = obj.getAsJsonPrimitive(REPLICATION_FACTOR).getAsInt();
+			}
 			return entity;
 		}
 	}

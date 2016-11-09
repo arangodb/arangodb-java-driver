@@ -47,8 +47,7 @@ public class CollectionEntity extends BaseEntity {
 	CollectionStatus status;
 
 	/**
-	 * If true each write operation is synchronised to disk before the server
-	 * sends a response
+	 * If true each write operation is synchronised to disk before the server sends a response
 	 */
 	Boolean waitForSync;
 
@@ -58,8 +57,8 @@ public class CollectionEntity extends BaseEntity {
 	Boolean isSystem;
 
 	/**
-	 * If true then the collection data will be kept in memory only and ArangoDB
-	 * will not write or sync the data to disk.
+	 * If true then the collection data will be kept in memory only and ArangoDB will not write or sync the data to
+	 * disk.
 	 */
 	Boolean isVolatile;
 
@@ -92,8 +91,7 @@ public class CollectionEntity extends BaseEntity {
 	/**
 	 * The checksum of the collection
 	 * 
-	 * @see com.arangodb.ArangoDriver#getCollectionChecksum(String, Boolean,
-	 *      Boolean)
+	 * @see com.arangodb.ArangoDriver#getCollectionChecksum(String, Boolean, Boolean)
 	 */
 	long checksum;
 
@@ -101,6 +99,8 @@ public class CollectionEntity extends BaseEntity {
 	 * Whether or not the collection will be compacted.
 	 */
 	Boolean doCompact;
+
+	Integer replicationFactor;
 
 	public String getName() {
 		return name;
@@ -214,30 +214,35 @@ public class CollectionEntity extends BaseEntity {
 		this.doCompact = doCompact;
 	}
 
+	public Integer getReplicationFactor() {
+		return replicationFactor;
+	}
+
+	public void setReplicationFactor(final Integer replicationFactor) {
+		this.replicationFactor = replicationFactor;
+	}
+
 	/**
 	 * additional statistical information about the collection.
 	 */
 	public static class Figures implements Serializable {
 
 		/**
-		 * The number of curretly active documents in all datafiles and journals
-		 * of the collection. Documents that are contained in the write-ahead
-		 * log only are not reported in this figure.
+		 * The number of curretly active documents in all datafiles and journals of the collection. Documents that are
+		 * contained in the write-ahead log only are not reported in this figure.
 		 */
 		long aliveCount;
 
 		/**
-		 * The total size in bytes used by all active documents of the
-		 * collection. Documents that are contained in the write-ahead log only
-		 * are not reported in this figure.
+		 * The total size in bytes used by all active documents of the collection. Documents that are contained in the
+		 * write-ahead log only are not reported in this figure.
 		 */
 		long aliveSize;
 
 		/**
-		 * The number of dead documents. This includes document versions that
-		 * have been deleted or replaced by a newer version. Documents deleted
-		 * or replaced that are contained the write-ahead log only are not
-		 * reported in this figure.
+		 * The number of dead documents. This includes document versions that have been deleted or replaced by a newer
+		 * version. Documents deleted or replaced that are contained the write-ahead log only are not reported in this
+		 * figure.
 		 */
 		long deadCount;
 
@@ -247,8 +252,8 @@ public class CollectionEntity extends BaseEntity {
 		long deadSize;
 
 		/**
-		 * The total number of deletion markers. Deletion markers only contained
-		 * in the write-ahead log are not reporting in this figure.
+		 * The total number of deletion markers. Deletion markers only contained in the write-ahead log are not
+		 * reporting in this figure.
 		 */
 		long deadDeletion;
 
@@ -283,8 +288,8 @@ public class CollectionEntity extends BaseEntity {
 		long compactorsFileSize;
 
 		/**
-		 * The total number of indexes defined for the collection, including the
-		 * pre-defined indexes (e.g. primary index).
+		 * The total number of indexes defined for the collection, including the pre-defined indexes (e.g. primary
+		 * index).
 		 */
 		long indexesCount;
 
@@ -294,15 +299,14 @@ public class CollectionEntity extends BaseEntity {
 		long indexesSize;
 
 		/**
-		 * The tick of the last marker that was stored in a journal of the
-		 * collection. This might be 0 if the collection does not yet have a
-		 * journal.
+		 * The tick of the last marker that was stored in a journal of the collection. This might be 0 if the collection
+		 * does not yet have a journal.
 		 */
 		long lastTick;
 
 		/**
-		 * The number of markers in the write-ahead log for this collection that
-		 * have not been transferred to journals or datafiles.
+		 * The number of markers in the write-ahead log for this collection that have not been transferred to journals
+		 * or datafiles.
 		 */
 		long uncollectedLogfileEntries;
 
