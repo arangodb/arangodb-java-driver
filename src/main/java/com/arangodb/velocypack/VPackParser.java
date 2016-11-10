@@ -53,11 +53,13 @@ public class VPackParser {
 	private static final String NON_REPRESENTABLE_TYPE = "(non-representable type)";
 	private final Map<ValueType, VPackJsonDeserializer> deserializers;
 	private final Map<String, Map<ValueType, VPackJsonDeserializer>> deserializersByName;
+	private final Map<Class<?>, VPackJsonSerializer<?>> serializers;
 
 	public VPackParser() {
 		super();
 		deserializers = new HashMap<ValueType, VPackJsonDeserializer>();
 		deserializersByName = new HashMap<String, Map<ValueType, VPackJsonDeserializer>>();
+		serializers = new HashMap<Class<?>, VPackJsonSerializer<?>>();
 	}
 
 	public String toJson(final VPackSlice vpack) throws VPackException {
@@ -98,6 +100,11 @@ public class VPackParser {
 			deserializer = deserializers.get(type);
 		}
 		return deserializer;
+	}
+
+	public VPackParser registerSerializer(final Class<?> type, final VPackJsonSerializer<?> serializer) {
+		serializers.put(type, serializer);
+		return this;
 	}
 
 	private void parse(
@@ -180,7 +187,7 @@ public class VPackParser {
 	public VPackSlice fromJson(final String json, final boolean includeNullValues) throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		final JSONParser parser = new JSONParser();
-		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues);
+		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues, serializers);
 		try {
 			parser.parse(json, contentHandler);
 		} catch (final ParseException e) {
@@ -194,11 +201,14 @@ public class VPackParser {
 		private final VPackBuilder builder;
 		private String attribute;
 		private final boolean includeNullValues;
+		private final Map<Class<?>, VPackJsonSerializer<?>> serializers;
 
-		public VPackContentHandler(final VPackBuilder builder, final boolean includeNullValues) {
+		public VPackContentHandler(final VPackBuilder builder, final boolean includeNullValues,
+			final Map<Class<?>, VPackJsonSerializer<?>> serializers) {
 			this.builder = builder;
 			this.includeNullValues = includeNullValues;
 			attribute = null;
+			this.serializers = serializers;
 		}
 
 		private void add(final ValueType value) throws ParseException {
@@ -297,20 +307,31 @@ public class VPackParser {
 			return true;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean primitive(final Object value) throws ParseException, IOException {
 			if (value == null) {
 				if (includeNullValues) {
 					add(ValueType.NULL);
 				}
-			} else if (String.class.isAssignableFrom(value.getClass())) {
-				add(String.class.cast(value));
-			} else if (Boolean.class.isAssignableFrom(value.getClass())) {
-				add(Boolean.class.cast(value));
-			} else if (Double.class.isAssignableFrom(value.getClass())) {
-				add(Double.class.cast(value));
-			} else if (Number.class.isAssignableFrom(value.getClass())) {
-				add(Long.class.cast(value));
+			} else {
+				final VPackJsonSerializer<?> serializer = serializers.get(value.getClass());
+				if (serializer != null) {
+					try {
+						((VPackJsonSerializer<Object>) serializer).serialize(builder, attribute, value);
+						attribute = null;
+					} catch (final VPackBuilderException e) {
+						throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
+					}
+				} else if (String.class.isAssignableFrom(value.getClass())) {
+					add(String.class.cast(value));
+				} else if (Boolean.class.isAssignableFrom(value.getClass())) {
+					add(Boolean.class.cast(value));
+				} else if (Double.class.isAssignableFrom(value.getClass())) {
+					add(Double.class.cast(value));
+				} else if (Number.class.isAssignableFrom(value.getClass())) {
+					add(Long.class.cast(value));
+				}
 			}
 			return true;
 		}
