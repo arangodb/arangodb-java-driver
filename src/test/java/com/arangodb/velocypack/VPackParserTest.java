@@ -462,6 +462,24 @@ public class VPackParserTest {
 	}
 
 	@Test
+	public void customSerializerByName() {
+		final String json = "{\"a\":\"a\",\"b\":\"b\"}";
+		final VPackSlice vpack = new VPackParser()
+				.registerSerializer("a", String.class, new VPackJsonSerializer<String>() {
+					@Override
+					public void serialize(final VPackBuilder builder, final String attribute, final String value)
+							throws VPackException {
+						builder.add(attribute, value + "1");
+					}
+				}).fromJson(json);
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("a").isString(), is(true));
+		assertThat(vpack.get("a").getAsString(), is("a1"));
+		assertThat(vpack.get("b").isString(), is(true));
+		assertThat(vpack.get("b").getAsString(), is("b"));
+	}
+
+	@Test
 	public void dateToJson() {
 		final VPackSlice vpack = new VPackBuilder().add(new Date(1478766992059L)).slice();
 		final VPackParser parser = new VPackParser();

@@ -54,12 +54,14 @@ public class VPackParser {
 	private final Map<ValueType, VPackJsonDeserializer> deserializers;
 	private final Map<String, Map<ValueType, VPackJsonDeserializer>> deserializersByName;
 	private final Map<Class<?>, VPackJsonSerializer<?>> serializers;
+	private final Map<String, Map<Class<?>, VPackJsonSerializer<?>>> serializersByName;
 
 	public VPackParser() {
 		super();
 		deserializers = new HashMap<ValueType, VPackJsonDeserializer>();
 		deserializersByName = new HashMap<String, Map<ValueType, VPackJsonDeserializer>>();
 		serializers = new HashMap<Class<?>, VPackJsonSerializer<?>>();
+		serializersByName = new HashMap<String, Map<Class<?>, VPackJsonSerializer<?>>>();
 	}
 
 	public String toJson(final VPackSlice vpack) throws VPackException {
@@ -102,9 +104,34 @@ public class VPackParser {
 		return deserializer;
 	}
 
-	public VPackParser registerSerializer(final Class<?> type, final VPackJsonSerializer<?> serializer) {
+	public <T> VPackParser registerSerializer(
+		final String attribute,
+		final Class<T> type,
+		final VPackJsonSerializer<T> serializer) {
+		Map<Class<?>, VPackJsonSerializer<?>> byName = serializersByName.get(attribute);
+		if (byName == null) {
+			byName = new HashMap<Class<?>, VPackJsonSerializer<?>>();
+			serializersByName.put(attribute, byName);
+		}
+		byName.put(type, serializer);
+		return this;
+	}
+
+	public <T> VPackParser registerSerializer(final Class<T> type, final VPackJsonSerializer<T> serializer) {
 		serializers.put(type, serializer);
 		return this;
+	}
+
+	private VPackJsonSerializer<?> getSerializer(final String attribute, final Class<?> type) {
+		VPackJsonSerializer<?> serializer = null;
+		final Map<Class<?>, VPackJsonSerializer<?>> byName = serializersByName.get(attribute);
+		if (byName != null) {
+			serializer = byName.get(type);
+		}
+		if (serializer == null) {
+			serializer = serializers.get(type);
+		}
+		return serializer;
 	}
 
 	private void parse(
@@ -187,7 +214,7 @@ public class VPackParser {
 	public VPackSlice fromJson(final String json, final boolean includeNullValues) throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		final JSONParser parser = new JSONParser();
-		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues, serializers);
+		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues, this);
 		try {
 			parser.parse(json, contentHandler);
 		} catch (final ParseException e) {
@@ -201,14 +228,14 @@ public class VPackParser {
 		private final VPackBuilder builder;
 		private String attribute;
 		private final boolean includeNullValues;
-		private final Map<Class<?>, VPackJsonSerializer<?>> serializers;
+		private final VPackParser parser;
 
 		public VPackContentHandler(final VPackBuilder builder, final boolean includeNullValues,
-			final Map<Class<?>, VPackJsonSerializer<?>> serializers) {
+			final VPackParser parser) {
 			this.builder = builder;
 			this.includeNullValues = includeNullValues;
+			this.parser = parser;
 			attribute = null;
-			this.serializers = serializers;
 		}
 
 		private void add(final ValueType value) throws ParseException {
@@ -315,7 +342,7 @@ public class VPackParser {
 					add(ValueType.NULL);
 				}
 			} else {
-				final VPackJsonSerializer<?> serializer = serializers.get(value.getClass());
+				final VPackJsonSerializer<?> serializer = parser.getSerializer(attribute, value.getClass());
 				if (serializer != null) {
 					try {
 						((VPackJsonSerializer<Object>) serializer).serialize(builder, attribute, value);

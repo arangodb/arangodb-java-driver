@@ -200,6 +200,14 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
+		public <T> Builder registerJsonSerializer(
+			final String attribute,
+			final Class<T> clazz,
+			final VPackJsonSerializer<T> serializer) {
+			vpackParser.registerSerializer(attribute, clazz, serializer);
+			return this;
+		}
+
 		public ArangoDB build() {
 			return new ArangoDB(
 					new CommunicationSync.Builder().host(host).port(port).timeout(timeout).user(user).password(password)
