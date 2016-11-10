@@ -1,4 +1,4 @@
-v4.1.2 (2016-11-xx)
+v4.1.2 (2016-11-10)
 ---------------------------
 * fixed GraphEntity for ArangoDatabase.getGraphs() (field name is null)
 * added VelocyPack UTC_DATE parsing to Json String (ISO 8601)
