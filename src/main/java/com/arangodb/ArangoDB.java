@@ -48,8 +48,10 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
+import com.arangodb.velocypack.VPackJsonDeserializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSerializer;
+import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -176,6 +178,19 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		public <T> Builder registerInstanceCreator(final Class<T> clazz, final VPackInstanceCreator<T> creator) {
 			vpackBuilder.registerInstanceCreator(clazz, creator);
+			return this;
+		}
+
+		public Builder registerJsonDeserializer(final ValueType type, final VPackJsonDeserializer deserializer) {
+			vpackParser.registerDeserializer(type, deserializer);
+			return this;
+		}
+
+		public Builder registerJsonDeserializer(
+			final String attribute,
+			final ValueType type,
+			final VPackJsonDeserializer deserializer) {
+			vpackParser.registerDeserializer(attribute, type, deserializer);
 			return this;
 		}
 
