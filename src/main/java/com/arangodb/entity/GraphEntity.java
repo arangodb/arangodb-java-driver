@@ -30,6 +30,10 @@ import java.util.Collection;
 public class GraphEntity {
 
 	private String name;
+	/**
+	 * Special case where <code>_key</code> is used instead of <code>name</code>.
+	 */
+	private String _key;
 	private Collection<EdgeDefinition> edgeDefinitions;
 	private Collection<String> orphanCollections;
 	private Boolean isSmart;
@@ -37,7 +41,7 @@ public class GraphEntity {
 	private String smartGraphAttribute;
 
 	public String getName() {
-		return name;
+		return name != null ? name : _key;
 	}
 
 	public Collection<EdgeDefinition> getEdgeDefinitions() {

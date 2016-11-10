@@ -95,6 +95,7 @@ public class ArangoGraphTest extends BaseTest {
 		final Collection<GraphEntity> graphs = db.getGraphs();
 		assertThat(graphs, is(notNullValue()));
 		assertThat(graphs.size(), is(1));
+		assertThat(graphs.iterator().next().getName(), is(GRAPH_NAME));
 	}
 
 	@Test
