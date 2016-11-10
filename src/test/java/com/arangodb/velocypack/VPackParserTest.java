@@ -23,6 +23,8 @@ package com.arangodb.velocypack;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Date;
+
 import org.json.simple.JSONValue;
 import org.junit.Test;
 
@@ -443,6 +445,13 @@ public class VPackParserTest {
 			}
 		}).toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"a1\",\"b\":\"b\"}"));
+	}
+
+	@Test
+	public void dateToJson() {
+		final VPackSlice vpack = new VPackBuilder().add(new Date(1478766992059L)).slice();
+		final VPackParser parser = new VPackParser();
+		assertThat(parser.toJson(vpack), is("\"2016-11-10T09:36:32.059Z\""));
 	}
 
 }
