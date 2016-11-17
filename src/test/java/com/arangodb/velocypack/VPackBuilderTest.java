@@ -895,4 +895,20 @@ public class VPackBuilderTest {
 		assertThat(vpack.getAsString(), is(s));
 	}
 
+	@Test
+	public void addLong() {
+		final long value = 12345678901L;
+		final VPackBuilder builder = new VPackBuilder().add(value);
+		final VPackSlice vpack = builder.slice();
+		assertThat(vpack.getAsLong(), is(value));
+	}
+
+	@Test
+	public void addBitInteger() {
+		final BigInteger value = new BigInteger("12345678901");
+		final VPackBuilder builder = new VPackBuilder().add(value);
+		final VPackSlice vpack = builder.slice();
+		assertThat(vpack.getAsBigInteger(), is(value));
+	}
+
 }

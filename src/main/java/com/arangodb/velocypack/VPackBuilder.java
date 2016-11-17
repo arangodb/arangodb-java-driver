@@ -125,8 +125,8 @@ public class VPackBuilder {
 			if (value <= 9 && value >= -6) {
 				builder.appendSmallInt(value);
 			} else {
-				builder.add((byte) 0x23);
-				builder.append(value, INTEGER_BYTES);
+				builder.add((byte) 0x27);
+				builder.append(value, LONG_BYTES);
 			}
 		}
 	};
@@ -158,8 +158,8 @@ public class VPackBuilder {
 			if (value.longValue() <= 9 && value.longValue() >= -6) {
 				builder.appendSmallInt(value.longValue());
 			} else {
-				builder.add((byte) 0x23);
-				builder.append(value, INTEGER_BYTES);
+				builder.add((byte) 0x27);
+				builder.append(value, LONG_BYTES);
 			}
 		}
 	};
