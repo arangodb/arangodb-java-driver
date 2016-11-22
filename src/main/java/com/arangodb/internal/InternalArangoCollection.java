@@ -40,12 +40,14 @@ import com.arangodb.model.CollectionRenameOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
+import com.arangodb.model.DocumentImportOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.DocumentReplaceOptions;
 import com.arangodb.model.DocumentUpdateOptions;
 import com.arangodb.model.FulltextIndexOptions;
 import com.arangodb.model.GeoIndexOptions;
 import com.arangodb.model.HashIndexOptions;
+import com.arangodb.model.ImportType;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
@@ -157,6 +159,29 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 				return multiDocument;
 			}
 		};
+	}
+
+	protected Request importDocumentsRequest(final String values, final DocumentImportOptions options) {
+		return importDocumentsRequest(options).putQueryParam(ArangoDBConstants.TYPE, ImportType.auto)
+				.setBody(executor.serialize(values));
+	}
+
+	protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
+		return importDocumentsRequest(options).putQueryParam(ArangoDBConstants.TYPE, ImportType.list)
+				.setBody(executor.serialize(values));
+	}
+
+	protected Request importDocumentsRequest(final DocumentImportOptions options) {
+		final DocumentImportOptions params = options != null ? options : new DocumentImportOptions();
+		return new Request(db, RequestType.POST, ArangoDBConstants.PATH_API_IMPORT)
+				.putQueryParam(ArangoDBConstants.COLLECTION, name)
+				.putQueryParam(ArangoDBConstants.FROM_PREFIX, params.getFromPrefix())
+				.putQueryParam(ArangoDBConstants.TO_PREFIX, params.getToPrefix())
+				.putQueryParam(ArangoDBConstants.OVERWRITE, params.getOverwrite())
+				.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync())
+				.putQueryParam(ArangoDBConstants.ON_DUPLICATE, params.getOnDuplicate())
+				.putQueryParam(ArangoDBConstants.COMPLETE, params.getComplete())
+				.putQueryParam(ArangoDBConstants.DETAILS, params.getDetails());
 	}
 
 	protected Request getDocumentRequest(final String key, final DocumentReadOptions options) {

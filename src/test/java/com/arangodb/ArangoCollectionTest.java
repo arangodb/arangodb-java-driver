@@ -21,6 +21,8 @@
 package com.arangodb;
 
 import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
@@ -42,19 +44,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionRevisionEntity;
+import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentDeleteEntity;
+import com.arangodb.entity.DocumentImportEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
+import com.arangodb.model.DocumentImportOptions;
+import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.DocumentReplaceOptions;
 import com.arangodb.model.DocumentUpdateOptions;
@@ -942,6 +950,344 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(docs.getErrors(), is(notNullValue()));
 		assertThat(docs.getErrors().size(), is(1));
 		assertThat(docs.getErrors().iterator().next().getErrorNum(), is(1210));
+	}
+
+	@Test
+	public void importDocuments() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values);
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(values.size()));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsDuplicateDefaultError() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values);
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(1));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsDuplicateError() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.error));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(1));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsDuplicateIgnore() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(1));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsDuplicateReplace() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(1));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsDuplicateUpdate() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.update));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(1));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsCompleteFail() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		try {
+			db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().complete(true));
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getMessage(), containsString("1210"));
+		}
+	}
+
+	@Test
+	public void importDocumentsDetails() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("2"));
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().details(true));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(1));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails().size(), is(1));
+		assertThat(docs.getDetails().iterator().next(), containsString("unique constraint violated"));
+	}
+
+	@Test
+	public void importDocumentsOverwriteFalse() {
+		final ArangoCollection collection = db.collection(COLLECTION_NAME);
+		collection.insertDocument(new BaseDocument());
+		assertThat(collection.count().getCount(), is(1L));
+
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		collection.importDocuments(values, new DocumentImportOptions().overwrite(false));
+		assertThat(collection.count().getCount(), is(3L));
+	}
+
+	@Test
+	public void importDocumentsOverwriteTrue() {
+		final ArangoCollection collection = db.collection(COLLECTION_NAME);
+		collection.insertDocument(new BaseDocument());
+		assertThat(collection.count().getCount(), is(1L));
+
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument());
+		values.add(new BaseDocument());
+		collection.importDocuments(values, new DocumentImportOptions().overwrite(true));
+		assertThat(collection.count().getCount(), is(2L));
+	}
+
+	@Test
+	public void importDocumentsFromToPrefix() {
+		db.createCollection(COLLECTION_NAME + "_edge", new CollectionCreateOptions().type(CollectionType.EDGES));
+		final ArangoCollection collection = db.collection(COLLECTION_NAME + "_edge");
+		try {
+			final Collection<BaseEdgeDocument> values = new ArrayList<BaseEdgeDocument>();
+			final String[] keys = { "1", "2" };
+			for (int i = 0; i < keys.length; i++) {
+				values.add(new BaseEdgeDocument(keys[i], "from", "to"));
+			}
+			assertThat(values.size(), is(keys.length));
+
+			final DocumentImportEntity importResult = collection.importDocuments(values,
+				new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
+			assertThat(importResult, is(notNullValue()));
+			assertThat(importResult.getCreated(), is(values.size()));
+			for (int i = 0; i < keys.length; i++) {
+				final BaseEdgeDocument doc = collection.getDocument(keys[i], BaseEdgeDocument.class);
+				assertThat(doc, is(notNullValue()));
+				assertThat(doc.getFrom(), is("foo/from"));
+				assertThat(doc.getTo(), is("bar/to"));
+			}
+		} finally {
+			collection.drop();
+		}
+	}
+
+	@Test
+	public void importDocumentsJson() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values);
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonDuplicateDefaultError() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values);
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(1));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonDuplicateError() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.error));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(1));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonDuplicateIgnore() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.ignore));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(1));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonDuplicateReplace() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.replace));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(1));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonDuplicateUpdate() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().onDuplicate(OnDuplicate.update));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(1));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonCompleteFail() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		try {
+			db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().complete(true));
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getMessage(), containsString("1210"));
+		}
+	}
+
+	@Test
+	public void importDocumentsJsonDetails() {
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values,
+			new DocumentImportOptions().details(true));
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(2));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(1));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails().size(), is(1));
+		assertThat(docs.getDetails().iterator().next(), containsString("unique constraint violated"));
+	}
+
+	@Test
+	public void importDocumentsJsonOverwriteFalse() {
+		final ArangoCollection collection = db.collection(COLLECTION_NAME);
+		collection.insertDocument(new BaseDocument());
+		assertThat(collection.count().getCount(), is(1L));
+
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
+		collection.importDocuments(values, new DocumentImportOptions().overwrite(false));
+		assertThat(collection.count().getCount(), is(3L));
+	}
+
+	@Test
+	public void importDocumentsJsonOverwriteTrue() {
+		final ArangoCollection collection = db.collection(COLLECTION_NAME);
+		collection.insertDocument(new BaseDocument());
+		assertThat(collection.count().getCount(), is(1L));
+
+		final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
+		collection.importDocuments(values, new DocumentImportOptions().overwrite(true));
+		assertThat(collection.count().getCount(), is(2L));
+	}
+
+	@Test
+	public void importDocumentsJsonFromToPrefix() {
+		db.createCollection(COLLECTION_NAME + "_edge", new CollectionCreateOptions().type(CollectionType.EDGES));
+		final ArangoCollection collection = db.collection(COLLECTION_NAME + "_edge");
+		try {
+			final String[] keys = { "1", "2" };
+			final String values = "[{\"_key\":\"1\",\"_from\":\"from\",\"_to\":\"to\"},{\"_key\":\"2\",\"_from\":\"from\",\"_to\":\"to\"}]";
+
+			final DocumentImportEntity importResult = collection.importDocuments(values,
+				new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
+			assertThat(importResult, is(notNullValue()));
+			assertThat(importResult.getCreated(), is(2));
+			for (int i = 0; i < keys.length; i++) {
+				final BaseEdgeDocument doc = collection.getDocument(keys[i], BaseEdgeDocument.class);
+				assertThat(doc, is(notNullValue()));
+				assertThat(doc.getFrom(), is("foo/from"));
+				assertThat(doc.getTo(), is("bar/to"));
+			}
+		} finally {
+			collection.drop();
+		}
 	}
 
 	@Test

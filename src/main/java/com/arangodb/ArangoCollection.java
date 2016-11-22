@@ -30,16 +30,18 @@ import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionRevisionEntity;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentDeleteEntity;
+import com.arangodb.entity.DocumentImportEntity;
 import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
-import com.arangodb.internal.InternalArangoCollection;
 import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.InternalArangoCollection;
 import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
+import com.arangodb.model.DocumentImportOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.DocumentReplaceOptions;
 import com.arangodb.model.DocumentUpdateOptions;
@@ -133,6 +135,61 @@ public class ArangoCollection extends InternalArangoCollection<ArangoExecutorSyn
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
 		return executor.execute(insertDocumentsRequest(values, params),
 			insertDocumentsResponseDeserializer(values, params));
+	}
+
+	/**
+	 * Imports documents
+	 * 
+	 * @param values
+	 *            a list of Objects that will be stored as documents
+	 * @return information about the import
+	 * @throws ArangoDBException
+	 */
+	public DocumentImportEntity importDocuments(final Collection<?> values) throws ArangoDBException {
+		return importDocuments(values, new DocumentImportOptions());
+	}
+
+	/**
+	 * Imports documents
+	 * 
+	 * @param values
+	 *            a list of Objects that will be stored as documents
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the import
+	 * @throws ArangoDBException
+	 */
+	public DocumentImportEntity importDocuments(final Collection<?> values, final DocumentImportOptions options)
+			throws ArangoDBException {
+		return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
+	}
+
+	/**
+	 * Imports documents
+	 * 
+	 * @param values
+	 *            JSON-encoded array of objects that will be stored as documents
+	 * @return information about the import
+	 * @throws ArangoDBException
+	 */
+	public DocumentImportEntity importDocuments(final String values) throws ArangoDBException {
+		return executor.execute(importDocumentsRequest(values, new DocumentImportOptions()),
+			DocumentImportEntity.class);
+	}
+
+	/**
+	 * Imports documents
+	 * 
+	 * @param values
+	 *            JSON-encoded array of objects that will be stored as documents
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the import
+	 * @throws ArangoDBException
+	 */
+	public DocumentImportEntity importDocuments(final String values, final DocumentImportOptions options)
+			throws ArangoDBException {
+		return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
 	}
 
 	/**
