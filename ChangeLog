@@ -1,4 +1,4 @@
-v4.1.3 (2016-11-xx)
+v4.1.3 (2016-11-22)
 ---------------------------
 * fixed error while serializing long values with VPackBuilder
 * added bulk import API
