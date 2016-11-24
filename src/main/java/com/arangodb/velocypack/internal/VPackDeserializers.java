@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.UUID;
 
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
@@ -173,6 +174,15 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			return vpack;
+		}
+	};
+	public static final VPackDeserializer<UUID> UUID = new VPackDeserializer<UUID>() {
+		@Override
+		public UUID deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return java.util.UUID.fromString(vpack.getAsString());
 		}
 	};
 

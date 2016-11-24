@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -3292,4 +3293,52 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.timestamp, is(new java.sql.Timestamp(1475062216)));
 	}
 
+	protected static class TestEntityUUID {
+		private UUID uuid;
+
+		public UUID getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(final UUID uuid) {
+			this.uuid = uuid;
+		}
+	}
+
+	@Test
+	public void fromUUID() {
+		final TestEntityUUID entity = new TestEntityUUID();
+		entity.setUuid(UUID.randomUUID());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+
+		final VPackSlice uuid = vpack.get("uuid");
+		assertThat(uuid.isString(), is(true));
+		assertThat(uuid.getAsString(), is(entity.uuid.toString()));
+	}
+
+	@Test
+	public void toUUID() {
+		final UUID uuid = UUID.randomUUID();
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(ValueType.OBJECT);
+		builder.add("uuid", uuid.toString());
+		builder.close();
+
+		final TestEntityUUID entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityUUID.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.uuid, is(uuid));
+	}
+
+	@Test
+	public void uuid() {
+		final TestEntityUUID entity = new TestEntityUUID();
+		entity.setUuid(UUID.randomUUID());
+		final VPack vpacker = new VPack.Builder().build();
+		final VPackSlice vpack = vpacker.serialize(entity);
+		final TestEntityUUID entity2 = vpacker.deserialize(vpack, TestEntityUUID.class);
+		assertThat(entity2, is(notNullValue()));
+		assertThat(entity2.getUuid(), is(entity.getUuid()));
+	}
 }

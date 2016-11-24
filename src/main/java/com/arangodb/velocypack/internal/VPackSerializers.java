@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.UUID;
 
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSerializationContext;
@@ -41,7 +42,7 @@ public class VPackSerializers {
 		super();
 	}
 
-	public static VPackSerializer<String> STRING = new VPackSerializer<String>() {
+	public static final VPackSerializer<String> STRING = new VPackSerializer<String>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -51,7 +52,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Boolean> BOOLEAN = new VPackSerializer<Boolean>() {
+	public static final VPackSerializer<Boolean> BOOLEAN = new VPackSerializer<Boolean>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -61,7 +62,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Integer> INTEGER = new VPackSerializer<Integer>() {
+	public static final VPackSerializer<Integer> INTEGER = new VPackSerializer<Integer>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -71,7 +72,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Long> LONG = new VPackSerializer<Long>() {
+	public static final VPackSerializer<Long> LONG = new VPackSerializer<Long>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -81,7 +82,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Short> SHORT = new VPackSerializer<Short>() {
+	public static final VPackSerializer<Short> SHORT = new VPackSerializer<Short>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -91,7 +92,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Double> DOUBLE = new VPackSerializer<Double>() {
+	public static final VPackSerializer<Double> DOUBLE = new VPackSerializer<Double>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -101,7 +102,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Float> FLOAT = new VPackSerializer<Float>() {
+	public static final VPackSerializer<Float> FLOAT = new VPackSerializer<Float>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -111,7 +112,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<BigInteger> BIG_INTEGER = new VPackSerializer<BigInteger>() {
+	public static final VPackSerializer<BigInteger> BIG_INTEGER = new VPackSerializer<BigInteger>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -121,7 +122,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<BigDecimal> BIG_DECIMAL = new VPackSerializer<BigDecimal>() {
+	public static final VPackSerializer<BigDecimal> BIG_DECIMAL = new VPackSerializer<BigDecimal>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -131,7 +132,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Number> NUMBER = new VPackSerializer<Number>() {
+	public static final VPackSerializer<Number> NUMBER = new VPackSerializer<Number>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -141,7 +142,7 @@ public class VPackSerializers {
 			builder.add(attribute, Double.class.cast(value));
 		}
 	};
-	public static VPackSerializer<Character> CHARACTER = new VPackSerializer<Character>() {
+	public static final VPackSerializer<Character> CHARACTER = new VPackSerializer<Character>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -151,7 +152,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<Date> DATE = new VPackSerializer<Date>() {
+	public static final VPackSerializer<Date> DATE = new VPackSerializer<Date>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -161,7 +162,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<java.sql.Date> SQL_DATE = new VPackSerializer<java.sql.Date>() {
+	public static final VPackSerializer<java.sql.Date> SQL_DATE = new VPackSerializer<java.sql.Date>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -171,7 +172,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<java.sql.Timestamp> SQL_TIMESTAMP = new VPackSerializer<Timestamp>() {
+	public static final VPackSerializer<java.sql.Timestamp> SQL_TIMESTAMP = new VPackSerializer<Timestamp>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -181,7 +182,7 @@ public class VPackSerializers {
 			builder.add(attribute, value);
 		}
 	};
-	public static VPackSerializer<VPackSlice> VPACK = new VPackSerializer<VPackSlice>() {
+	public static final VPackSerializer<VPackSlice> VPACK = new VPackSerializer<VPackSlice>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
@@ -189,6 +190,16 @@ public class VPackSerializers {
 			final VPackSlice value,
 			final VPackSerializationContext context) throws VPackException {
 			builder.add(attribute, value);
+		}
+	};
+	public static final VPackSerializer<UUID> UUID = new VPackSerializer<UUID>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final java.util.UUID value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(attribute, value.toString());
 		}
 	};
 }

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import com.arangodb.velocypack.VPackBuilder.BuilderOptions;
 import com.arangodb.velocypack.exception.VPackException;
@@ -113,6 +114,7 @@ public class VPack {
 			serializers.put(java.sql.Date.class, VPackSerializers.SQL_DATE);
 			serializers.put(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
 			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
+			serializers.put(UUID.class, VPackSerializers.UUID);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
 			deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);
@@ -136,6 +138,7 @@ public class VPack {
 			deserializers.put(java.sql.Date.class, VPackDeserializers.SQL_DATE);
 			deserializers.put(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
+			deserializers.put(UUID.class, VPackDeserializers.UUID);
 		}
 
 		public <T> VPack.Builder registerSerializer(final Type type, final VPackSerializer<T> serializer) {
