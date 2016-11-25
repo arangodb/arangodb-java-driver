@@ -35,7 +35,7 @@ public interface InternalAdminDriver extends BaseDriverInterface {
 
 	ArangoUnixTime getTime() throws ArangoException;
 
-	DefaultEntity reloadRouting() throws ArangoException;
+	DefaultEntity reloadRouting(String database) throws ArangoException;
 
 	DefaultEntity executeScript(String database, String jsCode) throws ArangoException;
 }

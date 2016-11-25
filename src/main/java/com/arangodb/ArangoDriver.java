@@ -2856,7 +2856,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DefaultEntity reloadRouting() throws ArangoException {
-		return adminDriver.reloadRouting();
+		return adminDriver.reloadRouting(getDefaultDatabase());
 	}
 
 	/**
@@ -3850,7 +3850,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DatabaseEntity getCurrentDatabase() throws ArangoException {
-		return databaseDriver.getCurrentDatabase();
+		return databaseDriver.getCurrentDatabase(getDefaultDatabase());
 	}
 
 	/**
@@ -5478,7 +5478,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteQueryCache() throws ArangoException {
-		return queryCacheDriver.deleteQueryCache();
+		return queryCacheDriver.deleteQueryCache(getDefaultDatabase());
 	}
 
 	/**
@@ -5489,7 +5489,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoException {
-		return queryCacheDriver.getQueryCacheProperties();
+		return queryCacheDriver.getQueryCacheProperties(getDefaultDatabase());
 	}
 
 	/**
@@ -5500,7 +5500,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 */
 	public QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties)
 			throws ArangoException {
-		return queryCacheDriver.setQueryCacheProperties(properties);
+		return queryCacheDriver.setQueryCacheProperties(getDefaultDatabase(), properties);
 	}
 
 	/**

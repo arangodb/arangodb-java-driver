@@ -114,9 +114,9 @@ public class InternalAdminDriverImpl extends BaseArangoDriverImpl implements com
 	}
 
 	@Override
-	public DefaultEntity reloadRouting() throws ArangoException {
+	public DefaultEntity reloadRouting(String database) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(null, "/_admin/routing/reload"), null,
+		HttpResponseEntity res = httpManager.doPost(createEndpointUrl(database, "/_admin/routing/reload"), null,
 			(String) null);
 
 		return createEntity(res, DefaultEntity.class, null, false);

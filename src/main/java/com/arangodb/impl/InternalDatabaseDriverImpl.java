@@ -41,9 +41,9 @@ public class InternalDatabaseDriverImpl extends BaseArangoDriverImpl implements 
 	}
 
 	@Override
-	public DatabaseEntity getCurrentDatabase() throws ArangoException {
+	public DatabaseEntity getCurrentDatabase(String database) throws ArangoException {
 
-		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(null, "/_api/database/current"));
+		HttpResponseEntity res = httpManager.doGet(createEndpointUrl(database, "/_api/database/current"));
 		return createEntity(res, DatabaseEntity.class);
 
 	}

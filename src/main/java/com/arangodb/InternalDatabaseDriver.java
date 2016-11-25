@@ -10,7 +10,7 @@ import com.arangodb.impl.BaseDriverInterface;
  * Created by fbartels on 10/27/14.
  */
 public interface InternalDatabaseDriver  extends BaseDriverInterface {
-  DatabaseEntity getCurrentDatabase() throws ArangoException;
+  DatabaseEntity getCurrentDatabase(String database) throws ArangoException;
 
   StringsResultEntity getDatabases(boolean currentUserAccessableOnly, String username, String password) throws ArangoException;
 

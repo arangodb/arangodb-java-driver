@@ -90,7 +90,7 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 
 	@Test
 	public void test_current_database() throws ArangoException {
-
+		driver.setDefaultDatabase("_system");
 		DatabaseEntity entity = driver.getCurrentDatabase();
 		assertThat(entity.isError(), is(false));
 		assertThat(entity.getCode(), is(200));
@@ -101,6 +101,23 @@ public class ArangoDriverDatabaseTest extends BaseTest {
 
 	}
 
+	@Test
+	public void test_current_database2() throws ArangoException {
+		final String dbName = "abcdefghi1abcdefghi2abcdefghi3abcdefghi4abcdefghi5abcdefghi61234";
+		try {
+			try {
+				driver.deleteDatabase(dbName);
+			} catch (final ArangoException e) {
+			}
+			driver.createDatabase(dbName);
+			driver.setDefaultDatabase(dbName);
+			final DatabaseEntity entity = driver.getCurrentDatabase();
+			assertThat(entity.getName(), is(dbName));
+		} finally {
+			driver.deleteDatabase(dbName);
+		}
+	}
+	
 	@Test
 	public void test_createDatabase() throws ArangoException {
 

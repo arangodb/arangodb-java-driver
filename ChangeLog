@@ -1,6 +1,11 @@
 v2.7.5 (2016-11-25)
 ---------------------------
 * fixed issue #43 (ArangoDriver.getAqlFunctions(String) does not uses the defaultDatabase setting)
+* fixed ArangoDriver.getCurrentDatabase() (does not use the defaultDatabase)
+* fixed ArangoDriver.deleteQueryCache() (does not use the defaultDatabase)
+* fixed ArangoDriver.getQueryCacheProperties() (does not use the defaultDatabase)
+* fixed ArangoDriver.setQueryCacheProperties() (does not use the defaultDatabase)
+* fixed ArangoDriver.reloadRouting() (does not use the defaultDatabase)
 
 v2.7.4 (2016-04-15)
 ---------------------------

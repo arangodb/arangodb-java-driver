@@ -9,10 +9,10 @@ import com.arangodb.impl.BaseDriverInterface;
  */
 public interface InternalQueryCacheDriver extends BaseDriverInterface {
 
-	DefaultEntity deleteQueryCache() throws ArangoException;
+	DefaultEntity deleteQueryCache(String database) throws ArangoException;
 
-	QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoException;
+	QueryCachePropertiesEntity getQueryCacheProperties(String database) throws ArangoException;
 
-	QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties) throws ArangoException;
+	QueryCachePropertiesEntity setQueryCacheProperties(String database, QueryCachePropertiesEntity properties) throws ArangoException;
 
 }
