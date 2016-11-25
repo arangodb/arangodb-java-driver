@@ -23,10 +23,13 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
 
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.ImportResultEntity;
 import com.arangodb.util.TestUtils;
 
@@ -55,6 +58,29 @@ public class ArangoDriverImportTest extends BaseTest {
 
 	}
 
+	@Test
+	public void test_import_base_documents() throws ArangoException {
+		final Collection<BaseDocument> docs = new ArrayList<BaseDocument>();
+		for (int i = 0; i < 100; i++) {
+			final BaseDocument doc = new BaseDocument();
+			doc.setDocumentKey("Key" + i);
+			doc.addAttribute("foo", "bar");
+			docs.add(doc);
+		}
+
+		final ImportResultEntity result = driver.importDocuments("ut-import-test", true, docs);
+
+		assertThat(result.getStatusCode(), is(201));
+		assertThat(result.isError(), is(false));
+		assertThat(result.getCreated(), is(100));
+		assertThat(result.getErrors(), is(0));
+		assertThat(result.getEmpty(), is(0));
+
+		final DocumentEntity<BaseDocument> zero = driver.getDocument("ut-import-test", "Key0", BaseDocument.class);
+		assertThat(zero.isError(), is(false));
+		assertThat(zero.getEntity().getAttribute("foo").toString(), is("bar"));
+	}
+	
 	@Test
 	public void test_import_documents_404() throws ArangoException, IOException {
 

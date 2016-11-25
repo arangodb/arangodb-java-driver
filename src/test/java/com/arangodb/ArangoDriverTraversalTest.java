@@ -31,8 +31,10 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEntity;
 import com.arangodb.entity.EdgeDefinitionEntity;
+import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.entity.marker.VertexEntity;
@@ -127,6 +129,47 @@ public class ArangoDriverTraversalTest extends BaseGraphTest {
 		assertThat(paths.get(3).getVertices().size(), is(3));
 	}
 
+	@Test
+	public void test_getTraversalWithBaseDocument() throws ArangoException {
+		final TraversalQueryOptions traversalQueryOptions = new TraversalQueryOptions();
+
+		traversalQueryOptions.setGraphName(graphName);
+		traversalQueryOptions.setStartVertex("person/Alice");
+		traversalQueryOptions.setDirection(Direction.OUTBOUND);
+
+		final TraversalEntity<BaseDocument, BaseDocument> traversal = driver.getTraversal(traversalQueryOptions,
+			BaseDocument.class, BaseDocument.class);
+
+		assertThat(traversal, is(notNullValue()));
+
+		final List<VertexEntity<BaseDocument>> vertices = traversal.getVertices();
+		assertThat(vertices, is(notNullValue()));
+		assertThat(vertices.size(), is(4));
+		assertThat(vertices.get(0).getEntity().getProperties().size(), is(1));
+		assertThat((String) vertices.get(0).getEntity().getAttribute("name"), is("Alice"));
+		assertThat((String) vertices.get(1).getEntity().getAttribute("name"), is("Bob"));
+		assertThat((String) vertices.get(2).getEntity().getAttribute("name"), is("Charlie"));
+		assertThat((String) vertices.get(3).getEntity().getAttribute("name"), is("Dave"));
+
+		final List<PathEntity<BaseDocument, BaseDocument>> paths = traversal.getPaths();
+		assertThat(paths, is(notNullValue()));
+		assertThat(paths.size(), is(4));
+
+		// start vertex!
+		assertThat(paths.get(0).getEdges().size(), is(0));
+		assertThat(paths.get(0).getVertices().size(), is(1));
+		assertThat((String) paths.get(0).getVertices().get(0).getEntity().getAttribute("name"), is("Alice"));
+
+		assertThat(paths.get(3).getEdges().size(), is(2));
+		assertThat(paths.get(3).getVertices().size(), is(3));
+
+		assertThat(paths.get(1).getEdges().size(), is(1));
+		EdgeEntity<BaseDocument> edgeEntity = traversal.getPaths().get(1).getEdges().get(0);
+		assertThat(edgeEntity.getFromVertexHandle(), is("person/Alice"));
+		assertThat(edgeEntity.getToVertexHandle(), is("person/Bob"));
+
+	}
+	
 	private VertexEntity<Person> createPerson(String name) throws ArangoException {
 		return driver.graphCreateVertex(graphName, vertexCollectionName, name, new Person(name), true);
 	}

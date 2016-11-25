@@ -111,6 +111,8 @@ public class EntityFactory {
 					new EntityDeserializers.ReplicationLoggerStateEntityDeserializer())
 				.registerTypeAdapter(ReplicationLoggerStateEntity.Client.class,
 					new EntityDeserializers.ReplicationLoggerStateEntityClientDeserializer())
+				.registerTypeAdapter(BaseDocument.class, new EntityDeserializers.BaseDocumentDeserializer())
+				.registerTypeAdapter(BaseDocument.class, new EntitySerializers.BaseDocumentSerializer())
 				.registerTypeAdapter(GraphEntity.class, new EntityDeserializers.GraphEntityDeserializer())
 				.registerTypeAdapter(GraphsEntity.class, new EntityDeserializers.GraphsEntityDeserializer())
 				.registerTypeAdapter(DeletedEntity.class, new EntityDeserializers.DeleteEntityDeserializer())
@@ -181,24 +183,6 @@ public class EntityFactory {
 	}
 
 	public static <T> String toJsonString(T obj, boolean includeNullValue) {
-		if (obj != null && obj.getClass().equals(BaseDocument.class)) {
-			String tmp = includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
-			JsonParser jsonParser = new JsonParser();
-			JsonElement jsonElement = jsonParser.parse(tmp);
-			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			JsonObject result = jsonObject.getAsJsonObject("properties");
-			JsonElement keyObject = jsonObject.get("_key");
-			if (keyObject != null && keyObject.getClass() != JsonNull.class) {
-				result.add("_key", jsonObject.get("_key"));
-			}
-			JsonElement handleObject = jsonObject.get("_id");
-			if (handleObject != null && handleObject.getClass() != JsonNull.class) {
-				result.add("_id", jsonObject.get("_id"));
-			}
-			// JsonElement revisionValue = jsonObject.get("documentRevision");
-			// result.add("_rev", revisionValue);
-			return result.toString();
-		}
 		return includeNullValue ? gsonNull.toJson(obj) : gson.toJson(obj);
 	}
 

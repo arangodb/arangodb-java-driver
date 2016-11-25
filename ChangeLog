@@ -6,6 +6,8 @@ v2.7.5 (2016-11-25)
 * fixed ArangoDriver.getQueryCacheProperties() (does not use the defaultDatabase)
 * fixed ArangoDriver.setQueryCacheProperties() (does not use the defaultDatabase)
 * fixed ArangoDriver.reloadRouting() (does not use the defaultDatabase)
+* fixed importing BaseDocuments
+* fixed edges deserializer (issue #50)
 
 v2.7.4 (2016-04-15)
 ---------------------------

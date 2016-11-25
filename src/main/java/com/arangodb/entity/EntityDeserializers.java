@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.CollectionEntity.Figures;
+import com.arangodb.entity.EntityDeserializers.DeserializeSingleEntry;
 import com.arangodb.entity.ReplicationApplierState.LastError;
 import com.arangodb.entity.ReplicationApplierState.Progress;
 import com.arangodb.entity.ReplicationInventoryEntity.Collection;
@@ -1977,6 +1978,28 @@ public class EntityDeserializers {
 		}
 	}
 
+	public static class BaseDocumentDeserializer implements JsonDeserializer<BaseDocument> {
+		@Override
+		public BaseDocument deserialize(
+			final JsonElement json,
+			final Type typeOfT,
+			final JsonDeserializationContext context) {
+
+			if (json.isJsonNull()) {
+				return null;
+			}
+
+			final JsonObject obj = json.getAsJsonObject();
+			final BaseDocument entity = deserializeDocumentParameter(obj, new BaseDocument());
+
+			if (entity instanceof BaseDocument) {
+				entity.setProperties(DeserializeSingleEntry.deserializeJsonObject(obj));
+			}
+
+			return entity;
+		}
+	}
+	
 	public static class DeleteEntityDeserializer implements JsonDeserializer<DeletedEntity> {
 		@Override
 		public DeletedEntity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
@@ -2361,13 +2384,7 @@ public class EntityDeserializers {
 		if (edges != null) {
 			for (int i = 0, imax = edges.size(); i < imax; i++) {
 				JsonObject edge = edges.get(i).getAsJsonObject();
-				EdgeEntity<Object> ve = deserializeBaseParameter(edge, new EdgeEntity<Object>());
-				deserializeDocumentParameter(edge, ve);
-				if (edgeClazz != null) {
-					ve.setEntity(context.deserialize(edge, edgeClazz));
-				} else {
-					ve.setEntity(context.deserialize(edge, Object.class));
-				}
+				final EdgeEntity<Object> ve = context.deserialize(edge, EdgeEntity.class);
 				list.add(ve);
 			}
 		}
