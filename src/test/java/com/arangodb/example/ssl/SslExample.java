@@ -16,10 +16,10 @@
 
 package com.arangodb.example.ssl;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -37,6 +37,7 @@ import com.arangodb.ArangoException;
 import com.arangodb.ArangoHost;
 import com.arangodb.entity.ArangoVersion;
 import com.arangodb.http.HttpResponseEntity;
+import com.arangodb.util.TestUtils;
 
 /*-
  * Example for using a HTTPS connection
@@ -75,31 +76,38 @@ public class SslExample {
 	@Test
 	public void httpTest() throws ArangoException {
 
-		ArangoConfigure configuration = new ArangoConfigure();
+		final ArangoConfigure configuration = new ArangoConfigure();
 		// get host and port from arangodb.properties
 		// configuration.setArangoHost(new ArangoHost("localhost", 8529));
 		configuration.init();
 
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
+		final ArangoDriver arangoDriver = new ArangoDriver(configuration);
 
-		ArangoVersion version = arangoDriver.getVersion();
+		final ArangoVersion version = arangoDriver.getVersion();
 		Assert.assertNotNull(version);
 
 	}
 
 	@Test
 	public void sslConnectionTest() throws ArangoException {
-		// use HTTPS with java default trust store
-
-		ArangoConfigure configuration = new ArangoConfigure();
-		configuration.setArangoHost(new ArangoHost("www.arangodb.com", 443));
-		configuration.setUseSsl(true);
-		configuration.init();
-
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
-
-		HttpResponseEntity response = arangoDriver.getHttpManager().doGet("/");
-		Assert.assertEquals(200, response.getStatusCode());
+		final String javaVersion = System.getProperty("java.version");
+		if (TestUtils.compareVersion(javaVersion, "1.7") > -1) {
+			// use HTTPS with java default trust store
+			ArangoConfigure configuration = null;
+			try {
+				configuration = new ArangoConfigure();
+				configuration.setArangoHost(new ArangoHost("www.arangodb.com", 443));
+				configuration.setUseSsl(true);
+				configuration.init();
+				final ArangoDriver arangoDriver = new ArangoDriver(configuration);
+				final HttpResponseEntity response = arangoDriver.getHttpManager().doGet("/");
+				Assert.assertEquals(200, response.getStatusCode());
+			} finally {
+				if (configuration != null) {
+					configuration.shutdown();
+				}
+			}
+		}
 	}
 
 	@Test
@@ -107,26 +115,26 @@ public class SslExample {
 			NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, URISyntaxException {
 
 		// create a sslContext for the self signed certificate
-		URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
-		SSLContext sslContext = SSLContexts.custom()
-				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
+		final URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
+		final SSLContext sslContext = SSLContexts.custom()
+				.loadTrustMaterial(new File(resource.toURI()), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
-		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
+		final ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		configuration.setSslContext(sslContext);
 		configuration.init();
 
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
+		final ArangoDriver arangoDriver = new ArangoDriver(configuration);
 
-		ArangoVersion version = arangoDriver.getVersion();
+		final ArangoVersion version = arangoDriver.getVersion();
 		Assert.assertNotNull(version);
 	}
 
 	@Test
 	public void sslHandshakeExceptionTest() {
-		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
+		final ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		configuration.init();
 
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
+		final ArangoDriver arangoDriver = new ArangoDriver(configuration);
 
 		try {
 			// java do not trust self signed certificates
@@ -134,8 +142,8 @@ public class SslExample {
 			arangoDriver.getVersion();
 			Assert.fail("this should fail");
 
-		} catch (ArangoException e) {
-			Throwable cause = e.getCause();
+		} catch (final ArangoException e) {
+			final Throwable cause = e.getCause();
 			Assert.assertTrue(cause instanceof javax.net.ssl.SSLHandshakeException);
 		}
 	}
@@ -145,23 +153,23 @@ public class SslExample {
 			NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, URISyntaxException {
 
 		// create a sslContext for the self signed certificate
-		URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
-		SSLContext sslContext = SSLContexts.custom()
-				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
+		final URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
+		final SSLContext sslContext = SSLContexts.custom()
+				.loadTrustMaterial(new File(resource.toURI()), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
-		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
+		final ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		// 127.0.0.1 is the wrong name
 		configuration.getArangoHost().setHost("127.0.0.1");
 		configuration.setSslContext(sslContext);
 		configuration.init();
 
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
+		final ArangoDriver arangoDriver = new ArangoDriver(configuration);
 
 		try {
 			arangoDriver.getVersion();
 			Assert.fail("this should fail");
-		} catch (ArangoException e) {
-			Throwable cause = e.getCause();
+		} catch (final ArangoException e) {
+			final Throwable cause = e.getCause();
 			Assert.assertTrue(cause instanceof javax.net.ssl.SSLPeerUnverifiedException);
 		}
 

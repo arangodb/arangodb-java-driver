@@ -23,11 +23,11 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -56,12 +56,10 @@ public class ArangoConfigureTest {
 	/**
 	 * a SSL trust store
 	 * 
-	 * create the trust store for the self signed certificate: keytool -import
-	 * -alias "my arangodb server cert" -file UnitTests/server.pem -keystore
-	 * example.truststore
+	 * create the trust store for the self signed certificate: keytool -import -alias "my arangodb server cert" -file
+	 * UnitTests/server.pem -keystore example.truststore
 	 * 
-	 * https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/
-	 * apache/http/conn/ssl/SSLSocketFactory.html
+	 * https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/ apache/http/conn/ssl/SSLSocketFactory.html
 	 */
 	private static final String SSL_TRUSTSTORE = "/example.truststore";
 
@@ -70,7 +68,7 @@ public class ArangoConfigureTest {
 		// validate file in classpath.
 		assertThat(getClass().getResource("/arangodb.properties"), is(notNullValue()));
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		assertThat(configure.getArangoHost().getPort(), is(8529));
 		assertThat(configure.getArangoHost().getHost(), is(notNullValue()));
 		assertThat(configure.getDefaultDatabase(), is(nullValue()));
@@ -80,13 +78,13 @@ public class ArangoConfigureTest {
 	@Test
 	public void load_from_proerty_file2() {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.loadProperties("/arangodb-test.properties");
 
 		assertThat(configure.getRetryCount(), is(10));
 		assertThat(configure.getDefaultDatabase(), is("mydb2"));
 
-		ArangoHost arangoHost = configure.getArangoHost();
+		final ArangoHost arangoHost = configure.getArangoHost();
 		assertThat(arangoHost.getPort(), is(9999));
 		assertThat(arangoHost.getHost(), is(notNullValue()));
 
@@ -96,17 +94,17 @@ public class ArangoConfigureTest {
 	@Test
 	public void connect_timeout() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.getArangoHost().setHost("1.0.0.200");
 		configure.setConnectionTimeout(1); // 1ms
 		configure.init();
 
-		ArangoDriver driver = new ArangoDriver(configure);
+		final ArangoDriver driver = new ArangoDriver(configure);
 
 		try {
 			driver.getCollections();
 			fail("did no timeout");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCause(), instanceOf(ConnectTimeoutException.class));
 		}
 
@@ -118,17 +116,17 @@ public class ArangoConfigureTest {
 	@Ignore(value = "this fails some times")
 	public void so_connect_timeout() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 		configure.setConnectionTimeout(5000);
 		configure.setTimeout(1); // 1ms
 		configure.init();
 
-		ArangoDriver driver = new ArangoDriver(configure);
+		final ArangoDriver driver = new ArangoDriver(configure);
 
 		try {
 			driver.getCollections();
 			fail("did no timeout");
-		} catch (ArangoException e) {
+		} catch (final ArangoException e) {
 			assertThat(e.getCause(), instanceOf(SocketTimeoutException.class));
 		}
 
@@ -139,18 +137,18 @@ public class ArangoConfigureTest {
 	@Test
 	public void reconnectFallbackArangoHost() throws ArangoException {
 
-		ArangoConfigure configure = new ArangoConfigure();
+		final ArangoConfigure configure = new ArangoConfigure();
 
 		// copy default arango host to fallback
-		ArangoHost arangoHost = configure.getArangoHost();
-		ArangoHost ah = new ArangoHost(arangoHost.getHost(), arangoHost.getPort());
+		final ArangoHost arangoHost = configure.getArangoHost();
+		final ArangoHost ah = new ArangoHost(arangoHost.getHost(), arangoHost.getPort());
 		configure.addFallbackArangoHost(ah);
 
 		// change default port to wrong port
 		arangoHost.setPort(1025);
 		configure.init();
 
-		ArangoDriver driver = new ArangoDriver(configure);
+		final ArangoDriver driver = new ArangoDriver(configure);
 
 		driver.getCollections();
 
@@ -163,17 +161,17 @@ public class ArangoConfigureTest {
 			NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, URISyntaxException {
 
 		// create a sslContext for the self signed certificate
-		URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
-		SSLContext sslContext = SSLContexts.custom()
-				.loadTrustMaterial(Paths.get(resource.toURI()).toFile(), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
+		final URL resource = this.getClass().getResource(SSL_TRUSTSTORE);
+		final SSLContext sslContext = SSLContexts.custom()
+				.loadTrustMaterial(new File(resource.toURI()), SSL_TRUSTSTORE_PASSWORD.toCharArray()).build();
 
-		ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
+		final ArangoConfigure configuration = new ArangoConfigure("/ssl-arangodb.properties");
 		configuration.setSslContext(sslContext);
 		configuration.init();
 
-		ArangoDriver arangoDriver = new ArangoDriver(configuration);
+		final ArangoDriver arangoDriver = new ArangoDriver(configuration);
 
-		ArangoVersion version = arangoDriver.getVersion();
+		final ArangoVersion version = arangoDriver.getVersion();
 
 		Assert.assertNotNull(version);
 	}
