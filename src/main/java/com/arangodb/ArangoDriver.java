@@ -5365,7 +5365,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DefaultEntity createAqlFunction(String name, String code) throws ArangoException {
-		return aqlFunctionsDriver.createAqlFunction(name, code);
+		return aqlFunctionsDriver.createAqlFunction(getDefaultDatabase(), name, code);
 	}
 
 	/**
@@ -5377,7 +5377,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public AqlFunctionsEntity getAqlFunctions(String namespace) throws ArangoException {
-		return aqlFunctionsDriver.getAqlFunctions(namespace);
+		return aqlFunctionsDriver.getAqlFunctions(getDefaultDatabase(), namespace);
 	}
 
 	/**
@@ -5392,7 +5392,7 @@ public class ArangoDriver extends BaseArangoDriver {
 	 * @throws ArangoException
 	 */
 	public DefaultEntity deleteAqlFunction(String name, boolean isNameSpace) throws ArangoException {
-		return aqlFunctionsDriver.deleteAqlFunction(name, isNameSpace);
+		return aqlFunctionsDriver.deleteAqlFunction(getDefaultDatabase(), name, isNameSpace);
 	}
 
 	/**

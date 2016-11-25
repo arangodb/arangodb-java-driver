@@ -1,6 +1,6 @@
-v2.7.5 (2016-XX-XX)
+v2.7.5 (2016-11-25)
 ---------------------------
-
+* fixed issue #43 (ArangoDriver.getAqlFunctions(String) does not uses the defaultDatabase setting)
 
 v2.7.4 (2016-04-15)
 ---------------------------
