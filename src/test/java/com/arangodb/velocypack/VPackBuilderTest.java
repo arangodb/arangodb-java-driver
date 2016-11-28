@@ -911,4 +911,25 @@ public class VPackBuilderTest {
 		assertThat(vpack.getAsBigInteger(), is(value));
 	}
 
+	@Test
+	public void objectWithByteSize256() {
+		final StringBuilder aa = new StringBuilder();
+		final int stringLength = 231;
+		for (int i = 0; i < stringLength; ++i) {
+			aa.append("a");
+		}
+		final String foo = "foo";
+		final String bar1 = "bar1";
+		final String bar2 = "bar2";
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add(foo, ValueType.OBJECT).add(bar2, "")
+				.add(bar1, aa.toString()).close().close().slice();
+
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get(foo).isObject(), is(true));
+		assertThat(vpack.get(foo).get(bar1).isString(), is(true));
+		assertThat(vpack.get(foo).get(bar1).getLength(), is(stringLength));
+		assertThat(vpack.get(foo).get(bar2).isString(), is(true));
+		assertThat(vpack.get(foo).get(bar2).getLength(), is(0));
+	}
+
 }

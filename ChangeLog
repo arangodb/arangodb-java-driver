@@ -1,6 +1,7 @@
 v4.1.4 (2016-11-xx)
 ---------------------------
 * added VPack serializer/de-serializer for java.util.UUID
+* fixed VPack parsing (issue #80)
 
 v4.1.3 (2016-11-22)
 ---------------------------

@@ -721,7 +721,7 @@ public class VPackBuilder {
 		final int offsetSize;
 		// can be 1, 2, 4 or 8 for the byte width of the offsets,
 		// the byte length and the number of subvalues:
-		if ((size - 1 - tos) + in.size() - 6 <= 0xff) {
+		if (size - tos + in.size() - 6 <= 0xff) {
 			// We have so far used _pos - tos bytes, including the reserved 8
 			// bytes for byte length and number of subvalues. In the 1-byte
 			// number
