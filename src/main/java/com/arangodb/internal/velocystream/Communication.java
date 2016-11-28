@@ -132,7 +132,7 @@ public abstract class Communication<R, C extends Connection> {
 		return new Message(id, vpack.serialize(request), request.getBody());
 	}
 
-	protected Collection<Chunk> buildChunks(final Message message) throws IOException {
+	protected Collection<Chunk> buildChunks(final Message message) {
 		final Collection<Chunk> chunks = new ArrayList<Chunk>();
 		final VPackSlice head = message.getHead();
 		int size = head.getByteSize();
