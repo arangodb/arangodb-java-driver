@@ -23,6 +23,7 @@ package com.arangodb.velocypack;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -37,7 +38,6 @@ import com.arangodb.velocypack.internal.util.BinaryUtil;
 import com.arangodb.velocypack.internal.util.DateUtil;
 import com.arangodb.velocypack.internal.util.NumberUtil;
 import com.arangodb.velocypack.internal.util.ObjectArrayUtil;
-import com.arangodb.velocypack.internal.util.StringUtil;
 import com.arangodb.velocypack.internal.util.ValueLengthUtil;
 import com.arangodb.velocypack.internal.util.ValueTypeUtil;
 
@@ -300,11 +300,11 @@ public class VPackSlice implements Serializable {
 	}
 
 	private String getShortString() {
-		return StringUtil.toString(vpack, start + 1, length());
+		return new String(vpack, start + 1, length(), Charset.forName("UTF-8"));
 	}
 
 	private String getLongString() {
-		return StringUtil.toString(vpack, start + 9, getLongStringLength());
+		return new String(vpack, start + 9, getLongStringLength(), Charset.forName("UTF-8"));
 	}
 
 	private int getLongStringLength() {
