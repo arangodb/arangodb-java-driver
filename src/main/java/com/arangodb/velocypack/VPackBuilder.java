@@ -729,9 +729,9 @@ public class VPackBuilder {
 			// subvalue
 			// for the index table
 			offsetSize = 1;
-		} else if ((size - 1 - tos) + 2 * in.size() <= 0xffff) {
+		} else if ((size - tos) + 2 * in.size() <= 0xffff) {
 			offsetSize = 2;
-		} else if (((size - 1 - tos) / 2) + 4 * in.size() / 2 <= Integer.MAX_VALUE/* 0xffffffffu */) {
+		} else if (((size - tos) / 2) + 4 * in.size() / 2 <= Integer.MAX_VALUE/* 0xffffffffu */) {
 			offsetSize = 4;
 		} else {
 			offsetSize = 8;
