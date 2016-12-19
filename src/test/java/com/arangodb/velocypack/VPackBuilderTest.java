@@ -25,13 +25,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.Date;
 
 import org.junit.Test;
 
+import com.arangodb.ArangoDB;
 import com.arangodb.velocypack.exception.VPackBuilderNeedOpenCompoundException;
 import com.arangodb.velocypack.exception.VPackBuilderNumberOutOfRangeException;
 import com.arangodb.velocypack.exception.VPackBuilderUnexpectedValueException;
@@ -953,6 +952,27 @@ public class VPackBuilderTest {
 		assertThat(vpack.get(foo).get(bar1).getLength(), is(stringLength));
 		assertThat(vpack.get(foo).get(bar2).isString(), is(true));
 		assertThat(vpack.get(foo).get(bar2).getLength(), is(0));
+	}
+
+	@Test
+	public void bytelength() {
+		final String name1 = "{\"name1\":\"job_04_detail_1\",\"seven__\":\"123456789\",\"_key\":\"191d936d-1eb9-4094-9c1c-9e0ba1d01867\",\"lang\":\"it\",\"value\":\"[CTO]\\n Ha supervisionato e gestito il reparto di R&D per il software, 1234567 formulando una visione di lungo periodo con la Direzione dell'Azienda.\"}";
+		final String name = "{\"name\":\"job_04_detail_1\",\"seven__\":\"123456789\",\"_key\":\"191d936d-1eb9-4094-9c1c-9e0ba1d01867\",\"lang\":\"it\",\"value\":\"[CTO]\\n Ha supervisionato e gestito il reparto di R&D per il software, 1234567 formulando una visione di lungo periodo con la Direzione dell'Azienda.\"}";
+
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		{
+			final VPackSlice vpack = arangoDB.util().serialize(name1);
+			assertThat(vpack.isObject(), is(true));
+			assertThat(vpack.get("name1").isString(), is(true));
+			assertThat(vpack.get("name1").getAsString(), is("job_04_detail_1"));
+
+		}
+		{
+			final VPackSlice vpack = arangoDB.util().serialize(name);
+			assertThat(vpack.isObject(), is(true));
+			assertThat(vpack.get("name").isString(), is(true));
+			assertThat(vpack.get("name").getAsString(), is("job_04_detail_1"));
+		}
 	}
 
 }
