@@ -1,3 +1,7 @@
+v4.1.5 (2016-01-xx)
+---------------------------
+* fixed VPack parsing of fields of type Object
+
 v4.1.4 (2016-12-19)
 ---------------------------
 * added VPack serializer/de-serializer for java.util.UUID

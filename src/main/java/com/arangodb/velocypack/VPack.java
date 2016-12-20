@@ -562,6 +562,8 @@ public class VPack {
 				serializeArray(name, value, builder, additionalFields);
 			} else if (((Class) type).isEnum()) {
 				builder.add(name, Enum.class.cast(value).name());
+			} else if (((Class) type) != value.getClass()) {
+				addValue(name, value.getClass(), value, builder, fieldInfo, additionalFields);
 			} else {
 				serializeObject(name, value, builder, additionalFields);
 			}
