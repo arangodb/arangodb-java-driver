@@ -488,4 +488,25 @@ public class VPackParserTest {
 		assertThat(parser.toJson(vpack), containsString(":36:32.059Z"));
 	}
 
+	@Test
+	public void bytelength() {
+		final String name1 = "{\"name1\":\"job_04_detail_1\",\"seven__\":\"123456789\",\"_key\":\"191d936d-1eb9-4094-9c1c-9e0ba1d01867\",\"lang\":\"it\",\"value\":\"[CTO]\\n Ha supervisionato e gestito il reparto di R&D per il software, 1234567 formulando una visione di lungo periodo con la Direzione dell'Azienda.\"}";
+		final String name = "{\"name\":\"job_04_detail_1\",\"seven__\":\"123456789\",\"_key\":\"191d936d-1eb9-4094-9c1c-9e0ba1d01867\",\"lang\":\"it\",\"value\":\"[CTO]\\n Ha supervisionato e gestito il reparto di R&D per il software, 1234567 formulando una visione di lungo periodo con la Direzione dell'Azienda.\"}";
+
+		final VPack vpacker = new VPack.Builder().build();
+		{
+			final VPackSlice vpack = vpacker.serialize(name1);
+			assertThat(vpack.isObject(), is(true));
+			assertThat(vpack.get("name1").isString(), is(true));
+			assertThat(vpack.get("name1").getAsString(), is("job_04_detail_1"));
+
+		}
+		{
+			final VPackSlice vpack = vpacker.serialize(name);
+			assertThat(vpack.isObject(), is(true));
+			assertThat(vpack.get("name").isString(), is(true));
+			assertThat(vpack.get("name").getAsString(), is("job_04_detail_1"));
+		}
+	}
+
 }
