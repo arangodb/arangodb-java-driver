@@ -692,9 +692,10 @@ public class VPackSerializeDeserializeTest {
 
 		final VPackSlice a1 = vpack.get("a1");
 		assertThat(a1.isArray(), is(true));
-		assertThat(a1.size(), is(1));
+		assertThat(a1.size(), is(2));
 		assertThat(a1.get(0).isString(), is(true));
 		assertThat(a1.get(0).getAsString(), is("foo"));
+		assertThat(a1.get(1).isNull(), is(true));
 	}
 
 	protected enum TestEnum {

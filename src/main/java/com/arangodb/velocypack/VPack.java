@@ -623,6 +623,8 @@ public class VPack {
 			final Object element = Array.get(value, i);
 			if (element != null) {
 				addValue(null, element.getClass(), element, builder, null, additionalFields);
+			} else {
+				builder.add(ValueType.NULL);
 			}
 		}
 		builder.close();
