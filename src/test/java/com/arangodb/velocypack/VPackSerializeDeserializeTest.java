@@ -677,6 +677,22 @@ public class VPackSerializeDeserializeTest {
 		}
 	}
 
+	@Test
+	public void fromArrayWithNull() {
+		final TestEntityArray entity = new TestEntityArray();
+		entity.a1 = new String[] { "foo", null };
+
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+
+		final VPackSlice a1 = vpack.get("a1");
+		assertThat(a1.isArray(), is(true));
+		assertThat(a1.size(), is(1));
+		assertThat(a1.get(0).isString(), is(true));
+		assertThat(a1.get(0).getAsString(), is("foo"));
+	}
+
 	protected enum TestEnum {
 		A, B, C
 	}

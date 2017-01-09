@@ -579,7 +579,9 @@ public class VPack {
 		builder.add(name, ValueType.ARRAY);
 		for (int i = 0; i < Array.getLength(value); i++) {
 			final Object element = Array.get(value, i);
-			addValue(null, element.getClass(), element, builder, null, additionalFields);
+			if (element != null) {
+				addValue(null, element.getClass(), element, builder, null, additionalFields);
+			}
 		}
 		builder.close();
 	}

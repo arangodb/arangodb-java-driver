@@ -1,6 +1,7 @@
-v4.1.5 (2016-01-xx)
+v4.1.5 (2017-01-xx)
 ---------------------------
 * fixed VPack parsing of fields of type Object
+* fixed VPack serializing of array with null values (issue #88)
 
 v4.1.4 (2016-12-19)
 ---------------------------
