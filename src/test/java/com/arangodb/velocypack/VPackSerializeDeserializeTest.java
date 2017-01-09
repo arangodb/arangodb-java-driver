@@ -3455,4 +3455,30 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity2, is(notNullValue()));
 		assertThat(entity2.getUuid(), is(entity.getUuid()));
 	}
+
+	private static class TransientEntity {
+		private transient String foo;
+
+		public TransientEntity() {
+			super();
+		}
+	}
+
+	@Test
+	public void fromTransient() {
+		final TransientEntity entity = new TransientEntity();
+		entity.foo = "bar";
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("foo").isNone(), is(true));
+	}
+
+	@Test
+	public void toTransient() {
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add("foo", "bar").close().slice();
+		final TransientEntity entity = new VPack.Builder().build().deserialize(vpack, TransientEntity.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.foo, is(nullValue()));
+	}
 }

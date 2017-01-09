@@ -118,7 +118,8 @@ public class VPackCache {
 			while (tmp != null && tmp != Object.class) {
 				final Field[] declaredFields = tmp.getDeclaredFields();
 				for (final Field field : declaredFields) {
-					if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers())) {
+					if (!field.isSynthetic() && !Modifier.isStatic(field.getModifiers())
+							&& !Modifier.isTransient(field.getModifiers())) {
 						field.setAccessible(true);
 						final FieldInfo fieldInfo = createFieldInfo(field);
 						if (fieldInfo.serialize || fieldInfo.deserialize) {
