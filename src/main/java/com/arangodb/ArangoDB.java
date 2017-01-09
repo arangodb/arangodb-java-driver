@@ -22,6 +22,7 @@ package com.arangodb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -46,6 +47,8 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackAnnotationFieldFilter;
+import com.arangodb.velocypack.VPackAnnotationFieldNaming;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
 import com.arangodb.velocypack.VPackJsonDeserializer;
@@ -205,6 +208,20 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			final Class<T> clazz,
 			final VPackJsonSerializer<T> serializer) {
 			vpackParser.registerSerializer(attribute, clazz, serializer);
+			return this;
+		}
+
+		public <A extends Annotation> Builder annotationFieldFilter(
+			final Class<A> type,
+			final VPackAnnotationFieldFilter<A> fieldFilter) {
+			vpackBuilder.annotationFieldFilter(type, fieldFilter);
+			return this;
+		}
+
+		public <A extends Annotation> Builder annotationFieldNaming(
+			final Class<A> type,
+			final VPackAnnotationFieldNaming<A> fieldNaming) {
+			vpackBuilder.annotationFieldNaming(type, fieldNaming);
 			return this;
 		}
 
