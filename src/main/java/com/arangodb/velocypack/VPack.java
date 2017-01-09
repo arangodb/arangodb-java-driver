@@ -20,6 +20,7 @@
 
 package com.arangodb.velocypack;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -37,6 +38,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.arangodb.velocypack.VPackBuilder.BuilderOptions;
+import com.arangodb.velocypack.annotations.Expose;
+import com.arangodb.velocypack.annotations.SerializedName;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocypack.internal.DefaultVPackBuilderOptions;
@@ -77,6 +80,8 @@ public class VPack {
 		private final BuilderOptions builderOptions;
 		private boolean serializeNullValues;
 		private VPackFieldNamingStrategy fieldNamingStrategy;
+		private final Map<Class<? extends Annotation>, VPackAnnotationFieldFilter<? extends Annotation>> annotationFieldFilter;
+		private final Map<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>> annotationFieldNaming;
 
 		public Builder() {
 			super();
@@ -86,6 +91,8 @@ public class VPack {
 			instanceCreators = new HashMap<Type, VPackInstanceCreator<?>>();
 			builderOptions = new DefaultVPackBuilderOptions();
 			serializeNullValues = false;
+			annotationFieldFilter = new HashMap<Class<? extends Annotation>, VPackAnnotationFieldFilter<? extends Annotation>>();
+			annotationFieldNaming = new HashMap<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>>();
 
 			instanceCreators.put(Collection.class, VPackInstanceCreators.COLLECTION);
 			instanceCreators.put(List.class, VPackInstanceCreators.LIST);
@@ -139,6 +146,24 @@ public class VPack {
 			deserializers.put(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 			deserializers.put(UUID.class, VPackDeserializers.UUID);
+
+			annotationFieldFilter.put(Expose.class, new VPackAnnotationFieldFilter<Expose>() {
+				@Override
+				public boolean serialize(final Expose annotation) {
+					return annotation.serialize();
+				}
+
+				@Override
+				public boolean deserialize(final Expose annotation) {
+					return annotation.deserialize();
+				}
+			});
+			annotationFieldNaming.put(SerializedName.class, new VPackAnnotationFieldNaming<SerializedName>() {
+				@Override
+				public String name(final SerializedName annotation) {
+					return annotation.value();
+				}
+			});
 		}
 
 		public <T> VPack.Builder registerSerializer(final Type type, final VPackSerializer<T> serializer) {
@@ -189,9 +214,23 @@ public class VPack {
 			return this;
 		}
 
+		public <A extends Annotation> VPack.Builder annotationFieldFilter(
+			final Class<A> type,
+			final VPackAnnotationFieldFilter<A> fieldFilter) {
+			annotationFieldFilter.put(type, fieldFilter);
+			return this;
+		}
+
+		public <A extends Annotation> VPack.Builder annotationFieldNaming(
+			final Class<A> type,
+			final VPackAnnotationFieldNaming<A> fieldNaming) {
+			annotationFieldNaming.put(type, fieldNaming);
+			return this;
+		}
+
 		public VPack build() {
 			return new VPack(serializers, deserializers, instanceCreators, builderOptions, serializeNullValues,
-					fieldNamingStrategy, deserializersByName);
+					fieldNamingStrategy, deserializersByName, annotationFieldFilter, annotationFieldNaming);
 		}
 
 	}
@@ -199,7 +238,9 @@ public class VPack {
 	private VPack(final Map<Type, VPackSerializer<?>> serializers, final Map<Type, VPackDeserializer<?>> deserializers,
 		final Map<Type, VPackInstanceCreator<?>> instanceCreators, final BuilderOptions builderOptions,
 		final boolean serializeNullValues, final VPackFieldNamingStrategy fieldNamingStrategy,
-		final Map<String, Map<Type, VPackDeserializer<?>>> deserializersByName) {
+		final Map<String, Map<Type, VPackDeserializer<?>>> deserializersByName,
+		final Map<Class<? extends Annotation>, VPackAnnotationFieldFilter<? extends Annotation>> annotationFieldFilter,
+		final Map<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>> annotationFieldNaming) {
 		super();
 		this.serializers = serializers;
 		this.deserializers = deserializers;
@@ -208,7 +249,8 @@ public class VPack {
 		this.serializeNullValues = serializeNullValues;
 		this.deserializersByName = deserializersByName;
 		keyMapAdapters = new HashMap<Type, VPackKeyMapAdapter<?>>();
-		cache = new VPackCache(fieldNamingStrategy);
+
+		cache = new VPackCache(fieldNamingStrategy, annotationFieldFilter, annotationFieldNaming);
 		serializationContext = new VPackSerializationContext() {
 			@Override
 			public void serialize(final VPackBuilder builder, final String attribute, final Object entity)

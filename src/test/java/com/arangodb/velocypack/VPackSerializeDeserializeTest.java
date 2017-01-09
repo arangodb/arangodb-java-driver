@@ -25,6 +25,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -2802,6 +2806,99 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.e, is("test"));
 		assertThat(entity.d, is(nullValue()));
 		assertThat(entity.f, is(nullValue()));
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	private static @interface CustomFilterAnnotation {
+		boolean serialize() default true;
+
+		boolean deserialize() default true;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	private static @interface CustomNamingAnnotation {
+		String name();
+	}
+
+	private static class CustomAnEntity {
+		@CustomFilterAnnotation(serialize = false)
+		private String a = null;
+		@CustomFilterAnnotation(deserialize = false)
+		private String b = null;
+		@CustomNamingAnnotation(name = "d")
+		@CustomFilterAnnotation(deserialize = false)
+		private String c = null;
+
+		public CustomAnEntity() {
+			super();
+		}
+	}
+
+	@Test
+	public void fromCutsomAnnotation() {
+		final CustomAnEntity entity = new CustomAnEntity();
+		entity.a = "1";
+		entity.b = "2";
+		entity.c = "3";
+		final VPackSlice vpack = new VPack.Builder().annotationFieldFilter(CustomFilterAnnotation.class,
+			new VPackAnnotationFieldFilter<CustomFilterAnnotation>() {
+
+				@Override
+				public boolean serialize(final CustomFilterAnnotation annotation) {
+					return annotation.serialize();
+				}
+
+				@Override
+				public boolean deserialize(final CustomFilterAnnotation annotation) {
+					return annotation.deserialize();
+				}
+			}).annotationFieldNaming(CustomNamingAnnotation.class,
+				new VPackAnnotationFieldNaming<CustomNamingAnnotation>() {
+					@Override
+					public String name(final CustomNamingAnnotation annotation) {
+						return annotation.name();
+					}
+				}).build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("a").isNone(), is(true));
+		assertThat(vpack.get("b").isString(), is(true));
+		assertThat(vpack.get("b").getAsString(), is("2"));
+		assertThat(vpack.get("c").isNone(), is(true));
+		assertThat(vpack.get("d").isString(), is(true));
+		assertThat(vpack.get("d").getAsString(), is("3"));
+	}
+
+	@Test
+	public void toCustomAnnotation() {
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add("a", "1").add("b", "2").add("c", "3")
+				.add("d", "4").close().slice();
+
+		final CustomAnEntity entity = new VPack.Builder().annotationFieldFilter(CustomFilterAnnotation.class,
+			new VPackAnnotationFieldFilter<CustomFilterAnnotation>() {
+
+				@Override
+				public boolean serialize(final CustomFilterAnnotation annotation) {
+					return annotation.serialize();
+				}
+
+				@Override
+				public boolean deserialize(final CustomFilterAnnotation annotation) {
+					return annotation.deserialize();
+				}
+			}).annotationFieldNaming(CustomNamingAnnotation.class,
+				new VPackAnnotationFieldNaming<CustomNamingAnnotation>() {
+					@Override
+					public String name(final CustomNamingAnnotation annotation) {
+						return annotation.name();
+					}
+				}).build().deserialize(vpack, CustomAnEntity.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.a, is("1"));
+		assertThat(entity.b, is(nullValue()));
+		assertThat(entity.c, is(nullValue()));
 	}
 
 	@Test

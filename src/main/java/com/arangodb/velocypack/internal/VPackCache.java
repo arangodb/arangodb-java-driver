@@ -20,6 +20,7 @@
 
 package com.arangodb.velocypack.internal;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -36,9 +37,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.arangodb.velocypack.VPackAnnotationFieldFilter;
+import com.arangodb.velocypack.VPackAnnotationFieldNaming;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
-import com.arangodb.velocypack.annotations.Expose;
-import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -81,11 +85,18 @@ public class VPackCache {
 		public abstract Object get(Object obj) throws IllegalAccessException;
 	}
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(VPackCache.class);
+
 	private final Map<Type, Map<String, FieldInfo>> cache;
 	private final Comparator<Entry<String, FieldInfo>> fieldComparator;
 	private final VPackFieldNamingStrategy fieldNamingStrategy;
 
-	public VPackCache(final VPackFieldNamingStrategy fieldNamingStrategy) {
+	private final Map<Class<? extends Annotation>, VPackAnnotationFieldFilter<? extends Annotation>> annotationFilter;
+	private final Map<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>> annotationFieldNaming;
+
+	public VPackCache(final VPackFieldNamingStrategy fieldNamingStrategy,
+		final Map<Class<? extends Annotation>, VPackAnnotationFieldFilter<? extends Annotation>> annotationFieldFilter,
+		final Map<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>> annotationFieldNaming) {
 		super();
 		cache = new ConcurrentHashMap<Type, Map<String, FieldInfo>>();
 		fieldComparator = new Comparator<Map.Entry<String, FieldInfo>>() {
@@ -95,6 +106,8 @@ public class VPackCache {
 			}
 		};
 		this.fieldNamingStrategy = fieldNamingStrategy;
+		this.annotationFilter = annotationFieldFilter;
+		this.annotationFieldNaming = annotationFieldNaming;
 	}
 
 	public Map<String, FieldInfo> getFields(final Type entityClass) {
@@ -131,18 +144,45 @@ public class VPackCache {
 		return sorted;
 	}
 
+	@SuppressWarnings("unchecked")
 	private FieldInfo createFieldInfo(final Field field) {
 		String fieldName = field.getName();
 		if (fieldNamingStrategy != null) {
 			fieldName = fieldNamingStrategy.translateName(field);
 		}
-		final SerializedName annotationName = field.getAnnotation(SerializedName.class);
-		if (annotationName != null) {
-			fieldName = annotationName.value();
+		boolean found = false;
+		for (final Entry<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>> entry : annotationFieldNaming
+				.entrySet()) {
+			final Annotation annotation = field.getAnnotation(entry.getKey());
+			if (annotation != null) {
+				fieldName = ((VPackAnnotationFieldNaming<Annotation>) entry.getValue()).name(annotation);
+				if (found) {
+					LOGGER.warn(String.format(
+						"Found additional annotation %s for field %s. Override previous annotation informations.",
+						entry.getKey().getSimpleName(), field.getName()));
+				}
+				found = true;
+			}
 		}
-		final Expose expose = field.getAnnotation(Expose.class);
-		final boolean serialize = expose != null ? expose.serialize() : true;
-		final boolean deserialize = expose != null ? expose.deserialize() : true;
+		boolean serialize = true;
+		boolean deserialize = true;
+		found = false;
+		for (final Entry<Class<? extends Annotation>, VPackAnnotationFieldFilter<? extends Annotation>> entry : annotationFilter
+				.entrySet()) {
+			final Annotation annotation = field.getAnnotation(entry.getKey());
+			if (annotation != null) {
+				final VPackAnnotationFieldFilter<Annotation> filter = (VPackAnnotationFieldFilter<Annotation>) entry
+						.getValue();
+				serialize = filter.serialize(annotation);
+				deserialize = filter.deserialize(annotation);
+				if (found) {
+					LOGGER.warn(String.format(
+						"Found additional annotation %s for field %s. Override previous annotation informations.",
+						entry.getKey().getSimpleName(), field.getName()));
+				}
+				found = true;
+			}
+		}
 		final Class<?> clazz = field.getType();
 		final Type type;
 		if (Collection.class.isAssignableFrom(clazz) || Map.class.isAssignableFrom(clazz)) {
