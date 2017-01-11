@@ -611,20 +611,27 @@ public class VPackBuilder {
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {
-		final int length = value.getBytes().length;
-		if (length <= 126) {
-			// short string
-			add((byte) (0x40 + length));
-		} else {
-			// long string
-			add((byte) 0xbf);
-			appendLength(length);
-		}
 		try {
-			append(value);
+			final byte[] bytes = value.getBytes("UTF-8");
+			final int length = bytes.length;
+			if (length <= 126) {
+				// short string
+				add((byte) (0x40 + length));
+			} else {
+				// long string
+				add((byte) 0xbf);
+				appendLength(length);
+			}
+			appendString(bytes);
 		} catch (final UnsupportedEncodingException e) {
 			throw new VPackBuilderException(e);
 		}
+	}
+
+	private void appendString(final byte[] bytes) {
+		ensureCapacity(size + bytes.length);
+		System.arraycopy(bytes, 0, buffer, size, bytes.length);
+		size += bytes.length;
 	}
 
 	private void appendBinary(final byte[] value) {
@@ -640,13 +647,6 @@ public class VPackBuilder {
 		ensureCapacity(size + vpack.length);
 		System.arraycopy(vpack, 0, buffer, size, vpack.length);
 		size += vpack.length;
-	}
-
-	private void append(final String value) throws UnsupportedEncodingException {
-		final byte[] bytes = value.getBytes("UTF-8");
-		ensureCapacity(size + bytes.length);
-		System.arraycopy(bytes, 0, buffer, size, bytes.length);
-		size += bytes.length;
 	}
 
 	private void addArray(final boolean unindexed) {
