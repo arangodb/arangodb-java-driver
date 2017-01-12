@@ -23,6 +23,7 @@ package com.arangodb.velocypack;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -611,7 +612,7 @@ public class VPackBuilder {
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {
-		final int length = value.getBytes().length;
+		final int length = value.getBytes(StandardCharsets.UTF_8).length;
 		if (length <= 126) {
 			// short string
 			add((byte) (0x40 + length));
