@@ -61,6 +61,7 @@ public class VPack {
 	private static final String ATTR_VALUE = "value";
 
 	private final Map<Type, VPackSerializer<?>> serializers;
+	private final Map<Type, VPackSerializer<?>> enclosingSerializers;
 	private final Map<Type, VPackDeserializer<?>> deserializers;
 	private final Map<String, Map<Type, VPackDeserializer<?>>> deserializersByName;
 	private final Map<Type, VPackInstanceCreator<?>> instanceCreators;
@@ -74,6 +75,7 @@ public class VPack {
 
 	public static class Builder {
 		private final Map<Type, VPackSerializer<?>> serializers;
+		private final Map<Type, VPackSerializer<?>> enclosingSerializers;
 		private final Map<Type, VPackDeserializer<?>> deserializers;
 		private final Map<String, Map<Type, VPackDeserializer<?>>> deserializersByName;
 		private final Map<Type, VPackInstanceCreator<?>> instanceCreators;
@@ -86,6 +88,7 @@ public class VPack {
 		public Builder() {
 			super();
 			serializers = new HashMap<Type, VPackSerializer<?>>();
+			enclosingSerializers = new HashMap<Type, VPackSerializer<?>>();
 			deserializers = new HashMap<Type, VPackDeserializer<?>>();
 			deserializersByName = new HashMap<String, Map<Type, VPackDeserializer<?>>>();
 			instanceCreators = new HashMap<Type, VPackInstanceCreator<?>>();
@@ -171,6 +174,11 @@ public class VPack {
 			return this;
 		}
 
+		public <T> VPack.Builder registerEnclosingSerializer(final Type type, final VPackSerializer<T> serializer) {
+			enclosingSerializers.put(type, serializer);
+			return this;
+		}
+
 		public <T> VPack.Builder registerDeserializer(final Type type, final VPackDeserializer<T> deserializer) {
 			deserializers.put(type, deserializer);
 			return this;
@@ -229,13 +237,15 @@ public class VPack {
 		}
 
 		public VPack build() {
-			return new VPack(serializers, deserializers, instanceCreators, builderOptions, serializeNullValues,
-					fieldNamingStrategy, deserializersByName, annotationFieldFilter, annotationFieldNaming);
+			return new VPack(serializers, enclosingSerializers, deserializers, instanceCreators, builderOptions,
+					serializeNullValues, fieldNamingStrategy, deserializersByName, annotationFieldFilter,
+					annotationFieldNaming);
 		}
 
 	}
 
-	private VPack(final Map<Type, VPackSerializer<?>> serializers, final Map<Type, VPackDeserializer<?>> deserializers,
+	private VPack(final Map<Type, VPackSerializer<?>> serializers,
+		final Map<Type, VPackSerializer<?>> enclosingSerializers, final Map<Type, VPackDeserializer<?>> deserializers,
 		final Map<Type, VPackInstanceCreator<?>> instanceCreators, final BuilderOptions builderOptions,
 		final boolean serializeNullValues, final VPackFieldNamingStrategy fieldNamingStrategy,
 		final Map<String, Map<Type, VPackDeserializer<?>>> deserializersByName,
@@ -243,6 +253,7 @@ public class VPack {
 		final Map<Class<? extends Annotation>, VPackAnnotationFieldNaming<? extends Annotation>> annotationFieldNaming) {
 		super();
 		this.serializers = serializers;
+		this.enclosingSerializers = enclosingSerializers;
 		this.deserializers = deserializers;
 		this.instanceCreators = instanceCreators;
 		this.builderOptions = builderOptions;
@@ -521,7 +532,7 @@ public class VPack {
 		final Map<String, Object> additionalFields)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, VPackException {
 
-		final VPackSerializer<?> serializer = serializers.get(entity.getClass());
+		final VPackSerializer<?> serializer = getSerializer(entity.getClass());
 		if (serializer != null) {
 			((VPackSerializer<Object>) serializer).serialize(builder, name, entity, serializationContext);
 		} else {
@@ -583,7 +594,7 @@ public class VPack {
 				builder.add(name, ValueType.NULL);
 			}
 		} else {
-			final VPackSerializer<?> serializer = serializers.get(type);
+			final VPackSerializer<?> serializer = getSerializer(type);
 			if (serializer != null) {
 				((VPackSerializer<Object>) serializer).serialize(builder, name, value, serializationContext);
 			} else if (type instanceof ParameterizedType) {
@@ -691,4 +702,13 @@ public class VPack {
 		return (VPackKeyMapAdapter<Object>) adapter;
 	}
 
+	private VPackSerializer<?> getSerializer(final Type type) {
+		VPackSerializer<?> serializer = serializers.get(type);
+		if (serializer == null) {
+			if (type instanceof Class && ((Class<?>) type).isMemberClass()) {
+				serializer = enclosingSerializers.get(((Class<?>) type).getEnclosingClass());
+			}
+		}
+		return serializer;
+	}
 }

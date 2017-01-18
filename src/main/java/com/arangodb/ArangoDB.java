@@ -175,6 +175,20 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
+		/**
+		 * Register a special serializer for a member class which can only be identified by its enclosing class.
+		 * 
+		 * @param clazz
+		 *            type of the enclosing class
+		 * @param serializer
+		 *            serializer to register
+		 * @return builder
+		 */
+		public <T> Builder registerEnclosingSerializer(final Class<T> clazz, final VPackSerializer<T> serializer) {
+			vpackBuilder.registerEnclosingSerializer(clazz, serializer);
+			return this;
+		}
+
 		public <T> Builder registerDeserializer(final Class<T> clazz, final VPackDeserializer<T> deserializer) {
 			vpackBuilder.registerDeserializer(clazz, deserializer);
 			return this;
@@ -503,4 +517,5 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
 		return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
 	}
+
 }
