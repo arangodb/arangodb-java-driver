@@ -4,7 +4,7 @@
 
 	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
-	<version>4.1.6</version>
+	<version>4.1.7-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 	<packaging>jar</packaging>
 
