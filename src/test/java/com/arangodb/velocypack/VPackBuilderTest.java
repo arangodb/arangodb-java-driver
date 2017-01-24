@@ -895,4 +895,62 @@ public class VPackBuilderTest {
 		assertThat(vpack.getAsString(), is(s));
 	}
 
+	@Test
+	public void addLong() {
+		final long value = 12345678901L;
+		final VPackBuilder builder = new VPackBuilder().add(value);
+		final VPackSlice vpack = builder.slice();
+		assertThat(vpack.getAsLong(), is(value));
+	}
+
+	@Test
+	public void addBitInteger() {
+		final BigInteger value = new BigInteger("12345678901");
+		final VPackBuilder builder = new VPackBuilder().add(value);
+		final VPackSlice vpack = builder.slice();
+		assertThat(vpack.getAsBigInteger(), is(value));
+	}
+
+	@Test
+	public void objectWithByteSize256() {
+		final StringBuilder aa = new StringBuilder();
+		final int stringLength = 256 - 25;
+		for (int i = 0; i < stringLength; ++i) {
+			aa.append("a");
+		}
+		final String foo = "foo";
+		final String bar1 = "bar1";
+		final String bar2 = "bar2";
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add(foo, ValueType.OBJECT).add(bar2, "")
+				.add(bar1, aa.toString()).close().close().slice();
+
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get(foo).isObject(), is(true));
+		assertThat(vpack.get(foo).get(bar1).isString(), is(true));
+		assertThat(vpack.get(foo).get(bar1).getLength(), is(stringLength));
+		assertThat(vpack.get(foo).get(bar2).isString(), is(true));
+		assertThat(vpack.get(foo).get(bar2).getLength(), is(0));
+	}
+
+	@Test
+	public void objectWithByteSizeOver65536() {
+		final StringBuilder aa = new StringBuilder();
+		final int stringLength = 65536 - 25 - 8;
+		for (int i = 0; i < stringLength; ++i) {
+			aa.append("a");
+		}
+		final String foo = "foo";
+		final String bar1 = "bar1";
+		final String bar2 = "bar2";
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add(foo, ValueType.OBJECT).add(bar2, "")
+				.add(bar1, aa.toString()).close().close().slice();
+
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get(foo).isObject(), is(true));
+		assertThat(vpack.get(foo).get(bar1).isString(), is(true));
+		assertThat(vpack.get(foo).get(bar1).getLength(), is(stringLength));
+		assertThat(vpack.get(foo).get(bar2).isString(), is(true));
+		assertThat(vpack.get(foo).get(bar2).getLength(), is(0));
+	}
+
 }

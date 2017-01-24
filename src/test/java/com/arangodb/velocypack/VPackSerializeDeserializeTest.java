@@ -25,6 +25,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -41,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -674,6 +679,23 @@ public class VPackSerializeDeserializeTest {
 			assertThat(entity.a4[0], is(TestEnum.A));
 			assertThat(entity.a4[1], is(TestEnum.B));
 		}
+	}
+
+	@Test
+	public void fromArrayWithNull() {
+		final TestEntityArray entity = new TestEntityArray();
+		entity.a1 = new String[] { "foo", null };
+
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+
+		final VPackSlice a1 = vpack.get("a1");
+		assertThat(a1.isArray(), is(true));
+		assertThat(a1.size(), is(2));
+		assertThat(a1.get(0).isString(), is(true));
+		assertThat(a1.get(0).getAsString(), is("foo"));
+		assertThat(a1.get(1).isNull(), is(true));
 	}
 
 	protected enum TestEnum {
@@ -2787,6 +2809,99 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.f, is(nullValue()));
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	private static @interface CustomFilterAnnotation {
+		boolean serialize() default true;
+
+		boolean deserialize() default true;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	private static @interface CustomNamingAnnotation {
+		String name();
+	}
+
+	private static class CustomAnEntity {
+		@CustomFilterAnnotation(serialize = false)
+		private String a = null;
+		@CustomFilterAnnotation(deserialize = false)
+		private String b = null;
+		@CustomNamingAnnotation(name = "d")
+		@CustomFilterAnnotation(deserialize = false)
+		private String c = null;
+
+		public CustomAnEntity() {
+			super();
+		}
+	}
+
+	@Test
+	public void fromCutsomAnnotation() {
+		final CustomAnEntity entity = new CustomAnEntity();
+		entity.a = "1";
+		entity.b = "2";
+		entity.c = "3";
+		final VPackSlice vpack = new VPack.Builder().annotationFieldFilter(CustomFilterAnnotation.class,
+			new VPackAnnotationFieldFilter<CustomFilterAnnotation>() {
+
+				@Override
+				public boolean serialize(final CustomFilterAnnotation annotation) {
+					return annotation.serialize();
+				}
+
+				@Override
+				public boolean deserialize(final CustomFilterAnnotation annotation) {
+					return annotation.deserialize();
+				}
+			}).annotationFieldNaming(CustomNamingAnnotation.class,
+				new VPackAnnotationFieldNaming<CustomNamingAnnotation>() {
+					@Override
+					public String name(final CustomNamingAnnotation annotation) {
+						return annotation.name();
+					}
+				}).build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("a").isNone(), is(true));
+		assertThat(vpack.get("b").isString(), is(true));
+		assertThat(vpack.get("b").getAsString(), is("2"));
+		assertThat(vpack.get("c").isNone(), is(true));
+		assertThat(vpack.get("d").isString(), is(true));
+		assertThat(vpack.get("d").getAsString(), is("3"));
+	}
+
+	@Test
+	public void toCustomAnnotation() {
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add("a", "1").add("b", "2").add("c", "3")
+				.add("d", "4").close().slice();
+
+		final CustomAnEntity entity = new VPack.Builder().annotationFieldFilter(CustomFilterAnnotation.class,
+			new VPackAnnotationFieldFilter<CustomFilterAnnotation>() {
+
+				@Override
+				public boolean serialize(final CustomFilterAnnotation annotation) {
+					return annotation.serialize();
+				}
+
+				@Override
+				public boolean deserialize(final CustomFilterAnnotation annotation) {
+					return annotation.deserialize();
+				}
+			}).annotationFieldNaming(CustomNamingAnnotation.class,
+				new VPackAnnotationFieldNaming<CustomNamingAnnotation>() {
+					@Override
+					public String name(final CustomNamingAnnotation annotation) {
+						return annotation.name();
+					}
+				}).build().deserialize(vpack, CustomAnEntity.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.a, is("1"));
+		assertThat(entity.b, is(nullValue()));
+		assertThat(entity.c, is(nullValue()));
+	}
+
 	@Test
 	public void directFromCollection() throws VPackException {
 		final Collection<String> list = new ArrayList<String>();
@@ -3292,4 +3407,78 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.timestamp, is(new java.sql.Timestamp(1475062216)));
 	}
 
+	protected static class TestEntityUUID {
+		private UUID uuid;
+
+		public UUID getUuid() {
+			return uuid;
+		}
+
+		public void setUuid(final UUID uuid) {
+			this.uuid = uuid;
+		}
+	}
+
+	@Test
+	public void fromUUID() {
+		final TestEntityUUID entity = new TestEntityUUID();
+		entity.setUuid(UUID.randomUUID());
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+
+		final VPackSlice uuid = vpack.get("uuid");
+		assertThat(uuid.isString(), is(true));
+		assertThat(uuid.getAsString(), is(entity.uuid.toString()));
+	}
+
+	@Test
+	public void toUUID() {
+		final UUID uuid = UUID.randomUUID();
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(ValueType.OBJECT);
+		builder.add("uuid", uuid.toString());
+		builder.close();
+
+		final TestEntityUUID entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityUUID.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.uuid, is(uuid));
+	}
+
+	@Test
+	public void uuid() {
+		final TestEntityUUID entity = new TestEntityUUID();
+		entity.setUuid(UUID.randomUUID());
+		final VPack vpacker = new VPack.Builder().build();
+		final VPackSlice vpack = vpacker.serialize(entity);
+		final TestEntityUUID entity2 = vpacker.deserialize(vpack, TestEntityUUID.class);
+		assertThat(entity2, is(notNullValue()));
+		assertThat(entity2.getUuid(), is(entity.getUuid()));
+	}
+
+	private static class TransientEntity {
+		private transient String foo;
+
+		public TransientEntity() {
+			super();
+		}
+	}
+
+	@Test
+	public void fromTransient() {
+		final TransientEntity entity = new TransientEntity();
+		entity.foo = "bar";
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("foo").isNone(), is(true));
+	}
+
+	@Test
+	public void toTransient() {
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add("foo", "bar").close().slice();
+		final TransientEntity entity = new VPack.Builder().build().deserialize(vpack, TransientEntity.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.foo, is(nullValue()));
+	}
 }

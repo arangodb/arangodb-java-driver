@@ -20,8 +20,6 @@
 
 package com.arangodb.internal.velocystream;
 
-import java.io.IOException;
-
 import javax.net.ssl.SSLContext;
 
 import org.slf4j.Logger;
@@ -123,13 +121,11 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 			return response;
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
-		} catch (final IOException e) {
-			throw new ArangoDBException(e);
 		}
 
 	}
 
-	private Message send(final Message message) throws IOException {
+	private Message send(final Message message) throws ArangoDBException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
 				message.getBody() != null ? message.getBody() : "{}"));

@@ -67,8 +67,10 @@ import com.arangodb.model.CollectionsReadOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Direction;
+import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 
 /**
@@ -691,6 +693,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			final Collection<GraphEntity> graphs = db.getGraphs();
 			assertThat(graphs, is(notNullValue()));
 			assertThat(graphs.size(), is(1));
+			assertThat(graphs.iterator().next().getName(), is(GRAPH_NAME));
 		} finally {
 			db.graph(GRAPH_NAME).drop();
 		}
@@ -716,6 +719,54 @@ public class ArangoDatabaseTest extends BaseTest {
 		final VPackSlice result = db.transaction("function (params) {return params;}", VPackSlice.class, options);
 		assertThat(result.isString(), is(true));
 		assertThat(result.getAsString(), is("test"));
+	}
+
+	@Test
+	public void transactionVPackObject() throws VPackException {
+		final VPackSlice params = new VPackBuilder().add(ValueType.OBJECT).add("foo", "hello").add("bar", "world")
+				.close().slice();
+		final TransactionOptions options = new TransactionOptions().params(params);
+		final String result = db.transaction("function (params) { return params['foo'] + ' ' + params['bar'];}",
+			String.class, options);
+		assertThat(result, is("hello world"));
+	}
+
+	@Test
+	public void transactionVPackArray() throws VPackException {
+		final VPackSlice params = new VPackBuilder().add(ValueType.ARRAY).add("hello").add("world").close().slice();
+		final TransactionOptions options = new TransactionOptions().params(params);
+		final String result = db.transaction("function (params) { return params[0] + ' ' + params[1];}", String.class,
+			options);
+		assertThat(result, is("hello world"));
+	}
+
+	@Test
+	public void transactionMap() {
+		final Map<String, Object> params = new MapBuilder().put("foo", "hello").put("bar", "world").get();
+		final TransactionOptions options = new TransactionOptions().params(params);
+		final String result = db.transaction("function (params) { return params['foo'] + ' ' + params['bar'];}",
+			String.class, options);
+		assertThat(result, is("hello world"));
+	}
+
+	@Test
+	public void transactionArray() {
+		final String[] params = new String[] { "hello", "world" };
+		final TransactionOptions options = new TransactionOptions().params(params);
+		final String result = db.transaction("function (params) { return params[0] + ' ' + params[1];}", String.class,
+			options);
+		assertThat(result, is("hello world"));
+	}
+
+	@Test
+	public void transactionCollection() {
+		final Collection<String> params = new ArrayList<String>();
+		params.add("hello");
+		params.add("world");
+		final TransactionOptions options = new TransactionOptions().params(params);
+		final String result = db.transaction("function (params) { return params[0] + ' ' + params[1];}", String.class,
+			options);
+		assertThat(result, is("hello world"));
 	}
 
 	@Test

@@ -22,6 +22,7 @@ package com.arangodb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -46,10 +47,15 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackAnnotationFieldFilter;
+import com.arangodb.velocypack.VPackAnnotationFieldNaming;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackInstanceCreator;
+import com.arangodb.velocypack.VPackJsonDeserializer;
+import com.arangodb.velocypack.VPackJsonSerializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSerializer;
+import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -169,6 +175,20 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
+		/**
+		 * Register a special serializer for a member class which can only be identified by its enclosing class.
+		 * 
+		 * @param clazz
+		 *            type of the enclosing class
+		 * @param serializer
+		 *            serializer to register
+		 * @return builder
+		 */
+		public <T> Builder registerEnclosingSerializer(final Class<T> clazz, final VPackSerializer<T> serializer) {
+			vpackBuilder.registerEnclosingSerializer(clazz, serializer);
+			return this;
+		}
+
 		public <T> Builder registerDeserializer(final Class<T> clazz, final VPackDeserializer<T> deserializer) {
 			vpackBuilder.registerDeserializer(clazz, deserializer);
 			return this;
@@ -176,6 +196,46 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		public <T> Builder registerInstanceCreator(final Class<T> clazz, final VPackInstanceCreator<T> creator) {
 			vpackBuilder.registerInstanceCreator(clazz, creator);
+			return this;
+		}
+
+		public Builder registerJsonDeserializer(final ValueType type, final VPackJsonDeserializer deserializer) {
+			vpackParser.registerDeserializer(type, deserializer);
+			return this;
+		}
+
+		public Builder registerJsonDeserializer(
+			final String attribute,
+			final ValueType type,
+			final VPackJsonDeserializer deserializer) {
+			vpackParser.registerDeserializer(attribute, type, deserializer);
+			return this;
+		}
+
+		public <T> Builder registerJsonSerializer(final Class<T> clazz, final VPackJsonSerializer<T> serializer) {
+			vpackParser.registerSerializer(clazz, serializer);
+			return this;
+		}
+
+		public <T> Builder registerJsonSerializer(
+			final String attribute,
+			final Class<T> clazz,
+			final VPackJsonSerializer<T> serializer) {
+			vpackParser.registerSerializer(attribute, clazz, serializer);
+			return this;
+		}
+
+		public <A extends Annotation> Builder annotationFieldFilter(
+			final Class<A> type,
+			final VPackAnnotationFieldFilter<A> fieldFilter) {
+			vpackBuilder.annotationFieldFilter(type, fieldFilter);
+			return this;
+		}
+
+		public <A extends Annotation> Builder annotationFieldNaming(
+			final Class<A> type,
+			final VPackAnnotationFieldNaming<A> fieldNaming) {
+			vpackBuilder.annotationFieldNaming(type, fieldNaming);
 			return this;
 		}
 
@@ -457,4 +517,5 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
 		return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
 	}
+
 }

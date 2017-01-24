@@ -1,3 +1,32 @@
+v4.1.6 (2017-01-18)
+---------------------------
+* added serializer support for enclosing types
+
+v4.1.5 (2017-01-12)
+---------------------------
+* fixed VPack String serialization (UTF-8 encoding)
+* fixed VPack parsing of fields of type Object
+* fixed VPack serializing of array with null values (issue #88)
+* added configuration for custom annotations within VPack de-/serialization
+* added support of transient modifier within VPack de-/serialization
+
+v4.1.4 (2016-12-19)
+---------------------------
+* added VPack serializer/de-serializer for java.util.UUID
+* fixed VPack parsing (issue #65, #80, #82)
+
+v4.1.3 (2016-11-22)
+---------------------------
+* fixed error while serializing long values with VPackBuilder
+* added bulk import API
+
+v4.1.2 (2016-11-10)
+---------------------------
+* fixed GraphEntity for ArangoDatabase.getGraphs() (field name is null)
+* added VelocyPack UTC_DATE parsing to Json String (ISO 8601)
+* added configuration methods for VPackParser in ArangoDB.Builder
+* added VPackJsonSerializer for VPackParser
+
 v4.1.1 (2016-11-09)
 ---------------------------
 * changed json parsing of VelocyPack types not known in json

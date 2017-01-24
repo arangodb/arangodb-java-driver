@@ -105,16 +105,20 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 			BaseEdgeDocument.class, null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(edge.getKey()));
+		assertThat(document.getFrom(), is(notNullValue()));
+		assertThat(document.getTo(), is(notNullValue()));
 	}
 
 	@Test
 	public void getEdge() {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
-		final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
-			BaseDocument.class, null);
+		final BaseEdgeDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.getEdge(edge.getKey(), BaseEdgeDocument.class, null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(edge.getKey()));
+		assertThat(document.getFrom(), is(notNullValue()));
+		assertThat(document.getTo(), is(notNullValue()));
 	}
 
 	@Test

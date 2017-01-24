@@ -20,8 +20,11 @@
 
 package com.arangodb.velocypack;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.Date;
 
 import org.json.simple.JSONValue;
 import org.junit.Test;
@@ -443,6 +446,67 @@ public class VPackParserTest {
 			}
 		}).toJson(builder.slice());
 		assertThat(json, is("{\"a\":\"a1\",\"b\":\"b\"}"));
+	}
+
+	@Test
+	public void customSerializer() throws VPackException {
+		final VPackSlice vpack = new VPackParser().registerSerializer(String.class, new VPackJsonSerializer<String>() {
+			@Override
+			public void serialize(final VPackBuilder builder, final String attribute, final String value)
+					throws VPackException {
+				builder.add(attribute, value + "1");
+			}
+		}).fromJson("{\"a\":\"a\"}");
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("a").isString(), is(true));
+		assertThat(vpack.get("a").getAsString(), is("a1"));
+	}
+
+	@Test
+	public void customSerializerByName() {
+		final String json = "{\"a\":\"a\",\"b\":\"b\"}";
+		final VPackSlice vpack = new VPackParser()
+				.registerSerializer("a", String.class, new VPackJsonSerializer<String>() {
+					@Override
+					public void serialize(final VPackBuilder builder, final String attribute, final String value)
+							throws VPackException {
+						builder.add(attribute, value + "1");
+					}
+				}).fromJson(json);
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("a").isString(), is(true));
+		assertThat(vpack.get("a").getAsString(), is("a1"));
+		assertThat(vpack.get("b").isString(), is(true));
+		assertThat(vpack.get("b").getAsString(), is("b"));
+	}
+
+	@Test
+	public void dateToJson() {
+		final VPackSlice vpack = new VPackBuilder().add(new Date(1478766992059L)).slice();
+		final VPackParser parser = new VPackParser();
+		assertThat(parser.toJson(vpack), containsString("2016-11-10T"));
+		assertThat(parser.toJson(vpack), containsString(":36:32.059Z"));
+	}
+
+	@Test
+	public void bytelength() {
+		final String name1 = "{\"name1\":\"job_04_detail_1\",\"seven__\":\"123456789\",\"_key\":\"191d936d-1eb9-4094-9c1c-9e0ba1d01867\",\"lang\":\"it\",\"value\":\"[CTO]\\n Ha supervisionato e gestito il reparto di R&D per il software, 1234567 formulando una visione di lungo periodo con la Direzione dell'Azienda.\"}";
+		final String name = "{\"name\":\"job_04_detail_1\",\"seven__\":\"123456789\",\"_key\":\"191d936d-1eb9-4094-9c1c-9e0ba1d01867\",\"lang\":\"it\",\"value\":\"[CTO]\\n Ha supervisionato e gestito il reparto di R&D per il software, 1234567 formulando una visione di lungo periodo con la Direzione dell'Azienda.\"}";
+
+		final VPackParser vpacker = new VPackParser();
+		{
+			final VPackSlice vpack = vpacker.fromJson(name1);
+			assertThat(vpack.isObject(), is(true));
+			assertThat(vpack.get("name1").isString(), is(true));
+			assertThat(vpack.get("name1").getAsString(), is("job_04_detail_1"));
+
+		}
+		{
+			final VPackSlice vpack = vpacker.fromJson(name);
+			assertThat(vpack.isObject(), is(true));
+			assertThat(vpack.get("name").isString(), is(true));
+			assertThat(vpack.get("name").getAsString(), is("job_04_detail_1"));
+		}
 	}
 
 }

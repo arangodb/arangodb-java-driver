@@ -21,6 +21,8 @@
 package com.arangodb.velocypack;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,6 +42,7 @@ import com.arangodb.velocypack.exception.VPackException;
  */
 public class VPackParser {
 
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");// ISO 8601
 	private static final char OBJECT_OPEN = '{';
 	private static final char OBJECT_CLOSE = '}';
 	private static final char ARRAY_OPEN = '[';
@@ -50,11 +53,15 @@ public class VPackParser {
 	private static final String NON_REPRESENTABLE_TYPE = "(non-representable type)";
 	private final Map<ValueType, VPackJsonDeserializer> deserializers;
 	private final Map<String, Map<ValueType, VPackJsonDeserializer>> deserializersByName;
+	private final Map<Class<?>, VPackJsonSerializer<?>> serializers;
+	private final Map<String, Map<Class<?>, VPackJsonSerializer<?>>> serializersByName;
 
 	public VPackParser() {
 		super();
 		deserializers = new HashMap<ValueType, VPackJsonDeserializer>();
 		deserializersByName = new HashMap<String, Map<ValueType, VPackJsonDeserializer>>();
+		serializers = new HashMap<Class<?>, VPackJsonSerializer<?>>();
+		serializersByName = new HashMap<String, Map<Class<?>, VPackJsonSerializer<?>>>();
 	}
 
 	public String toJson(final VPackSlice vpack) throws VPackException {
@@ -97,6 +104,36 @@ public class VPackParser {
 		return deserializer;
 	}
 
+	public <T> VPackParser registerSerializer(
+		final String attribute,
+		final Class<T> type,
+		final VPackJsonSerializer<T> serializer) {
+		Map<Class<?>, VPackJsonSerializer<?>> byName = serializersByName.get(attribute);
+		if (byName == null) {
+			byName = new HashMap<Class<?>, VPackJsonSerializer<?>>();
+			serializersByName.put(attribute, byName);
+		}
+		byName.put(type, serializer);
+		return this;
+	}
+
+	public <T> VPackParser registerSerializer(final Class<T> type, final VPackJsonSerializer<T> serializer) {
+		serializers.put(type, serializer);
+		return this;
+	}
+
+	private VPackJsonSerializer<?> getSerializer(final String attribute, final Class<?> type) {
+		VPackJsonSerializer<?> serializer = null;
+		final Map<Class<?>, VPackJsonSerializer<?>> byName = serializersByName.get(attribute);
+		if (byName != null) {
+			serializer = byName.get(type);
+		}
+		if (serializer == null) {
+			serializer = serializers.get(type);
+		}
+		return serializer;
+	}
+
 	private void parse(
 		final VPackSlice parent,
 		final String attribute,
@@ -122,6 +159,8 @@ public class VPackParser {
 				json.append(JSONValue.toJSONString(value.getAsString()));
 			} else if (value.isNumber()) {
 				json.append(value.getAsNumber());
+			} else if (value.isDate()) {
+				json.append(JSONValue.toJSONString(DATE_FORMAT.format(value.getAsDate())));
 			} else if (value.isNull()) {
 				json.append(NULL);
 			} else {
@@ -175,7 +214,7 @@ public class VPackParser {
 	public VPackSlice fromJson(final String json, final boolean includeNullValues) throws VPackException {
 		final VPackBuilder builder = new VPackBuilder();
 		final JSONParser parser = new JSONParser();
-		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues);
+		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues, this);
 		try {
 			parser.parse(json, contentHandler);
 		} catch (final ParseException e) {
@@ -189,10 +228,13 @@ public class VPackParser {
 		private final VPackBuilder builder;
 		private String attribute;
 		private final boolean includeNullValues;
+		private final VPackParser parser;
 
-		public VPackContentHandler(final VPackBuilder builder, final boolean includeNullValues) {
+		public VPackContentHandler(final VPackBuilder builder, final boolean includeNullValues,
+			final VPackParser parser) {
 			this.builder = builder;
 			this.includeNullValues = includeNullValues;
+			this.parser = parser;
 			attribute = null;
 		}
 
@@ -292,20 +334,31 @@ public class VPackParser {
 			return true;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean primitive(final Object value) throws ParseException, IOException {
 			if (value == null) {
 				if (includeNullValues) {
 					add(ValueType.NULL);
 				}
-			} else if (String.class.isAssignableFrom(value.getClass())) {
-				add(String.class.cast(value));
-			} else if (Boolean.class.isAssignableFrom(value.getClass())) {
-				add(Boolean.class.cast(value));
-			} else if (Double.class.isAssignableFrom(value.getClass())) {
-				add(Double.class.cast(value));
-			} else if (Number.class.isAssignableFrom(value.getClass())) {
-				add(Long.class.cast(value));
+			} else {
+				final VPackJsonSerializer<?> serializer = parser.getSerializer(attribute, value.getClass());
+				if (serializer != null) {
+					try {
+						((VPackJsonSerializer<Object>) serializer).serialize(builder, attribute, value);
+						attribute = null;
+					} catch (final VPackBuilderException e) {
+						throw new ParseException(ParseException.ERROR_UNEXPECTED_EXCEPTION);
+					}
+				} else if (String.class.isAssignableFrom(value.getClass())) {
+					add(String.class.cast(value));
+				} else if (Boolean.class.isAssignableFrom(value.getClass())) {
+					add(Boolean.class.cast(value));
+				} else if (Double.class.isAssignableFrom(value.getClass())) {
+					add(Double.class.cast(value));
+				} else if (Number.class.isAssignableFrom(value.getClass())) {
+					add(Long.class.cast(value));
+				}
 			}
 			return true;
 		}

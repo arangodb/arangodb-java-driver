@@ -18,20 +18,18 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.velocypack.internal.util;
+package com.arangodb.velocypack;
+
+import java.lang.annotation.Annotation;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class StringUtil {
+public interface VPackAnnotationFieldFilter<A extends Annotation> {
 
-	private StringUtil() {
-		super();
-	}
+	boolean serialize(A annotation);
 
-	public static String toString(final byte[] array, final int offset, final int length) {
-		return new String(array, offset, length);
-	}
+	boolean deserialize(A annotation);
 
 }

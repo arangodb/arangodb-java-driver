@@ -125,8 +125,8 @@ public class VPackBuilder {
 			if (value <= 9 && value >= -6) {
 				builder.appendSmallInt(value);
 			} else {
-				builder.add((byte) 0x23);
-				builder.append(value, INTEGER_BYTES);
+				builder.add((byte) 0x27);
+				builder.append(value, LONG_BYTES);
 			}
 		}
 	};
@@ -158,8 +158,8 @@ public class VPackBuilder {
 			if (value.longValue() <= 9 && value.longValue() >= -6) {
 				builder.appendSmallInt(value.longValue());
 			} else {
-				builder.add((byte) 0x23);
-				builder.append(value, INTEGER_BYTES);
+				builder.add((byte) 0x27);
+				builder.append(value, LONG_BYTES);
 			}
 		}
 	};
@@ -611,20 +611,27 @@ public class VPackBuilder {
 	}
 
 	private void appendString(final String value) throws VPackBuilderException {
-		final int length = value.getBytes().length;
-		if (length <= 126) {
-			// short string
-			add((byte) (0x40 + length));
-		} else {
-			// long string
-			add((byte) 0xbf);
-			appendLength(length);
-		}
 		try {
-			append(value);
+			final byte[] bytes = value.getBytes("UTF-8");
+			final int length = bytes.length;
+			if (length <= 126) {
+				// short string
+				add((byte) (0x40 + length));
+			} else {
+				// long string
+				add((byte) 0xbf);
+				appendLength(length);
+			}
+			appendString(bytes);
 		} catch (final UnsupportedEncodingException e) {
 			throw new VPackBuilderException(e);
 		}
+	}
+
+	private void appendString(final byte[] bytes) {
+		ensureCapacity(size + bytes.length);
+		System.arraycopy(bytes, 0, buffer, size, bytes.length);
+		size += bytes.length;
 	}
 
 	private void appendBinary(final byte[] value) {
@@ -640,13 +647,6 @@ public class VPackBuilder {
 		ensureCapacity(size + vpack.length);
 		System.arraycopy(vpack, 0, buffer, size, vpack.length);
 		size += vpack.length;
-	}
-
-	private void append(final String value) throws UnsupportedEncodingException {
-		final byte[] bytes = value.getBytes("UTF-8");
-		ensureCapacity(size + bytes.length);
-		System.arraycopy(bytes, 0, buffer, size, bytes.length);
-		size += bytes.length;
 	}
 
 	private void addArray(final boolean unindexed) {
@@ -721,7 +721,7 @@ public class VPackBuilder {
 		final int offsetSize;
 		// can be 1, 2, 4 or 8 for the byte width of the offsets,
 		// the byte length and the number of subvalues:
-		if ((size - 1 - tos) + in.size() - 6 <= 0xff) {
+		if (size - tos + in.size() - 6 <= 0xff) {
 			// We have so far used _pos - tos bytes, including the reserved 8
 			// bytes for byte length and number of subvalues. In the 1-byte
 			// number
@@ -729,9 +729,9 @@ public class VPackBuilder {
 			// subvalue
 			// for the index table
 			offsetSize = 1;
-		} else if ((size - 1 - tos) + 2 * in.size() <= 0xffff) {
+		} else if ((size - tos) + 2 * in.size() <= 0xffff) {
 			offsetSize = 2;
-		} else if (((size - 1 - tos) / 2) + 4 * in.size() / 2 <= Integer.MAX_VALUE/* 0xffffffffu */) {
+		} else if (((size - tos) / 2) + 4 * in.size() / 2 <= Integer.MAX_VALUE/* 0xffffffffu */) {
 			offsetSize = 4;
 		} else {
 			offsetSize = 8;
