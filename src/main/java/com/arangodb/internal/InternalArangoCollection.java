@@ -119,7 +119,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
-		request.setBody(executor.serialize(values));
+		request.setBody(util().serialize(values, false, true));
 		return request;
 	}
 
@@ -168,7 +168,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 
 	protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {
 		return importDocumentsRequest(options).putQueryParam(ArangoDBConstants.TYPE, ImportType.list)
-				.setBody(executor.serialize(values));
+				.setBody(util().serialize(values, false, true));
 	}
 
 	protected Request importDocumentsRequest(final DocumentImportOptions options) {

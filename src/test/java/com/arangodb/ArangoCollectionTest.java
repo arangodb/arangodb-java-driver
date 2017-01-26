@@ -890,6 +890,21 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentsJson() {
+		final Collection<String> values = new ArrayList<String>();
+		values.add("{}");
+		values.add("{}");
+		values.add("{}");
+		final MultiDocumentEntity<DocumentCreateEntity<String>> docs = db.collection(COLLECTION_NAME)
+				.insertDocuments(values);
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getDocuments(), is(notNullValue()));
+		assertThat(docs.getDocuments().size(), is(3));
+		assertThat(docs.getErrors(), is(notNullValue()));
+		assertThat(docs.getErrors().size(), is(0));
+	}
+
+	@Test
 	public void insertDocumentsOne() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		values.add(new BaseDocument());
@@ -958,6 +973,22 @@ public class ArangoCollectionTest extends BaseTest {
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
 		values.add(new BaseDocument());
+		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values);
+		assertThat(docs, is(notNullValue()));
+		assertThat(docs.getCreated(), is(values.size()));
+		assertThat(docs.getEmpty(), is(0));
+		assertThat(docs.getErrors(), is(0));
+		assertThat(docs.getIgnored(), is(0));
+		assertThat(docs.getUpdated(), is(0));
+		assertThat(docs.getDetails(), is(empty()));
+	}
+
+	@Test
+	public void importDocumentsJsonList() {
+		final Collection<String> values = new ArrayList<String>();
+		values.add("{}");
+		values.add("{}");
+		values.add("{}");
 		final DocumentImportEntity docs = db.collection(COLLECTION_NAME).importDocuments(values);
 		assertThat(docs, is(notNullValue()));
 		assertThat(docs.getCreated(), is(values.size()));

@@ -223,6 +223,26 @@ public class VPackParser {
 		return builder.slice();
 	}
 
+	public VPackSlice fromJson(final Iterable<String> jsons) throws VPackException {
+		return fromJson(jsons, false);
+	}
+
+	public VPackSlice fromJson(final Iterable<String> jsons, final boolean includeNullValues) throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		final JSONParser parser = new JSONParser();
+		final ContentHandler contentHandler = new VPackContentHandler(builder, includeNullValues, this);
+		try {
+			builder.add(ValueType.ARRAY);
+			for (final String json : jsons) {
+				parser.parse(json, contentHandler);
+			}
+			builder.close();
+		} catch (final ParseException e) {
+			throw new VPackBuilderException(e);
+		}
+		return builder.slice();
+	}
+
 	private static class VPackContentHandler implements ContentHandler {
 
 		private final VPackBuilder builder;

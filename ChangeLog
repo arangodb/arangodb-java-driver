@@ -1,3 +1,7 @@
+v4.1.7 (2017-01-26)
+---------------------------
+* fixed importDocuments, insertDocuments to work with raw Jsons (issue #91)
+
 v4.1.6 (2017-01-18)
 ---------------------------
 * added serializer support for enclosing types

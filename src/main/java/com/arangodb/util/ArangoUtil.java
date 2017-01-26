@@ -21,6 +21,7 @@
 package com.arangodb.util;
 
 import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.arangodb.ArangoDBException;
@@ -81,17 +82,7 @@ public class ArangoUtil {
 	 * @throws ArangoDBException
 	 */
 	public VPackSlice serialize(final Object entity) throws ArangoDBException {
-		try {
-			final VPackSlice vpack;
-			if (String.class.isAssignableFrom(entity.getClass())) {
-				vpack = vpackParser.fromJson((String) entity);
-			} else {
-				vpack = vpacker.serialize(entity);
-			}
-			return vpack;
-		} catch (final VPackException e) {
-			throw new ArangoDBException(e);
-		}
+		return serialize(entity, false);
 	}
 
 	/**
@@ -105,10 +96,37 @@ public class ArangoUtil {
 	 * @throws ArangoDBException
 	 */
 	public VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
+		return serialize(entity, serializeNullValues, false);
+	}
+
+	/**
+	 * Serialize a given Object to VelocyPack. If the Object is from type Iterable<String> the String will be
+	 * interpreted as Json
+	 * 
+	 * @param entity
+	 *            The Object to serialize. If it is from type String, it will be handled as a Json.
+	 * @param serializeNullValues
+	 *            Whether or not null values should be excluded from serialization.
+	 * @param stringAsJson
+	 * @return the serialized VelocyPack
+	 * @throws ArangoDBException
+	 */
+	@SuppressWarnings("unchecked")
+	public VPackSlice serialize(final Object entity, final boolean serializeNullValues, final boolean stringAsJson)
+			throws ArangoDBException {
 		try {
 			final VPackSlice vpack;
-			if (String.class.isAssignableFrom(entity.getClass())) {
+			final Class<? extends Object> type = entity.getClass();
+			if (String.class.isAssignableFrom(type)) {
 				vpack = vpackParser.fromJson((String) entity, serializeNullValues);
+			} else if (stringAsJson && Iterable.class.isAssignableFrom(type)) {
+				final Iterator<?> iterator = Iterable.class.cast(entity).iterator();
+				if (iterator.hasNext() && String.class.isAssignableFrom(iterator.next().getClass())) {
+					vpack = vpackParser.fromJson((Iterable<String>) entity, serializeNullValues);
+				} else {
+					final VPack vp = serializeNullValues ? vpackerNull : vpacker;
+					vpack = vp.serialize(entity);
+				}
 			} else {
 				final VPack vp = serializeNullValues ? vpackerNull : vpacker;
 				vpack = vp.serialize(entity);
