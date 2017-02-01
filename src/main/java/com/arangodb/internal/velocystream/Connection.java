@@ -71,7 +71,7 @@ public abstract class Connection {
 		this.sslContext = sslContext;
 	}
 
-	public synchronized boolean isOpen() {
+	public boolean isOpen() {
 		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
@@ -126,7 +126,7 @@ public abstract class Connection {
 		}
 	}
 
-	private void sendProtocolHeader() throws IOException {
+	private synchronized void sendProtocolHeader() throws IOException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send velocystream protocol header to %s", socket));
 		}
@@ -162,7 +162,7 @@ public abstract class Connection {
 		}
 	}
 
-	private void writeChunkHead(final Chunk chunk) throws IOException {
+	private synchronized void writeChunkHead(final Chunk chunk) throws IOException {
 		final long messageLength = chunk.getMessageLength();
 		final int headLength = messageLength > -1L ? ArangoDBConstants.CHUNK_MAX_HEADER_SIZE
 				: ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
@@ -205,7 +205,7 @@ public abstract class Connection {
 		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
 	}
 
-	protected void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
+	protected synchronized void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
 		for (int readed = 0; readed < len;) {
 			final int read = inputStream.read(buf, off + readed, len - readed);
 			if (read == -1) {
