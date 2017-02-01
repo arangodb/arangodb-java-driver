@@ -393,4 +393,17 @@ public class ArangoDBTest {
 			arangoDB.setLogLevel(entity);
 		}
 	}
+
+	@Test
+	public void arangoDBException() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			arangoDB.db("no").getInfo();
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getResponseCode(), is(404));
+			assertThat(e.getErrorNum(), is(1228));
+			assertThat(e.getErrorMessage(), is("database not found"));
+		}
+	}
 }

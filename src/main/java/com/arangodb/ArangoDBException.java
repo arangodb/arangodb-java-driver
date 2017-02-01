@@ -20,6 +20,8 @@
 
 package com.arangodb;
 
+import com.arangodb.entity.ErrorEntity;
+
 /**
  * @author Mark - mark at arangodb.com
  *
@@ -27,6 +29,13 @@ package com.arangodb;
 public class ArangoDBException extends RuntimeException {
 
 	private static final long serialVersionUID = 6165638002614173801L;
+	private ErrorEntity entity = null;
+
+	public ArangoDBException(final ErrorEntity errorEntity) {
+		super(String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
+			errorEntity.getErrorMessage()));
+		this.entity = errorEntity;
+	}
 
 	public ArangoDBException(final String message) {
 		super(message);
@@ -34,6 +43,18 @@ public class ArangoDBException extends RuntimeException {
 
 	public ArangoDBException(final Throwable cause) {
 		super(cause);
+	}
+
+	public String getErrorMessage() {
+		return entity != null ? entity.getErrorMessage() : null;
+	}
+
+	public int getResponseCode() {
+		return entity != null ? entity.getCode() : null;
+	}
+
+	public int getErrorNum() {
+		return entity != null ? entity.getErrorNum() : null;
 	}
 
 }

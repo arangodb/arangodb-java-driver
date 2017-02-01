@@ -101,7 +101,8 @@ public abstract class Communication<R, C extends Connection> {
 		try {
 			if (response.getResponseCode() >= ERROR_STATUS) {
 				if (response.getBody() != null) {
-					throw new ArangoDBException(createErrorMessage(response));
+					final ErrorEntity errorEntity = vpack.deserialize(response.getBody(), ErrorEntity.class);
+					throw new ArangoDBException(errorEntity);
 				} else {
 					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()));
 				}
@@ -109,14 +110,6 @@ public abstract class Communication<R, C extends Connection> {
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
 		}
-	}
-
-	private String createErrorMessage(final Response response) throws VPackParserException {
-		String errorMessage;
-		final ErrorEntity errorEntity = vpack.deserialize(response.getBody(), ErrorEntity.class);
-		errorMessage = String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
-			errorEntity.getErrorMessage());
-		return errorMessage;
 	}
 
 	protected Response createResponse(final Message messsage) throws VPackParserException {
