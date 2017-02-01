@@ -21,8 +21,6 @@
 package com.arangodb.velocypack;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,6 +33,7 @@ import org.json.simple.parser.ParseException;
 
 import com.arangodb.velocypack.exception.VPackBuilderException;
 import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocypack.internal.util.DateUtil;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -42,7 +41,6 @@ import com.arangodb.velocypack.exception.VPackException;
  */
 public class VPackParser {
 
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");// ISO 8601
 	private static final char OBJECT_OPEN = '{';
 	private static final char OBJECT_CLOSE = '}';
 	private static final char ARRAY_OPEN = '[';
@@ -160,7 +158,7 @@ public class VPackParser {
 			} else if (value.isNumber()) {
 				json.append(value.getAsNumber());
 			} else if (value.isDate()) {
-				json.append(JSONValue.toJSONString(DATE_FORMAT.format(value.getAsDate())));
+				json.append(JSONValue.toJSONString(DateUtil.format(value.getAsDate())));
 			} else if (value.isNull()) {
 				json.append(NULL);
 			} else {

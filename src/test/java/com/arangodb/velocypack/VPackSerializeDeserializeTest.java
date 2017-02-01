@@ -32,6 +32,8 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -58,6 +60,8 @@ import com.arangodb.velocypack.exception.VPackException;
  *
  */
 public class VPackSerializeDeserializeTest {
+
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");// ISO 8601
 
 	protected static class TestEntityBoolean {
 		private boolean a = true;
@@ -3378,16 +3382,17 @@ public class VPackSerializeDeserializeTest {
 		assertThat(vpack, is(notNullValue()));
 		assertThat(vpack.isObject(), is(true));
 		{
-			assertThat(vpack.get("utilDate").isDate(), is(true));
-			assertThat(vpack.get("utilDate").getAsDate(), is(new Date(1474988621)));
+			assertThat(vpack.get("utilDate").isString(), is(true));
+			assertThat(vpack.get("utilDate").getAsString(), is(DATE_FORMAT.format(new Date(1474988621))));
 		}
 		{
-			assertThat(vpack.get("sqlDate").isDate(), is(true));
-			assertThat(vpack.get("sqlDate").getAsSQLDate(), is(new java.sql.Date(1474988621)));
+			assertThat(vpack.get("sqlDate").isString(), is(true));
+			assertThat(vpack.get("sqlDate").getAsString(), is(DATE_FORMAT.format(new java.sql.Date(1474988621))));
 		}
 		{
-			assertThat(vpack.get("timestamp").isDate(), is(true));
-			assertThat(vpack.get("timestamp").getAsSQLTimestamp(), is(new java.sql.Timestamp(1474988621)));
+			assertThat(vpack.get("timestamp").isString(), is(true));
+			assertThat(vpack.get("timestamp").getAsString(),
+				is(DATE_FORMAT.format(new java.sql.Timestamp(1474988621))));
 		}
 	}
 
@@ -3398,6 +3403,22 @@ public class VPackSerializeDeserializeTest {
 		builder.add("utilDate", new Date(1475062216));
 		builder.add("sqlDate", new java.sql.Date(1475062216));
 		builder.add("timestamp", new java.sql.Timestamp(1475062216));
+		builder.close();
+
+		final TestEntityDate entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityDate.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.utilDate, is(new Date(1475062216)));
+		assertThat(entity.sqlDate, is(new java.sql.Date(1475062216)));
+		assertThat(entity.timestamp, is(new java.sql.Timestamp(1475062216)));
+	}
+
+	@Test
+	public void toDateFromString() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		builder.add(ValueType.OBJECT);
+		builder.add("utilDate", DATE_FORMAT.format(new Date(1475062216)));
+		builder.add("sqlDate", DATE_FORMAT.format(new java.sql.Date(1475062216)));
+		builder.add("timestamp", DATE_FORMAT.format(new java.sql.Timestamp(1475062216)));
 		builder.close();
 
 		final TestEntityDate entity = new VPack.Builder().build().deserialize(builder.slice(), TestEntityDate.class);
@@ -3481,4 +3502,5 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.foo, is(nullValue()));
 	}
+
 }

@@ -20,11 +20,17 @@
 
 package com.arangodb.velocypack.internal.util;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 /**
  * @author Mark - mark at arangodb.com
  *
  */
 public class DateUtil {
+
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");// ISO 8601
 
 	private DateUtil() {
 		super();
@@ -43,6 +49,14 @@ public class DateUtil {
 	public static java.sql.Timestamp toSQLTimestamp(final byte[] array, final int offset, final int length) {
 		final long milliseconds = NumberUtil.toLong(array, offset, length);
 		return new java.sql.Timestamp(milliseconds);
+	}
+
+	public static java.util.Date parse(final String source) throws ParseException {
+		return DATE_FORMAT.parse(source);
+	}
+
+	public static String format(final java.util.Date date) {
+		return DATE_FORMAT.format(date);
 	}
 
 }

@@ -23,6 +23,7 @@ package com.arangodb.velocypack.internal;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -30,6 +31,8 @@ import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocypack.exception.VPackParserException;
+import com.arangodb.velocypack.internal.util.DateUtil;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -146,16 +149,37 @@ public class VPackDeserializers {
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
-			return vpack.getAsDate();
+			final Date date;
+			if (vpack.isString()) {
+				try {
+					date = DateUtil.parse(vpack.getAsString());
+				} catch (final ParseException e) {
+					throw new VPackParserException(e);
+				}
+			} else {
+				date = vpack.getAsDate();
+			}
+			return date;
 		}
 	};
 	public static final VPackDeserializer<java.sql.Date> SQL_DATE = new VPackDeserializer<java.sql.Date>() {
+
 		@Override
 		public java.sql.Date deserialize(
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
-			return vpack.getAsSQLDate();
+			final java.sql.Date date;
+			if (vpack.isString()) {
+				try {
+					date = new java.sql.Date(DateUtil.parse(vpack.getAsString()).getTime());
+				} catch (final ParseException e) {
+					throw new VPackParserException(e);
+				}
+			} else {
+				date = vpack.getAsSQLDate();
+			}
+			return date;
 		}
 	};
 	public static final VPackDeserializer<java.sql.Timestamp> SQL_TIMESTAMP = new VPackDeserializer<Timestamp>() {
@@ -164,7 +188,17 @@ public class VPackDeserializers {
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
-			return vpack.getAsSQLTimestamp();
+			final java.sql.Timestamp date;
+			if (vpack.isString()) {
+				try {
+					date = new java.sql.Timestamp(DateUtil.parse(vpack.getAsString()).getTime());
+				} catch (final ParseException e) {
+					throw new VPackParserException(e);
+				}
+			} else {
+				date = vpack.getAsSQLTimestamp();
+			}
+			return date;
 		}
 	};
 	public static final VPackDeserializer<VPackSlice> VPACK = new VPackDeserializer<VPackSlice>() {

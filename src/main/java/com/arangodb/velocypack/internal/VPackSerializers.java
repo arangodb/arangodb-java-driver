@@ -31,6 +31,7 @@ import com.arangodb.velocypack.VPackSerializationContext;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocypack.internal.util.DateUtil;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -159,7 +160,7 @@ public class VPackSerializers {
 			final String attribute,
 			final Date value,
 			final VPackSerializationContext context) throws VPackException {
-			builder.add(attribute, value);
+			builder.add(attribute, DateUtil.format(value));
 		}
 	};
 	public static final VPackSerializer<java.sql.Date> SQL_DATE = new VPackSerializer<java.sql.Date>() {
@@ -169,7 +170,7 @@ public class VPackSerializers {
 			final String attribute,
 			final java.sql.Date value,
 			final VPackSerializationContext context) throws VPackException {
-			builder.add(attribute, value);
+			builder.add(attribute, DateUtil.format(value));
 		}
 	};
 	public static final VPackSerializer<java.sql.Timestamp> SQL_TIMESTAMP = new VPackSerializer<Timestamp>() {
@@ -179,7 +180,7 @@ public class VPackSerializers {
 			final String attribute,
 			final Timestamp value,
 			final VPackSerializationContext context) throws VPackException {
-			builder.add(attribute, value);
+			builder.add(attribute, DateUtil.format(value));
 		}
 	};
 	public static final VPackSerializer<VPackSlice> VPACK = new VPackSerializer<VPackSlice>() {
