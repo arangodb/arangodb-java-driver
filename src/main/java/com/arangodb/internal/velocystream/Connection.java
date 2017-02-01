@@ -205,7 +205,7 @@ public abstract class Connection {
 		return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
 	}
 
-	protected synchronized void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
+	protected void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
 		for (int readed = 0; readed < len;) {
 			final int read = inputStream.read(buf, off + readed, len - readed);
 			if (read == -1) {
