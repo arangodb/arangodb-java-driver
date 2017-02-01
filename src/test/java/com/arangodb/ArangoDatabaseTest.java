@@ -105,6 +105,35 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void deleteSystemCollection() {
+		final String name = "_system_test";
+		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
+		db.collection(name).drop(true);
+		try {
+			db.collection(name).getInfo();
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteSystemCollectionFail() {
+		final String name = "_system_test";
+		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
+		try {
+			db.collection(name).drop();
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+		db.collection(name).drop(true);
+		try {
+			db.collection(name).getInfo();
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
 	public void getIndex() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);

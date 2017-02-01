@@ -535,8 +535,9 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 		return request;
 	}
 
-	protected Request dropRequest() {
-		return new Request(db, RequestType.DELETE, executor.createPath(ArangoDBConstants.PATH_API_COLLECTION, name));
+	protected Request dropRequest(final Boolean isSystem) {
+		return new Request(db, RequestType.DELETE, executor.createPath(ArangoDBConstants.PATH_API_COLLECTION, name))
+				.putQueryParam(ArangoDBConstants.IS_SYSTEM, isSystem);
 	}
 
 	protected Request loadRequest() {

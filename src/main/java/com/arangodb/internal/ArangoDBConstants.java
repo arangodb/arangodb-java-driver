@@ -109,5 +109,6 @@ public class ArangoDBConstants {
 	public static final String COMPLETE = "complete";
 	public static final String DETAILS = "details";
 	public static final String TYPE = "type";
+	public static final String IS_SYSTEM = "isSystem";
 
 }
