@@ -26,6 +26,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.xml.bind.DatatypeConverter;
+
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSerializationContext;
 import com.arangodb.velocypack.VPackSerializer;
@@ -201,6 +203,16 @@ public class VPackSerializers {
 			final java.util.UUID value,
 			final VPackSerializationContext context) throws VPackException {
 			builder.add(attribute, value.toString());
+		}
+	};
+	public static final VPackSerializer<byte[]> BYTE_ARRAY = new VPackSerializer<byte[]>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final byte[] value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(attribute, DatatypeConverter.printBase64Binary(value));
 		}
 	};
 }

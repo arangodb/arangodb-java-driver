@@ -125,6 +125,7 @@ public class VPack {
 			serializers.put(java.sql.Timestamp.class, VPackSerializers.SQL_TIMESTAMP);
 			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
 			serializers.put(UUID.class, VPackSerializers.UUID);
+			serializers.put(new byte[] {}.getClass(), VPackSerializers.BYTE_ARRAY);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
 			deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);
@@ -149,6 +150,7 @@ public class VPack {
 			deserializers.put(java.sql.Timestamp.class, VPackDeserializers.SQL_TIMESTAMP);
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 			deserializers.put(UUID.class, VPackDeserializers.UUID);
+			deserializers.put(new byte[] {}.getClass(), VPackDeserializers.BYTE_ARRAY);
 
 			annotationFieldFilter.put(Expose.class, new VPackAnnotationFieldFilter<Expose>() {
 				@Override

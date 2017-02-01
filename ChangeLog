@@ -3,6 +3,7 @@ v4.1.8 (2017-02-xx)
 * changed java.util.Date serialization from VPack.date to VPack.string (ISO 8601)
 * changed java.sql.Date serialization from VPack.date to VPack.string (ISO 8601)
 * changed java.sql.Timestamp serialization from VPack.date to VPack.string (ISO 8601)
+* added byte[] de-/serialization from/to VPack.string (Base64)
 
 v4.1.7 (2017-01-26)
 ---------------------------

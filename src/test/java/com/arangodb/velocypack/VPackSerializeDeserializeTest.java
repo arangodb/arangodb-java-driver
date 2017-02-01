@@ -49,6 +49,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.junit.Test;
 
 import com.arangodb.velocypack.annotations.Expose;
@@ -3501,6 +3503,34 @@ public class VPackSerializeDeserializeTest {
 		final TransientEntity entity = new VPack.Builder().build().deserialize(vpack, TransientEntity.class);
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.foo, is(nullValue()));
+	}
+
+	private static class BinaryEntity {
+		private byte[] foo;
+
+		public BinaryEntity() {
+			super();
+		}
+	}
+
+	@Test
+	public void fromBinary() {
+		final BinaryEntity entity = new BinaryEntity();
+		entity.foo = "bar".getBytes();
+		final VPackSlice vpack = new VPack.Builder().build().serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.get("foo").isString(), is(true));
+		assertThat(vpack.get("foo").getAsString(), is(DatatypeConverter.printBase64Binary(entity.foo)));
+	}
+
+	@Test
+	public void toBinary() {
+		final String value = DatatypeConverter.printBase64Binary("bar".getBytes());
+		final VPackSlice vpack = new VPackBuilder().add(ValueType.OBJECT).add("foo", value).close().slice();
+		final BinaryEntity entity = new VPack.Builder().build().deserialize(vpack, BinaryEntity.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.foo, is("bar".getBytes()));
 	}
 
 }

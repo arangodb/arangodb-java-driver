@@ -27,6 +27,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.xml.bind.DatatypeConverter;
+
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -218,6 +220,16 @@ public class VPackDeserializers {
 			final VPackDeserializationContext context) throws VPackException {
 			return java.util.UUID.fromString(vpack.getAsString());
 		}
+	};
+	public static final VPackDeserializer<byte[]> BYTE_ARRAY = new VPackDeserializer<byte[]>() {
+		@Override
+		public byte[] deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return DatatypeConverter.parseBase64Binary(vpack.getAsString());
+		}
+
 	};
 
 }
