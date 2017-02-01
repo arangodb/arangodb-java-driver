@@ -186,7 +186,7 @@ public class CollectionCreateOptions {
 	 *            changed once set. This option is meaningless in a single server setup.
 	 * @return options
 	 */
-	public CollectionCreateOptions shardKeys(final String[] shardKeys) {
+	public CollectionCreateOptions shardKeys(final String... shardKeys) {
 		this.shardKeys = shardKeys;
 		return this;
 	}
