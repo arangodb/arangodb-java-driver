@@ -6,6 +6,7 @@ v4.1.8 (2017-02-xx)
 * added byte[] de-/serialization from/to VPack.string (Base64)
 * added ArangoCollection.drop(isSystem)
 * improved ArangoDBException with responseCode, errorNum, errorMessage
+* changed ArangoCollection.deleteDocuments() to work with keys and documents
 
 v4.1.7 (2017-01-26)
 ---------------------------

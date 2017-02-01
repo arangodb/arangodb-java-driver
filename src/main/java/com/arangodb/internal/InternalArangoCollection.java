@@ -409,7 +409,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 		};
 	}
 
-	protected Request deleteDocumentsRequest(final Collection<String> keys, final DocumentDeleteOptions options) {
+	protected <T> Request deleteDocumentsRequest(final Collection<T> keys, final DocumentDeleteOptions options) {
 		final Request request;
 		request = new Request(db, RequestType.DELETE, executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());

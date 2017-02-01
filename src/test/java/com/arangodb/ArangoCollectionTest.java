@@ -1322,7 +1322,7 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteDocuments() {
+	public void deleteDocumentsByKey() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		{
 			final BaseDocument e = new BaseDocument();
@@ -1349,7 +1349,31 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteDocumentsOne() {
+	public void deleteDocumentsByDocuments() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("2");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
+		final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(values, null, null);
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.getDocuments().size(), is(2));
+		for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+			assertThat(i.getKey(), anyOf(is("1"), is("2")));
+		}
+		assertThat(deleteResult.getErrors().size(), is(0));
+	}
+
+	@Test
+	public void deleteDocumentsByKeyOne() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		{
 			final BaseDocument e = new BaseDocument();
@@ -1361,6 +1385,25 @@ public class ArangoCollectionTest extends BaseTest {
 		keys.add("1");
 		final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = db.collection(COLLECTION_NAME)
 				.deleteDocuments(keys, null, null);
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.getDocuments().size(), is(1));
+		for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
+			assertThat(i.getKey(), is("1"));
+		}
+		assertThat(deleteResult.getErrors().size(), is(0));
+	}
+
+	@Test
+	public void deleteDocumentsByDocumentOne() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		db.collection(COLLECTION_NAME).insertDocuments(values, null);
+		final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(values, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.getDocuments().size(), is(1));
 		for (final DocumentDeleteEntity<Object> i : deleteResult.getDocuments()) {
@@ -1382,7 +1425,7 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void deleteDocumentsNotExisting() {
+	public void deleteDocumentsByKeyNotExisting() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		db.collection(COLLECTION_NAME).insertDocuments(values, null);
 		final Collection<String> keys = new ArrayList<String>();
@@ -1390,6 +1433,26 @@ public class ArangoCollectionTest extends BaseTest {
 		keys.add("2");
 		final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = db.collection(COLLECTION_NAME)
 				.deleteDocuments(keys, null, null);
+		assertThat(deleteResult, is(notNullValue()));
+		assertThat(deleteResult.getDocuments().size(), is(0));
+		assertThat(deleteResult.getErrors().size(), is(2));
+	}
+
+	@Test
+	public void deleteDocumentsByDocumentsNotExisting() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("1");
+			values.add(e);
+		}
+		{
+			final BaseDocument e = new BaseDocument();
+			e.setKey("2");
+			values.add(e);
+		}
+		final MultiDocumentEntity<DocumentDeleteEntity<Object>> deleteResult = db.collection(COLLECTION_NAME)
+				.deleteDocuments(values, null, null);
 		assertThat(deleteResult, is(notNullValue()));
 		assertThat(deleteResult.getDocuments().size(), is(0));
 		assertThat(deleteResult.getErrors().size(), is(2));
