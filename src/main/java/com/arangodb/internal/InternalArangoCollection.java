@@ -240,7 +240,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(executor.serialize(values));
+		request.setBody(util().serialize(values, false, true));
 		return request;
 	}
 
@@ -334,7 +334,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(executor.serialize(values, true));
+		request.setBody(util().serialize(values, true, true));
 		return request;
 	}
 

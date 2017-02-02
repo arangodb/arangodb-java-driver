@@ -1531,6 +1531,22 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void updateDocumentsJson() {
+		final Collection<String> values = new ArrayList<String>();
+		values.add("{\"_key\":\"1\"}");
+		values.add("{\"_key\":\"2\"}");
+		db.collection(COLLECTION_NAME).insertDocuments(values);
+
+		final Collection<String> updatedValues = new ArrayList<String>();
+		updatedValues.add("{\"_key\":\"1\", \"foo\":\"bar\"}");
+		updatedValues.add("{\"_key\":\"2\", \"foo\":\"bar\"}");
+		final MultiDocumentEntity<DocumentUpdateEntity<String>> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocuments(updatedValues);
+		assertThat(updateResult.getDocuments().size(), is(2));
+		assertThat(updateResult.getErrors().size(), is(0));
+	}
+
+	@Test
 	public void replaceDocuments() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		{
@@ -1594,6 +1610,22 @@ public class ArangoCollectionTest extends BaseTest {
 				.updateDocuments(updatedValues, null);
 		assertThat(updateResult.getDocuments().size(), is(1));
 		assertThat(updateResult.getErrors().size(), is(1));
+	}
+
+	@Test
+	public void replaceDocumentsJson() {
+		final Collection<String> values = new ArrayList<String>();
+		values.add("{\"_key\":\"1\"}");
+		values.add("{\"_key\":\"2\"}");
+		db.collection(COLLECTION_NAME).insertDocuments(values);
+
+		final Collection<String> updatedValues = new ArrayList<String>();
+		updatedValues.add("{\"_key\":\"1\", \"foo\":\"bar\"}");
+		updatedValues.add("{\"_key\":\"2\", \"foo\":\"bar\"}");
+		final MultiDocumentEntity<DocumentUpdateEntity<String>> updateResult = db.collection(COLLECTION_NAME)
+				.replaceDocuments(updatedValues);
+		assertThat(updateResult.getDocuments().size(), is(2));
+		assertThat(updateResult.getErrors().size(), is(0));
 	}
 
 	@Test
