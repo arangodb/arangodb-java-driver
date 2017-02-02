@@ -20,7 +20,9 @@
 
 package com.arangodb.internal;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -83,7 +85,17 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 			if (i > 0) {
 				sb.append("/");
 			}
-			sb.append(params[i]);
+			try {
+				final String param;
+				if (params[i].contains("/") || params[i].contains(" ")) {
+					param = params[i];
+				} else {
+					param = URLEncoder.encode(params[i], "UTF-8");
+				}
+				sb.append(param);
+			} catch (final UnsupportedEncodingException e) {
+				throw new ArangoDBException(e);
+			}
 		}
 		return sb.toString();
 	}

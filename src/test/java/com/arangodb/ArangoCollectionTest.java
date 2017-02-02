@@ -1660,4 +1660,12 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(result.getRevision(), is(notNullValue()));
 	}
 
+	@Test
+	public void keyWithPunctuationCharacter() {
+		final String key = "myKey+";
+		db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key));
+		final BaseDocument doc = db.collection(COLLECTION_NAME).getDocument(key, BaseDocument.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.getKey(), is(key));
+	}
 }
