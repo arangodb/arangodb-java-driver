@@ -78,11 +78,6 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 		return name;
 	}
 
-	public String createDocumentHandle(final String key) {
-		executor.validateDocumentKey(key);
-		return executor.createPath(name, key);
-	}
-
 	protected <T> Request insertDocumentRequest(final T value, final DocumentCreateOptions options) {
 		final Request request = new Request(db, RequestType.POST,
 				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
@@ -186,7 +181,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 
 	protected Request getDocumentRequest(final String key, final DocumentReadOptions options) {
 		final Request request = new Request(db, RequestType.GET,
-				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
+				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, executor.createDocumentHandle(name, key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -198,7 +193,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 		final T value,
 		final DocumentReplaceOptions options) {
 		final Request request = new Request(db, RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
+				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, executor.createDocumentHandle(name, key)));
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.IGNORE_REVS, params.getIgnoreRevs());
@@ -290,7 +285,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 	protected <T> Request updateDocumentRequest(final String key, final T value, final DocumentUpdateOptions options) {
 		final Request request;
 		request = new Request(db, RequestType.PATCH,
-				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
+				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, executor.createDocumentHandle(name, key)));
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
 		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoDBConstants.MERGE_OBJECTS, params.getMergeObjects());
@@ -384,7 +379,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 	protected Request deleteDocumentRequest(final String key, final DocumentDeleteOptions options) {
 		final Request request;
 		request = new Request(db, RequestType.DELETE,
-				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
+				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, executor.createDocumentHandle(name, key)));
 		final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
@@ -453,7 +448,7 @@ public class InternalArangoCollection<E extends ArangoExecutor<R, C>, R, C exten
 	protected Request documentExistsRequest(final String key, final DocumentExistsOptions options) {
 		final Request request;
 		request = new Request(db, RequestType.HEAD,
-				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, createDocumentHandle(key)));
+				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, executor.createDocumentHandle(name, key)));
 		final DocumentExistsOptions params = (options != null ? options : new DocumentExistsOptions());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());

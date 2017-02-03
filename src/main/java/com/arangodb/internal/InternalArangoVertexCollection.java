@@ -61,11 +61,6 @@ public class InternalArangoVertexCollection<E extends ArangoExecutor<R, C>, R, C
 		return name;
 	}
 
-	protected String createDocumentHandle(final String key) {
-		executor.validateDocumentKey(key);
-		return executor.createPath(name, key);
-	}
-
 	protected Request dropRequest() {
 		return new Request(db, RequestType.DELETE,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph, ArangoDBConstants.VERTEX, name));
@@ -98,7 +93,7 @@ public class InternalArangoVertexCollection<E extends ArangoExecutor<R, C>, R, C
 
 	protected Request getVertexRequest(final String key, final DocumentReadOptions options) {
 		final Request request = new Request(db, RequestType.GET, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			graph, ArangoDBConstants.VERTEX, createDocumentHandle(key)));
+			graph, ArangoDBConstants.VERTEX, executor.createDocumentHandle(name, key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -116,7 +111,7 @@ public class InternalArangoVertexCollection<E extends ArangoExecutor<R, C>, R, C
 
 	protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
 		final Request request = new Request(db, RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			graph, ArangoDBConstants.VERTEX, createDocumentHandle(key)));
+			graph, ArangoDBConstants.VERTEX, executor.createDocumentHandle(name, key)));
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -141,7 +136,7 @@ public class InternalArangoVertexCollection<E extends ArangoExecutor<R, C>, R, C
 	protected <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
 		final Request request;
 		request = new Request(db, RequestType.PATCH, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph,
-			ArangoDBConstants.VERTEX, createDocumentHandle(key)));
+			ArangoDBConstants.VERTEX, executor.createDocumentHandle(name, key)));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
 		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -161,8 +156,9 @@ public class InternalArangoVertexCollection<E extends ArangoExecutor<R, C>, R, C
 	}
 
 	protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
-		final Request request = new Request(db, RequestType.DELETE, executor.createPath(
-			ArangoDBConstants.PATH_API_GHARIAL, graph, ArangoDBConstants.VERTEX, createDocumentHandle(key)));
+		final Request request = new Request(db, RequestType.DELETE,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph, ArangoDBConstants.VERTEX,
+					executor.createDocumentHandle(name, key)));
 		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());

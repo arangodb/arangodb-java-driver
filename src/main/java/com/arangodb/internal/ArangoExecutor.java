@@ -42,6 +42,8 @@ import com.arangodb.velocystream.Response;
  */
 public abstract class ArangoExecutor<R, C extends Connection> {
 
+	private static final String SLASH = "/";
+
 	public static interface ResponseDeserializer<T> {
 		T deserialize(Response response) throws VPackException;
 	}
@@ -83,12 +85,12 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < params.length; i++) {
 			if (i > 0) {
-				sb.append("/");
+				sb.append(SLASH);
 			}
 			try {
 				final String param;
-				if (params[i].contains("/") || params[i].contains(" ")) {
-					param = params[i];
+				if (params[i].contains(SLASH)) {
+					param = createPath(params[i].split(SLASH));
 				} else {
 					param = URLEncoder.encode(params[i], "UTF-8");
 				}
@@ -106,6 +108,11 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 
 	public void validateDocumentId(final String id) throws ArangoDBException {
 		validateName("document id", REGEX_DOCUMENT_ID, id);
+	}
+
+	public String createDocumentHandle(final String collection, final String key) {
+		validateDocumentKey(key);
+		return new StringBuffer().append(collection).append(SLASH).append(key).toString();
 	}
 
 	protected void validateName(final String type, final String regex, final CharSequence name)
