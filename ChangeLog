@@ -1,4 +1,4 @@
-v4.1.8 (2017-02-xx)
+v4.1.8 (2017-02-03)
 ---------------------------
 * changed java.util.Date serialization from VPack.date to VPack.string (ISO 8601)
 * changed java.sql.Date serialization from VPack.date to VPack.string (ISO 8601)
