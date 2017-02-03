@@ -1693,11 +1693,12 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void keyWithPunctuationCharacter() {
-		final String key = "myKey+";
+	public void keyWithSpecialCharacter() {
+		final String key = "myKey_-:.@()+,=;$!*'%";
 		db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key));
 		final BaseDocument doc = db.collection(COLLECTION_NAME).getDocument(key, BaseDocument.class);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getKey(), is(key));
 	}
+
 }
