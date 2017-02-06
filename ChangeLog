@@ -1,3 +1,7 @@
+v4.1.9 (2017-02-xx)
+---------------------------
+* added missing IndexType.edge
+
 v4.1.8 (2017-02-03)
 ---------------------------
 * changed java.util.Date serialization from VPack.date to VPack.string (ISO 8601)

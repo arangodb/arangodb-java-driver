@@ -74,6 +74,7 @@ import com.arangodb.model.DocumentUpdateOptions;
 public class ArangoCollectionTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_collection_test";
+	private static final String EDGE_COLLECTION_NAME = "db_edge_collection_test";
 
 	@Before
 	public void setup() {
@@ -802,6 +803,24 @@ public class ArangoCollectionTest extends BaseTest {
 			if (i.getType() == IndexType.hash) {
 				assertThat(i.getFields().size(), is(1));
 				assertThat(i.getFields(), hasItem("a"));
+			}
+		}
+	}
+
+	@Test
+	public void getEdgeIndex() {
+		try {
+			db.createCollection(EDGE_COLLECTION_NAME, new CollectionCreateOptions().type(CollectionType.EDGES));
+			final Collection<IndexEntity> indexes = db.collection(EDGE_COLLECTION_NAME).getIndexes();
+			assertThat(indexes, is(notNullValue()));
+			assertThat(indexes.size(), is(2));
+			for (final IndexEntity i : indexes) {
+				assertThat(i.getType(), anyOf(is(IndexType.primary), is(IndexType.edge)));
+			}
+		} finally {
+			try {
+				db.collection(EDGE_COLLECTION_NAME).drop();
+			} catch (final ArangoDBException e) {
 			}
 		}
 	}
