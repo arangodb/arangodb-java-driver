@@ -142,7 +142,7 @@ public class VPackParser {
 		VPackJsonDeserializer deserializer = null;
 		if (attribute != null) {
 			appendField(attribute, json);
-			deserializer = getDeserializer(attribute, value.type());
+			deserializer = getDeserializer(attribute, value.getType());
 		}
 		if (deserializer != null) {
 			deserializer.deserialize(parent, attribute, value, json);

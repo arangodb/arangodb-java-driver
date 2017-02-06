@@ -80,7 +80,7 @@ public class VPackSlice implements Serializable {
 		return start;
 	}
 
-	protected ValueType type() {
+	public ValueType getType() {
 		return ValueTypeUtil.get(head());
 	}
 
@@ -88,8 +88,8 @@ public class VPackSlice implements Serializable {
 		return ValueLengthUtil.get(head()) - 1;
 	}
 
-	private boolean isType(final ValueType type) {
-		return type() == type;
+	public boolean isType(final ValueType type) {
+		return getType() == type;
 	}
 
 	public boolean isNone() {
@@ -399,7 +399,7 @@ public class VPackSlice implements Serializable {
 		if (valueLength != 0) {
 			size = valueLength;
 		} else {
-			switch (type()) {
+			switch (getType()) {
 			case ARRAY:
 			case OBJECT:
 				if (head == 0x13 || head == 0x14) {
