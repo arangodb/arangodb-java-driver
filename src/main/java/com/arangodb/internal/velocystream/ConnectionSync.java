@@ -85,7 +85,7 @@ public class ConnectionSync extends Connection {
 		super(host, port, timeout, useSsl, sslContext);
 	}
 
-	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+	public synchronized Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
 		super.writeIntern(message, chunks);
 		byte[] chunkBuffer = null;
 		int off = 0;
