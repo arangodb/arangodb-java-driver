@@ -1,6 +1,7 @@
 v4.1.9 (2017-02-xx)
 ---------------------------
 * added missing IndexType.edge
+* fixed Connection (thread-safe)
 * fixed URI encoding
 
 v4.1.8 (2017-02-03)
