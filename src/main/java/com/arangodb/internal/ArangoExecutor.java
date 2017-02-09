@@ -92,7 +92,7 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 				if (params[i].contains(SLASH)) {
 					param = createPath(params[i].split(SLASH));
 				} else {
-					param = URLEncoder.encode(params[i], "UTF-8");
+					param = encode(params[i]);
 				}
 				sb.append(param);
 			} catch (final UnsupportedEncodingException e) {
@@ -100,6 +100,11 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 			}
 		}
 		return sb.toString();
+	}
+
+	private String encode(final String value) throws UnsupportedEncodingException {
+		return URLEncoder.encode(value, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!")
+				.replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
 	}
 
 	public void validateDocumentKey(final String key) throws ArangoDBException {
