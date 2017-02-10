@@ -5,7 +5,7 @@ before_script:
   - ./tests/travis/setup_arangodb.sh
 
 after_script:  
-  - killall -9 arangod
+  - killall -9 arangod_x86_64
   
 install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
 
