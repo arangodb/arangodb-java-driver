@@ -1,4 +1,4 @@
-v4.1.9 (2017-02-xx)
+v4.1.9 (2017-02-10)
 ---------------------------
 * added missing IndexType.edge
 * fixed Connection (thread-safe)
