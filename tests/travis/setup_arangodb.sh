@@ -36,10 +36,6 @@ ${ARANGOD} \
     --javascript.startup-directory ${ARANGODB_DIR}/js \
     --server.authentication=true &
 
-ARANGOD_PID="$!"
-echo "pid is $ARANGOD_PID"
-trap "echo 'shutting down arangod'; kill -TERM $ARANGOD_PID; sleep 5" exit TERM HUP INT
-
 sleep 2
 
 echo "Check for arangod process"
