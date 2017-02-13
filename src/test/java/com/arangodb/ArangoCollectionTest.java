@@ -1720,4 +1720,13 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(doc.getKey(), is(key));
 	}
 
+	@Test
+	public void alreadyUrlEncodedkey() {
+		final String key = "http%3A%2F%2Fexample.com%2F";
+		db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key));
+		final BaseDocument doc = db.collection(COLLECTION_NAME).getDocument(key, BaseDocument.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.getKey(), is(key));
+	}
+
 }
