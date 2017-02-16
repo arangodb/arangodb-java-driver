@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -272,7 +273,8 @@ public class VPack {
 			@Override
 			public void serialize(final VPackBuilder builder, final String attribute, final Object entity)
 					throws VPackParserException {
-				VPack.this.serialize(attribute, entity, entity.getClass(), builder, new HashMap<String, Object>());
+				VPack.this.serialize(attribute, entity, entity.getClass(), builder,
+					Collections.<String, Object> emptyMap());
 			}
 		};
 		deserializationContext = new VPackDeserializationContext() {
@@ -496,7 +498,7 @@ public class VPack {
 	}
 
 	public VPackSlice serialize(final Object entity) throws VPackParserException {
-		return serialize(entity, entity.getClass(), new HashMap<String, Object>());
+		return serialize(entity, entity.getClass(), Collections.<String, Object> emptyMap());
 	}
 
 	public VPackSlice serialize(final Object entity, final Map<String, Object> additionalFields)
@@ -505,7 +507,7 @@ public class VPack {
 	}
 
 	public VPackSlice serialize(final Object entity, final Type type) throws VPackParserException {
-		return serialize(entity, type, new HashMap<String, Object>());
+		return serialize(entity, type, Collections.<String, Object> emptyMap());
 	}
 
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
@@ -561,7 +563,7 @@ public class VPack {
 		final Map<String, FieldInfo> fields = cache.getFields(entity.getClass());
 		for (final FieldInfo fieldInfo : fields.values()) {
 			if (fieldInfo.isSerialize()) {
-				serializeField(entity, builder, fieldInfo, new HashMap<String, Object>());
+				serializeField(entity, builder, fieldInfo, Collections.<String, Object> emptyMap());
 			}
 		}
 		for (final Entry<String, Object> entry : additionalFields.entrySet()) {
@@ -569,7 +571,7 @@ public class VPack {
 			if (!fields.containsKey(key)) {
 				final Object value = entry.getValue();
 				addValue(key, value != null ? value.getClass() : null, value, builder, null,
-					new HashMap<String, Object>());
+					Collections.<String, Object> emptyMap());
 			}
 		}
 	}
@@ -623,7 +625,7 @@ public class VPack {
 			} else if (((Class) type).isEnum()) {
 				builder.add(name, Enum.class.cast(value).name());
 			} else if (((Class) type) != value.getClass()) {
-				addValue(name, value.getClass(), value, builder, fieldInfo, new HashMap<String, Object>());
+				addValue(name, value.getClass(), value, builder, fieldInfo, Collections.<String, Object> emptyMap());
 			} else {
 				serializeObject(name, value, builder, additionalFields);
 			}
@@ -636,7 +638,7 @@ public class VPack {
 		for (int i = 0; i < Array.getLength(value); i++) {
 			final Object element = Array.get(value, i);
 			if (element != null) {
-				addValue(null, element.getClass(), element, builder, null, new HashMap<String, Object>());
+				addValue(null, element.getClass(), element, builder, null, Collections.<String, Object> emptyMap());
 			} else {
 				builder.add(ValueType.NULL);
 			}
@@ -650,7 +652,7 @@ public class VPack {
 		for (final Iterator iterator = Iterable.class.cast(value).iterator(); iterator.hasNext();) {
 			final Object element = iterator.next();
 			addValue(null, element != null ? element.getClass() : null, element, builder, null,
-				new HashMap<String, Object>());
+				Collections.<String, Object> emptyMap());
 		}
 		builder.close();
 	}
@@ -672,14 +674,14 @@ public class VPack {
 					final Object entryValue = entry.getValue();
 					addValue(keyMapAdapter.serialize(entry.getKey()),
 						entryValue != null ? entryValue.getClass() : Object.class, entry.getValue(), builder, null,
-						new HashMap<String, Object>());
+						Collections.<String, Object> emptyMap());
 				}
 				for (final Entry<String, Object> entry : additionalFields.entrySet()) {
 					final String key = entry.getKey();
 					if (!map.containsKey(key)) {
 						final Object additionalValue = entry.getValue();
 						addValue(key, additionalValue != null ? additionalValue.getClass() : null, additionalValue,
-							builder, null, new HashMap<String, Object>());
+							builder, null, Collections.<String, Object> emptyMap());
 					}
 				}
 				additionalFields.clear();
@@ -691,9 +693,9 @@ public class VPack {
 					final String s = null;
 					builder.add(s, ValueType.OBJECT);
 					addValue(ATTR_KEY, entry.getKey().getClass(), entry.getKey(), builder, null,
-						new HashMap<String, Object>());
+						Collections.<String, Object> emptyMap());
 					addValue(ATTR_VALUE, entry.getValue().getClass(), entry.getValue(), builder, null,
-						new HashMap<String, Object>());
+						Collections.<String, Object> emptyMap());
 					builder.close();
 				}
 				builder.close();
