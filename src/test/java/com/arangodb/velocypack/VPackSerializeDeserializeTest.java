@@ -21,6 +21,7 @@
 package com.arangodb.velocypack;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -981,7 +982,83 @@ public class VPackSerializeDeserializeTest {
 		}
 	}
 
+	protected static class TestCollection extends LinkedList<String> {
+
+	}
+
+	protected static class TestEntityCollectionExtendedWithNulls {
+
+		protected TestCollection a1;
+
+		public TestCollection getA1() {
+			return a1;
+		}
+
+		public void setA1(final TestCollection a1) {
+			this.a1 = a1;
+		}
+
+	}
+
+	@Test
+	public void fromCollectionExtendedWithNulls() throws Exception {
+
+		final TestCollection collection = new TestCollection();
+		collection.add("one");
+		collection.add(null);
+		collection.add("two");
+
+		final TestEntityCollectionExtendedWithNulls entity = new TestEntityCollectionExtendedWithNulls();
+		entity.setA1(collection);
+
+		final VPackSlice vpack = new VPack.Builder()
+				.serializeNullValues(true)
+				.build()
+				.serialize(entity);
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		{
+			final VPackSlice a1 = vpack.get("a1");
+			assertThat(a1.isArray(), is(true));
+			assertThat(a1.getLength(), is(entity.a1.size()));
+
+			VPackSlice at = a1.get(0);
+			assertThat(at.isString(), is(true));
+			assertThat(at.getAsString(), is(entity.a1.get(0)));
+			at = a1.get(1);
+			assertThat(at.isNull(), is(true));
+			at = a1.get(2);
+			assertThat(at.isString(), is(true));
+			assertThat(at.getAsString(), is(entity.a1.get(2)));
+		}
+	}
+
+	@Test
+	public void toCollectionExtendedWithNulls() throws Exception {
+		final VPackBuilder builder = new VPackBuilder();
+		{
+			builder.add(ValueType.OBJECT);
+			{
+				builder.add("a1", ValueType.ARRAY);
+				builder.add("one");
+				builder.add(ValueType.NULL);
+				builder.add("two");
+				builder.close();
+			}
+			builder.close();
+		}
+
+		final VPackSlice vpack = builder.slice();
+		final TestEntityCollectionExtendedWithNulls entity = new VPack.Builder()
+				.build().deserialize(vpack, TestEntityCollectionExtendedWithNulls.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.getA1(), is(notNullValue()));
+		assertThat(entity.getA1().size(), is(3));
+		assertThat(entity.getA1(), contains("one", null, "two"));
+	}
+
 	protected static class TestEntityArrayInArrayInArray {
+
 		private double[][][] a1;
 
 		public double[][][] getA1() {

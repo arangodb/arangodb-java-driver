@@ -187,7 +187,7 @@ public class VPackCache {
 		final Class<?> clazz = field.getType();
 		final Type type;
 		if (Collection.class.isAssignableFrom(clazz) || Map.class.isAssignableFrom(clazz)) {
-			type = (ParameterizedType) field.getGenericType();
+			type = field.getGenericType();
 		} else {
 			type = clazz;
 		}

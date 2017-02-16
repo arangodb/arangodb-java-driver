@@ -652,7 +652,7 @@ public class VPack {
 		builder.add(name, ValueType.ARRAY);
 		for (final Iterator iterator = Iterable.class.cast(value).iterator(); iterator.hasNext();) {
 			final Object element = iterator.next();
-			addValue(null, element.getClass(), element, builder, null, additionalFields);
+			addValue(null, element != null ? element.getClass() : null, element, builder, null, additionalFields);
 		}
 		builder.close();
 	}
