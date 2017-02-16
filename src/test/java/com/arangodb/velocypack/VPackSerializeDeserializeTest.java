@@ -20,8 +20,8 @@
 
 package com.arangodb.velocypack;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -54,6 +54,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 
+import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
 import com.arangodb.velocypack.exception.VPackException;
@@ -437,7 +438,6 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.s1, is((short) 2));
 		assertThat(entity.s2, is(new Short((short) 3)));
 	}
-
 
 	protected static class TestEntityByte {
 		private byte b1 = 1; // short integer path
@@ -1037,6 +1037,7 @@ public class VPackSerializeDeserializeTest {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	protected static class TestCollection extends LinkedList<String> {
 
 	}
@@ -1066,10 +1067,7 @@ public class VPackSerializeDeserializeTest {
 		final TestEntityCollectionExtendedWithNulls entity = new TestEntityCollectionExtendedWithNulls();
 		entity.setA1(collection);
 
-		final VPackSlice vpack = new VPack.Builder()
-				.serializeNullValues(true)
-				.build()
-				.serialize(entity);
+		final VPackSlice vpack = new VPack.Builder().serializeNullValues(true).build().serialize(entity);
 		assertThat(vpack, is(notNullValue()));
 		assertThat(vpack.isObject(), is(true));
 		{
@@ -1104,8 +1102,8 @@ public class VPackSerializeDeserializeTest {
 		}
 
 		final VPackSlice vpack = builder.slice();
-		final TestEntityCollectionExtendedWithNulls entity = new VPack.Builder()
-				.build().deserialize(vpack, TestEntityCollectionExtendedWithNulls.class);
+		final TestEntityCollectionExtendedWithNulls entity = new VPack.Builder().build().deserialize(vpack,
+			TestEntityCollectionExtendedWithNulls.class);
 		assertThat(entity, is(notNullValue()));
 		assertThat(entity.getA1(), is(notNullValue()));
 		assertThat(entity.getA1().size(), is(3));
@@ -3312,6 +3310,36 @@ public class VPackSerializeDeserializeTest {
 		final VPackSlice a = vpack.get("a");
 		assertThat(a.isString(), is(true));
 		assertThat(a.getAsString(), is("test"));
+	}
+
+	@Test
+	public void additionalFieldsNestedPojo() {
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityObject(),
+			new MapBuilder().put("foo", "bar").get());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.size(), is(3));
+		assertThat(vpack.get("foo").isString(), is(true));
+		assertThat(vpack.get("foo").getAsString(), is("bar"));
+
+		assertThat(vpack.get("o1").isObject(), is(true));
+		assertThat(vpack.get("o1").get("foo").isNone(), is(true));
+		assertThat(vpack.get("o2").isObject(), is(true));
+		assertThat(vpack.get("o2").get("foo").isNone(), is(true));
+	}
+
+	@Test
+	public void additionalFieldsNestedMap() {
+		final VPackSlice vpack = new VPack.Builder().build().serialize(
+			new MapBuilder().put("n", new MapBuilder().get()).get(), new MapBuilder().put("foo", "bar").get());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		assertThat(vpack.size(), is(2));
+		assertThat(vpack.get("foo").isString(), is(true));
+		assertThat(vpack.get("foo").getAsString(), is("bar"));
+
+		assertThat(vpack.get("n").isObject(), is(true));
+		assertThat(vpack.get("n").size(), is(0));
 	}
 
 	@Test

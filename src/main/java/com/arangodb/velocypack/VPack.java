@@ -561,14 +561,15 @@ public class VPack {
 		final Map<String, FieldInfo> fields = cache.getFields(entity.getClass());
 		for (final FieldInfo fieldInfo : fields.values()) {
 			if (fieldInfo.isSerialize()) {
-				serializeField(entity, builder, fieldInfo, additionalFields);
+				serializeField(entity, builder, fieldInfo, new HashMap<String, Object>());
 			}
 		}
 		for (final Entry<String, Object> entry : additionalFields.entrySet()) {
 			final String key = entry.getKey();
 			if (!fields.containsKey(key)) {
 				final Object value = entry.getValue();
-				addValue(key, value != null ? value.getClass() : null, value, builder, null, additionalFields);
+				addValue(key, value != null ? value.getClass() : null, value, builder, null,
+					new HashMap<String, Object>());
 			}
 		}
 	}
@@ -607,39 +608,35 @@ public class VPack {
 				final ParameterizedType pType = ParameterizedType.class.cast(type);
 				final Type rawType = pType.getRawType();
 				if (Iterable.class.isAssignableFrom((Class<?>) rawType)) {
-					serializeIterable(name, value, builder, additionalFields);
+					serializeIterable(name, value, builder);
 				} else if (Map.class.isAssignableFrom((Class<?>) rawType)) {
 					serializeMap(name, value, builder, pType.getActualTypeArguments()[0], additionalFields);
 				} else {
 					serializeObject(name, value, builder, additionalFields);
 				}
 			} else if (Iterable.class.isAssignableFrom((Class<?>) type)) {
-				serializeIterable(name, value, builder, additionalFields);
+				serializeIterable(name, value, builder);
 			} else if (Map.class.isAssignableFrom((Class<?>) type)) {
 				serializeMap(name, value, builder, String.class, additionalFields);
 			} else if (((Class) type).isArray()) {
-				serializeArray(name, value, builder, additionalFields);
+				serializeArray(name, value, builder);
 			} else if (((Class) type).isEnum()) {
 				builder.add(name, Enum.class.cast(value).name());
 			} else if (((Class) type) != value.getClass()) {
-				addValue(name, value.getClass(), value, builder, fieldInfo, additionalFields);
+				addValue(name, value.getClass(), value, builder, fieldInfo, new HashMap<String, Object>());
 			} else {
 				serializeObject(name, value, builder, additionalFields);
 			}
 		}
 	}
 
-	private void serializeArray(
-		final String name,
-		final Object value,
-		final VPackBuilder builder,
-		final Map<String, Object> additionalFields)
+	private void serializeArray(final String name, final Object value, final VPackBuilder builder)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, VPackException {
 		builder.add(name, ValueType.ARRAY);
 		for (int i = 0; i < Array.getLength(value); i++) {
 			final Object element = Array.get(value, i);
 			if (element != null) {
-				addValue(null, element.getClass(), element, builder, null, additionalFields);
+				addValue(null, element.getClass(), element, builder, null, new HashMap<String, Object>());
 			} else {
 				builder.add(ValueType.NULL);
 			}
@@ -647,16 +644,13 @@ public class VPack {
 		builder.close();
 	}
 
-	private void serializeIterable(
-		final String name,
-		final Object value,
-		final VPackBuilder builder,
-		final Map<String, Object> additionalFields)
+	private void serializeIterable(final String name, final Object value, final VPackBuilder builder)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, VPackException {
 		builder.add(name, ValueType.ARRAY);
 		for (final Iterator iterator = Iterable.class.cast(value).iterator(); iterator.hasNext();) {
 			final Object element = iterator.next();
-			addValue(null, element != null ? element.getClass() : null, element, builder, null, additionalFields);
+			addValue(null, element != null ? element.getClass() : null, element, builder, null,
+				new HashMap<String, Object>());
 		}
 		builder.close();
 	}
@@ -678,8 +672,17 @@ public class VPack {
 					final Object entryValue = entry.getValue();
 					addValue(keyMapAdapter.serialize(entry.getKey()),
 						entryValue != null ? entryValue.getClass() : Object.class, entry.getValue(), builder, null,
-						additionalFields);
+						new HashMap<String, Object>());
 				}
+				for (final Entry<String, Object> entry : additionalFields.entrySet()) {
+					final String key = entry.getKey();
+					if (!map.containsKey(key)) {
+						final Object additionalValue = entry.getValue();
+						addValue(key, additionalValue != null ? additionalValue.getClass() : null, additionalValue,
+							builder, null, new HashMap<String, Object>());
+					}
+				}
+				additionalFields.clear();
 				builder.close();
 			} else {
 				builder.add(name, ValueType.ARRAY);
@@ -687,9 +690,10 @@ public class VPack {
 				for (final Entry<?, ?> entry : entrySet) {
 					final String s = null;
 					builder.add(s, ValueType.OBJECT);
-					addValue(ATTR_KEY, entry.getKey().getClass(), entry.getKey(), builder, null, additionalFields);
+					addValue(ATTR_KEY, entry.getKey().getClass(), entry.getKey(), builder, null,
+						new HashMap<String, Object>());
 					addValue(ATTR_VALUE, entry.getValue().getClass(), entry.getValue(), builder, null,
-						additionalFields);
+						new HashMap<String, Object>());
 					builder.close();
 				}
 				builder.close();
