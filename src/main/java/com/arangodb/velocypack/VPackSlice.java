@@ -253,6 +253,10 @@ public class VPackSlice implements Serializable {
 		return getAsNumber().shortValue();
 	}
 
+	public byte getAsByte() {
+		return getAsNumber().byteValue();
+	}
+
 	public BigInteger getAsBigInteger() {
 		if (isSmallInt() || isInt()) {
 			return BigInteger.valueOf(getAsLong());

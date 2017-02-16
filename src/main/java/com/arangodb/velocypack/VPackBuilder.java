@@ -152,6 +152,17 @@ public class VPackBuilder {
 			}
 		}
 	};
+	private static final Appender<Byte> BYTE = new Appender<Byte>() {
+		@Override
+		public void append(final VPackBuilder builder, final Byte value) {
+			if (value <= 9 && value >= -6) {
+				builder.appendSmallInt(value);
+			} else {
+				builder.add((byte) 0x23);
+				builder.append(value, INTEGER_BYTES);
+			}
+		}
+	};
 	private static final Appender<BigInteger> BIG_INTEGER = new Appender<BigInteger>() {
 		@Override
 		public void append(final VPackBuilder builder, final BigInteger value) throws VPackBuilderException {
@@ -379,6 +390,10 @@ public class VPackBuilder {
 
 	public VPackBuilder add(final String attribute, final Short value) throws VPackBuilderException {
 		return addInternal(attribute, SHORT, value);
+	}
+
+	public VPackBuilder add(final String attribute, final Byte value) throws VPackBuilderException {
+		return addInternal(attribute, BYTE, value);
 	}
 
 	public VPackBuilder add(final String attribute, final BigInteger value) throws VPackBuilderException {

@@ -126,6 +126,8 @@ public class VPack {
 			serializers.put(VPackSlice.class, VPackSerializers.VPACK);
 			serializers.put(UUID.class, VPackSerializers.UUID);
 			serializers.put(new byte[] {}.getClass(), VPackSerializers.BYTE_ARRAY);
+			serializers.put(Byte.class, VPackSerializers.BYTE);
+			serializers.put(byte.class, VPackSerializers.BYTE);
 
 			deserializers.put(String.class, VPackDeserializers.STRING);
 			deserializers.put(Boolean.class, VPackDeserializers.BOOLEAN);
@@ -151,6 +153,8 @@ public class VPack {
 			deserializers.put(VPackSlice.class, VPackDeserializers.VPACK);
 			deserializers.put(UUID.class, VPackDeserializers.UUID);
 			deserializers.put(new byte[] {}.getClass(), VPackDeserializers.BYTE_ARRAY);
+			deserializers.put(Byte.class, VPackDeserializers.BYTE);
+			deserializers.put(byte.class, VPackDeserializers.BYTE);
 
 			annotationFieldFilter.put(Expose.class, new VPackAnnotationFieldFilter<Expose>() {
 				@Override
