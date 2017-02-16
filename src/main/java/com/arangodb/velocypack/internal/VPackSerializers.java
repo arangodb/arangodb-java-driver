@@ -215,4 +215,14 @@ public class VPackSerializers {
 			builder.add(attribute, DatatypeConverter.printBase64Binary(value));
 		}
 	};
+	public static final VPackSerializer<Byte> BYTE = new VPackSerializer<Byte>() {
+		@Override
+		public void serialize(
+				final VPackBuilder builder,
+				final String attribute,
+				final Byte value,
+				final VPackSerializationContext context) {
+			builder.add(attribute, value);
+		}
+	};
 }

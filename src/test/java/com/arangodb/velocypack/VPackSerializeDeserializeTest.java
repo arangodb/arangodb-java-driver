@@ -438,6 +438,61 @@ public class VPackSerializeDeserializeTest {
 		assertThat(entity.s2, is(new Short((short) 3)));
 	}
 
+
+	protected static class TestEntityByte {
+		private byte b1 = 1; // short integer path
+		private Byte b2 = 100; // integer path
+
+		public byte getB1() {
+			return b1;
+		}
+
+		public void setB1(final byte b1) {
+			this.b1 = b1;
+		}
+
+		public Byte getB2() {
+			return b2;
+		}
+
+		public void setB2(final Byte b2) {
+			this.b2 = b2;
+		}
+	}
+
+	@Test
+	public void fromByte() throws VPackException {
+		final VPackSlice vpack = new VPack.Builder().build().serialize(new TestEntityByte());
+		assertThat(vpack, is(notNullValue()));
+		assertThat(vpack.isObject(), is(true));
+		{
+			final VPackSlice b1 = vpack.get("b1");
+			assertThat(b1.isInteger(), is(true));
+			assertThat(b1.getAsByte(), is((byte) 1));
+		}
+		{
+			final VPackSlice b2 = vpack.get("b2");
+			assertThat(b2.isInteger(), is(true));
+			assertThat(b2.getAsByte(), is((byte) 100));
+		}
+	}
+
+	@Test
+	public void toByte() throws VPackException {
+		final VPackBuilder builder = new VPackBuilder();
+		{
+			builder.add(ValueType.OBJECT);
+			builder.add("b1", 30); // integer path
+			builder.add("b2", 4); // short integer path
+			builder.close();
+		}
+		final VPackSlice vpack = builder.slice();
+		final TestEntityByte entity = new VPack.Builder().build().deserialize(vpack, TestEntityByte.class);
+		assertThat(entity, is(notNullValue()));
+		assertThat(entity.b1, is((byte) 30));
+		assertThat(entity.b2, is(new Byte((byte) 4)));
+	}
+
 	protected static class TestEntityDouble {
 		private Double d1 = 1.5;
 		private double d2 = 1.5;

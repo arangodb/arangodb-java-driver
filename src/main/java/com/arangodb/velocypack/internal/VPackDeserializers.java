@@ -231,5 +231,14 @@ public class VPackDeserializers {
 		}
 
 	};
+	public static final VPackDeserializer<Byte> BYTE = new VPackDeserializer<Byte>() {
+		@Override
+		public Byte deserialize(
+				final VPackSlice parent,
+				final VPackSlice vpack,
+				final VPackDeserializationContext context) {
+			return vpack.getAsByte();
+		}
+	};
 
 }
