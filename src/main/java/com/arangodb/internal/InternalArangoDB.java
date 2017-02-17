@@ -75,7 +75,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 				final String[] split = host.split(":");
 				if (split.length != 2 || !split[1].matches("[0-9]+")) {
 					throw new ArangoDBException(String.format(
-						"Could not load property-value arangodb.hosts=%s. Expected format host:ip,host:ip,...",
+						"Could not load property-value arangodb.hosts=%s. Expected format ip:port,ip:port,...",
 						hostsProp));
 				} else {
 					hosts.add(new Host(split[0], Integer.valueOf(split[1])));
