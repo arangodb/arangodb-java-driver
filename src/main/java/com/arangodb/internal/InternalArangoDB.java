@@ -99,7 +99,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	}
 
 	protected static String loadUser(final Properties properties, final String currentValue) {
-		return getProperty(properties, PROPERTY_KEY_USER, currentValue, null);
+		return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDBConstants.DEFAULT_USER);
 	}
 
 	protected static String loadPassword(final Properties properties, final String currentValue) {
