@@ -1,3 +1,7 @@
+v4.1.10 (2017-02-xx)
+---------------------------
+* changed velocystream message sending to async
+
 v4.1.9 (2017-02-10)
 ---------------------------
 * added missing IndexType.edge

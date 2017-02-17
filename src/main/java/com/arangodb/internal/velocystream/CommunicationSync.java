@@ -105,7 +105,7 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
 		final CollectionCache collectionCache, final Integer chunksize) {
 		super(host, port, timeout, user, password, useSsl, sslContext, vpack, collectionCache, chunksize,
-				new ConnectionSync.Builder().host(host).port(port).timeout(timeout).useSsl(useSsl)
+				new ConnectionSync.Builder(new MessageStore()).host(host).port(port).timeout(timeout).useSsl(useSsl)
 						.sslContext(sslContext).build());
 	}
 

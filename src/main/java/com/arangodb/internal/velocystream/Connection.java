@@ -29,6 +29,9 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
@@ -51,6 +54,9 @@ public abstract class Connection {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
 	private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
 
+	private ExecutorService executor;
+	protected final MessageStore messageStore;
+
 	private final String host;
 	private final Integer port;
 	private final Integer timeout;
@@ -62,13 +68,14 @@ public abstract class Connection {
 	private InputStream inputStream;
 
 	protected Connection(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
-		final SSLContext sslContext) {
+		final SSLContext sslContext, final MessageStore messageStore) {
 		super();
 		this.host = host;
 		this.port = port;
 		this.timeout = timeout;
 		this.useSsl = useSsl;
 		this.sslContext = sslContext;
+		this.messageStore = messageStore;
 	}
 
 	public boolean isOpen() {
@@ -111,11 +118,44 @@ public abstract class Connection {
 			((SSLSocket) socket).startHandshake();
 		}
 		sendProtocolHeader();
+		executor = Executors.newSingleThreadExecutor();
+		executor.submit(new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				final ChunkStore chunkStore = new ChunkStore(messageStore);
+				while (true) {
+					if (!isOpen()) {
+						messageStore.clear(new IOException("The socket is closed."));
+						close();
+						break;
+					}
+					try {
+						final Chunk chunk = readChunk();
+						final ByteBuffer chunkBuffer = chunkStore.storeChunk(chunk);
+						if (chunkBuffer != null) {
+							final byte[] buf = new byte[chunk.getContentLength()];
+							readBytesIntoBuffer(buf, 0, buf.length);
+							chunkBuffer.put(buf);
+							chunkStore.checkCompleteness(chunk.getMessageId());
+						}
+					} catch (final Exception e) {
+						messageStore.clear(e);
+						close();
+						break;
+					}
+				}
+				return null;
+			}
+		});
 	}
 
 	public synchronized void close() {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Close connection %s", socket));
+		}
+		messageStore.clear();
+		if (executor != null && !executor.isShutdown()) {
+			executor.shutdown();
 		}
 		if (socket != null) {
 			try {

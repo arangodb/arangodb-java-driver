@@ -20,13 +20,12 @@
 
 package com.arangodb.internal.velocystream;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import javax.net.ssl.SSLContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 
@@ -36,8 +35,6 @@ import com.arangodb.ArangoDBException;
  */
 public class ConnectionSync extends Connection {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionSync.class);
-
 	public static class Builder {
 
 		private String host;
@@ -45,9 +42,11 @@ public class ConnectionSync extends Connection {
 		private Integer timeout;
 		private Boolean useSsl;
 		private SSLContext sslContext;
+		private final MessageStore messageStore;
 
-		public Builder() {
+		public Builder(final MessageStore messageStore) {
 			super();
+			this.messageStore = messageStore;
 		}
 
 		public Builder host(final String host) {
@@ -76,47 +75,31 @@ public class ConnectionSync extends Connection {
 		}
 
 		public ConnectionSync build() {
-			return new ConnectionSync(host, port, timeout, useSsl, sslContext);
+			return new ConnectionSync(host, port, timeout, useSsl, sslContext, messageStore);
 		}
 	}
 
 	private ConnectionSync(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
-		final SSLContext sslContext) {
-		super(host, port, timeout, useSsl, sslContext);
+		final SSLContext sslContext, final MessageStore messageStore) {
+		super(host, port, timeout, useSsl, sslContext, messageStore);
 	}
 
-	public synchronized Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+		final FutureTask<Message> task = new FutureTask<Message>(new Callable<Message>() {
+			@Override
+			public Message call() throws Exception {
+				return messageStore.get(message.getId());
+			}
+		});
+		messageStore.storeMessage(message.getId(), task);
 		super.writeIntern(message, chunks);
-		byte[] chunkBuffer = null;
-		int off = 0;
-		while (chunkBuffer == null || off < chunkBuffer.length) {
-			if (!isOpen()) {
-				close();
-				throw new ArangoDBException(new IOException("The socket is closed."));
-			}
-			try {
-				final Chunk chunk = readChunk();
-				final int contentLength = chunk.getContentLength();
-				if (chunkBuffer == null) {
-					if (!chunk.isFirstChunk()) {
-						throw new ArangoDBException("Wrong Chunk recieved! Expected first Chunk.");
-					}
-					final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength() : contentLength);
-					chunkBuffer = new byte[length];
-				}
-				readBytesIntoBuffer(chunkBuffer, off, contentLength);
-				off += contentLength;
-			} catch (final Exception e) {
-				close();
-				throw new ArangoDBException(e);
-			}
+		try {
+			return task.get();
+		} catch (final InterruptedException e) {
+			throw new ArangoDBException(e);
+		} catch (final ExecutionException e) {
+			throw new ArangoDBException(e);
 		}
-		final Message responseMessage = new Message(message.getId(), chunkBuffer);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Received Message (id=%s, head=%s, body=%s)", responseMessage.getId(),
-				responseMessage.getHead(), responseMessage.getBody() != null ? responseMessage.getBody() : "{}"));
-		}
-		return responseMessage;
 	}
 
 }
