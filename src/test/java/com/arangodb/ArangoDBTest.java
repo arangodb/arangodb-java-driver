@@ -406,4 +406,16 @@ public class ArangoDBTest {
 			assertThat(e.getErrorMessage(), is("database not found"));
 		}
 	}
+
+	@Test
+	public void fallbackHost() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().host("not-accessible", 8529).host("127.0.0.1", 8529).build();
+		final ArangoDBVersion version = arangoDB.getVersion();
+		assertThat(version, is(notNullValue()));
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void loadproperties() {
+		new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad.properties"));
+	}
 }

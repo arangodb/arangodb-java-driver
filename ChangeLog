@@ -2,6 +2,7 @@ v4.1.10 (2017-02-xx)
 ---------------------------
 * changed velocystream message sending to async
 * changed return value of getVertex/getEdge to null if not exists
+* added support for multiple hosts as fallbacks
 * added support serializing collections with null elements
 * added support serializing non-generic classes that extend collections
 * added support serializing/deserializing byte and Byte

@@ -37,26 +37,16 @@ public class ConnectionSync extends Connection {
 
 	public static class Builder {
 
-		private String host;
-		private Integer port;
+		private final HostHandler hostHandler;
+		private final MessageStore messageStore;
 		private Integer timeout;
 		private Boolean useSsl;
 		private SSLContext sslContext;
-		private final MessageStore messageStore;
 
-		public Builder(final MessageStore messageStore) {
+		public Builder(final HostHandler hostHandler, final MessageStore messageStore) {
 			super();
+			this.hostHandler = hostHandler;
 			this.messageStore = messageStore;
-		}
-
-		public Builder host(final String host) {
-			this.host = host;
-			return this;
-		}
-
-		public Builder port(final Integer port) {
-			this.port = port;
-			return this;
 		}
 
 		public Builder timeout(final Integer timeout) {
@@ -75,13 +65,13 @@ public class ConnectionSync extends Connection {
 		}
 
 		public ConnectionSync build() {
-			return new ConnectionSync(host, port, timeout, useSsl, sslContext, messageStore);
+			return new ConnectionSync(hostHandler, timeout, useSsl, sslContext, messageStore);
 		}
 	}
 
-	private ConnectionSync(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
+	private ConnectionSync(final HostHandler hostHandler, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
-		super(host, port, timeout, useSsl, sslContext, messageStore);
+		super(hostHandler, timeout, useSsl, sslContext, messageStore);
 	}
 
 	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {

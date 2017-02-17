@@ -23,7 +23,9 @@ package com.arangodb;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
@@ -43,6 +45,8 @@ import com.arangodb.internal.velocypack.VPackConfigure;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.CommunicationSync;
 import com.arangodb.internal.velocystream.ConnectionSync;
+import com.arangodb.internal.velocystream.DefaultHostHandler;
+import com.arangodb.internal.velocystream.Host;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -68,17 +72,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 	public static class Builder {
 
-		private static final String PROPERTY_KEY_HOST = "arangodb.host";
-		private static final String PROPERTY_KEY_PORT = "arangodb.port";
-		private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
-		private static final String PROPERTY_KEY_USER = "arangodb.user";
-		private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
-		private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
-		private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
-		private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
-
-		private String host;
-		private Integer port;
+		private final List<Host> hosts;
+		private Host host;
 		private Integer timeout;
 		private String user;
 		private String password;
@@ -95,25 +90,25 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			collectionCache = new CollectionCache();
 			vpackParser = new VPackParser();
 			VPackConfigure.configure(vpackBuilder, vpackParser, collectionCache);
+			host = new Host(ArangoDBConstants.DEFAULT_HOST, ArangoDBConstants.DEFAULT_PORT);
+			hosts = new ArrayList<Host>();
 			loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
 		}
 
-		public Builder loadProperties(final InputStream in) {
+		public Builder loadProperties(final InputStream in) throws ArangoDBException {
 			if (in != null) {
 				final Properties properties = new Properties();
 				try {
 					properties.load(in);
-					host = getProperty(properties, PROPERTY_KEY_HOST, host, ArangoDBConstants.DEFAULT_HOST);
-					port = Integer
-							.parseInt(getProperty(properties, PROPERTY_KEY_PORT, port, ArangoDBConstants.DEFAULT_PORT));
-					timeout = Integer.parseInt(
-						getProperty(properties, PROPERTY_KEY_TIMEOUT, timeout, ArangoDBConstants.DEFAULT_TIMEOUT));
-					user = getProperty(properties, PROPERTY_KEY_USER, user, null);
-					password = getProperty(properties, PROPERTY_KEY_PASSWORD, password, null);
-					useSsl = Boolean.parseBoolean(
-						getProperty(properties, PROPERTY_KEY_USE_SSL, useSsl, ArangoDBConstants.DEFAULT_USE_SSL));
-					chunksize = Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE,
-						chunksize, ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
+					loadHosts(properties, this.hosts);
+					final String host = loadHost(properties, this.host.getHost());
+					final int port = loadPort(properties, this.host.getPort());
+					this.host = new Host(host, port);
+					timeout = loadTimeout(properties, timeout);
+					user = loadUser(properties, user);
+					password = loadPassword(properties, password);
+					useSsl = loadUseSsl(properties, useSsl);
+					chunksize = loadChunkSize(properties, chunksize);
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}
@@ -121,22 +116,41 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
-		private <T> String getProperty(
-			final Properties properties,
-			final String key,
-			final T currentValue,
-			final T defaultValue) {
-			return properties.getProperty(key,
-				currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
-		}
-
+		/**
+		 * @deprecated will be removed in version 4.2.0 use {@link #host(String, int)} instead
+		 * 
+		 * @param host
+		 * @return
+		 */
+		@Deprecated
 		public Builder host(final String host) {
-			this.host = host;
+			this.host = new Host(host, this.host.getPort());
 			return this;
 		}
 
+		/**
+		 * @deprecated will be removed in version 4.2.0 use {@link #host(String, int)} instead
+		 * 
+		 * @param port
+		 * @return
+		 */
+		@Deprecated
 		public Builder port(final Integer port) {
-			this.port = port;
+			host = new Host(host.getHost(), port);
+			return this;
+		}
+
+		/**
+		 * Adds a host to connect to. Multiple hosts can be added to provide fallbacks.
+		 * 
+		 * @param host
+		 *            address of the host
+		 * @param port
+		 *            port of the host
+		 * @return {@link ArangoDB.Builder}
+		 */
+		public Builder host(final String host, final int port) {
+			hosts.add(new Host(host, port));
 			return this;
 		}
 
@@ -240,9 +254,12 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		}
 
 		public ArangoDB build() {
+			if (hosts.isEmpty()) {
+				hosts.add(host);
+			}
 			return new ArangoDB(
-					new CommunicationSync.Builder().host(host).port(port).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize),
+					new CommunicationSync.Builder(new DefaultHostHandler(hosts)).timeout(timeout).user(user)
+							.password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 

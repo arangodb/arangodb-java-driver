@@ -57,8 +57,7 @@ public abstract class Connection {
 	private ExecutorService executor;
 	protected final MessageStore messageStore;
 
-	private final String host;
-	private final Integer port;
+	private final HostHandler hostHandler;
 	private final Integer timeout;
 	private final Boolean useSsl;
 	private final SSLContext sslContext;
@@ -67,11 +66,10 @@ public abstract class Connection {
 	private OutputStream outputStream;
 	private InputStream inputStream;
 
-	protected Connection(final String host, final Integer port, final Integer timeout, final Boolean useSsl,
+	protected Connection(final HostHandler hostHandler, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
 		super();
-		this.host = host;
-		this.port = port;
+		this.hostHandler = hostHandler;
 		this.timeout = timeout;
 		this.useSsl = useSsl;
 		this.sslContext = sslContext;
@@ -86,22 +84,36 @@ public abstract class Connection {
 		if (isOpen()) {
 			return;
 		}
-		if (useSsl != null && useSsl) {
-			if (sslContext != null) {
-				socket = sslContext.getSocketFactory().createSocket();
-			} else {
-				socket = SSLSocketFactory.getDefault().createSocket();
+		Host host = hostHandler.get();
+		while (true) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(String.format("Open connection to %s", host));
 			}
-		} else {
-			socket = SocketFactory.getDefault().createSocket();
+			try {
+				if (useSsl != null && useSsl) {
+					if (sslContext != null) {
+						socket = sslContext.getSocketFactory().createSocket();
+					} else {
+						socket = SSLSocketFactory.getDefault().createSocket();
+					}
+				} else {
+					socket = SocketFactory.getDefault().createSocket();
+				}
+				socket.connect(new InetSocketAddress(host.getHost(), host.getPort()),
+					timeout != null ? timeout : ArangoDBConstants.DEFAULT_TIMEOUT);
+				hostHandler.success();
+				break;
+			} catch (final IOException e) {
+				hostHandler.fail();
+				final Host failedHost = host;
+				host = hostHandler.change();
+				if (host != null) {
+					LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s", failedHost, host));
+				} else {
+					throw e;
+				}
+			}
 		}
-		final String host = this.host != null ? this.host : ArangoDBConstants.DEFAULT_HOST;
-		final Integer port = this.port != null ? this.port : ArangoDBConstants.DEFAULT_PORT;
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Open connection to addr=%s,port=%s", host, port));
-		}
-		socket.connect(new InetSocketAddress(host, port),
-			timeout != null ? timeout : ArangoDBConstants.DEFAULT_TIMEOUT);
 		socket.setKeepAlive(true);
 		socket.setTcpNoDelay(true);
 		if (LOGGER.isDebugEnabled()) {

@@ -60,9 +60,9 @@ public abstract class Communication<R, C extends Connection> {
 
 	protected final Integer chunksize;
 
-	protected Communication(final String host, final Integer port, final Integer timeout, final String user,
-		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
-		final CollectionCache collectionCache, final Integer chunksize, final C connection) {
+	protected Communication(final Integer timeout, final String user, final String password, final Boolean useSsl,
+		final SSLContext sslContext, final VPack vpack, final CollectionCache collectionCache, final Integer chunksize,
+		final C connection) {
 		this.user = user;
 		this.password = password;
 		this.vpack = vpack;

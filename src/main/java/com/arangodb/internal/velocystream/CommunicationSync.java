@@ -42,8 +42,8 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationSync.class);
 
 	public static class Builder {
-		private String host;
-		private Integer port;
+
+		private final HostHandler hostHandler;
 		private Integer timeout;
 		private String user;
 		private String password;
@@ -51,18 +51,9 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 		private SSLContext sslContext;
 		private Integer chunksize;
 
-		public Builder() {
+		public Builder(final HostHandler hostHandler) {
 			super();
-		}
-
-		public Builder host(final String host) {
-			this.host = host;
-			return this;
-		}
-
-		public Builder port(final Integer port) {
-			this.port = port;
-			return this;
+			this.hostHandler = hostHandler;
 		}
 
 		public Builder timeout(final Integer timeout) {
@@ -96,16 +87,16 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 		}
 
 		public Communication<Response, ConnectionSync> build(final VPack vpack, final CollectionCache collectionCache) {
-			return new CommunicationSync(host, port, timeout, user, password, useSsl, sslContext, vpack,
+			return new CommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, vpack,
 					collectionCache, chunksize);
 		}
 	}
 
-	protected CommunicationSync(final String host, final Integer port, final Integer timeout, final String user,
+	protected CommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
 		final CollectionCache collectionCache, final Integer chunksize) {
-		super(host, port, timeout, user, password, useSsl, sslContext, vpack, collectionCache, chunksize,
-				new ConnectionSync.Builder(new MessageStore()).host(host).port(port).timeout(timeout).useSsl(useSsl)
+		super(timeout, user, password, useSsl, sslContext, vpack, collectionCache, chunksize,
+				new ConnectionSync.Builder(hostHandler, new MessageStore()).timeout(timeout).useSsl(useSsl)
 						.sslContext(sslContext).build());
 	}
 

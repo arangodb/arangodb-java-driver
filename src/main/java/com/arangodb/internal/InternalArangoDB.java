@@ -24,11 +24,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Properties;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.velocystream.Connection;
+import com.arangodb.internal.velocystream.Host;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.OptionsBuilder;
@@ -50,8 +53,76 @@ import com.arangodb.velocystream.Response;
 public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Connection>
 		extends ArangoExecuteable<E, R, C> {
 
+	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
+	private static final String PROPERTY_KEY_HOST = "arangodb.host";
+	private static final String PROPERTY_KEY_PORT = "arangodb.port";
+	private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
+	private static final String PROPERTY_KEY_USER = "arangodb.user";
+	private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
+	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
+	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
+	protected static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
+
 	public InternalArangoDB(final E executor) {
 		super(executor);
+	}
+
+	protected static void loadHosts(final Properties properties, final Collection<Host> hosts) {
+		final String hostsProp = properties.getProperty(PROPERTY_KEY_HOSTS);
+		if (hostsProp != null) {
+			final String[] hostsSplit = hostsProp.split(",");
+			for (final String host : hostsSplit) {
+				final String[] split = host.split(":");
+				if (split.length != 2 || !split[1].matches("[0-9]+")) {
+					throw new ArangoDBException(String.format(
+						"Could not load property-value arangodb.hosts=%s. Expected format host:ip,host:ip,...",
+						hostsProp));
+				} else {
+					hosts.add(new Host(split[0], Integer.valueOf(split[1])));
+				}
+			}
+		}
+	}
+
+	protected static String loadHost(final Properties properties, final String currentValue) {
+		return getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDBConstants.DEFAULT_HOST);
+	}
+
+	protected static Integer loadPort(final Properties properties, final int currentValue) {
+		return Integer
+				.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDBConstants.DEFAULT_PORT));
+	}
+
+	protected static Integer loadTimeout(final Properties properties, final Integer currentValue) {
+		return Integer.parseInt(
+			getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDBConstants.DEFAULT_TIMEOUT));
+	}
+
+	protected static String loadUser(final Properties properties, final String currentValue) {
+		return getProperty(properties, PROPERTY_KEY_USER, currentValue, null);
+	}
+
+	protected static String loadPassword(final Properties properties, final String currentValue) {
+		return getProperty(properties, PROPERTY_KEY_PASSWORD, currentValue, null);
+	}
+
+	protected static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
+		return Boolean.parseBoolean(
+			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDBConstants.DEFAULT_USE_SSL));
+	}
+
+	protected static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
+		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
+			ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
+	}
+
+	private static <T> String getProperty(
+		final Properties properties,
+		final String key,
+		final T currentValue,
+		final T defaultValue) {
+		return properties.getProperty(key,
+			currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
 	}
 
 	protected Request createDatabaseRequest(final String name) {
