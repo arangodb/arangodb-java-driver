@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -114,12 +115,9 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
-		try {
-			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(), BaseDocument.class,
-				options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseDocument vertex2 = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
+			BaseDocument.class, options);
+		assertThat(vertex2, is(nullValue()));
 	}
 
 	@Test
@@ -138,12 +136,9 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(vertex.getRev());
-		try {
-			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(), BaseDocument.class,
-				options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseDocument vertex2 = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
+			BaseDocument.class, options);
+		assertThat(vertex2, is(nullValue()));
 	}
 
 	@Test
@@ -337,12 +332,9 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
 			null);
 		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), null);
-		try {
-			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(createResult.getKey(), BaseDocument.class,
-				null);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseDocument vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(createResult.getKey(), BaseDocument.class, null);
+		assertThat(vertex, is(nullValue()));
 	}
 
 	@Test
@@ -352,12 +344,9 @@ public class ArangoVertexCollectionTest extends BaseTest {
 			null);
 		final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch(createResult.getRev());
 		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
-		try {
-			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(createResult.getKey(), BaseDocument.class,
-				null);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseDocument vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(createResult.getKey(), BaseDocument.class, null);
+		assertThat(vertex, is(nullValue()));
 	}
 
 	@Test

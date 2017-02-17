@@ -20,10 +20,13 @@
 
 package com.arangodb;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
-import com.arangodb.internal.InternalArangoEdgeCollection;
 import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.InternalArangoEdgeCollection;
 import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
@@ -37,6 +40,8 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class ArangoEdgeCollection extends InternalArangoEdgeCollection<ArangoExecutorSync, Response, ConnectionSync> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollection.class);
 
 	protected ArangoEdgeCollection(final ArangoGraph graph, final String name) {
 		super(graph.executor(), graph.db(), graph.name(), name);
@@ -83,7 +88,14 @@ public class ArangoEdgeCollection extends InternalArangoEdgeCollection<ArangoExe
 	 * @throws ArangoDBException
 	 */
 	public <T> T getEdge(final String key, final Class<T> type) throws ArangoDBException {
-		return executor.execute(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
+		try {
+			return executor.execute(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
+		} catch (final ArangoDBException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(e.getMessage(), e);
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -101,7 +113,14 @@ public class ArangoEdgeCollection extends InternalArangoEdgeCollection<ArangoExe
 	 */
 	public <T> T getEdge(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+		try {
+			return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+		} catch (final ArangoDBException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(e.getMessage(), e);
+			}
+			return null;
+		}
 	}
 
 	/**

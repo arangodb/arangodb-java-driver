@@ -20,6 +20,9 @@
 
 package com.arangodb;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoExecutorSync;
@@ -38,6 +41,8 @@ import com.arangodb.velocystream.Response;
  */
 public class ArangoVertexCollection
 		extends InternalArangoVertexCollection<ArangoExecutorSync, Response, ConnectionSync> {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoVertexCollection.class);
 
 	protected ArangoVertexCollection(final ArangoGraph graph, final String name) {
 		super(graph.executor(), graph.db(), graph.name(), name);
@@ -96,7 +101,15 @@ public class ArangoVertexCollection
 	 * @throws ArangoDBException
 	 */
 	public <T> T getVertex(final String key, final Class<T> type) throws ArangoDBException {
-		return executor.execute(getVertexRequest(key, new DocumentReadOptions()), getVertexResponseDeserializer(type));
+		try {
+			return executor.execute(getVertexRequest(key, new DocumentReadOptions()),
+				getVertexResponseDeserializer(type));
+		} catch (final ArangoDBException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(e.getMessage(), e);
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -114,7 +127,14 @@ public class ArangoVertexCollection
 	 */
 	public <T> T getVertex(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+		try {
+			return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+		} catch (final ArangoDBException e) {
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(e.getMessage(), e);
+			}
+			return null;
+		}
 	}
 
 	/**

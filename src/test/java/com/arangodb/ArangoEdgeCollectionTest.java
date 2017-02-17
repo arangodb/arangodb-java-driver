@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -137,12 +138,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
 		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
-		try {
-			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(), BaseEdgeDocument.class,
-				options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseEdgeDocument edge2 = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
+			BaseEdgeDocument.class, options);
+		assertThat(edge2, is(nullValue()));
 	}
 
 	@Test
@@ -161,12 +159,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
 		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(edge.getRev());
-		try {
-			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(), BaseEdgeDocument.class,
-				options);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseEdgeDocument edge2 = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
+			BaseEdgeDocument.class, options);
+		assertThat(edge2, is(nullValue()));
 	}
 
 	@Test
@@ -351,12 +346,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument doc = createEdgeValue();
 		final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
 		db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), null);
-		try {
-			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(createResult.getKey(),
-				BaseEdgeDocument.class, null);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseEdgeDocument edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
+		assertThat(edge, is(nullValue()));
 	}
 
 	@Test
@@ -365,12 +357,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
 		final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch(createResult.getRev());
 		db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options);
-		try {
-			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(createResult.getKey(),
-				BaseEdgeDocument.class, null);
-			fail();
-		} catch (final ArangoDBException e) {
-		}
+		final BaseEdgeDocument edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
+		assertThat(edge, is(nullValue()));
 	}
 
 	@Test
