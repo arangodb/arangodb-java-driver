@@ -13,8 +13,7 @@ The driver is configured with some default values:
 
 <table>
 <tr><th>property-key</th><th>description</th><th>default value</th></tr>
-<tr><td>arangodb.host</td><td>ArangoDB host</td><td>127.0.0.1</td></tr>
-<tr><td>arangodb.port</td><td>ArangoDB port</td><td>8529</td></tr>
+<tr><td>arangodb.hosts</td><td>ArangoDB hosts</td><td>127.0.0.1:8529</td></tr>
 <tr><td>arangodb.timeout</td><td>socket connect timeout(millisecond)</td><td>0</td></tr>
 <tr><td>arangodb.user</td><td>Basic Authentication User</td><td></td></tr>
 <tr><td>arangodb.password</td><td>Basic Authentication Password</td><td></td></tr>
@@ -25,7 +24,7 @@ The driver is configured with some default values:
 To customize the configuration the parameters can be changed in the code...
 
 ``` Java
-  ArangoDB arangoDB = new ArangoDB.Builder().host("192.168.182.50").port(8888).build();
+  ArangoDB arangoDB = new ArangoDB.Builder().host("192.168.182.50", 8888).build();
   
 ```
 ... or with a custom properties file (my.properties)
@@ -38,8 +37,7 @@ To customize the configuration the parameters can be changed in the code...
 
 Example for arangodb.properties:
 ``` Java
-  arangodb.host=127.0.0.1
-  arangodb.port=8529
+  arangodb.hosts=127.0.0.1:8529,127.0.0.1:8529
   arangodb.user=root
   arangodb.password=
 
