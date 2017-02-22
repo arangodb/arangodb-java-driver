@@ -1,4 +1,4 @@
-v4.1.10 (2017-02-xx)
+v4.1.10 (2017-02-22)
 ---------------------------
 * changed velocystream message sending to async
 * changed return value of getVertex/getEdge to null if not exists
