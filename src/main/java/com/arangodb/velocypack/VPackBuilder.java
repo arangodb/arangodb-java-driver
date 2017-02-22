@@ -912,7 +912,7 @@ public class VPackBuilder {
 		final int offsetSize;
 		// can be 1, 2, 4 or 8 for the byte width of the offsets,
 		// the byte length and the number of subvalues:
-		if ((size - 1 - tos) + (needIndexTable ? n : 0) - (needNrSubs ? 6 : 7) <= 0xff) {
+		if ((size - tos) + (needIndexTable ? n : 0) - (needNrSubs ? 6 : 7) <= 0xff) {
 			// We have so far used _pos - tos bytes, including the reserved 8
 			// bytes for byte length and number of subvalues. In the 1-byte
 			// number
@@ -920,9 +920,9 @@ public class VPackBuilder {
 			// subvalue
 			// for the index table
 			offsetSize = 1;
-		} else if ((size - 1 - tos) + (needIndexTable ? 2 * n : 0) <= 0xffff) {
+		} else if ((size - tos) + (needIndexTable ? 2 * n : 0) <= 0xffff) {
 			offsetSize = 2;
-		} else if (((size - 1 - tos) / 2) + ((needIndexTable ? 4 * n : 0) / 2) <= Integer.MAX_VALUE/* 0xffffffffu */) {
+		} else if (((size - tos) / 2) + ((needIndexTable ? 4 * n : 0) / 2) <= Integer.MAX_VALUE/* 0xffffffffu */) {
 			offsetSize = 4;
 		} else {
 			offsetSize = 8;

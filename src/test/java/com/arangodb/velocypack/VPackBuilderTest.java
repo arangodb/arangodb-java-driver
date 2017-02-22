@@ -953,4 +953,35 @@ public class VPackBuilderTest {
 		assertThat(vpack.get(foo).get(bar2).getLength(), is(0));
 	}
 
+	@Test
+	public void nestedArray() {
+		//@formatter:off
+		final VPackSlice s = new VPackBuilder()
+		.add(ValueType.OBJECT)
+			.add("dddddddddddddd", ValueType.ARRAY)
+				.add(ValueType.OBJECT)
+					.add("dddddddddddddd", ValueType.OBJECT)
+						.add("ddddddd",6)
+					.close()
+				.close()
+				.add(ValueType.OBJECT)
+					.add("ddddddddddddddddd","dddddddddddddddddddddd")
+				.close()
+				.add(ValueType.OBJECT)
+					.add("ddddddddddddddddddddddddd", ValueType.ARRAY).close()
+					.add("ddddddddddddddddda","dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
+					.add("dddddddddddddddddb","")
+					.add("dddddddddddddddddc",ValueType.ARRAY).close()
+					.add("ddddddddddddddd",-1)
+				.close()
+			.close()
+			.add("dddddddddd",0)
+		.close().slice();
+		//@formatter:on
+		assertThat(s.isObject(), is(true));
+		assertThat(s.get("dddddddddddddd").isArray(), is(true));
+		assertThat(s.get("dddddddddddddd").size(), is(3));
+		assertThat(s.get("dddddddddddddd").get(2).isObject(), is(true));
+	}
+
 }

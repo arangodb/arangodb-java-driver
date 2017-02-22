@@ -6,8 +6,9 @@ v4.1.10 (2017-02-xx)
 * added support serializing collections with null elements
 * added support serializing non-generic classes that extend collections
 * added support serializing/deserializing byte and Byte
-* fixed serialization of additionalFields for objects and maps
 * added default value "root" for user
+* fixed serialization of additionalFields for objects and maps
+* fixed VPack parsing (arrays of specific length)
 
 v4.1.9 (2017-02-10)
 ---------------------------
