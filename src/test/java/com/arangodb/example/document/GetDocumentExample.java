@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.Map;
+
 import org.json.simple.parser.ParseException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,6 +64,15 @@ public class GetDocumentExample extends ExampleBase {
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getAttribute("foo"), is(notNullValue()));
 		assertThat(String.valueOf(doc.getAttribute("foo")), is("bar"));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void getAsMap() {
+		final Map<String, Object> doc = collection.getDocument(key, Map.class);
+		assertThat(doc, is(notNullValue()));
+		assertThat(doc.get("foo"), is(notNullValue()));
+		assertThat(String.valueOf(doc.get("foo")), is("bar"));
 	}
 
 	@Test
