@@ -56,12 +56,13 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoCollection extends InternalArangoCollection<ArangoExecutorSync, Response, ConnectionSync> {
+public class ArangoCollection
+		extends InternalArangoCollection<ArangoDB, ArangoDatabase, ArangoExecutorSync, Response, ConnectionSync> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollection.class);
 
 	protected ArangoCollection(final ArangoDatabase db, final String name) {
-		super(db.executor(), db.name(), name);
+		super(db, name);
 	}
 
 	/**

@@ -59,14 +59,20 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class InternalArangoDatabase<E extends ArangoExecutor<R, C>, R, C extends Connection>
+public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E extends ArangoExecutor<R, C>, R, C extends Connection>
 		extends ArangoExecuteable<E, R, C> {
 
 	private final String name;
+	private final A arango;
 
-	public InternalArangoDatabase(final E executor, final String name) {
+	public InternalArangoDatabase(final A arango, final E executor, final String name) {
 		super(executor);
+		this.arango = arango;
 		this.name = name;
+	}
+
+	public A arango() {
+		return arango;
 	}
 
 	public String name() {

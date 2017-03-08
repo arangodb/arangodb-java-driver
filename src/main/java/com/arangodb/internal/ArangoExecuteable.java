@@ -36,6 +36,10 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor<R, C>, R, C ext
 		this.executor = executor;
 	}
 
+	protected E executor() {
+		return executor;
+	}
+
 	public ArangoUtil util() {
 		return executor.util();
 	}

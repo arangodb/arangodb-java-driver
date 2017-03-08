@@ -37,11 +37,11 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 	private int pos;
 
 	private final ArangoCursor<T> cursor;
-	private final InternalArangoDatabase<?, ?, ?> db;
+	private final InternalArangoDatabase<?, ?, ?, ?> db;
 	private final ArangoCursorExecute execute;
 
 	public ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
-		final InternalArangoDatabase<?, ?, ?> db, final CursorEntity result) {
+		final InternalArangoDatabase<?, ?, ?, ?> db, final CursorEntity result) {
 		super();
 		this.cursor = cursor;
 		this.execute = execute;

@@ -39,12 +39,13 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoEdgeCollection extends InternalArangoEdgeCollection<ArangoExecutorSync, Response, ConnectionSync> {
+public class ArangoEdgeCollection extends
+		InternalArangoEdgeCollection<ArangoDB, ArangoDatabase, ArangoGraph, ArangoExecutorSync, Response, ConnectionSync> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollection.class);
 
 	protected ArangoEdgeCollection(final ArangoGraph graph, final String name) {
-		super(graph.executor(), graph.db(), graph.name(), name);
+		super(graph, name);
 	}
 
 	/**

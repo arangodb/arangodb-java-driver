@@ -43,18 +43,20 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C extends Connection>
+public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, G extends InternalArangoGraph<A, D, E, R, C>, E extends ArangoExecutor<R, C>, R, C extends Connection>
 		extends ArangoExecuteable<E, R, C> {
 
-	private final String db;
-	private final String graph;
+	private final G graph;
 	private final String name;
 
-	public InternalArangoEdgeCollection(final E executor, final String db, final String graph, final String name) {
-		super(executor);
-		this.db = db;
+	public InternalArangoEdgeCollection(final G graph, final String name) {
+		super(graph.executor());
 		this.graph = graph;
 		this.name = name;
+	}
+
+	public G graph() {
+		return graph;
 	}
 
 	public String name() {
@@ -62,8 +64,8 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 	}
 
 	protected <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-		final Request request = new Request(db, RequestType.POST,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph, ArangoDBConstants.EDGE, name));
+		final Request request = new Request(graph.db().name(), RequestType.POST,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name));
 		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(executor.serialize(value));
@@ -87,8 +89,9 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 	}
 
 	protected Request getEdgeRequest(final String key, final DocumentReadOptions options) {
-		final Request request = new Request(db, RequestType.GET, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			graph, ArangoDBConstants.EDGE, executor.createDocumentHandle(name, key)));
+		final Request request = new Request(graph.db().name(), RequestType.GET,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE,
+					executor.createDocumentHandle(name, key)));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -105,8 +108,9 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 	}
 
 	protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-		final Request request = new Request(db, RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			graph, ArangoDBConstants.EDGE, executor.createDocumentHandle(name, key)));
+		final Request request = new Request(graph.db().name(), RequestType.PUT,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE,
+					executor.createDocumentHandle(name, key)));
 		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -130,8 +134,9 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 
 	protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
 		final Request request;
-		request = new Request(db, RequestType.PATCH, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph,
-			ArangoDBConstants.EDGE, executor.createDocumentHandle(name, key)));
+		request = new Request(graph.db().name(), RequestType.PATCH,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE,
+					executor.createDocumentHandle(name, key)));
 		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
 		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -151,8 +156,8 @@ public class InternalArangoEdgeCollection<E extends ArangoExecutor<R, C>, R, C e
 	}
 
 	protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-		final Request request = new Request(db, RequestType.DELETE,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph, ArangoDBConstants.EDGE,
+		final Request request = new Request(graph.db().name(), RequestType.DELETE,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE,
 					executor.createDocumentHandle(name, key)));
 		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());

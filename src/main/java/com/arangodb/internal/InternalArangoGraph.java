@@ -38,19 +38,19 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Connection>
+public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, E extends ArangoExecutor<R, C>, R, C extends Connection>
 		extends ArangoExecuteable<E, R, C> {
 
-	private final String db;
+	private final D db;
 	private final String name;
 
-	public InternalArangoGraph(final E executor, final String db, final String name) {
-		super(executor);
+	public InternalArangoGraph(final D db, final String name) {
+		super(db.executor());
 		this.db = db;
 		this.name = name;
 	}
 
-	public String db() {
+	public D db() {
 		return db;
 	}
 
@@ -59,11 +59,12 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request dropRequest() {
-		return new Request(db, RequestType.DELETE, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
+		return new Request(db.name(), RequestType.DELETE,
+				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
 	}
 
 	protected Request getInfoRequest() {
-		return new Request(db, RequestType.GET, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
+		return new Request(db.name(), RequestType.GET, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name));
 	}
 
 	protected ResponseDeserializer<GraphEntity> getInfoResponseDeserializer() {
@@ -71,7 +72,7 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request getVertexCollectionsRequest() {
-		return new Request(db, RequestType.GET,
+		return new Request(db.name(), RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.VERTEX));
 	}
 
@@ -87,7 +88,7 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request addVertexCollectionRequest(final String name) {
-		final Request request = new Request(db, RequestType.POST,
+		final Request request = new Request(db.name(), RequestType.POST,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name(), ArangoDBConstants.VERTEX));
 		request.setBody(executor.serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
 		return request;
@@ -98,7 +99,7 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request getEdgeDefinitionsRequest() {
-		return new Request(db, RequestType.GET,
+		return new Request(db.name(), RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
 	}
 
@@ -114,7 +115,7 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = new Request(db, RequestType.POST,
+		final Request request = new Request(db.name(), RequestType.POST,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
 		request.setBody(executor.serialize(definition));
 		return request;
@@ -130,8 +131,8 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = new Request(db, RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_GHARIAL,
-			name, ArangoDBConstants.EDGE, definition.getCollection()));
+		final Request request = new Request(db.name(), RequestType.PUT, executor.createPath(
+			ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definition.getCollection()));
 		request.setBody(executor.serialize(definition));
 		return request;
 	}
@@ -146,7 +147,7 @@ public class InternalArangoGraph<E extends ArangoExecutor<R, C>, R, C extends Co
 	}
 
 	protected Request removeEdgeDefinitionRequest(final String definitionName) {
-		return new Request(db, RequestType.DELETE,
+		return new Request(db.name(), RequestType.DELETE,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definitionName));
 	}
 

@@ -64,21 +64,17 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoDatabase extends InternalArangoDatabase<ArangoExecutorSync, Response, ConnectionSync> {
+public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecutorSync, Response, ConnectionSync> {
 
 	protected ArangoDatabase(final ArangoDB arangoDB, final String name) {
-		super(arangoDB.executor(), name);
+		super(arangoDB, arangoDB.executor(), name);
 	}
 
 	protected ArangoDatabase(final Communication<Response, ConnectionSync> communication, final VPack vpacker,
 		final VPack vpackerNull, final VPackParser vpackParser, final DocumentCache documentCache,
 		final CollectionCache collectionCache, final String name) {
-		super(new ArangoExecutorSync(communication, vpacker, vpackerNull, vpackParser, documentCache, collectionCache),
-				name);
-	}
-
-	protected ArangoExecutorSync executor() {
-		return executor;
+		super(null, new ArangoExecutorSync(communication, vpacker, vpackerNull, vpackParser, documentCache,
+				collectionCache), name);
 	}
 
 	/**
