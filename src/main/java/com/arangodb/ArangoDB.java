@@ -80,6 +80,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		private Boolean useSsl;
 		private SSLContext sslContext;
 		private Integer chunksize;
+		private Integer maxConnections;
 		private final VPack.Builder vpackBuilder;
 		private final CollectionCache collectionCache;
 		private final VPackParser vpackParser;
@@ -109,6 +110,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					password = loadPassword(properties, password);
 					useSsl = loadUseSsl(properties, useSsl);
 					chunksize = loadChunkSize(properties, chunksize);
+					maxConnections = loadMaxConnections(properties, maxConnections);
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}
@@ -181,6 +183,11 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		public Builder chunksize(final Integer chunksize) {
 			this.chunksize = chunksize;
+			return this;
+		}
+
+		public Builder maxConnections(final Integer maxConnections) {
+			this.maxConnections = maxConnections;
 			return this;
 		}
 
@@ -259,7 +266,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			}
 			return new ArangoDB(
 					new CommunicationSync.Builder(new DefaultHostHandler(hosts)).timeout(timeout).user(user)
-							.password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize),
+							.password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
+							.maxConnections(maxConnections),
 					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser, collectionCache);
 		}
 
@@ -279,6 +287,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		});
 	}
 
+	@Override
 	protected ArangoExecutorSync executor() {
 		return executor;
 	}

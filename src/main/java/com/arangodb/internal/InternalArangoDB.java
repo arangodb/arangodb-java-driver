@@ -61,6 +61,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
 	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
 	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
+	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
 	protected static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 	public InternalArangoDB(final E executor) {
@@ -114,6 +115,11 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	protected static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
 			ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
+	}
+
+	protected static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
+		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
+			ArangoDBConstants.MAX_CONNECTIONS_DEFAULT));
 	}
 
 	private static <T> String getProperty(

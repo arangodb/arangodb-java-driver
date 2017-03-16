@@ -91,4 +91,17 @@ public class CommunicationTest {
 		assertThat(iterator.next(), is(SLOW));
 	}
 
+	@Test
+	public void minOneConnection() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(0).build();
+		final ArangoDBVersion version = arangoDB.getVersion();
+		assertThat(version, is(notNullValue()));
+	}
+
+	@Test
+	public void defaultMaxConnection() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(null).build();
+		final ArangoDBVersion version = arangoDB.getVersion();
+		assertThat(version, is(notNullValue()));
+	}
 }

@@ -52,7 +52,7 @@ public abstract class Communication<R, C extends Connection> {
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
 	protected final VPack vpack;
-	protected final C connection;
+	protected final ConnectionPool<C> connectionPool;
 	protected final CollectionCache collectionCache;
 
 	protected final String user;
@@ -62,21 +62,21 @@ public abstract class Communication<R, C extends Connection> {
 
 	protected Communication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final VPack vpack, final CollectionCache collectionCache, final Integer chunksize,
-		final C connection) {
+		final ConnectionPool<C> connectionPool) {
 		this.user = user;
 		this.password = password;
 		this.vpack = vpack;
 		this.collectionCache = collectionCache;
-		this.connection = connection;
+		this.connectionPool = connectionPool;
 		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
 	}
 
-	protected void connect(final Connection connection) {
+	protected void connect(final C connection) {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
 				if (user != null) {
-					authenticate();
+					authenticate(connection);
 				}
 			} catch (final IOException e) {
 				LOGGER.error(e.getMessage(), e);
@@ -85,17 +85,17 @@ public abstract class Communication<R, C extends Connection> {
 		}
 	}
 
-	protected abstract void authenticate();
+	protected abstract void authenticate(final C connection);
 
 	public void disconnect() {
-		disconnect(connection);
+		connectionPool.disconnect();
 	}
 
-	public void disconnect(final Connection connection) {
-		connection.close();
+	public R execute(final Request request) throws ArangoDBException {
+		return execute(request, connectionPool.connection());
 	}
 
-	public abstract R execute(final Request request) throws ArangoDBException;
+	public abstract R execute(final Request request, C connection) throws ArangoDBException;
 
 	protected void checkError(final Response response) throws ArangoDBException {
 		try {

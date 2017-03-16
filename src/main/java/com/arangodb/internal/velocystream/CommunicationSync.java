@@ -50,6 +50,7 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 		private Boolean useSsl;
 		private SSLContext sslContext;
 		private Integer chunksize;
+		private Integer maxConnections;
 
 		public Builder(final HostHandler hostHandler) {
 			super();
@@ -86,26 +87,38 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 			return this;
 		}
 
+		public Builder maxConnections(final Integer maxConnections) {
+			this.maxConnections = maxConnections;
+			return this;
+		}
+
 		public Communication<Response, ConnectionSync> build(final VPack vpack, final CollectionCache collectionCache) {
 			return new CommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, vpack,
-					collectionCache, chunksize);
+					collectionCache, chunksize, maxConnections);
 		}
 	}
 
 	protected CommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
-		final CollectionCache collectionCache, final Integer chunksize) {
+		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections) {
 		super(timeout, user, password, useSsl, sslContext, vpack, collectionCache, chunksize,
-				new ConnectionSync.Builder(hostHandler, new MessageStore()).timeout(timeout).useSsl(useSsl)
-						.sslContext(sslContext).build());
+				new ConnectionPool<ConnectionSync>(maxConnections) {
+					private final ConnectionSync.Builder builder = new ConnectionSync.Builder(hostHandler,
+							new MessageStore()).timeout(timeout).useSsl(useSsl).sslContext(sslContext);
+
+					@Override
+					public ConnectionSync createConnection() {
+						return builder.build();
+					}
+				});
 	}
 
 	@Override
-	public Response execute(final Request request) throws ArangoDBException {
+	public Response execute(final Request request, final ConnectionSync connection) throws ArangoDBException {
 		connect(connection);
 		try {
 			final Message requestMessage = createMessage(request);
-			final Message responseMessage = send(requestMessage);
+			final Message responseMessage = send(requestMessage, connection);
 			collectionCache.setDb(request.getDatabase());
 			final Response response = createResponse(responseMessage);
 			checkError(response);
@@ -116,7 +129,7 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 
 	}
 
-	private Message send(final Message message) throws ArangoDBException {
+	private Message send(final Message message, final ConnectionSync connection) throws ArangoDBException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
 				message.getBody() != null ? message.getBody() : "{}"));
@@ -125,9 +138,10 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 	}
 
 	@Override
-	protected void authenticate() {
+	protected void authenticate(final ConnectionSync connection) {
 		final Response response = execute(
-			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN));
+			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN),
+			connection);
 		checkError(response);
 	}
 

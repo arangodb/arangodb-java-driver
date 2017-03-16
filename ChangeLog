@@ -3,6 +3,7 @@ v4.1.11 (2017-03-xx)
 * added convenience methods (ArangoDatabase.arango(), ArangoCollection.db(), ArangoGraph.db())
 * added convenience methods (ArangoCollection.getIndex(String), .deleteIndex(key))
 * fixed exception handling in Connection (issue #110)
+* added connection pooling (issue #103)
 
 v4.1.10 (2017-02-22)
 ---------------------------
