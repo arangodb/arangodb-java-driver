@@ -186,7 +186,8 @@ public abstract class Connection {
 		outputStream.flush();
 	}
 
-	protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) {
+	protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks)
+			throws ArangoDBException {
 		for (final Chunk chunk : chunks) {
 			try {
 				if (LOGGER.isDebugEnabled()) {
@@ -209,7 +210,7 @@ public abstract class Connection {
 				}
 				outputStream.flush();
 			} catch (final IOException e) {
-				throw new RuntimeException(e);
+				throw new ArangoDBException(e);
 			}
 		}
 	}
