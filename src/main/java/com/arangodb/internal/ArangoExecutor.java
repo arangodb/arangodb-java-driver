@@ -48,8 +48,8 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 		T deserialize(Response response) throws VPackException;
 	}
 
-	private static final String REGEX_DOCUMENT_KEY = "[^/]+";
-	private static final String REGEX_DOCUMENT_ID = "[^/]+/[^/]+";
+	protected static final String REGEX_KEY = "[^/]+";
+	protected static final String REGEX_ID = "[^/]+/[^/]+";
 
 	private final Communication<R, C> communication;
 	private final DocumentCache documentCache;
@@ -107,12 +107,16 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 				.replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
 	}
 
+	public void validateIndexId(final String id) {
+		validateName("index id", REGEX_ID, id);
+	}
+
 	public void validateDocumentKey(final String key) throws ArangoDBException {
-		validateName("document key", REGEX_DOCUMENT_KEY, key);
+		validateName("document key", REGEX_KEY, key);
 	}
 
 	public void validateDocumentId(final String id) throws ArangoDBException {
-		validateName("document id", REGEX_DOCUMENT_ID, id);
+		validateName("document id", REGEX_ID, id);
 	}
 
 	public String createDocumentHandle(final String collection, final String key) {

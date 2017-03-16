@@ -103,23 +103,6 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		};
 	}
 
-	protected Request getIndexRequest(final String id) {
-		return new Request(name, RequestType.GET, executor.createPath(ArangoDBConstants.PATH_API_INDEX, id));
-	}
-
-	protected Request deleteIndexRequest(final String id) {
-		return new Request(name, RequestType.DELETE, executor.createPath(ArangoDBConstants.PATH_API_INDEX, id));
-	}
-
-	protected ResponseDeserializer<String> deleteIndexResponseDeserializer() {
-		return new ResponseDeserializer<String>() {
-			@Override
-			public String deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoDBConstants.ID).getAsString();
-			}
-		};
-	}
-
 	protected Request dropRequest() {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
 				executor.createPath(ArangoDBConstants.PATH_API_DATABASE, name));

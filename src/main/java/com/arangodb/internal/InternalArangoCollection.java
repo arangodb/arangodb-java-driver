@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.entity.DocumentDeleteEntity;
 import com.arangodb.entity.DocumentField;
@@ -460,6 +461,37 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
 		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		return request;
+	}
+
+	protected Request getIndexRequest(final String id) {
+		return new Request(db.name(), RequestType.GET,
+				executor.createPath(ArangoDBConstants.PATH_API_INDEX, createIndexId(id)));
+	}
+
+	protected Request deleteIndexRequest(final String id) {
+		return new Request(db.name(), RequestType.DELETE,
+				executor.createPath(ArangoDBConstants.PATH_API_INDEX, createIndexId(id)));
+	}
+
+	protected ResponseDeserializer<String> deleteIndexResponseDeserializer() {
+		return new ResponseDeserializer<String>() {
+			@Override
+			public String deserialize(final Response response) throws VPackException {
+				return response.getBody().get(ArangoDBConstants.ID).getAsString();
+			}
+		};
+	}
+
+	private String createIndexId(final String id) {
+		final String index;
+		if (id.matches(ArangoExecutor.REGEX_ID)) {
+			index = id;
+		} else if (id.matches(ArangoExecutor.REGEX_KEY)) {
+			index = name + "/" + id;
+		} else {
+			throw new ArangoDBException(String.format("index id %s is not valid.", id));
+		}
+		return index;
 	}
 
 	protected Request createHashIndexRequest(final Collection<String> fields, final HashIndexOptions options) {

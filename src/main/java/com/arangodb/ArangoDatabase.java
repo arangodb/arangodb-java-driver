@@ -156,7 +156,9 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @throws ArangoDBException
 	 */
 	public IndexEntity getIndex(final String id) throws ArangoDBException {
-		return executor.execute(getIndexRequest(id), IndexEntity.class);
+		executor.validateIndexId(id);
+		final String[] split = id.split("/");
+		return collection(split[0]).getIndex(split[1]);
 	}
 
 	/**
@@ -169,7 +171,9 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @throws ArangoDBException
 	 */
 	public String deleteIndex(final String id) throws ArangoDBException {
-		return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
+		executor.validateIndexId(id);
+		final String[] split = id.split("/");
+		return collection(split[0]).deleteIndex(split[1]);
 	}
 
 	/**

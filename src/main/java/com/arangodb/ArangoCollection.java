@@ -530,6 +530,32 @@ public class ArangoCollection
 	}
 
 	/**
+	 * Returns an index
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+	 * @param id
+	 *            The index-handle
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	public IndexEntity getIndex(final String id) throws ArangoDBException {
+		return executor.execute(getIndexRequest(id), IndexEntity.class);
+	}
+
+	/**
+	 * Deletes an index
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+	 * @param id
+	 *            The index-handle
+	 * @return the id of the index
+	 * @throws ArangoDBException
+	 */
+	public String deleteIndex(final String id) throws ArangoDBException {
+		return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
+	}
+
+	/**
 	 * Creates a hash index for the collection if it does not already exist.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>

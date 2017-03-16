@@ -676,6 +676,54 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void getIndex() {
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity readResult = db.collection(COLLECTION_NAME).getIndex(createResult.getId());
+		assertThat(readResult.getId(), is(createResult.getId()));
+		assertThat(readResult.getType(), is(createResult.getType()));
+	}
+
+	@Test
+	public void getIndexByKey() {
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity readResult = db.collection(COLLECTION_NAME).getIndex(createResult.getId().split("/")[1]);
+		assertThat(readResult.getId(), is(createResult.getId()));
+		assertThat(readResult.getType(), is(createResult.getType()));
+	}
+
+	@Test
+	public void deleteIndex() {
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final String id = db.collection(COLLECTION_NAME).deleteIndex(createResult.getId());
+		assertThat(id, is(createResult.getId()));
+		try {
+			db.getIndex(id);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
+	public void deleteIndexByKey() {
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final String id = db.collection(COLLECTION_NAME).deleteIndex(createResult.getId().split("/")[1]);
+		assertThat(id, is(createResult.getId()));
+		try {
+			db.getIndex(id);
+			fail();
+		} catch (final ArangoDBException e) {
+		}
+	}
+
+	@Test
 	public void createHashIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
