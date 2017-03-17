@@ -27,6 +27,7 @@
 		<logback-classic.version>1.1.3</logback-classic.version>
 		<hamcrest-all.version>1.3</hamcrest-all.version>
 		<junit.version>4.12</junit.version>
+		<arangodb.velocypack.version>1.0.1</arangodb.velocypack.version>
 	</properties>
 
 	<developers>
@@ -197,6 +198,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.arangodb</groupId>
+			<artifactId>velocypack</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -223,6 +228,11 @@
 	
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>com.arangodb</groupId>
+				<artifactId>velocypack</artifactId>
+				<version>${arangodb.velocypack.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>

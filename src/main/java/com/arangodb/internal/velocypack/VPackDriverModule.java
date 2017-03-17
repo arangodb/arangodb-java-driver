@@ -35,12 +35,14 @@ import com.arangodb.entity.QueryEntity;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
-import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
 import com.arangodb.velocypack.VPackJsonDeserializer;
-import com.arangodb.velocypack.VPackParser;
+import com.arangodb.velocypack.VPackModule;
+import com.arangodb.velocypack.VPackParserModule;
+import com.arangodb.velocypack.VPackParserSetupContext;
+import com.arangodb.velocypack.VPackSetupContext;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
@@ -52,16 +54,19 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class VPackConfigure {
+public class VPackDriverModule implements VPackModule, VPackParserModule {
 
 	private static final String ID = "_id";
+	private final CollectionCache collectionCache;
 
-	public static void configure(
-		final VPack.Builder builder,
-		final VPackParser vpackParser,
-		final CollectionCache cache) {
+	public VPackDriverModule(final CollectionCache collectionCache) {
+		super();
+		this.collectionCache = collectionCache;
+	}
 
-		builder.fieldNamingStrategy(new VPackFieldNamingStrategy() {
+	@Override
+	public <C extends VPackSetupContext<C>> void setup(final C context) {
+		context.fieldNamingStrategy(new VPackFieldNamingStrategy() {
 			@Override
 			public String translateName(final Field field) {
 				final DocumentField annotation = field.getAnnotation(DocumentField.class);
@@ -71,7 +76,7 @@ public class VPackConfigure {
 				return field.getName();
 			}
 		});
-		builder.registerDeserializer(ID, String.class, new VPackDeserializer<String>() {
+		context.registerDeserializer(ID, String.class, new VPackDeserializer<String>() {
 			@Override
 			public String deserialize(
 				final VPackSlice parent,
@@ -81,7 +86,7 @@ public class VPackConfigure {
 				if (vpack.isCustom()) {
 					final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1,
 						vpack.getByteSize() - 1);
-					final String collectionName = cache.getCollectionName(idLong);
+					final String collectionName = collectionCache.getCollectionName(idLong);
 					if (collectionName != null) {
 						final VPackSlice key = parent.get("_key");
 						id = String.format("%s/%s", collectionName, key.getAsString());
@@ -94,7 +99,26 @@ public class VPackConfigure {
 				return id;
 			}
 		});
-		vpackParser.registerDeserializer(ID, ValueType.CUSTOM, new VPackJsonDeserializer() {
+		context.registerSerializer(Request.class, VPackSerializers.REQUEST);
+		context.registerSerializer(AuthenticationRequest.class, VPackSerializers.AUTH_REQUEST);
+		context.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
+		context.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
+		context.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
+		context.registerSerializer(TraversalOptions.Order.class, VPackSerializers.TRAVERSAL_ORDER);
+		context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
+
+		context.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
+		context.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
+		context.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
+		context.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
+		context.registerDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
+		context.registerDeserializer(QueryEntity.PROPERTY_STARTED, Date.class, VPackDeserializers.DATE_STRING);
+		context.registerDeserializer(LogLevel.class, VPackDeserializers.LOG_LEVEL);
+	}
+
+	@Override
+	public <C extends VPackParserSetupContext<C>> void setup(final C context) {
+		context.registerDeserializer(ID, ValueType.CUSTOM, new VPackJsonDeserializer() {
 			@Override
 			public void deserialize(
 				final VPackSlice parent,
@@ -103,7 +127,7 @@ public class VPackConfigure {
 				final StringBuilder json) throws VPackException {
 				final String id;
 				final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1, vpack.getByteSize() - 1);
-				final String collectionName = cache.getCollectionName(idLong);
+				final String collectionName = collectionCache.getCollectionName(idLong);
 				if (collectionName != null) {
 					final VPackSlice key = parent.get("_key");
 					id = String.format("%s/%s", collectionName, key.getAsString());
@@ -113,22 +137,6 @@ public class VPackConfigure {
 				json.append(JSONValue.toJSONString(id));
 			}
 		});
-
-		builder.registerSerializer(Request.class, VPackSerializers.REQUEST);
-		builder.registerSerializer(AuthenticationRequest.class, VPackSerializers.AUTH_REQUEST);
-		builder.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
-		builder.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
-		builder.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
-		builder.registerSerializer(TraversalOptions.Order.class, VPackSerializers.TRAVERSAL_ORDER);
-		builder.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
-
-		builder.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
-		builder.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
-		builder.registerDeserializer(CollectionStatus.class, VPackDeserializers.COLLECTION_STATUS);
-		builder.registerDeserializer(BaseDocument.class, VPackDeserializers.BASE_DOCUMENT);
-		builder.registerDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
-		builder.registerDeserializer(QueryEntity.PROPERTY_STARTED, Date.class, VPackDeserializers.DATE_STRING);
-		builder.registerDeserializer(LogLevel.class, VPackDeserializers.LOG_LEVEL);
 	}
 
 }
