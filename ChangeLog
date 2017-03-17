@@ -6,6 +6,7 @@ v4.1.11 (2017-03-xx)
 * added connection pooling (issue #103)
 * extracted VelocyPack implementation to https://github.com/arangodb/java-velocypack
 * fixed NPE in ArangoCursor (issue #112)
+* added support for replacing build-in VelocyPack serializer/deserializer
 
 v4.1.10 (2017-02-22)
 ---------------------------

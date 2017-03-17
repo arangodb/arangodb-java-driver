@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.velocypack.VPack;
+import com.arangodb.util.ArangoUtil;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -92,16 +92,18 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 			return this;
 		}
 
-		public Communication<Response, ConnectionSync> build(final VPack vpack, final CollectionCache collectionCache) {
-			return new CommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, vpack,
+		public Communication<Response, ConnectionSync> build(
+			final ArangoUtil util,
+			final CollectionCache collectionCache) {
+			return new CommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util,
 					collectionCache, chunksize, maxConnections);
 		}
 	}
 
 	protected CommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
-		final String password, final Boolean useSsl, final SSLContext sslContext, final VPack vpack,
+		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoUtil util,
 		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections) {
-		super(timeout, user, password, useSsl, sslContext, vpack, collectionCache, chunksize,
+		super(timeout, user, password, useSsl, sslContext, util, collectionCache, chunksize,
 				new ConnectionPool<ConnectionSync>(maxConnections) {
 					private final ConnectionSync.Builder builder = new ConnectionSync.Builder(hostHandler,
 							new MessageStore()).timeout(timeout).useSsl(useSsl).sslContext(sslContext);

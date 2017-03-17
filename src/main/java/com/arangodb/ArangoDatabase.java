@@ -54,9 +54,8 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
+import com.arangodb.util.ArangoUtil;
 import com.arangodb.velocypack.Type;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -70,11 +69,9 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 		super(arangoDB, arangoDB.executor(), name);
 	}
 
-	protected ArangoDatabase(final Communication<Response, ConnectionSync> communication, final VPack vpacker,
-		final VPack vpackerNull, final VPackParser vpackParser, final DocumentCache documentCache,
-		final CollectionCache collectionCache, final String name) {
-		super(null, new ArangoExecutorSync(communication, vpacker, vpackerNull, vpackParser, documentCache,
-				collectionCache), name);
+	protected ArangoDatabase(final Communication<Response, ConnectionSync> communication, final ArangoUtil util,
+		final DocumentCache documentCache, final CollectionCache collectionCache, final String name) {
+		super(null, new ArangoExecutorSync(communication, util, documentCache, collectionCache), name);
 	}
 
 	/**

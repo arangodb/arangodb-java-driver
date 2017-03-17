@@ -34,7 +34,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.velocypack.VPack;
+import com.arangodb.util.ArangoUtil;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -51,7 +51,7 @@ public abstract class Communication<R, C extends Connection> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
-	protected final VPack vpack;
+	protected final ArangoUtil util;
 	protected final ConnectionPool<C> connectionPool;
 	protected final CollectionCache collectionCache;
 
@@ -61,11 +61,11 @@ public abstract class Communication<R, C extends Connection> {
 	protected final Integer chunksize;
 
 	protected Communication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final VPack vpack, final CollectionCache collectionCache, final Integer chunksize,
-		final ConnectionPool<C> connectionPool) {
+		final SSLContext sslContext, final ArangoUtil util, final CollectionCache collectionCache,
+		final Integer chunksize, final ConnectionPool<C> connectionPool) {
 		this.user = user;
 		this.password = password;
-		this.vpack = vpack;
+		this.util = util;
 		this.collectionCache = collectionCache;
 		this.connectionPool = connectionPool;
 		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
@@ -101,7 +101,7 @@ public abstract class Communication<R, C extends Connection> {
 		try {
 			if (response.getResponseCode() >= ERROR_STATUS) {
 				if (response.getBody() != null) {
-					final ErrorEntity errorEntity = vpack.deserialize(response.getBody(), ErrorEntity.class);
+					final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
 					throw new ArangoDBException(errorEntity);
 				} else {
 					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()));
@@ -113,7 +113,7 @@ public abstract class Communication<R, C extends Connection> {
 	}
 
 	protected Response createResponse(final Message messsage) throws VPackParserException {
-		final Response response = vpack.deserialize(messsage.getHead(), Response.class);
+		final Response response = util.deserialize(messsage.getHead(), Response.class);
 		if (messsage.getBody() != null) {
 			response.setBody(messsage.getBody());
 		}
@@ -122,7 +122,7 @@ public abstract class Communication<R, C extends Connection> {
 
 	protected Message createMessage(final Request request) throws VPackParserException {
 		final long id = mId.incrementAndGet();
-		return new Message(id, vpack.serialize(request), request.getBody());
+		return new Message(id, util.serialize(request), request.getBody());
 	}
 
 	protected Collection<Chunk> buildChunks(final Message message) {

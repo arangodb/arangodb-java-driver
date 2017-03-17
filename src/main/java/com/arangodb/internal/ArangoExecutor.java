@@ -30,8 +30,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.Connection;
 import com.arangodb.util.ArangoUtil;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
@@ -56,13 +54,13 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 	private final CollectionCache collectionCache;
 	private final ArangoUtil util;
 
-	protected ArangoExecutor(final Communication<R, C> communication, final VPack vpacker, final VPack vpackerNull,
-		final VPackParser vpackParser, final DocumentCache documentCache, final CollectionCache collectionCache) {
+	protected ArangoExecutor(final Communication<R, C> communication, final ArangoUtil util,
+		final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super();
 		this.communication = communication;
 		this.documentCache = documentCache;
 		this.collectionCache = collectionCache;
-		util = new ArangoUtil(vpacker, vpackerNull, vpackParser);
+		this.util = util;
 	}
 
 	public Communication<R, C> communication() {

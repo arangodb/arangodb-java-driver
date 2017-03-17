@@ -41,6 +41,9 @@ import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.CollectionCache.DBAccess;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.InternalArangoDB;
+import com.arangodb.internal.util.ArangoDeserializerImpl;
+import com.arangodb.internal.util.ArangoSerializerImpl;
+import com.arangodb.internal.util.ArangoUtilImpl;
 import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.CommunicationSync;
@@ -50,6 +53,9 @@ import com.arangodb.internal.velocystream.Host;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.util.ArangoDeserializer;
+import com.arangodb.util.ArangoSerializer;
+import com.arangodb.util.ArangoUtil;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackAnnotationFieldFilter;
 import com.arangodb.velocypack.VPackAnnotationFieldNaming;
@@ -84,15 +90,17 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		private Integer maxConnections;
 		private final VPack.Builder vpackBuilder;
 		private final CollectionCache collectionCache;
-		private final VPackParser.Builder vpackParser;
+		private final VPackParser.Builder vpackParserBuilder;
+		private ArangoSerializer serializer;
+		private ArangoDeserializer deserializer;
 
 		public Builder() {
 			super();
 			vpackBuilder = new VPack.Builder();
 			collectionCache = new CollectionCache();
-			vpackParser = new VPackParser.Builder();
+			vpackParserBuilder = new VPackParser.Builder();
 			vpackBuilder.registerModule(new VPackDriverModule(collectionCache));
-			vpackParser.registerModule(new VPackDriverModule(collectionCache));
+			vpackParserBuilder.registerModule(new VPackDriverModule(collectionCache));
 			host = new Host(ArangoDBConstants.DEFAULT_HOST, ArangoDBConstants.DEFAULT_PORT);
 			hosts = new ArrayList<Host>();
 			loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
@@ -223,7 +231,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		}
 
 		public Builder registerJsonDeserializer(final ValueType type, final VPackJsonDeserializer deserializer) {
-			vpackParser.registerDeserializer(type, deserializer);
+			vpackParserBuilder.registerDeserializer(type, deserializer);
 			return this;
 		}
 
@@ -231,12 +239,12 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			final String attribute,
 			final ValueType type,
 			final VPackJsonDeserializer deserializer) {
-			vpackParser.registerDeserializer(attribute, type, deserializer);
+			vpackParserBuilder.registerDeserializer(attribute, type, deserializer);
 			return this;
 		}
 
 		public <T> Builder registerJsonSerializer(final Class<T> clazz, final VPackJsonSerializer<T> serializer) {
-			vpackParser.registerSerializer(clazz, serializer);
+			vpackParserBuilder.registerSerializer(clazz, serializer);
 			return this;
 		}
 
@@ -244,7 +252,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			final String attribute,
 			final Class<T> clazz,
 			final VPackJsonSerializer<T> serializer) {
-			vpackParser.registerSerializer(attribute, clazz, serializer);
+			vpackParserBuilder.registerSerializer(attribute, clazz, serializer);
 			return this;
 		}
 
@@ -272,30 +280,47 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
+		public Builder setSerializer(final ArangoSerializer serializer) {
+			this.serializer = serializer;
+			return this;
+		}
+
+		public Builder setDeserializer(final ArangoDeserializer deserializer) {
+			this.deserializer = deserializer;
+			return this;
+		}
+
 		public ArangoDB build() {
 			if (hosts.isEmpty()) {
 				hosts.add(host);
+			}
+			final VPack vpacker = vpackBuilder.build();
+			final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
+			final VPackParser vpackParser = vpackParserBuilder.build();
+			if (serializer == null) {
+				serializer = new ArangoSerializerImpl(vpacker, vpackerNull, vpackParser);
+			}
+			if (deserializer == null) {
+				deserializer = new ArangoDeserializerImpl(vpackerNull, vpackParser);
 			}
 			return new ArangoDB(
 					new CommunicationSync.Builder(new DefaultHostHandler(hosts)).timeout(timeout).user(user)
 							.password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
 							.maxConnections(maxConnections),
-					vpackBuilder.build(), vpackBuilder.serializeNullValues(true).build(), vpackParser.build(),
-					collectionCache);
+					new ArangoUtilImpl(serializer, deserializer), collectionCache);
 		}
 
 	}
 
-	public ArangoDB(final CommunicationSync.Builder commBuilder, final VPack vpack, final VPack vpackNull,
-		final VPackParser vpackParser, final CollectionCache collectionCache) {
-		super(new ArangoExecutorSync(commBuilder.build(vpack, collectionCache), vpack, vpackNull, vpackParser,
-				new DocumentCache(), collectionCache));
-		final Communication<Response, ConnectionSync> cacheCom = commBuilder.build(vpack, collectionCache);
+	public ArangoDB(final CommunicationSync.Builder commBuilder, final ArangoUtil util,
+		final CollectionCache collectionCache) {
+		super(new ArangoExecutorSync(commBuilder.build(util, collectionCache), util, new DocumentCache(),
+				collectionCache));
+		final Communication<Response, ConnectionSync> cacheCom = commBuilder.build(util, collectionCache);
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
-				return new ArangoDatabase(cacheCom, vpackNull, vpack, vpackParser, executor.documentCache(), null,
-						name);
+				return new ArangoDatabase(cacheCom, util, executor.documentCache(), null, name);
 			}
 		});
 	}
