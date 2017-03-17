@@ -535,6 +535,18 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void queryNoResults() throws IOException {
+		try {
+			db.createCollection(COLLECTION_NAME);
+			final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i",
+				new MapBuilder().put("@col", COLLECTION_NAME).get(), null, BaseDocument.class);
+			cursor.close();
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
 	public void explainQuery() {
 		final AqlExecutionExplainEntity explain = arangoDB.db().explainQuery("for i in _apps return i", null, null);
 		assertThat(explain, is(notNullValue()));

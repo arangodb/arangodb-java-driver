@@ -97,7 +97,9 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 
 	@Override
 	public void close() throws IOException {
-		execute.close(id);
+		if (id != null) {
+			execute.close(id);
+		}
 	}
 
 	@Override
