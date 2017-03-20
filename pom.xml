@@ -202,6 +202,11 @@
 			<artifactId>velocypack</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.arangodb</groupId>
+			<artifactId>jackson-dataformat-velocypack</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
@@ -232,6 +237,11 @@
 				<groupId>com.arangodb</groupId>
 				<artifactId>velocypack</artifactId>
 				<version>${arangodb.velocypack.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.arangodb</groupId>
+				<artifactId>jackson-dataformat-velocypack</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
