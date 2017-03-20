@@ -26,6 +26,7 @@ import java.util.Map;
 import com.arangodb.entity.AqlExecutionExplainEntity;
 import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
+import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DatabaseEntity;
@@ -72,6 +73,31 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	protected ArangoDatabase(final Communication<Response, ConnectionSync> communication, final ArangoUtil util,
 		final DocumentCache documentCache, final CollectionCache collectionCache, final String name) {
 		super(null, new ArangoExecutorSync(communication, util, documentCache, collectionCache), name);
+	}
+
+	/**
+	 * Returns the server name and version number.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 *      Documentation</a>
+	 * @return the server version, number
+	 * @throws ArangoDBException
+	 */
+	public ArangoDBVersion getVersion() throws ArangoDBException {
+		return executor.execute(getVersionRequest(), ArangoDBVersion.class);
+	}
+
+	/**
+	 * Retrieves a list of all databases the current user can access
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+	 *      Documentation</a>
+	 * @return a list of all databases the current user can access
+	 * @throws ArangoDBException
+	 */
+	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
+		return executor.execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
 	}
 
 	/**

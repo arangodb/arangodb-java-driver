@@ -79,6 +79,19 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		return name;
 	}
 
+	protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
+		return arango.getDatabaseResponseDeserializer();
+	}
+
+	protected Request getAccessibleDatabasesRequest() {
+		return new Request(name, RequestType.GET,
+				executor.createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER));
+	}
+
+	protected Request getVersionRequest() {
+		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_VERSION);
+	}
+
 	protected Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
 		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION).setBody(
 			executor.serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));

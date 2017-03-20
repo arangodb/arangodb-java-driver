@@ -390,7 +390,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @throws ArangoDBException
 	 */
 	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
-		return executor.execute(getAccessibleDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
+		return db().getAccessibleDatabases();
 	}
 
 	/**
@@ -418,7 +418,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @throws ArangoDBException
 	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
-		return executor.execute(getVersionRequest(), ArangoDBVersion.class);
+		return db().getVersion();
 	}
 
 	/**

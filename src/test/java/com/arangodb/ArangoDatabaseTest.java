@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -47,6 +48,7 @@ import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.AqlParseEntity.AstNode;
+import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -81,6 +83,22 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_test";
 	private static final String GRAPH_NAME = "graph_test";
+
+	@Test
+	public void getVersion() {
+		final ArangoDBVersion version = db.getVersion();
+		assertThat(version, is(notNullValue()));
+		assertThat(version.getServer(), is(notNullValue()));
+		assertThat(version.getVersion(), is(notNullValue()));
+	}
+
+	@Test
+	public void getAccessibleDatabases() {
+		final Collection<String> dbs = db.getAccessibleDatabases();
+		assertThat(dbs, is(notNullValue()));
+		assertThat(dbs.size(), greaterThan(0));
+		assertThat(dbs, hasItem("_system"));
+	}
 
 	@Test
 	public void createCollection() {

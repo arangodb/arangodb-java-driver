@@ -162,11 +162,6 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 		};
 	}
 
-	protected Request getAccessibleDatabasesRequest(final String database) {
-		return new Request(database, RequestType.GET,
-				executor.createPath(ArangoDBConstants.PATH_API_DATABASE, ArangoDBConstants.USER));
-	}
-
 	protected Request getAccessibleDatabasesForRequest(final String database, final String user) {
 		return new Request(database, RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE));
@@ -185,10 +180,6 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 				return dbs;
 			}
 		};
-	}
-
-	protected Request getVersionRequest() {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_VERSION);
 	}
 
 	protected Request createUserRequest(
