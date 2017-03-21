@@ -54,6 +54,13 @@
 		</repository>
 	</distributionManagement>
 
+	<repositories>
+		<repository>
+			<id>arangodb-snapshots</id>
+			<url>https://oss.sonatype.org/content/groups/staging</url>
+		</repository>
+	</repositories>
+
 	<profiles>
 		<profile>
 			<id>doclint-java8-disable</id>
