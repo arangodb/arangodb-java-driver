@@ -65,6 +65,7 @@ import com.arangodb.velocypack.VPackJsonDeserializer;
 import com.arangodb.velocypack.VPackJsonSerializer;
 import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParser;
+import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
@@ -280,11 +281,41 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			return this;
 		}
 
+		public Builder registerJsonModule(final VPackParserModule module) {
+			vpackParserBuilder.registerModule(module);
+			return this;
+		}
+
+		public Builder registerJsonModules(final VPackParserModule... module) {
+			vpackParserBuilder.registerModules(module);
+			return this;
+		}
+
+		/**
+		 * Replace the built-in serializer with the given serializer.
+		 * 
+		 * <br />
+		 * <b>ATTENTION!:</b> Use at your own risk
+		 * 
+		 * @param serializer
+		 *            custom serializer
+		 * @return builder
+		 */
 		public Builder setSerializer(final ArangoSerializer serializer) {
 			this.serializer = serializer;
 			return this;
 		}
 
+		/**
+		 * Replace the built-in deserializer with the given deserializer.
+		 * 
+		 * <br />
+		 * <b>ATTENTION!:</b> Use at your own risk
+		 * 
+		 * @param deserializer
+		 *            custom deserializer
+		 * @return builder
+		 */
 		public Builder setDeserializer(final ArangoDeserializer deserializer) {
 			this.deserializer = deserializer;
 			return this;

@@ -54,6 +54,57 @@ If you want to test with a snapshot version (e.g. 4.0.0-SNAPSHOT), add the stagi
 mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
 ```	
 
+## configure VelocyPack serialization
+
+Since version `4.1.11` you can extend the VelocyPack serialization by registering additional `VPackModule`s on `ArangoDB.Builder`.
+
+### Java 8 types 
+
+Added support for:
+* java.time.Instant
+* java.time.LocalDate
+* java.time.LocalDateTime
+* java.util.Optional;
+* java.util.OptionalDouble;
+* java.util.OptionalInt;
+* java.util.OptionalLong;
+
+```XML
+<dependencies>
+  <dependency>
+    <groupId>com.arangodb</groupId>
+    <artifactId>velocypack-module-jdk8</artifactId>
+    <version>1.0.1</version>
+  </dependency>
+</dependencies>
+```
+
+``` Java
+ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJdk8Module()).build();
+``` 
+
+### Joda-Time
+
+Added support for:
+* org.joda.time.DateTime;
+* org.joda.time.Instant;
+* org.joda.time.LocalDate;
+* org.joda.time.LocalDateTime;
+
+```XML
+<dependencies>
+  <dependency>
+    <groupId>com.arangodb</groupId>
+    <artifactId>velocypack-module-joda</artifactId>
+    <version>1.0.0</version>
+  </dependency>
+</dependencies>
+```
+
+``` Java
+ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJodaModule()).build();
+``` 
+
 # Learn more
 * [ArangoDB](https://www.arangodb.com/)
 * [ChangeLog](ChangeLog)
