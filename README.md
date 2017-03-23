@@ -83,6 +83,27 @@ Added support for:
 ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJdk8Module()).build();
 ``` 
 
+### Scala types
+
+Added support for:
+* scala.Option
+* scala.collection.immutable.List
+* scala.collection.immutable.Map
+
+```XML
+<dependencies>
+  <dependency>
+    <groupId>com.arangodb</groupId>
+    <artifactId>velocypack-module-scala</artifactId>
+    <version>1.0.0</version>
+  </dependency>
+</dependencies>
+```
+
+``` Scala
+val arangoDB: ArangoDB = new ArangoDB.Builder().registerModule(new VPackScalaModule).build
+``` 
+
 ### Joda-Time
 
 Added support for:
