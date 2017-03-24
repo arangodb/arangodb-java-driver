@@ -1,12 +1,12 @@
-v4.1.11 (2017-03-xx)
+v4.1.11 (2017-03-24)
 ---------------------------
+* fixed exception handling in Connection (issue #110)
+* fixed NPE in ArangoCursor (issue #112)
+* extracted VelocyPack implementation to https://github.com/arangodb/java-velocypack
 * added convenience methods (ArangoDatabase.arango(), ArangoCollection.db(), ArangoGraph.db())
 * added convenience methods (ArangoCollection.getIndex(String), .deleteIndex(key))
-* fixed exception handling in Connection (issue #110)
 * added connection pooling (issue #103)
-* extracted VelocyPack implementation to https://github.com/arangodb/java-velocypack
 * added extension point for VelocyPack serialization (ArangoDB.registerModule())
-* fixed NPE in ArangoCursor (issue #112)
 * added support for replacing build-in VelocyPack serializer/deserializer
 * added ArangoDatabase.getVersion(), ArangoDatabase.getAccessibleDatabases()
 
