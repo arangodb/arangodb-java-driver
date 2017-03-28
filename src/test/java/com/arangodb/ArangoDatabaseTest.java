@@ -874,6 +874,22 @@ public class ArangoDatabaseTest extends BaseTest {
 		}
 	}
 
+	protected static class TransactionTestEntity {
+		private String value;
+
+		public TransactionTestEntity() {
+			super();
+		}
+	}
+
+	@Test
+	public void transactionPojoReturn() {
+		final String action = "function() { return {'value':'hello world'}; }";
+		final TransactionTestEntity res = db.transaction(action, TransactionTestEntity.class, new TransactionOptions());
+		assertThat(res, is(notNullValue()));
+		assertThat(res.value, is("hello world"));
+	}
+
 	@Test
 	public void getInfo() {
 		final DatabaseEntity info = db.getInfo();
