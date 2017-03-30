@@ -418,4 +418,21 @@ public class ArangoDBTest {
 	public void loadproperties() {
 		new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad.properties"));
 	}
+
+	@Test
+	public void accessMultipleDatabases() {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		try {
+			arangoDB.createDatabase("db1");
+			arangoDB.createDatabase("db2");
+
+			final ArangoDBVersion version1 = arangoDB.db("db1").getVersion();
+			assertThat(version1, is(notNullValue()));
+			final ArangoDBVersion version2 = arangoDB.db("db2").getVersion();
+			assertThat(version2, is(notNullValue()));
+		} finally {
+			arangoDB.db("db1").drop();
+			arangoDB.db("db2").drop();
+		}
+	}
 }
