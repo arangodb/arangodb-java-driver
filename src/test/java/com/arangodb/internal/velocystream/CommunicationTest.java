@@ -90,6 +90,40 @@ public class CommunicationTest {
 	}
 
 	@Test
+	public void multiThreadSameDatabases() throws Exception {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+
+		final ArangoDatabase db = arangoDB.db();
+
+		final Collection<String> result = new ConcurrentLinkedQueue<String>();
+		final Thread t1 = new Thread() {
+			@Override
+			public void run() {
+				try {
+					db.query("return sleep(1)", null, null, null);
+					result.add("1");
+				} catch (final ArangoDBException e) {
+				}
+			}
+		};
+		final Thread t2 = new Thread() {
+			@Override
+			public void run() {
+				try {
+					db.query("return sleep(1)", null, null, null);
+					result.add("1");
+				} catch (final ArangoDBException e) {
+				}
+			}
+		};
+		t2.start();
+		t1.start();
+		t2.join();
+		t1.join();
+		assertThat(result.size(), is(2));
+	}
+
+	@Test
 	public void multiThreadMultiDatabases() throws Exception {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 
