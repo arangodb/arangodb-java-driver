@@ -28,11 +28,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.ArangoDBVersion;
 
 /**
@@ -52,10 +52,8 @@ public class CommunicationTest {
 	}
 
 	@Test
-	@Ignore // need server fix
 	public void multiThread() throws Exception {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
-		arangoDB.getVersion();// authenticate
 
 		final Collection<String> result = new ConcurrentLinkedQueue<String>();
 		final Thread fast = new Thread() {
@@ -89,6 +87,48 @@ public class CommunicationTest {
 		final Iterator<String> iterator = result.iterator();
 		assertThat(iterator.next(), is(FAST));
 		assertThat(iterator.next(), is(SLOW));
+	}
+
+	@Test
+	public void multiThreadMultiDatabases() throws Exception {
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+
+		try {
+			arangoDB.createDatabase("db1");
+			arangoDB.createDatabase("db2");
+			final ArangoDatabase db1 = arangoDB.db("db1");
+			final ArangoDatabase db2 = arangoDB.db("db2");
+
+			final Collection<String> result = new ConcurrentLinkedQueue<String>();
+			final Thread t1 = new Thread() {
+				@Override
+				public void run() {
+					try {
+						db1.query("return sleep(1)", null, null, null);
+						result.add("1");
+					} catch (final ArangoDBException e) {
+					}
+				}
+			};
+			final Thread t2 = new Thread() {
+				@Override
+				public void run() {
+					try {
+						db2.query("return sleep(1)", null, null, null);
+						result.add("1");
+					} catch (final ArangoDBException e) {
+					}
+				}
+			};
+			t2.start();
+			t1.start();
+			t2.join();
+			t1.join();
+			assertThat(result.size(), is(2));
+		} finally {
+			arangoDB.db("db1").drop();
+			arangoDB.db("db2").drop();
+		}
 	}
 
 	@Test
