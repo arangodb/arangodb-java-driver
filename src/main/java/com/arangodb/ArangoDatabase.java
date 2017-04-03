@@ -262,6 +262,28 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 		final Class<T> type) throws ArangoDBException {
 		final Request request = queryRequest(query, bindVars, options);
 		final CursorEntity result = executor.execute(request, CursorEntity.class);
+		return createCursor(result, type);
+	}
+
+	/**
+	 * Return an cursor from the given cursor-ID if still existing
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#read-next-batch-from-cursor">API
+	 *      Documentation</a>
+	 * @param cursorId
+	 *            The ID of the cursor
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 * @return cursor of the results
+	 * @throws ArangoDBException
+	 */
+	public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
+		final CursorEntity result = executor.execute(queryNextRequest(cursorId), CursorEntity.class);
+		return createCursor(result, type);
+	}
+
+	private <T> ArangoCursor<T> createCursor(final CursorEntity result, final Class<T> type) {
 		return new ArangoCursor<T>(this, new ArangoCursorExecute() {
 			@Override
 			public CursorEntity next(final String id) {

@@ -44,9 +44,6 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	private final Class<T> type;
 	protected final ArangoCursorIterator<T> iterator;
 	private final String id;
-	private final Integer count;
-	private final Extras extra;
-	private final boolean cached;
 	private final ArangoCursorExecute execute;
 
 	protected ArangoCursor(final InternalArangoDatabase<?, ?, ?, ?> db, final ArangoCursorExecute execute,
@@ -54,9 +51,6 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		super();
 		this.execute = execute;
 		this.type = type;
-		count = result.getCount();
-		extra = result.getExtra();
-		cached = result.getCached().booleanValue();
 		iterator = new ArangoCursorIterator<T>(this, execute, db, result);
 		id = result.getId();
 	}
@@ -77,14 +71,16 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	 *         attribute set)
 	 */
 	public Integer getCount() {
-		return count;
+		return iterator.getResult().getCount();
 	}
 
 	public Stats getStats() {
+		final Extras extra = iterator.getResult().getExtra();
 		return extra != null ? extra.getStats() : null;
 	}
 
 	public Collection<Warning> getWarnings() {
+		final Extras extra = iterator.getResult().getExtra();
 		return extra != null ? extra.getWarnings() : null;
 	}
 
@@ -92,7 +88,8 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	 * @return indicating whether the query result was served from the query cache or not
 	 */
 	public boolean isCached() {
-		return cached;
+		final Boolean cached = iterator.getResult().getCached();
+		return cached != null && cached.booleanValue();
 	}
 
 	@Override

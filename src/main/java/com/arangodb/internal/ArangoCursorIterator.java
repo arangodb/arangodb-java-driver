@@ -50,6 +50,10 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 		pos = 0;
 	}
 
+	public CursorEntity getResult() {
+		return result;
+	}
+
 	@Override
 	public boolean hasNext() {
 		return pos < result.getResult().size() || result.getHasMore();
