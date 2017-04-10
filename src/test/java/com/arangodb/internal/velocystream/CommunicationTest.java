@@ -103,6 +103,7 @@ public class CommunicationTest {
 					db.query("return sleep(1)", null, null, null);
 					result.add("1");
 				} catch (final ArangoDBException e) {
+					e.printStackTrace(System.err);
 				}
 			}
 		};
@@ -113,6 +114,7 @@ public class CommunicationTest {
 					db.query("return sleep(1)", null, null, null);
 					result.add("1");
 				} catch (final ArangoDBException e) {
+					e.printStackTrace(System.err);
 				}
 			}
 		};
