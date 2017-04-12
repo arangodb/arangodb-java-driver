@@ -48,7 +48,7 @@ public class BaseDocumentTest {
 		entity.addAttribute("a", "a");
 
 		final Builder builder = new VPack.Builder();
-		builder.registerModule(new VPackDriverModule(null));
+		builder.registerModule(new VPackDriverModule());
 		final VPack vpacker = builder.build();
 
 		final VPackSlice vpack = vpacker.serialize(entity);
@@ -80,7 +80,7 @@ public class BaseDocumentTest {
 		builder.close();
 
 		final VPack.Builder vbuilder = new VPack.Builder();
-		vbuilder.registerModule(new VPackDriverModule(null));
+		vbuilder.registerModule(new VPackDriverModule());
 		final VPack vpacker = vbuilder.build();
 
 		final BaseDocument entity = vpacker.deserialize(builder.slice(), BaseDocument.class);

@@ -23,8 +23,6 @@ package com.arangodb.internal.velocypack;
 import java.lang.reflect.Field;
 import java.util.Date;
 
-import org.json.simple.JSONValue;
-
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
@@ -32,21 +30,13 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.QueryEntity;
-import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.velocystream.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
-import com.arangodb.velocypack.VPackDeserializationContext;
-import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
-import com.arangodb.velocypack.VPackJsonDeserializer;
 import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackParserSetupContext;
 import com.arangodb.velocypack.VPackSetupContext;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.ValueType;
-import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocypack.internal.util.NumberUtil;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -55,14 +45,6 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class VPackDriverModule implements VPackModule, VPackParserModule {
-
-	private static final String ID = "_id";
-	private final CollectionCache collectionCache;
-
-	public VPackDriverModule(final CollectionCache collectionCache) {
-		super();
-		this.collectionCache = collectionCache;
-	}
 
 	@Override
 	public <C extends VPackSetupContext<C>> void setup(final C context) {
@@ -74,29 +56,6 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 					return annotation.value().getSerializeName();
 				}
 				return field.getName();
-			}
-		});
-		context.registerDeserializer(ID, String.class, new VPackDeserializer<String>() {
-			@Override
-			public String deserialize(
-				final VPackSlice parent,
-				final VPackSlice vpack,
-				final VPackDeserializationContext context) throws VPackException {
-				final String id;
-				if (vpack.isCustom()) {
-					final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1,
-						vpack.getByteSize() - 1);
-					final String collectionName = collectionCache.getCollectionName(idLong);
-					if (collectionName != null) {
-						final VPackSlice key = parent.get("_key");
-						id = String.format("%s/%s", collectionName, key.getAsString());
-					} else {
-						id = null;
-					}
-				} else {
-					id = vpack.getAsString();
-				}
-				return id;
 			}
 		});
 		context.registerSerializer(Request.class, VPackSerializers.REQUEST);
@@ -118,25 +77,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 
 	@Override
 	public <C extends VPackParserSetupContext<C>> void setup(final C context) {
-		context.registerDeserializer(ID, ValueType.CUSTOM, new VPackJsonDeserializer() {
-			@Override
-			public void deserialize(
-				final VPackSlice parent,
-				final String attribute,
-				final VPackSlice vpack,
-				final StringBuilder json) throws VPackException {
-				final String id;
-				final long idLong = NumberUtil.toLong(vpack.getBuffer(), vpack.getStart() + 1, vpack.getByteSize() - 1);
-				final String collectionName = collectionCache.getCollectionName(idLong);
-				if (collectionName != null) {
-					final VPackSlice key = parent.get("_key");
-					id = String.format("%s/%s", collectionName, key.getAsString());
-				} else {
-					id = null;
-				}
-				json.append(JSONValue.toJSONString(id));
-			}
-		});
+
 	}
 
 }
