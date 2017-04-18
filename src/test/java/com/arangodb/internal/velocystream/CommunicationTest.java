@@ -54,6 +54,7 @@ public class CommunicationTest {
 	@Test
 	public void multiThread() throws Exception {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		arangoDB.getVersion();// authentication
 
 		final Collection<String> result = new ConcurrentLinkedQueue<String>();
 		final Thread fast = new Thread() {
@@ -92,6 +93,7 @@ public class CommunicationTest {
 	@Test
 	public void multiThreadSameDatabases() throws Exception {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		arangoDB.getVersion();// authentication
 
 		final ArangoDatabase db = arangoDB.db();
 
@@ -128,6 +130,7 @@ public class CommunicationTest {
 	@Test
 	public void multiThreadMultiDatabases() throws Exception {
 		final ArangoDB arangoDB = new ArangoDB.Builder().build();
+		arangoDB.getVersion();// authentication
 
 		try {
 			arangoDB.createDatabase("db1");
