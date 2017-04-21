@@ -1,4 +1,4 @@
-v4.1.12 (2017-04-xx)
+v4.1.12 (2017-04-13)
 ---------------------------
 * added ArangoDatabase.cursor() (issue #116)
 * optimized ArangoDB.Builder for better multi thread support
