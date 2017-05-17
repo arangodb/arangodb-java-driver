@@ -31,6 +31,7 @@ import java.util.Properties;
 import javax.net.ssl.SSLContext;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.ArangoDBRole;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.UserEntity;
@@ -451,6 +452,18 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
 		return db().getVersion();
+	}
+
+	/**
+	 * Returns the server role.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 *      Documentation</a>
+	 * @return the server role
+	 * @throws ArangoDBException
+	 */
+	public ArangoDBRole getRole() throws ArangoDBException {
+		return db().getRole();
 	}
 
 	/**

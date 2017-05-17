@@ -49,6 +49,7 @@ import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.ArangoDBRole;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -124,6 +125,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void deleteSystemCollection() {
+    if (db.getRole().getRole() == "COORDINATOR") {
+      return;
+    }
 		final String name = "_system_test";
 		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
 		db.collection(name).drop(true);
@@ -136,6 +140,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void deleteSystemCollectionFail() {
+    if (db.getRole().getRole() == "COORDINATOR") {
+      return;
+    }
 		final String name = "_system_test";
 		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
 		try {
