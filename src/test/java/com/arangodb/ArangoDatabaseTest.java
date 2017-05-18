@@ -49,7 +49,6 @@ import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.ArangoDBRole;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -62,6 +61,7 @@ import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
+import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
@@ -125,9 +125,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void deleteSystemCollection() {
-    if (db.getRole().getRole() == "COORDINATOR") {
-      return;
-    }
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final String name = "_system_test";
 		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
 		db.collection(name).drop(true);
@@ -140,9 +140,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void deleteSystemCollectionFail() {
-    if (db.getRole().getRole() == "COORDINATOR") {
-      return;
-    }
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final String name = "_system_test";
 		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
 		try {

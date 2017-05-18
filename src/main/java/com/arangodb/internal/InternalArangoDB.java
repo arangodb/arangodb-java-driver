@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.velocystream.Connection;
@@ -129,6 +130,19 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 		final T defaultValue) {
 		return properties.getProperty(key,
 			currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
+	}
+
+	protected Request getRoleRequest() {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ROLE);
+	}
+
+	protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
+		return new ResponseDeserializer<ServerRole>() {
+			@Override
+			public ServerRole deserialize(final Response response) throws VPackException {
+				return util().deserialize(response.getBody().get(ArangoDBConstants.ROLE), ServerRole.class);
+			}
+		};
 	}
 
 	protected Request createDatabaseRequest(final String name) {

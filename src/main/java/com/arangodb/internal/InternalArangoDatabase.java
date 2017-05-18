@@ -92,10 +92,6 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_VERSION);
 	}
 
-	protected Request getRoleRequest() {
-		return new Request(name, RequestType.GET, ArangoDBConstants.PATH_API_ROLE);
-	}
-
 	protected Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
 		return new Request(name(), RequestType.POST, ArangoDBConstants.PATH_API_COLLECTION).setBody(
 			executor.serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));

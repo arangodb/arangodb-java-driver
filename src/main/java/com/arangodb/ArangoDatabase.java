@@ -27,7 +27,6 @@ import com.arangodb.entity.AqlExecutionExplainEntity;
 import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.ArangoDBRole;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DatabaseEntity;
@@ -86,18 +85,6 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 */
 	public ArangoDBVersion getVersion() throws ArangoDBException {
 		return executor.execute(getVersionRequest(), ArangoDBVersion.class);
-	}
-
-	/**
-	 * Returns the server name and version number.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
-	 *      Documentation</a>
-	 * @return the server version, number
-	 * @throws ArangoDBException
-	 */
-	public ArangoDBRole getRole() throws ArangoDBException {
-		return executor.execute(getRoleRequest(), ArangoDBRole.class);
 	}
 
 	/**
