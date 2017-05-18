@@ -755,7 +755,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
-		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.geo1));
 		assertThat(indexResult.getUnique(), is(false));
@@ -775,7 +774,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
-		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.geo2));
 		assertThat(indexResult.getUnique(), is(false));
@@ -795,7 +793,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
-		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.skiplist));
 		assertThat(indexResult.getUnique(), is(false));
@@ -815,7 +812,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
-		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.persistent));
 		assertThat(indexResult.getUnique(), is(false));
@@ -832,7 +828,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
-		assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.fulltext));
 		assertThat(indexResult.getUnique(), is(false));
@@ -1726,11 +1721,9 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(properties.getWaitForSync(), is(notNullValue()));
 		final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
 		options.waitForSync(!properties.getWaitForSync());
-		options.journalSize(2000000L);
 		final CollectionPropertiesEntity changedProperties = db.collection(COLLECTION_NAME).changeProperties(options);
 		assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
 		assertThat(changedProperties.getWaitForSync(), is(not(properties.getWaitForSync())));
-		assertThat(changedProperties.getJournalSize(), is(options.getJournalSize()));
 	}
 
 	@Test
