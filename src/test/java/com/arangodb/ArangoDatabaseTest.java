@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -997,6 +998,20 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(document.getKey(), is("123"));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void shouldIncludeExceptionMessage() {
+		final String exceptionMessage = "My error context";
+		final String action = "function (params) {"
+				+ "throw '" + exceptionMessage + "';"
+				+ "}";
+		try {
+			db.transaction(action, VPackSlice.class, null);
+			fail();
+		} catch (final ArangoDBException e) {
+			assertTrue(e.getException().contains(exceptionMessage));
 		}
 	}
 
