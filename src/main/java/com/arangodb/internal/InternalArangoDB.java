@@ -52,8 +52,7 @@ import com.arangodb.velocystream.Response;
  * @param <C>
  *
  */
-public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Connection>
-		extends ArangoExecuteable<E, R, C> {
+public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection> extends ArangoExecuteable<E, R, C> {
 
 	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
 	private static final String PROPERTY_KEY_HOST = "arangodb.host";

@@ -40,6 +40,7 @@ import com.arangodb.velocystream.Response;
 public class CommunicationSync extends Communication<Response, ConnectionSync> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationSync.class);
+	private final CollectionCache collectionCache;
 
 	public static class Builder {
 
@@ -103,7 +104,7 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 	protected CommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
 		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections) {
-		super(timeout, user, password, useSsl, sslContext, util, collectionCache, chunksize,
+		super(timeout, user, password, useSsl, sslContext, util, chunksize,
 				new ConnectionPool<ConnectionSync>(maxConnections) {
 					private final ConnectionSync.Builder builder = new ConnectionSync.Builder(hostHandler,
 							new MessageStore()).timeout(timeout).useSsl(useSsl).sslContext(sslContext);
@@ -113,6 +114,7 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 						return builder.build();
 					}
 				});
+		this.collectionCache = collectionCache;
 	}
 
 	@Override

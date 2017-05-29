@@ -50,6 +50,7 @@ import com.arangodb.model.GeoIndexOptions;
 import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
+import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
 
 /**
@@ -522,7 +523,7 @@ public class ArangoCollection
 	 */
 	public Boolean documentExists(final String key, final DocumentExistsOptions options) {
 		try {
-			executor.communication().execute(documentExistsRequest(key, options));
+			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
 			return true;
 		} catch (final ArangoDBException e) {
 			return false;

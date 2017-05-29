@@ -18,31 +18,36 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.velocystream;
 
-import com.arangodb.internal.velocystream.Connection;
-import com.arangodb.util.ArangoSerialization;
+import java.io.IOException;
+
+import com.arangodb.ArangoDBException;
+import com.arangodb.internal.CommunicationProtocol;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends Connection> {
+public class VelocyStreamProtocol implements CommunicationProtocol {
 
-	protected final E executor;
-	private final ArangoSerialization util;
+	private final Communication<Response, ConnectionSync> communication;
 
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
+	public VelocyStreamProtocol(final Communication<Response, ConnectionSync> communication) {
 		super();
-		this.executor = executor;
-		this.util = util;
+		this.communication = communication;
 	}
 
-	protected E executor() {
-		return executor;
+	@Override
+	public Response execute(final Request request) throws ArangoDBException {
+		return communication.execute(request);
 	}
 
-	public ArangoSerialization util() {
-		return util;
+	@Override
+	public void close() throws IOException {
+		communication.disconnect();
 	}
+
 }

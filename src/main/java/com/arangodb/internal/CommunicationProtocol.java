@@ -20,29 +20,18 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.internal.velocystream.Connection;
-import com.arangodb.util.ArangoSerialization;
+import java.io.Closeable;
+
+import com.arangodb.ArangoDBException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends Connection> {
+public interface CommunicationProtocol extends Closeable {
 
-	protected final E executor;
-	private final ArangoSerialization util;
+	Response execute(final Request request) throws ArangoDBException;
 
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
-		super();
-		this.executor = executor;
-		this.util = util;
-	}
-
-	protected E executor() {
-		return executor;
-	}
-
-	public ArangoSerialization util() {
-		return util;
-	}
 }

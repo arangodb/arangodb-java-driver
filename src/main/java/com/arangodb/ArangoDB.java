@@ -40,24 +40,27 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.CollectionCache.DBAccess;
+import com.arangodb.internal.CommunicationProtocol;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.InternalArangoDB;
+import com.arangodb.internal.http.HttpCommunication;
+import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.ArangoUtilImpl;
 import com.arangodb.internal.velocypack.VPackDocumentModule;
 import com.arangodb.internal.velocypack.VPackDriverModule;
-import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.CommunicationSync;
 import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.internal.velocystream.DefaultHostHandler;
 import com.arangodb.internal.velocystream.Host;
+import com.arangodb.internal.velocystream.VelocyStreamProtocol;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoDeserializer;
-import com.arangodb.util.ArangoSerializer;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackAnnotationFieldFilter;
 import com.arangodb.velocypack.VPackAnnotationFieldNaming;
@@ -95,6 +98,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		private final VPackParser.Builder vpackParserBuilder;
 		private ArangoSerializer serializer;
 		private ArangoDeserializer deserializer;
+		private Protocol protocol;
 
 		public Builder() {
 			super();
@@ -199,6 +203,11 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		public Builder maxConnections(final Integer maxConnections) {
 			this.maxConnections = maxConnections;
+			return this;
+		}
+
+		public Builder useProtocol(final Protocol protocol) {
+			this.protocol = protocol;
 			return this;
 		}
 
@@ -340,22 +349,47 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					new CommunicationSync.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts))).timeout(timeout)
 							.user(user).password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
 							.maxConnections(maxConnections),
-					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache);
+					new HttpCommunication.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts))).timeout(timeout)
+							.user(user).password(password).useSsl(useSsl).sslContext(sslContext),
+					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol);
 		}
 
 	}
 
-	public ArangoDB(final CommunicationSync.Builder commBuilder, final ArangoSerialization util,
-		final CollectionCache collectionCache) {
-		super(new ArangoExecutorSync(commBuilder.build(util, collectionCache), util, new DocumentCache(),
-				collectionCache), util);
-		final Communication<Response, ConnectionSync> cacheCom = commBuilder.build(util, collectionCache);
+	public ArangoDB(final CommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
+		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol) {
+		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
+				new DocumentCache()), util);
+		final CommunicationProtocol cp = createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol);
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
-				return new ArangoDatabase(cacheCom, util, executor.documentCache(), null, name);
+				return new ArangoDatabase(cp, util, executor.documentCache(), name);
 			}
 		});
+	}
+
+	private static CommunicationProtocol createProtocol(
+		final CommunicationSync.Builder vstBuilder,
+		final HttpCommunication.Builder httpBuilder,
+		final ArangoSerialization util,
+		final CollectionCache collectionCache,
+		final Protocol protocol) {
+		return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util, collectionCache)
+				: createHTTP(httpBuilder, util);
+	}
+
+	private static CommunicationProtocol createVST(
+		final CommunicationSync.Builder builder,
+		final ArangoSerialization util,
+		final CollectionCache collectionCache) {
+		return new VelocyStreamProtocol(builder.build(util, collectionCache));
+	}
+
+	private static CommunicationProtocol createHTTP(
+		final HttpCommunication.Builder builder,
+		final ArangoSerialization util) {
+		return new HttpProtocol(builder.build(util));
 	}
 
 	@Override
@@ -364,7 +398,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	}
 
 	public void shutdown() {
-		executor.communication().disconnect();
+		executor.disconnect();
 	}
 
 	/**

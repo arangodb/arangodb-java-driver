@@ -18,31 +18,12 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
-
-import com.arangodb.internal.velocystream.Connection;
-import com.arangodb.util.ArangoSerialization;
+package com.arangodb;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends Connection> {
-
-	protected final E executor;
-	private final ArangoSerialization util;
-
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
-		super();
-		this.executor = executor;
-		this.util = util;
-	}
-
-	protected E executor() {
-		return executor;
-	}
-
-	public ArangoSerialization util() {
-		return util;
-	}
+public enum Protocol {
+	VST, HTTP
 }

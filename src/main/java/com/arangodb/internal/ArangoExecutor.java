@@ -22,15 +22,13 @@ package com.arangodb.internal;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.velocystream.Communication;
-import com.arangodb.internal.velocystream.Connection;
-import com.arangodb.util.ArangoSerializer;
+import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
@@ -39,7 +37,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoExecutor<R, C extends Connection> {
+public abstract class ArangoExecutor {
 
 	private static final String SLASH = "/";
 
@@ -50,30 +48,17 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 	protected static final String REGEX_KEY = "[^/]+";
 	protected static final String REGEX_ID = "[^/]+/[^/]+";
 
-	private final Communication<R, C> communication;
 	private final DocumentCache documentCache;
-	private final CollectionCache collectionCache;
 	private final ArangoSerialization util;
 
-	protected ArangoExecutor(final Communication<R, C> communication, final ArangoSerialization util,
-		final DocumentCache documentCache, final CollectionCache collectionCache) {
+	protected ArangoExecutor(final ArangoSerialization util, final DocumentCache documentCache) {
 		super();
-		this.communication = communication;
 		this.documentCache = documentCache;
-		this.collectionCache = collectionCache;
 		this.util = util;
-	}
-
-	public Communication<R, C> communication() {
-		return communication;
 	}
 
 	public DocumentCache documentCache() {
 		return documentCache;
-	}
-
-	protected CollectionCache collectionCache() {
-		return collectionCache;
 	}
 
 	protected ArangoSerialization util() {
@@ -91,7 +76,7 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 				if (params[i].contains(SLASH)) {
 					param = createPath(params[i].split(SLASH));
 				} else {
-					param = encode(params[i]);
+					param = EncodeUtils.encodeURL(params[i]);
 				}
 				sb.append(param);
 			} catch (final UnsupportedEncodingException e) {
@@ -99,11 +84,6 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 			}
 		}
 		return sb.toString();
-	}
-
-	private String encode(final String value) throws UnsupportedEncodingException {
-		return URLEncoder.encode(value, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!")
-				.replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
 	}
 
 	public void validateIndexId(final String id) {

@@ -49,9 +49,8 @@ public class ArangoExecuteableTest {
 		checkDocumentKey("");
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void checkDocumentKey(final String key) throws ArangoDBException {
-		final ArangoExecutor executeBase = new ArangoExecutor(null, null, null, null) {
+		final ArangoExecutor executeBase = new ArangoExecutor(null, null) {
 		};
 		executeBase.validateDocumentKey(key);
 	}
@@ -75,9 +74,8 @@ public class ArangoExecuteableTest {
 		checkDocumentId("");
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void checkDocumentId(final String id) throws ArangoDBException {
-		final ArangoExecutor executeBase = new ArangoExecutor(null, null, null, null) {
+		final ArangoExecutor executeBase = new ArangoExecutor(null, null) {
 		};
 		executeBase.validateDocumentId(id);
 	}

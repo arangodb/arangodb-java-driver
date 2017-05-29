@@ -18,31 +18,23 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.util;
 
-import com.arangodb.internal.velocystream.Connection;
-import com.arangodb.util.ArangoSerialization;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends Connection> {
+public class EncodeUtils {
 
-	protected final E executor;
-	private final ArangoSerialization util;
-
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
-		super();
-		this.executor = executor;
-		this.util = util;
+	private EncodeUtils() {
 	}
 
-	protected E executor() {
-		return executor;
+	public static String encodeURL(final String value) throws UnsupportedEncodingException {
+		return URLEncoder.encode(value, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!")
+				.replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
 	}
 
-	public ArangoSerialization util() {
-		return util;
-	}
 }

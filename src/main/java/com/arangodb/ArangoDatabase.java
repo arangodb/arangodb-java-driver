@@ -39,10 +39,9 @@ import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.CollectionCache;
+import com.arangodb.internal.CommunicationProtocol;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
@@ -70,9 +69,9 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 		super(arangoDB, arangoDB.executor(), arangoDB.util(), name);
 	}
 
-	protected ArangoDatabase(final Communication<Response, ConnectionSync> communication, final ArangoSerialization util,
-		final DocumentCache documentCache, final CollectionCache collectionCache, final String name) {
-		super(null, new ArangoExecutorSync(communication, util, documentCache, collectionCache), util, name);
+	protected ArangoDatabase(final CommunicationProtocol protocol, final ArangoSerialization util,
+		final DocumentCache documentCache, final String name) {
+		super(null, new ArangoExecutorSync(protocol, util, documentCache), util, name);
 	}
 
 	/**

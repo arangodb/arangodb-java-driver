@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.CollectionCache;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
@@ -53,7 +52,6 @@ public abstract class Communication<R, C extends Connection> {
 	protected static final AtomicLong mId = new AtomicLong(0L);
 	protected final ArangoSerialization util;
 	protected final ConnectionPool<C> connectionPool;
-	protected final CollectionCache collectionCache;
 
 	protected final String user;
 	protected final String password;
@@ -61,12 +59,11 @@ public abstract class Communication<R, C extends Connection> {
 	protected final Integer chunksize;
 
 	protected Communication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final ArangoSerialization util, final CollectionCache collectionCache,
-		final Integer chunksize, final ConnectionPool<C> connectionPool) {
+		final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
+		final ConnectionPool<C> connectionPool) {
 		this.user = user;
 		this.password = password;
 		this.util = util;
-		this.collectionCache = collectionCache;
 		this.connectionPool = connectionPool;
 		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
 	}
