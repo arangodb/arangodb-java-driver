@@ -45,7 +45,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 	private final String name;
 
 	public InternalArangoGraph(final D db, final String name) {
-		super(db.executor());
+		super(db.executor(), db.util());
 		this.db = db;
 		this.name = name;
 	}
@@ -80,7 +80,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 		return new ResponseDeserializer<Collection<String>>() {
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
+				return util().deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
 					new Type<Collection<String>>() {
 					}.getType());
 			}
@@ -90,7 +90,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 	protected Request addVertexCollectionRequest(final String name) {
 		final Request request = new Request(db.name(), RequestType.POST,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name(), ArangoDBConstants.VERTEX));
-		request.setBody(executor.serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
+		request.setBody(util().serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
 		return request;
 	}
 
@@ -107,7 +107,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 		return new ResponseDeserializer<Collection<String>>() {
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
+				return util().deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
 					new Type<Collection<String>>() {
 					}.getType());
 			}
@@ -117,7 +117,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 	protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
 		final Request request = new Request(db.name(), RequestType.POST,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE));
-		request.setBody(executor.serialize(definition));
+		request.setBody(util().serialize(definition));
 		return request;
 	}
 
@@ -125,7 +125,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 			}
 		};
 	}
@@ -133,7 +133,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 	protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
 		final Request request = new Request(db.name(), RequestType.PUT, executor.createPath(
 			ArangoDBConstants.PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definition.getCollection()));
-		request.setBody(executor.serialize(definition));
+		request.setBody(util().serialize(definition));
 		return request;
 	}
 
@@ -141,7 +141,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 			}
 		};
 	}
@@ -155,7 +155,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
 			}
 		};
 	}

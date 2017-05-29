@@ -30,7 +30,6 @@ import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocypack.exception.VPackParserException;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -51,34 +50,32 @@ public class ArangoSerializerImpl implements ArangoSerializer {
 
 	@Override
 	public VPackSlice serialize(final Object entity) throws ArangoDBException {
-		return serialize(entity, false);
+		return serialize(entity, new ArangoSerializer.Options());
 	}
 
-	@Override
-	public VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
-		return serialize(entity, serializeNullValues, false);
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
-	public VPackSlice serialize(final Object entity, final boolean serializeNullValues, final boolean stringAsJson)
-			throws ArangoDBException {
+	@Override
+	public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
+		if (options.getType() == null) {
+			options.type(entity.getClass());
+		}
 		try {
 			final VPackSlice vpack;
 			final Class<? extends Object> type = entity.getClass();
+			final boolean serializeNullValues = options.isSerializeNullValues();
 			if (String.class.isAssignableFrom(type)) {
 				vpack = vpackParser.fromJson((String) entity, serializeNullValues);
-			} else if (stringAsJson && Iterable.class.isAssignableFrom(type)) {
+			} else if (options.isStringAsJson() && Iterable.class.isAssignableFrom(type)) {
 				final Iterator<?> iterator = Iterable.class.cast(entity).iterator();
 				if (iterator.hasNext() && String.class.isAssignableFrom(iterator.next().getClass())) {
 					vpack = vpackParser.fromJson((Iterable<String>) entity, serializeNullValues);
 				} else {
 					final VPack vp = serializeNullValues ? vpackerNull : vpacker;
-					vpack = vp.serialize(entity);
+					vpack = vp.serialize(entity, options.getType(), options.getAdditionalFields());
 				}
 			} else {
 				final VPack vp = serializeNullValues ? vpackerNull : vpacker;
-				vpack = vp.serialize(entity);
+				vpack = vp.serialize(entity, options.getType(), options.getAdditionalFields());
 			}
 			return vpack;
 		} catch (final VPackException e) {
@@ -87,32 +84,37 @@ public class ArangoSerializerImpl implements ArangoSerializer {
 	}
 
 	@Override
-	public VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
-		try {
-			return vpacker.serialize(entity, type);
-		} catch (final VPackException e) {
-			throw new ArangoDBException(e);
-		}
+	@Deprecated
+	public VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
+		return serialize(entity, new ArangoSerializer.Options().serializeNullValues(serializeNullValues));
 	}
 
 	@Override
+	@Deprecated
+	public VPackSlice serialize(final Object entity, final boolean serializeNullValues, final boolean stringAsJson)
+			throws ArangoDBException {
+		return serialize(entity,
+			new ArangoSerializer.Options().serializeNullValues(serializeNullValues).stringAsJson(stringAsJson));
+	}
+
+	@Override
+	@Deprecated
+	public VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
+		return serialize(entity, new ArangoSerializer.Options().type(type));
+	}
+
+	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
 			throws ArangoDBException {
-		try {
-			final VPack vp = serializeNullValues ? vpackerNull : vpacker;
-			return vp.serialize(entity, type);
-		} catch (final VPackException e) {
-			throw new ArangoDBException(e);
-		}
+		return serialize(entity, new ArangoSerializer.Options().type(type).serializeNullValues(serializeNullValues));
 	}
 
 	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws ArangoDBException {
-		try {
-			return vpacker.serialize(entity, type, additionalFields);
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		}
+		return serialize(entity, new ArangoSerializer.Options().type(type).additionalFields(additionalFields));
 	}
+
 }

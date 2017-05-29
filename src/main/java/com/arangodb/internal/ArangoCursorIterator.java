@@ -68,7 +68,7 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 		if (!hasNext()) {
 			throw new NoSuchElementException();
 		}
-		return db.executor.deserialize(result.getResult().get(pos++), cursor.getType());
+		return db.util().deserialize(result.getResult().get(pos++), cursor.getType());
 	}
 
 	@Override

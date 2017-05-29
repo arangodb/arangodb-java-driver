@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.ConnectionSync;
-import com.arangodb.util.ArangoUtil;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -36,7 +36,7 @@ import com.arangodb.velocystream.Response;
  */
 public class ArangoExecutorSync extends ArangoExecutor<Response, ConnectionSync> {
 
-	public ArangoExecutorSync(final Communication<Response, ConnectionSync> communication, final ArangoUtil util,
+	public ArangoExecutorSync(final Communication<Response, ConnectionSync> communication, final ArangoSerialization util,
 		final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super(communication, util, documentCache, collectionCache);
 	}

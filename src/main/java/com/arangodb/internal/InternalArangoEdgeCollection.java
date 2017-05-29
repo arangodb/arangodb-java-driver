@@ -33,6 +33,7 @@ import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
@@ -50,7 +51,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 	private final String name;
 
 	public InternalArangoEdgeCollection(final G graph, final String name) {
-		super(graph.executor());
+		super(graph.executor(), graph.util());
 		this.graph = graph;
 		this.name = name;
 	}
@@ -68,7 +69,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE, name));
 		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.setBody(executor.serialize(value));
+		request.setBody(util().serialize(value));
 		return request;
 	}
 
@@ -77,7 +78,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 			@Override
 			public EdgeEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				final EdgeEntity doc = executor.deserialize(body, EdgeEntity.class);
+				final EdgeEntity doc = util().deserialize(body, EdgeEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.ID, doc.getId());
 				values.put(DocumentField.Type.KEY, doc.getKey());
@@ -102,7 +103,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 		return new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
+				return util().deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
 			}
 		};
 	}
@@ -114,7 +115,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(executor.serialize(value));
+		request.setBody(util().serialize(value));
 		return request;
 	}
 
@@ -123,7 +124,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 			@Override
 			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				final EdgeUpdateEntity doc = executor.deserialize(body, EdgeUpdateEntity.class);
+				final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
 				executor.documentCache().setValues(value, values);
@@ -141,7 +142,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(executor.serialize(value, true));
+		request.setBody(util().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
 		return request;
 	}
 
@@ -150,7 +151,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 			@Override
 			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				return executor.deserialize(body, EdgeUpdateEntity.class);
+				return util().deserialize(body, EdgeUpdateEntity.class);
 			}
 		};
 	}

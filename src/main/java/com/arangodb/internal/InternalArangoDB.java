@@ -38,6 +38,7 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -65,8 +66,8 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
 	protected static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
-	public InternalArangoDB(final E executor) {
-		super(executor);
+	public InternalArangoDB(final E executor, final ArangoSerialization util) {
+		super(executor, util);
 	}
 
 	protected static void loadHosts(final Properties properties, final Collection<Host> hosts) {
@@ -148,7 +149,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	protected Request createDatabaseRequest(final String name) {
 		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
 				ArangoDBConstants.PATH_API_DATABASE);
-		request.setBody(executor.serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
+		request.setBody(util().serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
 		return request;
 	}
 
@@ -170,7 +171,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
 				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
-				return executor.deserialize(result, new Type<Collection<String>>() {
+				return util().deserialize(result, new Type<Collection<String>>() {
 				}.getType());
 			}
 		};
@@ -203,8 +204,8 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 		final UserCreateOptions options) {
 		final Request request;
 		request = new Request(database, RequestType.POST, ArangoDBConstants.PATH_API_USER);
-		request.setBody(executor
-				.serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
+		request.setBody(
+			util().serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
 		return request;
 	}
 
@@ -225,7 +226,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 			@Override
 			public Collection<UserEntity> deserialize(final Response response) throws VPackException {
 				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
-				return executor.deserialize(result, new Type<Collection<UserEntity>>() {
+				return util().deserialize(result, new Type<Collection<UserEntity>>() {
 				}.getType());
 			}
 		};
@@ -234,14 +235,14 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 	protected Request updateUserRequest(final String database, final String user, final UserUpdateOptions options) {
 		final Request request;
 		request = new Request(database, RequestType.PATCH, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
-		request.setBody(executor.serialize(options != null ? options : new UserUpdateOptions()));
+		request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
 		return request;
 	}
 
 	protected Request replaceUserRequest(final String database, final String user, final UserUpdateOptions options) {
 		final Request request;
 		request = new Request(database, RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
-		request.setBody(executor.serialize(options != null ? options : new UserUpdateOptions()));
+		request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
 		return request;
 	}
 
@@ -263,7 +264,7 @@ public class InternalArangoDB<E extends ArangoExecutor<R, C>, R, C extends Conne
 
 	protected Request setLogLevelRequest(final LogLevelEntity entity) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT, ArangoDBConstants.PATH_API_ADMIN_LOG_LEVEL)
-				.setBody(executor.serialize(entity));
+				.setBody(util().serialize(entity));
 	}
 
 }

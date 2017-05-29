@@ -29,7 +29,8 @@ import java.util.regex.Pattern;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.velocystream.Communication;
 import com.arangodb.internal.velocystream.Connection;
-import com.arangodb.util.ArangoUtil;
+import com.arangodb.util.ArangoSerializer;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
@@ -52,9 +53,9 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 	private final Communication<R, C> communication;
 	private final DocumentCache documentCache;
 	private final CollectionCache collectionCache;
-	private final ArangoUtil util;
+	private final ArangoSerialization util;
 
-	protected ArangoExecutor(final Communication<R, C> communication, final ArangoUtil util,
+	protected ArangoExecutor(final Communication<R, C> communication, final ArangoSerialization util,
 		final DocumentCache documentCache, final CollectionCache collectionCache) {
 		super();
 		this.communication = communication;
@@ -75,7 +76,7 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 		return collectionCache;
 	}
 
-	protected ArangoUtil util() {
+	protected ArangoSerialization util() {
 		return util;
 	}
 
@@ -134,30 +135,37 @@ public abstract class ArangoExecutor<R, C extends Connection> {
 		return (T) ((type != Void.class && response.getBody() != null) ? deserialize(response.getBody(), type) : null);
 	}
 
+	@Deprecated
 	protected <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
 		return util.deserialize(vpack, type);
 	}
 
+	@Deprecated
 	protected VPackSlice serialize(final Object entity) throws ArangoDBException {
 		return util.serialize(entity);
 	}
 
+	@Deprecated
 	protected VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
-		return util.serialize(entity, serializeNullValues);
+		return util.serialize(entity, new ArangoSerializer.Options().serializeNullValues(serializeNullValues));
 	}
 
+	@Deprecated
 	protected VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
-		return util.serialize(entity, type);
+		return util.serialize(entity, new ArangoSerializer.Options().type(type));
 	}
 
+	@Deprecated
 	protected VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
 			throws ArangoDBException {
-		return util.serialize(entity, type, serializeNullValues);
+		return util.serialize(entity,
+			new ArangoSerializer.Options().type(type).serializeNullValues(serializeNullValues));
 	}
 
+	@Deprecated
 	protected VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws ArangoDBException {
-		return util.serialize(entity, type, additionalFields);
+		return util.serialize(entity, new ArangoSerializer.Options().type(type).additionalFields(additionalFields));
 	}
 
 }

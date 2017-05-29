@@ -34,7 +34,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.util.ArangoUtil;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -51,7 +51,7 @@ public abstract class Communication<R, C extends Connection> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
-	protected final ArangoUtil util;
+	protected final ArangoSerialization util;
 	protected final ConnectionPool<C> connectionPool;
 	protected final CollectionCache collectionCache;
 
@@ -61,7 +61,7 @@ public abstract class Communication<R, C extends Connection> {
 	protected final Integer chunksize;
 
 	protected Communication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final ArangoUtil util, final CollectionCache collectionCache,
+		final SSLContext sslContext, final ArangoSerialization util, final CollectionCache collectionCache,
 		final Integer chunksize, final ConnectionPool<C> connectionPool) {
 		this.user = user;
 		this.password = password;

@@ -44,9 +44,9 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoUtilTest {
+public class ArangoSerializationTest {
 
-	private static ArangoUtil util;
+	private static ArangoSerialization util;
 
 	@BeforeClass
 	public static void setup() {
@@ -74,7 +74,7 @@ public class ArangoUtilTest {
 	public void serializeNullValues() {
 		final BaseDocument entity = new BaseDocument();
 		entity.addAttribute("foo", null);
-		final VPackSlice vpack = util.serialize(entity, true);
+		final VPackSlice vpack = util.serialize(entity, new ArangoSerializer.Options().serializeNullValues(true));
 		assertThat(vpack.get("foo").isNull(), is(true));
 	}
 
@@ -84,8 +84,9 @@ public class ArangoUtilTest {
 		list.add(new BaseDocument());
 		list.add(new BaseDocument());
 
-		final VPackSlice vpack = util.serialize(list, new Type<Collection<BaseDocument>>() {
-		}.getType());
+		final VPackSlice vpack = util.serialize(list,
+			new ArangoSerializer.Options().type(new Type<Collection<BaseDocument>>() {
+			}.getType()));
 		assertThat(vpack.isArray(), is(true));
 		assertThat(vpack.getLength(), is(list.size()));
 	}

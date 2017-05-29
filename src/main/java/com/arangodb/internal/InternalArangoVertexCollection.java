@@ -33,6 +33,7 @@ import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
@@ -50,7 +51,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 	private final String name;
 
 	public InternalArangoVertexCollection(final G graph, final String name) {
-		super(graph.executor());
+		super(graph.executor(), graph.util());
 		this.graph = graph;
 		this.name = name;
 	}
@@ -73,7 +74,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name));
 		final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.setBody(executor.serialize(value));
+		request.setBody(util().serialize(value));
 		return request;
 	}
 
@@ -82,7 +83,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 			@Override
 			public VertexEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
-				final VertexEntity doc = executor.deserialize(body, VertexEntity.class);
+				final VertexEntity doc = util().deserialize(body, VertexEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.ID, doc.getId());
 				values.put(DocumentField.Type.KEY, doc.getKey());
@@ -107,7 +108,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 		return new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return executor.deserialize(response.getBody().get(ArangoDBConstants.VERTEX), type);
+				return util().deserialize(response.getBody().get(ArangoDBConstants.VERTEX), type);
 			}
 		};
 	}
@@ -119,7 +120,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(executor.serialize(value));
+		request.setBody(util().serialize(value));
 		return request;
 	}
 
@@ -128,7 +129,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 			@Override
 			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
-				final VertexUpdateEntity doc = executor.deserialize(body, VertexUpdateEntity.class);
+				final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
 				executor.documentCache().setValues(value, values);
@@ -146,7 +147,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(executor.serialize(value, true));
+		request.setBody(util().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
 		return request;
 	}
 
@@ -155,7 +156,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 			@Override
 			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
-				return executor.deserialize(body, VertexUpdateEntity.class);
+				return util().deserialize(body, VertexUpdateEntity.class);
 			}
 		};
 	}

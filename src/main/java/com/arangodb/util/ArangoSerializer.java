@@ -21,6 +21,7 @@
 package com.arangodb.util;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Map;
 
 import com.arangodb.ArangoDBException;
@@ -31,6 +32,81 @@ import com.arangodb.velocypack.VPackSlice;
  *
  */
 public interface ArangoSerializer {
+
+	public static class Options {
+		private Type type;
+		private boolean serializeNullValues;
+		private Map<String, Object> additionalFields;
+		private boolean stringAsJson;
+
+		public Options() {
+			super();
+			serializeNullValues = false;
+			stringAsJson = false;
+			additionalFields = Collections.<String, Object> emptyMap();
+		}
+
+		/**
+		 * 
+		 * @param type
+		 *            The source type of the Object.
+		 * @return options
+		 */
+		public Options type(final Type type) {
+			this.type = type;
+			return this;
+		}
+
+		/**
+		 * 
+		 * @param serializeNullValues
+		 *            Whether or not null values should be excluded from serialization.
+		 * @return options
+		 */
+		public Options serializeNullValues(final boolean serializeNullValues) {
+			this.serializeNullValues = serializeNullValues;
+			return this;
+		}
+
+		/**
+		 * 
+		 * @param additionalFields
+		 *            Additional Key/Value pairs to include in the created VelocyPack.
+		 * @return options
+		 */
+		public Options additionalFields(final Map<String, Object> additionalFields) {
+			this.additionalFields = additionalFields;
+			return this;
+		}
+
+		/**
+		 * 
+		 * @param stringAsJson
+		 *            Wheter or not String should be interpreted as json
+		 * @return options
+		 */
+		public Options stringAsJson(final boolean stringAsJson) {
+			this.stringAsJson = stringAsJson;
+			return this;
+		}
+
+		public Type getType() {
+			return type;
+		}
+
+		public boolean isSerializeNullValues() {
+			return serializeNullValues;
+		}
+
+		public Map<String, Object> getAdditionalFields() {
+			return additionalFields;
+		}
+
+		public boolean isStringAsJson() {
+			return stringAsJson;
+		}
+
+	}
 
 	/**
 	 * Serialize a given Object to VelocyPack
@@ -47,17 +123,32 @@ public interface ArangoSerializer {
 	 * 
 	 * @param entity
 	 *            The Object to serialize. If it is from type String, it will be handled as a Json.
+	 * @param options
+	 *            Additional options
+	 * @return the serialized VelocyPack
+	 * @throws ArangoDBException
+	 */
+	VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException;
+
+	/**
+	 * Serialize a given Object to VelocyPack
+	 * 
+	 * @deprecated use {@link #serialize(Object, Options)} instead
+	 * @param entity
+	 *            The Object to serialize. If it is from type String, it will be handled as a Json.
 	 * @param serializeNullValues
 	 *            Whether or not null values should be excluded from serialization.
 	 * @return the serialized VelocyPack
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException;
 
 	/**
 	 * Serialize a given Object to VelocyPack. If the Object is from type Iterable<String> the String will be
 	 * interpreted as Json
 	 * 
+	 * @deprecated use {@link #serialize(Object, Options)} instead
 	 * @param entity
 	 *            The Object to serialize. If it is from type String, it will be handled as a Json.
 	 * @param serializeNullValues
@@ -66,6 +157,7 @@ public interface ArangoSerializer {
 	 * @return the serialized VelocyPack
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	VPackSlice serialize(final Object entity, final boolean serializeNullValues, final boolean stringAsJson)
 			throws ArangoDBException;
 
@@ -73,6 +165,7 @@ public interface ArangoSerializer {
 	 * Serialize a given Object to VelocyPack. This method is for serialization of types with generic parameter like
 	 * Collection, List, Map.
 	 * 
+	 * @deprecated use {@link #serialize(Object, Options)} instead
 	 * @param entity
 	 *            The Object to serialize
 	 * @param type
@@ -80,12 +173,14 @@ public interface ArangoSerializer {
 	 * @return the serialized VelocyPack
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException;
 
 	/**
 	 * Serialize a given Object to VelocyPack. This method is for serialization of types with generic parameter like
 	 * Collection, List, Map.
 	 * 
+	 * @deprecated use {@link #serialize(Object, Options)} instead
 	 * @param entity
 	 *            The Object to serialize
 	 * @param type
@@ -95,6 +190,7 @@ public interface ArangoSerializer {
 	 * @return the serialized VelocyPack
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
 			throws ArangoDBException;
 
@@ -102,6 +198,7 @@ public interface ArangoSerializer {
 	 * Serialize a given Object to VelocyPack. This method is for serialization of types with generic parameter like
 	 * Collection, List, Map.
 	 * 
+	 * @deprecated use {@link #serialize(Object, Options)} instead
 	 * @param entity
 	 *            The Object to serialize
 	 * @param type
@@ -113,6 +210,7 @@ public interface ArangoSerializer {
 	 * @return the serialized VelocyPack
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws ArangoDBException;
 

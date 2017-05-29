@@ -26,14 +26,14 @@ import java.util.Map;
 import com.arangodb.ArangoDBException;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerializer;
-import com.arangodb.util.ArangoUtil;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class ArangoUtilImpl implements ArangoUtil {
+public class ArangoUtilImpl implements ArangoSerialization {
 
 	private final ArangoSerializer serializer;
 	private final ArangoDeserializer deserializer;
@@ -50,28 +50,38 @@ public class ArangoUtilImpl implements ArangoUtil {
 	}
 
 	@Override
+	public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
+		return serializer.serialize(entity, options);
+	}
+
+	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
 		return serializer.serialize(entity, serializeNullValues);
 	}
 
 	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final boolean serializeNullValues, final boolean stringAsJson)
 			throws ArangoDBException {
 		return serializer.serialize(entity, serializeNullValues, stringAsJson);
 	}
 
 	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
 		return serializer.serialize(entity, type);
 	}
 
 	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
 			throws ArangoDBException {
 		return serializer.serialize(entity, type, serializeNullValues);
 	}
 
 	@Override
+	@Deprecated
 	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
 			throws ArangoDBException {
 		return serializer.serialize(entity, type, additionalFields);
