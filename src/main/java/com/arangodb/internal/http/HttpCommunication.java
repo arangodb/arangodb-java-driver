@@ -290,7 +290,7 @@ public class HttpCommunication {
 	}
 
 	private String buildBaseUrl(final Host host) {
-		return (useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+		return (useSsl != null && useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
 	}
 
 	private static String buildUrl(final String baseUrl, final Request request) throws UnsupportedEncodingException {
