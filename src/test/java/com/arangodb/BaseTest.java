@@ -20,8 +20,11 @@
 
 package com.arangodb;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author Mark - mark at arangodb.com
@@ -29,21 +32,28 @@ import org.junit.BeforeClass;
  */
 public abstract class BaseTest {
 
+	@Parameters
+	public static Collection<ArangoDB.Builder> builders() {
+		return Arrays.asList(new ArangoDB.Builder().useProtocol(Protocol.VST),
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP));
+	}
+
 	protected static final String TEST_DB = "java_driver_test_db";
 	protected static ArangoDB arangoDB;
 	protected static ArangoDatabase db;
 
-	@BeforeClass
-	public static void init() {
-		if (arangoDB == null) {
-			arangoDB = new ArangoDB.Builder().build();
+	public BaseTest(final ArangoDB.Builder builder) {
+		super();
+		if (arangoDB != null) {
+			shutdown();
 		}
+		arangoDB = builder.build();
 		try {
 			arangoDB.db(TEST_DB).drop();
 		} catch (final ArangoDBException e) {
 		}
 		arangoDB.createDatabase(TEST_DB);
-		BaseTest.db = arangoDB.db(TEST_DB);
+		db = arangoDB.db(TEST_DB);
 	}
 
 	@AfterClass

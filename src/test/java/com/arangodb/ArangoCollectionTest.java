@@ -42,7 +42,10 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -71,10 +74,15 @@ import com.arangodb.model.DocumentUpdateOptions;
  * @author Mark - mark at arangodb.com
  *
  */
+@RunWith(Parameterized.class)
 public class ArangoCollectionTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_collection_test";
 	private static final String EDGE_COLLECTION_NAME = "db_edge_collection_test";
+
+	public ArangoCollectionTest(final Builder builder) {
+		super(builder);
+	}
 
 	@Before
 	public void setup() {

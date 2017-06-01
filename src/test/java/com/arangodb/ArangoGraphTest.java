@@ -34,7 +34,10 @@ import java.util.Iterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
@@ -44,6 +47,7 @@ import com.arangodb.model.CollectionCreateOptions;
  * @author Mark - mark at arangodb.com
  *
  */
+@RunWith(Parameterized.class)
 public class ArangoGraphTest extends BaseTest {
 
 	private static final String GRAPH_NAME = "db_collection_test";
@@ -54,6 +58,10 @@ public class ArangoGraphTest extends BaseTest {
 	private static final String VERTEX_COL_2 = "db_vertex2_collection_test";
 	private static final String VERTEX_COL_3 = "db_vertex3_collection_test";
 	private static final String VERTEX_COL_4 = "db_vertex4_collection_test";
+
+	public ArangoGraphTest(final Builder builder) {
+		super(builder);
+	}
 
 	@Before
 	public void setup() {

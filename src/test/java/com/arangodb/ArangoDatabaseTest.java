@@ -41,7 +41,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.AqlExecutionExplainEntity;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionNode;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
@@ -80,10 +83,15 @@ import com.arangodb.velocypack.exception.VPackException;
  * @author Mark - mark at arangodb.com
  *
  */
+@RunWith(Parameterized.class)
 public class ArangoDatabaseTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "db_test";
 	private static final String GRAPH_NAME = "graph_test";
+
+	public ArangoDatabaseTest(final Builder builder) {
+		super(builder);
+	}
 
 	@Test
 	public void getVersion() {

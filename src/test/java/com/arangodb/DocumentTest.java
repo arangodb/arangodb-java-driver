@@ -28,7 +28,10 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 
@@ -36,10 +39,15 @@ import com.arangodb.entity.DocumentCreateEntity;
  * @author Mark - mark at arangodb.com
  *
  */
+@RunWith(Parameterized.class)
 public class DocumentTest extends BaseTest {
 
 	private static final String COLLECTION_NAME = "collection_test";
 	private ArangoCollection collection;
+
+	public DocumentTest(final Builder builder) {
+		super(builder);
+	}
 
 	@Before
 	public void setup() {

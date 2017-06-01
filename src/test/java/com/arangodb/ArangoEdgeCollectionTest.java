@@ -34,7 +34,10 @@ import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
@@ -52,11 +55,16 @@ import com.arangodb.model.EdgeUpdateOptions;
  * @author Mark - mark at arangodb.com
  *
  */
+@RunWith(Parameterized.class)
 public class ArangoEdgeCollectionTest extends BaseTest {
 
 	private static final String GRAPH_NAME = "db_collection_test";
 	private static final String EDGE_COLLECTION_NAME = "db_edge_collection_test";
 	private static final String VERTEX_COLLECTION_NAME = "db_vertex_collection_test";
+
+	public ArangoEdgeCollectionTest(final Builder builder) {
+		super(builder);
+	}
 
 	@Before
 	public void setup() {

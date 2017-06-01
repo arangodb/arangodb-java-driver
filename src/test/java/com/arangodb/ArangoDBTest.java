@@ -32,12 +32,17 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevel;
@@ -56,15 +61,27 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
+@RunWith(Parameterized.class)
 public class ArangoDBTest {
+
+	@Parameters
+	public static Collection<ArangoDB.Builder> builders() {
+		return Arrays.asList(new ArangoDB.Builder().useProtocol(Protocol.VST),
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP));
+	}
 
 	private static final String ROOT = "root";
 	private static final String USER = "mit dem mund";
 	private static final String PW = "machts der hund";
+	private final ArangoDB arangoDB;
+
+	public ArangoDBTest(final Builder builder) {
+		super();
+		arangoDB = builder.build();
+	}
 
 	@Test
 	public void getVersion() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final ArangoDBVersion version = arangoDB.getVersion();
 		assertThat(version, is(notNullValue()));
 		assertThat(version.getServer(), is(notNullValue()));
@@ -73,7 +90,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void createDatabase() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Boolean result = arangoDB.createDatabase(BaseTest.TEST_DB);
 		assertThat(result, is(true));
 		try {
@@ -84,7 +100,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void deleteDatabase() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB);
 		assertThat(resultCreate, is(true));
 		final Boolean resultDelete = arangoDB.db(BaseTest.TEST_DB).drop();
@@ -93,7 +108,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getDatabases() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			Collection<String> dbs = arangoDB.getDatabases();
 			assertThat(dbs, is(notNullValue()));
@@ -112,7 +126,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getAccessibleDatabases() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Collection<String> dbs = arangoDB.getAccessibleDatabases();
 		assertThat(dbs, is(notNullValue()));
 		assertThat(dbs.size(), greaterThan(0));
@@ -121,7 +134,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getAccessibleDatabasesFor() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Collection<String> dbs = arangoDB.getAccessibleDatabasesFor("root");
 		assertThat(dbs, is(notNullValue()));
 		assertThat(dbs.size(), greaterThan(0));
@@ -130,7 +142,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void createUser() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			final UserEntity result = arangoDB.createUser(USER, PW, null);
 			assertThat(result, is(notNullValue()));
@@ -143,14 +154,12 @@ public class ArangoDBTest {
 
 	@Test
 	public void deleteUser() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		arangoDB.createUser(USER, PW, null);
 		arangoDB.deleteUser(USER);
 	}
 
 	@Test
 	public void getUserRoot() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final UserEntity user = arangoDB.getUser(ROOT);
 		assertThat(user, is(notNullValue()));
 		assertThat(user.getUser(), is(ROOT));
@@ -158,7 +167,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getUser() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.createUser(USER, PW, null);
 			final UserEntity user = arangoDB.getUser(USER);
@@ -171,7 +179,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getUsersOnlyRoot() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Collection<UserEntity> users = arangoDB.getUsers();
 		assertThat(users, is(notNullValue()));
 		assertThat(users.size(), greaterThan(0));
@@ -179,7 +186,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getUsers() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.createUser(USER, PW, null);
 			final Collection<UserEntity> users = arangoDB.getUsers();
@@ -195,7 +201,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void updateUserNoOptions() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.createUser(USER, PW, null);
 			arangoDB.updateUser(USER, null);
@@ -206,7 +211,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void updateUser() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			final Map<String, Object> extra = new HashMap<String, Object>();
 			extra.put("hund", false);
@@ -229,7 +233,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void replaceUser() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			final Map<String, Object> extra = new HashMap<String, Object>();
 			extra.put("hund", false);
@@ -274,7 +277,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void execute() throws VPackException {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final Response response = arangoDB.execute(new Request("_system", RequestType.GET, "/_api/version"));
 		assertThat(response.getBody(), is(notNullValue()));
 		assertThat(response.getBody().get("version").isString(), is(true));
@@ -282,7 +284,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogs() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(null);
 		assertThat(logs, is(notNullValue()));
 		assertThat(logs.getTotalAmount(), greaterThan(0L));
@@ -294,7 +295,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsUpto() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logsUpto = arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING));
 		assertThat(logsUpto, is(notNullValue()));
 		assertThat(logsUpto.getLevel(), not(contains(LogLevel.INFO)));
@@ -302,7 +302,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsLevel() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logsInfo = arangoDB.getLogs(new LogOptions().level(LogLevel.INFO));
 		assertThat(logsInfo, is(notNullValue()));
 		assertThat(logsInfo.getLevel(), everyItem(is(LogLevel.INFO)));
@@ -310,7 +309,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsStart() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(null);
 		assertThat(logs.getLid(), not(empty()));
 		final LogEntity logsStart = arangoDB.getLogs(new LogOptions().start(logs.getLid().get(0) + 1));
@@ -320,7 +318,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsSize() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(null);
 		assertThat(logs.getLid().size(), greaterThan(0));
 		final LogEntity logsSize = arangoDB.getLogs(new LogOptions().size(logs.getLid().size() - 1));
@@ -330,7 +327,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsOffset() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(null);
 		assertThat(logs.getTotalAmount(), greaterThan(0L));
 		final LogEntity logsOffset = arangoDB.getLogs(new LogOptions().offset(1));
@@ -340,7 +336,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsSearch() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(null);
 		final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB));
 		assertThat(logsSearch, is(notNullValue()));
@@ -349,7 +344,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsSortAsc() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.asc));
 		assertThat(logs, is(notNullValue()));
 		long lastId = -1;
@@ -361,7 +355,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogsSortDesc() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.desc));
 		assertThat(logs, is(notNullValue()));
 		long lastId = Long.MAX_VALUE;
@@ -373,7 +366,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void getLogLevel() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogLevelEntity logLevel = arangoDB.getLogLevel();
 		assertThat(logLevel, is(notNullValue()));
 		assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.INFO));
@@ -381,7 +373,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void setLogLevel() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		final LogLevelEntity entity = new LogLevelEntity();
 		try {
 			entity.setAgency(LogLevelEntity.LogLevel.ERROR);
@@ -396,7 +387,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void arangoDBException() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.db("no").getInfo();
 			fail();
@@ -421,7 +411,6 @@ public class ArangoDBTest {
 
 	@Test
 	public void accessMultipleDatabases() {
-		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		try {
 			arangoDB.createDatabase("db1");
 			arangoDB.createDatabase("db2");
