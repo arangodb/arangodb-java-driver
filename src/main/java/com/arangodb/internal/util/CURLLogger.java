@@ -48,7 +48,7 @@ public class CURLLogger {
 		final ArangoSerialization util) {
 		final RequestType requestType = request.getRequestType();
 		final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
-				|| requestType == RequestType.PATCH) && request.getBody() != null;
+				|| requestType == RequestType.PATCH || requestType == RequestType.DELETE) && request.getBody() != null;
 		final StringBuilder buffer = new StringBuilder();
 		if (includeBody) {
 			buffer.append("\n");
