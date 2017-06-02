@@ -23,6 +23,7 @@ package com.arangodb.internal.http;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,6 +54,7 @@ import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
@@ -75,6 +77,7 @@ import com.arangodb.internal.velocystream.Host;
 import com.arangodb.internal.velocystream.HostHandler;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer.Options;
+import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -84,6 +87,10 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class HttpCommunication {
+
+	public enum HttpContentType {
+		JSON, VPACK
+	}
 
 	public static class Builder {
 
@@ -137,12 +144,15 @@ public class HttpCommunication {
 		// }
 
 		public HttpCommunication build(final ArangoSerialization util) {
-			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler);
+			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler,
+					HttpContentType.JSON);
 		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
-	private static final ContentType APPLICATION_JSON_UTF8 = ContentType.create("application/json", "utf-8");
+	private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
+		"utf-8");
+	private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("velocypack", "utf-8");
 	private static final int ERROR_STATUS = 300;
 	private final PoolingHttpClientConnectionManager cm;
 	private final CloseableHttpClient client;
@@ -151,15 +161,18 @@ public class HttpCommunication {
 	private final ArangoSerialization util;
 	private final HostHandler hostHandler;
 	private final Boolean useSsl;
+	private final HttpContentType contentType;
 
 	private HttpCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler) {
+		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
+		final HttpContentType contentType) {
 		super();
 		this.user = user;
 		this.password = password;
 		this.useSsl = useSsl;
 		this.util = util;
 		this.hostHandler = hostHandler;
+		this.contentType = contentType;
 		final RegistryBuilder<ConnectionSocketFactory> a = RegistryBuilder.<ConnectionSocketFactory> create();
 		if (useSsl != null && useSsl) {
 			if (sslContext != null) {
@@ -172,8 +185,8 @@ public class HttpCommunication {
 			a.register("http", new PlainConnectionSocketFactory());
 		}
 		cm = new PoolingHttpClientConnectionManager(a.build());
-		// cm.setDefaultMaxPerRoute(configure.getMaxPerConnection());
-		// cm.setMaxTotal(configure.getMaxTotalConnection());
+		cm.setDefaultMaxPerRoute(20);// TODO configurable
+		cm.setMaxTotal(20);// TODO configurable
 
 		final RequestConfig.Builder custom = RequestConfig.custom();
 		// if (configure.getConnectionTimeout() >= 0) {
@@ -248,42 +261,45 @@ public class HttpCommunication {
 		return response;
 	}
 
-	private static HttpRequestBase buildHttpRequestBase(
+	private HttpRequestBase buildHttpRequestBase(
 		final Request request,
 		final String url,
 		final ArangoSerialization util) {
 		final HttpRequestBase httpRequest;
 		switch (request.getRequestType()) {
-		case DELETE:
-			httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
-			break;
-		case GET:
-			httpRequest = new HttpGet(url);
-			break;
 		case POST:
 			httpRequest = requestWithBody(new HttpPost(url), request);
 			break;
 		case PUT:
 			httpRequest = requestWithBody(new HttpPut(url), request);
 			break;
-		case HEAD:
-			httpRequest = new HttpHead(url);
-			break;
 		case PATCH:
 			httpRequest = requestWithBody(new HttpPatch(url), request);
 			break;
+		case DELETE:
+			httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
+			break;
+		case HEAD:
+			httpRequest = new HttpHead(url);
+			break;
+		case GET:
 		default:
-			httpRequest = new HttpGet(url); // FIXME
+			httpRequest = new HttpGet(url);
 			break;
 		}
 		return httpRequest;
 	}
 
-	private static HttpRequestBase requestWithBody(
-		final HttpEntityEnclosingRequestBase httpRequest,
-		final Request request) {
-		if (request.getBody() != null) {
-			httpRequest.setEntity(new StringEntity(request.getBody().toString(), APPLICATION_JSON_UTF8));
+	private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
+		final VPackSlice body = request.getBody();
+		if (body != null) {
+			if (contentType == HttpContentType.VPACK) {
+				httpRequest.setEntity(new ByteArrayEntity(
+						Arrays.copyOfRange(body.getBuffer(), body.getStart(), body.getStart() + body.getByteSize()),
+						CONTENT_TYPE_VPACK));
+			} else {
+				httpRequest.setEntity(new StringEntity(body.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8));
+			}
 		}
 		return httpRequest;
 	}
@@ -346,9 +362,17 @@ public class HttpCommunication {
 		response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
 		final HttpEntity entity = httpResponse.getEntity();
 		if (entity != null && entity.getContent() != null) {
-			final String content = IOUtils.toString(entity.getContent());
-			if (!content.isEmpty()) {
-				response.setBody(util.serialize(content, new Options().stringAsJson(true).serializeNullValues(true)));
+			if (contentType == HttpContentType.VPACK) {
+				final byte[] content = IOUtils.toByteArray(entity.getContent());
+				if (content.length > 0) {
+					response.setBody(new VPackSlice(content));
+				}
+			} else {
+				final String content = IOUtils.toString(entity.getContent());
+				if (!content.isEmpty()) {
+					response.setBody(
+						util.serialize(content, new Options().stringAsJson(true).serializeNullValues(true)));
+				}
 			}
 		}
 		return response;
