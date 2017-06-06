@@ -120,7 +120,7 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection>
 
 	protected static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
-			ArangoDBConstants.MAX_CONNECTIONS_DEFAULT));
+			ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT));
 	}
 
 	private static <T> String getProperty(

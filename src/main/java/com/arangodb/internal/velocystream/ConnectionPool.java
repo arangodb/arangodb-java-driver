@@ -36,7 +36,7 @@ public abstract class ConnectionPool<C extends Connection> {
 	public ConnectionPool(final Integer maxConnections) {
 		super();
 		this.maxConnections = maxConnections != null ? Math.max(1, maxConnections)
-				: ArangoDBConstants.MAX_CONNECTIONS_DEFAULT;
+				: ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT;
 		connections = new LinkedList<C>();
 	}
 

@@ -350,7 +350,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 							.user(user).password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
 							.maxConnections(maxConnections),
 					new HttpCommunication.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts))).timeout(timeout)
-							.user(user).password(password).useSsl(useSsl).sslContext(sslContext),
+							.user(user).password(password).useSsl(useSsl).sslContext(sslContext)
+							.maxConnections(maxConnections),
 					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol);
 		}
 

@@ -71,6 +71,7 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
+import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.velocystream.Host;
@@ -101,7 +102,7 @@ public class HttpCommunication {
 		private Boolean useSsl;
 		private SSLContext sslContext;
 		// private Integer chunksize;
-		// private Integer maxConnections;
+		private Integer maxConnections;
 
 		public Builder(final HostHandler hostHandler) {
 			super();
@@ -138,13 +139,13 @@ public class HttpCommunication {
 		// return this;
 		// }
 		//
-		// public Builder maxConnections(final Integer maxConnections) {
-		// this.maxConnections = maxConnections;
-		// return this;
-		// }
+		public Builder maxConnections(final Integer maxConnections) {
+			this.maxConnections = maxConnections;
+			return this;
+		}
 
 		public HttpCommunication build(final ArangoSerialization util) {
-			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler,
+			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler, maxConnections,
 					HttpContentType.JSON);
 		}
 	}
@@ -165,7 +166,7 @@ public class HttpCommunication {
 
 	private HttpCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
-		final HttpContentType contentType) {
+		final Integer maxConnections, final HttpContentType contentType) {
 		super();
 		this.user = user;
 		this.password = password;
@@ -185,8 +186,10 @@ public class HttpCommunication {
 			a.register("http", new PlainConnectionSocketFactory());
 		}
 		cm = new PoolingHttpClientConnectionManager(a.build());
-		cm.setDefaultMaxPerRoute(20);// TODO configurable
-		cm.setMaxTotal(20);// TODO configurable
+		final int connections = maxConnections != null ? Math.max(1, maxConnections)
+				: ArangoDBConstants.MAX_CONNECTIONS_HTTP_DEFAULT;
+		cm.setDefaultMaxPerRoute(connections);
+		cm.setMaxTotal(connections);
 
 		final RequestConfig.Builder custom = RequestConfig.custom();
 		// if (configure.getConnectionTimeout() >= 0) {
