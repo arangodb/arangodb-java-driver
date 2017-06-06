@@ -23,6 +23,7 @@ master: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-dri
 <tr><td>2.7.4</td><td>2.7.x, 2.8.x</td><td>HTTP</td><td>1.6+</td></tr>
 </table>
 
+**Note**: VelocyStream is only supported in ArangoDB 3.1 and above.
 
 ## Maven
 
