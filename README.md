@@ -69,7 +69,7 @@ mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
     * [Java 8 types](#java-8-types) 
     * [Scala types](#scala-types)
     * [Joda-Time](#joda-time)
-    * custom de-/serializer
+    * [custom serializer](#custom-serializer)
 * [Manipulating databases](#manipulating-databases)
   * [create database](#create-database)
   * [drop database](#drop-database)
@@ -264,6 +264,36 @@ Added support for:
 ``` Java
 ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJodaModule()).build();
 ``` 
+
+## custom serializer
+``` Java
+  ArangoDB arangoDB = new ArangoDB.Builder()
+    .registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
+      @Override
+      public MyObject deserialize(
+        final VPackSlice parent,
+        final VPackSlice vpack,
+        final VPackDeserializationContext context) throws VPackException {
+        
+          final MyObject obj = new MyObject();
+          obj.setName(vpack.get("name").getAsString());
+          return obj;
+      }
+    }).registerSerializer(MyObject.class, new VPackSerializer<MyObject>() {
+      @Override
+      public void serialize(
+        final VPackBuilder builder,
+        final String attribute,
+        final MyObject value,
+        final VPackSerializationContext context) throws VPackException {
+        
+          builder.add(attribute, ValueType.OBJECT);
+          builder.add("name", value.getName());
+          builder.close();
+      }
+    }).build();
+``` 
+
 
 # Manipulating databases
 
