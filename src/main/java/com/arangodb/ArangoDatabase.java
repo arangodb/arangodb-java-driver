@@ -42,7 +42,7 @@ import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CommunicationProtocol;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.internal.velocystream.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;

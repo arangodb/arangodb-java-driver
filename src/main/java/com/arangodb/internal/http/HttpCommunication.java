@@ -22,6 +22,7 @@ package com.arangodb.internal.http;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -59,6 +59,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
@@ -70,12 +71,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Protocol;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.Host;
+import com.arangodb.internal.HostHandler;
 import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;
-import com.arangodb.internal.velocystream.Host;
-import com.arangodb.internal.velocystream.HostHandler;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer.Options;
 import com.arangodb.velocypack.VPackSlice;
@@ -89,24 +91,21 @@ import com.arangodb.velocystream.Response;
  */
 public class HttpCommunication {
 
-	public enum HttpContentType {
-		JSON, VPACK
-	}
-
 	public static class Builder {
 
 		private final HostHandler hostHandler;
+		private final Protocol protocol;
 		private Integer timeout;
 		private String user;
 		private String password;
 		private Boolean useSsl;
 		private SSLContext sslContext;
-		// private Integer chunksize;
 		private Integer maxConnections;
 
-		public Builder(final HostHandler hostHandler) {
+		public Builder(final HostHandler hostHandler, final Protocol protocol) {
 			super();
 			this.hostHandler = hostHandler;
+			this.protocol = protocol;
 		}
 
 		public Builder timeout(final Integer timeout) {
@@ -134,11 +133,6 @@ public class HttpCommunication {
 			return this;
 		}
 
-		// public Builder chunksize(final Integer chunksize) {
-		// this.chunksize = chunksize;
-		// return this;
-		// }
-		//
 		public Builder maxConnections(final Integer maxConnections) {
 			this.maxConnections = maxConnections;
 			return this;
@@ -146,14 +140,14 @@ public class HttpCommunication {
 
 		public HttpCommunication build(final ArangoSerialization util) {
 			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler, maxConnections,
-					HttpContentType.JSON);
+					protocol);
 		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
 	private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
 		"utf-8");
-	private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("velocypack", "utf-8");
+	private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
 	private static final int ERROR_STATUS = 300;
 	private final PoolingHttpClientConnectionManager cm;
 	private final CloseableHttpClient client;
@@ -162,11 +156,11 @@ public class HttpCommunication {
 	private final ArangoSerialization util;
 	private final HostHandler hostHandler;
 	private final Boolean useSsl;
-	private final HttpContentType contentType;
+	private final Protocol contentType;
 
 	private HttpCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
-		final Integer maxConnections, final HttpContentType contentType) {
+		final Integer maxConnections, final Protocol contentType) {
 		super();
 		this.user = user;
 		this.password = password;
@@ -174,56 +168,41 @@ public class HttpCommunication {
 		this.util = util;
 		this.hostHandler = hostHandler;
 		this.contentType = contentType;
-		final RegistryBuilder<ConnectionSocketFactory> a = RegistryBuilder.<ConnectionSocketFactory> create();
+		final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
+				.<ConnectionSocketFactory> create();
 		if (useSsl != null && useSsl) {
 			if (sslContext != null) {
-
-				a.register("https", new SSLConnectionSocketFactory(sslContext));
+				registryBuilder.register("https", new SSLConnectionSocketFactory(sslContext));
 			} else {
-				a.register("https", new SSLConnectionSocketFactory(SSLContexts.createSystemDefault()));
+				registryBuilder.register("https", new SSLConnectionSocketFactory(SSLContexts.createSystemDefault()));
 			}
 		} else {
-			a.register("http", new PlainConnectionSocketFactory());
+			registryBuilder.register("http", new PlainConnectionSocketFactory());
 		}
-		cm = new PoolingHttpClientConnectionManager(a.build());
+		cm = new PoolingHttpClientConnectionManager(registryBuilder.build());
 		final int connections = maxConnections != null ? Math.max(1, maxConnections)
 				: ArangoDBConstants.MAX_CONNECTIONS_HTTP_DEFAULT;
 		cm.setDefaultMaxPerRoute(connections);
 		cm.setMaxTotal(connections);
-
-		final RequestConfig.Builder custom = RequestConfig.custom();
-		// if (configure.getConnectionTimeout() >= 0) {
-		// custom.setConnectTimeout(timeout);
-		// }
-		// if (configure.getTimeout() >= 0) {
-		// custom.setConnectionRequestTimeout(configure.getTimeout());
-		// custom.setSocketTimeout(configure.getTimeout());
-		// }
-		// cm.setValidateAfterInactivity(configure.getValidateAfterInactivity());
-		final RequestConfig requestConfig = custom.build();
-
+		final RequestConfig.Builder requestConfig = RequestConfig.custom();
+		if (timeout >= 0) {
+			requestConfig.setConnectTimeout(timeout);
+			requestConfig.setConnectionRequestTimeout(timeout);
+			requestConfig.setSocketTimeout(timeout);
+		}
 		final ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
 			@Override
 			public long getKeepAliveDuration(final HttpResponse response, final HttpContext context) {
 				return HttpCommunication.this.getKeepAliveDuration(response);
 			}
 		};
-
-		// // Retry Handler
-		// builder.setRetryHandler(new DefaultHttpRequestRetryHandler(configure.getRetryCount(), false));
-		//
-		// // Proxy
-		// addProxyToBuilder(builder);
-
-		final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig)
-				.setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy);
-
+		final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
+				.setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
+				.setRetryHandler(new DefaultHttpRequestRetryHandler());
 		client = builder.build();
-
 	}
 
 	private long getKeepAliveDuration(final HttpResponse response) {
-		// Honor 'keep-alive' header
 		final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
 		while (it.hasNext()) {
 			final HeaderElement he = it.nextElement();
@@ -233,11 +212,9 @@ public class HttpCommunication {
 				try {
 					return Long.parseLong(value) * 1000L;
 				} catch (final NumberFormatException ignore) {
-					// ignore this exception
 				}
 			}
 		}
-		// otherwise keep alive for 30 seconds
 		return 30L * 1000L;
 	}
 
@@ -249,25 +226,41 @@ public class HttpCommunication {
 		}
 	}
 
-	public Response execute(final Request request) throws ArangoDBException, ClientProtocolException, IOException {
-		final Host host = hostHandler.get();
-		final String url = buildUrl(buildBaseUrl(host), request);
-		final HttpRequestBase httpRequest = buildHttpRequestBase(request, url, util);
-		httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-		addHeader(request, httpRequest);
-		final Credentials credentials = addCredentials(httpRequest);
-		if (LOGGER.isDebugEnabled()) {
-			CURLLogger.log(url, request, credentials, util);
+	public Response execute(final Request request) throws ArangoDBException, IOException {
+		Host host = hostHandler.get();
+		while (true) {
+			try {
+				final String url = buildUrl(buildBaseUrl(host), request);
+				final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
+				httpRequest.setHeader("User-Agent",
+					"Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+				if (contentType == Protocol.HTTP_VPACK) {
+					httpRequest.setHeader("Accept", "application/x-velocypack");
+				}
+				addHeader(request, httpRequest);
+				final Credentials credentials = addCredentials(httpRequest);
+				if (LOGGER.isDebugEnabled()) {
+					CURLLogger.log(url, request, credentials, util);
+				}
+				Response response;
+				response = buildResponse(client.execute(httpRequest));
+				checkError(response);
+				hostHandler.success();
+				return response;
+			} catch (final SocketException e) {
+				hostHandler.fail();
+				final Host failedHost = host;
+				host = hostHandler.change();
+				if (host != null) {
+					LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s", failedHost, host));
+				} else {
+					throw e;
+				}
+			}
 		}
-		final Response response = buildResponse(client.execute(httpRequest));
-		checkError(response);
-		return response;
 	}
 
-	private HttpRequestBase buildHttpRequestBase(
-		final Request request,
-		final String url,
-		final ArangoSerialization util) {
+	private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
 		final HttpRequestBase httpRequest;
 		switch (request.getRequestType()) {
 		case POST:
@@ -296,7 +289,7 @@ public class HttpCommunication {
 	private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
 		final VPackSlice body = request.getBody();
 		if (body != null) {
-			if (contentType == HttpContentType.VPACK) {
+			if (contentType == Protocol.HTTP_VPACK) {
 				httpRequest.setEntity(new ByteArrayEntity(
 						Arrays.copyOfRange(body.getBuffer(), body.getStart(), body.getStart() + body.getByteSize()),
 						CONTENT_TYPE_VPACK));
@@ -365,7 +358,7 @@ public class HttpCommunication {
 		response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
 		final HttpEntity entity = httpResponse.getEntity();
 		if (entity != null && entity.getContent() != null) {
-			if (contentType == HttpContentType.VPACK) {
+			if (contentType == Protocol.HTTP_VPACK) {
 				final byte[] content = IOUtils.toByteArray(entity.getContent());
 				if (content.length > 0) {
 					response.setBody(new VPackSlice(content));

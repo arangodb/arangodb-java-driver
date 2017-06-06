@@ -20,7 +20,7 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.internal.velocystream.Connection;
+import com.arangodb.internal.velocystream.internal.Connection;
 import com.arangodb.util.ArangoSerialization;
 
 /**

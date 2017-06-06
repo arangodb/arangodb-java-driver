@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.velocystream;
+package com.arangodb.internal.velocystream.internal;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.Host;
+import com.arangodb.internal.HostHandler;
 import com.arangodb.velocypack.VPackSlice;
 
 /**

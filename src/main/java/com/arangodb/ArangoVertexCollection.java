@@ -27,7 +27,7 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.InternalArangoVertexCollection;
-import com.arangodb.internal.velocystream.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexDeleteOptions;

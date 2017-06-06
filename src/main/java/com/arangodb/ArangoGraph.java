@@ -26,7 +26,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.InternalArangoGraph;
-import com.arangodb.internal.velocystream.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.velocystream.Response;
 
 /**

@@ -33,6 +33,10 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.velocystream.internal.Chunk;
+import com.arangodb.internal.velocystream.internal.Connection;
+import com.arangodb.internal.velocystream.internal.ConnectionPool;
+import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
@@ -43,11 +47,11 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public abstract class Communication<R, C extends Connection> {
+public abstract class VstCommunication<R, C extends Connection> {
 
 	private static final int ERROR_STATUS = 300;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Communication.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
 	protected final ArangoSerialization util;
@@ -58,7 +62,7 @@ public abstract class Communication<R, C extends Connection> {
 
 	protected final Integer chunksize;
 
-	protected Communication(final Integer timeout, final String user, final String password, final Boolean useSsl,
+	protected VstCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
 		final ConnectionPool<C> connectionPool) {
 		this.user = user;

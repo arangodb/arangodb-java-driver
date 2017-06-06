@@ -67,7 +67,8 @@ public class ArangoDBTest {
 	@Parameters
 	public static Collection<ArangoDB.Builder> builders() {
 		return Arrays.asList(new ArangoDB.Builder().useProtocol(Protocol.VST),
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP));
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON),
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK));
 	}
 
 	private static final String ROOT = "root";

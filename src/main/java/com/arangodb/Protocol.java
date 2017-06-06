@@ -25,5 +25,5 @@ package com.arangodb;
  *
  */
 public enum Protocol {
-	VST, HTTP, HTTP_WITH_JSON, HTTP_WITH_VPACK // TODO
+	VST, HTTP_JSON, HTTP_VPACK
 }

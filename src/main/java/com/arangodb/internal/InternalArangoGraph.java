@@ -25,7 +25,7 @@ import java.util.Collection;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.velocystream.Connection;
+import com.arangodb.internal.velocystream.internal.Connection;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import com.arangodb.velocypack.Type;

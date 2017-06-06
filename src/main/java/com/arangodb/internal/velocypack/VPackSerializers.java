@@ -29,7 +29,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
-import com.arangodb.internal.velocystream.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.velocypack.VPackBuilder;

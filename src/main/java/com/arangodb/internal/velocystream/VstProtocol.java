@@ -20,36 +20,35 @@
 
 package com.arangodb.internal.velocystream;
 
+import java.io.IOException;
+
+import com.arangodb.ArangoDBException;
+import com.arangodb.internal.CommunicationProtocol;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public class AuthenticationRequest extends Request {
+public class VstProtocol implements CommunicationProtocol {
 
-	private final String user;
-	private final String password;
-	private final String encryption;// "plain"
+	private final VstCommunication<Response, ConnectionSync> communication;
 
-	public AuthenticationRequest(final String user, final String password, final String encryption) {
-		super(null, null, null);
-		this.user = user;
-		this.password = password;
-		this.encryption = encryption;
-		setType(1000);
+	public VstProtocol(final VstCommunication<Response, ConnectionSync> communication) {
+		super();
+		this.communication = communication;
 	}
 
-	public String getUser() {
-		return user;
+	@Override
+	public Response execute(final Request request) throws ArangoDBException {
+		return communication.execute(request);
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public String getEncryption() {
-		return encryption;
+	@Override
+	public void close() throws IOException {
+		communication.disconnect();
 	}
 
 }

@@ -27,7 +27,7 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.InternalArangoEdgeCollection;
-import com.arangodb.internal.velocystream.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;

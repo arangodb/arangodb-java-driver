@@ -33,7 +33,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.InternalArangoDB;
-import com.arangodb.internal.velocystream.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;

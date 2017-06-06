@@ -30,7 +30,7 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.QueryEntity;
-import com.arangodb.internal.velocystream.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
 import com.arangodb.velocypack.VPackModule;

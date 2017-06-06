@@ -18,20 +18,49 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.velocystream;
+package com.arangodb.internal;
+
+import java.util.List;
 
 /**
  * @author Mark - mark at arangodb.com
  *
  */
-public interface HostHandler {
+public class DefaultHostHandler implements HostHandler {
 
-	Host get();
+	private final List<Host> hosts;
+	private int current;
+	private int lastSuccess;
 
-	Host change();
+	/**
+	 * @param hosts
+	 */
+	public DefaultHostHandler(final List<Host> hosts) {
+		this.hosts = hosts;
+		current = lastSuccess = 0;
+	}
 
-	void success();
+	@Override
+	public Host get() {
+		return hosts.get(current);
+	}
 
-	void fail();
+	@Override
+	public Host change() {
+		current++;
+		if ((current + 1) > hosts.size()) {
+			current -= hosts.size();
+		}
+		return current != lastSuccess ? get() : null;
+	}
+
+	@Override
+	public void success() {
+		lastSuccess = current;
+	}
+
+	@Override
+	public void fail() {
+	}
 
 }

@@ -41,7 +41,9 @@ import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.CollectionCache.DBAccess;
 import com.arangodb.internal.CommunicationProtocol;
+import com.arangodb.internal.DefaultHostHandler;
 import com.arangodb.internal.DocumentCache;
+import com.arangodb.internal.Host;
 import com.arangodb.internal.InternalArangoDB;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
@@ -50,11 +52,9 @@ import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.ArangoUtilImpl;
 import com.arangodb.internal.velocypack.VPackDocumentModule;
 import com.arangodb.internal.velocypack.VPackDriverModule;
-import com.arangodb.internal.velocystream.CommunicationSync;
-import com.arangodb.internal.velocystream.ConnectionSync;
-import com.arangodb.internal.velocystream.DefaultHostHandler;
-import com.arangodb.internal.velocystream.Host;
-import com.arangodb.internal.velocystream.VelocyStreamProtocol;
+import com.arangodb.internal.velocystream.VstCommunicationSync;
+import com.arangodb.internal.velocystream.VstProtocol;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -346,18 +346,18 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
 					: new ArangoDeserializerImpl(vpackerNull, vpackParser);
 			return new ArangoDB(
-					new CommunicationSync.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts))).timeout(timeout)
-							.user(user).password(password).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
-							.maxConnections(maxConnections),
-					new HttpCommunication.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts))).timeout(timeout)
-							.user(user).password(password).useSsl(useSsl).sslContext(sslContext)
+					new VstCommunicationSync.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts)))
+							.timeout(timeout).user(user).password(password).useSsl(useSsl).sslContext(sslContext)
+							.chunksize(chunksize).maxConnections(maxConnections),
+					new HttpCommunication.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts)), protocol)
+							.timeout(timeout).user(user).password(password).useSsl(useSsl).sslContext(sslContext)
 							.maxConnections(maxConnections),
 					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol);
 		}
 
 	}
 
-	public ArangoDB(final CommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
+	public ArangoDB(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
 		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol) {
 		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
 				new DocumentCache()), util);
@@ -371,7 +371,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	}
 
 	private static CommunicationProtocol createProtocol(
-		final CommunicationSync.Builder vstBuilder,
+		final VstCommunicationSync.Builder vstBuilder,
 		final HttpCommunication.Builder httpBuilder,
 		final ArangoSerialization util,
 		final CollectionCache collectionCache,
@@ -381,10 +381,10 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	}
 
 	private static CommunicationProtocol createVST(
-		final CommunicationSync.Builder builder,
+		final VstCommunicationSync.Builder builder,
 		final ArangoSerialization util,
 		final CollectionCache collectionCache) {
-		return new VelocyStreamProtocol(builder.build(util, collectionCache));
+		return new VstProtocol(builder.build(util, collectionCache));
 	}
 
 	private static CommunicationProtocol createHTTP(

@@ -28,6 +28,12 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
+import com.arangodb.internal.HostHandler;
+import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.ConnectionPool;
+import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.Message;
+import com.arangodb.internal.velocystream.internal.MessageStore;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -37,9 +43,9 @@ import com.arangodb.velocystream.Response;
  * @author Mark - mark at arangodb.com
  *
  */
-public class CommunicationSync extends Communication<Response, ConnectionSync> {
+public class VstCommunicationSync extends VstCommunication<Response, ConnectionSync> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationSync.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationSync.class);
 	private final CollectionCache collectionCache;
 
 	public static class Builder {
@@ -93,15 +99,15 @@ public class CommunicationSync extends Communication<Response, ConnectionSync> {
 			return this;
 		}
 
-		public Communication<Response, ConnectionSync> build(
+		public VstCommunication<Response, ConnectionSync> build(
 			final ArangoSerialization util,
 			final CollectionCache collectionCache) {
-			return new CommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util,
+			return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util,
 					collectionCache, chunksize, maxConnections);
 		}
 	}
 
-	protected CommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
+	protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
 		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections) {
 		super(timeout, user, password, useSsl, sslContext, util, chunksize,
