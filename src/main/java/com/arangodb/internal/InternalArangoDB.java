@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Protocol;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
@@ -62,6 +63,7 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection>
 	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
 	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
+	private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 	protected static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 	public InternalArangoDB(final E executor, final ArangoSerialization util) {
@@ -120,6 +122,12 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection>
 	protected static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
 			ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT));
+	}
+
+	protected static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
+		return Protocol.valueOf(
+			getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDBConstants.DEFAULT_NETWORK_PROTOCOL)
+					.toUpperCase());
 	}
 
 	private static <T> String getProperty(

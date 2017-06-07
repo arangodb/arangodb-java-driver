@@ -126,6 +126,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					useSsl = loadUseSsl(properties, useSsl);
 					chunksize = loadChunkSize(properties, chunksize);
 					maxConnections = loadMaxConnections(properties, maxConnections);
+					protocol = loadProtocol(properties, protocol);
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}
