@@ -59,6 +59,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.entity.ServerRole;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
@@ -745,7 +746,9 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
-		assertThat(indexResult.getSelectivityEstimate(), is(1));
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			assertThat(indexResult.getSelectivityEstimate(), is(1));
+		}
 		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.hash));
 		assertThat(indexResult.getUnique(), is(false));
