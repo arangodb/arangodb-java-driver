@@ -185,7 +185,7 @@ public class HttpCommunication {
 		cm.setDefaultMaxPerRoute(connections);
 		cm.setMaxTotal(connections);
 		final RequestConfig.Builder requestConfig = RequestConfig.custom();
-		if (timeout >= 0) {
+		if (timeout != null && timeout >= 0) {
 			requestConfig.setConnectTimeout(timeout);
 			requestConfig.setConnectionRequestTimeout(timeout);
 			requestConfig.setSocketTimeout(timeout);
