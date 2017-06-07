@@ -48,7 +48,7 @@ public class GraphTraversalsInAQLExample extends BaseGraphTest {
 		Collection<String> result = cursor.asListRemaining();
 		assertThat(result.size(), is(10));
 
-		queryString = "FOR v IN 1..3 OUTBOUND 'circles/A' edges RETURN v._key";
+		queryString = "WITH circles FOR v IN 1..3 OUTBOUND 'circles/A' edges RETURN v._key";
 		cursor = db.query(queryString, null, null, String.class);
 		result = cursor.asListRemaining();
 		assertThat(result.size(), is(10));
