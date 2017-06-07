@@ -74,7 +74,7 @@ public class ShortestPathInAQLExample extends BaseGraphTest {
 		assertThat(collection.size(), is(4));
 		assertThat(collection, hasItems("A", "B", "C", "D"));
 
-		queryString = "FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' edges RETURN {'vertex': v._key, 'edge': e._key}";
+		queryString = "WITH circles FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' edges RETURN {'vertex': v._key, 'edge': e._key}";
 		cursor = db.query(queryString, null, null, Pair.class);
 		assertThat(collection.size(), is(4));
 		assertThat(collection, hasItems("A", "B", "C", "D"));
