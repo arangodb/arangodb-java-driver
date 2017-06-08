@@ -188,7 +188,7 @@ To use SSL, you have to set the configuration `useSsl` to `true` and set a `SSLC
 
 ## Connection Pooling
 
-The driver supports connection pooling with a default of 1 maximum connections. To change this value use the method `maxConnections(Integer)` in `ArangoDB.Builder`.
+The driver supports connection pooling for VelocyStream with a default of 1 and HTTP with a default of 20 maximum connections. To change this value use the method `maxConnections(Integer)` in `ArangoDB.Builder`.
 
 ``` Java
 
