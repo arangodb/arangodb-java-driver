@@ -38,7 +38,6 @@ ArangoDB 3.x.x
     <artifactId>arangodb-java-driver</artifactId>
     <version>4.2.0</version>
   </dependency>
-	....
 </dependencies>
 ```
 
@@ -57,8 +56,7 @@ If you want to test with a snapshot version (e.g. 4.2.0-SNAPSHOT), add the stagi
 
 ```
 mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
-```	
-
+```
 
 ## Table of Contents
 
@@ -269,31 +267,29 @@ ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJodaModule())
 
 ## custom serializer
 ``` Java
-  ArangoDB arangoDB = new ArangoDB.Builder()
-    .registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
-      @Override
-      public MyObject deserialize(
-        final VPackSlice parent,
-        final VPackSlice vpack,
-        final VPackDeserializationContext context) throws VPackException {
-        
-          final MyObject obj = new MyObject();
+  ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackModule() {
+    @Override
+    public <C extends VPackSetupContext<C>> void setup(final C context) {
+      context.registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
+        @Override
+        public MyObject deserialize(VPackSlice parent,VPackSlice vpack,
+            VPackDeserializationContext context) throws VPackException {
+          MyObject obj = new MyObject();
           obj.setName(vpack.get("name").getAsString());
           return obj;
-      }
-    }).registerSerializer(MyObject.class, new VPackSerializer<MyObject>() {
-      @Override
-      public void serialize(
-        final VPackBuilder builder,
-        final String attribute,
-        final MyObject value,
-        final VPackSerializationContext context) throws VPackException {
-        
+        }
+      });
+      context.registerSerializer(MyObject.class, new VPackSerializer<MyObject>() {
+        @Override
+        public void serialize(VPackBuilder builder,String attribute,MyObject value,
+            VPackSerializationContext context) throws VPackException {
           builder.add(attribute, ValueType.OBJECT);
           builder.add("name", value.getName());
           builder.close();
-      }
-    }).build();
+        }
+      });
+    }
+  }).build();
 ``` 
 
 
@@ -698,31 +694,29 @@ To ignore fields at serialization/deserialization, use the annotation `Expose`
 
 ## custom serializer
 ``` Java
-  ArangoDB arangoDB = new ArangoDB.Builder()
-    .registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
-      @Override
-      public MyObject deserialize(
-        final VPackSlice parent,
-        final VPackSlice vpack,
-        final VPackDeserializationContext context) throws VPackException {
-        
-          final MyObject obj = new MyObject();
+  ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackModule() {
+    @Override
+    public <C extends VPackSetupContext<C>> void setup(final C context) {
+      context.registerDeserializer(MyObject.class, new VPackDeserializer<MyObject>() {
+        @Override
+        public MyObject deserialize(VPackSlice parent,VPackSlice vpack,
+            VPackDeserializationContext context) throws VPackException {
+          MyObject obj = new MyObject();
           obj.setName(vpack.get("name").getAsString());
           return obj;
-      }
-    }).registerSerializer(MyObject.class, new VPackSerializer<MyObject>() {
-      @Override
-      public void serialize(
-        final VPackBuilder builder,
-        final String attribute,
-        final MyObject value,
-        final VPackSerializationContext context) throws VPackException {
-        
+        }
+      });
+      context.registerSerializer(MyObject.class, new VPackSerializer<MyObject>() {
+        @Override
+        public void serialize(VPackBuilder builder,String attribute,MyObject value,
+            VPackSerializationContext context) throws VPackException {
           builder.add(attribute, ValueType.OBJECT);
           builder.add("name", value.getName());
           builder.close();
-      }
-    }).build();
+        }
+      });
+    }
+  }).build();
 ``` 
 
 ## manually serialization
