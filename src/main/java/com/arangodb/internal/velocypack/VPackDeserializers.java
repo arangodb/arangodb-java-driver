@@ -28,6 +28,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.ArangoDBVersion.License;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
@@ -128,6 +130,16 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			return LogLevel.fromLevel(vpack.getAsInt());
+		}
+	};
+
+	public static final VPackDeserializer<ArangoDBVersion.License> LICENSE = new VPackDeserializer<ArangoDBVersion.License>() {
+		@Override
+		public License deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return License.valueOf(vpack.getAsString().toUpperCase());
 		}
 	};
 }

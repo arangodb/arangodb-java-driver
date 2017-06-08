@@ -28,8 +28,13 @@ package com.arangodb.entity;
  */
 public class ArangoDBVersion {
 
+	public enum License {
+		ENTERPRISE, COMMUNITY
+	}
+
 	private String server;
 	private String version;
+	private License license;
 
 	public ArangoDBVersion() {
 		super();
@@ -48,6 +53,13 @@ public class ArangoDBVersion {
 	 */
 	public String getVersion() {
 		return version;
+	}
+
+	/**
+	 * @return the license
+	 */
+	public License getLicense() {
+		return license;
 	}
 
 }
