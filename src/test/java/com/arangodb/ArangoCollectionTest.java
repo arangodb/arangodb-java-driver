@@ -1731,6 +1731,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void rename() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		try {
 			final CollectionEntity result = db.collection(COLLECTION_NAME).rename(COLLECTION_NAME + "1");
 			assertThat(result, is(notNullValue()));
