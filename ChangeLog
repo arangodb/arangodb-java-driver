@@ -1,3 +1,12 @@
+v4.2.0 (2017-xx-xx)
+---------------------------
+* added ArangoDBVersion.getLicense()
+* added ArangoDB.getRole()
+* added protocol switch (ArangoDB.Builder.useProtocol(Protocol))
+  * Protocol.VST = VeclocyStream (default)
+  * Protocol.HTTP_JSON =  Json over HTTP
+  * Protocol.HTTP_VPACK = VelocyPack over HTTP
+
 v4.1.12 (2017-04-13)
 ---------------------------
 * added ArangoDatabase.cursor() (issue #116)
