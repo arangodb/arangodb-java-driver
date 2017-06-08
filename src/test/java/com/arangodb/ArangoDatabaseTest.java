@@ -112,6 +112,72 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void createCollectionWithReplicationFactor() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+				new CollectionCreateOptions().replicationFactor(2));
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void createCollectionWithNumberOfShards() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+				new CollectionCreateOptions().numberOfShards(2));
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void createCollectionWithNumberOfShardsAndShardKey() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+				new CollectionCreateOptions().numberOfShards(2).shardKeys("a"));
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getShardKeys().size(), is(1));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void createCollectionWithNumberOfShardsAndShardKeys() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+				new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getShardKeys().size(), is(2));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
 	public void deleteCollection() {
 		db.createCollection(COLLECTION_NAME, null);
 		db.collection(COLLECTION_NAME).drop();
