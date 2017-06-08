@@ -23,6 +23,7 @@ package com.arangodb.internal.velocypack;
 import java.lang.reflect.Field;
 import java.util.Date;
 
+import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
@@ -73,6 +74,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerDeserializer(BaseEdgeDocument.class, VPackDeserializers.BASE_EDGE_DOCUMENT);
 		context.registerDeserializer(QueryEntity.PROPERTY_STARTED, Date.class, VPackDeserializers.DATE_STRING);
 		context.registerDeserializer(LogLevel.class, VPackDeserializers.LOG_LEVEL);
+		context.registerDeserializer(ArangoDBVersion.License.class, VPackDeserializers.LICENSE);
 	}
 
 	@Override
