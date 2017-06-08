@@ -54,6 +54,7 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.GraphEntity;
@@ -161,8 +162,9 @@ public class ArangoDatabaseTest extends BaseTest {
 				new CollectionCreateOptions().numberOfShards(2).shardKeys("a"));
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
-			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
-			assertThat(db.collection(COLLECTION_NAME).getProperties().getShardKeys().size(), is(1));
+			final CollectionPropertiesEntity properties = db.collection(COLLECTION_NAME).getProperties();
+			assertThat(properties.getNumberOfShards(), is(2));
+			assertThat(properties.getShardKeys().size(), is(1));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
@@ -178,8 +180,9 @@ public class ArangoDatabaseTest extends BaseTest {
 				new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
-			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
-			assertThat(db.collection(COLLECTION_NAME).getProperties().getShardKeys().size(), is(2));
+			final CollectionPropertiesEntity properties = db.collection(COLLECTION_NAME).getProperties();
+			assertThat(properties.getNumberOfShards(), is(2));
+			assertThat(properties.getShardKeys().size(), is(2));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
