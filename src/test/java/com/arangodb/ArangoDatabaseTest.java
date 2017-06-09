@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1031,8 +1032,9 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(vertices.size(), is(4));
 
 			final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-			for (final String e : new String[] { "Alice", "Bob", "Charlie", "Dave" }) {
-				assertThat(verticesIterator.next().getKey(), is(e));
+			final Collection<String> v = Arrays.asList(new String[] { "Alice", "Bob", "Charlie", "Dave" });
+			for (; verticesIterator.hasNext();) {
+				assertThat(v.contains(verticesIterator.next().getKey()), is(true));
 			}
 
 			final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
