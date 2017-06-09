@@ -27,6 +27,7 @@ import java.util.Map;
 import com.arangodb.ArangoDBException;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPack.SerializeOptions;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -71,11 +72,13 @@ public class ArangoSerializerImpl implements ArangoSerializer {
 					vpack = vpackParser.fromJson((Iterable<String>) entity, serializeNullValues);
 				} else {
 					final VPack vp = serializeNullValues ? vpackerNull : vpacker;
-					vpack = vp.serialize(entity, options.getType(), options.getAdditionalFields());
+					vpack = vp.serialize(entity,
+						new SerializeOptions().type(options.getType()).additionalFields(options.getAdditionalFields()));
 				}
 			} else {
 				final VPack vp = serializeNullValues ? vpackerNull : vpacker;
-				vpack = vp.serialize(entity, options.getType(), options.getAdditionalFields());
+				vpack = vp.serialize(entity,
+					new SerializeOptions().type(options.getType()).additionalFields(options.getAdditionalFields()));
 			}
 			return vpack;
 		} catch (final VPackException e) {
