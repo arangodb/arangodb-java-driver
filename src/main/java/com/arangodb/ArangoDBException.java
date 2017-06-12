@@ -49,6 +49,10 @@ public class ArangoDBException extends RuntimeException {
 		return entity != null ? entity.getErrorMessage() : null;
 	}
 
+	public String getException() {
+		return entity != null ? entity.getException() : null;
+	}
+
 	public int getResponseCode() {
 		return entity != null ? entity.getCode() : null;
 	}
