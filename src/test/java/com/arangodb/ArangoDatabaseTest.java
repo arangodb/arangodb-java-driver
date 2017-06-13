@@ -1070,11 +1070,10 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void shouldIncludeExceptionMessage() {
 		final String exceptionMessage = "My error context";
-		final String action = "function (params) {"
-				+ "throw '" + exceptionMessage + "';"
-				+ "}";
+		final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
 		try {
 			db.transaction(action, VPackSlice.class, null);
 			fail();
