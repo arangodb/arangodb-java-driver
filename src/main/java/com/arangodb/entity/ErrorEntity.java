@@ -27,6 +27,7 @@ package com.arangodb.entity;
 public class ErrorEntity {
 
 	private String errorMessage;
+	private String exception;
 	private int code;
 	private int errorNum;
 
@@ -39,6 +40,14 @@ public class ErrorEntity {
 	 */
 	public String getErrorMessage() {
 		return errorMessage;
+	}
+
+	/**
+	 * @return the exception message, passed when transaction fails
+	 * @return
+	 */
+	public String getException() {
+		return exception;
 	}
 
 	/**
