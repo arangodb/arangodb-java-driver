@@ -1,9 +1,9 @@
-#Graphs
+# Graphs
 This driver supports the [graph api](https://docs.arangodb.com/HTTP/Gharial/index.html).
 
 Some of the basic graph operations are described in the following:
 
-##add graph
+## add graph
 A graph consists of vertices and edges (stored in collections). Which collections are used within a graph is defined via edge definitions. A graph can contain more than one edge definition, at least one is needed.
 
 ``` Java
@@ -28,7 +28,7 @@ A graph consists of vertices and edges (stored in collections). Which collection
   
 ```
 
-##delete graph
+## delete graph
 
 A graph can be deleted by its name
 
@@ -36,7 +36,7 @@ A graph can be deleted by its name
   arangoDB.db("myDatabase").graph("myGraph").drop();
 ```
 
-##add vertex
+## add vertex
 
 Vertices are stored in the vertex collections defined above.
 
