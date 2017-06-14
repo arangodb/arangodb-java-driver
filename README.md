@@ -213,7 +213,7 @@ Added support for:
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>velocypack-module-jdk8</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
   </dependency>
 </dependencies>
 ```
