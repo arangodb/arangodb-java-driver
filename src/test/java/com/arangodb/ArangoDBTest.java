@@ -91,11 +91,14 @@ public class ArangoDBTest {
 
 	@Test
 	public void createDatabase() {
-		final Boolean result = arangoDB.createDatabase(BaseTest.TEST_DB);
-		assertThat(result, is(true));
 		try {
-			arangoDB.db(BaseTest.TEST_DB).drop();
-		} catch (final ArangoDBException e) {
+			final Boolean result = arangoDB.createDatabase(BaseTest.TEST_DB);
+			assertThat(result, is(true));
+		} finally {
+			try {
+				arangoDB.db(BaseTest.TEST_DB).drop();
+			} catch (final ArangoDBException e) {
+			}
 		}
 	}
 

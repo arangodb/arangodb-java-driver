@@ -4,7 +4,7 @@
 
 	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
-	<version>4.2.1-SNAPSHOT</version>
+	<version>4.2.1</version>
 	<inceptionYear>2016</inceptionYear>
 	<packaging>jar</packaging>
 
@@ -28,7 +28,7 @@
 		<hamcrest-all.version>1.3</hamcrest-all.version>
 		<junit.version>4.12</junit.version>
 		<httpclient.version>4.5.1</httpclient.version>
-		<arangodb.velocypack.version>1.0.8</arangodb.velocypack.version>
+		<arangodb.velocypack.version>1.0.9</arangodb.velocypack.version>
 	</properties>
 
 	<developers>

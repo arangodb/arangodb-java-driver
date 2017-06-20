@@ -1,3 +1,7 @@
+v4.2.1 (2017-06-20)
+---------------------------
+* fixed deserializing of internal field _id
+
 v4.2.0 (2017-06-14)
 ---------------------------
 * added ArangoDBVersion.getLicense()
