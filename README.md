@@ -172,6 +172,16 @@ The drivers default used network protocol is the binary protocol VelocyStream wh
   
 ```
 
+In addition to set the configuration for HTTP you have to add the apache httpclient to your classpath. 
+
+```XML
+<dependency>
+  <groupId>org.apache.httpcomponents</groupId>
+  <artifactId>httpclient</artifactId>
+  <version>4.5.1</version>
+</dependency>
+```
+
 **Note**: If you are using ArangoDB 3.0.x you have to set the protocol to `Protocol.HTTP_JSON` because it is the only one supported.
 
 ## SSL
