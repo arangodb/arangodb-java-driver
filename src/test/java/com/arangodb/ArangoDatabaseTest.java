@@ -1070,15 +1070,17 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldIncludeExceptionMessage() {
-		final String exceptionMessage = "My error context";
-		final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
-		try {
-			db.transaction(action, VPackSlice.class, null);
-			fail();
-		} catch (final ArangoDBException e) {
-			assertTrue(e.getException().contains(exceptionMessage));
+		final String version = db.getVersion().getVersion();
+		if (version.startsWith("3.1") || version.startsWith("3.0")) {
+			final String exceptionMessage = "My error context";
+			final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
+			try {
+				db.transaction(action, VPackSlice.class, null);
+				fail();
+			} catch (final ArangoDBException e) {
+				assertTrue(e.getException().contains(exceptionMessage));
+			}
 		}
 	}
 
