@@ -206,7 +206,7 @@ public class ArangoCollection
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String key, final Class<T> type) {
+	public <T> T getDocument(final String key, final Class<T> type) throws ArangoDBException {
 		executor.validateDocumentKey(key);
 		try {
 			return executor.execute(getDocumentRequest(key, new DocumentReadOptions()), type);
