@@ -108,6 +108,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			vpackParserBuilder.registerModule(new VPackDriverModule());
 			host = new Host(ArangoDBConstants.DEFAULT_HOST, ArangoDBConstants.DEFAULT_PORT);
 			hosts = new ArrayList<Host>();
+			user = ArangoDBConstants.DEFAULT_USER;
 			loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
 		}
 
