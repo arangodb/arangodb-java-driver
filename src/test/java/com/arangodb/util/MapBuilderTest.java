@@ -29,7 +29,7 @@ import java.util.Map;
 import org.junit.Test;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class MapBuilderTest {

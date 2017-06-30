@@ -25,7 +25,7 @@ import java.net.URI;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {

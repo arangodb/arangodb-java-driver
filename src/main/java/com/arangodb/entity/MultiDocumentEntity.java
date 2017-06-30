@@ -23,7 +23,7 @@ package com.arangodb.entity;
 import java.util.Collection;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class MultiDocumentEntity<E extends DocumentEntity> {

@@ -23,7 +23,7 @@ package com.arangodb.entity;
 import java.util.List;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  * @see <a href=
  *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API

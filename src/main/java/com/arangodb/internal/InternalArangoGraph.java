@@ -35,7 +35,7 @@ import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, E extends ArangoExecutor, R, C extends Connection>

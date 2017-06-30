@@ -21,7 +21,7 @@
 package com.arangodb.velocystream;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public enum RequestType {

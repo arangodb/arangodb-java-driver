@@ -27,7 +27,7 @@ import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public abstract class BaseTest {

@@ -23,7 +23,7 @@ package com.arangodb.internal.velocystream.internal;
 import com.arangodb.velocystream.Request;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class AuthenticationRequest extends Request {

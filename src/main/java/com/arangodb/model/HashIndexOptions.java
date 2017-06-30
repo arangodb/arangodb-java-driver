@@ -25,7 +25,7 @@ import java.util.Collection;
 import com.arangodb.entity.IndexType;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
  */

@@ -25,7 +25,7 @@ import com.arangodb.entity.KeyOptions;
 import com.arangodb.entity.KeyType;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * 
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
  *      Documentation</a>

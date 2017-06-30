@@ -21,7 +21,7 @@
 package com.arangodb.util;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * 
  */
 public interface ArangoSerialization extends ArangoSerializer, ArangoDeserializer {

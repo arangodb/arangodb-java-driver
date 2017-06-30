@@ -36,7 +36,7 @@ import com.arangodb.model.EdgeUpdateOptions;
 import com.arangodb.velocystream.Response;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class ArangoEdgeCollection extends

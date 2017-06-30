@@ -23,7 +23,7 @@ package com.arangodb.internal;
 import java.util.List;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class DefaultHostHandler implements HostHandler {

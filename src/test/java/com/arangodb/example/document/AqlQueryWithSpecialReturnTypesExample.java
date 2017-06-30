@@ -39,7 +39,7 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {

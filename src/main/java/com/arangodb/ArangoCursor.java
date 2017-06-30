@@ -36,7 +36,7 @@ import com.arangodb.internal.ArangoCursorIterator;
 import com.arangodb.internal.InternalArangoDatabase;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class ArangoCursor<T> implements Iterator<T>, Closeable {

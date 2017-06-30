@@ -27,7 +27,7 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.entity.CursorEntity;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * @param <T>
  *
  */

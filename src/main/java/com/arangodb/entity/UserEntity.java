@@ -23,7 +23,7 @@ package com.arangodb.entity;
 import java.util.Map;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html">API Documentation</a>
  */

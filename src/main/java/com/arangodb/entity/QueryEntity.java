@@ -23,7 +23,7 @@ package com.arangodb.entity;
 import java.util.Date;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class QueryEntity {

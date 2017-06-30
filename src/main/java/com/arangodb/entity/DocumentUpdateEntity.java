@@ -24,7 +24,7 @@ import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * @param <T>
  * 
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API

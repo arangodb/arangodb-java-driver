@@ -21,7 +21,7 @@
 package com.arangodb;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public enum Protocol {

@@ -32,7 +32,7 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.CollectionEntity;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class CollectionCache {

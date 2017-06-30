@@ -24,7 +24,7 @@ import com.arangodb.internal.velocystream.internal.Connection;
 import com.arangodb.util.ArangoSerialization;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends Connection> {

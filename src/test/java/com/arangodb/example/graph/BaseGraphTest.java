@@ -34,7 +34,7 @@ import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.VertexEntity;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public abstract class BaseGraphTest {

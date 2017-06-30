@@ -23,7 +23,7 @@ package com.arangodb.entity;
 import com.arangodb.velocypack.annotations.Expose;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
  *      Documentation</a>

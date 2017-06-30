@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import com.arangodb.internal.ArangoDBConstants;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public abstract class ConnectionPool<C extends Connection> {

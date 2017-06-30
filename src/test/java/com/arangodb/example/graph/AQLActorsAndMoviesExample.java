@@ -39,7 +39,7 @@ import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.model.CollectionCreateOptions;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * 
  * @see <a href="https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html">AQL Example Queries on an
  *      Actors and Movies Database</a>

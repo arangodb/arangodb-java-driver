@@ -25,7 +25,7 @@ import java.util.Collection;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * 
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
  *      Documentation</a>

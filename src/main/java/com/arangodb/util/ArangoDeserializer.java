@@ -26,7 +26,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public interface ArangoDeserializer {

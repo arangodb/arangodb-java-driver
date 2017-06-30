@@ -30,7 +30,7 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class ArangoUtilImpl implements ArangoSerialization {

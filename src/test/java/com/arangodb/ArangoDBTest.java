@@ -58,7 +58,7 @@ import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 @RunWith(Parameterized.class)

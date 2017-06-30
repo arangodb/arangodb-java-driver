@@ -23,7 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.Protocol;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class ArangoDBConstants {

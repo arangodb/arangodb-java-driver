@@ -23,7 +23,7 @@ package com.arangodb.entity;
 import java.util.Collection;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
  *      Documentation</a>

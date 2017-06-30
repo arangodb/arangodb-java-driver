@@ -21,7 +21,7 @@
 package com.arangodb.entity;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class QueryTrackingPropertiesEntity {

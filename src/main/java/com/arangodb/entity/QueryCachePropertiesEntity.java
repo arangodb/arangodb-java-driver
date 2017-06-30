@@ -21,7 +21,7 @@
 package com.arangodb.entity;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * 
  * @see <a href=
  *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#http-interface-for-the-aql-query-cache">API

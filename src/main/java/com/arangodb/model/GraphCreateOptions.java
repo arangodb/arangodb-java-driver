@@ -26,7 +26,7 @@ import java.util.Collection;
 import com.arangodb.entity.EdgeDefinition;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  * 
  * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API Documentation</a>
  */

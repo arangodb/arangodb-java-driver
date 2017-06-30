@@ -23,7 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.ErrorEntity;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class ArangoDBException extends RuntimeException {

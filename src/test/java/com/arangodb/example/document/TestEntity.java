@@ -21,7 +21,7 @@
 package com.arangodb.example.document;
 
 /**
- * @author Mark - mark at arangodb.com
+ * @author Mark Vollmary
  *
  */
 public class TestEntity {
