@@ -58,6 +58,7 @@ import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
@@ -359,6 +360,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 	}
 
+	private ArangoCursorInitializer cursorInitializer;
+
 	public ArangoDB(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
 		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol) {
 		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
@@ -367,7 +370,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
-				return new ArangoDatabase(cp, util, executor.documentCache(), name);
+				return new ArangoDatabase(cp, util, executor.documentCache(), name)
+						.setCursorInitializer(cursorInitializer);
 			}
 		});
 	}
@@ -421,7 +425,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return database handler
 	 */
 	public ArangoDatabase db(final String name) {
-		return new ArangoDatabase(this, name);
+		return new ArangoDatabase(this, name).setCursorInitializer(cursorInitializer);
 	}
 
 	/**
@@ -662,4 +666,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
 	}
 
+	public ArangoDB _setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
+		this.cursorInitializer = cursorInitializer;
+		return this;
+	}
 }

@@ -51,8 +51,16 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 		super();
 		this.execute = execute;
 		this.type = type;
-		iterator = new ArangoCursorIterator<T>(this, execute, db, result);
+		iterator = createIterator(this, db, execute, result);
 		id = result.getId();
+	}
+
+	protected ArangoCursorIterator<T> createIterator(
+		final ArangoCursor<T> cursor,
+		final InternalArangoDatabase<?, ?, ?, ?> db,
+		final ArangoCursorExecute execute,
+		final CursorEntity result) {
+		return new ArangoCursorIterator<T>(cursor, execute, db, result);
 	}
 
 	/**

@@ -54,6 +54,7 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
+import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
@@ -64,6 +65,8 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecutorSync, Response, ConnectionSync> {
+
+	private ArangoCursorInitializer cursorInitializer;
 
 	protected ArangoDatabase(final ArangoDB arangoDB, final String name) {
 		super(arangoDB, arangoDB.executor(), arangoDB.util(), name);
@@ -283,7 +286,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	private <T> ArangoCursor<T> createCursor(final CursorEntity result, final Class<T> type) {
-		return new ArangoCursor<T>(this, new ArangoCursorExecute() {
+		final ArangoCursorExecute execute = new ArangoCursorExecute() {
 			@Override
 			public CursorEntity next(final String id) {
 				return executor.execute(queryNextRequest(id), CursorEntity.class);
@@ -293,7 +296,9 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 			public void close(final String id) {
 				executor.execute(queryCloseRequest(id), Void.class);
 			}
-		}, type, result);
+		};
+		return cursorInitializer != null ? cursorInitializer.createInstance(this, execute, type, result)
+				: new ArangoCursor<T>(this, execute, type, result);
 	}
 
 	/**
@@ -673,6 +678,11 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 */
 	public void reloadRouting() throws ArangoDBException {
 		executor.execute(reloadRoutingRequest(), Void.class);
+	}
+
+	protected ArangoDatabase setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
+		this.cursorInitializer = cursorInitializer;
+		return this;
 	}
 
 }

@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -68,7 +69,11 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 		if (!hasNext()) {
 			throw new NoSuchElementException();
 		}
-		return db.util().deserialize(result.getResult().get(pos++), cursor.getType());
+		return deserialize(result.getResult().get(pos++), cursor.getType());
+	}
+
+	protected <R> R deserialize(final VPackSlice result, final Class<R> type) {
+		return db.util().deserialize(result, type);
 	}
 
 	@Override
