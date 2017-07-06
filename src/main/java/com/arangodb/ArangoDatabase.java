@@ -33,6 +33,7 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
@@ -214,31 +215,51 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	/**
-	 * Grants access to the database dbname for user user. You need permission to the _system database in order to
+	 * Grants or revoke access to the database for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
 	 * @throws ArangoDBException
 	 */
+	public void grantAccess(final String user, final Permissions permissions) throws ArangoDBException {
+		executor.execute(grantAccessRequest(user, permissions), Void.class);
+	}
+
+	/**
+	 * Grants access to the database for user user. You need permission to the _system database in order to execute this
+	 * call.
+	 *
+	 * @deprecated use {@link #grantAccess(String, Permissions)} instead
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 *      API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
 	public void grantAccess(final String user) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user), Void.class);
+		executor.execute(grantAccessRequest(user, Permissions.RW), Void.class);
 	}
 
 	/**
 	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
+	 * @deprecated use {@link #grantAccess(String, Permissions)} instead
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	public void revokeAccess(final String user) throws ArangoDBException {
-		executor.execute(revokeAccessRequest(user), Void.class);
+		executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
 	}
 
 	/**

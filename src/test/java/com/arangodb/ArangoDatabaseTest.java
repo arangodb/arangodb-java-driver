@@ -62,6 +62,7 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.QueryEntity;
@@ -303,10 +304,30 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void grantAccess() {
+	public void grantAccessRW() {
 		try {
 			arangoDB.createUser("user1", "1234", null);
-			db.grantAccess("user1");
+			db.grantAccess("user1", Permissions.RW);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test
+	public void grantAccessRO() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.grantAccess("user1", Permissions.RO);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test
+	public void grantAccessNONE() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.grantAccess("user1", Permissions.NONE);
 		} finally {
 			arangoDB.deleteUser("user1");
 		}
@@ -314,14 +335,14 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void grantAccessUserNotFound() {
-		db.grantAccess("user1");
+		db.grantAccess("user1", Permissions.RW);
 	}
 
 	@Test
 	public void revokeAccess() {
 		try {
 			arangoDB.createUser("user1", "1234", null);
-			db.revokeAccess("user1");
+			db.grantAccess("user1", Permissions.NONE);
 		} finally {
 			arangoDB.deleteUser("user1");
 		}
@@ -329,7 +350,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void revokeAccessUserNotFound() {
-		db.revokeAccess("user1");
+		db.grantAccess("user1", Permissions.NONE);
 	}
 
 	@Test

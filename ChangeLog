@@ -1,3 +1,8 @@
+v4.2.2 (xxxx-xx-xx)
+---------------------------
+* added ArangoDatabase.grantAccess(String, Permissions)
+* added ArangoCollection.grantAccess(String, Permissions)
+
 v4.2.1 (2017-06-20)
 ---------------------------
 * fixed deserializing of internal field _id

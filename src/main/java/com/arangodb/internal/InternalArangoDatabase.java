@@ -30,6 +30,7 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.PathEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
@@ -131,16 +132,10 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		};
 	}
 
-	protected Request grantAccessRequest(final String user) {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
-						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.RW)));
-	}
-
-	protected Request revokeAccessRequest(final String user) {
+	protected Request grantAccessRequest(final String user, final Permissions permissions) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
 				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name)).setBody(
-					util().serialize(OptionsBuilder.build(new UserAccessOptions(), ArangoDBConstants.NONE)));
+					util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
 	}
 
 	protected Request queryRequest(

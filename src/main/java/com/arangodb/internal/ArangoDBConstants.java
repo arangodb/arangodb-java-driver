@@ -89,8 +89,6 @@ public class ArangoDBConstants {
 	public static final String COLLECTIONS = "collections";
 	public static final String EXCLUDE_SYSTEM = "excludeSystem";
 	public static final String USER = "user";
-	public static final String RW = "rw";
-	public static final String NONE = "none";
 	public static final String DATABASE = "database";
 	public static final String CURRENT = "current";
 	public static final String INDEXES = "indexes";

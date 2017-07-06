@@ -59,6 +59,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.IndexType;
 import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
@@ -1782,6 +1783,56 @@ public class ArangoCollectionTest extends BaseTest {
 		final BaseDocument doc = db.collection(COLLECTION_NAME).getDocument(key, BaseDocument.class);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.getKey(), is(key));
+	}
+
+	@Test
+	public void grantAccessRW() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RW);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test
+	public void grantAccessRO() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RO);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test
+	public void grantAccessNONE() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void grantAccessUserNotFound() {
+		db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RW);
+	}
+
+	@Test
+	public void revokeAccess() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void revokeAccessUserNotFound() {
+		db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE);
 	}
 
 }

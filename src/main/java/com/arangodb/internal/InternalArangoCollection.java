@@ -34,6 +34,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.velocystream.internal.Connection;
 import com.arangodb.model.CollectionPropertiesOptions;
@@ -52,6 +53,7 @@ import com.arangodb.model.ImportType;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
+import com.arangodb.model.UserAccessOptions;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
@@ -619,5 +621,12 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 	protected Request getRevisionRequest() {
 		return new Request(db.name(), RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.REVISION));
+	}
+
+	protected Request grantAccessRequest(final String user, final Permissions permissions) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, db.name(), name))
+						.setBody(
+							util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
 	}
 }
