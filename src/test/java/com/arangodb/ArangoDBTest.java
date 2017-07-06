@@ -150,7 +150,6 @@ public class ArangoDBTest {
 			final UserEntity result = arangoDB.createUser(USER, PW, null);
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getUser(), is(USER));
-			assertThat(result.getChangePassword(), is(false));
 		} finally {
 			arangoDB.deleteUser(USER);
 		}
