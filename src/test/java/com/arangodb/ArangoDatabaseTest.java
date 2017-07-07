@@ -304,6 +304,16 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void grantAccess() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.grantAccess("user1");
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test
 	public void grantAccessRW() {
 		try {
 			arangoDB.createUser("user1", "1234", null);
@@ -342,7 +352,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	public void revokeAccess() {
 		try {
 			arangoDB.createUser("user1", "1234", null);
-			db.grantAccess("user1", Permissions.NONE);
+			db.revokeAccess("user1");
 		} finally {
 			arangoDB.deleteUser("user1");
 		}
@@ -350,7 +360,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void revokeAccessUserNotFound() {
-		db.grantAccess("user1", Permissions.NONE);
+		db.revokeAccess("user1");
 	}
 
 	@Test

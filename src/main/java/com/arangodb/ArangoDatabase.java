@@ -234,14 +234,12 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * Grants access to the database for user user. You need permission to the _system database in order to execute this
 	 * call.
 	 *
-	 * @deprecated use {@link #grantAccess(String, Permissions)} instead
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	@Deprecated
 	public void grantAccess(final String user) throws ArangoDBException {
 		executor.execute(grantAccessRequest(user, Permissions.RW), Void.class);
 	}
@@ -250,14 +248,12 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
 	 * execute this call.
 	 * 
-	 * @deprecated use {@link #grantAccess(String, Permissions)} instead
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	@Deprecated
 	public void revokeAccess(final String user) throws ArangoDBException {
 		executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
 	}
