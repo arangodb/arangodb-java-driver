@@ -242,7 +242,9 @@ public class ArangoCollection
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
-			if (options == null || options.isCatchException()) {
+			if ((e.getResponseCode() != null && (e.getResponseCode().intValue() == 404
+					|| e.getResponseCode().intValue() == 304 || e.getResponseCode().intValue() == 412))
+					&& (options == null || options.isCatchException())) {
 				return null;
 			}
 			throw e;
@@ -532,7 +534,9 @@ public class ArangoCollection
 			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
 			return true;
 		} catch (final ArangoDBException e) {
-			if (options == null || options.isCatchException()) {
+			if ((e.getResponseCode() != null && (e.getResponseCode().intValue() == 404
+					|| e.getResponseCode().intValue() == 304 || e.getResponseCode().intValue() == 412))
+					&& (options == null || options.isCatchException())) {
 				return false;
 			}
 			throw e;

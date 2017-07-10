@@ -381,7 +381,8 @@ public class HttpCommunication {
 					final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
 					throw new ArangoDBException(errorEntity);
 				} else {
-					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()));
+					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()),
+							response.getResponseCode());
 				}
 			}
 		} catch (final VPackParserException e) {
