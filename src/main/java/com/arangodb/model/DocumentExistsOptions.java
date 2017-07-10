@@ -30,9 +30,11 @@ public class DocumentExistsOptions {
 
 	private String ifNoneMatch;
 	private String ifMatch;
+	private boolean catchException;
 
 	public DocumentExistsOptions() {
 		super();
+		catchException = true;
 	}
 
 	public String getIfNoneMatch() {
@@ -60,6 +62,20 @@ public class DocumentExistsOptions {
 	 */
 	public DocumentExistsOptions ifMatch(final String ifMatch) {
 		this.ifMatch = ifMatch;
+		return this;
+	}
+
+	public boolean isCatchException() {
+		return catchException;
+	}
+
+	/**
+	 * @param catchException
+	 *            whether or not catch possible thrown exceptions
+	 * @return options
+	 */
+	public DocumentExistsOptions catchException(final boolean catchException) {
+		this.catchException = catchException;
 		return this;
 	}
 
