@@ -923,12 +923,11 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(exists, is(true));
 	}
 
-	@Test
+	@Test(expected = ArangoDBException.class)
 	public void documentExistsIfMatchFail() {
 		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null);
 		final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch("no");
-		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options);
-		assertThat(exists, is(false));
+		db.collection(COLLECTION_NAME).documentExists("abc", options);
 	}
 
 	@Test
@@ -939,13 +938,12 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(exists, is(true));
 	}
 
-	@Test
+	@Test(expected = ArangoDBException.class)
 	public void documentExistsIfNoneMatchFail() {
 		final DocumentCreateEntity<String> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument("{\"_key\":\"abc\"}", null);
 		final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch(createResult.getRev());
-		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", options);
-		assertThat(exists, is(false));
+		db.collection(COLLECTION_NAME).documentExists("abc", options);
 	}
 
 	@Test
