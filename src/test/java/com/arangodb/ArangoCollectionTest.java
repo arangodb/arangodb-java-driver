@@ -214,6 +214,12 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test(expected = ArangoDBException.class)
+	public void getDocumentNotFoundThrowException() {
+		db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class,
+			new DocumentReadOptions().catchException(false));
+	}
+
+	@Test(expected = ArangoDBException.class)
 	public void getDocumentWrongKey() {
 		db.collection(COLLECTION_NAME).getDocument("no/no", BaseDocument.class);
 	}
@@ -912,6 +918,11 @@ public class ArangoCollectionTest extends BaseTest {
 		db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null);
 		final Boolean exists = db.collection(COLLECTION_NAME).documentExists("abc", null);
 		assertThat(exists, is(true));
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void documentExistsThrowExcpetion() {
+		db.collection(COLLECTION_NAME).documentExists("no", new DocumentExistsOptions().catchException(false));
 	}
 
 	@Test

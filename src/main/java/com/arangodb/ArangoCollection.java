@@ -242,7 +242,10 @@ public class ArangoCollection
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
-			return null;
+			if (options == null || options.isCatchException()) {
+				return null;
+			}
+			throw e;
 		}
 	}
 
@@ -521,13 +524,18 @@ public class ArangoCollection
 	 * @param options
 	 *            Additional options, can be null
 	 * @return true if the document was found, otherwise false
+	 * @throws ArangoDBException
+	 *             only thrown when {@link DocumentExistsOptions#isCatchException()} == false
 	 */
-	public Boolean documentExists(final String key, final DocumentExistsOptions options) {
+	public Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException {
 		try {
 			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
 			return true;
 		} catch (final ArangoDBException e) {
-			return false;
+			if (options == null || options.isCatchException()) {
+				return false;
+			}
+			throw e;
 		}
 	}
 
