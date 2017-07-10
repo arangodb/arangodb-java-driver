@@ -215,7 +215,10 @@ public class ArangoCollection
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
-			return null;
+			if (e.getResponseCode() != null && e.getResponseCode().intValue() == 404) {
+				return null;
+			}
+			throw e;
 		}
 	}
 
@@ -527,7 +530,10 @@ public class ArangoCollection
 			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
 			return true;
 		} catch (final ArangoDBException e) {
-			return false;
+			if (e.getResponseCode() != null && e.getResponseCode().intValue() == 404) {
+				return false;
+			}
+			throw e;
 		}
 	}
 
