@@ -252,6 +252,22 @@ public class ArangoCollection
 	}
 
 	/**
+	 * Reads multiple documents
+	 * 
+	 * @param keys
+	 *            The keys of the documents
+	 * @param type
+	 *            The type of the documents (POJO class, VPackSlice or String for Json)
+	 * @return the documents and possible errors
+	 * @throws ArangoDBException
+	 */
+	public <T> MultiDocumentEntity<T> getDocuments(final Collection<String> keys, final Class<T> type)
+			throws ArangoDBException {
+		final DocumentReadOptions options = new DocumentReadOptions();
+		return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type, options));
+	}
+
+	/**
 	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
 	 * violated
 	 * 

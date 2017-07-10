@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
@@ -35,7 +36,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -222,6 +225,41 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test(expected = ArangoDBException.class)
 	public void getDocumentWrongKey() {
 		db.collection(COLLECTION_NAME).getDocument("no/no", BaseDocument.class);
+	}
+
+	@Test
+	public void getDocuments() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("3"));
+		db.collection(COLLECTION_NAME).insertDocuments(values);
+		final MultiDocumentEntity<BaseDocument> documents = db.collection(COLLECTION_NAME)
+				.getDocuments(Arrays.asList("1", "2", "3"), BaseDocument.class);
+		assertThat(documents, is(notNullValue()));
+		assertThat(documents.getDocuments().size(), is(3));
+		for (final BaseDocument document : documents.getDocuments()) {
+			assertThat(document.getId(),
+				isOneOf(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3"));
+		}
+	}
+
+	@Test
+	public void getDocumentsNotFound() {
+		final MultiDocumentEntity<BaseDocument> readResult = db.collection(COLLECTION_NAME)
+				.getDocuments(Collections.singleton("no"), BaseDocument.class);
+		assertThat(readResult, is(notNullValue()));
+		assertThat(readResult.getDocuments().size(), is(0));
+		assertThat(readResult.getErrors().size(), is(1));
+	}
+
+	@Test
+	public void getDocumentsWrongKey() {
+		final MultiDocumentEntity<BaseDocument> readResult = db.collection(COLLECTION_NAME)
+				.getDocuments(Collections.singleton("no/no"), BaseDocument.class);
+		assertThat(readResult, is(notNullValue()));
+		assertThat(readResult.getDocuments().size(), is(0));
+		assertThat(readResult.getErrors().size(), is(1));
 	}
 
 	@Test

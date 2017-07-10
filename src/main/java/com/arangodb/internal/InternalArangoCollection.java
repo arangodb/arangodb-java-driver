@@ -197,6 +197,39 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return request;
 	}
 
+	protected Request getDocumentsRequest(final Collection<String> keys, final DocumentReadOptions options) {
+		return new Request(db.name(), RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, name))
+				.putQueryParam("onlyget", true)
+				.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, options.getIfNoneMatch())
+				.putHeaderParam(ArangoDBConstants.IF_MATCH, options.getIfMatch()).setBody(util().serialize(keys));
+	}
+
+	protected <T> ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(
+		final Class<T> type,
+		final DocumentReadOptions options) {
+		return new ResponseDeserializer<MultiDocumentEntity<T>>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public MultiDocumentEntity<T> deserialize(final Response response) throws VPackException {
+				final MultiDocumentEntity<T> multiDocument = new MultiDocumentEntity<T>();
+				final Collection<T> docs = new ArrayList<T>();
+				final Collection<ErrorEntity> errors = new ArrayList<ErrorEntity>();
+				final VPackSlice body = response.getBody();
+				for (final Iterator<VPackSlice> iterator = body.arrayIterator(); iterator.hasNext();) {
+					final VPackSlice next = iterator.next();
+					if (next.get(ArangoDBConstants.ERROR).isTrue()) {
+						errors.add((ErrorEntity) util().deserialize(next, ErrorEntity.class));
+					} else {
+						docs.add((T) util().deserialize(next, type));
+					}
+				}
+				multiDocument.setDocuments(docs);
+				multiDocument.setErrors(errors);
+				return multiDocument;
+			}
+		};
+	}
+
 	protected <T> Request replaceDocumentRequest(
 		final String key,
 		final T value,
