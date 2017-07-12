@@ -47,6 +47,7 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
@@ -251,6 +252,26 @@ public class ArangoDBTest {
 			assertThat(user2.getExtra().size(), is(1));
 			assertThat(user2.getExtra().get("mund"), is(notNullValue()));
 			assertThat(Boolean.valueOf(String.valueOf(user2.getExtra().get("mund"))), is(true));
+		} finally {
+			arangoDB.deleteUser(USER);
+		}
+	}
+
+	@Test
+	public void updateUserDefaultDatabaseAccess() {
+		try {
+			arangoDB.createUser(USER, PW);
+			arangoDB.updateUserDefaultDatabaseAccess(USER, Permissions.RW);
+		} finally {
+			arangoDB.deleteUser(USER);
+		}
+	}
+
+	@Test
+	public void updateUserDefaultCollectionAccess() {
+		try {
+			arangoDB.createUser(USER, PW);
+			arangoDB.updateUserDefaultCollectionAccess(USER, Permissions.RW);
 		} finally {
 			arangoDB.deleteUser(USER);
 		}

@@ -33,6 +33,7 @@ import javax.net.ssl.SSLContext;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
@@ -610,6 +611,14 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 */
 	public UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
 		return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
+	}
+
+	public void updateUserDefaultDatabaseAccess(final String user, final Permissions permissions) {
+		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
+	}
+
+	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) {
+		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
 	}
 
 	/**

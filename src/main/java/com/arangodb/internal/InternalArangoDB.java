@@ -29,6 +29,7 @@ import java.util.Properties;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -36,6 +37,7 @@ import com.arangodb.internal.velocystream.internal.Connection;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.OptionsBuilder;
+import com.arangodb.model.UserAccessOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoSerialization;
@@ -250,6 +252,19 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection>
 		request = new Request(database, RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
 		request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
 		return request;
+	}
+
+	protected Request updateUserDefaultDatabaseAccessRequest(final String user, final Permissions permissions) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*")).setBody(
+					util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
+	}
+
+	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*", "*"))
+						.setBody(
+							util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
 	}
 
 	protected Request getLogsRequest(final LogOptions options) {
