@@ -259,6 +259,19 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	/**
+	 * Clear the database access level, revert back to the default access level.
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 *      API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
+	public void resetAccess(final String user) throws ArangoDBException {
+		executor.execute(resetAccessRequest(user), Void.class);
+	}
+
+	/**
 	 * Create a cursor and return the first results
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API

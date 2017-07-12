@@ -688,4 +688,9 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 						.setBody(
 							util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
 	}
+
+	protected Request resetAccessRequest(final String user) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE, executor
+				.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, db.name(), name));
+	}
 }

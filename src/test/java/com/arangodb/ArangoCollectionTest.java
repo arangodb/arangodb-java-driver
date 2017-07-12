@@ -1884,4 +1884,19 @@ public class ArangoCollectionTest extends BaseTest {
 		db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE);
 	}
 
+	@Test
+	public void resetAccess() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.collection(COLLECTION_NAME).resetAccess("user1");
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void resetAccessUserNotFound() {
+		db.collection(COLLECTION_NAME).resetAccess("user1");
+	}
+
 }

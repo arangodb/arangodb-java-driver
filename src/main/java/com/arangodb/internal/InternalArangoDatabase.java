@@ -138,6 +138,11 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 					util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
 	}
 
+	protected Request resetAccessRequest(final String user) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.DELETE,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
+	}
+
 	protected Request queryRequest(
 		final String query,
 		final Map<String, Object> bindVars,

@@ -364,6 +364,21 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void resetAccess() {
+		try {
+			arangoDB.createUser("user1", "1234", null);
+			db.resetAccess("user1");
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void resetAccessUserNotFound() {
+		db.resetAccess("user1");
+	}
+
+	@Test
 	public void query() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);

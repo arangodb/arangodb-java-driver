@@ -842,4 +842,33 @@ public class ArangoCollection
 		executor.execute(grantAccessRequest(user, permissions), Void.class);
 	}
 
+	/**
+	 * Revokes access to the collection for user user. You need permission to the _system database in order to execute
+	 * this call.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
+	public void revokeAccess(final String user) throws ArangoDBException {
+		executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
+	}
+
+	/**
+	 * Clear the collection access level, revert back to the default access level.
+	 * 
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @throws ArangoDBException
+	 */
+	public void resetAccess(final String user) throws ArangoDBException {
+		executor.execute(resetAccessRequest(user), Void.class);
+	}
+
 }
