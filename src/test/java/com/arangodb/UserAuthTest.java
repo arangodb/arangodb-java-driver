@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -54,7 +53,6 @@ import com.arangodb.util.MapBuilder;
  *
  */
 @RunWith(Parameterized.class)
-@Ignore
 public class UserAuthTest {
 
 	private static final String DB_NAME = "AuthUnitTestDB";
@@ -465,7 +463,8 @@ public class UserAuthTest {
 	public void dropCollection() {
 		try {
 			arangoDBRoot.db(DB_NAME).createCollection(COLLECTION_NAME_NEW);
-			if (Permissions.RW.equals(param.dbPermission)) {
+			arangoDBRoot.db(DB_NAME).collection(COLLECTION_NAME_NEW).grantAccess(USER_NAME, param.colPermission);
+			if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
 				try {
 					arangoDB.db(DB_NAME).collection(COLLECTION_NAME_NEW).drop();
 				} catch (final ArangoDBException e) {
@@ -495,8 +494,8 @@ public class UserAuthTest {
 
 	@Test
 	public void seeCollection() {
-		if (Permissions.RW.equals(param.dbPermission) || (Permissions.RO.equals(param.dbPermission)
-				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission)))) {
+		if ((Permissions.RW.equals(param.dbPermission) || Permissions.RO.equals(param.dbPermission))
+				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission))) {
 			try {
 				final Collection<CollectionEntity> collections = arangoDB.db(DB_NAME).getCollections();
 				boolean found = false;
@@ -525,8 +524,8 @@ public class UserAuthTest {
 
 	@Test
 	public void readCollectionInfo() {
-		if (Permissions.RW.equals(param.dbPermission) || (Permissions.RO.equals(param.dbPermission)
-				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission)))) {
+		if ((Permissions.RW.equals(param.dbPermission) || Permissions.RO.equals(param.dbPermission))
+				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission))) {
 			try {
 				assertThat(details, arangoDB.db(DB_NAME).collection(COLLECTION_NAME).getInfo(), is(notNullValue()));
 			} catch (final ArangoDBException e) {
@@ -543,8 +542,8 @@ public class UserAuthTest {
 
 	@Test
 	public void readCollectionProperties() {
-		if (Permissions.RW.equals(param.dbPermission) || (Permissions.RO.equals(param.dbPermission)
-				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission)))) {
+		if ((Permissions.RW.equals(param.dbPermission) || Permissions.RO.equals(param.dbPermission))
+				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission))) {
 			try {
 				assertThat(details, arangoDB.db(DB_NAME).collection(COLLECTION_NAME).getProperties(),
 					is(notNullValue()));
@@ -562,7 +561,7 @@ public class UserAuthTest {
 
 	@Test
 	public void writeCollectionProperties() {
-		if (Permissions.RW.equals(param.dbPermission)) {
+		if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
 			try {
 				assertThat(details, arangoDB.db(DB_NAME).collection(COLLECTION_NAME)
 						.changeProperties(new CollectionPropertiesOptions().waitForSync(true)),
@@ -586,8 +585,8 @@ public class UserAuthTest {
 
 	@Test
 	public void readCollectionIndexes() {
-		if ((Permissions.RW.equals(param.dbPermission) || (Permissions.RO.equals(param.dbPermission)
-				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission))))) {
+		if ((Permissions.RW.equals(param.dbPermission) || Permissions.RO.equals(param.dbPermission))
+				&& (Permissions.RW.equals(param.colPermission) || Permissions.RO.equals(param.colPermission))) {
 			try {
 				assertThat(details, arangoDB.db(DB_NAME).collection(COLLECTION_NAME).getIndexes(), is(notNullValue()));
 			} catch (final ArangoDBException e) {
@@ -606,7 +605,7 @@ public class UserAuthTest {
 	public void createCollectionIndex() {
 		String id = null;
 		try {
-			if (Permissions.RW.equals(param.dbPermission)) {
+			if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
 				try {
 					final IndexEntity createHashIndex = arangoDB.db(DB_NAME).collection(COLLECTION_NAME)
 							.createHashIndex(Arrays.asList("a"), new HashIndexOptions());
@@ -638,7 +637,7 @@ public class UserAuthTest {
 		final String id = arangoDBRoot.db(DB_NAME).collection(COLLECTION_NAME)
 				.createHashIndex(Arrays.asList("a"), new HashIndexOptions()).getId();
 		try {
-			if (Permissions.RW.equals(param.dbPermission)) {
+			if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
 				try {
 					arangoDB.db(DB_NAME).collection(COLLECTION_NAME).deleteIndex(id);
 				} catch (final ArangoDBException e) {
