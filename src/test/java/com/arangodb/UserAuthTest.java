@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -53,6 +54,7 @@ import com.arangodb.util.MapBuilder;
  *
  */
 @RunWith(Parameterized.class)
+@Ignore
 public class UserAuthTest {
 
 	private static final String DB_NAME = "AuthUnitTestDB";
