@@ -691,7 +691,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void queryWithWarning() {
-		final ArangoCursor<String> cursor = arangoDB.db().query("return _users + 1", null, null, String.class);
+		final ArangoCursor<String> cursor = arangoDB.db().query("return _apps + 1", null, null, String.class);
 
 		assertThat(cursor, is(notNullValue()));
 		assertThat(cursor.getWarnings(), is(notNullValue()));
