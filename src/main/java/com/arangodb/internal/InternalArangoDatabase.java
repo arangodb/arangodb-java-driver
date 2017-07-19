@@ -143,6 +143,13 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
 	}
 
+	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name, "*"))
+						.setBody(
+							util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
+	}
+
 	protected Request queryRequest(
 		final String query,
 		final Map<String, Object> bindVars,

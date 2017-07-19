@@ -618,7 +618,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	}
 
 	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) {
-		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
+		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
 	}
 
 	/**

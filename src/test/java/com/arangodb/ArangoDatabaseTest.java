@@ -379,6 +379,16 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void updateUserDefaultCollectionAccess() {
+		try {
+			arangoDB.createUser("user1", "1234");
+			db.updateUserDefaultCollectionAccess("user1", Permissions.RW);
+		} finally {
+			arangoDB.deleteUser("user1");
+		}
+	}
+
+	@Test
 	public void query() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);

@@ -271,6 +271,10 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 		executor.execute(resetAccessRequest(user), Void.class);
 	}
 
+	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) {
+		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+	}
+
 	/**
 	 * Create a cursor and return the first results
 	 * 
