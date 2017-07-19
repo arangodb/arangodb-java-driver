@@ -103,6 +103,21 @@ public abstract class Connection {
 				}
 				socket.connect(new InetSocketAddress(host.getHost(), host.getPort()),
 					timeout != null ? timeout : ArangoDBConstants.DEFAULT_TIMEOUT);
+				socket.setKeepAlive(true);
+				socket.setTcpNoDelay(true);
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(String.format("Connected to %s", socket));
+				}
+
+				outputStream = new BufferedOutputStream(socket.getOutputStream());
+				inputStream = socket.getInputStream();
+
+				if (useSsl != null && useSsl) {
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug(String.format("Start Handshake on %s", socket));
+					}
+					((SSLSocket) socket).startHandshake();
+				}
 				hostHandler.success();
 				break;
 			} catch (final IOException e) {
@@ -110,26 +125,12 @@ public abstract class Connection {
 				final Host failedHost = host;
 				host = hostHandler.change();
 				if (host != null) {
-					LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s", failedHost, host));
+					LOGGER.warn(String.format("Could not connect to %s or SSL Handshake failed. Try connecting to %s",
+						failedHost, host));
 				} else {
 					throw e;
 				}
 			}
-		}
-		socket.setKeepAlive(true);
-		socket.setTcpNoDelay(true);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Connected to %s", socket));
-		}
-
-		outputStream = new BufferedOutputStream(socket.getOutputStream());
-		inputStream = socket.getInputStream();
-
-		if (useSsl != null && useSsl) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(String.format("Start Handshake on %s", socket));
-			}
-			((SSLSocket) socket).startHandshake();
 		}
 		sendProtocolHeader();
 		executor = Executors.newSingleThreadExecutor();

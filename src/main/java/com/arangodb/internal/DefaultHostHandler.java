@@ -31,13 +31,14 @@ public class DefaultHostHandler implements HostHandler {
 	private final List<Host> hosts;
 	private int current;
 	private int lastSuccess;
+	private int iterations;
 
 	/**
 	 * @param hosts
 	 */
 	public DefaultHostHandler(final List<Host> hosts) {
 		this.hosts = hosts;
-		current = lastSuccess = 0;
+		current = lastSuccess = iterations = 0;
 	}
 
 	@Override
@@ -50,8 +51,9 @@ public class DefaultHostHandler implements HostHandler {
 		current++;
 		if ((current + 1) > hosts.size()) {
 			current -= hosts.size();
+			iterations++;
 		}
-		return current != lastSuccess ? get() : null;
+		return current != lastSuccess || iterations < 3 ? get() : null;
 	}
 
 	@Override
