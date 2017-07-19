@@ -35,6 +35,7 @@ public class SkiplistIndexOptions {
 	private final IndexType type = IndexType.skiplist;
 	private Boolean unique;
 	private Boolean sparse;
+	private Boolean deduplicate;
 
 	public SkiplistIndexOptions() {
 		super();
@@ -83,6 +84,20 @@ public class SkiplistIndexOptions {
 	 */
 	public SkiplistIndexOptions sparse(final Boolean sparse) {
 		this.sparse = sparse;
+		return this;
+	}
+
+	public Boolean getDeduplicate() {
+		return deduplicate;
+	}
+
+	/**
+	 * @param deduplicate
+	 *            if false, the deduplication of array values is turned off.
+	 * @return options
+	 */
+	public SkiplistIndexOptions deduplicate(final Boolean deduplicate) {
+		this.deduplicate = deduplicate;
 		return this;
 	}
 

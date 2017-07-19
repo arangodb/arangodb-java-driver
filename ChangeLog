@@ -9,6 +9,7 @@ v4.2.2 (xxxx-xx-xx)
 * added ArangoDatabase.updateUserDefaultCollectionAccess(String, Permissions)
 * added ArangoCollection.getDocuments(Collection<String>, Class)
 * added connection/handshake retry on same host
+* added deduplicate field for hash/skiplist index
 
 v4.2.1 (2017-06-20)
 ---------------------------

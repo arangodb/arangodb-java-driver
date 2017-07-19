@@ -38,6 +38,7 @@ public class IndexEntity {
 	private Boolean isNewlyCreated;
 	private Boolean geoJson;
 	private Boolean constraint;
+	private Boolean deduplicate;
 
 	public IndexEntity() {
 		super();
@@ -81,6 +82,10 @@ public class IndexEntity {
 
 	public Boolean getConstraint() {
 		return constraint;
+	}
+
+	public Boolean getDeduplicate() {
+		return deduplicate;
 	}
 
 }
