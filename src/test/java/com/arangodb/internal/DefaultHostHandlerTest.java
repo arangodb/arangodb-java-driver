@@ -53,10 +53,16 @@ public class DefaultHostHandlerTest {
 		hosts.add(h2);
 
 		final HostHandler hh = new DefaultHostHandler(hosts);
-		assertThat(hh.get(), is(h1));
-		assertThat(hh.change(), is(h2));
-		assertThat(hh.get(), is(h2));
-		assertThat(hh.change(), is(nullValue()));
+		for (int i = 0; i < 3; i++) {
+			assertThat(hh.get(), is(h1));
+			assertThat(hh.change(), is(h2));
+			assertThat(hh.get(), is(h2));
+			if (i < 2) {
+				assertThat(hh.change(), is(h1));
+			} else {
+				assertThat(hh.change(), is(nullValue()));
+			}
+		}
 	}
 
 }
