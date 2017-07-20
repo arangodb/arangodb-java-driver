@@ -1,0 +1,11 @@
+com.arangodb
+com.arangodb.entity
+com.arangodb.internal
+com.arangodb.internal.http
+com.arangodb.internal.util
+com.arangodb.internal.velocypack
+com.arangodb.internal.velocystream
+com.arangodb.internal.velocystream.internal
+com.arangodb.model
+com.arangodb.util
+com.arangodb.velocystream
