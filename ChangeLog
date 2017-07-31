@@ -1,4 +1,4 @@
-v4.2.3 (xxxx-xx-xx)
+v4.2.3 (2017-07-31)
 ---------------------------
 * added ArangoDatabase.getPermissions(String)
 * added ArangoCollection.getPermissions(String)
