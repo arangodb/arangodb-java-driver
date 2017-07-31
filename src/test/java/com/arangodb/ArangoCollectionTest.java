@@ -1899,4 +1899,9 @@ public class ArangoCollectionTest extends BaseTest {
 		db.collection(COLLECTION_NAME).resetAccess("user1");
 	}
 
+	@Test
+	public void getPermissions() {
+		assertThat(Permissions.RW, is(db.collection(COLLECTION_NAME).getPermissions("root")));
+	}
+
 }

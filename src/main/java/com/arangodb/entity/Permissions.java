@@ -36,9 +36,4 @@ public enum Permissions {
 	RO,
 	NONE;
 
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase();
-	}
-
 }

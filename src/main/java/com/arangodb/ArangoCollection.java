@@ -865,10 +865,26 @@ public class ArangoCollection
 	 *      Documentation</a>
 	 * @param user
 	 *            The name of the user
+	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
 	public void resetAccess(final String user) throws ArangoDBException {
 		executor.execute(resetAccessRequest(user), Void.class);
+	}
+
+	/**
+	 * Get the collection access level
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-specific-collection-access-level">
+	 *      API Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return permissions of the user
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	public Permissions getPermissions(final String user) throws ArangoDBException {
+		return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
 	}
 
 }

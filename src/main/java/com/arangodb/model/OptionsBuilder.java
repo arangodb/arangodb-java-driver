@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.Permissions;
 
 /**
  * @author Mark Vollmary
@@ -100,7 +101,7 @@ public class OptionsBuilder {
 		return options.name(name);
 	}
 
-	public static UserAccessOptions build(final UserAccessOptions options, final String grant) {
+	public static UserAccessOptions build(final UserAccessOptions options, final Permissions grant) {
 		return options.grant(grant);
 	}
 

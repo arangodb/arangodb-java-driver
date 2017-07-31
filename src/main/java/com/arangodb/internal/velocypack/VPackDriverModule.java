@@ -30,6 +30,7 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
@@ -66,6 +67,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
 		context.registerSerializer(TraversalOptions.Order.class, VPackSerializers.TRAVERSAL_ORDER);
 		context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
+		context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
 
 		context.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		context.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
@@ -75,6 +77,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerDeserializer(QueryEntity.PROPERTY_STARTED, Date.class, VPackDeserializers.DATE_STRING);
 		context.registerDeserializer(LogLevel.class, VPackDeserializers.LOG_LEVEL);
 		context.registerDeserializer(ArangoDBVersion.License.class, VPackDeserializers.LICENSE);
+		context.registerDeserializer(Permissions.class, VPackDeserializers.PERMISSIONS);
 	}
 
 	@Override

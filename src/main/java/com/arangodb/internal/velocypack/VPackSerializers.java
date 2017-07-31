@@ -29,6 +29,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.Permissions;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
@@ -157,6 +158,17 @@ public class VPackSerializers {
 			final LogLevel value,
 			final VPackSerializationContext context) throws VPackException {
 			builder.add(attribute, value.getLevel());
+		}
+	};
+
+	public static final VPackSerializer<Permissions> PERMISSIONS = new VPackSerializer<Permissions>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final Permissions value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(attribute, value.toString().toLowerCase());
 		}
 	};
 }

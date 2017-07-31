@@ -261,7 +261,7 @@ public class ArangoDBTest {
 	public void updateUserDefaultDatabaseAccess() {
 		try {
 			arangoDB.createUser(USER, PW);
-			arangoDB.updateUserDefaultDatabaseAccess(USER, Permissions.RW);
+			arangoDB.grantDefaultDatabaseAccess(USER, Permissions.RW);
 		} finally {
 			arangoDB.deleteUser(USER);
 		}
@@ -271,7 +271,7 @@ public class ArangoDBTest {
 	public void updateUserDefaultCollectionAccess() {
 		try {
 			arangoDB.createUser(USER, PW);
-			arangoDB.updateUserDefaultCollectionAccess(USER, Permissions.RW);
+			arangoDB.grantDefaultCollectionAccess(USER, Permissions.RW);
 		} finally {
 			arangoDB.deleteUser(USER);
 		}

@@ -35,6 +35,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.Permissions;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -140,6 +141,16 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			return License.valueOf(vpack.getAsString().toUpperCase());
+		}
+	};
+
+	public static final VPackDeserializer<Permissions> PERMISSIONS = new VPackDeserializer<Permissions>() {
+		@Override
+		public Permissions deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return Permissions.valueOf(vpack.getAsString().toUpperCase());
 		}
 	};
 }

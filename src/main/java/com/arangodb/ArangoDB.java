@@ -613,11 +613,66 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
 	}
 
-	public void updateUserDefaultDatabaseAccess(final String user, final Permissions permissions) {
+	/**
+	 * @deprecated use {@link #grantDefaultDatabaseAccess(String, Permissions)} instead
+	 * 
+	 * @param user
+	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public void updateUserDefaultDatabaseAccess(final String user, final Permissions permissions)
+			throws ArangoDBException {
 		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
 	}
 
-	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) {
+	/**
+	 * Sets the default access level for databases for the user <code>user</code>. You need permission to the _system
+	 * database in order to execute this call.
+	 * 
+	 * @param user
+	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	public void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException {
+		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
+	}
+
+	/**
+	 * @deprecated user {@link #grantDefaultCollectionAccess(String, Permissions)} instead
+	 * 
+	 * @param user
+	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions)
+			throws ArangoDBException {
+		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+	}
+
+	/**
+	 * Sets the default access level for collections for the user <code>user</code>. You need permission to the _system
+	 * database in order to execute this call.
+	 * 
+	 * @param user
+	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
+			throws ArangoDBException {
 		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
 	}
 

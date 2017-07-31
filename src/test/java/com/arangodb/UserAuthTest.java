@@ -385,13 +385,13 @@ public class UserAuthTest {
 			arangoDBRoot.db().grantAccess(USER_NAME_NEW);
 			if (Permissions.RW.equals(param.systemPermission)) {
 				try {
-					arangoDB.updateUserDefaultDatabaseAccess(USER_NAME_NEW, Permissions.RW);
+					arangoDB.grantDefaultDatabaseAccess(USER_NAME_NEW, Permissions.RW);
 				} catch (final ArangoDBException e) {
 					fail(details);
 				}
 			} else {
 				try {
-					arangoDB.updateUserDefaultDatabaseAccess(USER_NAME_NEW, Permissions.RW);
+					arangoDB.grantDefaultDatabaseAccess(USER_NAME_NEW, Permissions.RW);
 					fail(details);
 				} catch (final ArangoDBException e) {
 				}
@@ -411,13 +411,13 @@ public class UserAuthTest {
 			arangoDBRoot.db().grantAccess(USER_NAME_NEW);
 			if (Permissions.RW.equals(param.systemPermission)) {
 				try {
-					arangoDB.updateUserDefaultCollectionAccess(USER_NAME_NEW, Permissions.RW);
+					arangoDB.grantDefaultCollectionAccess(USER_NAME_NEW, Permissions.RW);
 				} catch (final ArangoDBException e) {
 					fail(details);
 				}
 			} else {
 				try {
-					arangoDB.updateUserDefaultCollectionAccess(USER_NAME_NEW, Permissions.RW);
+					arangoDB.grantDefaultCollectionAccess(USER_NAME_NEW, Permissions.RW);
 					fail(details);
 				} catch (final ArangoDBException e) {
 				}

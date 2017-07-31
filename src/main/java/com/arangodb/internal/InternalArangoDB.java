@@ -256,15 +256,14 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection>
 
 	protected Request updateUserDefaultDatabaseAccessRequest(final String user, final Permissions permissions) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*")).setBody(
-					util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*"))
+						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
 				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*", "*"))
-						.setBody(
-							util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
+						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request getLogsRequest(final LogOptions options) {

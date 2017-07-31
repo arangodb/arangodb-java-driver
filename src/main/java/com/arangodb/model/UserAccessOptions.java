@@ -20,23 +20,25 @@
 
 package com.arangodb.model;
 
+import com.arangodb.entity.Permissions;
+
 /**
  * @author Mark Vollmary
  *
  */
 public class UserAccessOptions {
 
-	private String grant;
+	private Permissions grant;
 
 	public UserAccessOptions() {
 		super();
 	}
 
-	protected String getGrant() {
+	protected Permissions getGrant() {
 		return grant;
 	}
 
-	protected UserAccessOptions grant(final String grant) {
+	protected UserAccessOptions grant(final Permissions grant) {
 		this.grant = grant;
 		return this;
 	}

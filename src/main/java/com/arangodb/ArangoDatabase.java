@@ -215,8 +215,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	/**
-	 * Grants or revoke access to the database for user user. You need permission to the _system database in order to
-	 * execute this call.
+	 * Grants or revoke access to the database for user <code>user</code>. You need permission to the _system database
+	 * in order to execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
@@ -231,8 +231,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	/**
-	 * Grants access to the database for user user. You need permission to the _system database in order to execute this
-	 * call.
+	 * Grants access to the database for user <code>user</code>. You need permission to the _system database in order to
+	 * execute this call.
 	 *
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
@@ -245,8 +245,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	/**
-	 * Revokes access to the database dbname for user user. You need permission to the _system database in order to
-	 * execute this call.
+	 * Revokes access to the database dbname for user <code>user</code>. You need permission to the _system database in
+	 * order to execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
@@ -265,14 +265,57 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *      API Documentation</a>
 	 * @param user
 	 *            The name of the user
+	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
 	public void resetAccess(final String user) throws ArangoDBException {
 		executor.execute(resetAccessRequest(user), Void.class);
 	}
 
-	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) {
+	/**
+	 * Sets the default access level for collections within this database for the user <code>user</code>. You need
+	 * permission to the _system database in order to execute this call.
+	 * 
+	 * @param user
+	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
+			throws ArangoDBException {
 		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+	}
+
+	/**
+	 * @deprecated use {@link #grantDefaultCollectionAccess(String, Permissions)} instead
+	 * @param user
+	 *            The name of the user
+	 * @param permissions
+	 *            The permissions the user grant
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions)
+			throws ArangoDBException {
+		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+	}
+
+	/**
+	 * Get specific database access level
+	 * 
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-database-access-level"> API
+	 *      Documentation</a>
+	 * @param user
+	 *            The name of the user
+	 * @return permissions of the user
+	 * @since ArangoDB 3.2.0
+	 * @throws ArangoDBException
+	 */
+	public Permissions getPermissions(final String user) throws ArangoDBException {
+		return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
 	}
 
 	/**

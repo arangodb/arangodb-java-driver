@@ -134,8 +134,8 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 
 	protected Request grantAccessRequest(final String user, final Permissions permissions) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name)).setBody(
-					util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name))
+						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request resetAccessRequest(final String user) {
@@ -146,8 +146,28 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
 		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
 				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name, "*"))
-						.setBody(
-							util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions.toString())));
+						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+	}
+
+	protected Request getPermissionsRequest(final String user) {
+		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET,
+				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, name));
+	}
+
+	protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
+		return new ResponseDeserializer<Permissions>() {
+			@Override
+			public Permissions deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				if (body != null) {
+					final VPackSlice result = body.get(ArangoDBConstants.RESULT);
+					if (!result.isNone()) {
+						return util().deserialize(result, Permissions.class);
+					}
+				}
+				return null;
+			}
+		};
 	}
 
 	protected Request queryRequest(
