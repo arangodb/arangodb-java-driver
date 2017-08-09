@@ -25,6 +25,14 @@ master: [![Build Status](https://secure.travis-ci.org/arangodb/arangodb-java-dri
 
 **Note**: VelocyStream is only supported in ArangoDB 3.1 and above.
 
+## Learn more
+* [ArangoDB](https://www.arangodb.com/)
+* [ChangeLog](ChangeLog)
+* [Examples](src/test/java/com/arangodb/example)
+* [Tutorial](https://www.arangodb.com/tutorials/tutorial-sync-java-driver/)
+* [JavaDoc](http://arangodb.github.io/arangodb-java-driver/javadoc-4_2/index.html)
+* [JavaDoc VelocyPack](http://arangodb.github.io/java-velocypack/javadoc-1_0/index.html)
+
 ## Maven
 
 To add the driver to your project with maven, add the following code to your pom.xml
@@ -113,7 +121,6 @@ mvn clean install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B
   * [ignore fields](#ignore-fields)
   * [custom serializer](#custom-serializer)
   * [manually serialization](#manually-serialization)
-* [Learn more](#learn-more)
 
 
 # Driver setup
@@ -741,11 +748,3 @@ To de-/serialize from and to VelocyPack before or after a database call, use the
   ArangoDB arangoDB = new ArangoDB.Builder();
   MyObject myObj = arangoDB.util().deserialize(vpack, MyObject.class);
 ```
-
-# Learn more
-* [ArangoDB](https://www.arangodb.com/)
-* [ChangeLog](ChangeLog)
-* [Examples](src/test/java/com/arangodb/example)
-* [Tutorial](https://www.arangodb.com/tutorials/tutorial-sync-java-driver/)
-* [JavaDoc](http://arangodb.github.io/arangodb-java-driver/javadoc-4_2/index.html)
-* [JavaDoc VelocyPack](http://arangodb.github.io/java-velocypack/javadoc-1_0/index.html)
