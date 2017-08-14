@@ -304,7 +304,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 				final VPackSlice body = response.getBody();
 				if (body != null) {
 					final VPackSlice result = body.get(ArangoDBConstants.RESULT);
-					if (!result.isNone()) {
+					if (!result.isNone() && !result.isNull()) {
 						return util().deserialize(result, type);
 					}
 				}
