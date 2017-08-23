@@ -733,7 +733,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void getIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 		final IndexEntity readResult = db.collection(COLLECTION_NAME).getIndex(createResult.getId());
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getType(), is(createResult.getType()));
@@ -743,7 +743,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void getIndexByKey() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 		final IndexEntity readResult = db.collection(COLLECTION_NAME).getIndex(createResult.getId().split("/")[1]);
 		assertThat(readResult.getId(), is(createResult.getId()));
 		assertThat(readResult.getType(), is(createResult.getType()));
@@ -753,7 +753,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void deleteIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 		final String id = db.collection(COLLECTION_NAME).deleteIndex(createResult.getId());
 		assertThat(id, is(createResult.getId()));
 		try {
@@ -767,7 +767,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void deleteIndexByKey() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 		final String id = db.collection(COLLECTION_NAME).deleteIndex(createResult.getId().split("/")[1]);
 		assertThat(id, is(createResult.getId()));
 		try {
@@ -782,7 +782,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
 		fields.add("b");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
@@ -803,7 +803,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void createGeoIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createGeoIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
@@ -821,7 +821,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
 		fields.add("b");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createGeoIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
@@ -840,7 +840,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
 		fields.add("b");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createSkiplistIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureSkiplistIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
@@ -859,7 +859,7 @@ public class ArangoCollectionTest extends BaseTest {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
 		fields.add("b");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createPersistentIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
@@ -877,7 +877,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void createFulltextIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).createFulltextIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
@@ -893,7 +893,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void getIndexes() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+		db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 		final Collection<IndexEntity> indexes = db.collection(COLLECTION_NAME).getIndexes();
 		assertThat(indexes, is(notNullValue()));
 		assertThat(indexes.size(), is(2));

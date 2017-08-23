@@ -560,7 +560,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return index;
 	}
 
-	protected Request createHashIndexRequest(final Collection<String> fields, final HashIndexOptions options) {
+	protected Request createHashIndexRequest(final Iterable<String> fields, final HashIndexOptions options) {
 		final Request request;
 		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putQueryParam(ArangoDBConstants.COLLECTION, name);
@@ -569,7 +569,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return request;
 	}
 
-	protected Request createSkiplistIndexRequest(final Collection<String> fields, final SkiplistIndexOptions options) {
+	protected Request createSkiplistIndexRequest(final Iterable<String> fields, final SkiplistIndexOptions options) {
 		final Request request;
 		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putQueryParam(ArangoDBConstants.COLLECTION, name);
@@ -579,7 +579,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 	}
 
 	protected Request createPersistentIndexRequest(
-		final Collection<String> fields,
+		final Iterable<String> fields,
 		final PersistentIndexOptions options) {
 		final Request request;
 		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
@@ -589,12 +589,21 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return request;
 	}
 
-	protected Request createGeoIndexRequest(final Collection<String> fields, final GeoIndexOptions options) {
+	protected Request createGeoIndexRequest(final Iterable<String> fields, final GeoIndexOptions options) {
 		final Request request;
 		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
 		request.putQueryParam(ArangoDBConstants.COLLECTION, name);
 		request.setBody(
 			util().serialize(OptionsBuilder.build(options != null ? options : new GeoIndexOptions(), fields)));
+		return request;
+	}
+
+	protected Request createFulltextIndexRequest(final Iterable<String> fields, final FulltextIndexOptions options) {
+		final Request request;
+		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
+		request.putQueryParam(ArangoDBConstants.COLLECTION, name);
+		request.setBody(
+			util().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
 		return request;
 	}
 
@@ -624,15 +633,6 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 	protected Request countRequest() {
 		return new Request(db.name(), RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.COUNT));
-	}
-
-	protected Request createFulltextIndexRequest(final Collection<String> fields, final FulltextIndexOptions options) {
-		final Request request;
-		request = new Request(db.name(), RequestType.POST, ArangoDBConstants.PATH_API_INDEX);
-		request.putQueryParam(ArangoDBConstants.COLLECTION, name);
-		request.setBody(
-			util().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
-		return request;
 	}
 
 	protected Request dropRequest(final Boolean isSystem) {

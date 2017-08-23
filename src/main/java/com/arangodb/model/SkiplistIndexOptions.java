@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import java.util.Collection;
-
 import com.arangodb.entity.IndexType;
 
 /**
@@ -31,7 +29,7 @@ import com.arangodb.entity.IndexType;
  */
 public class SkiplistIndexOptions {
 
-	private Collection<String> fields;
+	private Iterable<String> fields;
 	private final IndexType type = IndexType.skiplist;
 	private Boolean unique;
 	private Boolean sparse;
@@ -41,7 +39,7 @@ public class SkiplistIndexOptions {
 		super();
 	}
 
-	protected Collection<String> getFields() {
+	protected Iterable<String> getFields() {
 		return fields;
 	}
 
@@ -50,7 +48,7 @@ public class SkiplistIndexOptions {
 	 *            A list of attribute paths
 	 * @return options
 	 */
-	protected SkiplistIndexOptions fields(final Collection<String> fields) {
+	protected SkiplistIndexOptions fields(final Iterable<String> fields) {
 		this.fields = fields;
 		return this;
 	}

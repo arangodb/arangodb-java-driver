@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import java.util.Collection;
-
 import com.arangodb.entity.IndexType;
 
 /**
@@ -32,7 +30,7 @@ import com.arangodb.entity.IndexType;
  */
 public class PersistentIndexOptions {
 
-	private Collection<String> fields;
+	private Iterable<String> fields;
 	protected IndexType type = IndexType.persistent;
 	private Boolean unique;
 	private Boolean sparse;
@@ -41,7 +39,7 @@ public class PersistentIndexOptions {
 		super();
 	}
 
-	protected Collection<String> getFields() {
+	protected Iterable<String> getFields() {
 		return fields;
 	}
 
@@ -50,7 +48,7 @@ public class PersistentIndexOptions {
 	 *            A list of attribute paths
 	 * @return options
 	 */
-	protected PersistentIndexOptions fields(final Collection<String> fields) {
+	protected PersistentIndexOptions fields(final Iterable<String> fields) {
 		this.fields = fields;
 		return this;
 	}

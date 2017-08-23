@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import java.util.Collection;
-
 import com.arangodb.entity.IndexType;
 
 /**
@@ -31,7 +29,7 @@ import com.arangodb.entity.IndexType;
  */
 public class HashIndexOptions {
 
-	private Collection<String> fields;
+	private Iterable<String> fields;
 	private final IndexType type = IndexType.hash;
 	private Boolean unique;
 	private Boolean sparse;
@@ -41,7 +39,7 @@ public class HashIndexOptions {
 		super();
 	}
 
-	protected Collection<String> getFields() {
+	protected Iterable<String> getFields() {
 		return fields;
 	}
 
@@ -50,7 +48,7 @@ public class HashIndexOptions {
 	 *            A list of attribute paths
 	 * @return options
 	 */
-	protected HashIndexOptions fields(final Collection<String> fields) {
+	protected HashIndexOptions fields(final Iterable<String> fields) {
 		this.fields = fields;
 		return this;
 	}

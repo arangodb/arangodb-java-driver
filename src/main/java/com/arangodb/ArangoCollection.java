@@ -588,6 +588,7 @@ public class ArangoCollection
 	/**
 	 * Creates a hash index for the collection if it does not already exist.
 	 * 
+	 * @deprecated use {@link #ensureHashIndex(Iterable, HashIndexOptions)} instead
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
 	 * @param fields
 	 *            A list of attribute paths
@@ -596,9 +597,45 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
+	@Deprecated
 	public IndexEntity createHashIndex(final Collection<String> fields, final HashIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
+	}
+
+	/**
+	 * Creates a hash index for the collection if it does not already exist.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	public IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options)
+			throws ArangoDBException {
+		return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
+	}
+
+	/**
+	 * Creates a skip-list index for the collection, if it does not already exist.
+	 * 
+	 * @deprecated use {@link #ensureSkiplistIndex(Collection, SkiplistIndexOptions)} instead
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public IndexEntity createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
+			throws ArangoDBException {
+		return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -613,9 +650,28 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
+	public IndexEntity ensureSkiplistIndex(final Iterable<String> fields, final SkiplistIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
+	}
+
+	/**
+	 * Creates a persistent index for the collection, if it does not already exist.
+	 * 
+	 * @deprecated use {@link #ensurePersistentIndex(Collection, PersistentIndexOptions)} instead
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public IndexEntity createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
+			throws ArangoDBException {
+		return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -630,9 +686,28 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
+	public IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
+	}
+
+	/**
+	 * Creates a geo-spatial index for the collection, if it does not already exist.
+	 * 
+	 * @deprecated use {@link #ensureGeoIndex(Collection, GeoIndexOptions)} instead
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public IndexEntity createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
+			throws ArangoDBException {
+		return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -647,9 +722,28 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
+	public IndexEntity ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
+	}
+
+	/**
+	 * Creates a fulltext index for the collection, if it does not already exist.
+	 * 
+	 * @deprecated use {@link #ensureFulltextIndex(Collection, FulltextIndexOptions)} instead
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	@Deprecated
+	public IndexEntity createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
+			throws ArangoDBException {
+		return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	/**
@@ -664,7 +758,7 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
+	public IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
 	}

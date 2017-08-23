@@ -40,23 +40,23 @@ public class OptionsBuilder {
 		return options.user(user).passwd(passwd);
 	}
 
-	public static HashIndexOptions build(final HashIndexOptions options, final Collection<String> fields) {
+	public static HashIndexOptions build(final HashIndexOptions options, final Iterable<String> fields) {
 		return options.fields(fields);
 	}
 
-	public static SkiplistIndexOptions build(final SkiplistIndexOptions options, final Collection<String> fields) {
+	public static SkiplistIndexOptions build(final SkiplistIndexOptions options, final Iterable<String> fields) {
 		return options.fields(fields);
 	}
 
-	public static PersistentIndexOptions build(final PersistentIndexOptions options, final Collection<String> fields) {
+	public static PersistentIndexOptions build(final PersistentIndexOptions options, final Iterable<String> fields) {
 		return options.fields(fields);
 	}
 
-	public static GeoIndexOptions build(final GeoIndexOptions options, final Collection<String> fields) {
+	public static GeoIndexOptions build(final GeoIndexOptions options, final Iterable<String> fields) {
 		return options.fields(fields);
 	}
 
-	public static FulltextIndexOptions build(final FulltextIndexOptions options, final Collection<String> fields) {
+	public static FulltextIndexOptions build(final FulltextIndexOptions options, final Iterable<String> fields) {
 		return options.fields(fields);
 	}
 

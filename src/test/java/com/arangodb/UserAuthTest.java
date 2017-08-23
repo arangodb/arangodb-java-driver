@@ -610,7 +610,7 @@ public class UserAuthTest {
 			if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
 				try {
 					final IndexEntity createHashIndex = arangoDB.db(DB_NAME).collection(COLLECTION_NAME)
-							.createHashIndex(Arrays.asList("a"), new HashIndexOptions());
+							.ensureHashIndex(Arrays.asList("a"), new HashIndexOptions());
 					assertThat(details, createHashIndex, is(notNullValue()));
 					id = createHashIndex.getId();
 				} catch (final ArangoDBException e) {
@@ -620,7 +620,7 @@ public class UserAuthTest {
 			} else {
 				try {
 					final IndexEntity createHashIndex = arangoDB.db(DB_NAME).collection(COLLECTION_NAME)
-							.createHashIndex(Arrays.asList("a"), new HashIndexOptions());
+							.ensureHashIndex(Arrays.asList("a"), new HashIndexOptions());
 					id = createHashIndex.getId();
 					fail(details);
 				} catch (final ArangoDBException e) {
@@ -637,7 +637,7 @@ public class UserAuthTest {
 	@Test
 	public void dropCollectionIndex() {
 		final String id = arangoDBRoot.db(DB_NAME).collection(COLLECTION_NAME)
-				.createHashIndex(Arrays.asList("a"), new HashIndexOptions()).getId();
+				.ensureHashIndex(Arrays.asList("a"), new HashIndexOptions()).getId();
 		try {
 			if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
 				try {

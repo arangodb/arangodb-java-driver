@@ -243,7 +243,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.createCollection(COLLECTION_NAME, null);
 			final Collection<String> fields = new ArrayList<String>();
 			fields.add("a");
-			final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+			final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 			final IndexEntity readResult = db.getIndex(createResult.getId());
 			assertThat(readResult.getId(), is(createResult.getId()));
 			assertThat(readResult.getType(), is(createResult.getType()));
@@ -258,7 +258,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.createCollection(COLLECTION_NAME, null);
 			final Collection<String> fields = new ArrayList<String>();
 			fields.add("a");
-			final IndexEntity createResult = db.collection(COLLECTION_NAME).createHashIndex(fields, null);
+			final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
 			final String id = db.deleteIndex(createResult.getId());
 			assertThat(id, is(createResult.getId()));
 			try {

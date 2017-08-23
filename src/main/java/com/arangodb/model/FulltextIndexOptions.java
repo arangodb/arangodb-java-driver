@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import java.util.Collection;
-
 import com.arangodb.entity.IndexType;
 
 /**
@@ -32,7 +30,7 @@ import com.arangodb.entity.IndexType;
  */
 public class FulltextIndexOptions {
 
-	private Collection<String> fields;
+	private Iterable<String> fields;
 	private final IndexType type = IndexType.fulltext;
 	private Integer minLength;
 
@@ -40,7 +38,7 @@ public class FulltextIndexOptions {
 		super();
 	}
 
-	protected Collection<String> getFields() {
+	protected Iterable<String> getFields() {
 		return fields;
 	}
 
@@ -49,7 +47,7 @@ public class FulltextIndexOptions {
 	 *            A list of attribute paths
 	 * @return options
 	 */
-	protected FulltextIndexOptions fields(final Collection<String> fields) {
+	protected FulltextIndexOptions fields(final Iterable<String> fields) {
 		this.fields = fields;
 		return this;
 	}
