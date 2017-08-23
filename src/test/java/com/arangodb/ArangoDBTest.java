@@ -433,6 +433,11 @@ public class ArangoDBTest {
 		new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad.properties"));
 	}
 
+	@Test(expected = ArangoDBException.class)
+	public void loadproperties2() {
+		new ArangoDB.Builder().loadProperties(ArangoDBTest.class.getResourceAsStream("/arangodb-bad2.properties"));
+	}
+
 	@Test
 	public void accessMultipleDatabases() {
 		try {

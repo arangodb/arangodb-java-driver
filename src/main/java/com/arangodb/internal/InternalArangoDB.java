@@ -90,7 +90,13 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection>
 	}
 
 	protected static String loadHost(final Properties properties, final String currentValue) {
-		return getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDBConstants.DEFAULT_HOST);
+		final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDBConstants.DEFAULT_HOST);
+		if (host.contains(":")) {
+			throw new ArangoDBException(String.format(
+				"Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb.hosts=ip:port ?",
+				host));
+		}
+		return host;
 	}
 
 	protected static Integer loadPort(final Properties properties, final int currentValue) {
