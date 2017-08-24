@@ -39,7 +39,7 @@ import com.arangodb.internal.InternalArangoDatabase;
  * @author Mark Vollmary
  *
  */
-public class ArangoCursor<T> implements Iterator<T>, Closeable {
+public class ArangoCursor<T> implements Iterable<T>, Iterator<T>, Closeable {
 
 	private final Class<T> type;
 	protected final ArangoCursorIterator<T> iterator;
@@ -128,6 +128,11 @@ public class ArangoCursor<T> implements Iterator<T>, Closeable {
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return iterator;
 	}
 
 }
