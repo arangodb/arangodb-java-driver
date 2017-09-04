@@ -119,6 +119,13 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertEdgeUpdateRev() {
+		final BaseEdgeDocument value = createEdgeValue();
+		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
+		assertThat(value.getRevision(), is(edge.getRev()));
+	}
+
+	@Test
 	public void getEdge() {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
@@ -196,6 +203,16 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void replaceEdgeUpdateRev() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+		final EdgeUpdateEntity replaceResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.replaceEdge(createResult.getKey(), doc, null);
+		assertThat(doc.getRevision(), is(replaceResult.getRev()));
+	}
+
+	@Test
 	public void replaceEdgeIfMatch() {
 		final BaseEdgeDocument doc = createEdgeValue();
 		doc.addAttribute("a", "test");
@@ -259,6 +276,16 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
+	}
+
+	@Test
+	public void updateEdgeUpdateRev() {
+		final BaseEdgeDocument doc = createEdgeValue();
+		final EdgeEntity createResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(doc, null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+		final EdgeUpdateEntity updateResult = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+				.updateEdge(createResult.getKey(), doc, null);
+		assertThat(doc.getRevision(), is(updateResult.getRev()));
 	}
 
 	@Test

@@ -5,6 +5,9 @@ v4.2.x (xxxx-xx-xx)
 * added ArangoCollection.ensure<IndexType>Index()
 * maded ArangoCollection.create<IndexType>Index() deprecated
 * let ArangoCursor implement Iterable
+* fixed issue #145: ArangoCollection.updateDocument()
+* fixed issue #145: ArangoVertexCollection.updateVertex()
+* fixed issue #145: ArangoEdgeCollection.updateEdge()
 
 v4.2.3 (2017-07-31)
 ---------------------------

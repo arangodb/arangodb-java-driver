@@ -98,6 +98,13 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertVertexUpdateRev() {
+		final BaseDocument doc = new BaseDocument();
+		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc, null);
+		assertThat(doc.getRevision(), is(vertex.getRev()));
+	}
+
+	@Test
 	public void getVertex() {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
@@ -174,6 +181,17 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void replaceVertexUpdateRev() {
+		final BaseDocument doc = new BaseDocument();
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
+			null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+		final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.replaceVertex(createResult.getKey(), doc, null);
+		assertThat(doc.getRevision(), is(replaceResult.getRev()));
+	}
+
+	@Test
 	public void replaceVertexIfMatch() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
@@ -240,6 +258,17 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
+	}
+
+	@Test
+	public void updateVertexUpdateRev() {
+		final BaseDocument doc = new BaseDocument();
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
+			null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+		final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.updateVertex(createResult.getKey(), doc, null);
+		assertThat(doc.getRevision(), is(updateResult.getRev()));
 	}
 
 	@Test

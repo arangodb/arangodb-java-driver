@@ -151,7 +151,11 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 			@Override
 			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
-				return util().deserialize(body, EdgeUpdateEntity.class);
+				final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.REV, doc.getRev());
+				executor.documentCache().setValues(value, values);
+				return doc;
 			}
 		};
 	}

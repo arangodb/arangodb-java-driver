@@ -374,6 +374,9 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				if (oldDoc.isObject()) {
 					doc.setOld((T) util().deserialize(oldDoc, value.getClass()));
 				}
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.REV, doc.getRev());
+				executor.documentCache().setValues(value, values);
 				return doc;
 			}
 		};

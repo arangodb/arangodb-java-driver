@@ -112,6 +112,14 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentUpdateRev() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+	}
+
+	@Test
 	public void insertDocumentReturnNew() {
 		final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
 		final DocumentCreateEntity<BaseDocument> doc = db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(),
@@ -290,6 +298,17 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
 		assertThat(readResult.getRevision(), is(updateResult.getRev()));
 		assertThat(readResult.getProperties().keySet(), hasItem("c"));
+	}
+
+	@Test
+	public void updateDocumentUpdateRev() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+		final DocumentUpdateEntity<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, null);
+		assertThat(doc.getRevision(), is(updateResult.getRev()));
 	}
 
 	@Test
@@ -574,6 +593,17 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
 		assertThat(readResult.getAttribute("b"), is(notNullValue()));
 		assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+	}
+
+	@Test
+	public void replaceDocumentUpdateRev() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
+			null);
+		assertThat(doc.getRevision(), is(createResult.getRev()));
+		final DocumentUpdateEntity<BaseDocument> replaceResult = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), doc, null);
+		assertThat(doc.getRevision(), is(replaceResult.getRev()));
 	}
 
 	@Test

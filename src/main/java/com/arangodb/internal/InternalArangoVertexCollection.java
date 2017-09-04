@@ -156,7 +156,11 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 			@Override
 			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
-				return util().deserialize(body, VertexUpdateEntity.class);
+				final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
+				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+				values.put(DocumentField.Type.REV, doc.getRev());
+				executor.documentCache().setValues(value, values);
+				return doc;
 			}
 		};
 	}
