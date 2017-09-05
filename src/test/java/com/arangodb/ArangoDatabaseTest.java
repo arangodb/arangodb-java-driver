@@ -105,6 +105,12 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void exists() {
+		assertThat(db.exists(), is(true));
+		assertThat(arangoDB.db("no").exists(), is(false));
+	}
+
+	@Test
 	public void getAccessibleDatabases() {
 		final Collection<String> dbs = db.getAccessibleDatabases();
 		assertThat(dbs, is(notNullValue()));

@@ -781,7 +781,7 @@ public class ArangoCollection
 	 * 
 	 * @return true if the collection exists, otherwise false
 	 */
-	public boolean exists() {
+	public boolean exists() throws ArangoDBException {
 		boolean exists = false;
 		final Collection<CollectionEntity> collections = db().getCollections();
 		for (final CollectionEntity collection : collections) {

@@ -91,6 +91,15 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	}
 
 	/**
+	 * Checks whether the database exists
+	 * 
+	 * @return true if the database exists, otherwise false
+	 */
+	public boolean exists() throws ArangoDBException {
+		return arango().getDatabases().contains(name());
+	}
+
+	/**
 	 * Retrieves a list of all databases the current user can access
 	 * 
 	 * @see <a href=
