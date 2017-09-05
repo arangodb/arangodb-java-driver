@@ -955,6 +955,12 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void exists() {
+		assertThat(db.collection(COLLECTION_NAME).exists(), is(true));
+		assertThat(db.collection(COLLECTION_NAME + "no").exists(), is(false));
+	}
+
+	@Test
 	public void truncate() {
 		final BaseDocument doc = new BaseDocument();
 		db.collection(COLLECTION_NAME).insertDocument(doc, null);

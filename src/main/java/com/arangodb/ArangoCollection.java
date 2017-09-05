@@ -777,6 +777,23 @@ public class ArangoCollection
 	}
 
 	/**
+	 * Checks whether the collection exists
+	 * 
+	 * @return true if the collection exists, otherwise false
+	 */
+	public boolean exists() {
+		boolean exists = false;
+		final Collection<CollectionEntity> collections = db().getCollections();
+		for (final CollectionEntity collection : collections) {
+			if (collection.getName().equals(name())) {
+				exists = true;
+				break;
+			}
+		}
+		return exists;
+	}
+
+	/**
 	 * Removes all documents from the collection, but leaves the indexes intact
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
