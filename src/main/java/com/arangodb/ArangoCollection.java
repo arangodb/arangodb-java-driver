@@ -782,15 +782,12 @@ public class ArangoCollection
 	 * @return true if the collection exists, otherwise false
 	 */
 	public boolean exists() throws ArangoDBException {
-		boolean exists = false;
-		final Collection<CollectionEntity> collections = db().getCollections();
-		for (final CollectionEntity collection : collections) {
-			if (collection.getName().equals(name())) {
-				exists = true;
-				break;
-			}
+		try {
+			getInfo();
+			return true;
+		} catch (final ArangoDBException e) {
+			return false;
 		}
-		return exists;
 	}
 
 	/**
