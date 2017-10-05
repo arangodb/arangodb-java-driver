@@ -73,6 +73,10 @@ public class BaseDocument implements Serializable {
 		return id;
 	}
 
+	public void setId(final String id) {
+		this.id = id;
+	}
+
 	public String getKey() {
 		return key;
 	}
