@@ -721,7 +721,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void queryClose() throws IOException {
-		final ArangoCursor<String> cursor = arangoDB.db().query("for i in _apps return i._id", null,
+		final ArangoCursor<String> cursor = arangoDB.db().query("for i in 1..2 return i", null,
 			new AqlQueryOptions().batchSize(1), String.class);
 		cursor.close();
 		int count = 0;
@@ -749,28 +749,25 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void explainQuery() {
-		final AqlExecutionExplainEntity explain = arangoDB.db().explainQuery("for i in _apps return i", null, null);
+		final AqlExecutionExplainEntity explain = arangoDB.db().explainQuery("for i in 1..1 return i", null, null);
 		assertThat(explain, is(notNullValue()));
 		assertThat(explain.getPlan(), is(notNullValue()));
 		assertThat(explain.getPlans(), is(nullValue()));
 		final ExecutionPlan plan = explain.getPlan();
-		assertThat(plan.getCollections().size(), is(1));
-		assertThat(plan.getCollections().iterator().next().getName(), is("_apps"));
-		assertThat(plan.getCollections().iterator().next().getType(), is("read"));
+		assertThat(plan.getCollections().size(), is(0));
 		assertThat(plan.getEstimatedCost(), greaterThan(0));
 		assertThat(plan.getEstimatedNrItems(), greaterThan(0));
-		assertThat(plan.getVariables().size(), is(1));
-		assertThat(plan.getVariables().iterator().next().getName(), is("i"));
+		assertThat(plan.getVariables().size(), is(2));
+		assertThat(plan.getVariables().iterator().next().getName(), is("1"));
 		assertThat(plan.getNodes().size(), is(greaterThan(0)));
 	}
 
 	@Test
 	public void parseQuery() {
-		final AqlParseEntity parse = arangoDB.db().parseQuery("for i in _apps return i");
+		final AqlParseEntity parse = arangoDB.db().parseQuery("for i in 1..1 return i");
 		assertThat(parse, is(notNullValue()));
 		assertThat(parse.getBindVars(), is(empty()));
-		assertThat(parse.getCollections().size(), is(1));
-		assertThat(parse.getCollections().iterator().next(), is("_apps"));
+		assertThat(parse.getCollections().size(), is(0));
 		assertThat(parse.getAst().size(), is(1));
 		final AstNode root = parse.getAst().iterator().next();
 		assertThat(root.getType(), is("root"));
@@ -787,8 +784,8 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(first.getType(), is("variable"));
 		assertThat(first.getName(), is("i"));
 		final AstNode second = iterator2.next();
-		assertThat(second.getType(), is("collection"));
-		assertThat(second.getName(), is("_apps"));
+		assertThat(second.getType(), is("range"));
+		assertThat(second.getName(), is(nullValue()));
 		final AstNode return_ = iterator.next();
 		assertThat(return_.getType(), is("return"));
 		assertThat(return_.getSubNodes(), is(notNullValue()));
