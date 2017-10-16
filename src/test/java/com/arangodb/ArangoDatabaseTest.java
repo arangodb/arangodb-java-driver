@@ -758,7 +758,6 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(plan.getEstimatedCost(), greaterThan(0));
 		assertThat(plan.getEstimatedNrItems(), greaterThan(0));
 		assertThat(plan.getVariables().size(), is(2));
-		assertThat(plan.getVariables().iterator().next().getName(), is("1"));
 		assertThat(plan.getNodes().size(), is(greaterThan(0)));
 	}
 
