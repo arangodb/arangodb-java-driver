@@ -1,4 +1,4 @@
-v4.2.5 (2017-xx-xx)
+v4.2.5 (2017-10-16)
 ---------------------------
 * issue #146: added ArangoCollection.exists()
 * added ArangoDatabase.exists()
