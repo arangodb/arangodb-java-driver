@@ -99,6 +99,26 @@ public class GraphCreateOptions {
 		return this;
 	}
 
+	public Integer getReplicationFactor() {
+		return getOptions().getReplicationFactor();
+	}
+
+	/**
+	 * @param replicationFactor
+	 *            (The default is 1): in a cluster, this attribute determines how many copies of each shard are kept on
+	 *            different DBServers. The value 1 means that only one copy (no synchronous replication) is kept. A
+	 *            value of k means that k-1 replicas are kept. Any two copies reside on different DBServers. Replication
+	 *            between them is synchronous, that is, every write operation to the "leader" copy will be replicated to
+	 *            all "follower" replicas, before the write operation is reported successful. If a server fails, this is
+	 *            detected automatically and one of the servers holding copies take over, usually without an error being
+	 *            reported.
+	 * @return options
+	 */
+	public GraphCreateOptions replicationFactor(final Integer replicationFactor) {
+		getOptions().setReplicationFactor(replicationFactor);
+		return this;
+	}
+
 	public Integer getNumberOfShards() {
 		return getOptions().getNumberOfShards();
 	}
@@ -136,11 +156,20 @@ public class GraphCreateOptions {
 	}
 
 	public static class SmartOptions {
+		private Integer replicationFactor;
 		private Integer numberOfShards;
 		private String smartGraphAttribute;
 
 		public SmartOptions() {
 			super();
+		}
+
+		public Integer getReplicationFactor() {
+			return replicationFactor;
+		}
+
+		public void setReplicationFactor(final Integer replicationFactor) {
+			this.replicationFactor = replicationFactor;
 		}
 
 		public Integer getNumberOfShards() {
