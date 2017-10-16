@@ -362,12 +362,13 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	}
 
 	private ArangoCursorInitializer cursorInitializer;
+	private CommunicationProtocol cp;
 
 	public ArangoDB(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
 		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol) {
 		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
 				new DocumentCache()), util);
-		final CommunicationProtocol cp = createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol);
+		cp = createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol);
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
@@ -405,8 +406,13 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		return executor;
 	}
 
-	public void shutdown() {
-		executor.disconnect();
+	public void shutdown() throws ArangoDBException {
+		try {
+			executor.disconnect();
+			cp.close();
+		} catch (final IOException e) {
+			throw new ArangoDBException(e);
+		}
 	}
 
 	/**
