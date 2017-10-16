@@ -4,7 +4,7 @@
 
 	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
-	<version>4.2.5-SNAPSHOT</version>
+	<version>4.2.5</version>
 	<inceptionYear>2016</inceptionYear>
 	<packaging>jar</packaging>
 
@@ -32,11 +32,6 @@
 	</properties>
 
 	<developers>
-		<developer>
-			<id>a-brandt</id>
-			<name>a-brandt</name>
-			<url>https://github.com/a-brandt</url>
-		</developer>
 		<developer>
 			<id>mpv1989</id>
 			<name>Mark</name>
