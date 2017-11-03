@@ -41,6 +41,20 @@ public class ArangoGraph
 	}
 
 	/**
+	 * Checks whether the graph exists
+	 * 
+	 * @return true if the graph exists, otherwise false
+	 */
+	public boolean exists() throws ArangoDBException {
+		try {
+			getInfo();
+			return true;
+		} catch (final ArangoDBException e) {
+			return false;
+		}
+	}
+
+	/**
 	 * Delete an existing graph
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API Documentation</a>

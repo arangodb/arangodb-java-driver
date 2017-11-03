@@ -101,6 +101,12 @@ public class ArangoGraphTest extends BaseTest {
 	}
 
 	@Test
+	public void exists() {
+		assertThat(db.graph(GRAPH_NAME).exists(), is(true));
+		assertThat(db.graph(GRAPH_NAME + "no").exists(), is(false));
+	}
+
+	@Test
 	public void getGraphs() {
 		final Collection<GraphEntity> graphs = db.getGraphs();
 		assertThat(graphs, is(notNullValue()));
