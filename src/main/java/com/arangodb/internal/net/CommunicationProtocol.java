@@ -18,31 +18,20 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.net;
 
-import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.util.ArangoSerialization;
+import java.io.Closeable;
+
+import com.arangodb.ArangoDBException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends VstConnection> {
+public interface CommunicationProtocol extends Closeable {
 
-	protected final E executor;
-	private final ArangoSerialization util;
+	Response execute(final Request request, HostHandle hostHandle, boolean closeConnection) throws ArangoDBException;
 
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
-		super();
-		this.executor = executor;
-		this.util = util;
-	}
-
-	protected E executor() {
-		return executor;
-	}
-
-	public ArangoSerialization util() {
-		return util;
-	}
 }

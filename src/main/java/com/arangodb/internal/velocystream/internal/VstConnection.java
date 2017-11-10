@@ -44,16 +44,17 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.Host;
-import com.arangodb.internal.HostHandler;
+import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
  *
  */
-public abstract class Connection {
+public abstract class VstConnection implements Connection {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Connection.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
 	private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
 
 	private ExecutorService executor;
@@ -68,7 +69,9 @@ public abstract class Connection {
 	private OutputStream outputStream;
 	private InputStream inputStream;
 
-	protected Connection(final HostHandler hostHandler, final Integer timeout, final Boolean useSsl,
+	private Host host;
+
+	protected VstConnection(final HostHandler hostHandler, final Integer timeout, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
 		super();
 		this.hostHandler = hostHandler;
@@ -76,6 +79,11 @@ public abstract class Connection {
 		this.useSsl = useSsl;
 		this.sslContext = sslContext;
 		this.messageStore = messageStore;
+	}
+
+	@Override
+	public Host getHost() {
+		return host;
 	}
 
 	public boolean isOpen() {
@@ -86,7 +94,7 @@ public abstract class Connection {
 		if (isOpen()) {
 			return;
 		}
-		Host host = hostHandler.get();
+		host = hostHandler.get();
 		while (true) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(String.format("Open connection to %s", host));
@@ -123,7 +131,7 @@ public abstract class Connection {
 			} catch (final IOException e) {
 				hostHandler.fail();
 				final Host failedHost = host;
-				host = hostHandler.change();
+				host = hostHandler.get();
 				if (host != null) {
 					LOGGER.warn(String.format("Could not connect to %s or SSL Handshake failed. Try connecting to %s",
 						failedHost, host));
@@ -164,16 +172,17 @@ public abstract class Connection {
 		});
 	}
 
+	@Override
 	public synchronized void close() {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Close connection %s", socket));
-		}
 		messageStore.clear();
 		if (executor != null && !executor.isShutdown()) {
 			executor.shutdown();
 		}
-		if (socket != null) {
+		if (socket != null && !socket.isClosed()) {
 			try {
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug(String.format("Close connection %s", socket));
+				}
 				socket.close();
 			} catch (final IOException e) {
 				throw new ArangoDBException(e);

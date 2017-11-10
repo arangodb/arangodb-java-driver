@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.internal.HostHandler;
+import com.arangodb.internal.net.ConnectionPool;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
-import com.arangodb.internal.velocystream.internal.ConnectionPool;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.MessageStore;
@@ -62,6 +62,12 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 		public Builder(final HostHandler hostHandler) {
 			super();
 			this.hostHandler = hostHandler;
+		}
+
+		public Builder(final Builder builder) {
+			this(builder.hostHandler);
+			timeout(builder.timeout).user(builder.user).password(builder.password).useSsl(builder.useSsl)
+					.sslContext(builder.sslContext).chunksize(builder.chunksize).maxConnections(builder.maxConnections);
 		}
 
 		public Builder timeout(final Integer timeout) {
@@ -105,26 +111,28 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 			return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util,
 					collectionCache, chunksize, maxConnections);
 		}
+
 	}
 
 	protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
 		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections) {
-		super(timeout, user, password, useSsl, sslContext, util, chunksize,
-				new ConnectionPool<ConnectionSync>(maxConnections) {
-					private final ConnectionSync.Builder builder = new ConnectionSync.Builder(hostHandler,
-							new MessageStore()).timeout(timeout).useSsl(useSsl).sslContext(sslContext);
+		super(timeout, user, password, useSsl, sslContext, util, chunksize, new ConnectionPool<ConnectionSync>(
+				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT) {
+			private final ConnectionSync.Builder builder = new ConnectionSync.Builder(hostHandler, new MessageStore())
+					.timeout(timeout).useSsl(useSsl).sslContext(sslContext);
 
-					@Override
-					public ConnectionSync createConnection() {
-						return builder.build();
-					}
-				});
+			@Override
+			public ConnectionSync createConnection() {
+				return builder.build();
+			}
+		});
 		this.collectionCache = collectionCache;
 	}
 
 	@Override
-	public Response execute(final Request request, final ConnectionSync connection) throws ArangoDBException {
+	protected Response execute(final Request request, final ConnectionSync connection, final boolean closeConnection)
+			throws ArangoDBException {
 		connect(connection);
 		try {
 			final Message requestMessage = createMessage(request);
@@ -135,6 +143,10 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 			return response;
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
+		} finally {
+			if (closeConnection) {
+				connection.close();
+			}
 		}
 
 	}
@@ -151,7 +163,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 	protected void authenticate(final ConnectionSync connection) {
 		final Response response = execute(
 			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN),
-			connection);
+			connection, false);
 		checkError(response);
 	}
 

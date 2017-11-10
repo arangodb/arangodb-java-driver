@@ -66,6 +66,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
 	public static final String PATH_API_IMPORT = "/_api/import";
 	public static final String PATH_API_ROLE = "/_admin/server/role";
+	public static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
 
 	public static final String ENCRYPTION_PLAIN = "plain";
 
@@ -116,5 +117,6 @@ public class ArangoDBConstants {
 	public static final String TYPE = "type";
 	public static final String IS_SYSTEM = "isSystem";
 	public static final String ROLE = "role";
+	public static final String ENDPOINTS = "endpoints";
 
 }

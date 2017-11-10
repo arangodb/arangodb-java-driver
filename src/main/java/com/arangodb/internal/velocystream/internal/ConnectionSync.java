@@ -28,13 +28,13 @@ import java.util.concurrent.FutureTask;
 import javax.net.ssl.SSLContext;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.HostHandler;
+import com.arangodb.internal.net.HostHandler;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ConnectionSync extends Connection {
+public class ConnectionSync extends VstConnection {
 
 	public static class Builder {
 

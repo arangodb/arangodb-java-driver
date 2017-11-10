@@ -18,11 +18,12 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.velocystream.internal;
+package com.arangodb.internal.net;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
-import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.Host;
 
 /**
  * @author Mark Vollmary
@@ -35,25 +36,40 @@ public abstract class ConnectionPool<C extends Connection> {
 
 	public ConnectionPool(final Integer maxConnections) {
 		super();
-		this.maxConnections = maxConnections != null ? Math.max(1, maxConnections)
-				: ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT;
+		this.maxConnections = maxConnections;
 		connections = new LinkedList<C>();
 	}
 
 	public abstract C createConnection();
 
-	public synchronized C connection() {
+	public synchronized C connection(final HostHandle hostHandle) {
 		final C c;
-		if (connections.size() < maxConnections) {
-			c = createConnection();
+		if (hostHandle == null || hostHandle.getHost() == null) {
+			if (connections.size() < maxConnections) {
+				c = createConnection();
+			} else {
+				c = connections.removeFirst();
+			}
+			if (hostHandle != null) {
+				hostHandle.setHost(c.getHost());
+			}
 		} else {
-			c = connections.removeFirst();
+			final Host host = hostHandle.getHost();
+			C tmp = null;
+			for (final C connection : connections) {
+				if (connection.getHost().equals(host)) {
+					tmp = connection;
+					connections.remove(tmp);
+					break;
+				}
+			}
+			c = tmp != null ? tmp : createConnection();
 		}
 		connections.add(c);
 		return c;
 	}
 
-	public void disconnect() {
+	public void disconnect() throws IOException {
 		while (!connections.isEmpty()) {
 			connections.removeLast().close();
 		}

@@ -33,7 +33,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.velocystream.internal.Connection;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.OptionsBuilder;
@@ -54,7 +54,7 @@ import com.arangodb.velocystream.Response;
  * @param <C>
  *
  */
-public class InternalArangoDB<E extends ArangoExecutor, R, C extends Connection> extends ArangoExecuteable<E, R, C> {
+public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnection> extends ArangoExecuteable<E, R, C> {
 
 	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
 	private static final String PROPERTY_KEY_HOST = "arangodb.host";

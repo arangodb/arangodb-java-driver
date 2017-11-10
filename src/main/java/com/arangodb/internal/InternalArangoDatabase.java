@@ -35,7 +35,7 @@ import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.velocystream.internal.Connection;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
@@ -61,7 +61,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E extends ArangoExecutor, R, C extends Connection>
+public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E extends ArangoExecutor, R, C extends VstConnection>
 		extends ArangoExecuteable<E, R, C> {
 
 	private final String name;

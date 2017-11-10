@@ -34,6 +34,7 @@ import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.ArangoCursorIterator;
 import com.arangodb.internal.InternalArangoDatabase;
+import com.arangodb.internal.net.HostHandle;
 
 /**
  * @author Mark Vollmary
@@ -45,13 +46,15 @@ public class ArangoCursor<T> implements Iterable<T>, Iterator<T>, Closeable {
 	protected final ArangoCursorIterator<T> iterator;
 	private final String id;
 	private final ArangoCursorExecute execute;
+	private final HostHandle hostHandle;
 
 	protected ArangoCursor(final InternalArangoDatabase<?, ?, ?, ?> db, final ArangoCursorExecute execute,
 		final Class<T> type, final CursorEntity result) {
 		super();
 		this.execute = execute;
 		this.type = type;
-		iterator = createIterator(this, db, execute, result);
+		hostHandle = new HostHandle();
+		iterator = createIterator(this, db, execute, result, hostHandle);
 		id = result.getId();
 	}
 
@@ -59,8 +62,9 @@ public class ArangoCursor<T> implements Iterable<T>, Iterator<T>, Closeable {
 		final ArangoCursor<T> cursor,
 		final InternalArangoDatabase<?, ?, ?, ?> db,
 		final ArangoCursorExecute execute,
-		final CursorEntity result) {
-		return new ArangoCursorIterator<T>(cursor, execute, db, result);
+		final CursorEntity result,
+		final HostHandle hostHandle) {
+		return new ArangoCursorIterator<T>(cursor, execute, db, result, hostHandle);
 	}
 
 	/**
@@ -103,7 +107,7 @@ public class ArangoCursor<T> implements Iterable<T>, Iterator<T>, Closeable {
 	@Override
 	public void close() throws IOException {
 		if (id != null) {
-			execute.close(id);
+			execute.close(id, hostHandle);
 		}
 	}
 

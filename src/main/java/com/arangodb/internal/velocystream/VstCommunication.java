@@ -33,10 +33,11 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.net.ConnectionPool;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.velocystream.internal.Chunk;
-import com.arangodb.internal.velocystream.internal.Connection;
-import com.arangodb.internal.velocystream.internal.ConnectionPool;
 import com.arangodb.internal.velocystream.internal.Message;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
@@ -47,7 +48,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public abstract class VstCommunication<R, C extends Connection> {
+public abstract class VstCommunication<R, C extends VstConnection> {
 
 	private static final int ERROR_STATUS = 300;
 
@@ -88,15 +89,16 @@ public abstract class VstCommunication<R, C extends Connection> {
 
 	protected abstract void authenticate(final C connection);
 
-	public void disconnect() {
+	public void disconnect() throws IOException {
 		connectionPool.disconnect();
 	}
 
-	public R execute(final Request request) throws ArangoDBException {
-		return execute(request, connectionPool.connection());
+	public R execute(final Request request, final HostHandle hostHandle, final boolean closeConnection)
+			throws ArangoDBException {
+		return execute(request, connectionPool.connection(hostHandle), closeConnection);
 	}
 
-	public abstract R execute(final Request request, C connection) throws ArangoDBException;
+	protected abstract R execute(final Request request, C connection, boolean closeConnection) throws ArangoDBException;
 
 	protected void checkError(final Response response) throws ArangoDBException {
 		try {

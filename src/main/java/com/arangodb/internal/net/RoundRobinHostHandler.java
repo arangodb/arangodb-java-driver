@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2017 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,41 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.net;
 
-import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.util.ArangoSerialization;
+import java.util.List;
+
+import com.arangodb.internal.Host;
 
 /**
  * @author Mark Vollmary
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends VstConnection> {
+public class RoundRobinHostHandler implements HostHandler {
 
-	protected final E executor;
-	private final ArangoSerialization util;
+	private final HostResolver resolver;
+	private Host current;
 
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
+	public RoundRobinHostHandler(final HostResolver resolver) {
 		super();
-		this.executor = executor;
-		this.util = util;
+		this.resolver = resolver;
+		current = resolver.resolve(true, false).get(0);
 	}
 
-	protected E executor() {
-		return executor;
+	@Override
+	public Host get() {
+		final List<Host> hosts = resolver.resolve(false, false);
+		final int index = hosts.indexOf(current) + 1;
+		current = hosts.get(index < hosts.size() ? index : 0);
+		return current;
 	}
 
-	public ArangoSerialization util() {
-		return util;
+	@Override
+	public void success() {
 	}
+
+	@Override
+	public void fail() {
+	}
+
 }
