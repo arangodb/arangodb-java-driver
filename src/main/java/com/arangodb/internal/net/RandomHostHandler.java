@@ -40,7 +40,7 @@ public class RandomHostHandler implements HostHandler {
 		super();
 		this.resolver = resolver;
 		this.fallback = fallback;
-		current = getRandomHost(true, false);
+		origin = current = getRandomHost(true, false);
 	}
 
 	@Override
