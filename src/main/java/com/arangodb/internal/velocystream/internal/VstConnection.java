@@ -96,6 +96,9 @@ public abstract class VstConnection implements Connection {
 		}
 		host = hostHandler.get();
 		while (true) {
+			if (host == null) {
+				throw new ArangoDBException("Was not able to connect to any host");
+			}
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(String.format("Open connection to %s", host));
 			}
@@ -188,6 +191,12 @@ public abstract class VstConnection implements Connection {
 				throw new ArangoDBException(e);
 			}
 		}
+	}
+
+	@Override
+	public synchronized void closeOnError() {
+		hostHandler.fail();
+		close();
 	}
 
 	private synchronized void sendProtocolHeader() throws IOException {

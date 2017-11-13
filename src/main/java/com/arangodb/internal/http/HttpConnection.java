@@ -175,9 +175,18 @@ public class HttpConnection implements Connection {
 		client.close();
 	}
 
+	@Override
+	public void closeOnError() throws IOException {
+		hostHandler.fail();
+		close();
+	}
+
 	public Response execute(final Request request) throws ArangoDBException, IOException {
 		host = hostHandler.get();
 		while (true) {
+			if (host == null) {
+				throw new ArangoDBException("Was not able to connect to any host");
+			}
 			try {
 				final String url = buildUrl(buildBaseUrl(host), request);
 				final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);

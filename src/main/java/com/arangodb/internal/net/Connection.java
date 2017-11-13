@@ -21,6 +21,7 @@
 package com.arangodb.internal.net;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 import com.arangodb.internal.Host;
 
@@ -31,5 +32,7 @@ import com.arangodb.internal.Host;
 public interface Connection extends Closeable {
 
 	Host getHost();
+
+	void closeOnError() throws IOException;
 
 }

@@ -40,6 +40,8 @@ import com.arangodb.velocystream.Response;
  */
 public class HttpCommunication {
 
+	private static final int ERROR_REDIRECT = 307;
+
 	public static class Builder {
 
 		private final HostHandler hostHandler;
@@ -120,7 +122,18 @@ public class HttpCommunication {
 
 	public Response execute(final Request request, final HostHandle hostHandle, final boolean closeConnection)
 			throws ArangoDBException, IOException {
-		return execute(request, connectionPool.connection(hostHandle), closeConnection);
+		final HttpConnection connection = connectionPool.connection(hostHandle);
+		try {
+			return execute(request, connection, closeConnection);
+		} catch (final ArangoDBException e) {
+			final Integer responseCode = e.getResponseCode();
+			if (responseCode != null && responseCode == ERROR_REDIRECT) {
+				connectionPool.closeConnectionOnError(connection);
+				return execute(request, hostHandle, closeConnection);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	protected Response execute(final Request request, final HttpConnection connection, final boolean closeConnection)

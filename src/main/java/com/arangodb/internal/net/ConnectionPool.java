@@ -23,6 +23,7 @@ package com.arangodb.internal.net;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.Host;
 
 /**
@@ -75,4 +76,21 @@ public abstract class ConnectionPool<C extends Connection> {
 		}
 	}
 
+	public void closeConnection(final C connection) {
+		try {
+			connection.close();
+			connections.remove(connection);
+		} catch (final IOException e) {
+			throw new ArangoDBException(e);
+		}
+	}
+
+	public void closeConnectionOnError(final C connection) {
+		try {
+			connection.closeOnError();
+			connections.remove(connection);
+		} catch (final IOException e) {
+			throw new ArangoDBException(e);
+		}
+	}
 }

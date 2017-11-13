@@ -51,6 +51,7 @@ import com.arangodb.velocystream.Response;
 public abstract class VstCommunication<R, C extends VstConnection> {
 
 	private static final int ERROR_STATUS = 300;
+	private static final int ERROR_REDIRECT = 307;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
@@ -95,7 +96,18 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 
 	public R execute(final Request request, final HostHandle hostHandle, final boolean closeConnection)
 			throws ArangoDBException {
-		return execute(request, connectionPool.connection(hostHandle), closeConnection);
+		final C connection = connectionPool.connection(hostHandle);
+		try {
+			return execute(request, connection, closeConnection);
+		} catch (final ArangoDBException e) {
+			final Integer responseCode = e.getResponseCode();
+			if (responseCode != null && responseCode == ERROR_REDIRECT) {
+				connectionPool.closeConnectionOnError(connection);
+				return execute(request, hostHandle, closeConnection);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	protected abstract R execute(final Request request, C connection, boolean closeConnection) throws ArangoDBException;
@@ -116,10 +128,10 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 		}
 	}
 
-	protected Response createResponse(final Message messsage) throws VPackParserException {
-		final Response response = util.deserialize(messsage.getHead(), Response.class);
-		if (messsage.getBody() != null) {
-			response.setBody(messsage.getBody());
+	protected Response createResponse(final Message message) throws VPackParserException {
+		final Response response = util.deserialize(message.getHead(), Response.class);
+		if (message.getBody() != null) {
+			response.setBody(message.getBody());
 		}
 		return response;
 	}
