@@ -144,6 +144,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					chunksize = loadChunkSize(properties, chunksize);
 					maxConnections = loadMaxConnections(properties, maxConnections);
 					protocol = loadProtocol(properties, protocol);
+					acquireHostList = loadAcquireHostList(properties, acquireHostList);
+					loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}

@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
+import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -66,6 +67,8 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
 	private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
+	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
+	private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
 	protected static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 	public InternalArangoDB(final E executor, final ArangoSerialization util) {
@@ -136,6 +139,18 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 		return Protocol.valueOf(
 			getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDBConstants.DEFAULT_NETWORK_PROTOCOL)
 					.toUpperCase());
+	}
+
+	protected static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
+		return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
+			ArangoDBConstants.DEFAULT_ACQUIRE_HOST_LIST));
+	}
+
+	protected static LoadBalancingStrategy loadLoadBalancingStrategy(
+		final Properties properties,
+		final LoadBalancingStrategy currentValue) {
+		return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
+			ArangoDBConstants.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase());
 	}
 
 	private static <T> String getProperty(

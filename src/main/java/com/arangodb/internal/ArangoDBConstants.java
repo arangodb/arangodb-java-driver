@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.Protocol;
+import com.arangodb.entity.LoadBalancingStrategy;
 
 /**
  * @author Mark Vollmary
@@ -42,6 +43,8 @@ public class ArangoDBConstants {
 	public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
 	public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 	public static final Protocol DEFAULT_NETWORK_PROTOCOL = Protocol.VST;
+	public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
+	public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
 
 	public static final String PATH_API_DOCUMENT = "/_api/document";
 	public static final String PATH_API_COLLECTION = "/_api/collection";
