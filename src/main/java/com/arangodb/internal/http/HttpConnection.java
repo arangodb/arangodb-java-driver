@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
@@ -72,16 +73,15 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
-import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.Host;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;
+import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer.Options;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -95,7 +95,6 @@ public class HttpConnection implements Connection {
 	private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
 		"utf-8");
 	private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
-	private static final int ERROR_STATUS = 300;
 	private final PoolingHttpClientConnectionManager cm;
 	private final CloseableHttpClient client;
 	private final String user;
@@ -329,23 +328,16 @@ public class HttpConnection implements Connection {
 				}
 			}
 		}
+		final Header[] headers = httpResponse.getAllHeaders();
+		final Map<String, String> meta = response.getMeta();
+		for (final Header header : headers) {
+			meta.put(header.getName(), header.getValue());
+		}
 		return response;
 	}
 
 	protected void checkError(final Response response) throws ArangoDBException {
-		try {
-			if (response.getResponseCode() >= ERROR_STATUS) {
-				if (response.getBody() != null) {
-					final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-					throw new ArangoDBException(errorEntity);
-				} else {
-					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()),
-							response.getResponseCode());
-				}
-			}
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		}
+		ResponseUtils.checkError(util, response);
 	}
 
 }

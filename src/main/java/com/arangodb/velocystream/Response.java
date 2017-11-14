@@ -20,6 +20,9 @@
 
 package com.arangodb.velocystream;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
@@ -32,11 +35,13 @@ public class Response {
 	private int version = 1;
 	private int type = 2;
 	private int responseCode;
+	private Map<String, String> meta;
 	@Expose(deserialize = false)
 	private VPackSlice body = null;
 
 	public Response() {
 		super();
+		meta = new HashMap<String, String>();
 	}
 
 	public int getVersion() {
@@ -61,6 +66,14 @@ public class Response {
 
 	public void setResponseCode(final int responseCode) {
 		this.responseCode = responseCode;
+	}
+
+	public Map<String, String> getMeta() {
+		return meta;
+	}
+
+	public void setMeta(final Map<String, String> meta) {
+		this.meta = meta;
 	}
 
 	public VPackSlice getBody() {

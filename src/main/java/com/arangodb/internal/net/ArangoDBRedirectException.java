@@ -20,27 +20,24 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.internal.Host;
+import com.arangodb.ArangoDBException;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class HostHandle {
+public class ArangoDBRedirectException extends ArangoDBException {
 
-	private Host host;
+	private static final long serialVersionUID = -94810262465567613L;
+	private final String location;
 
-	public HostHandle() {
-		super();
+	public ArangoDBRedirectException(final String message, final String location) {
+		super(message);
+		this.location = location;
 	}
 
-	public Host getHost() {
-		return host;
-	}
-
-	public HostHandle setHost(final Host host) {
-		this.host = host;
-		return this;
+	public String getLocation() {
+		return location;
 	}
 
 }

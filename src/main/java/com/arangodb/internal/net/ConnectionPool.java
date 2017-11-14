@@ -41,13 +41,13 @@ public abstract class ConnectionPool<C extends Connection> {
 		connections = new LinkedList<C>();
 	}
 
-	public abstract C createConnection();
+	public abstract C createConnection(final Host host);
 
 	public synchronized C connection(final HostHandle hostHandle) {
 		final C c;
 		if (hostHandle == null || hostHandle.getHost() == null) {
 			if (connections.size() < maxConnections) {
-				c = createConnection();
+				c = createConnection(null);
 			} else {
 				c = connections.removeFirst();
 			}
@@ -64,7 +64,7 @@ public abstract class ConnectionPool<C extends Connection> {
 					break;
 				}
 			}
-			c = tmp != null ? tmp : createConnection();
+			c = tmp != null ? tmp : createConnection(host);
 		}
 		connections.add(c);
 		return c;

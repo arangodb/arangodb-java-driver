@@ -27,9 +27,13 @@ import javax.net.ssl.SSLContext;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.Host;
+import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.ConnectionPool;
+import com.arangodb.internal.net.DelHostHandler;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.util.HostUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -39,8 +43,6 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class HttpCommunication {
-
-	private static final int ERROR_REDIRECT = 307;
 
 	public static class Builder {
 
@@ -110,8 +112,9 @@ public class HttpCommunication {
 		connectionPool = new ConnectionPool<HttpConnection>(
 				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_HTTP_DEFAULT) {
 			@Override
-			public HttpConnection createConnection() {
-				return new HttpConnection(timeout, user, password, useSsl, sslContext, util, hostHandler, contentType);
+			public HttpConnection createConnection(final Host host) {
+				return new HttpConnection(timeout, user, password, useSsl, sslContext, util,
+						new DelHostHandler(hostHandler, host), contentType);
 			}
 		};
 	}
@@ -126,10 +129,11 @@ public class HttpCommunication {
 		try {
 			return execute(request, connection, closeConnection);
 		} catch (final ArangoDBException e) {
-			final Integer responseCode = e.getResponseCode();
-			if (responseCode != null && responseCode == ERROR_REDIRECT) {
+			if (e instanceof ArangoDBRedirectException) {
+				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
+				final Host host = HostUtils.createFromLocation(location);
 				connectionPool.closeConnectionOnError(connection);
-				return execute(request, hostHandle, closeConnection);
+				return execute(request, new HostHandle().setHost(host), closeConnection);
 			} else {
 				throw e;
 			}

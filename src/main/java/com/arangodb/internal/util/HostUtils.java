@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
+package com.arangodb.internal.util;
 
 import com.arangodb.internal.Host;
 
@@ -26,21 +26,21 @@ import com.arangodb.internal.Host;
  * @author Mark Vollmary
  *
  */
-public class HostHandle {
+public class HostUtils {
 
-	private Host host;
-
-	public HostHandle() {
+	private HostUtils() {
 		super();
 	}
 
-	public Host getHost() {
+	public static Host createFromLocation(final String location) {
+		final Host host;
+		if (location != null) {
+			final String[] tmp = location.replaceAll(".*://", "").replaceAll("/.*", "").split(":");
+			host = tmp.length == 2 ? new Host(tmp[0], Integer.valueOf(tmp[1])) : null;
+		} else {
+			host = null;
+		}
 		return host;
-	}
-
-	public HostHandle setHost(final Host host) {
-		this.host = host;
-		return this;
 	}
 
 }

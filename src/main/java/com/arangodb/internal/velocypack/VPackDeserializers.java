@@ -52,6 +52,7 @@ public class VPackDeserializers {
 	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	public static final VPackDeserializer<Response> RESPONSE = new VPackDeserializer<Response>() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public Response deserialize(
 			final VPackSlice parent,
@@ -61,6 +62,9 @@ public class VPackDeserializers {
 			response.setVersion(vpack.get(0).getAsInt());
 			response.setType(vpack.get(1).getAsInt());
 			response.setResponseCode(vpack.get(2).getAsInt());
+			if (vpack.size() > 3) {
+				response.setMeta(context.deserialize(vpack.get(3), Map.class));
+			}
 			return response;
 		}
 	};

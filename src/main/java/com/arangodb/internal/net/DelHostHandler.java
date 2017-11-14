@@ -26,21 +26,36 @@ import com.arangodb.internal.Host;
  * @author Mark Vollmary
  *
  */
-public class HostHandle {
+public class DelHostHandler implements HostHandler {
 
+	private final HostHandler hostHandler;
 	private Host host;
 
-	public HostHandle() {
+	public DelHostHandler(final HostHandler hostHandler, final Host host) {
 		super();
-	}
-
-	public Host getHost() {
-		return host;
-	}
-
-	public HostHandle setHost(final Host host) {
+		this.hostHandler = hostHandler;
 		this.host = host;
-		return this;
+	}
+
+	@Override
+	public Host get() {
+		return host != null ? host : hostHandler.get();
+	}
+
+	@Override
+	public void success() {
+		if (host == null) {
+			hostHandler.success();
+		}
+	}
+
+	@Override
+	public void fail() {
+		if (host == null) {
+			hostHandler.fail();
+		} else {
+			host = null;
+		}
 	}
 
 }

@@ -31,10 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.Host;
+import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.util.HostUtils;
+import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnection;
@@ -49,9 +52,6 @@ import com.arangodb.velocystream.Response;
  *
  */
 public abstract class VstCommunication<R, C extends VstConnection> {
-
-	private static final int ERROR_STATUS = 300;
-	private static final int ERROR_REDIRECT = 307;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
@@ -100,10 +100,11 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 		try {
 			return execute(request, connection, closeConnection);
 		} catch (final ArangoDBException e) {
-			final Integer responseCode = e.getResponseCode();
-			if (responseCode != null && responseCode == ERROR_REDIRECT) {
+			if (e instanceof ArangoDBRedirectException) {
+				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
+				final Host host = HostUtils.createFromLocation(location);
 				connectionPool.closeConnectionOnError(connection);
-				return execute(request, hostHandle, closeConnection);
+				return execute(request, new HostHandle().setHost(host), closeConnection);
 			} else {
 				throw e;
 			}
@@ -113,19 +114,7 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 	protected abstract R execute(final Request request, C connection, boolean closeConnection) throws ArangoDBException;
 
 	protected void checkError(final Response response) throws ArangoDBException {
-		try {
-			if (response.getResponseCode() >= ERROR_STATUS) {
-				if (response.getBody() != null) {
-					final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-					throw new ArangoDBException(errorEntity);
-				} else {
-					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()),
-							response.getResponseCode());
-				}
-			}
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		}
+		ResponseUtils.checkError(util, response);
 	}
 
 	protected Response createResponse(final Message message) throws VPackParserException {
