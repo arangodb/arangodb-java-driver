@@ -32,6 +32,6 @@ import com.arangodb.velocystream.Response;
  */
 public interface CommunicationProtocol extends Closeable {
 
-	Response execute(final Request request, HostHandle hostHandle, boolean closeConnection) throws ArangoDBException;
+	Response execute(final Request request, HostHandle hostHandle) throws ArangoDBException;
 
 }

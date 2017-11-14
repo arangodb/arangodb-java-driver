@@ -133,8 +133,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 	}
 
 	@Override
-	protected Response execute(final Request request, final ConnectionSync connection, final boolean closeConnection)
-			throws ArangoDBException {
+	protected Response execute(final Request request, final ConnectionSync connection) throws ArangoDBException {
 		connect(connection);
 		try {
 			final Message requestMessage = createMessage(request);
@@ -145,12 +144,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 			return response;
 		} catch (final VPackParserException e) {
 			throw new ArangoDBException(e);
-		} finally {
-			if (closeConnection) {
-				connection.close();
-			}
 		}
-
 	}
 
 	private Message send(final Message message, final ConnectionSync connection) throws ArangoDBException {
@@ -165,7 +159,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 	protected void authenticate(final ConnectionSync connection) {
 		final Response response = execute(
 			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN),
-			connection, false);
+			connection);
 		checkError(response);
 	}
 

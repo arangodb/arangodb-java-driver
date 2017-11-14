@@ -94,24 +94,23 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 		connectionPool.disconnect();
 	}
 
-	public R execute(final Request request, final HostHandle hostHandle, final boolean closeConnection)
-			throws ArangoDBException {
+	public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
 		final C connection = connectionPool.connection(hostHandle);
 		try {
-			return execute(request, connection, closeConnection);
+			return execute(request, connection);
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
 				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
 				final Host host = HostUtils.createFromLocation(location);
 				connectionPool.closeConnectionOnError(connection);
-				return execute(request, new HostHandle().setHost(host), closeConnection);
+				return execute(request, new HostHandle().setHost(host));
 			} else {
 				throw e;
 			}
 		}
 	}
 
-	protected abstract R execute(final Request request, C connection, boolean closeConnection) throws ArangoDBException;
+	protected abstract R execute(final Request request, C connection) throws ArangoDBException;
 
 	protected void checkError(final Response response) throws ArangoDBException {
 		ResponseUtils.checkError(util, response);

@@ -123,24 +123,23 @@ public class HttpCommunication {
 		connectionPool.disconnect();
 	}
 
-	public Response execute(final Request request, final HostHandle hostHandle, final boolean closeConnection)
-			throws ArangoDBException, IOException {
+	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException, IOException {
 		final HttpConnection connection = connectionPool.connection(hostHandle);
 		try {
-			return execute(request, connection, closeConnection);
+			return execute(request, connection);
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
 				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
 				final Host host = HostUtils.createFromLocation(location);
 				connectionPool.closeConnectionOnError(connection);
-				return execute(request, new HostHandle().setHost(host), closeConnection);
+				return execute(request, new HostHandle().setHost(host));
 			} else {
 				throw e;
 			}
 		}
 	}
 
-	protected Response execute(final Request request, final HttpConnection connection, final boolean closeConnection)
+	protected Response execute(final Request request, final HttpConnection connection)
 			throws ArangoDBException, IOException {
 		return connection.execute(request);
 	}

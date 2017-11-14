@@ -44,10 +44,9 @@ public class HttpProtocol implements CommunicationProtocol {
 	}
 
 	@Override
-	public Response execute(final Request request, final HostHandle hostHandle, final boolean closeConnection)
-			throws ArangoDBException {
+	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
 		try {
-			return httpCommunitaction.execute(request, hostHandle, closeConnection);
+			return httpCommunitaction.execute(request, hostHandle);
 		} catch (final ClientProtocolException e) {
 			throw new ArangoDBException(e);
 		} catch (final IOException e) {

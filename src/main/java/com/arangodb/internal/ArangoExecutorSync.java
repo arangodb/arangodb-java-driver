@@ -67,16 +67,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
 		final Request request,
 		final ResponseDeserializer<T> responseDeserializer,
 		final HostHandle hostHandle) throws ArangoDBException {
-		return execute(request, responseDeserializer, hostHandle, false);
-	}
-
-	public <T> T execute(
-		final Request request,
-		final ResponseDeserializer<T> responseDeserializer,
-		final HostHandle hostHandle,
-		final boolean closeConnection) throws ArangoDBException {
 		try {
-			final Response response = protocol.execute(request, hostHandle, closeConnection);
+			final Response response = protocol.execute(request, hostHandle);
 			return responseDeserializer.deserialize(response);
 		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
