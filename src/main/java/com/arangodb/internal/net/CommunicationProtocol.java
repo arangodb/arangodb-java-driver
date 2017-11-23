@@ -18,20 +18,20 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.net;
+
+import java.io.Closeable;
+
+import com.arangodb.ArangoDBException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public interface HostHandler {
+public interface CommunicationProtocol extends Closeable {
 
-	Host get();
-
-	Host change();
-
-	void success();
-
-	void fail();
+	Response execute(final Request request, HostHandle hostHandle) throws ArangoDBException;
 
 }

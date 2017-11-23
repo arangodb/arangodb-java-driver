@@ -31,12 +31,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.Host;
+import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.ConnectionPool;
+import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.util.HostUtils;
+import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
-import com.arangodb.internal.velocystream.internal.Connection;
-import com.arangodb.internal.velocystream.internal.ConnectionPool;
 import com.arangodb.internal.velocystream.internal.Message;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
@@ -47,9 +51,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public abstract class VstCommunication<R, C extends Connection> {
-
-	private static final int ERROR_STATUS = 300;
+public abstract class VstCommunication<R, C extends VstConnection> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
@@ -88,36 +90,36 @@ public abstract class VstCommunication<R, C extends Connection> {
 
 	protected abstract void authenticate(final C connection);
 
-	public void disconnect() {
+	public void disconnect() throws IOException {
 		connectionPool.disconnect();
 	}
 
-	public R execute(final Request request) throws ArangoDBException {
-		return execute(request, connectionPool.connection());
-	}
-
-	public abstract R execute(final Request request, C connection) throws ArangoDBException;
-
-	protected void checkError(final Response response) throws ArangoDBException {
+	public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+		final C connection = connectionPool.connection(hostHandle);
 		try {
-			if (response.getResponseCode() >= ERROR_STATUS) {
-				if (response.getBody() != null) {
-					final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-					throw new ArangoDBException(errorEntity);
-				} else {
-					throw new ArangoDBException(String.format("Response Code: %s", response.getResponseCode()),
-							response.getResponseCode());
-				}
+			return execute(request, connection);
+		} catch (final ArangoDBException e) {
+			if (e instanceof ArangoDBRedirectException) {
+				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
+				final Host host = HostUtils.createFromLocation(location);
+				connectionPool.closeConnectionOnError(connection);
+				return execute(request, new HostHandle().setHost(host));
+			} else {
+				throw e;
 			}
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
 		}
 	}
 
-	protected Response createResponse(final Message messsage) throws VPackParserException {
-		final Response response = util.deserialize(messsage.getHead(), Response.class);
-		if (messsage.getBody() != null) {
-			response.setBody(messsage.getBody());
+	protected abstract R execute(final Request request, C connection) throws ArangoDBException;
+
+	protected void checkError(final Response response) throws ArangoDBException {
+		ResponseUtils.checkError(util, response);
+	}
+
+	protected Response createResponse(final Message message) throws VPackParserException {
+		final Response response = util.deserialize(message.getHead(), Response.class);
+		if (message.getBody() != null) {
+			response.setBody(message.getBody());
 		}
 		return response;
 	}

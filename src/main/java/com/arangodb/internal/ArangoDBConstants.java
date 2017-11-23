@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.Protocol;
+import com.arangodb.entity.LoadBalancingStrategy;
 
 /**
  * @author Mark Vollmary
@@ -42,6 +43,8 @@ public class ArangoDBConstants {
 	public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
 	public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 	public static final Protocol DEFAULT_NETWORK_PROTOCOL = Protocol.VST;
+	public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
+	public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
 
 	public static final String PATH_API_DOCUMENT = "/_api/document";
 	public static final String PATH_API_COLLECTION = "/_api/collection";
@@ -66,6 +69,7 @@ public class ArangoDBConstants {
 	public static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
 	public static final String PATH_API_IMPORT = "/_api/import";
 	public static final String PATH_API_ROLE = "/_admin/server/role";
+	public static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
 
 	public static final String ENCRYPTION_PLAIN = "plain";
 
@@ -116,5 +120,6 @@ public class ArangoDBConstants {
 	public static final String TYPE = "type";
 	public static final String IS_SYSTEM = "isSystem";
 	public static final String ROLE = "role";
+	public static final String ENDPOINTS = "endpoints";
 
 }

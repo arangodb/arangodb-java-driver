@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2017 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,51 +18,32 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.net;
 
 import java.util.List;
+
+import com.arangodb.internal.Host;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class DefaultHostHandler implements HostHandler {
+public class SimpleHostResolver implements HostResolver {
 
 	private final List<Host> hosts;
-	private int current;
-	private int lastSuccess;
-	private int iterations;
 
-	/**
-	 * @param hosts
-	 */
-	public DefaultHostHandler(final List<Host> hosts) {
+	public SimpleHostResolver(final List<Host> hosts) {
+		super();
 		this.hosts = hosts;
-		current = lastSuccess = iterations = 0;
 	}
 
 	@Override
-	public Host get() {
-		return hosts.get(current);
+	public void init(final EndpointResolver resolver) {
 	}
 
 	@Override
-	public Host change() {
-		current++;
-		if ((current + 1) > hosts.size()) {
-			current -= hosts.size();
-			iterations++;
-		}
-		return current != lastSuccess || iterations < 3 ? get() : null;
-	}
-
-	@Override
-	public void success() {
-		lastSuccess = current;
-	}
-
-	@Override
-	public void fail() {
+	public List<Host> resolve(final boolean initial, final boolean closeConnections) {
+		return hosts;
 	}
 
 }

@@ -27,7 +27,7 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.velocystream.internal.Connection;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;
@@ -44,7 +44,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, G extends InternalArangoGraph<A, D, E, R, C>, E extends ArangoExecutor, R, C extends Connection>
+public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, G extends InternalArangoGraph<A, D, E, R, C>, E extends ArangoExecutor, R, C extends VstConnection>
 		extends ArangoExecuteable<E, R, C> {
 
 	private final G graph;

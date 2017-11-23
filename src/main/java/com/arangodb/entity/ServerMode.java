@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2017 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,12 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
-
-import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.util.ArangoSerialization;
+package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends VstConnection> {
-
-	protected final E executor;
-	private final ArangoSerialization util;
-
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
-		super();
-		this.executor = executor;
-		this.util = util;
-	}
-
-	protected E executor() {
-		return executor;
-	}
-
-	public ArangoSerialization util() {
-		return util;
-	}
+public enum ServerMode {
+	DEFAULT, RESILIENT
 }

@@ -25,7 +25,8 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.CommunicationProtocol;
+import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -43,9 +44,9 @@ public class HttpProtocol implements CommunicationProtocol {
 	}
 
 	@Override
-	public Response execute(final Request request) throws ArangoDBException {
+	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
 		try {
-			return httpCommunitaction.execute(request);
+			return httpCommunitaction.execute(request, hostHandle);
 		} catch (final ClientProtocolException e) {
 			throw new ArangoDBException(e);
 		} catch (final IOException e) {

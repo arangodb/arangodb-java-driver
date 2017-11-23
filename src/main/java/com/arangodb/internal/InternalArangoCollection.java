@@ -36,7 +36,7 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.velocystream.internal.Connection;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
 import com.arangodb.model.DocumentCreateOptions;
@@ -66,7 +66,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, E extends ArangoExecutor, R, C extends Connection>
+public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, E extends ArangoExecutor, R, C extends VstConnection>
 		extends ArangoExecuteable<E, R, C> {
 
 	private final D db;

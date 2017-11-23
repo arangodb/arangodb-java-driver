@@ -40,9 +40,10 @@ import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.CommunicationProtocol;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.InternalArangoDatabase;
+import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
@@ -379,13 +380,13 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	private <T> ArangoCursor<T> createCursor(final CursorEntity result, final Class<T> type) {
 		final ArangoCursorExecute execute = new ArangoCursorExecute() {
 			@Override
-			public CursorEntity next(final String id) {
-				return executor.execute(queryNextRequest(id), CursorEntity.class);
+			public CursorEntity next(final String id, final HostHandle hostHandle) {
+				return executor.execute(queryNextRequest(id), CursorEntity.class, hostHandle);
 			}
 
 			@Override
-			public void close(final String id) {
-				executor.execute(queryCloseRequest(id), Void.class);
+			public void close(final String id, final HostHandle hostHandle) {
+				executor.execute(queryCloseRequest(id), Void.class, hostHandle);
 			}
 		};
 		return cursorInitializer != null ? cursorInitializer.createInstance(this, execute, type, result)

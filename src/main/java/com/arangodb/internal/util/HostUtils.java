@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2017 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,29 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.util;
 
-import java.io.Closeable;
-
-import com.arangodb.ArangoDBException;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
+import com.arangodb.internal.Host;
 
 /**
  * @author Mark Vollmary
  *
  */
-public interface CommunicationProtocol extends Closeable {
+public class HostUtils {
 
-	Response execute(final Request request) throws ArangoDBException;
+	private HostUtils() {
+		super();
+	}
+
+	public static Host createFromLocation(final String location) {
+		final Host host;
+		if (location != null) {
+			final String[] tmp = location.replaceAll(".*://", "").replaceAll("/.*", "").split(":");
+			host = tmp.length == 2 ? new Host(tmp[0], Integer.valueOf(tmp[1])) : null;
+		} else {
+			host = null;
+		}
+		return host;
+	}
 
 }

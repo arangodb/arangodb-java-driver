@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.internal.net.HostHandle;
 
 /**
  * @author Mark Vollmary
@@ -29,8 +30,8 @@ import com.arangodb.entity.CursorEntity;
  */
 public interface ArangoCursorExecute {
 
-	CursorEntity next(String id) throws ArangoDBException;
+	CursorEntity next(String id, HostHandle hostHandle) throws ArangoDBException;
 
-	void close(String id) throws ArangoDBException;
+	void close(String id, HostHandle hostHandle) throws ArangoDBException;
 
 }

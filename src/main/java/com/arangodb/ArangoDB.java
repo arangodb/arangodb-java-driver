@@ -25,12 +25,15 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
 
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
@@ -41,13 +44,21 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.CollectionCache.DBAccess;
-import com.arangodb.internal.CommunicationProtocol;
-import com.arangodb.internal.DefaultHostHandler;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.Host;
 import com.arangodb.internal.InternalArangoDB;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
+import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.net.ExtendedHostResolver;
+import com.arangodb.internal.net.FallbackHostHandler;
+import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.HostResolver;
+import com.arangodb.internal.net.HostResolver.EndpointResolver;
+import com.arangodb.internal.net.RandomHostHandler;
+import com.arangodb.internal.net.RoundRobinHostHandler;
+import com.arangodb.internal.net.SimpleHostResolver;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.ArangoUtilImpl;
@@ -74,9 +85,11 @@ import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackSerializer;
+import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
@@ -101,6 +114,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		private ArangoSerializer serializer;
 		private ArangoDeserializer deserializer;
 		private Protocol protocol;
+		private Boolean acquireHostList;
+		private LoadBalancingStrategy loadBalancingStrategy;
 
 		public Builder() {
 			super();
@@ -130,6 +145,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					chunksize = loadChunkSize(properties, chunksize);
 					maxConnections = loadMaxConnections(properties, maxConnections);
 					protocol = loadProtocol(properties, protocol);
+					acquireHostList = loadAcquireHostList(properties, acquireHostList);
+					loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
 				} catch (final IOException e) {
 					throw new ArangoDBException(e);
 				}
@@ -212,6 +229,16 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		public Builder useProtocol(final Protocol protocol) {
 			this.protocol = protocol;
+			return this;
+		}
+
+		public Builder acquireHostList(final Boolean acquireHostList) {
+			this.acquireHostList = acquireHostList;
+			return this;
+		}
+
+		public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
+			this.loadBalancingStrategy = loadBalancingStrategy;
 			return this;
 		}
 
@@ -349,14 +376,42 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					: new ArangoSerializerImpl(vpacker, vpackerNull, vpackParser);
 			final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
 					: new ArangoDeserializerImpl(vpackerNull, vpackParser);
+
+			final HostResolver hostResolver = createHostResolver();
+			final HostHandler hostHandler = createHostHandler(hostResolver);
 			return new ArangoDB(
-					new VstCommunicationSync.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts)))
-							.timeout(timeout).user(user).password(password).useSsl(useSsl).sslContext(sslContext)
-							.chunksize(chunksize).maxConnections(maxConnections),
-					new HttpCommunication.Builder(new DefaultHostHandler(new ArrayList<Host>(hosts)), protocol)
-							.timeout(timeout).user(user).password(password).useSsl(useSsl).sslContext(sslContext)
-							.maxConnections(maxConnections),
-					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol);
+					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
+							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections),
+					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
+							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections),
+					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol, hostResolver);
+		}
+
+		private HostResolver createHostResolver() {
+			return acquireHostList != null && acquireHostList.booleanValue()
+					? new ExtendedHostResolver(new ArrayList<Host>(hosts))
+					: new SimpleHostResolver(new ArrayList<Host>(hosts));
+		}
+
+		private HostHandler createHostHandler(final HostResolver hostResolver) {
+			final HostHandler hostHandler;
+			if (loadBalancingStrategy != null) {
+				switch (loadBalancingStrategy) {
+				case ONE_RANDOM:
+					hostHandler = new RandomHostHandler(hostResolver, new FallbackHostHandler(hostResolver));
+					break;
+				case ROUND_ROBIN:
+					hostHandler = new RoundRobinHostHandler(hostResolver);
+					break;
+				case NONE:
+				default:
+					hostHandler = new FallbackHostHandler(hostResolver);
+					break;
+				}
+			} else {
+				hostHandler = new FallbackHostHandler(hostResolver);
+			}
+			return hostHandler;
 		}
 
 	}
@@ -365,15 +420,59 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	private CommunicationProtocol cp;
 
 	public ArangoDB(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol) {
+		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol,
+		final HostResolver hostResolver) {
 		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
 				new DocumentCache()), util);
-		cp = createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol);
+		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
+			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util, collectionCache, protocol);
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
 				return new ArangoDatabase(cp, util, executor.documentCache(), name)
 						.setCursorInitializer(cursorInitializer);
+			}
+		});
+		hostResolver.init(new EndpointResolver() {
+			@Override
+			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
+				Collection<String> response;
+				try {
+					response = executor.execute(
+						new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_ENDPOINTS),
+						new ResponseDeserializer<Collection<String>>() {
+							@Override
+							public Collection<String> deserialize(final Response response) throws VPackException {
+								final VPackSlice field = response.getBody().get(ArangoDBConstants.ENDPOINTS);
+								Collection<String> endpoints;
+								if (field.isNone()) {
+									endpoints = Collections.<String> emptyList();
+								} else {
+									final Collection<Map<String, String>> tmp = util().deserialize(field,
+										Collection.class);
+									endpoints = new ArrayList<String>();
+									for (final Map<String, String> map : tmp) {
+										for (final String value : map.values()) {
+											endpoints.add(value);
+										}
+									}
+								}
+								return endpoints;
+							}
+						}, null);
+				} catch (final ArangoDBException e) {
+					final Integer responseCode = e.getResponseCode();
+					if (responseCode != null && responseCode == 403) {
+						response = Collections.<String> emptyList();
+					} else {
+						throw e;
+					}
+				} finally {
+					if (closeConnections) {
+						ArangoDB.this.shutdown();
+					}
+				}
+				return response;
 			}
 		});
 	}
@@ -697,6 +796,25 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 				return response;
 			}
 		});
+	}
+
+	/**
+	 * Generic Execute. Use this method to execute custom FOXX services.
+	 * 
+	 * @param request
+	 *            VelocyStream request
+	 * @param hostHandle
+	 *            Used to stick to a specific host when using {@link LoadBalancingStrategy#ROUND_ROBIN}
+	 * @return VelocyStream response
+	 * @throws ArangoDBException
+	 */
+	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+		return executor.execute(request, new ResponseDeserializer<Response>() {
+			@Override
+			public Response deserialize(final Response response) throws VPackException {
+				return response;
+			}
+		}, hostHandle);
 	}
 
 	/**

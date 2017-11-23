@@ -25,5 +25,5 @@ package com.arangodb.entity;
  *
  */
 public enum ServerRole {
-	SINGLE, AGENT, COORDINATOR, PRIMARY
+	SINGLE, AGENT, COORDINATOR, PRIMARY, SECONDARY, UNDEFINED
 }

@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -40,14 +41,16 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 	private final ArangoCursor<T> cursor;
 	private final InternalArangoDatabase<?, ?, ?, ?> db;
 	private final ArangoCursorExecute execute;
+	private final HostHandle hostHandle;
 
 	public ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
-		final InternalArangoDatabase<?, ?, ?, ?> db, final CursorEntity result) {
+		final InternalArangoDatabase<?, ?, ?, ?> db, final CursorEntity result, final HostHandle hostHandle) {
 		super();
 		this.cursor = cursor;
 		this.execute = execute;
 		this.db = db;
 		this.result = result;
+		this.hostHandle = hostHandle;
 		pos = 0;
 	}
 
@@ -63,7 +66,7 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 	@Override
 	public T next() {
 		if (pos >= result.getResult().size() && result.getHasMore()) {
-			result = execute.next(cursor.getId());
+			result = execute.next(cursor.getId(), hostHandle);
 			pos = 0;
 		}
 		if (!hasNext()) {

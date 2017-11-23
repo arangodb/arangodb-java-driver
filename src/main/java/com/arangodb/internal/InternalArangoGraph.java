@@ -25,7 +25,7 @@ import java.util.Collection;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.velocystream.internal.Connection;
+import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import com.arangodb.velocypack.Type;
@@ -38,7 +38,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, E extends ArangoExecutor, R, C extends Connection>
+public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, E extends ArangoExecutor, R, C extends VstConnection>
 		extends ArangoExecuteable<E, R, C> {
 
 	private final D db;

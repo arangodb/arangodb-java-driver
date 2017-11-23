@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2017 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,26 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.net;
 
-import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.ArangoDBException;
 
 /**
  * @author Mark Vollmary
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends VstConnection> {
+public class ArangoDBRedirectException extends ArangoDBException {
 
-	protected final E executor;
-	private final ArangoSerialization util;
+	private static final long serialVersionUID = -94810262465567613L;
+	private final String location;
 
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
-		super();
-		this.executor = executor;
-		this.util = util;
+	public ArangoDBRedirectException(final String message, final String location) {
+		super(message);
+		this.location = location;
 	}
 
-	protected E executor() {
-		return executor;
+	public String getLocation() {
+		return location;
 	}
 
-	public ArangoSerialization util() {
-		return util;
-	}
 }
