@@ -32,16 +32,21 @@ public class RoundRobinHostHandler implements HostHandler {
 
 	private final HostResolver resolver;
 	private Host current;
+	private int fails;
 
 	public RoundRobinHostHandler(final HostResolver resolver) {
 		super();
 		this.resolver = resolver;
 		current = resolver.resolve(true, false).get(0);
+		fails = 0;
 	}
 
 	@Override
 	public Host get() {
 		final List<Host> hosts = resolver.resolve(false, false);
+		if (fails > hosts.size()) {
+			return null;
+		}
 		final int index = hosts.indexOf(current) + 1;
 		current = hosts.get(index < hosts.size() ? index : 0);
 		return current;
@@ -49,10 +54,12 @@ public class RoundRobinHostHandler implements HostHandler {
 
 	@Override
 	public void success() {
+		fails = 0;
 	}
 
 	@Override
 	public void fail() {
+		fails++;
 	}
 
 }
