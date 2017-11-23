@@ -1,3 +1,8 @@
+v4.3.0 (2017-11-23)
+---------------------------
+* added load balancing (ArangoDB.Builder.loadBalancingStrategy())
+* added automatic acquiring of hosts for load balancing or as fallback (ArangoDB.Builder.acquireHostList())
+
 v4.2.7 (2017-11-03)
 ---------------------------
 * added ArangoGraph.exists()
