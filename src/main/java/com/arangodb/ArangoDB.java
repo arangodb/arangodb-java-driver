@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
@@ -447,13 +448,21 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 								if (field.isNone()) {
 									endpoints = Collections.<String> emptyList();
 								} else {
-									endpoints = util().deserialize(field, Collection.class);
+									final Collection<Map<String, String>> tmp = util().deserialize(field,
+										Collection.class);
+									endpoints = new ArrayList<String>();
+									for (final Map<String, String> map : tmp) {
+										for (final String value : map.values()) {
+											endpoints.add(value);
+										}
+									}
 								}
 								return endpoints;
 							}
 						}, null);
 				} catch (final ArangoDBException e) {
-					if (e.getResponseCode() == 403) {
+					final Integer responseCode = e.getResponseCode();
+					if (responseCode != null && responseCode == 403) {
 						response = Collections.<String> emptyList();
 					} else {
 						throw e;
