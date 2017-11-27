@@ -25,6 +25,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,4 +93,11 @@ public class ArangoSerializationTest {
 		assertThat(vpack.getLength(), is(list.size()));
 	}
 
+	@Test
+	public void parseJsonIncludeNull() {
+		final Map<String, Object> entity = new HashMap<String, Object>();
+		entity.put("value", new String[] { "test", null });
+		final String json = util.deserialize(util.serialize(entity, new ArangoSerializer.Options()), String.class);
+		assertThat(json, is("{\"value\":[\"test\",null]}"));
+	}
 }

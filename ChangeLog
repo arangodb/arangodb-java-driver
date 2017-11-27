@@ -1,3 +1,7 @@
+v4.3.1 (2017-11-27)
+---------------------------
+* fixed default Json parsing, include null values (Issue #163)
+
 v4.3.0 (2017-11-23)
 ---------------------------
 * added load balancing (ArangoDB.Builder.loadBalancingStrategy())

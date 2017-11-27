@@ -50,7 +50,7 @@ public class ArangoDeserializerImpl implements ArangoDeserializer {
 		try {
 			final T doc;
 			if (type == String.class && !vpack.isString()) {
-				doc = (T) vpackParser.toJson(vpack);
+				doc = (T) vpackParser.toJson(vpack, true);
 			} else {
 				doc = vpacker.deserialize(vpack, type);
 			}
