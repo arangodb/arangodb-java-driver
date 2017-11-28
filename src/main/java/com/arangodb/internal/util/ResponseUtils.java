@@ -35,7 +35,7 @@ public class ResponseUtils {
 
 	private static final int ERROR_STATUS = 300;
 	private static final int ERROR_INTERNAL = 503;
-	private static final String HEADER_ENDPOINT = "x-arango-endpoint";
+	private static final String HEADER_ENDPOINT = "X-Arango-Endpoint";
 
 	private ResponseUtils() {
 		super();

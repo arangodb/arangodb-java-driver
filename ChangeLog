@@ -1,3 +1,7 @@
+v4.3.2 (2017-xx-xx)
+---------------------------
+* fixed redirect header (uppercase)
+
 v4.3.1 (2017-11-27)
 ---------------------------
 * fixed default Json parsing, include null values (Issue #163)
