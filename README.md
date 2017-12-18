@@ -580,7 +580,7 @@ The driver supports the [graph api](https://docs.arangodb.com/HTTP/Gharial/index
 
 Some of the basic graph operations are described in the following:
 
-##add graph
+## add graph
 A graph consists of vertices and edges (stored in collections). Which collections are used within a graph is defined via edge definitions. A graph can contain more than one edge definition, at least one is needed.
 
 ``` Java
