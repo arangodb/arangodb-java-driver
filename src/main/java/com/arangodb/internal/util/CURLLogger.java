@@ -71,7 +71,7 @@ public class CURLLogger {
 		buffer.append(" '").append(url).append("'");
 		if (includeBody) {
 			buffer.append("\n");
-			buffer.append(util.deserialize(request.getBody(), String.class));
+			buffer.append((String) util.deserialize(request.getBody(), String.class));
 			buffer.append("\n");
 			buffer.append("___EOB___");
 		}
