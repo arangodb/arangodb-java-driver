@@ -36,6 +36,9 @@ public class TransactionOptions {
 	private final TransactionCollectionOptions collections;
 	private Integer lockTimeout;
 	private Boolean waitForSync;
+	private Long maxTransactionSize;
+	private Long intermediateCommitCount;
+	private Long intermediateCommitSize;
 
 	public TransactionOptions() {
 		super();
@@ -123,6 +126,33 @@ public class TransactionOptions {
 
 	public TransactionOptions allowImplicit(final Boolean allowImplicit) {
 		collections.allowImplicit(allowImplicit);
+		return this;
+	}
+
+	public Long getMaxTransactionSize() {
+		return maxTransactionSize;
+	}
+
+	public TransactionOptions maxTransactionSize(final Long maxTransactionSize) {
+		this.maxTransactionSize = maxTransactionSize;
+		return this;
+	}
+
+	public Long getIntermediateCommitCount() {
+		return intermediateCommitCount;
+	}
+
+	public TransactionOptions intermediateCommitCount(final Long intermediateCommitCount) {
+		this.intermediateCommitCount = intermediateCommitCount;
+		return this;
+	}
+
+	public Long getIntermediateCommitSize() {
+		return intermediateCommitSize;
+	}
+
+	public TransactionOptions intermediateCommitSize(final Long intermediateCommitSize) {
+		this.intermediateCommitSize = intermediateCommitSize;
 		return this;
 	}
 

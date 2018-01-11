@@ -8,6 +8,9 @@ v4.3.3 (2018-xx-xx)
 * added AqlQueryOptions.intermediateCommitCount(Long)
 * added AqlQueryOptions.intermediateCommitSize(Long)
 * added AqlQueryOptions.satelliteSyncWait(Double)
+* added TransactionOptions.maxTransactionSize(Long)
+* added TransactionOptions.intermediateCommitCount(Long)
+* added TransactionOptions.intermediateCommitSize(Long)
 
 v4.3.2 (2017-11-30)
 ---------------------------
