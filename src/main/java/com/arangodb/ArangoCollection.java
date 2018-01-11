@@ -208,15 +208,7 @@ public class ArangoCollection
 	 * @throws ArangoDBException
 	 */
 	public <T> T getDocument(final String key, final Class<T> type) throws ArangoDBException {
-		executor.validateDocumentKey(key);
-		try {
-			return executor.execute(getDocumentRequest(key, new DocumentReadOptions()), type);
-		} catch (final ArangoDBException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			return null;
-		}
+		return getDocument(key, type, new DocumentReadOptions());
 	}
 
 	/**

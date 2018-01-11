@@ -224,6 +224,19 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(document, is(nullValue()));
 	}
 
+	@Test
+	public void getDocumentNotFoundOptionsDefault() {
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class,
+			new DocumentReadOptions());
+		assertThat(document, is(nullValue()));
+	}
+
+	@Test
+	public void getDocumentNotFoundOptionsNull() {
+		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class, null);
+		assertThat(document, is(nullValue()));
+	}
+
 	@Test(expected = ArangoDBException.class)
 	public void getDocumentNotFoundThrowException() {
 		db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class,
