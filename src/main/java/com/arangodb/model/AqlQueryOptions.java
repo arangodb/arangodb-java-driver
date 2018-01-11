@@ -35,6 +35,7 @@ public class AqlQueryOptions {
 	private Integer ttl;
 	private Integer batchSize;
 	private Boolean cache;
+	private Long memoryLimit;
 	private Map<String, Object> bindVars;
 	private String query;
 	private Options options;
@@ -89,6 +90,22 @@ public class AqlQueryOptions {
 	 */
 	public AqlQueryOptions batchSize(final Integer batchSize) {
 		this.batchSize = batchSize;
+		return this;
+	}
+
+	public Long getMemoryLimit() {
+		return memoryLimit;
+	}
+
+	/**
+	 * @param memoryLimit
+	 *            the maximum number of memory (measured in bytes) that the query is allowed to use. If set, then the
+	 *            query will fail with error "resource limit exceeded" in case it allocates too much memory. A value of
+	 *            0 indicates that there is no memory limit.
+	 * @return options
+	 */
+	public AqlQueryOptions memoryLimit(final Long memoryLimit) {
+		this.memoryLimit = memoryLimit;
 		return this;
 	}
 

@@ -633,6 +633,16 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void queryWithMemoryLimit() {
+		try {
+			db.query("RETURN 'bla'", null, new AqlQueryOptions().memoryLimit(1L), String.class);
+			fail();
+		} catch (final ArangoDBException e) {
+			assertThat(e.getErrorNum(), is(32));
+		}
+	}
+
+	@Test
 	public void queryCursor() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
