@@ -153,6 +153,24 @@ public class AqlQueryOptions {
 		return this;
 	}
 
+	public Boolean getFailOnWarning() {
+		return options != null ? options.failOnWarning : null;
+	}
+
+	/**
+	 * @param failOnWarning
+	 *            When set to true, the query will throw an exception and abort instead of producing a warning. This
+	 *            option should be used during development to catch potential issues early. When the attribute is set to
+	 *            false, warnings will not be propagated to exceptions and will be returned with the query result. There
+	 *            is also a server configuration option --query.fail-on-warning for setting the default value for
+	 *            failOnWarning so it does not need to be set on a per-query level.
+	 * @return options
+	 */
+	public AqlQueryOptions failOnWarning(final Boolean failOnWarning) {
+		getOptions().failOnWarning = failOnWarning;
+		return this;
+	}
+
 	/**
 	 * @return If set to true, then the additional query profiling information will be returned in the sub-attribute
 	 *         profile of the extra return attribute if the query result is not served from the query cache.
@@ -169,6 +187,81 @@ public class AqlQueryOptions {
 	 */
 	public AqlQueryOptions profile(final Boolean profile) {
 		getOptions().profile = profile;
+		return this;
+	}
+
+	public Long getMaxTransactionSize() {
+		return options != null ? options.maxTransactionSize : null;
+	}
+
+	/**
+	 * @param maxTransactionSize
+	 *            Transaction size limit in bytes. Honored by the RocksDB storage engine only.
+	 * @return options
+	 */
+	public AqlQueryOptions maxTransactionSize(final Long maxTransactionSize) {
+		getOptions().maxTransactionSize = maxTransactionSize;
+		return this;
+	}
+
+	public Long getMaxWarningCount() {
+		return options != null ? options.maxWarningCount : null;
+	}
+
+	/**
+	 * @param maxWarningCount
+	 *            Limits the maximum number of warnings a query will return. The number of warnings a query will return
+	 *            is limited to 10 by default, but that number can be increased or decreased by setting this attribute.
+	 * @return options
+	 */
+	public AqlQueryOptions maxWarningCount(final Long maxWarningCount) {
+		getOptions().maxWarningCount = maxWarningCount;
+		return this;
+	}
+
+	public Long getIntermediateCommitCount() {
+		return options != null ? options.intermediateCommitCount : null;
+	}
+
+	/**
+	 * @param intermediateCommitCount
+	 *            Maximum number of operations after which an intermediate commit is performed automatically. Honored by
+	 *            the RocksDB storage engine only.
+	 * @return options
+	 */
+	public AqlQueryOptions intermediateCommitCount(final Long intermediateCommitCount) {
+		getOptions().intermediateCommitCount = intermediateCommitCount;
+		return this;
+	}
+
+	public Long getIntermediateCommitSize() {
+		return options != null ? options.intermediateCommitSize : null;
+	}
+
+	/**
+	 * @param intermediateCommitSize
+	 *            Maximum total size of operations after which an intermediate commit is performed automatically.
+	 *            Honored by the RocksDB storage engine only.
+	 * @return options
+	 */
+	public AqlQueryOptions intermediateCommitSize(final Long intermediateCommitSize) {
+		getOptions().intermediateCommitSize = intermediateCommitSize;
+		return this;
+	}
+
+	public Double getSatelliteSyncWait() {
+		return options != null ? options.satelliteSyncWait : null;
+	}
+
+	/**
+	 * @param satelliteSyncWait
+	 *            This enterprise parameter allows to configure how long a DBServer will have time to bring the
+	 *            satellite collections involved in the query into sync. The default value is 60.0 (seconds). When the
+	 *            max time has been reached the query will be stopped.
+	 * @return options
+	 */
+	public AqlQueryOptions satelliteSyncWait(final Double satelliteSyncWait) {
+		getOptions().satelliteSyncWait = satelliteSyncWait;
 		return this;
 	}
 
@@ -234,7 +327,13 @@ public class AqlQueryOptions {
 	}
 
 	private static class Options {
+		private Boolean failOnWarning;
 		private Boolean profile;
+		private Long maxTransactionSize;
+		private Long maxWarningCount;
+		private Long intermediateCommitCount;
+		private Long intermediateCommitSize;
+		private Double satelliteSyncWait;
 		private Optimizer optimizer;
 		private Boolean fullCount;
 		private Integer maxPlans;

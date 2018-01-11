@@ -642,6 +642,28 @@ public class ArangoDatabaseTest extends BaseTest {
 		}
 	}
 
+	@Test(expected = ArangoDBException.class)
+	public void queryWithFailOnWarningTrue() {
+		db.query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(true), String.class);
+	}
+
+	@Test
+	public void queryWithFailOnWarningFalse() {
+		final ArangoCursor<String> cursor = db.query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(false),
+			String.class);
+		assertThat(cursor.next(), is("null"));
+	}
+
+	@Test
+	public void queryWithMaxWarningCount() {
+		final ArangoCursor<String> cursorWithWarnings = db.query("RETURN 1 / 0", null, new AqlQueryOptions(),
+			String.class);
+		assertThat(cursorWithWarnings.getWarnings().size(), is(1));
+		final ArangoCursor<String> cursorWithLimitedWarnings = db.query("RETURN 1 / 0", null,
+			new AqlQueryOptions().maxWarningCount(0L), String.class);
+		assertThat(cursorWithLimitedWarnings.getWarnings().size(), is(0));
+	}
+
 	@Test
 	public void queryCursor() {
 		try {

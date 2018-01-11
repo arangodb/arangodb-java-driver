@@ -1,7 +1,13 @@
 v4.3.3 (2018-xx-xx)
 ---------------------------
-* added AqlQueryOptions.memoryLimit(Long)
 * fixed inconsistency of getDocument() variants (Issue #168)
+* added AqlQueryOptions.memoryLimit(Long)
+* added AqlQueryOptions.failOnWarning(Boolean)
+* added AqlQueryOptions.maxTransactionSize(Long)
+* added AqlQueryOptions.maxWarningCount(Long)
+* added AqlQueryOptions.intermediateCommitCount(Long)
+* added AqlQueryOptions.intermediateCommitSize(Long)
+* added AqlQueryOptions.satelliteSyncWait(Double)
 
 v4.3.2 (2017-11-30)
 ---------------------------
