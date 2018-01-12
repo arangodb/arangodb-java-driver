@@ -21,6 +21,7 @@
 package com.arangodb.entity;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -34,6 +35,8 @@ public class QueryEntity {
 	private String query;
 	private Date started;
 	private Double runTime;
+	private Map<String, Object> bindVars;
+	private QueryExecutionState state;
 
 	public QueryEntity() {
 		super();
@@ -66,6 +69,20 @@ public class QueryEntity {
 	 */
 	public Double getRunTime() {
 		return runTime;
+	}
+
+	/**
+	 * @return the bind parameter values used by the query
+	 */
+	public Map<String, Object> getBindVars() {
+		return bindVars;
+	}
+
+	/**
+	 * @return the query's current execution state
+	 */
+	public QueryExecutionState getState() {
+		return state;
 	}
 
 }

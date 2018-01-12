@@ -11,6 +11,8 @@ v4.3.3 (2018-xx-xx)
 * added TransactionOptions.maxTransactionSize(Long)
 * added TransactionOptions.intermediateCommitCount(Long)
 * added TransactionOptions.intermediateCommitSize(Long)
+* added QueryEntity.getBindVars(): Map<String, Object>
+* added QueryEntity.getState(): QueryExecutionState
 
 v4.3.2 (2017-11-30)
 ---------------------------

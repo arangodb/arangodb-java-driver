@@ -32,6 +32,7 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryEntity;
+import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
@@ -78,6 +79,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerDeserializer(LogLevel.class, VPackDeserializers.LOG_LEVEL);
 		context.registerDeserializer(ArangoDBVersion.License.class, VPackDeserializers.LICENSE);
 		context.registerDeserializer(Permissions.class, VPackDeserializers.PERMISSIONS);
+		context.registerDeserializer(QueryExecutionState.class, VPackDeserializers.QUERY_EXECUTION_STATE);
 	}
 
 	@Override

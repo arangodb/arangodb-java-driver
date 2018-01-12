@@ -66,6 +66,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.QueryEntity;
+import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.TraversalEntity;
@@ -843,6 +844,7 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(currentlyRunningQueries.size(), is(1));
 			final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
 			assertThat(queryEntity.getQuery(), is("return sleep(0.2)"));
+			assertThat(queryEntity.getState(), is(QueryExecutionState.EXECUTING));
 		} finally {
 			t.join();
 		}

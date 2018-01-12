@@ -36,6 +36,7 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
+import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -155,6 +156,16 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			return Permissions.valueOf(vpack.getAsString().toUpperCase());
+		}
+	};
+
+	public static final VPackDeserializer<QueryExecutionState> QUERY_EXECUTION_STATE = new VPackDeserializer<QueryExecutionState>() {
+		@Override
+		public QueryExecutionState deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return QueryExecutionState.valueOf(vpack.getAsString().toUpperCase().replaceAll(" ", "_"));
 		}
 	};
 }
