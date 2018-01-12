@@ -826,6 +826,7 @@ public class ArangoCollection
 	 * @param isSystem
 	 *            Whether or not the collection to drop is a system collection. This parameter must be set to true in
 	 *            order to drop a system collection.
+	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
 	public void drop(final boolean isSystem) throws ArangoDBException {

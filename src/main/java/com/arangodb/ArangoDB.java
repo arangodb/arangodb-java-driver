@@ -836,6 +836,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * Returns the server's current loglevel settings.
 	 * 
 	 * @return the server's current loglevel settings
+	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
 	public LogLevelEntity getLogLevel() throws ArangoDBException {
@@ -848,6 +849,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @param entity
 	 *            loglevel settings
 	 * @return the server's current loglevel settings
+	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
 	public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
