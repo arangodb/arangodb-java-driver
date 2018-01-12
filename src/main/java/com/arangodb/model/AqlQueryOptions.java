@@ -102,6 +102,7 @@ public class AqlQueryOptions {
 	 *            the maximum number of memory (measured in bytes) that the query is allowed to use. If set, then the
 	 *            query will fail with error "resource limit exceeded" in case it allocates too much memory. A value of
 	 *            0 indicates that there is no memory limit.
+	 * @since ArangoDB 3.1.0
 	 * @return options
 	 */
 	public AqlQueryOptions memoryLimit(final Long memoryLimit) {
@@ -197,6 +198,7 @@ public class AqlQueryOptions {
 	/**
 	 * @param maxTransactionSize
 	 *            Transaction size limit in bytes. Honored by the RocksDB storage engine only.
+	 * @since ArangoDB 3.2.0
 	 * @return options
 	 */
 	public AqlQueryOptions maxTransactionSize(final Long maxTransactionSize) {
@@ -212,6 +214,7 @@ public class AqlQueryOptions {
 	 * @param maxWarningCount
 	 *            Limits the maximum number of warnings a query will return. The number of warnings a query will return
 	 *            is limited to 10 by default, but that number can be increased or decreased by setting this attribute.
+	 * @since ArangoDB 3.2.0
 	 * @return options
 	 */
 	public AqlQueryOptions maxWarningCount(final Long maxWarningCount) {
@@ -227,6 +230,7 @@ public class AqlQueryOptions {
 	 * @param intermediateCommitCount
 	 *            Maximum number of operations after which an intermediate commit is performed automatically. Honored by
 	 *            the RocksDB storage engine only.
+	 * @since ArangoDB 3.2.0
 	 * @return options
 	 */
 	public AqlQueryOptions intermediateCommitCount(final Long intermediateCommitCount) {
@@ -242,6 +246,7 @@ public class AqlQueryOptions {
 	 * @param intermediateCommitSize
 	 *            Maximum total size of operations after which an intermediate commit is performed automatically.
 	 *            Honored by the RocksDB storage engine only.
+	 * @since ArangoDB 3.2.0
 	 * @return options
 	 */
 	public AqlQueryOptions intermediateCommitSize(final Long intermediateCommitSize) {
@@ -258,6 +263,7 @@ public class AqlQueryOptions {
 	 *            This enterprise parameter allows to configure how long a DBServer will have time to bring the
 	 *            satellite collections involved in the query into sync. The default value is 60.0 (seconds). When the
 	 *            max time has been reached the query will be stopped.
+	 * @since ArangoDB 3.2.0
 	 * @return options
 	 */
 	public AqlQueryOptions satelliteSyncWait(final Double satelliteSyncWait) {

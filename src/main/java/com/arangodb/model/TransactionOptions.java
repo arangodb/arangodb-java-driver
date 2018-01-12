@@ -133,6 +133,12 @@ public class TransactionOptions {
 		return maxTransactionSize;
 	}
 
+	/**
+	 * @param maxTransactionSize
+	 *            Transaction size limit in bytes. Honored by the RocksDB storage engine only.
+	 * @since ArangoDB 3.2.0
+	 * @return options
+	 */
 	public TransactionOptions maxTransactionSize(final Long maxTransactionSize) {
 		this.maxTransactionSize = maxTransactionSize;
 		return this;
@@ -142,6 +148,13 @@ public class TransactionOptions {
 		return intermediateCommitCount;
 	}
 
+	/**
+	 * @param intermediateCommitCount
+	 *            Maximum number of operations after which an intermediate commit is performed automatically. Honored by
+	 *            the RocksDB storage engine only.
+	 * @since ArangoDB 3.2.0
+	 * @return options
+	 */
 	public TransactionOptions intermediateCommitCount(final Long intermediateCommitCount) {
 		this.intermediateCommitCount = intermediateCommitCount;
 		return this;
@@ -151,6 +164,13 @@ public class TransactionOptions {
 		return intermediateCommitSize;
 	}
 
+	/**
+	 * @param intermediateCommitSize
+	 *            Maximum total size of operations after which an intermediate commit is performed automatically.
+	 *            Honored by the RocksDB storage engine only.
+	 * @since ArangoDB 3.2.0
+	 * @return options
+	 */
 	public TransactionOptions intermediateCommitSize(final Long intermediateCommitSize) {
 		this.intermediateCommitSize = intermediateCommitSize;
 		return this;
