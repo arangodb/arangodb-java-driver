@@ -271,6 +271,26 @@ public class AqlQueryOptions {
 		return this;
 	}
 
+	public Boolean getSkipInaccessibleCollections() {
+		return options != null ? options.skipInaccessibleCollections : null;
+	}
+
+	/**
+	 * @param skipInaccessibleCollections
+	 *            AQL queries (especially graph traversals) will treat collection to which a user has no access rights
+	 *            as if these collections were empty. Instead of returning a forbidden access error, your queries will
+	 *            execute normally. This is intended to help with certain use-cases: A graph contains several
+	 *            collections and different users execute AQL queries on that graph. You can now naturally limit the
+	 *            accessible results by changing the access rights of users on collections. This feature is only
+	 *            available in the Enterprise Edition.
+	 * @since ArangoDB 3.2.0
+	 * @return options
+	 */
+	public AqlQueryOptions skipInaccessibleCollections(final Boolean skipInaccessibleCollections) {
+		getOptions().skipInaccessibleCollections = skipInaccessibleCollections;
+		return this;
+	}
+
 	public Boolean getFullCount() {
 		return options != null ? options.fullCount : null;
 	}
@@ -340,6 +360,7 @@ public class AqlQueryOptions {
 		private Long intermediateCommitCount;
 		private Long intermediateCommitSize;
 		private Double satelliteSyncWait;
+		private Boolean skipInaccessibleCollections;
 		private Optimizer optimizer;
 		private Boolean fullCount;
 		private Integer maxPlans;
