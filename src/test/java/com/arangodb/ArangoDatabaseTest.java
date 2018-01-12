@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -749,7 +748,6 @@ public class ArangoDatabaseTest extends BaseTest {
 
 		assertThat(cursor, is(notNullValue()));
 		assertThat(cursor.getWarnings(), is(notNullValue()));
-		assertThat(cursor.getWarnings(), is(not(empty())));
 	}
 
 	@Test
