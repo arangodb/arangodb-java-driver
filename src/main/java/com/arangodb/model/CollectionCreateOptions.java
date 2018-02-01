@@ -44,6 +44,7 @@ public class CollectionCreateOptions {
 	private Boolean isSystem;
 	private CollectionType type;
 	private Integer indexBuckets;
+	private String distributeShardsLike;
 
 	public CollectionCreateOptions() {
 		super();
@@ -254,6 +255,24 @@ public class CollectionCreateOptions {
 	 */
 	public CollectionCreateOptions indexBuckets(final Integer indexBuckets) {
 		this.indexBuckets = indexBuckets;
+		return this;
+	}
+
+	public String getDistributeShardsLike() {
+		return distributeShardsLike;
+	}
+
+	/**
+	 * @param distributeShardsLike
+	 *            (The default is ""): in an enterprise cluster, this attribute binds the specifics of sharding for the
+	 *            newly created collection to follow that of a specified existing collection. Note: Using this parameter
+	 *            has consequences for the prototype collection. It can no longer be dropped, before sharding imitating
+	 *            collections are dropped. Equally, backups and restores of imitating collections alone will generate
+	 *            warnings, which can be overridden, about missing sharding prototype.
+	 * @return options
+	 */
+	public CollectionCreateOptions distributeShardsLike(final String distributeShardsLike) {
+		this.distributeShardsLike = distributeShardsLike;
 		return this;
 	}
 

@@ -52,6 +52,7 @@ import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.ArangoDBVersion.License;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -194,6 +195,18 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(properties.getShardKeys().size(), is(2));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void createCollectionWithDistributeShardsLike() {
+		if (arangoDB.getVersion().getLicense() == License.ENTERPRISE && arangoDB.getRole() != ServerRole.SINGLE) {
+			final Integer numberOfShards = 3;
+			db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(numberOfShards));
+			db.createCollection(COLLECTION_NAME + "2",
+				new CollectionCreateOptions().distributeShardsLike(COLLECTION_NAME));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(numberOfShards));
+			assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
 		}
 	}
 
