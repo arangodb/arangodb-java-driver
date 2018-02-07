@@ -66,6 +66,10 @@ public class ArangoGraphTest extends BaseTest {
 	}
 
 	public void setup() {
+		try {
+			db.graph(GRAPH_NAME).drop();
+		} catch (final ArangoDBException e1) {
+		}
 		for (final String collection : new String[] { VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_2, VERTEX_COL_3,
 				VERTEX_COL_4 }) {
 			try {
@@ -141,6 +145,7 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(graph, is(notNullValue()));
 		final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections();
 		assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4));
+		setup();
 	}
 
 	@Test
@@ -171,6 +176,7 @@ public class ArangoGraphTest extends BaseTest {
 				assertThat(e.getTo(), hasItem(VERTEX_COL_2));
 			}
 		}
+		setup();
 	}
 
 	@Test
@@ -192,6 +198,7 @@ public class ArangoGraphTest extends BaseTest {
 				assertThat(e.getTo(), hasItem(VERTEX_COL_4));
 			}
 		}
+		setup();
 	}
 
 	@Test
@@ -200,12 +207,23 @@ public class ArangoGraphTest extends BaseTest {
 		final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
 		assertThat(edgeDefinitions.size(), is(1));
 		assertThat(edgeDefinitions.iterator().next().getCollection(), is(EDGE_COL_2));
+		setup();
 	}
 
 	@Test
 	public void smartGraph() {
 		if (arangoDB.getVersion().getLicense() == License.ENTERPRISE) {
-			teardown();
+			for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2,
+					VERTEX_COL_3, VERTEX_COL_4 }) {
+				try {
+					db.collection(collection).drop();
+				} catch (final ArangoDBException e) {
+				}
+			}
+			try {
+				db.graph(GRAPH_NAME).drop();
+			} catch (final ArangoDBException e) {
+			}
 			final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
 			edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
 			edgeDefinitions
