@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -47,16 +47,17 @@ public class DocumentTest extends BaseTest {
 
 	public DocumentTest(final Builder builder) {
 		super(builder);
+		setup();
 	}
 
-	@Before
 	public void setup() {
-		collection = db.collection(COLLECTION_NAME);
-		try {
-			collection.drop();
-		} catch (final ArangoDBException e) {
-		}
 		db.createCollection(COLLECTION_NAME);
+		collection = db.collection(COLLECTION_NAME);
+	}
+
+	@After
+	public void teardown() {
+		collection.truncate();
 	}
 
 	@SuppressWarnings("unchecked")

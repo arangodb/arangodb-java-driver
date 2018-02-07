@@ -31,7 +31,6 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -58,9 +57,9 @@ public class ArangoVertexCollectionTest extends BaseTest {
 
 	public ArangoVertexCollectionTest(final Builder builder) {
 		super(builder);
+		setup();
 	}
 
-	@Before
 	public void setup() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
@@ -72,11 +71,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
 
 	@After
 	public void teardown() {
-		try {
-			db.collection(COLLECTION_NAME).drop();
-		} catch (final ArangoDBException e) {
-		}
-		db.graph(GRAPH_NAME).drop();
+		db.collection(COLLECTION_NAME).truncate();
 	}
 
 	@Test

@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -63,9 +62,9 @@ public class ArangoGraphTest extends BaseTest {
 
 	public ArangoGraphTest(final Builder builder) {
 		super(builder);
+		setup();
 	}
 
-	@Before
 	public void setup() {
 		for (final String collection : new String[] { VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_2, VERTEX_COL_3,
 				VERTEX_COL_4 }) {
@@ -92,12 +91,8 @@ public class ArangoGraphTest extends BaseTest {
 	public void teardown() {
 		for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3,
 				VERTEX_COL_4 }) {
-			try {
-				db.collection(collection).drop();
-			} catch (final ArangoDBException e) {
-			}
+			db.collection(collection).truncate();
 		}
-		db.graph(GRAPH_NAME).drop();
 	}
 
 	@Test

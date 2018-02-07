@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -87,16 +86,12 @@ public class ArangoCollectionTest extends BaseTest {
 
 	public ArangoCollectionTest(final Builder builder) {
 		super(builder);
-	}
-
-	@Before
-	public void setup() {
 		db.createCollection(COLLECTION_NAME, null);
 	}
 
 	@After
 	public void teardown() {
-		db.collection(COLLECTION_NAME).drop();
+		db.collection(COLLECTION_NAME).truncate();
 	}
 
 	@Test
