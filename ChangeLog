@@ -1,6 +1,7 @@
 v4.3.4 (2018-xx-xx)
 ---------------------------
 * made ErrorEntity serializable (Issue #178)
+* fixed VelocyStream multi-thread authentication bug
 
 v4.3.3 (2018-02-01)
 ---------------------------
