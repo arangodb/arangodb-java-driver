@@ -20,12 +20,17 @@
 
 package com.arangodb.entity;
 
+import java.io.Serializable;
+
 /**
  * @author Mark Vollmary
  *
  */
-public class ErrorEntity {
-
+public class ErrorEntity implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5918898261563691261L;
 	private String errorMessage;
 	private String exception;
 	private int code;
