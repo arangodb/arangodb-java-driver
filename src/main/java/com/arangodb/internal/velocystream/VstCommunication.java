@@ -74,7 +74,7 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
 	}
 
-	protected void connect(final C connection) {
+	protected synchronized void connect(final C connection) {
 		if (!connection.isOpen()) {
 			try {
 				connection.open();
