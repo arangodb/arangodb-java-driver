@@ -50,6 +50,7 @@ import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.UserAccessOptions;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -174,8 +175,9 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options) {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(
-			util().serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(util().serialize(
+			OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars != null
+					? util().serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) : null)));
 	}
 
 	protected Request queryNextRequest(final String id) {

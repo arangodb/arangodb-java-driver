@@ -21,7 +21,8 @@
 package com.arangodb.model;
 
 import java.util.Collection;
-import java.util.Map;
+
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -36,7 +37,7 @@ public class AqlQueryOptions {
 	private Integer batchSize;
 	private Boolean cache;
 	private Long memoryLimit;
-	private Map<String, Object> bindVars;
+	private VPackSlice bindVars;
 	private String query;
 	private Options options;
 
@@ -126,7 +127,7 @@ public class AqlQueryOptions {
 		return this;
 	}
 
-	protected Map<String, Object> getBindVars() {
+	protected VPackSlice getBindVars() {
 		return bindVars;
 	}
 
@@ -135,7 +136,7 @@ public class AqlQueryOptions {
 	 *            key/value pairs representing the bind parameters
 	 * @return options
 	 */
-	protected AqlQueryOptions bindVars(final Map<String, Object> bindVars) {
+	protected AqlQueryOptions bindVars(final VPackSlice bindVars) {
 		this.bindVars = bindVars;
 		return this;
 	}

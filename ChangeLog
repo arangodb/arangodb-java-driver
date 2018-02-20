@@ -1,5 +1,7 @@
 v4.3.4 (2018-xx-xx)
 ---------------------------
+
+* fixed serialization of bind parameter with null values (Issue #177)
 * made ErrorEntity serializable (Issue #178)
 * fixed VelocyStream multi-thread authentication bug
 
