@@ -153,6 +153,7 @@
 						</goals>
 						<configuration>
 							<additionalparam>${javadoc.opts}</additionalparam>
+							<excludePackageNames>com.arangodb.internal</excludePackageNames>
 						</configuration>
 					</execution>
 				</executions>
