@@ -1822,13 +1822,19 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void changeProperties() {
-		final CollectionPropertiesEntity properties = db.collection(COLLECTION_NAME).getProperties();
-		assertThat(properties.getWaitForSync(), is(notNullValue()));
-		final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
-		options.waitForSync(!properties.getWaitForSync());
-		final CollectionPropertiesEntity changedProperties = db.collection(COLLECTION_NAME).changeProperties(options);
-		assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
-		assertThat(changedProperties.getWaitForSync(), is(not(properties.getWaitForSync())));
+		final String collection = COLLECTION_NAME + "_prop";
+		try {
+			final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+			assertThat(properties.getWaitForSync(), is(notNullValue()));
+			final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
+			options.waitForSync(!properties.getWaitForSync());
+			options.journalSize(2000000L);
+			final CollectionPropertiesEntity changedProperties = db.collection(collection).changeProperties(options);
+			assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
+			assertThat(changedProperties.getWaitForSync(), is(not(properties.getWaitForSync())));
+		} finally {
+			db.collection(collection).drop();
+		}
 	}
 
 	@Test
