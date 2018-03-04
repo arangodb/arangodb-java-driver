@@ -7,8 +7,8 @@
 
 The official ArangoDB Java Driver.
 
-- [Getting Started](GettingStarted/README.md)
-- [Reference](Reference/README.md)
+- [Getting Started](docs/Drivers/Java/GettingStarted/README.md)
+- [Reference](docs/Drivers/Java/Reference/README.md)
 
 ## Learn more
 
