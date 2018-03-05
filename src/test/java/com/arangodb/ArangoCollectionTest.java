@@ -1824,6 +1824,7 @@ public class ArangoCollectionTest extends BaseTest {
 	public void changeProperties() {
 		final String collection = COLLECTION_NAME + "_prop";
 		try {
+			db.createCollection(collection);
 			final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
 			assertThat(properties.getWaitForSync(), is(notNullValue()));
 			final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
