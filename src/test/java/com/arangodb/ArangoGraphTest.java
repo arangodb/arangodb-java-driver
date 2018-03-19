@@ -95,7 +95,10 @@ public class ArangoGraphTest extends BaseTest {
 	public void teardown() {
 		for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3,
 				VERTEX_COL_4 }) {
-			db.collection(collection).truncate();
+			final ArangoCollection c = db.collection(collection);
+			if (c.exists()) {
+				c.truncate();
+			}
 		}
 	}
 
