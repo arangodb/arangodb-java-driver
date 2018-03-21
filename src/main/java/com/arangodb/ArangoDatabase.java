@@ -355,8 +355,9 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
 		final Request request = queryRequest(query, bindVars, options);
-		final CursorEntity result = executor.execute(request, CursorEntity.class);
-		return createCursor(result, type);
+		final HostHandle hostHandle = new HostHandle();
+		final CursorEntity result = executor.execute(request, CursorEntity.class, hostHandle);
+		return createCursor(result, type, hostHandle);
 	}
 
 	/**
@@ -373,19 +374,23 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @throws ArangoDBException
 	 */
 	public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
-		final CursorEntity result = executor.execute(queryNextRequest(cursorId), CursorEntity.class);
-		return createCursor(result, type);
+		final HostHandle hostHandle = new HostHandle();
+		final CursorEntity result = executor.execute(queryNextRequest(cursorId), CursorEntity.class, hostHandle);
+		return createCursor(result, type, hostHandle);
 	}
 
-	private <T> ArangoCursor<T> createCursor(final CursorEntity result, final Class<T> type) {
+	private <T> ArangoCursor<T> createCursor(
+		final CursorEntity result,
+		final Class<T> type,
+		final HostHandle hostHandle) {
 		final ArangoCursorExecute execute = new ArangoCursorExecute() {
 			@Override
-			public CursorEntity next(final String id, final HostHandle hostHandle) {
+			public CursorEntity next(final String id) {
 				return executor.execute(queryNextRequest(id), CursorEntity.class, hostHandle);
 			}
 
 			@Override
-			public void close(final String id, final HostHandle hostHandle) {
+			public void close(final String id) {
 				executor.execute(queryCloseRequest(id), Void.class, hostHandle);
 			}
 		};

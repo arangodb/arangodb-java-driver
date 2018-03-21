@@ -149,6 +149,9 @@ public class HttpConnection implements Connection {
 
 	@Override
 	public Host getHost() {
+		if (host == null) {
+			host = hostHandler.get();
+		}
 		return host;
 	}
 
