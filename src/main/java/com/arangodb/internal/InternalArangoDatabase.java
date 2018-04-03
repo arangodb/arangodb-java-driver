@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
@@ -260,6 +261,20 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
 		request.putQueryParam(ArangoDBConstants.NAMESPACE, params.getNamespace());
 		return request;
+	}
+
+	protected ResponseDeserializer<Collection<AqlFunctionEntity>> getAqlFunctionsResponseDeserializer() {
+		return new ResponseDeserializer<Collection<AqlFunctionEntity>>() {
+			@Override
+			public Collection<AqlFunctionEntity> deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				// compatibility with ArangoDB < 3.4
+				// https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+				final VPackSlice result = body.isArray() ? body : body.get(ArangoDBConstants.RESULT);
+				return util().deserialize(result, new Type<Collection<AqlFunctionEntity>>() {
+				}.getType());
+			}
+		};
 	}
 
 	protected Request createGraphRequest(

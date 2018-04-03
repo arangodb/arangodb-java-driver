@@ -604,8 +604,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @throws ArangoDBException
 	 */
 	public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
-		return executor.execute(getAqlFunctionsRequest(options), new Type<Collection<AqlFunctionEntity>>() {
-		}.getType());
+		return executor.execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
 	}
 
 	/**
