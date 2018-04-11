@@ -22,6 +22,7 @@ package com.arangodb.internal.velocystream.internal;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -93,6 +94,8 @@ public class ConnectionSync extends VstConnection {
 		} catch (final InterruptedException e) {
 			throw new ArangoDBException(e);
 		} catch (final ExecutionException e) {
+			throw new ArangoDBException(e);
+		} catch (final CancellationException e) {
 			throw new ArangoDBException(e);
 		}
 	}
