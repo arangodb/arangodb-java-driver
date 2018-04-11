@@ -1,4 +1,4 @@
-v4.x.x (2018-xx-xx)
+v4.3.5 (2018-04-11)
 ---------------------------
 
 * fixed compatibility for ArangoDatabase.getAqlFunctions() for ArangoDB 3.4
