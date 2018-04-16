@@ -231,7 +231,6 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		/**
 		 * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
-		 * Only used by VelocyStream protocol!
 		 * 
 		 * @param connectionTtl
 		 *            the maximum time to life of a connection.
