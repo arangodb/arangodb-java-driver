@@ -42,6 +42,7 @@ public class ConnectionSync extends VstConnection {
 		private final MessageStore messageStore;
 		private HostHandler hostHandler;
 		private Integer timeout;
+		private Long ttl;
 		private Boolean useSsl;
 		private SSLContext sslContext;
 
@@ -70,14 +71,19 @@ public class ConnectionSync extends VstConnection {
 			return this;
 		}
 
+		public Builder ttl(final Long ttl) {
+			this.ttl = ttl;
+			return this;
+		}
+
 		public ConnectionSync build() {
-			return new ConnectionSync(hostHandler, timeout, useSsl, sslContext, messageStore);
+			return new ConnectionSync(hostHandler, timeout, ttl, useSsl, sslContext, messageStore);
 		}
 	}
 
-	private ConnectionSync(final HostHandler hostHandler, final Integer timeout, final Boolean useSsl,
+	private ConnectionSync(final HostHandler hostHandler, final Integer timeout, final Long ttl, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
-		super(hostHandler, timeout, useSsl, sslContext, messageStore);
+		super(hostHandler, timeout, ttl, useSsl, sslContext, messageStore);
 	}
 
 	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {

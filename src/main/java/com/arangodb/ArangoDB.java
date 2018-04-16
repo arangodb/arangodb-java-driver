@@ -109,6 +109,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		private SSLContext sslContext;
 		private Integer chunksize;
 		private Integer maxConnections;
+		private Long connectionTtl;
 		private final VPack.Builder vpackBuilder;
 		private final VPackParser.Builder vpackParserBuilder;
 		private ArangoSerializer serializer;
@@ -144,6 +145,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 					useSsl = loadUseSsl(properties, useSsl);
 					chunksize = loadChunkSize(properties, chunksize);
 					maxConnections = loadMaxConnections(properties, maxConnections);
+					connectionTtl = loadConnectionTtl(properties, connectionTtl);
 					protocol = loadProtocol(properties, protocol);
 					acquireHostList = loadAcquireHostList(properties, acquireHostList);
 					loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
@@ -224,6 +226,19 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 		public Builder maxConnections(final Integer maxConnections) {
 			this.maxConnections = maxConnections;
+			return this;
+		}
+
+		/**
+		 * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
+		 * Only used by VelocyStream protocol!
+		 * 
+		 * @param connectionTtl
+		 *            the maximum time to life of a connection.
+		 * @return {@link ArangoDB.Builder}
+		 */
+		public Builder connectionTtl(final Long connectionTtl) {
+			this.connectionTtl = connectionTtl;
 			return this;
 		}
 
@@ -381,9 +396,11 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 			final HostHandler hostHandler = createHostHandler(hostResolver);
 			return new ArangoDB(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections),
+							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+							.connectionTtl(connectionTtl),
 					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections),
+							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections)
+							.connectionTtl(connectionTtl),
 					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol, hostResolver);
 		}
 

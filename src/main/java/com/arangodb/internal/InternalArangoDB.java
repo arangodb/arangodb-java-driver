@@ -66,6 +66,7 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
 	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
+	private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
 	private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
 	private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
@@ -133,6 +134,11 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	protected static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
 			ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT));
+	}
+
+	protected static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
+		return Long.parseLong(getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
+			ArangoDBConstants.CONNECTION_TTL_VST_DEFAULT));
 	}
 
 	protected static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {

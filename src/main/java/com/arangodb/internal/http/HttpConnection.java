@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -107,7 +108,7 @@ public class HttpConnection implements Connection {
 
 	public HttpConnection(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
-		final Protocol contentType) {
+		final Protocol contentType, final Long ttl) {
 		super();
 		this.user = user;
 		this.password = password;
@@ -144,6 +145,9 @@ public class HttpConnection implements Connection {
 		final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
 				.setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
 				.setRetryHandler(new DefaultHttpRequestRetryHandler());
+		if (ttl != null) {
+			builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
+		}
 		client = builder.build();
 	}
 

@@ -49,6 +49,7 @@ public class HttpCommunication {
 		private final HostHandler hostHandler;
 		private final Protocol protocol;
 		private Integer timeout;
+		private Long connectionTtl;
 		private String user;
 		private String password;
 		private Boolean useSsl;
@@ -97,9 +98,14 @@ public class HttpCommunication {
 			return this;
 		}
 
+		public Builder connectionTtl(final Long connectionTtl) {
+			this.connectionTtl = connectionTtl;
+			return this;
+		}
+
 		public HttpCommunication build(final ArangoSerialization util) {
 			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler, maxConnections,
-					protocol);
+					protocol, connectionTtl);
 		}
 	}
 
@@ -107,14 +113,14 @@ public class HttpCommunication {
 
 	private HttpCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
-		final Integer maxConnections, final Protocol contentType) {
+		final Integer maxConnections, final Protocol contentType, final Long connectionTtl) {
 		super();
 		connectionPool = new ConnectionPool<HttpConnection>(
 				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_HTTP_DEFAULT) {
 			@Override
 			public HttpConnection createConnection(final Host host) {
 				return new HttpConnection(timeout, user, password, useSsl, sslContext, util,
-						new DelHostHandler(hostHandler, host), contentType);
+						new DelHostHandler(hostHandler, host), contentType, connectionTtl);
 			}
 		};
 	}

@@ -29,6 +29,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,6 +63,7 @@ public abstract class VstConnection implements Connection {
 
 	private final HostHandler hostHandler;
 	private final Integer timeout;
+	private final Long ttl;
 	private final Boolean useSsl;
 	private final SSLContext sslContext;
 
@@ -71,11 +73,12 @@ public abstract class VstConnection implements Connection {
 
 	private Host host;
 
-	protected VstConnection(final HostHandler hostHandler, final Integer timeout, final Boolean useSsl,
+	protected VstConnection(final HostHandler hostHandler, final Integer timeout, final Long ttl, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
 		super();
 		this.hostHandler = hostHandler;
 		this.timeout = timeout;
+		this.ttl = ttl;
 		this.useSsl = useSsl;
 		this.sslContext = sslContext;
 		this.messageStore = messageStore;
@@ -151,8 +154,15 @@ public abstract class VstConnection implements Connection {
 		executor.submit(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				final long openTime = new Date().getTime();
+				final Long ttlTime = ttl != null ? openTime + ttl : null;
 				final ChunkStore chunkStore = new ChunkStore(messageStore);
 				while (true) {
+					if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {
+						close();
+						hostHandler.fail();
+						break;
+					}
 					if (!isOpen()) {
 						messageStore.clear(new IOException("The socket is closed."));
 						close();
