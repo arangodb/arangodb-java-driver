@@ -137,8 +137,9 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	}
 
 	protected static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
-		return Long.parseLong(getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
-			ArangoDBConstants.CONNECTION_TTL_VST_DEFAULT));
+		final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
+			ArangoDBConstants.CONNECTION_TTL_VST_DEFAULT);
+		return ttl != null ? Long.parseLong(ttl) : null;
 	}
 
 	protected static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
