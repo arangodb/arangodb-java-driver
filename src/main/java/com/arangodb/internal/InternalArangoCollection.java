@@ -394,8 +394,10 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(
-			util().serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
+		request.setBody(util().serialize(values,
+			new ArangoSerializer.Options()
+					.serializeNullValues(params.getSerializeNull() == null || params.getSerializeNull())
+					.stringAsJson(true)));
 		return request;
 	}
 
