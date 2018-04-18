@@ -191,6 +191,7 @@ public class HttpConnection implements Connection {
 		host = hostHandler.get();
 		while (true) {
 			if (host == null) {
+				hostHandler.reset();
 				throw new ArangoDBException("Was not able to connect to any host");
 			}
 			try {

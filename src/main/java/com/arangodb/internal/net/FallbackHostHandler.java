@@ -62,4 +62,9 @@ public class FallbackHostHandler implements HostHandler {
 		}
 	}
 
+	@Override
+	public void reset() {
+		iterations = 0;
+	}
+
 }

@@ -1,8 +1,9 @@
 v4.3.8 (2018-xx-xx)
 ---------------------------
 
-* Changed dependency com.arangodb:velocypack to 1.0.15
+* changed dependency com.arangodb:velocypack to 1.0.15
   * fixed DateUtil does incorrect conversion of UTC time
+* fixed reconnecting after ArangoDB restarts (issue #186)
 
 v4.3.7 (2018-04-17)
 ---------------------------

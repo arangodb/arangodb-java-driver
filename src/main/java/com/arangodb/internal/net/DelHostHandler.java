@@ -58,4 +58,10 @@ public class DelHostHandler implements HostHandler {
 		}
 	}
 
+	@Override
+	public void reset() {
+		host = null;
+		hostHandler.reset();
+	}
+
 }

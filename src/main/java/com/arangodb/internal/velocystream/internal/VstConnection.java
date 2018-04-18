@@ -103,6 +103,7 @@ public abstract class VstConnection implements Connection {
 		host = hostHandler.get();
 		while (true) {
 			if (host == null) {
+				hostHandler.reset();
 				throw new ArangoDBException("Was not able to connect to any host");
 			}
 			if (LOGGER.isDebugEnabled()) {
@@ -160,7 +161,7 @@ public abstract class VstConnection implements Connection {
 				while (true) {
 					if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {
 						close();
-						hostHandler.fail();
+						hostHandler.reset();
 						break;
 					}
 					if (!isOpen()) {

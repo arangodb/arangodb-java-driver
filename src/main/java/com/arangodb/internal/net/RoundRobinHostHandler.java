@@ -62,4 +62,9 @@ public class RoundRobinHostHandler implements HostHandler {
 		fails++;
 	}
 
+	@Override
+	public void reset() {
+		fails = 0;
+	}
+
 }

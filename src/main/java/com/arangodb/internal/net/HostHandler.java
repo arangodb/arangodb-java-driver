@@ -34,4 +34,6 @@ public interface HostHandler {
 
 	void fail();
 
+	void reset();
+
 }
