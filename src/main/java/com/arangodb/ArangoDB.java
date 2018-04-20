@@ -521,6 +521,11 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		return executor;
 	}
 
+	/**
+	 * Releases all connections to the server and clear the connection pool.
+	 * 
+	 * @throws ArangoDBException
+	 */
 	public void shutdown() throws ArangoDBException {
 		try {
 			executor.disconnect();

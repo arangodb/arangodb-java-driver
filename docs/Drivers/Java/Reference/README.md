@@ -80,6 +80,12 @@ The driver supports connection pooling for VelocyStream with a default of 1 and 
   ArangoDB arangoDB = new ArangoDB.Builder().maxConnections(8).build();
 ```
 
+The driver does not explicitly release connections. To avoid exhaustion of resources when no connection is needed, you can clear the connection pool (close all connections to the server) or use [connection TTL](#connection-time-to-live).
+
+```Java
+arangoDB.shutdown();
+```
+
 ## Fallback hosts
 
 The driver supports configuring multiple hosts. The first host is used to open a connection to. When this host is not reachable the next host from the list is used. To use this feature just call the method `host(String, int)` multiple times.
@@ -116,7 +122,7 @@ The second load balancing strategy allows to pick a random host from the configu
   ArangoDB arangoDB = new ArangoDB.Builder().loadBalancingStrategy(LoadBalancingStrategy.ONE_RANDOM).acquireHostList(true).build();
 ```
 
-## Connection - time to live (TTL)
+## Connection time to live
 
 Since version 4.4 the driver supports setting a TTL for connections managed by the internal connection pool. Setting a TTL helps when using load balancing strategy `ROUND_ROBIN`, because as soon as a coordinator goes down, every open connection to that host will be closed and opened again with another target coordinator. As long as the driver does not have to open new connections (all connections in the pool are used) it will use only the coordinators which never went down. To use the downed coordinator again, when it is running again, the connections in the connection pool have to be closed and opened again with the target host mentioned by the load balancing startegy. To achieve this you can manually call `ArangoDB.shutdown` in your client code or use the TTL for connection so that a downed coordinator (which is then brought up again) will be used again after a certain time.
 
