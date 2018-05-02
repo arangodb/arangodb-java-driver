@@ -58,6 +58,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
@@ -674,7 +675,10 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(cursorWithWarnings.getWarnings().size(), is(1));
 		final ArangoCursor<String> cursorWithLimitedWarnings = db.query("RETURN 1 / 0", null,
 			new AqlQueryOptions().maxWarningCount(0L), String.class);
-		assertThat(cursorWithLimitedWarnings.getWarnings().size(), is(0));
+		final Collection<Warning> warnings = cursorWithLimitedWarnings.getWarnings();
+		if (warnings != null) {
+			assertThat(warnings.size(), is(0));
+		}
 	}
 
 	@Test
