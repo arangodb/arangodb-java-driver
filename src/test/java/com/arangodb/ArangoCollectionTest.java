@@ -843,14 +843,13 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("a");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getGeoJson(), is(false));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), is(IndexType.geo1));
+		assertThat(indexResult.getType(), anyOf(is(IndexType.geo), is(IndexType.geo1)));
 		assertThat(indexResult.getUnique(), is(false));
 	}
 
@@ -861,15 +860,14 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("b");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson(), is(nullValue()));
+		assertThat(indexResult.getGeoJson(), is(false));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), is(IndexType.geo2));
+		assertThat(indexResult.getType(), anyOf(is(IndexType.geo), is(IndexType.geo2)));
 		assertThat(indexResult.getUnique(), is(false));
 	}
 
