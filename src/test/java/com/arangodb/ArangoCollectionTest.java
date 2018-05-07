@@ -844,13 +844,18 @@ public class ArangoCollectionTest extends BaseTest {
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
-		assertThat(indexResult.getGeoJson(), is(false));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), anyOf(is(IndexType.geo), is(IndexType.geo1)));
 		assertThat(indexResult.getUnique(), is(false));
+		assertThat(indexResult.getGeoJson(), is(false));
+		final Integer minorVersion = Integer.valueOf(db.getVersion().getVersion().split("\\.")[1]);
+		if (minorVersion <= 3) {
+			assertThat(indexResult.getType(), is(IndexType.geo1));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo));
+		}
 	}
 
 	@Test
@@ -862,13 +867,19 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson(), is(false));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), anyOf(is(IndexType.geo), is(IndexType.geo2)));
 		assertThat(indexResult.getUnique(), is(false));
+		final Integer minorVersion = Integer.valueOf(db.getVersion().getVersion().split("\\.")[1]);
+		if (minorVersion <= 3) {
+			assertThat(indexResult.getGeoJson(), is(nullValue()));
+			assertThat(indexResult.getType(), is(IndexType.geo2));
+		} else {
+			assertThat(indexResult.getGeoJson(), is(false));
+			assertThat(indexResult.getType(), is(IndexType.geo));
+		}
 	}
 
 	@Test
