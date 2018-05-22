@@ -1,3 +1,7 @@
+v4.4.1 (xxxx-xx-xx)
+---------------------------
+* fixed concurrency bug in VST when using connectionTtl
+
 v4.4.0 (2018-04-19)
 ---------------------------
 * changed dependency com.arangodb:velocypack to 1.1.0

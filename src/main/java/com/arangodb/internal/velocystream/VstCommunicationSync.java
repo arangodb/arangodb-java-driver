@@ -127,12 +127,13 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections, final Long ttl) {
 		super(timeout, user, password, useSsl, sslContext, util, chunksize, new ConnectionPool<ConnectionSync>(
 				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT) {
-			private final ConnectionSync.Builder builder = new ConnectionSync.Builder(new MessageStore())
-					.timeout(timeout).ttl(ttl).useSsl(useSsl).sslContext(sslContext);
+			private final ConnectionSync.Builder builder = new ConnectionSync.Builder().timeout(timeout).ttl(ttl)
+					.useSsl(useSsl).sslContext(sslContext);
 
 			@Override
 			public ConnectionSync createConnection(final Host host) {
-				return builder.hostHandler(new DelHostHandler(hostHandler, host)).build();
+				return builder.messageStore(new MessageStore()).hostHandler(new DelHostHandler(hostHandler, host))
+						.build();
 			}
 		});
 		this.collectionCache = collectionCache;

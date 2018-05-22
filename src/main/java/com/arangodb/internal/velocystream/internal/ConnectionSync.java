@@ -39,16 +39,20 @@ public class ConnectionSync extends VstConnection {
 
 	public static class Builder {
 
-		private final MessageStore messageStore;
+		private MessageStore messageStore;
 		private HostHandler hostHandler;
 		private Integer timeout;
 		private Long ttl;
 		private Boolean useSsl;
 		private SSLContext sslContext;
 
-		public Builder(final MessageStore messageStore) {
+		public Builder() {
 			super();
+		}
+
+		public Builder messageStore(final MessageStore messageStore) {
 			this.messageStore = messageStore;
+			return this;
 		}
 
 		public Builder hostHandler(final HostHandler hostHandler) {
