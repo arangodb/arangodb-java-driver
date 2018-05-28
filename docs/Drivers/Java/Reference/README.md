@@ -132,13 +132,13 @@ ArangoDB arango = new ArangoDB.Builder().connectionTtl(5 * 60 * 1000).build();
 
 In this example all connections will be closed/reopened after 5 minutes.
 
-Connection TTL can be disabled setting it to `Null`:
+Connection TTL can be disabled setting it to `null`:
 
 ```Java
-.connectionTtl(Null)
+.connectionTtl(null)
 ```
 
-The default TTL is `Null` (no automatic connection closure).
+The default TTL is `null` (no automatic connection closure).
 
 ## configure VelocyPack serialization
 
