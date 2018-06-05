@@ -256,6 +256,25 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		return request;
 	}
 
+	protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
+		return new ResponseDeserializer<Integer>() {
+			@Override
+			public Integer deserialize(final Response response) throws VPackException {
+				// compatibility with ArangoDB < 3.4
+				// https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+				Integer count = null;
+				final VPackSlice body = response.getBody();
+				if (body.isObject()) {
+					final VPackSlice deletedCount = body.get("deletedCount");
+					if (deletedCount.isInteger()) {
+						count = deletedCount.getAsInt();
+					}
+				}
+				return count;
+			};
+		};
+	}
+
 	protected Request getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_AQLFUNCTION);
 		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();

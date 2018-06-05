@@ -586,10 +586,12 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            the name of the AQL user function
 	 * @param options
 	 *            Additional options, can be null
+	 * @return number of deleted functions (since ArangoDB 3.4.0)
 	 * @throws ArangoDBException
 	 */
-	public void deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) throws ArangoDBException {
-		executor.execute(deleteAqlFunctionRequest(name, options), Void.class);
+	public Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options)
+			throws ArangoDBException {
+		return executor.execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
 	}
 
 	/**

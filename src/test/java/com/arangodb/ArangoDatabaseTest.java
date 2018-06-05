@@ -936,8 +936,14 @@ public class ArangoDatabaseTest extends BaseTest {
 			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(greaterThan(aqlFunctionsInitial.size())));
 		} finally {
-			db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
-
+			final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
+			// compatibility with ArangoDB < 3.4
+			final String version = db.getVersion().getVersion();
+			if (Integer.valueOf(version.split("\\.")[1]) < 4) {
+				assertThat(deleteCount, is(nullValue()));
+			} else {
+				assertThat(deleteCount, is(1));
+			}
 			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
 		}
@@ -954,8 +960,15 @@ public class ArangoDatabaseTest extends BaseTest {
 				"function (celsius) { return celsius * 1.8 + 32; }", null);
 
 		} finally {
-			db.deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true));
-
+			final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature",
+				new AqlFunctionDeleteOptions().group(true));
+			// compatibility with ArangoDB < 3.4
+			final String version = db.getVersion().getVersion();
+			if (Integer.valueOf(version.split("\\.")[1]) < 4) {
+				assertThat(deleteCount, is(nullValue()));
+			} else {
+				assertThat(deleteCount, is(2));
+			}
 			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
 		}
