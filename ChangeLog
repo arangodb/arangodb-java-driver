@@ -2,6 +2,7 @@ v4.4.2 (xxxx-xx-xx)
 ---------------------------
 * fixed aquireHostList bug when using active failover
 * added return type for ArangoDatabase.deleteAqlFunction()
+* added field AqlFunctionEntity.isDeterministic
 
 v4.4.1 (2018-06-04)
 ---------------------------
