@@ -187,6 +187,7 @@ public abstract class VstConnection implements Connection {
 				return null;
 			}
 		});
+		hostHandler.opened();
 	}
 
 	@Override

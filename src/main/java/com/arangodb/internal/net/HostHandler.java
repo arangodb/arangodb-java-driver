@@ -36,4 +36,6 @@ public interface HostHandler {
 
 	void reset();
 
+	void opened();
+
 }

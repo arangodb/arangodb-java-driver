@@ -34,11 +34,13 @@ public class FallbackHostHandler implements HostHandler {
 	private Host lastSuccess;
 	private int iterations;
 	private final HostResolver resolver;
+	private boolean firstOpened;
 
 	public FallbackHostHandler(final HostResolver resolver) {
 		this.resolver = resolver;
 		iterations = 0;
 		current = lastSuccess = resolver.resolve(true, false).get(0);
+		firstOpened = true;
 	}
 
 	@Override
@@ -65,6 +67,15 @@ public class FallbackHostHandler implements HostHandler {
 	@Override
 	public void reset() {
 		iterations = 0;
+	}
+
+	@Override
+	public void opened() {
+		if (firstOpened) {
+			// after first successful established connection, update host list
+			resolver.resolve(false, false);
+			firstOpened = false;
+		}
 	}
 
 }

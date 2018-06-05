@@ -73,4 +73,8 @@ public class RandomHostHandler implements HostHandler {
 		fallback.reset();
 	}
 
+	@Override
+	public void opened() {
+	}
+
 }

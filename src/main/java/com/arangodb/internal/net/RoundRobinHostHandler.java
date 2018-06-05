@@ -67,4 +67,8 @@ public class RoundRobinHostHandler implements HostHandler {
 		fails = 0;
 	}
 
+	@Override
+	public void opened() {
+	}
+
 }

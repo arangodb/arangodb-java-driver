@@ -64,4 +64,9 @@ public class DelHostHandler implements HostHandler {
 		hostHandler.reset();
 	}
 
+	@Override
+	public void opened() {
+		hostHandler.opened();
+	}
+
 }
