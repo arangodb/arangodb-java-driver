@@ -99,6 +99,19 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void create() {
+		try {
+			final Boolean result = arangoDB.db(BaseTest.TEST_DB + "_1").create();
+			assertThat(result, is(true));
+		} finally {
+			try {
+				arangoDB.db(BaseTest.TEST_DB + "_1").drop();
+			} catch (final ArangoDBException e) {
+			}
+		}
+	}
+
+	@Test
 	public void getVersion() {
 		final ArangoDBVersion version = db.getVersion();
 		assertThat(version, is(notNullValue()));

@@ -178,6 +178,16 @@ public interface ArangoDatabase {
 	String deleteIndex(final String id) throws ArangoDBException;
 
 	/**
+	 * Creates the database
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+	 *      Documentation</a>
+	 * @return true if the database was created successfully.
+	 * @throws ArangoDBException
+	 */
+	Boolean create() throws ArangoDBException;
+
+	/**
 	 * Drop an existing database
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API

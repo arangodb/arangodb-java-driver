@@ -143,6 +143,11 @@ public class ArangoDatabaseImpl extends
 	}
 
 	@Override
+	public Boolean create() throws ArangoDBException {
+		return arango().createDatabase(name());
+	}
+
+	@Override
 	public Boolean drop() throws ArangoDBException {
 		return executor.execute(dropRequest(), createDropResponseDeserializer());
 	}
