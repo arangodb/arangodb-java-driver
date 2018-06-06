@@ -29,6 +29,7 @@ import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.velocystream.Response;
 
 /**
@@ -51,6 +52,17 @@ public class ArangoGraphImpl
 		} catch (final ArangoDBException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException {
+		return db().createGraph(name(), edgeDefinitions);
+	}
+
+	@Override
+	public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options)
+			throws ArangoDBException {
+		return db().createGraph(name(), edgeDefinitions, options);
 	}
 
 	@Override

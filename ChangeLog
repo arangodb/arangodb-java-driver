@@ -2,6 +2,7 @@ v4.5.0 (xxxx-xx-xx)
 ---------------------------
 * added ArangoDatabase.create()
 * added ArangoCollection.create() && .create(CollectionCreateOptions)
+* added ArangoGraph.create(Collection<EdgeDefinition>) && .create(Collection<EdgeDefinition>, GraphCreateOptions)
 * extracted interfaces for ArangoDB API 
 * fixed aquireHostList bug when using active failover
 * added return type for ArangoDatabase.deleteAqlFunction()

@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
+import com.arangodb.model.GraphCreateOptions;
 
 /**
  * @author Mark Vollmary
@@ -51,6 +52,35 @@ public interface ArangoGraph {
 	 * @return true if the graph exists, otherwise false
 	 */
 	boolean exists() throws ArangoDBException;
+
+	/**
+	 * Creates the graph in the graph module. The creation of a graph requires the name of the graph and a definition of
+	 * its edges.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 *      Documentation</a>
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException;
+
+	/**
+	 * Creates the graph in the graph module. The creation of a graph requires the name of the graph and a definition of
+	 * its edges.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 *      Documentation</a>
+	 * @param edgeDefinitions
+	 *            An array of definitions for the edge
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the graph
+	 * @throws ArangoDBException
+	 */
+	GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Delete an existing graph
