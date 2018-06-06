@@ -361,12 +361,12 @@ public class ArangoCollectionImpl
 
 	@Override
 	public CollectionEntity create() throws ArangoDBException {
-		return executor.execute(createCollectionRequest(new CollectionCreateOptions()), CollectionEntity.class);
+		return db().createCollection(name());
 	}
 
 	@Override
 	public CollectionEntity create(final CollectionCreateOptions options) throws ArangoDBException {
-		return executor.execute(createCollectionRequest(options), CollectionEntity.class);
+		return db().createCollection(name(), options);
 	}
 
 	@Override

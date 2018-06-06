@@ -37,7 +37,6 @@ import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
 import com.arangodb.model.DocumentCreateOptions;
@@ -639,10 +638,6 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 	protected Request countRequest() {
 		return new Request(db.name(), RequestType.GET,
 				executor.createPath(ArangoDBConstants.PATH_API_COLLECTION, name, ArangoDBConstants.COUNT));
-	}
-
-	protected Request createCollectionRequest(final CollectionCreateOptions options) {
-		return db.createCollectionRequest(name, options);
 	}
 
 	protected Request dropRequest(final Boolean isSystem) {
