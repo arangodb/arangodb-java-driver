@@ -115,7 +115,7 @@ public class ArangoGraphTest extends BaseTest {
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getName(), is(GRAPH_NAME + "_1"));
 		} finally {
-			db.graph(GRAPH_NAME).drop();
+			db.graph(GRAPH_NAME + "_1").drop();
 		}
 	}
 
