@@ -20,6 +20,7 @@
 
 package com.arangodb;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
@@ -29,7 +30,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
@@ -92,6 +92,17 @@ public class ArangoCollectionTest extends BaseTest {
 	@After
 	public void teardown() {
 		db.collection(COLLECTION_NAME).truncate();
+	}
+
+	@Test
+	public void createCollection() {
+		try {
+			final CollectionEntity result = db.collection(COLLECTION_NAME + "_1").create();
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+		} finally {
+			db.collection(COLLECTION_NAME + "_1").drop();
+		}
 	}
 
 	@Test

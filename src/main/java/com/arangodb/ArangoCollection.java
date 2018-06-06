@@ -32,6 +32,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
+import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
@@ -668,6 +669,28 @@ public interface ArangoCollection {
 	 * @throws ArangoDBException
 	 */
 	CollectionPropertiesEntity count() throws ArangoDBException;
+
+	/**
+	 * Creates the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
+	CollectionEntity create() throws ArangoDBException;
+
+	/**
+	 * Creates the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
+	CollectionEntity create(final CollectionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Drops the collection

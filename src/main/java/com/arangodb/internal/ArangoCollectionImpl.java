@@ -38,6 +38,7 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
@@ -356,6 +357,16 @@ public class ArangoCollectionImpl
 	@Override
 	public CollectionPropertiesEntity count() throws ArangoDBException {
 		return executor.execute(countRequest(), CollectionPropertiesEntity.class);
+	}
+
+	@Override
+	public CollectionEntity create() throws ArangoDBException {
+		return executor.execute(createCollectionRequest(new CollectionCreateOptions()), CollectionEntity.class);
+	}
+
+	@Override
+	public CollectionEntity create(final CollectionCreateOptions options) throws ArangoDBException {
+		return executor.execute(createCollectionRequest(options), CollectionEntity.class);
 	}
 
 	@Override
