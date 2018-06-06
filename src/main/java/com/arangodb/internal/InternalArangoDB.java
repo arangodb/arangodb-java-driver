@@ -24,11 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Properties;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.Protocol;
-import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -57,116 +53,8 @@ import com.arangodb.velocystream.Response;
  */
 public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnection> extends ArangoExecuteable<E, R, C> {
 
-	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
-	private static final String PROPERTY_KEY_HOST = "arangodb.host";
-	private static final String PROPERTY_KEY_PORT = "arangodb.port";
-	private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
-	private static final String PROPERTY_KEY_USER = "arangodb.user";
-	private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
-	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
-	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
-	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
-	private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
-	private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
-	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
-	private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
-	protected static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
-
 	public InternalArangoDB(final E executor, final ArangoSerialization util) {
 		super(executor, util);
-	}
-
-	protected static void loadHosts(final Properties properties, final Collection<Host> hosts) {
-		final String hostsProp = properties.getProperty(PROPERTY_KEY_HOSTS);
-		if (hostsProp != null) {
-			final String[] hostsSplit = hostsProp.split(",");
-			for (final String host : hostsSplit) {
-				final String[] split = host.split(":");
-				if (split.length != 2 || !split[1].matches("[0-9]+")) {
-					throw new ArangoDBException(String.format(
-						"Could not load property-value arangodb.hosts=%s. Expected format ip:port,ip:port,...",
-						hostsProp));
-				} else {
-					hosts.add(new Host(split[0], Integer.valueOf(split[1])));
-				}
-			}
-		}
-	}
-
-	protected static String loadHost(final Properties properties, final String currentValue) {
-		final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDBConstants.DEFAULT_HOST);
-		if (host.contains(":")) {
-			throw new ArangoDBException(String.format(
-				"Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb.hosts=ip:port ?",
-				host));
-		}
-		return host;
-	}
-
-	protected static Integer loadPort(final Properties properties, final int currentValue) {
-		return Integer
-				.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDBConstants.DEFAULT_PORT));
-	}
-
-	protected static Integer loadTimeout(final Properties properties, final Integer currentValue) {
-		return Integer.parseInt(
-			getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDBConstants.DEFAULT_TIMEOUT));
-	}
-
-	protected static String loadUser(final Properties properties, final String currentValue) {
-		return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDBConstants.DEFAULT_USER);
-	}
-
-	protected static String loadPassword(final Properties properties, final String currentValue) {
-		return getProperty(properties, PROPERTY_KEY_PASSWORD, currentValue, null);
-	}
-
-	protected static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
-		return Boolean.parseBoolean(
-			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDBConstants.DEFAULT_USE_SSL));
-	}
-
-	protected static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
-		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
-			ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
-	}
-
-	protected static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
-		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
-			ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT));
-	}
-
-	protected static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
-		final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
-			ArangoDBConstants.CONNECTION_TTL_VST_DEFAULT);
-		return ttl != null ? Long.parseLong(ttl) : null;
-	}
-
-	protected static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
-		return Protocol.valueOf(
-			getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDBConstants.DEFAULT_NETWORK_PROTOCOL)
-					.toUpperCase());
-	}
-
-	protected static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
-		return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
-			ArangoDBConstants.DEFAULT_ACQUIRE_HOST_LIST));
-	}
-
-	protected static LoadBalancingStrategy loadLoadBalancingStrategy(
-		final Properties properties,
-		final LoadBalancingStrategy currentValue) {
-		return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-			ArangoDBConstants.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase());
-	}
-
-	private static <T> String getProperty(
-		final Properties properties,
-		final String key,
-		final T currentValue,
-		final T defaultValue) {
-		return properties.getProperty(key,
-			currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
 	}
 
 	protected Request getRoleRequest() {

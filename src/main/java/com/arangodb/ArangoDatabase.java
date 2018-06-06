@@ -28,7 +28,6 @@ import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
@@ -38,13 +37,6 @@ import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
-import com.arangodb.internal.ArangoCursorExecute;
-import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.DocumentCache;
-import com.arangodb.internal.InternalArangoDatabase;
-import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
@@ -56,28 +48,26 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
-import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.Type;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecutorSync, Response, ConnectionSync> {
+public interface ArangoDatabase {
 
-	private ArangoCursorInitializer cursorInitializer;
+	/**
+	 * Return the main entry point for the ArangoDB driver
+	 * 
+	 * @return main entry point
+	 */
+	ArangoDB arango();
 
-	protected ArangoDatabase(final ArangoDB arangoDB, final String name) {
-		super(arangoDB, arangoDB.executor(), arangoDB.util(), name);
-	}
-
-	protected ArangoDatabase(final CommunicationProtocol protocol, final ArangoSerialization util,
-		final DocumentCache documentCache, final String name) {
-		super(null, new ArangoExecutorSync(protocol, util, documentCache), util, name);
-	}
+	/**
+	 * Returns the name of the database
+	 * 
+	 * @return database name
+	 */
+	String name();
 
 	/**
 	 * Returns the server name and version number.
@@ -87,23 +77,14 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return the server version, number
 	 * @throws ArangoDBException
 	 */
-	public ArangoDBVersion getVersion() throws ArangoDBException {
-		return executor.execute(getVersionRequest(), ArangoDBVersion.class);
-	}
+	ArangoDBVersion getVersion() throws ArangoDBException;
 
 	/**
 	 * Checks whether the database exists
 	 * 
 	 * @return true if the database exists, otherwise false
 	 */
-	public boolean exists() throws ArangoDBException {
-		try {
-			getInfo();
-			return true;
-		} catch (final ArangoDBException e) {
-			return false;
-		}
-	}
+	boolean exists() throws ArangoDBException;
 
 	/**
 	 * Retrieves a list of all databases the current user can access
@@ -114,9 +95,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return a list of all databases the current user can access
 	 * @throws ArangoDBException
 	 */
-	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
-		return executor.execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
-	}
+	Collection<String> getAccessibleDatabases() throws ArangoDBException;
 
 	/**
 	 * Returns a handler of the collection by the given name
@@ -125,9 +104,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            Name of the collection
 	 * @return collection handler
 	 */
-	public ArangoCollection collection(final String name) {
-		return new ArangoCollection(this, name);
-	}
+	ArangoCollection collection(final String name);
 
 	/**
 	 * Creates a collection
@@ -139,9 +116,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity createCollection(final String name) throws ArangoDBException {
-		return executor.execute(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
-	}
+	CollectionEntity createCollection(final String name) throws ArangoDBException;
 
 	/**
 	 * Creates a collection
@@ -155,10 +130,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
-			throws ArangoDBException {
-		return executor.execute(createCollectionRequest(name, options), CollectionEntity.class);
-	}
+	CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Returns all collections
@@ -168,10 +141,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
 	 */
-	public Collection<CollectionEntity> getCollections() throws ArangoDBException {
-		return executor.execute(getCollectionsRequest(new CollectionsReadOptions()),
-			getCollectionsResponseDeserializer());
-	}
+	Collection<CollectionEntity> getCollections() throws ArangoDBException;
 
 	/**
 	 * Returns all collections
@@ -183,9 +153,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
 	 */
-	public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
-		return executor.execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
-	}
+	Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns an index
@@ -196,11 +164,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity getIndex(final String id) throws ArangoDBException {
-		executor.validateIndexId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getIndex(split[1]);
-	}
+	IndexEntity getIndex(final String id) throws ArangoDBException;
 
 	/**
 	 * Deletes an index
@@ -211,11 +175,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return the id of the index
 	 * @throws ArangoDBException
 	 */
-	public String deleteIndex(final String id) throws ArangoDBException {
-		executor.validateIndexId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).deleteIndex(split[1]);
-	}
+	String deleteIndex(final String id) throws ArangoDBException;
 
 	/**
 	 * Drop an existing database
@@ -225,9 +185,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return true if the database was dropped successfully
 	 * @throws ArangoDBException
 	 */
-	public Boolean drop() throws ArangoDBException {
-		return executor.execute(dropRequest(), createDropResponseDeserializer());
-	}
+	Boolean drop() throws ArangoDBException;
 
 	/**
 	 * Grants or revoke access to the database for user <code>user</code>. You need permission to the _system database
@@ -241,9 +199,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            The permissions the user grant
 	 * @throws ArangoDBException
 	 */
-	public void grantAccess(final String user, final Permissions permissions) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, permissions), Void.class);
-	}
+	void grantAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Grants access to the database for user <code>user</code>. You need permission to the _system database in order to
@@ -255,9 +211,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	public void grantAccess(final String user) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, Permissions.RW), Void.class);
-	}
+	void grantAccess(final String user) throws ArangoDBException;
 
 	/**
 	 * Revokes access to the database dbname for user <code>user</code>. You need permission to the _system database in
@@ -269,9 +223,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	public void revokeAccess(final String user) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
-	}
+	void revokeAccess(final String user) throws ArangoDBException;
 
 	/**
 	 * Clear the database access level, revert back to the default access level.
@@ -283,9 +235,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public void resetAccess(final String user) throws ArangoDBException {
-		executor.execute(resetAccessRequest(user), Void.class);
-	}
+	void resetAccess(final String user) throws ArangoDBException;
 
 	/**
 	 * Sets the default access level for collections within this database for the user <code>user</code>. You need
@@ -298,10 +248,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
-	}
+	void grantDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * @deprecated use {@link #grantDefaultCollectionAccess(String, Permissions)} instead
@@ -313,10 +260,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @throws ArangoDBException
 	 */
 	@Deprecated
-	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
-	}
+	void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Get specific database access level
@@ -329,9 +273,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public Permissions getPermissions(final String user) throws ArangoDBException {
-		return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
-	}
+	Permissions getPermissions(final String user) throws ArangoDBException;
 
 	/**
 	 * Create a cursor and return the first results
@@ -349,16 +291,11 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
-	public <T> ArangoCursor<T> query(
+	<T> ArangoCursor<T> query(
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
-		final Class<T> type) throws ArangoDBException {
-		final Request request = queryRequest(query, bindVars, options);
-		final HostHandle hostHandle = new HostHandle();
-		final CursorEntity result = executor.execute(request, CursorEntity.class, hostHandle);
-		return createCursor(result, type, hostHandle);
-	}
+		final Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Return an cursor from the given cursor-ID if still existing
@@ -373,30 +310,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
-	public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
-		final HostHandle hostHandle = new HostHandle();
-		final CursorEntity result = executor.execute(queryNextRequest(cursorId), CursorEntity.class, hostHandle);
-		return createCursor(result, type, hostHandle);
-	}
-
-	private <T> ArangoCursor<T> createCursor(
-		final CursorEntity result,
-		final Class<T> type,
-		final HostHandle hostHandle) {
-		final ArangoCursorExecute execute = new ArangoCursorExecute() {
-			@Override
-			public CursorEntity next(final String id) {
-				return executor.execute(queryNextRequest(id), CursorEntity.class, hostHandle);
-			}
-
-			@Override
-			public void close(final String id) {
-				executor.execute(queryCloseRequest(id), Void.class, hostHandle);
-			}
-		};
-		return cursorInitializer != null ? cursorInitializer.createInstance(this, execute, type, result)
-				: new ArangoCursor<T>(this, execute, type, result);
-	}
+	<T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Explain an AQL query and return information about it
@@ -412,12 +326,10 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the query
 	 * @throws ArangoDBException
 	 */
-	public AqlExecutionExplainEntity explainQuery(
+	AqlExecutionExplainEntity explainQuery(
 		final String query,
 		final Map<String, Object> bindVars,
-		final AqlQueryExplainOptions options) throws ArangoDBException {
-		return executor.execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
-	}
+		final AqlQueryExplainOptions options) throws ArangoDBException;
 
 	/**
 	 * Parse an AQL query and return information about it This method is for query validation only. To actually query
@@ -430,9 +342,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return imformation about the query
 	 * @throws ArangoDBException
 	 */
-	public AqlParseEntity parseQuery(final String query) throws ArangoDBException {
-		return executor.execute(parseQueryRequest(query), AqlParseEntity.class);
-	}
+	AqlParseEntity parseQuery(final String query) throws ArangoDBException;
 
 	/**
 	 * Clears the AQL query cache
@@ -442,9 +352,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *      Documentation</a>
 	 * @throws ArangoDBException
 	 */
-	public void clearQueryCache() throws ArangoDBException {
-		executor.execute(clearQueryCacheRequest(), Void.class);
-	}
+	void clearQueryCache() throws ArangoDBException;
 
 	/**
 	 * Returns the global configuration for the AQL query cache
@@ -455,9 +363,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return configuration for the AQL query cache
 	 * @throws ArangoDBException
 	 */
-	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException {
-		return executor.execute(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
-	}
+	QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException;
 
 	/**
 	 * Changes the configuration for the AQL query cache. Note: changing the properties may invalidate all results in
@@ -471,10 +377,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return current set of properties
 	 * @throws ArangoDBException
 	 */
-	public QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
-			throws ArangoDBException {
-		return executor.execute(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
-	}
+	QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
+			throws ArangoDBException;
 
 	/**
 	 * Returns the configuration for the AQL query tracking
@@ -485,9 +389,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return configuration for the AQL query tracking
 	 * @throws ArangoDBException
 	 */
-	public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException {
-		return executor.execute(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
-	}
+	QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException;
 
 	/**
 	 * Changes the configuration for the AQL query tracking
@@ -500,10 +402,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return current set of properties
 	 * @throws ArangoDBException
 	 */
-	public QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
-			throws ArangoDBException {
-		return executor.execute(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
-	}
+	QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
+			throws ArangoDBException;
 
 	/**
 	 * Returns a list of currently running AQL queries
@@ -514,10 +414,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return a list of currently running AQL queries
 	 * @throws ArangoDBException
 	 */
-	public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
-		return executor.execute(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
-		}.getType());
-	}
+	Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException;
 
 	/**
 	 * Returns a list of slow running AQL queries
@@ -528,10 +425,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return a list of slow running AQL queries
 	 * @throws ArangoDBException
 	 */
-	public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
-		return executor.execute(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
-		}.getType());
-	}
+	Collection<QueryEntity> getSlowQueries() throws ArangoDBException;
 
 	/**
 	 * Clears the list of slow AQL queries
@@ -541,9 +435,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *      Documentation</a>
 	 * @throws ArangoDBException
 	 */
-	public void clearSlowQueries() throws ArangoDBException {
-		executor.execute(clearSlowQueriesRequest(), Void.class);
-	}
+	void clearSlowQueries() throws ArangoDBException;
 
 	/**
 	 * Kills a running query. The query will be terminated at the next cancelation point.
@@ -554,9 +446,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            The id of the query
 	 * @throws ArangoDBException
 	 */
-	public void killQuery(final String id) throws ArangoDBException {
-		executor.execute(killQueryRequest(id), Void.class);
-	}
+	void killQuery(final String id) throws ArangoDBException;
 
 	/**
 	 * Create a new AQL user function
@@ -571,10 +461,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
 	 */
-	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
-			throws ArangoDBException {
-		executor.execute(createAqlFunctionRequest(name, code, options), Void.class);
-	}
+	void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Remove an existing AQL user function
@@ -589,10 +477,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return number of deleted functions (since ArangoDB 3.4.0)
 	 * @throws ArangoDBException
 	 */
-	public Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options)
-			throws ArangoDBException {
-		return executor.execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
-	}
+	Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) throws ArangoDBException;
 
 	/**
 	 * Gets all reqistered AQL user functions
@@ -605,9 +490,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return all reqistered AQL user functions
 	 * @throws ArangoDBException
 	 */
-	public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
-		return executor.execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
-	}
+	Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns a handler of the graph by the given name
@@ -616,9 +499,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *            Name of the graph
 	 * @return graph handler
 	 */
-	public ArangoGraph graph(final String name) {
-		return new ArangoGraph(this, name);
-	}
+	ArangoGraph graph(final String name);
 
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
@@ -633,11 +514,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
-			throws ArangoDBException {
-		return executor.execute(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
-			createGraphResponseDeserializer());
-	}
+	GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
+			throws ArangoDBException;
 
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
@@ -654,12 +532,10 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	public GraphEntity createGraph(
+	GraphEntity createGraph(
 		final String name,
 		final Collection<EdgeDefinition> edgeDefinitions,
-		final GraphCreateOptions options) throws ArangoDBException {
-		return executor.execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
-	}
+		final GraphCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Lists all graphs known to the graph module
@@ -669,9 +545,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return graphs stored in this database
 	 * @throws ArangoDBException
 	 */
-	public Collection<GraphEntity> getGraphs() throws ArangoDBException {
-		return executor.execute(getGraphsRequest(), getGraphsResponseDeserializer());
-	}
+	Collection<GraphEntity> getGraphs() throws ArangoDBException;
 
 	/**
 	 * Execute a server-side transaction
@@ -687,10 +561,8 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return the result of the transaction if it succeeded
 	 * @throws ArangoDBException
 	 */
-	public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
-			throws ArangoDBException {
-		return executor.execute(transactionRequest(action, options), transactionResponseDeserializer(type));
-	}
+	<T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Retrieves information about the current database
@@ -701,9 +573,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return information about the current database
 	 * @throws ArangoDBException
 	 */
-	public DatabaseEntity getInfo() throws ArangoDBException {
-		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
-	}
+	DatabaseEntity getInfo() throws ArangoDBException;
 
 	/**
 	 * Execute a server-side traversal
@@ -719,13 +589,10 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return Result of the executed traversal
 	 * @throws ArangoDBException
 	 */
-	public <V, E> TraversalEntity<V, E> executeTraversal(
+	<V, E> TraversalEntity<V, E> executeTraversal(
 		final Class<V> vertexClass,
 		final Class<E> edgeClass,
-		final TraversalOptions options) throws ArangoDBException {
-		final Request request = executeTraversalRequest(options);
-		return executor.execute(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
-	}
+		final TraversalOptions options) throws ArangoDBException;
 
 	/**
 	 * Reads a single document
@@ -739,11 +606,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String id, final Class<T> type) throws ArangoDBException {
-		executor.validateDocumentId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getDocument(split[1], type);
-	}
+	<T> T getDocument(final String id, final Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Reads a single document
@@ -759,12 +622,7 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
-			throws ArangoDBException {
-		executor.validateDocumentId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getDocument(split[1], type, options);
-	}
+	<T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Reload the routing table.
@@ -774,13 +632,6 @@ public class ArangoDatabase extends InternalArangoDatabase<ArangoDB, ArangoExecu
 	 *      Documentation</a>
 	 * @throws ArangoDBException
 	 */
-	public void reloadRouting() throws ArangoDBException {
-		executor.execute(reloadRoutingRequest(), Void.class);
-	}
-
-	protected ArangoDatabase setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
-		this.cursorInitializer = cursorInitializer;
-		return this;
-	}
+	void reloadRouting() throws ArangoDBException;
 
 }

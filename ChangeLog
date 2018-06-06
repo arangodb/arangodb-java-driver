@@ -1,5 +1,6 @@
-v4.4.2 (xxxx-xx-xx)
+v4.5.0 (xxxx-xx-xx)
 ---------------------------
+* extracted interfaces for ArangoDB API 
 * fixed aquireHostList bug when using active failover
 * added return type for ArangoDatabase.deleteAqlFunction()
 * added field AqlFunctionEntity.isDeterministic
