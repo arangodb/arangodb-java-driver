@@ -95,7 +95,7 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createCollection() {
+	public void create() {
 		try {
 			final CollectionEntity result = db.collection(COLLECTION_NAME + "_1").create();
 			assertThat(result, is(notNullValue()));
