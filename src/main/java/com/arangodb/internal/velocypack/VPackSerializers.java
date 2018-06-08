@@ -183,7 +183,7 @@ public class VPackSerializers {
 			final Boolean satellite = value.getSatellite();
 			if (satellite != null && satellite.booleanValue()) {
 				builder.add(attribute, "satellite");
-			} else {
+			} else if (value.getReplicationFactor() != null) {
 				builder.add(attribute, value.getReplicationFactor());
 			}
 		}
