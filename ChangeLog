@@ -1,5 +1,7 @@
 v4.5.0 (xxxx-xx-xx)
 ---------------------------
+* upgraded dependency java-velocypack 1.2.0
+  * replaced dependency json-simple with jackson
 * added replace-insert support: DocumentCreateOptions.overwrite(Boolean)
 * added support for satellite collections: CollectionCreateOptions.satellite(Boolean)
 * added AqlQueryOptions.stream(boolean) for Streaming AQL Cursors
