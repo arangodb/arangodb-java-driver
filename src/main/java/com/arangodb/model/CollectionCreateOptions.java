@@ -23,6 +23,7 @@ package com.arangodb.model;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.KeyOptions;
 import com.arangodb.entity.KeyType;
+import com.arangodb.entity.ReplicationFactor;
 
 /**
  * @author Mark Vollmary
@@ -34,7 +35,7 @@ public class CollectionCreateOptions {
 
 	private String name;
 	private Long journalSize;
-	private Integer replicationFactor;
+	private final ReplicationFactor replicationFactor;
 	private KeyOptions keyOptions;
 	private Boolean waitForSync;
 	private Boolean doCompact;
@@ -48,6 +49,7 @@ public class CollectionCreateOptions {
 
 	public CollectionCreateOptions() {
 		super();
+		replicationFactor = new ReplicationFactor();
 	}
 
 	protected String getName() {
@@ -79,7 +81,7 @@ public class CollectionCreateOptions {
 	}
 
 	public Integer getReplicationFactor() {
-		return replicationFactor;
+		return replicationFactor.getReplicationFactor();
 	}
 
 	/**
@@ -94,7 +96,22 @@ public class CollectionCreateOptions {
 	 * @return options
 	 */
 	public CollectionCreateOptions replicationFactor(final Integer replicationFactor) {
-		this.replicationFactor = replicationFactor;
+		this.replicationFactor.setReplicationFactor(replicationFactor);
+		return this;
+	}
+
+	public Boolean getSatellite() {
+		return replicationFactor.getSatellite();
+	}
+
+	/**
+	 * @param satellite
+	 *            If the true the collection is created as a satellite collection. In this case
+	 *            {@link #replicationFactor(Integer)} is ignored.
+	 * @return options
+	 */
+	public CollectionCreateOptions satellite(final Boolean satellite) {
+		this.replicationFactor.setSatellite(satellite);
 		return this;
 	}
 

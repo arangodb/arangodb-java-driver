@@ -37,10 +37,11 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	private Long count;
 	private Integer numberOfShards;
 	private Collection<String> shardKeys;
-	private Integer replicationFactor;
+	private final ReplicationFactor replicationFactor;
 
 	public CollectionPropertiesEntity() {
 		super();
+		replicationFactor = new ReplicationFactor();
 	}
 
 	public Boolean getDoCompact() {
@@ -107,11 +108,22 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	}
 
 	public Integer getReplicationFactor() {
-		return replicationFactor;
+		return replicationFactor.getReplicationFactor();
 	}
 
 	public void setReplicationFactor(final Integer replicationFactor) {
-		this.replicationFactor = replicationFactor;
+		this.replicationFactor.setReplicationFactor(replicationFactor);
+	}
+
+	/**
+	 * @return whether the collection is a satellite collection. Only in a enterprise cluster setup.
+	 */
+	public Boolean getSatellite() {
+		return this.replicationFactor.getSatellite();
+	}
+
+	public void setSatellite(final Boolean satellite) {
+		this.replicationFactor.setSatellite(satellite);
 	}
 
 }

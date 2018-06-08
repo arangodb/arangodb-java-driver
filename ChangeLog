@@ -1,5 +1,6 @@
 v4.5.0 (xxxx-xx-xx)
 ---------------------------
+* added support for satellite collections: CollectionCreateOptions.satellite(Boolean)
 * added AqlQueryOptions.stream(boolean) for Streaming AQL Cursors
 * added ArangoDatabase.create()
 * added ArangoCollection.create() && .create(CollectionCreateOptions)

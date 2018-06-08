@@ -155,6 +155,27 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(nullValue()));
+		} catch (final ArangoDBException e) {
+			e.printStackTrace();
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+
+	}
+
+	@Test
+	public void createSatelliteCollection() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+				new CollectionCreateOptions().satellite(true));
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(nullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(true));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
