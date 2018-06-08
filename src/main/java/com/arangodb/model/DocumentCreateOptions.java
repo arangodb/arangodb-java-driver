@@ -30,6 +30,8 @@ public class DocumentCreateOptions {
 
 	private Boolean waitForSync;
 	private Boolean returnNew;
+	private Boolean returnOld;
+	private Boolean overwrite;
 
 	public DocumentCreateOptions() {
 		super();
@@ -60,6 +62,39 @@ public class DocumentCreateOptions {
 	 */
 	public DocumentCreateOptions returnNew(final Boolean returnNew) {
 		this.returnNew = returnNew;
+		return this;
+	}
+
+	public Boolean getReturnOld() {
+		return returnOld;
+	}
+
+	/**
+	 * @param returnOld
+	 *            Additionally return the complete old document under the attribute old in the result. Only available if
+	 *            the <code>overwrite</code> option is used.
+	 * @since ArangoDB 3.4
+	 * @return options
+	 */
+	public DocumentCreateOptions returnOld(final Boolean returnOld) {
+		this.returnOld = returnOld;
+		return this;
+	}
+
+	public Boolean getOverwrite() {
+		return overwrite;
+	}
+
+	/**
+	 * @param overwrite
+	 *            If set to true, the insert becomes a replace-insert. If a document with the same <code>_key</code>
+	 *            already exists the new document is not rejected with unique constraint violated but will replace the
+	 *            old document.
+	 * @since ArangoDB 3.4
+	 * @return options
+	 */
+	public DocumentCreateOptions overwrite(final Boolean overwrite) {
+		this.overwrite = overwrite;
 		return this;
 	}
 

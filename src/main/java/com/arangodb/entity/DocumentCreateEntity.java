@@ -32,6 +32,8 @@ public class DocumentCreateEntity<T> extends DocumentEntity {
 
 	@Expose(deserialize = false)
 	private T newDocument;
+	@Expose(deserialize = false)
+	private T oldDocument;
 
 	public DocumentCreateEntity() {
 		super();
@@ -46,6 +48,18 @@ public class DocumentCreateEntity<T> extends DocumentEntity {
 
 	public void setNew(final T newDocument) {
 		this.newDocument = newDocument;
+	}
+
+	/**
+	 * @return If the query parameter returnOld is true, then the complete previous revision of the document is
+	 *         returned.
+	 */
+	public T getOld() {
+		return oldDocument;
+	}
+
+	public void setOld(final T oldDocument) {
+		this.oldDocument = oldDocument;
 	}
 
 }

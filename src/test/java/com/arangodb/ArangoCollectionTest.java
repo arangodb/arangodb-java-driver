@@ -138,6 +138,21 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentOverwriteReturnOld() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("value", "a");
+		final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME).insertDocument(doc);
+		doc.addAttribute("value", "b");
+		final DocumentCreateEntity<BaseDocument> repsert = db.collection(COLLECTION_NAME).insertDocument(doc,
+			new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
+		assertThat(repsert, is(notNullValue()));
+		assertThat(repsert.getRev(), is(not(meta.getRev())));
+		assertThat(repsert.getOld().getAttribute("value").toString(), is("a"));
+		assertThat(repsert.getNew().getAttribute("value").toString(), is("b"));
+		assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(1L));
+	}
+
+	@Test
 	public void insertDocumentWaitForSync() {
 		final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
 		final DocumentCreateEntity<BaseDocument> doc = db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(),
