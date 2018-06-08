@@ -859,11 +859,10 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getUnique(), is(false));
-		final Integer minorVersion = Integer.valueOf(db.getVersion().getVersion().split("\\.")[1]);
-		if (minorVersion <= 3) {
-			assertThat(indexResult.getType(), is(IndexType.geo1));
-		} else {
+		if (requireVersion(3, 4)) {
 			assertThat(indexResult.getType(), is(IndexType.geo));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo1));
 		}
 	}
 
@@ -881,11 +880,10 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getUnique(), is(false));
-		final Integer minorVersion = Integer.valueOf(db.getVersion().getVersion().split("\\.")[1]);
-		if (minorVersion <= 3) {
-			assertThat(indexResult.getType(), is(IndexType.geo2));
-		} else {
+		if (requireVersion(3, 4)) {
 			assertThat(indexResult.getType(), is(IndexType.geo));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo2));
 		}
 	}
 
