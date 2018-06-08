@@ -463,7 +463,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void queryStream() {
+	public void queryIterate() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
@@ -546,7 +546,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void queryStreamWithBatchSize() {
+	public void queryIterateWithBatchSize() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
@@ -778,6 +778,17 @@ public class ArangoDatabaseTest extends BaseTest {
 
 		assertThat(cursor, is(notNullValue()));
 		assertThat(cursor.getWarnings(), is(notNullValue()));
+	}
+
+	@Test
+	public void queryStream() {
+		final String version = db.getVersion().getVersion();
+		if (Integer.valueOf(version.split("\\.")[1]) >= 4) {
+			final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 1..2 RETURN i", null,
+				new AqlQueryOptions().stream(true).count(true), VPackSlice.class);
+			assertThat(cursor, is(notNullValue()));
+			assertThat(cursor.getCount(), is(nullValue()));
+		}
 	}
 
 	@Test
