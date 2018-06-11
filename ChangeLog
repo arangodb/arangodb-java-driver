@@ -1,4 +1,4 @@
-v4.5.0 (xxxx-xx-xx)
+v4.5.0 (2018-06-11)
 ---------------------------
 * removed deprecated ArangoDB.host(String)
 * removed deprecated ArangoDB.port(Integer)
