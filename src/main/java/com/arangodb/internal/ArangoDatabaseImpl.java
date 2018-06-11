@@ -179,12 +179,6 @@ public class ArangoDatabaseImpl extends
 	}
 
 	@Override
-	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
-	}
-
-	@Override
 	public Permissions getPermissions(final String user) throws ArangoDBException {
 		return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
 	}

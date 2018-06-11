@@ -20,9 +20,7 @@
 
 package com.arangodb.internal.util;
 
-import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.Map;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.util.ArangoSerializer;
@@ -84,40 +82,6 @@ public class ArangoSerializerImpl implements ArangoSerializer {
 		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}
-	}
-
-	@Override
-	@Deprecated
-	public VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
-		return serialize(entity, new ArangoSerializer.Options().serializeNullValues(serializeNullValues));
-	}
-
-	@Override
-	@Deprecated
-	public VPackSlice serialize(final Object entity, final boolean serializeNullValues, final boolean stringAsJson)
-			throws ArangoDBException {
-		return serialize(entity,
-			new ArangoSerializer.Options().serializeNullValues(serializeNullValues).stringAsJson(stringAsJson));
-	}
-
-	@Override
-	@Deprecated
-	public VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
-		return serialize(entity, new ArangoSerializer.Options().type(type));
-	}
-
-	@Override
-	@Deprecated
-	public VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
-			throws ArangoDBException {
-		return serialize(entity, new ArangoSerializer.Options().type(type).serializeNullValues(serializeNullValues));
-	}
-
-	@Override
-	@Deprecated
-	public VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
-			throws ArangoDBException {
-		return serialize(entity, new ArangoSerializer.Options().type(type).additionalFields(additionalFields));
 	}
 
 }

@@ -242,20 +242,8 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response,
 	}
 
 	@Override
-	public void updateUserDefaultDatabaseAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
-	}
-
-	@Override
 	public void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException {
 		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
-	}
-
-	@Override
-	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
 	}
 
 	@Override

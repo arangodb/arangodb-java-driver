@@ -1,5 +1,12 @@
 v4.5.0 (xxxx-xx-xx)
 ---------------------------
+* removed deprecated ArangoDB.host(String)
+* removed deprecated ArangoDB.port(Integer)
+* removed deprecated ArangoCollection.create[IndexType]Index()
+* removed deprecated ArangoDatabase.updateUserDefaultCollectionAccess()
+* removed deprecated ArangoDB.updateUserDefaultDatabaseAccess()
+* removed deprecated ArangoDB.updateUserDefaultCollectionAccess()
+* removed several deprecated APIs
 * upgraded dependency velocypack 1.2.0
   * replaced dependency json-simple with jackson
 * added replace-insert support: DocumentCreateOptions.overwrite(Boolean)

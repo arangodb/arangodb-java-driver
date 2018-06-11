@@ -275,21 +275,9 @@ public class ArangoCollectionImpl
 	}
 
 	@Override
-	public IndexEntity createHashIndex(final Collection<String> fields, final HashIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	@Override
 	public IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	@Override
-	public IndexEntity createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	@Override
@@ -299,33 +287,15 @@ public class ArangoCollectionImpl
 	}
 
 	@Override
-	public IndexEntity createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	@Override
 	public IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	@Override
-	public IndexEntity createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	@Override
 	public IndexEntity ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	@Override
-	public IndexEntity createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	@Override

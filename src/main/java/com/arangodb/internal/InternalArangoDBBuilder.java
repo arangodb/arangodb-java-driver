@@ -123,16 +123,6 @@ public class InternalArangoDBBuilder {
 		loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
 	}
 
-	@Deprecated
-	protected void setHost(final String host) {
-		this.host = new Host(host, this.host.getPort());
-	}
-
-	@Deprecated
-	protected void setPort(final Integer port) {
-		host = new Host(host.getHost(), port);
-	}
-
 	protected void setHost(final String host, final int port) {
 		hosts.add(new Host(host, port));
 	}

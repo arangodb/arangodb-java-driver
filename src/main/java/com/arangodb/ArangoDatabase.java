@@ -261,18 +261,6 @@ public interface ArangoDatabase {
 	void grantDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
-	 * @deprecated use {@link #grantDefaultCollectionAccess(String, Permissions)} instead
-	 * @param user
-	 *            The name of the user
-	 * @param permissions
-	 *            The permissions the user grant
-	 * @since ArangoDB 3.2.0
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	void updateUserDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
-
-	/**
 	 * Get specific database access level
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-database-access-level"> API
