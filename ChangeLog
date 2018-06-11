@@ -1,7 +1,7 @@
 v4.5.0 (2018-06-11)
 ---------------------------
-* removed deprecated ArangoDB.host(String)
-* removed deprecated ArangoDB.port(Integer)
+* removed deprecated ArangoDB.Builder.host(String)
+* removed deprecated ArangoDB.Builder.port(Integer)
 * removed deprecated ArangoCollection.create[IndexType]Index()
 * removed deprecated ArangoDatabase.updateUserDefaultCollectionAccess()
 * removed deprecated ArangoDB.updateUserDefaultDatabaseAccess()
