@@ -139,6 +139,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void insertDocumentOverwriteReturnOld() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("value", "a");
 		final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME).insertDocument(doc);
