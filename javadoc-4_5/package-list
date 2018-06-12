@@ -1,0 +1,5 @@
+com.arangodb
+com.arangodb.entity
+com.arangodb.model
+com.arangodb.util
+com.arangodb.velocystream
