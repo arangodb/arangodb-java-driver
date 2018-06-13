@@ -63,7 +63,7 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
- *
+ * @author Reşat SABIQ
  */
 @RunWith(Parameterized.class)
 public class ArangoDBTest {
