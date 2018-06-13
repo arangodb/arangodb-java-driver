@@ -194,21 +194,19 @@ public class ArangoDBTest {
 	@Test
 	public void getUsers() {
 		try {
-			// Allow & account for pre-existing users other than ROOT
+			// Allow & account for pre-existing users other than ROOT:
 			final Collection<UserEntity> initialUsers = arangoDB.getUsers();
+			
 			arangoDB.createUser(USER, PW, null);
 			final Collection<UserEntity> users = arangoDB.getUsers();
 			assertThat(users, is(notNullValue()));
 			assertThat(users.size(), is(initialUsers.size()+1));
 			
 			List<Matcher<? super String>> matchers = new ArrayList<Matcher<? super String>>(users.size());
-			// Add initial users, including root
-			for (UserEntity userEntity : initialUsers) {
-				Matcher<String> matcher = is(userEntity.getUser());
-				if (!matchers.contains(matcher))
-					matchers.add(matcher);
-			}
-			// Add USER
+			// Add initial users, including root:
+			for (final UserEntity userEntity : initialUsers)
+				matchers.add(is(userEntity.getUser()));
+			// Add USER:
 			matchers.add(is(USER));
 			
 			for (final UserEntity user : users) {
