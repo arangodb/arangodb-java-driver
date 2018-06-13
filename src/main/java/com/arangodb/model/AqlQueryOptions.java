@@ -21,7 +21,8 @@
 package com.arangodb.model;
 
 import java.util.Collection;
-import java.util.Map;
+
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -36,7 +37,7 @@ public class AqlQueryOptions {
 	private Integer batchSize;
 	private Boolean cache;
 	private Long memoryLimit;
-	private Map<String, Object> bindVars;
+	private VPackSlice bindVars;
 	private String query;
 	private Options options;
 
@@ -126,7 +127,7 @@ public class AqlQueryOptions {
 		return this;
 	}
 
-	protected Map<String, Object> getBindVars() {
+	protected VPackSlice getBindVars() {
 		return bindVars;
 	}
 
@@ -135,7 +136,7 @@ public class AqlQueryOptions {
 	 *            key/value pairs representing the bind parameters
 	 * @return options
 	 */
-	protected AqlQueryOptions bindVars(final Map<String, Object> bindVars) {
+	protected AqlQueryOptions bindVars(final VPackSlice bindVars) {
 		this.bindVars = bindVars;
 		return this;
 	}
@@ -345,6 +346,30 @@ public class AqlQueryOptions {
 		return this;
 	}
 
+	public Boolean getStream() {
+		return options != null ? options.stream : null;
+	}
+
+	/**
+	 * 
+	 * @param stream
+	 *            Specify true and the query will be executed in a streaming fashion. The query result is not stored on
+	 *            the server, but calculated on the fly. Beware: long-running queries will need to hold the collection
+	 *            locks for as long as the query cursor exists. When set to false a query will be executed right away in
+	 *            its entirety. In that case query results are either returned right away (if the resultset is small
+	 *            enough), or stored on the arangod instance and accessible via the cursor API (with respect to the
+	 *            ttl). It is advisable to only use this option on short-running queries or without exclusive locks
+	 *            (write-locks on MMFiles). Please note that the query options cache, count and fullCount will not work
+	 *            on streaming queries. Additionally query statistics, warnings and profiling data will only be
+	 *            available after the query is finished. The default value is false
+	 * @since ArangoDB 3.4.0
+	 * @return options
+	 */
+	public AqlQueryOptions stream(final Boolean stream) {
+		getOptions().stream = stream;
+		return this;
+	}
+
 	private Options getOptions() {
 		if (options == null) {
 			options = new Options();
@@ -364,6 +389,7 @@ public class AqlQueryOptions {
 		private Optimizer optimizer;
 		private Boolean fullCount;
 		private Integer maxPlans;
+		private Boolean stream;
 
 		protected Optimizer getOptimizer() {
 			if (optimizer == null) {

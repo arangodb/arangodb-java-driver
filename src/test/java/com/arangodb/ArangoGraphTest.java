@@ -20,11 +20,11 @@
 
 package com.arangodb;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -95,7 +95,10 @@ public class ArangoGraphTest extends BaseTest {
 	public void teardown() {
 		for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3,
 				VERTEX_COL_4 }) {
-			db.collection(collection).truncate();
+			final ArangoCollection c = db.collection(collection);
+			if (c.exists()) {
+				c.truncate();
+			}
 		}
 	}
 
@@ -103,6 +106,17 @@ public class ArangoGraphTest extends BaseTest {
 	public void exists() {
 		assertThat(db.graph(GRAPH_NAME).exists(), is(true));
 		assertThat(db.graph(GRAPH_NAME + "no").exists(), is(false));
+	}
+
+	@Test
+	public void create() {
+		try {
+			final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(null);
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getName(), is(GRAPH_NAME + "_1"));
+		} finally {
+			db.graph(GRAPH_NAME + "_1").drop();
+		}
 	}
 
 	@Test

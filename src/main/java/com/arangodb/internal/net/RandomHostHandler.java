@@ -68,4 +68,13 @@ public class RandomHostHandler implements HostHandler {
 		return hosts.get(0);
 	}
 
+	@Override
+	public void reset() {
+		fallback.reset();
+	}
+
+	@Override
+	public void opened() {
+	}
+
 }

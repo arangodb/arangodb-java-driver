@@ -26,7 +26,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
-import org.json.simple.parser.ParseException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -84,7 +83,7 @@ public class GetDocumentExample extends ExampleBase {
 	}
 
 	@Test
-	public void getAsJson() throws ParseException {
+	public void getAsJson() {
 		final String doc = collection.getDocument(key, String.class);
 		assertThat(doc, is(notNullValue()));
 		assertThat(doc.contains("foo"), is(true));

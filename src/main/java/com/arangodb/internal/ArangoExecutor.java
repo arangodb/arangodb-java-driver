@@ -22,14 +22,11 @@ package com.arangodb.internal;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
 
@@ -112,40 +109,8 @@ public abstract class ArangoExecutor {
 
 	@SuppressWarnings("unchecked")
 	protected <T> T createResult(final Type type, final Response response) {
-		return (T) ((type != Void.class && response.getBody() != null) ? deserialize(response.getBody(), type) : null);
-	}
-
-	@Deprecated
-	protected <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
-		return util.deserialize(vpack, type);
-	}
-
-	@Deprecated
-	protected VPackSlice serialize(final Object entity) throws ArangoDBException {
-		return util.serialize(entity);
-	}
-
-	@Deprecated
-	protected VPackSlice serialize(final Object entity, final boolean serializeNullValues) throws ArangoDBException {
-		return util.serialize(entity, new ArangoSerializer.Options().serializeNullValues(serializeNullValues));
-	}
-
-	@Deprecated
-	protected VPackSlice serialize(final Object entity, final Type type) throws ArangoDBException {
-		return util.serialize(entity, new ArangoSerializer.Options().type(type));
-	}
-
-	@Deprecated
-	protected VPackSlice serialize(final Object entity, final Type type, final boolean serializeNullValues)
-			throws ArangoDBException {
-		return util.serialize(entity,
-			new ArangoSerializer.Options().type(type).serializeNullValues(serializeNullValues));
-	}
-
-	@Deprecated
-	protected VPackSlice serialize(final Object entity, final Type type, final Map<String, Object> additionalFields)
-			throws ArangoDBException {
-		return util.serialize(entity, new ArangoSerializer.Options().type(type).additionalFields(additionalFields));
+		return (T) ((type != Void.class && response.getBody() != null) ? util.deserialize(response.getBody(), type)
+				: null);
 	}
 
 }

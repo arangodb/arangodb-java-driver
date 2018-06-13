@@ -20,6 +20,7 @@
 
 package com.arangodb;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
@@ -29,7 +30,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
@@ -95,6 +95,17 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void create() {
+		try {
+			final CollectionEntity result = db.collection(COLLECTION_NAME + "_1").create();
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+		} finally {
+			db.collection(COLLECTION_NAME + "_1").drop();
+		}
+	}
+
+	@Test
 	public void insertDocument() {
 		final DocumentCreateEntity<BaseDocument> doc = db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(),
 			null);
@@ -124,6 +135,24 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(doc.getKey(), is(notNullValue()));
 		assertThat(doc.getRev(), is(notNullValue()));
 		assertThat(doc.getNew(), is(notNullValue()));
+	}
+
+	@Test
+	public void insertDocumentOverwriteReturnOld() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("value", "a");
+		final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME).insertDocument(doc);
+		doc.addAttribute("value", "b");
+		final DocumentCreateEntity<BaseDocument> repsert = db.collection(COLLECTION_NAME).insertDocument(doc,
+			new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
+		assertThat(repsert, is(notNullValue()));
+		assertThat(repsert.getRev(), is(not(meta.getRev())));
+		assertThat(repsert.getOld().getAttribute("value").toString(), is("a"));
+		assertThat(repsert.getNew().getAttribute("value").toString(), is("b"));
+		assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(1L));
 	}
 
 	@Test
@@ -825,7 +854,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
@@ -843,15 +871,17 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("a");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
-		assertThat(indexResult.getGeoJson(), is(false));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), is(IndexType.geo1));
 		assertThat(indexResult.getUnique(), is(false));
+		if (requireVersion(3, 4)) {
+			assertThat(indexResult.getType(), is(IndexType.geo));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo1));
+		}
 	}
 
 	@Test
@@ -861,16 +891,18 @@ public class ArangoCollectionTest extends BaseTest {
 		fields.add("b");
 		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint(), is(false));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
 		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), is(IndexType.geo2));
 		assertThat(indexResult.getUnique(), is(false));
+		if (requireVersion(3, 4)) {
+			assertThat(indexResult.getType(), is(IndexType.geo));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo2));
+		}
 	}
 
 	@Test
@@ -883,7 +915,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
@@ -902,7 +933,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getFields(), hasItem("b"));
-		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getMinLength(), is(nullValue()));
@@ -919,7 +949,6 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
-		assertThat(indexResult.getGeoJson(), is(nullValue()));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getSparse(), is(true));
@@ -1822,13 +1851,20 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void changeProperties() {
-		final CollectionPropertiesEntity properties = db.collection(COLLECTION_NAME).getProperties();
-		assertThat(properties.getWaitForSync(), is(notNullValue()));
-		final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
-		options.waitForSync(!properties.getWaitForSync());
-		final CollectionPropertiesEntity changedProperties = db.collection(COLLECTION_NAME).changeProperties(options);
-		assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
-		assertThat(changedProperties.getWaitForSync(), is(not(properties.getWaitForSync())));
+		final String collection = COLLECTION_NAME + "_prop";
+		try {
+			db.createCollection(collection);
+			final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+			assertThat(properties.getWaitForSync(), is(notNullValue()));
+			final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
+			options.waitForSync(!properties.getWaitForSync());
+			options.journalSize(2000000L);
+			final CollectionPropertiesEntity changedProperties = db.collection(collection).changeProperties(options);
+			assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
+			assertThat(changedProperties.getWaitForSync(), is(not(properties.getWaitForSync())));
+		} finally {
+			db.collection(collection).drop();
+		}
 	}
 
 	@Test

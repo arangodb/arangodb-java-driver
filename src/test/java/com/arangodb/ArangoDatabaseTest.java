@@ -58,6 +58,7 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
@@ -95,6 +96,19 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	public ArangoDatabaseTest(final Builder builder) {
 		super(builder);
+	}
+
+	@Test
+	public void create() {
+		try {
+			final Boolean result = arangoDB.db(BaseTest.TEST_DB + "_1").create();
+			assertThat(result, is(true));
+		} finally {
+			try {
+				arangoDB.db(BaseTest.TEST_DB + "_1").drop();
+			} catch (final ArangoDBException e) {
+			}
+		}
 	}
 
 	@Test
@@ -141,6 +155,27 @@ public class ArangoDatabaseTest extends BaseTest {
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(nullValue()));
+		} catch (final ArangoDBException e) {
+			e.printStackTrace();
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+
+	}
+
+	@Test
+	public void createSatelliteCollection() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+				new CollectionCreateOptions().satellite(true));
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(nullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(true));
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
@@ -449,7 +484,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void queryStream() {
+	public void queryIterate() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
@@ -532,7 +567,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
-	public void queryStreamWithBatchSize() {
+	public void queryIterateWithBatchSize() {
 		try {
 			db.createCollection(COLLECTION_NAME, null);
 			for (int i = 0; i < 10; i++) {
@@ -674,7 +709,10 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(cursorWithWarnings.getWarnings().size(), is(1));
 		final ArangoCursor<String> cursorWithLimitedWarnings = db.query("RETURN 1 / 0", null,
 			new AqlQueryOptions().maxWarningCount(0L), String.class);
-		assertThat(cursorWithLimitedWarnings.getWarnings().size(), is(0));
+		final Collection<Warning> warnings = cursorWithLimitedWarnings.getWarnings();
+		if (warnings != null) {
+			assertThat(warnings.size(), is(0));
+		}
 	}
 
 	@Test
@@ -757,10 +795,20 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void queryWithWarning() {
-		final ArangoCursor<String> cursor = arangoDB.db().query("return _apps + 1", null, null, String.class);
+		final ArangoCursor<String> cursor = arangoDB.db().query("return 1/0", null, null, String.class);
 
 		assertThat(cursor, is(notNullValue()));
 		assertThat(cursor.getWarnings(), is(notNullValue()));
+	}
+
+	@Test
+	public void queryStream() {
+		if (requireVersion(3, 4)) {
+			final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 1..2 RETURN i", null,
+				new AqlQueryOptions().stream(true).count(true), VPackSlice.class);
+			assertThat(cursor, is(notNullValue()));
+			assertThat(cursor.getCount(), is(nullValue()));
+		}
 	}
 
 	@Test
@@ -785,6 +833,18 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.createCollection(COLLECTION_NAME);
 			final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col RETURN i",
 				new MapBuilder().put("@col", COLLECTION_NAME).get(), null, BaseDocument.class);
+			cursor.close();
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
+	public void queryWithNullBindParam() throws IOException {
+		try {
+			db.createCollection(COLLECTION_NAME);
+			final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
+				new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(), null, BaseDocument.class);
 			cursor.close();
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
@@ -920,8 +980,13 @@ public class ArangoDatabaseTest extends BaseTest {
 			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(greaterThan(aqlFunctionsInitial.size())));
 		} finally {
-			db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
-
+			final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
+			// compatibility with ArangoDB < 3.4
+			if (requireVersion(3, 4)) {
+				assertThat(deleteCount, is(1));
+			} else {
+				assertThat(deleteCount, is(nullValue()));
+			}
 			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
 		}
@@ -938,8 +1003,14 @@ public class ArangoDatabaseTest extends BaseTest {
 				"function (celsius) { return celsius * 1.8 + 32; }", null);
 
 		} finally {
-			db.deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true));
-
+			final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature",
+				new AqlFunctionDeleteOptions().group(true));
+			// compatibility with ArangoDB < 3.4
+			if (requireVersion(3, 4)) {
+				assertThat(deleteCount, is(2));
+			} else {
+				assertThat(deleteCount, is(nullValue()));
+			}
 			final Collection<AqlFunctionEntity> aqlFunctions = db.getAqlFunctions(null);
 			assertThat(aqlFunctions.size(), is(aqlFunctionsInitial.size()));
 		}
@@ -1179,8 +1250,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void shouldIncludeExceptionMessage() {
-		final String version = db.getVersion().getVersion();
-		if (version.startsWith("3.1") || version.startsWith("3.0")) {
+		if (!requireVersion(3, 2)) {
 			final String exceptionMessage = "My error context";
 			final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
 			try {

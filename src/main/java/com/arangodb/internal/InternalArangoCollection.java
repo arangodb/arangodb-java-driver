@@ -92,6 +92,8 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putQueryParam(ArangoDBConstants.OVERWRITE, params.getOverwrite());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -106,6 +108,10 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
 					doc.setNew((T) util().deserialize(newDoc, value.getClass()));
+				}
+				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
+				if (oldDoc.isObject()) {
+					doc.setOld((T) util().deserialize(oldDoc, value.getClass()));
 				}
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.ID, doc.getId());
@@ -394,8 +400,10 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
-		request.setBody(
-			util().serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
+		request.setBody(util().serialize(values,
+			new ArangoSerializer.Options()
+					.serializeNullValues(params.getSerializeNull() == null || params.getSerializeNull())
+					.stringAsJson(true)));
 		return request;
 	}
 

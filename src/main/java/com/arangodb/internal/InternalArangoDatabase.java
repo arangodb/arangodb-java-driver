@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
@@ -50,6 +51,7 @@ import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.UserAccessOptions;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -174,8 +176,9 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		final String query,
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options) {
-		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(
-			util().serialize(OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars)));
+		return new Request(name, RequestType.POST, ArangoDBConstants.PATH_API_CURSOR).setBody(util().serialize(
+			OptionsBuilder.build(options != null ? options : new AqlQueryOptions(), query, bindVars != null
+					? util().serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) : null)));
 	}
 
 	protected Request queryNextRequest(final String id) {
@@ -253,11 +256,44 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		return request;
 	}
 
+	protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
+		return new ResponseDeserializer<Integer>() {
+			@Override
+			public Integer deserialize(final Response response) throws VPackException {
+				// compatibility with ArangoDB < 3.4
+				// https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+				Integer count = null;
+				final VPackSlice body = response.getBody();
+				if (body.isObject()) {
+					final VPackSlice deletedCount = body.get("deletedCount");
+					if (deletedCount.isInteger()) {
+						count = deletedCount.getAsInt();
+					}
+				}
+				return count;
+			};
+		};
+	}
+
 	protected Request getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
 		final Request request = new Request(name(), RequestType.GET, ArangoDBConstants.PATH_API_AQLFUNCTION);
 		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
 		request.putQueryParam(ArangoDBConstants.NAMESPACE, params.getNamespace());
 		return request;
+	}
+
+	protected ResponseDeserializer<Collection<AqlFunctionEntity>> getAqlFunctionsResponseDeserializer() {
+		return new ResponseDeserializer<Collection<AqlFunctionEntity>>() {
+			@Override
+			public Collection<AqlFunctionEntity> deserialize(final Response response) throws VPackException {
+				final VPackSlice body = response.getBody();
+				// compatibility with ArangoDB < 3.4
+				// https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+				final VPackSlice result = body.isArray() ? body : body.get(ArangoDBConstants.RESULT);
+				return util().deserialize(result, new Type<Collection<AqlFunctionEntity>>() {
+				}.getType());
+			}
+		};
 	}
 
 	protected Request createGraphRequest(

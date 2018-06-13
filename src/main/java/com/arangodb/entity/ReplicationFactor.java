@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2018 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,35 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
-
-import com.arangodb.internal.Host;
+package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
  *
  */
-public interface HostHandler {
+public class ReplicationFactor {
 
-	Host get();
+	private Integer replicationFactor;
+	private Boolean satellite;
 
-	void success();
+	public ReplicationFactor() {
+		super();
+	}
 
-	void fail();
+	public Integer getReplicationFactor() {
+		return replicationFactor;
+	}
 
-	void reset();
+	public void setReplicationFactor(final Integer replicationFactor) {
+		this.replicationFactor = replicationFactor;
+	}
 
-	void opened();
+	public Boolean getSatellite() {
+		return satellite;
+	}
+
+	public void setSatellite(final Boolean satellite) {
+		this.satellite = satellite;
+	}
 
 }

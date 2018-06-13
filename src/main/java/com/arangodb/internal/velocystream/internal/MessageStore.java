@@ -108,4 +108,7 @@ public class MessageStore {
 		task.clear();
 	}
 
+	public boolean isEmpty() {
+		return task.isEmpty();
+	}
 }

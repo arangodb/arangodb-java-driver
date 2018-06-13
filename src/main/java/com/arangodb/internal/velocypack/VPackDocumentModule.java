@@ -20,13 +20,12 @@
 
 package com.arangodb.internal.velocypack;
 
-import org.json.simple.JSONValue;
-
 import com.arangodb.internal.CollectionCache;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackJsonDeserializer;
 import com.arangodb.velocypack.VPackModule;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackParserSetupContext;
 import com.arangodb.velocypack.VPackSetupContext;
@@ -95,7 +94,7 @@ public class VPackDocumentModule implements VPackModule, VPackParserModule {
 				} else {
 					id = null;
 				}
-				json.append(JSONValue.toJSONString(id));
+				json.append(VPackParser.toJSONString(id));
 			}
 		});
 	}

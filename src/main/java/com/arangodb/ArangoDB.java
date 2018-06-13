@@ -20,14 +20,9 @@
 
 package com.arangodb;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
@@ -40,33 +35,18 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.ArangoExecutorSync;
+import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.CollectionCache;
-import com.arangodb.internal.CollectionCache.DBAccess;
-import com.arangodb.internal.DocumentCache;
-import com.arangodb.internal.Host;
-import com.arangodb.internal.InternalArangoDB;
+import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
-import com.arangodb.internal.http.HttpProtocol;
-import com.arangodb.internal.net.CommunicationProtocol;
-import com.arangodb.internal.net.ExtendedHostResolver;
-import com.arangodb.internal.net.FallbackHostHandler;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.net.HostResolver.EndpointResolver;
-import com.arangodb.internal.net.RandomHostHandler;
-import com.arangodb.internal.net.RoundRobinHostHandler;
-import com.arangodb.internal.net.SimpleHostResolver;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.ArangoUtilImpl;
 import com.arangodb.internal.velocypack.VPackDocumentModule;
-import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
-import com.arangodb.internal.velocystream.VstProtocol;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -85,96 +65,46 @@ import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, ConnectionSync> {
+public interface ArangoDB {
 
-	public static class Builder {
+	public static class Builder extends InternalArangoDBBuilder {
 
-		private final List<Host> hosts;
-		private Host host;
-		private Integer timeout;
-		private String user;
-		private String password;
-		private Boolean useSsl;
-		private SSLContext sslContext;
-		private Integer chunksize;
-		private Integer maxConnections;
-		private final VPack.Builder vpackBuilder;
-		private final VPackParser.Builder vpackParserBuilder;
-		private ArangoSerializer serializer;
-		private ArangoDeserializer deserializer;
-		private Protocol protocol;
-		private Boolean acquireHostList;
-		private LoadBalancingStrategy loadBalancingStrategy;
+		private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
+
+		protected Protocol protocol;
 
 		public Builder() {
 			super();
-			vpackBuilder = new VPack.Builder();
-			vpackParserBuilder = new VPackParser.Builder();
-			vpackBuilder.registerModule(new VPackDriverModule());
-			vpackParserBuilder.registerModule(new VPackDriverModule());
-			host = new Host(ArangoDBConstants.DEFAULT_HOST, ArangoDBConstants.DEFAULT_PORT);
-			hosts = new ArrayList<Host>();
-			user = ArangoDBConstants.DEFAULT_USER;
-			loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
 		}
 
+		@Override
+		protected void loadProperties(final Properties properties) {
+			super.loadProperties(properties);
+			protocol = loadProtocol(properties, protocol);
+		}
+
+		private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
+			return Protocol.valueOf(
+				getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDBConstants.DEFAULT_NETWORK_PROTOCOL)
+						.toUpperCase());
+		}
+
+		public Builder useProtocol(final Protocol protocol) {
+			this.protocol = protocol;
+			return this;
+		}
+
+		@Override
 		public Builder loadProperties(final InputStream in) throws ArangoDBException {
-			if (in != null) {
-				final Properties properties = new Properties();
-				try {
-					properties.load(in);
-					loadHosts(properties, this.hosts);
-					final String host = loadHost(properties, this.host.getHost());
-					final int port = loadPort(properties, this.host.getPort());
-					this.host = new Host(host, port);
-					timeout = loadTimeout(properties, timeout);
-					user = loadUser(properties, user);
-					password = loadPassword(properties, password);
-					useSsl = loadUseSsl(properties, useSsl);
-					chunksize = loadChunkSize(properties, chunksize);
-					maxConnections = loadMaxConnections(properties, maxConnections);
-					protocol = loadProtocol(properties, protocol);
-					acquireHostList = loadAcquireHostList(properties, acquireHostList);
-					loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
-				} catch (final IOException e) {
-					throw new ArangoDBException(e);
-				}
-			}
-			return this;
-		}
-
-		/**
-		 * @deprecated will be removed in version 4.2.0 use {@link #host(String, int)} instead
-		 * 
-		 * @param host
-		 * @return
-		 */
-		@Deprecated
-		public Builder host(final String host) {
-			this.host = new Host(host, this.host.getPort());
-			return this;
-		}
-
-		/**
-		 * @deprecated will be removed in version 4.2.0 use {@link #host(String, int)} instead
-		 * 
-		 * @param port
-		 * @return
-		 */
-		@Deprecated
-		public Builder port(final Integer port) {
-			host = new Host(host.getHost(), port);
+			super.loadProperties(in);
 			return this;
 		}
 
@@ -188,57 +118,64 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder host(final String host, final int port) {
-			hosts.add(new Host(host, port));
+			setHost(host, port);
 			return this;
 		}
 
 		public Builder timeout(final Integer timeout) {
-			this.timeout = timeout;
+			setTimeout(timeout);
 			return this;
 		}
 
 		public Builder user(final String user) {
-			this.user = user;
+			setUser(user);
 			return this;
 		}
 
 		public Builder password(final String password) {
-			this.password = password;
+			setPassword(password);
 			return this;
 		}
 
 		public Builder useSsl(final Boolean useSsl) {
-			this.useSsl = useSsl;
+			setUseSsl(useSsl);
 			return this;
 		}
 
 		public Builder sslContext(final SSLContext sslContext) {
-			this.sslContext = sslContext;
+			setSslContext(sslContext);
 			return this;
 		}
 
 		public Builder chunksize(final Integer chunksize) {
-			this.chunksize = chunksize;
+			setChunksize(chunksize);
 			return this;
 		}
 
 		public Builder maxConnections(final Integer maxConnections) {
-			this.maxConnections = maxConnections;
+			setMaxConnections(maxConnections);
 			return this;
 		}
 
-		public Builder useProtocol(final Protocol protocol) {
-			this.protocol = protocol;
+		/**
+		 * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
+		 * 
+		 * @param connectionTtl
+		 *            the maximum time to life of a connection.
+		 * @return {@link ArangoDB.Builder}
+		 */
+		public Builder connectionTtl(final Long connectionTtl) {
+			setConnectionTtl(connectionTtl);
 			return this;
 		}
 
 		public Builder acquireHostList(final Boolean acquireHostList) {
-			this.acquireHostList = acquireHostList;
+			setAcquireHostList(acquireHostList);
 			return this;
 		}
 
 		public Builder loadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
-			this.loadBalancingStrategy = loadBalancingStrategy;
+			setLoadBalancingStrategy(loadBalancingStrategy);
 			return this;
 		}
 
@@ -342,7 +279,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		 * @return builder
 		 */
 		public Builder setSerializer(final ArangoSerializer serializer) {
-			this.serializer = serializer;
+			serializer(serializer);
 			return this;
 		}
 
@@ -357,7 +294,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 		 * @return builder
 		 */
 		public Builder setDeserializer(final ArangoDeserializer deserializer) {
-			this.deserializer = deserializer;
+			deserializer(deserializer);
 			return this;
 		}
 
@@ -379,149 +316,31 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 
 			final HostResolver hostResolver = createHostResolver();
 			final HostHandler hostHandler = createHostHandler(hostResolver);
-			return new ArangoDB(
+			return new ArangoDBImpl(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections),
+							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+							.connectionTtl(connectionTtl),
 					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections),
+							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections)
+							.connectionTtl(connectionTtl),
 					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol, hostResolver);
 		}
 
-		private HostResolver createHostResolver() {
-			return acquireHostList != null && acquireHostList.booleanValue()
-					? new ExtendedHostResolver(new ArrayList<Host>(hosts))
-					: new SimpleHostResolver(new ArrayList<Host>(hosts));
-		}
-
-		private HostHandler createHostHandler(final HostResolver hostResolver) {
-			final HostHandler hostHandler;
-			if (loadBalancingStrategy != null) {
-				switch (loadBalancingStrategy) {
-				case ONE_RANDOM:
-					hostHandler = new RandomHostHandler(hostResolver, new FallbackHostHandler(hostResolver));
-					break;
-				case ROUND_ROBIN:
-					hostHandler = new RoundRobinHostHandler(hostResolver);
-					break;
-				case NONE:
-				default:
-					hostHandler = new FallbackHostHandler(hostResolver);
-					break;
-				}
-			} else {
-				hostHandler = new FallbackHostHandler(hostResolver);
-			}
-			return hostHandler;
-		}
-
 	}
 
-	private ArangoCursorInitializer cursorInitializer;
-	private CommunicationProtocol cp;
-
-	public ArangoDB(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol,
-		final HostResolver hostResolver) {
-		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
-				new DocumentCache()), util);
-		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
-			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util, collectionCache, protocol);
-		collectionCache.init(new DBAccess() {
-			@Override
-			public ArangoDatabase db(final String name) {
-				return new ArangoDatabase(cp, util, executor.documentCache(), name)
-						.setCursorInitializer(cursorInitializer);
-			}
-		});
-		hostResolver.init(new EndpointResolver() {
-			@Override
-			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
-				Collection<String> response;
-				try {
-					response = executor.execute(
-						new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_ENDPOINTS),
-						new ResponseDeserializer<Collection<String>>() {
-							@Override
-							public Collection<String> deserialize(final Response response) throws VPackException {
-								final VPackSlice field = response.getBody().get(ArangoDBConstants.ENDPOINTS);
-								Collection<String> endpoints;
-								if (field.isNone()) {
-									endpoints = Collections.<String> emptyList();
-								} else {
-									final Collection<Map<String, String>> tmp = util().deserialize(field,
-										Collection.class);
-									endpoints = new ArrayList<String>();
-									for (final Map<String, String> map : tmp) {
-										for (final String value : map.values()) {
-											endpoints.add(value);
-										}
-									}
-								}
-								return endpoints;
-							}
-						}, null);
-				} catch (final ArangoDBException e) {
-					final Integer responseCode = e.getResponseCode();
-					if (responseCode != null && responseCode == 403) {
-						response = Collections.<String> emptyList();
-					} else {
-						throw e;
-					}
-				} finally {
-					if (closeConnections) {
-						ArangoDB.this.shutdown();
-					}
-				}
-				return response;
-			}
-		});
-	}
-
-	private static CommunicationProtocol createProtocol(
-		final VstCommunicationSync.Builder vstBuilder,
-		final HttpCommunication.Builder httpBuilder,
-		final ArangoSerialization util,
-		final CollectionCache collectionCache,
-		final Protocol protocol) {
-		return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util, collectionCache)
-				: createHTTP(httpBuilder, util);
-	}
-
-	private static CommunicationProtocol createVST(
-		final VstCommunicationSync.Builder builder,
-		final ArangoSerialization util,
-		final CollectionCache collectionCache) {
-		return new VstProtocol(builder.build(util, collectionCache));
-	}
-
-	private static CommunicationProtocol createHTTP(
-		final HttpCommunication.Builder builder,
-		final ArangoSerialization util) {
-		return new HttpProtocol(builder.build(util));
-	}
-
-	@Override
-	protected ArangoExecutorSync executor() {
-		return executor;
-	}
-
-	public void shutdown() throws ArangoDBException {
-		try {
-			executor.disconnect();
-			cp.close();
-		} catch (final IOException e) {
-			throw new ArangoDBException(e);
-		}
-	}
+	/**
+	 * Releases all connections to the server and clear the connection pool.
+	 * 
+	 * @throws ArangoDBException
+	 */
+	void shutdown() throws ArangoDBException;
 
 	/**
 	 * Returns a handler of the system database
 	 * 
 	 * @return database handler
 	 */
-	public ArangoDatabase db() {
-		return db(ArangoDBConstants.SYSTEM);
-	}
+	ArangoDatabase db();
 
 	/**
 	 * Returns a handler of the database by the given name
@@ -530,9 +349,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 *            Name of the database
 	 * @return database handler
 	 */
-	public ArangoDatabase db(final String name) {
-		return new ArangoDatabase(this, name).setCursorInitializer(cursorInitializer);
-	}
+	ArangoDatabase db(final String name);
 
 	/**
 	 * Creates a new database
@@ -544,9 +361,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return true if the database was created successfully.
 	 * @throws ArangoDBException
 	 */
-	public Boolean createDatabase(final String name) throws ArangoDBException {
-		return executor.execute(createDatabaseRequest(name), createDatabaseResponseDeserializer());
-	}
+	Boolean createDatabase(final String name) throws ArangoDBException;
 
 	/**
 	 * Retrieves a list of all existing databases
@@ -556,9 +371,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return a list of all existing databases
 	 * @throws ArangoDBException
 	 */
-	public Collection<String> getDatabases() throws ArangoDBException {
-		return executor.execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
-	}
+	Collection<String> getDatabases() throws ArangoDBException;
 
 	/**
 	 * Retrieves a list of all databases the current user can access
@@ -569,9 +382,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return a list of all databases the current user can access
 	 * @throws ArangoDBException
 	 */
-	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
-		return db().getAccessibleDatabases();
-	}
+	Collection<String> getAccessibleDatabases() throws ArangoDBException;
 
 	/**
 	 * List available database to the specified user
@@ -584,10 +395,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return
 	 * @throws ArangoDBException
 	 */
-	public Collection<String> getAccessibleDatabasesFor(final String user) throws ArangoDBException {
-		return executor.execute(getAccessibleDatabasesForRequest(db().name(), user),
-			getAccessibleDatabasesForResponseDeserializer());
-	}
+	Collection<String> getAccessibleDatabasesFor(final String user) throws ArangoDBException;
 
 	/**
 	 * Returns the server name and version number.
@@ -597,9 +405,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return the server version, number
 	 * @throws ArangoDBException
 	 */
-	public ArangoDBVersion getVersion() throws ArangoDBException {
-		return db().getVersion();
-	}
+	ArangoDBVersion getVersion() throws ArangoDBException;
 
 	/**
 	 * Returns the server role.
@@ -607,9 +413,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return the server role
 	 * @throws ArangoDBException
 	 */
-	public ServerRole getRole() throws ArangoDBException {
-		return executor.execute(getRoleRequest(), getRoleResponseDeserializer());
-	}
+	ServerRole getRole() throws ArangoDBException;
 
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
@@ -623,10 +427,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
-		return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
-			UserEntity.class);
-	}
+	UserEntity createUser(final String user, final String passwd) throws ArangoDBException;
 
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
@@ -642,10 +443,8 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
-			throws ArangoDBException {
-		return executor.execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
-	}
+	UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Removes an existing user, identified by user. You need access to the _system database.
@@ -655,9 +454,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	public void deleteUser(final String user) throws ArangoDBException {
-		executor.execute(deleteUserRequest(db().name(), user), Void.class);
-	}
+	void deleteUser(final String user) throws ArangoDBException;
 
 	/**
 	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
@@ -669,9 +466,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserEntity getUser(final String user) throws ArangoDBException {
-		return executor.execute(getUserRequest(db().name(), user), UserEntity.class);
-	}
+	UserEntity getUser(final String user) throws ArangoDBException;
 
 	/**
 	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
@@ -681,9 +476,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return informations about all users
 	 * @throws ArangoDBException
 	 */
-	public Collection<UserEntity> getUsers() throws ArangoDBException {
-		return executor.execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
-	}
+	Collection<UserEntity> getUsers() throws ArangoDBException;
 
 	/**
 	 * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
@@ -697,9 +490,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return executor.execute(updateUserRequest(db().name(), user, options), UserEntity.class);
-	}
+	UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
@@ -714,25 +505,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	public UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-		return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
-	}
-
-	/**
-	 * @deprecated use {@link #grantDefaultDatabaseAccess(String, Permissions)} instead
-	 * 
-	 * @param user
-	 *            The name of the user
-	 * @param permissions
-	 *            The permissions the user grant
-	 * @since ArangoDB 3.2.0
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public void updateUserDefaultDatabaseAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
-	}
+	UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Sets the default access level for databases for the user <code>user</code>. You need permission to the _system
@@ -745,25 +518,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException {
-		executor.execute(updateUserDefaultDatabaseAccessRequest(user, permissions), Void.class);
-	}
-
-	/**
-	 * @deprecated user {@link #grantDefaultCollectionAccess(String, Permissions)} instead
-	 * 
-	 * @param user
-	 *            The name of the user
-	 * @param permissions
-	 *            The permissions the user grant
-	 * @since ArangoDB 3.2.0
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public void updateUserDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
-	}
+	void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Sets the default access level for collections for the user <code>user</code>. You need permission to the _system
@@ -776,10 +531,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
-	}
+	void grantDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Generic Execute. Use this method to execute custom FOXX services.
@@ -789,14 +541,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return VelocyStream response
 	 * @throws ArangoDBException
 	 */
-	public Response execute(final Request request) throws ArangoDBException {
-		return executor.execute(request, new ResponseDeserializer<Response>() {
-			@Override
-			public Response deserialize(final Response response) throws VPackException {
-				return response;
-			}
-		});
-	}
+	Response execute(final Request request) throws ArangoDBException;
 
 	/**
 	 * Generic Execute. Use this method to execute custom FOXX services.
@@ -808,14 +553,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return VelocyStream response
 	 * @throws ArangoDBException
 	 */
-	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
-		return executor.execute(request, new ResponseDeserializer<Response>() {
-			@Override
-			public Response deserialize(final Response response) throws VPackException {
-				return response;
-			}
-		}, hostHandle);
-	}
+	Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException;
 
 	/**
 	 * Returns fatal, error, warning or info log messages from the server's global log.
@@ -828,9 +566,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @return the log messages
 	 * @throws ArangoDBException
 	 */
-	public LogEntity getLogs(final LogOptions options) throws ArangoDBException {
-		return executor.execute(getLogsRequest(options), LogEntity.class);
-	}
+	LogEntity getLogs(final LogOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns the server's current loglevel settings.
@@ -839,9 +575,7 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
-	public LogLevelEntity getLogLevel() throws ArangoDBException {
-		return executor.execute(getLogLevelRequest(), LogLevelEntity.class);
-	}
+	LogLevelEntity getLogLevel() throws ArangoDBException;
 
 	/**
 	 * Modifies and returns the server's current loglevel settings.
@@ -852,12 +586,9 @@ public class ArangoDB extends InternalArangoDB<ArangoExecutorSync, Response, Con
 	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
-	public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
-		return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
-	}
+	LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException;
 
-	public ArangoDB _setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
-		this.cursorInitializer = cursorInitializer;
-		return this;
-	}
+	ArangoDB _setCursorInitializer(final ArangoCursorInitializer cursorInitializer);
+
+	ArangoSerialization util();
 }

@@ -33,14 +33,10 @@ import org.junit.Test;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.InternalArangoDB;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
@@ -52,7 +48,7 @@ public class ArangoSerializationTest {
 
 	@BeforeClass
 	public static void setup() {
-		final InternalArangoDB<ArangoExecutorSync, Response, ConnectionSync> arangoDB = new ArangoDB.Builder().build();
+		final ArangoDB arangoDB = new ArangoDB.Builder().build();
 		util = arangoDB.util();
 	}
 

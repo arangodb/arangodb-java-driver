@@ -22,9 +22,6 @@ package com.arangodb;
 
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionRevisionEntity;
@@ -35,9 +32,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
-import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.InternalArangoCollection;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
@@ -51,21 +46,26 @@ import com.arangodb.model.GeoIndexOptions;
 import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoCollection
-		extends InternalArangoCollection<ArangoDB, ArangoDatabase, ArangoExecutorSync, Response, ConnectionSync> {
+public interface ArangoCollection {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollection.class);
+	/**
+	 * The the handler of the database the collection is within
+	 * 
+	 * @return database handler
+	 */
+	public ArangoDatabase db();
 
-	protected ArangoCollection(final ArangoDatabase db, final String name) {
-		super(db, name);
-	}
+	/**
+	 * The name of the collection
+	 * 
+	 * @return collection name
+	 */
+	public String name();
 
 	/**
 	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -78,10 +78,7 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentCreateEntity<T> insertDocument(final T value) throws ArangoDBException {
-		return executor.execute(insertDocumentRequest(value, new DocumentCreateOptions()),
-			insertDocumentResponseDeserializer(value));
-	}
+	<T> DocumentCreateEntity<T> insertDocument(final T value) throws ArangoDBException;
 
 	/**
 	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -96,10 +93,8 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
-			throws ArangoDBException {
-		return executor.execute(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value));
-	}
+	<T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -112,12 +107,8 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
-			throws ArangoDBException {
-		final DocumentCreateOptions params = new DocumentCreateOptions();
-		return executor.execute(insertDocumentsRequest(values, params),
-			insertDocumentsResponseDeserializer(values, params));
-	}
+	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
+			throws ArangoDBException;
 
 	/**
 	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -132,13 +123,9 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
+	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
 		final Collection<T> values,
-		final DocumentCreateOptions options) throws ArangoDBException {
-		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
-		return executor.execute(insertDocumentsRequest(values, params),
-			insertDocumentsResponseDeserializer(values, params));
-	}
+		final DocumentCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Imports documents
@@ -148,9 +135,7 @@ public class ArangoCollection
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	public DocumentImportEntity importDocuments(final Collection<?> values) throws ArangoDBException {
-		return importDocuments(values, new DocumentImportOptions());
-	}
+	DocumentImportEntity importDocuments(final Collection<?> values) throws ArangoDBException;
 
 	/**
 	 * Imports documents
@@ -162,10 +147,8 @@ public class ArangoCollection
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	public DocumentImportEntity importDocuments(final Collection<?> values, final DocumentImportOptions options)
-			throws ArangoDBException {
-		return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
-	}
+	DocumentImportEntity importDocuments(final Collection<?> values, final DocumentImportOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Imports documents
@@ -175,10 +158,7 @@ public class ArangoCollection
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	public DocumentImportEntity importDocuments(final String values) throws ArangoDBException {
-		return executor.execute(importDocumentsRequest(values, new DocumentImportOptions()),
-			DocumentImportEntity.class);
-	}
+	DocumentImportEntity importDocuments(final String values) throws ArangoDBException;
 
 	/**
 	 * Imports documents
@@ -190,10 +170,8 @@ public class ArangoCollection
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	public DocumentImportEntity importDocuments(final String values, final DocumentImportOptions options)
-			throws ArangoDBException {
-		return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
-	}
+	DocumentImportEntity importDocuments(final String values, final DocumentImportOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Reads a single document
@@ -207,9 +185,7 @@ public class ArangoCollection
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String key, final Class<T> type) throws ArangoDBException {
-		return getDocument(key, type, new DocumentReadOptions());
-	}
+	<T> T getDocument(final String key, final Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Reads a single document
@@ -225,23 +201,8 @@ public class ArangoCollection
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
-			throws ArangoDBException {
-		executor.validateDocumentKey(key);
-		try {
-			return executor.execute(getDocumentRequest(key, options), type);
-		} catch (final ArangoDBException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			if ((e.getResponseCode() != null && (e.getResponseCode().intValue() == 404
-					|| e.getResponseCode().intValue() == 304 || e.getResponseCode().intValue() == 412))
-					&& (options == null || options.isCatchException())) {
-				return null;
-			}
-			throw e;
-		}
-	}
+	<T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Reads multiple documents
@@ -253,11 +214,8 @@ public class ArangoCollection
 	 * @return the documents and possible errors
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<T> getDocuments(final Collection<String> keys, final Class<T> type)
-			throws ArangoDBException {
-		final DocumentReadOptions options = new DocumentReadOptions();
-		return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type, options));
-	}
+	<T> MultiDocumentEntity<T> getDocuments(final Collection<String> keys, final Class<T> type)
+			throws ArangoDBException;
 
 	/**
 	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
@@ -272,10 +230,7 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException {
-		return executor.execute(replaceDocumentRequest(key, value, new DocumentReplaceOptions()),
-			replaceDocumentResponseDeserializer(value));
-	}
+	<T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException;
 
 	/**
 	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
@@ -292,13 +247,8 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateEntity<T> replaceDocument(
-		final String key,
-		final T value,
-		final DocumentReplaceOptions options) throws ArangoDBException {
-		return executor.execute(replaceDocumentRequest(key, value, options),
-			replaceDocumentResponseDeserializer(value));
-	}
+	<T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value, final DocumentReplaceOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -311,12 +261,8 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
-			throws ArangoDBException {
-		final DocumentReplaceOptions params = new DocumentReplaceOptions();
-		return executor.execute(replaceDocumentsRequest(values, params),
-			replaceDocumentsResponseDeserializer(values, params));
-	}
+	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
+			throws ArangoDBException;
 
 	/**
 	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -331,13 +277,9 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
+	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
 		final Collection<T> values,
-		final DocumentReplaceOptions options) throws ArangoDBException {
-		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-		return executor.execute(replaceDocumentsRequest(values, params),
-			replaceDocumentsResponseDeserializer(values, params));
-	}
+		final DocumentReplaceOptions options) throws ArangoDBException;
 
 	/**
 	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -353,10 +295,7 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateEntity<T> updateDocument(final String key, final T value) throws ArangoDBException {
-		return executor.execute(updateDocumentRequest(key, value, new DocumentUpdateOptions()),
-			updateDocumentResponseDeserializer(value));
-	}
+	<T> DocumentUpdateEntity<T> updateDocument(final String key, final T value) throws ArangoDBException;
 
 	/**
 	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -374,12 +313,8 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentUpdateEntity<T> updateDocument(
-		final String key,
-		final T value,
-		final DocumentUpdateOptions options) throws ArangoDBException {
-		return executor.execute(updateDocumentRequest(key, value, options), updateDocumentResponseDeserializer(value));
-	}
+	<T> DocumentUpdateEntity<T> updateDocument(final String key, final T value, final DocumentUpdateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -394,12 +329,8 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
-			throws ArangoDBException {
-		final DocumentUpdateOptions params = new DocumentUpdateOptions();
-		return executor.execute(updateDocumentsRequest(values, params),
-			updateDocumentsResponseDeserializer(values, params));
-	}
+	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
+			throws ArangoDBException;
 
 	/**
 	 * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -416,13 +347,9 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
+	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
 		final Collection<T> values,
-		final DocumentUpdateOptions options) throws ArangoDBException {
-		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
-		return executor.execute(updateDocumentsRequest(values, params),
-			updateDocumentsResponseDeserializer(values, params));
-	}
+		final DocumentUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Removes a document
@@ -439,10 +366,7 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException {
-		return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-			deleteDocumentResponseDeserializer(Void.class));
-	}
+	DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException;
 
 	/**
 	 * Removes a document
@@ -459,12 +383,10 @@ public class ArangoCollection
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	public <T> DocumentDeleteEntity<T> deleteDocument(
+	<T> DocumentDeleteEntity<T> deleteDocument(
 		final String key,
 		final Class<T> type,
-		final DocumentDeleteOptions options) throws ArangoDBException {
-		return executor.execute(deleteDocumentRequest(key, options), deleteDocumentResponseDeserializer(type));
-	}
+		final DocumentDeleteOptions options) throws ArangoDBException;
 
 	/**
 	 * Removes multiple document
@@ -480,11 +402,8 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values)
-			throws ArangoDBException {
-		return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
-			deleteDocumentsResponseDeserializer(Void.class));
-	}
+	MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values)
+			throws ArangoDBException;
 
 	/**
 	 * Removes multiple document
@@ -502,12 +421,10 @@ public class ArangoCollection
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
+	<T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
 		final Collection<?> values,
 		final Class<T> type,
-		final DocumentDeleteOptions options) throws ArangoDBException {
-		return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
-	}
+		final DocumentDeleteOptions options) throws ArangoDBException;
 
 	/**
 	 * Checks if the document exists by reading a single document head
@@ -519,9 +436,7 @@ public class ArangoCollection
 	 *            The key of the document
 	 * @return true if the document was found, otherwise false
 	 */
-	public Boolean documentExists(final String key) {
-		return documentExists(key, new DocumentExistsOptions());
-	}
+	Boolean documentExists(final String key);
 
 	/**
 	 * Checks if the document exists by reading a single document head
@@ -537,19 +452,7 @@ public class ArangoCollection
 	 * @throws ArangoDBException
 	 *             only thrown when {@link DocumentExistsOptions#isCatchException()} == false
 	 */
-	public Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException {
-		try {
-			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
-			return true;
-		} catch (final ArangoDBException e) {
-			if ((e.getResponseCode() != null && (e.getResponseCode().intValue() == 404
-					|| e.getResponseCode().intValue() == 304 || e.getResponseCode().intValue() == 412))
-					&& (options == null || options.isCatchException())) {
-				return false;
-			}
-			throw e;
-		}
-	}
+	Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns an index
@@ -560,9 +463,7 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity getIndex(final String id) throws ArangoDBException {
-		return executor.execute(getIndexRequest(id), IndexEntity.class);
-	}
+	IndexEntity getIndex(final String id) throws ArangoDBException;
 
 	/**
 	 * Deletes an index
@@ -573,27 +474,7 @@ public class ArangoCollection
 	 * @return the id of the index
 	 * @throws ArangoDBException
 	 */
-	public String deleteIndex(final String id) throws ArangoDBException {
-		return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
-	}
-
-	/**
-	 * Creates a hash index for the collection if it does not already exist.
-	 * 
-	 * @deprecated use {@link #ensureHashIndex(Iterable, HashIndexOptions)} instead
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
-	 * @param fields
-	 *            A list of attribute paths
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the index
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public IndexEntity createHashIndex(final Collection<String> fields, final HashIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
-	}
+	String deleteIndex(final String id) throws ArangoDBException;
 
 	/**
 	 * Creates a hash index for the collection if it does not already exist.
@@ -606,29 +487,7 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	/**
-	 * Creates a skip-list index for the collection, if it does not already exist.
-	 * 
-	 * @deprecated use {@link #ensureSkiplistIndex(Collection, SkiplistIndexOptions)} instead
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
-	 *      Documentation</a>
-	 * @param fields
-	 *            A list of attribute paths
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the index
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public IndexEntity createSkiplistIndex(final Collection<String> fields, final SkiplistIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
-	}
+	IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a skip-list index for the collection, if it does not already exist.
@@ -642,29 +501,8 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity ensureSkiplistIndex(final Iterable<String> fields, final SkiplistIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createSkiplistIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	/**
-	 * Creates a persistent index for the collection, if it does not already exist.
-	 * 
-	 * @deprecated use {@link #ensurePersistentIndex(Collection, PersistentIndexOptions)} instead
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
-	 *      Documentation</a>
-	 * @param fields
-	 *            A list of attribute paths
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the index
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public IndexEntity createPersistentIndex(final Collection<String> fields, final PersistentIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
-	}
+	IndexEntity ensureSkiplistIndex(final Iterable<String> fields, final SkiplistIndexOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Creates a persistent index for the collection, if it does not already exist.
@@ -678,29 +516,8 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createPersistentIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	/**
-	 * Creates a geo-spatial index for the collection, if it does not already exist.
-	 * 
-	 * @deprecated use {@link #ensureGeoIndex(Collection, GeoIndexOptions)} instead
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
-	 *      Documentation</a>
-	 * @param fields
-	 *            A list of attribute paths
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the index
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public IndexEntity createGeoIndex(final Collection<String> fields, final GeoIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
-	}
+	IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Creates a geo-spatial index for the collection, if it does not already exist.
@@ -714,29 +531,7 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createGeoIndexRequest(fields, options), IndexEntity.class);
-	}
-
-	/**
-	 * Creates a fulltext index for the collection, if it does not already exist.
-	 * 
-	 * @deprecated use {@link #ensureFulltextIndex(Collection, FulltextIndexOptions)} instead
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
-	 *      Documentation</a>
-	 * @param fields
-	 *            A list of attribute paths
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the index
-	 * @throws ArangoDBException
-	 */
-	@Deprecated
-	public IndexEntity createFulltextIndex(final Collection<String> fields, final FulltextIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
-	}
+	IndexEntity ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a fulltext index for the collection, if it does not already exist.
@@ -750,10 +545,8 @@ public class ArangoCollection
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	public IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options)
-			throws ArangoDBException {
-		return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
-	}
+	IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Returns all indexes of the collection
@@ -764,23 +557,14 @@ public class ArangoCollection
 	 * @return information about the indexes
 	 * @throws ArangoDBException
 	 */
-	public Collection<IndexEntity> getIndexes() throws ArangoDBException {
-		return executor.execute(getIndexesRequest(), getIndexesResponseDeserializer());
-	}
+	Collection<IndexEntity> getIndexes() throws ArangoDBException;
 
 	/**
 	 * Checks whether the collection exists
 	 * 
 	 * @return true if the collection exists, otherwise false
 	 */
-	public boolean exists() throws ArangoDBException {
-		try {
-			getInfo();
-			return true;
-		} catch (final ArangoDBException e) {
-			return false;
-		}
-	}
+	boolean exists() throws ArangoDBException;
 
 	/**
 	 * Removes all documents from the collection, but leaves the indexes intact
@@ -790,9 +574,7 @@ public class ArangoCollection
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity truncate() throws ArangoDBException {
-		return executor.execute(truncateRequest(), CollectionEntity.class);
-	}
+	CollectionEntity truncate() throws ArangoDBException;
 
 	/**
 	 * Counts the documents in a collection
@@ -803,9 +585,29 @@ public class ArangoCollection
 	 * @return information about the collection, including the number of documents
 	 * @throws ArangoDBException
 	 */
-	public CollectionPropertiesEntity count() throws ArangoDBException {
-		return executor.execute(countRequest(), CollectionPropertiesEntity.class);
-	}
+	CollectionPropertiesEntity count() throws ArangoDBException;
+
+	/**
+	 * Creates the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
+	CollectionEntity create() throws ArangoDBException;
+
+	/**
+	 * Creates the collection
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
+	CollectionEntity create(final CollectionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Drops the collection
@@ -814,9 +616,7 @@ public class ArangoCollection
 	 *      Documentation</a>
 	 * @throws ArangoDBException
 	 */
-	public void drop() throws ArangoDBException {
-		executor.execute(dropRequest(null), Void.class);
-	}
+	void drop() throws ArangoDBException;
 
 	/**
 	 * Drops the collection
@@ -829,9 +629,7 @@ public class ArangoCollection
 	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
-	public void drop(final boolean isSystem) throws ArangoDBException {
-		executor.execute(dropRequest(isSystem), Void.class);
-	}
+	void drop(final boolean isSystem) throws ArangoDBException;
 
 	/**
 	 * Loads a collection into memory.
@@ -841,9 +639,7 @@ public class ArangoCollection
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity load() throws ArangoDBException {
-		return executor.execute(loadRequest(), CollectionEntity.class);
-	}
+	CollectionEntity load() throws ArangoDBException;
 
 	/**
 	 * Removes a collection from memory. This call does not delete any documents. You can use the collection afterwards;
@@ -854,9 +650,7 @@ public class ArangoCollection
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity unload() throws ArangoDBException {
-		return executor.execute(unloadRequest(), CollectionEntity.class);
-	}
+	CollectionEntity unload() throws ArangoDBException;
 
 	/**
 	 * Returns information about the collection
@@ -867,9 +661,7 @@ public class ArangoCollection
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity getInfo() throws ArangoDBException {
-		return executor.execute(getInfoRequest(), CollectionEntity.class);
-	}
+	CollectionEntity getInfo() throws ArangoDBException;
 
 	/**
 	 * Reads the properties of the specified collection
@@ -880,9 +672,7 @@ public class ArangoCollection
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionPropertiesEntity getProperties() throws ArangoDBException {
-		return executor.execute(getPropertiesRequest(), CollectionPropertiesEntity.class);
-	}
+	CollectionPropertiesEntity getProperties() throws ArangoDBException;
 
 	/**
 	 * Changes the properties of a collection
@@ -895,10 +685,7 @@ public class ArangoCollection
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionPropertiesEntity changeProperties(final CollectionPropertiesOptions options)
-			throws ArangoDBException {
-		return executor.execute(changePropertiesRequest(options), CollectionPropertiesEntity.class);
-	}
+	CollectionPropertiesEntity changeProperties(final CollectionPropertiesOptions options) throws ArangoDBException;
 
 	/**
 	 * Renames a collection
@@ -910,9 +697,7 @@ public class ArangoCollection
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	public CollectionEntity rename(final String newName) throws ArangoDBException {
-		return executor.execute(renameRequest(newName), CollectionEntity.class);
-	}
+	CollectionEntity rename(final String newName) throws ArangoDBException;
 
 	/**
 	 * Retrieve the collections revision
@@ -922,9 +707,7 @@ public class ArangoCollection
 	 * @return information about the collection, including the collections revision
 	 * @throws ArangoDBException
 	 */
-	public CollectionRevisionEntity getRevision() throws ArangoDBException {
-		return executor.execute(getRevisionRequest(), CollectionRevisionEntity.class);
-	}
+	CollectionRevisionEntity getRevision() throws ArangoDBException;
 
 	/**
 	 * Grants or revoke access to the collection for user user. You need permission to the _system database in order to
@@ -939,9 +722,7 @@ public class ArangoCollection
 	 *            The permissions the user grant
 	 * @throws ArangoDBException
 	 */
-	public void grantAccess(final String user, final Permissions permissions) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, permissions), Void.class);
-	}
+	void grantAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Revokes access to the collection for user user. You need permission to the _system database in order to execute
@@ -954,9 +735,7 @@ public class ArangoCollection
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	public void revokeAccess(final String user) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
-	}
+	void revokeAccess(final String user) throws ArangoDBException;
 
 	/**
 	 * Clear the collection access level, revert back to the default access level.
@@ -969,9 +748,7 @@ public class ArangoCollection
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public void resetAccess(final String user) throws ArangoDBException {
-		executor.execute(resetAccessRequest(user), Void.class);
-	}
+	void resetAccess(final String user) throws ArangoDBException;
 
 	/**
 	 * Get the collection access level
@@ -984,8 +761,6 @@ public class ArangoCollection
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	public Permissions getPermissions(final String user) throws ArangoDBException {
-		return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
-	}
+	Permissions getPermissions(final String user) throws ArangoDBException;
 
 }

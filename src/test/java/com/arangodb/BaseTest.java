@@ -64,4 +64,9 @@ public abstract class BaseTest {
 		arangoDB = null;
 	}
 
+	protected boolean requireVersion(final int major, final int minor) {
+		final String[] split = arangoDB.getVersion().getVersion().split("\\.");
+		return Integer.valueOf(split[0]) >= major && Integer.valueOf(split[1]) >= minor;
+	}
+
 }

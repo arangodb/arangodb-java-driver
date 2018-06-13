@@ -34,7 +34,7 @@ public class DelHostHandler implements HostHandler {
 	public DelHostHandler(final HostHandler hostHandler, final Host host) {
 		super();
 		this.hostHandler = hostHandler;
-		this.host = host;
+		this.host = host != null ? host : hostHandler.get();
 	}
 
 	@Override
@@ -56,6 +56,17 @@ public class DelHostHandler implements HostHandler {
 		} else {
 			host = null;
 		}
+	}
+
+	@Override
+	public void reset() {
+		host = null;
+		hostHandler.reset();
+	}
+
+	@Override
+	public void opened() {
+		hostHandler.opened();
 	}
 
 }

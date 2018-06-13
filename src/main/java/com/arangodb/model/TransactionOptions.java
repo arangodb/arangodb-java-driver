@@ -124,6 +124,15 @@ public class TransactionOptions {
 		return this;
 	}
 
+	/**
+	 * @param allowImplicit
+	 *            Collections that will be written to in the transaction must be declared with the write attribute or it
+	 *            will fail, whereas non-declared collections from which is solely read will be added lazily. The
+	 *            optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
+	 *            collections for reading. Collections for reading should be fully declared if possible, to avoid
+	 *            deadlocks.
+	 * @return options
+	 */
 	public TransactionOptions allowImplicit(final Boolean allowImplicit) {
 		collections.allowImplicit(allowImplicit);
 		return this;

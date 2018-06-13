@@ -20,33 +20,33 @@
 
 package com.arangodb;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
-import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.InternalArangoVertexCollection;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoVertexCollection extends
-		InternalArangoVertexCollection<ArangoDB, ArangoDatabase, ArangoGraph, ArangoExecutorSync, Response, ConnectionSync> {
+public interface ArangoVertexCollection {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoVertexCollection.class);
+	/**
+	 * The the handler of the named graph the edge collection is within
+	 * 
+	 * @return graph handler
+	 */
+	ArangoGraph graph();
 
-	protected ArangoVertexCollection(final ArangoGraph graph, final String name) {
-		super(graph, name);
-	}
+	/**
+	 * The name of the edge collection
+	 * 
+	 * @return collection name
+	 */
+	String name();
 
 	/**
 	 * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
@@ -56,9 +56,7 @@ public class ArangoVertexCollection extends
 	 *      Documentation</a>
 	 * @throws ArangoDBException
 	 */
-	public void drop() throws ArangoDBException {
-		executor.execute(dropRequest(), Void.class);
-	}
+	void drop() throws ArangoDBException;
 
 	/**
 	 * Creates a new vertex in the collection
@@ -69,10 +67,7 @@ public class ArangoVertexCollection extends
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexEntity insertVertex(final T value) throws ArangoDBException {
-		return executor.execute(insertVertexRequest(value, new VertexCreateOptions()),
-			insertVertexResponseDeserializer(value));
-	}
+	<T> VertexEntity insertVertex(final T value) throws ArangoDBException;
 
 	/**
 	 * Creates a new vertex in the collection
@@ -85,9 +80,7 @@ public class ArangoVertexCollection extends
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException {
-		return executor.execute(insertVertexRequest(value, options), insertVertexResponseDeserializer(value));
-	}
+	<T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches an existing vertex
@@ -100,17 +93,7 @@ public class ArangoVertexCollection extends
 	 * @return the vertex identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getVertex(final String key, final Class<T> type) throws ArangoDBException {
-		try {
-			return executor.execute(getVertexRequest(key, new DocumentReadOptions()),
-				getVertexResponseDeserializer(type));
-		} catch (final ArangoDBException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			return null;
-		}
-	}
+	<T> T getVertex(final String key, final Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Fetches an existing vertex
@@ -125,17 +108,7 @@ public class ArangoVertexCollection extends
 	 * @return the vertex identified by the key
 	 * @throws ArangoDBException
 	 */
-	public <T> T getVertex(final String key, final Class<T> type, final DocumentReadOptions options)
-			throws ArangoDBException {
-		try {
-			return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
-		} catch (final ArangoDBException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			return null;
-		}
-	}
+	<T> T getVertex(final String key, final Class<T> type, final DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -150,10 +123,7 @@ public class ArangoVertexCollection extends
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateEntity replaceVertex(final String key, final T value) throws ArangoDBException {
-		return executor.execute(replaceVertexRequest(key, value, new VertexReplaceOptions()),
-			replaceVertexResponseDeserializer(value));
-	}
+	<T> VertexUpdateEntity replaceVertex(final String key, final T value) throws ArangoDBException;
 
 	/**
 	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -170,10 +140,8 @@ public class ArangoVertexCollection extends
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
-			throws ArangoDBException {
-		return executor.execute(replaceVertexRequest(key, value, options), replaceVertexResponseDeserializer(value));
-	}
+	<T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -188,10 +156,7 @@ public class ArangoVertexCollection extends
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateEntity updateVertex(final String key, final T value) throws ArangoDBException {
-		return executor.execute(updateVertexRequest(key, value, new VertexUpdateOptions()),
-			updateVertexResponseDeserializer(value));
-	}
+	<T> VertexUpdateEntity updateVertex(final String key, final T value) throws ArangoDBException;
 
 	/**
 	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -208,10 +173,8 @@ public class ArangoVertexCollection extends
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	public <T> VertexUpdateEntity updateVertex(final String key, final T value, final VertexUpdateOptions options)
-			throws ArangoDBException {
-		return executor.execute(updateVertexRequest(key, value, options), updateVertexResponseDeserializer(value));
-	}
+	<T> VertexUpdateEntity updateVertex(final String key, final T value, final VertexUpdateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Removes a vertex
@@ -221,9 +184,7 @@ public class ArangoVertexCollection extends
 	 *            The key of the vertex
 	 * @throws ArangoDBException
 	 */
-	public void deleteVertex(final String key) throws ArangoDBException {
-		executor.execute(deleteVertexRequest(key, new VertexDeleteOptions()), Void.class);
-	}
+	void deleteVertex(final String key) throws ArangoDBException;
 
 	/**
 	 * Removes a vertex
@@ -235,8 +196,6 @@ public class ArangoVertexCollection extends
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
 	 */
-	public void deleteVertex(final String key, final VertexDeleteOptions options) throws ArangoDBException {
-		executor.execute(deleteVertexRequest(key, options), Void.class);
-	}
+	void deleteVertex(final String key, final VertexDeleteOptions options) throws ArangoDBException;
 
 }

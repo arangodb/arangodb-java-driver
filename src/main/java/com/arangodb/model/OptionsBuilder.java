@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.Permissions;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -64,10 +65,7 @@ public class OptionsBuilder {
 		return options.name(name);
 	}
 
-	public static AqlQueryOptions build(
-		final AqlQueryOptions options,
-		final String query,
-		final Map<String, Object> bindVars) {
+	public static AqlQueryOptions build(final AqlQueryOptions options, final String query, final VPackSlice bindVars) {
 		return options.query(query).bindVars(bindVars);
 	}
 

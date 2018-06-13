@@ -1,3 +1,57 @@
+v4.5.0 (2018-06-11)
+---------------------------
+* removed deprecated ArangoDB.Builder.host(String)
+* removed deprecated ArangoDB.Builder.port(Integer)
+* removed deprecated ArangoCollection.create[IndexType]Index()
+* removed deprecated ArangoDatabase.updateUserDefaultCollectionAccess()
+* removed deprecated ArangoDB.updateUserDefaultDatabaseAccess()
+* removed deprecated ArangoDB.updateUserDefaultCollectionAccess()
+* removed several deprecated APIs
+* upgraded dependency velocypack 1.2.0
+  * replaced dependency json-simple with jackson
+* added replace-insert support: DocumentCreateOptions.overwrite(Boolean)
+* added support for satellite collections: CollectionCreateOptions.satellite(Boolean)
+* added AqlQueryOptions.stream(boolean) for Streaming AQL Cursors
+* added ArangoDatabase.create()
+* added ArangoCollection.create() && .create(CollectionCreateOptions)
+* added ArangoGraph.create(Collection<EdgeDefinition>) && .create(Collection<EdgeDefinition>, GraphCreateOptions)
+* extracted interfaces for ArangoDB API 
+* fixed aquireHostList bug when using active failover
+* added return type for ArangoDatabase.deleteAqlFunction()
+* added field AqlFunctionEntity.isDeterministic
+
+v4.4.1 (2018-06-04)
+---------------------------
+* fixed concurrency bug in VST when using connectionTtl
+
+v4.4.0 (2018-04-19)
+---------------------------
+* changed dependency com.arangodb:velocypack to 1.1.0
+  * fixed DateUtil does incorrect conversion of UTC time
+  * serialize BigInteger/BigDecimal as String
+* fixed reconnecting after ArangoDB restarts (issue #186)
+* fixed ArangoCollection.updateDocuments() ignoring DocumentUpdateOptions.serializeNull (issue #180)
+
+v4.3.7 (2018-04-17)
+---------------------------
+* fixed property loading
+
+v4.3.6 (2018-04-16)
+---------------------------
+* added ArangoDB.Builder.maxConnectionTtl(Integer) (Issue #141, #186)
+
+v4.3.5 (2018-04-11)
+---------------------------
+* fixed compatibility for ArangoDatabase.getAqlFunctions() for ArangoDB 3.4
+* fixed internal exception handling in VST connection
+
+v4.3.4 (2018-03-21)
+---------------------------
+* fixed serialization of bind parameter with null values (Issue #176, #177)
+* made ErrorEntity serializable (Issue #178)
+* fixed VelocyStream multi-thread authentication bug
+* fixed load balancing cursor stickiness bug
+
 v4.3.3 (2018-02-01)
 ---------------------------
 * added CollectionCreateOptions.distributeShardsLike(String) (Issue #170)

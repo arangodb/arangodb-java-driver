@@ -27,10 +27,9 @@ import java.io.Serializable;
  *
  */
 public class ErrorEntity implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -5918898261563691261L;
+
 	private String errorMessage;
 	private String exception;
 	private int code;

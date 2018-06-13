@@ -37,6 +37,7 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryExecutionState;
+import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -166,6 +167,22 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			return QueryExecutionState.valueOf(vpack.getAsString().toUpperCase().replaceAll(" ", "_"));
+		}
+	};
+
+	public static final VPackDeserializer<ReplicationFactor> REPLICATION_FACTOR = new VPackDeserializer<ReplicationFactor>() {
+		@Override
+		public ReplicationFactor deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final ReplicationFactor replicationFactor = new ReplicationFactor();
+			if (vpack.isString() && vpack.getAsString().equals("satellite")) {
+				replicationFactor.setSatellite(true);
+			} else {
+				replicationFactor.setReplicationFactor(vpack.getAsInt());
+			}
+			return replicationFactor;
 		}
 	};
 }

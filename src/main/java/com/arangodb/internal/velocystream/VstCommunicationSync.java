@@ -54,6 +54,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 
 		private final HostHandler hostHandler;
 		private Integer timeout;
+		private Long connectionTtl;
 		private String user;
 		private String password;
 		private Boolean useSsl;
@@ -107,26 +108,32 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 			return this;
 		}
 
+		public Builder connectionTtl(final Long connectionTtl) {
+			this.connectionTtl = connectionTtl;
+			return this;
+		}
+
 		public VstCommunication<Response, ConnectionSync> build(
 			final ArangoSerialization util,
 			final CollectionCache collectionCache) {
 			return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util,
-					collectionCache, chunksize, maxConnections);
+					collectionCache, chunksize, maxConnections, connectionTtl);
 		}
 
 	}
 
 	protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
-		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections) {
+		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections, final Long ttl) {
 		super(timeout, user, password, useSsl, sslContext, util, chunksize, new ConnectionPool<ConnectionSync>(
 				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT) {
-			private final ConnectionSync.Builder builder = new ConnectionSync.Builder(new MessageStore())
-					.timeout(timeout).useSsl(useSsl).sslContext(sslContext);
+			private final ConnectionSync.Builder builder = new ConnectionSync.Builder().timeout(timeout).ttl(ttl)
+					.useSsl(useSsl).sslContext(sslContext);
 
 			@Override
 			public ConnectionSync createConnection(final Host host) {
-				return builder.hostHandler(new DelHostHandler(hostHandler, host)).build();
+				return builder.messageStore(new MessageStore()).hostHandler(new DelHostHandler(hostHandler, host))
+						.build();
 			}
 		});
 		this.collectionCache = collectionCache;
