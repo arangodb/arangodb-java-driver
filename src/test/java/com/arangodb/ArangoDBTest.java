@@ -32,11 +32,14 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -60,7 +63,7 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
- *
+ * @author Reşat SABIQ
  */
 @RunWith(Parameterized.class)
 public class ArangoDBTest {
@@ -191,12 +194,23 @@ public class ArangoDBTest {
 	@Test
 	public void getUsers() {
 		try {
+			// Allow & account for pre-existing users other than ROOT:
+			final Collection<UserEntity> initialUsers = arangoDB.getUsers();
+			
 			arangoDB.createUser(USER, PW, null);
 			final Collection<UserEntity> users = arangoDB.getUsers();
 			assertThat(users, is(notNullValue()));
-			assertThat(users.size(), is(2));
+			assertThat(users.size(), is(initialUsers.size()+1));
+			
+			List<Matcher<? super String>> matchers = new ArrayList<Matcher<? super String>>(users.size());
+			// Add initial users, including root:
+			for (final UserEntity userEntity : initialUsers)
+				matchers.add(is(userEntity.getUser()));
+			// Add USER:
+			matchers.add(is(USER));
+			
 			for (final UserEntity user : users) {
-				assertThat(user.getUser(), anyOf(is(ROOT), is(USER)));
+				assertThat(user.getUser(), anyOf(matchers));
 			}
 		} finally {
 			arangoDB.deleteUser(USER);
