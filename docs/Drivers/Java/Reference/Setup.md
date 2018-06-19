@@ -1,5 +1,3 @@
-# ArangoDB Java Driver - Reference
-
 # Driver setup
 
 Setup with default configuration, this automatically loads a properties file arangodb.properties if exists in the classpath:
