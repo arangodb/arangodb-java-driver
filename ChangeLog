@@ -1,3 +1,7 @@
+v4.5.1 (xxxx-xx-xx)
+---------------------------
+* fixed exists() method in ArangoDatabase, ArangoCollection, ArangoGraph: check for ArangoDB error num
+
 v4.5.0 (2018-06-11)
 ---------------------------
 * removed deprecated ArangoDB.Builder.host(String)

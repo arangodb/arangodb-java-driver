@@ -50,7 +50,10 @@ public class ArangoGraphImpl
 			getInfo();
 			return true;
 		} catch (final ArangoDBException e) {
-			return false;
+			if (ArangoErrors.ERROR_GRAPH_NOT_FOUND.equals(e.getErrorNum())) {
+				return false;
+			}
+			throw e;
 		}
 	}
 

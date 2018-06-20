@@ -315,7 +315,10 @@ public class ArangoCollectionImpl
 			getInfo();
 			return true;
 		} catch (final ArangoDBException e) {
-			return false;
+			if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
+				return false;
+			}
+			throw e;
 		}
 	}
 

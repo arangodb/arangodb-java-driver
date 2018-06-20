@@ -92,7 +92,10 @@ public class ArangoDatabaseImpl extends
 			getInfo();
 			return true;
 		} catch (final ArangoDBException e) {
-			return false;
+			if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
+				return false;
+			}
+			throw e;
 		}
 	}
 
