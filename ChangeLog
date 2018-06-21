@@ -1,6 +1,7 @@
-v4.5.1 (xxxx-xx-xx)
+v4.5.1 (2018-06-21)
 ---------------------------
 * fixed exists() method in ArangoDatabase, ArangoCollection, ArangoGraph: check for ArangoDB error num
+* fixed ArangoDB.aquireHostList(true) with authentication
 
 v4.5.0 (2018-06-11)
 ---------------------------

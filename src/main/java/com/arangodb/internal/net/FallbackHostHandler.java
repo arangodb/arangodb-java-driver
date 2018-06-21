@@ -70,7 +70,7 @@ public class FallbackHostHandler implements HostHandler {
 	}
 
 	@Override
-	public void opened() {
+	public void confirm() {
 		if (firstOpened) {
 			// after first successful established connection, update host list
 			resolver.resolve(false, false);

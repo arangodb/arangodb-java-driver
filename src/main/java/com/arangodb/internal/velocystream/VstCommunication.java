@@ -81,6 +81,7 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 				if (user != null) {
 					authenticate(connection);
 				}
+				connection.confirm();
 			} catch (final IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				throw new ArangoDBException(e);

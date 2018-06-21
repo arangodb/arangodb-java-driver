@@ -74,7 +74,7 @@ public class RandomHostHandler implements HostHandler {
 	}
 
 	@Override
-	public void opened() {
+	public void confirm() {
 	}
 
 }

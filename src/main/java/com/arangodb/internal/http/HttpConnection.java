@@ -211,7 +211,7 @@ public class HttpConnection implements Connection {
 				response = buildResponse(client.execute(httpRequest));
 				checkError(response);
 				hostHandler.success();
-				hostHandler.opened();
+				hostHandler.confirm();
 				return response;
 			} catch (final SocketException e) {
 				hostHandler.fail();

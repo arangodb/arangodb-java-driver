@@ -65,8 +65,8 @@ public class DelHostHandler implements HostHandler {
 	}
 
 	@Override
-	public void opened() {
-		hostHandler.opened();
+	public void confirm() {
+		hostHandler.confirm();
 	}
 
 }
