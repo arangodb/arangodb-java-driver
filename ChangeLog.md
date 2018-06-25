@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Added
 
 - added support for custom serializer
-  - added `ArangoDB#Builder#serializer(ArangoSerialization)`
+  - added `ArangoDB.Builder#serializer(ArangoSerialization)`
   - added link to jackson-dataformat-velocypack in docs
 
 ## [4.5.1] - 2018-06-21
@@ -55,8 +55,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Removed
 
-- removed deprecated `ArangoDB#Builder#host(String)`
-- removed deprecated `ArangoDB#Builder#port(Integer)`
+- removed deprecated `ArangoDB.Builder#host(String)`
+- removed deprecated `ArangoDB.Builder#port(Integer)`
 - removed deprecated `ArangoCollection#create[IndexType]Index()`
 - removed deprecated `ArangoDatabase#updateUserDefaultCollectionAccess()`
 - removed deprecated `ArangoDB#updateUserDefaultDatabaseAccess()`
@@ -96,7 +96,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added `ArangoDB#Builder#maxConnectionTtl(Integer)` (Issue #141, #186)
+- added `ArangoDB.Builder#maxConnectionTtl(Integer)` (Issue #141, #186)
 
 ## [4.3.5] - 2018-04-11
 
@@ -157,8 +157,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added load balancing (`ArangoDB#Builder#loadBalancingStrategy()`)
-- added automatic acquiring of hosts for load balancing or as fallback (`ArangoDB#Builder#acquireHostList()`)
+- added load balancing (`ArangoDB.Builder#loadBalancingStrategy()`)
+- added automatic acquiring of hosts for load balancing or as fallback (`ArangoDB.Builder#acquireHostList()`)
 
 ## [4.2.7] - 2017-11-03
 
@@ -257,7 +257,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added `ArangoDBVersion#getLicense()`
 - added `ArangoDB#getRole()`
 - added `ArangoDBException#getException()`
-- added protocol switch (`ArangoDB#Builder#useProtocol(Protocol)`)
+- added protocol switch (`ArangoDB.Builder#useProtocol(Protocol)`)
   - `Protocol#VST` = VeclocyStream (default)
   - `Protocol#HTTP_JSON` = Json over HTTP
   - `Protocol#HTTP_VPACK` = VelocyPack over HTTP
@@ -270,7 +270,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
-- optimized `ArangoDB#Builder` for better multi thread support
+- optimized `ArangoDB.Builder` for better multi thread support
 
 ### Fixed
 
@@ -397,7 +397,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Added
 
 - added `VelocyPack` UTC_DATE parsing to Json String (ISO 8601)
-- added configuration methods for `VPackParser` in `ArangoDB#Builder`
+- added configuration methods for `VPackParser` in `ArangoDB.Builder`
 - added `VPackJsonSerializer` for `VPackParser`
 
 ### Fixed
