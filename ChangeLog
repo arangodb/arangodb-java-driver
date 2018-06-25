@@ -4,6 +4,7 @@ v4.5.3 (xxxx-xx-xx)
 * added DocumentReplaceOptions#silent(Boolean)
 * added DocumentUpdateOptions#silent(Boolean)
 * added DocumentDeleteOptions#silent(Boolean)
+* removed unnecessary deserializer for internal _id field
 
 v4.5.2 (2018-06-25)
 ---------------------------

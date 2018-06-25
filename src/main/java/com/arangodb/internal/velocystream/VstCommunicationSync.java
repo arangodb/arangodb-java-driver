@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.Host;
 import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.internal.net.DelHostHandler;
@@ -48,7 +47,6 @@ import com.arangodb.velocystream.Response;
 public class VstCommunicationSync extends VstCommunication<Response, ConnectionSync> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationSync.class);
-	private final CollectionCache collectionCache;
 
 	public static class Builder {
 
@@ -113,18 +111,16 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 			return this;
 		}
 
-		public VstCommunication<Response, ConnectionSync> build(
-			final ArangoSerialization util,
-			final CollectionCache collectionCache) {
-			return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util,
-					collectionCache, chunksize, maxConnections, connectionTtl);
+		public VstCommunication<Response, ConnectionSync> build(final ArangoSerialization util) {
+			return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util, chunksize,
+					maxConnections, connectionTtl);
 		}
 
 	}
 
 	protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
-		final CollectionCache collectionCache, final Integer chunksize, final Integer maxConnections, final Long ttl) {
+		final Integer chunksize, final Integer maxConnections, final Long ttl) {
 		super(timeout, user, password, useSsl, sslContext, util, chunksize, new ConnectionPool<ConnectionSync>(
 				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT) {
 			private final ConnectionSync.Builder builder = new ConnectionSync.Builder().timeout(timeout).ttl(ttl)
@@ -136,7 +132,6 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 						.build();
 			}
 		});
-		this.collectionCache = collectionCache;
 	}
 
 	@Override
@@ -145,7 +140,6 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 		try {
 			final Message requestMessage = createMessage(request);
 			final Message responseMessage = send(requestMessage, connection);
-			collectionCache.setDb(request.getDatabase());
 			final Response response = createResponse(responseMessage);
 			checkError(response);
 			return response;

@@ -37,7 +37,6 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.internal.CollectionCache.DBAccess;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.net.CommunicationProtocol;
@@ -70,21 +69,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response,
 	private CommunicationProtocol cp;
 
 	public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-		final ArangoSerializationFactory util, final CollectionCache collectionCache, final Protocol protocol,
-		final HostResolver hostResolver) {
-		super(new ArangoExecutorSync(
-				createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), collectionCache, protocol), util,
-				new DocumentCache()), util);
+		final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver) {
+		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
+				util, new DocumentCache()), util);
 		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
-			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util.get(Serializer.INTERNAL),
-			collectionCache, protocol);
-		collectionCache.init(new DBAccess() {
-			@Override
-			public ArangoDatabase db(final String name) {
-				return new ArangoDatabaseImpl(cp, util, executor.documentCache(), name)
-						.setCursorInitializer(cursorInitializer);
-			}
-		});
+			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util.get(Serializer.INTERNAL), protocol);
 		hostResolver.init(new EndpointResolver() {
 			@Override
 			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
@@ -133,17 +122,15 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response,
 		final VstCommunicationSync.Builder vstBuilder,
 		final HttpCommunication.Builder httpBuilder,
 		final ArangoSerialization util,
-		final CollectionCache collectionCache,
 		final Protocol protocol) {
-		return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util, collectionCache)
+		return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
 				: createHTTP(httpBuilder, util);
 	}
 
 	private static CommunicationProtocol createVST(
 		final VstCommunicationSync.Builder builder,
-		final ArangoSerialization util,
-		final CollectionCache collectionCache) {
-		return new VstProtocol(builder.build(util, collectionCache));
+		final ArangoSerialization util) {
+		return new VstProtocol(builder.build(util));
 	}
 
 	private static CommunicationProtocol createHTTP(

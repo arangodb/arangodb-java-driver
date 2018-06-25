@@ -36,7 +36,6 @@ import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoDBConstants;
 import com.arangodb.internal.ArangoDBImpl;
-import com.arangodb.internal.CollectionCache;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.net.HostHandle;
@@ -47,7 +46,6 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
-import com.arangodb.internal.velocypack.VPackDocumentModule;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
@@ -323,10 +321,6 @@ public interface ArangoDB {
 			if (hosts.isEmpty()) {
 				hosts.add(host);
 			}
-			final CollectionCache collectionCache = new CollectionCache();
-			vpackBuilder.registerModule(new VPackDocumentModule(collectionCache));
-			vpackParserBuilder.registerModule(new VPackDocumentModule(collectionCache));
-
 			final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
 			final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
 			final VPackParser vpackParser = vpackParserBuilder.build();
@@ -348,7 +342,7 @@ public interface ArangoDB {
 					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections)
 							.connectionTtl(connectionTtl),
-					util, collectionCache, protocol, hostResolver);
+					util, protocol, hostResolver);
 		}
 
 	}
