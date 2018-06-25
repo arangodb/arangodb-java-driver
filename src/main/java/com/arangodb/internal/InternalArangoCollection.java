@@ -95,6 +95,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putQueryParam(ArangoDBConstants.OVERWRITE, params.getOverwrite());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -129,6 +130,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				executor.createPath(ArangoDBConstants.PATH_API_DOCUMENT, name));
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(
 			util().serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
 		return request;
@@ -260,6 +262,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -296,6 +299,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(
 			util().serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
 		return request;
@@ -361,6 +365,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(util().serialize(value, new ArangoSerializer.Options()
 				.serializeNullValues(params.getSerializeNull() == null || params.getSerializeNull())));
 		return request;
@@ -401,6 +406,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(util().serialize(values,
 			new ArangoSerializer.Options()
 					.serializeNullValues(params.getSerializeNull() == null || params.getSerializeNull())
@@ -464,6 +470,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		return request;
 	}
 
@@ -491,6 +498,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(ArangoDBConstants.RETURN_OLD, params.getReturnOld());
+		request.putQueryParam(ArangoDBConstants.SILENT, params.getSilent());
 		request.setBody(util().serialize(keys));
 		return request;
 	}

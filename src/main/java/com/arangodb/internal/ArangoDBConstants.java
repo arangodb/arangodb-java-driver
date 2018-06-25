@@ -122,5 +122,6 @@ public class ArangoDBConstants {
 	public static final String IS_SYSTEM = "isSystem";
 	public static final String ROLE = "role";
 	public static final String ENDPOINTS = "endpoints";
+	public static final String SILENT = "silent";
 
 }

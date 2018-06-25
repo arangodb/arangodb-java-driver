@@ -178,6 +178,16 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentSilent() {
+		final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument(), new DocumentCreateOptions().silent(true));
+		assertThat(meta, is(notNullValue()));
+		assertThat(meta.getId(), is(nullValue()));
+		assertThat(meta.getKey(), is(nullValue()));
+		assertThat(meta.getRev(), is(nullValue()));
+	}
+
+	@Test
 	public void getDocument() {
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument(), null);
@@ -607,6 +617,18 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void updateDocumentSilent() {
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument());
+		final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), new BaseDocument(), new DocumentUpdateOptions().silent(true));
+		assertThat(meta, is(notNullValue()));
+		assertThat(meta.getId(), is(nullValue()));
+		assertThat(meta.getKey(), is(nullValue()));
+		assertThat(meta.getRev(), is(nullValue()));
+	}
+
+	@Test
 	public void replaceDocument() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
@@ -746,6 +768,18 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void replaceDocumentSilent() {
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument());
+		final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), new BaseDocument(), new DocumentReplaceOptions().silent(true));
+		assertThat(meta, is(notNullValue()));
+		assertThat(meta.getId(), is(nullValue()));
+		assertThat(meta.getKey(), is(nullValue()));
+		assertThat(meta.getRev(), is(nullValue()));
+	}
+
+	@Test
 	public void deleteDocument() {
 		final BaseDocument doc = new BaseDocument();
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
@@ -794,6 +828,18 @@ public class ArangoCollectionTest extends BaseTest {
 			fail();
 		} catch (final ArangoDBException e) {
 		}
+	}
+
+	@Test
+	public void deleteDocumentSilent() {
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument());
+		final DocumentDeleteEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
+				.deleteDocument(createResult.getKey(), BaseDocument.class, new DocumentDeleteOptions().silent(true));
+		assertThat(meta, is(notNullValue()));
+		assertThat(meta.getId(), is(nullValue()));
+		assertThat(meta.getKey(), is(nullValue()));
+		assertThat(meta.getRev(), is(nullValue()));
 	}
 
 	@Test
