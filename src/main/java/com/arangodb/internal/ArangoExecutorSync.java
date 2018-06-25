@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -39,7 +39,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
 	private final CommunicationProtocol protocol;
 
-	public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerialization util,
+	public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
 		final DocumentCache documentCache) {
 		super(util, documentCache);
 		this.protocol = protocol;

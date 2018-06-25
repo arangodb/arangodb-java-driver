@@ -1,3 +1,9 @@
+v4.5.2 (xxxx-xx-xx)
+---------------------------
+* added support for custom serializer
+  * added ArangoDB.Builder.serializer(ArangoSerialization)
+  * added link to jackson-dataformat-velocypack in docs
+
 v4.5.1 (2018-06-21)
 ---------------------------
 * fixed exists() method in ArangoDatabase, ArangoCollection, ArangoGraph: check for ArangoDB error num

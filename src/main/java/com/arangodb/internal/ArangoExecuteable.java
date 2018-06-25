@@ -20,6 +20,8 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.util.ArangoSerialization;
 
@@ -30,9 +32,9 @@ import com.arangodb.util.ArangoSerialization;
 public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends VstConnection> {
 
 	protected final E executor;
-	private final ArangoSerialization util;
+	protected final ArangoSerializationFactory util;
 
-	public ArangoExecuteable(final E executor, final ArangoSerialization util) {
+	public ArangoExecuteable(final E executor, final ArangoSerializationFactory util) {
 		super();
 		this.executor = executor;
 		this.util = util;
@@ -43,6 +45,11 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends V
 	}
 
 	public ArangoSerialization util() {
-		return util;
+		return util.get(Serializer.INTERNAL);
 	}
+
+	public ArangoSerialization util(final Serializer serializer) {
+		return util.get(serializer);
+	}
+
 }

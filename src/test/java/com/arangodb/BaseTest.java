@@ -34,9 +34,13 @@ public abstract class BaseTest {
 
 	@Parameters
 	public static Collection<ArangoDB.Builder> builders() {
-		return Arrays.asList(new ArangoDB.Builder().useProtocol(Protocol.VST),
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON),
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK));
+		return Arrays.asList(//
+			new ArangoDB.Builder().useProtocol(Protocol.VST), //
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK), //
+			new ArangoDB.Builder().useProtocol(Protocol.VST).serializer(new VelocyJack()), //
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).serializer(new VelocyJack()) //
+		);
 	}
 
 	protected static final String TEST_DB = "java_driver_test_db";

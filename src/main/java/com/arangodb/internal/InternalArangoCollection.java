@@ -36,6 +36,7 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
@@ -73,7 +74,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 	private final String name;
 
 	public InternalArangoCollection(final D db, final String name) {
-		super(db.executor(), db.util());
+		super(db.executor(), db.util);
 		this.db = db;
 		this.name = name;
 	}
@@ -107,11 +108,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				final DocumentCreateEntity<T> doc = util().deserialize(body, DocumentCreateEntity.class);
 				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
-					doc.setNew((T) util().deserialize(newDoc, value.getClass()));
+					doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, value.getClass()));
 				}
 				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
 				if (oldDoc.isObject()) {
-					doc.setOld((T) util().deserialize(oldDoc, value.getClass()));
+					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
 				}
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.ID, doc.getId());
@@ -162,7 +163,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 						final DocumentCreateEntity<T> doc = util().deserialize(next, DocumentCreateEntity.class);
 						final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
 						if (newDoc.isObject()) {
-							doc.setNew((T) util().deserialize(newDoc, type));
+							doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, type));
 						}
 						docs.add(doc);
 						documentsAndErrors.add(doc);
@@ -234,7 +235,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 						errors.add(error);
 						documentsAndErrors.add(error);
 					} else {
-						final T doc = (T) util().deserialize(next, type);
+						final T doc = (T) util(Serializer.CUSTOM).deserialize(next, type);
 						docs.add(doc);
 						documentsAndErrors.add(doc);
 					}
@@ -272,11 +273,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				final DocumentUpdateEntity<T> doc = util().deserialize(body, DocumentUpdateEntity.class);
 				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
-					doc.setNew((T) util().deserialize(newDoc, value.getClass()));
+					doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, value.getClass()));
 				}
 				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
 				if (oldDoc.isObject()) {
-					doc.setOld((T) util().deserialize(oldDoc, value.getClass()));
+					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
 				}
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
@@ -330,11 +331,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 						final DocumentUpdateEntity<T> doc = util().deserialize(next, DocumentUpdateEntity.class);
 						final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
 						if (newDoc.isObject()) {
-							doc.setNew((T) util().deserialize(newDoc, type));
+							doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, type));
 						}
 						final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
 						if (oldDoc.isObject()) {
-							doc.setOld((T) util().deserialize(oldDoc, type));
+							doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, type));
 						}
 						docs.add(doc);
 						documentsAndErrors.add(doc);
@@ -374,11 +375,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				final DocumentUpdateEntity<T> doc = util().deserialize(body, DocumentUpdateEntity.class);
 				final VPackSlice newDoc = body.get(ArangoDBConstants.NEW);
 				if (newDoc.isObject()) {
-					doc.setNew((T) util().deserialize(newDoc, value.getClass()));
+					doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, value.getClass()));
 				}
 				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
 				if (oldDoc.isObject()) {
-					doc.setOld((T) util().deserialize(oldDoc, value.getClass()));
+					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
 				}
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
@@ -437,11 +438,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 						final DocumentUpdateEntity<T> doc = util().deserialize(next, DocumentUpdateEntity.class);
 						final VPackSlice newDoc = next.get(ArangoDBConstants.NEW);
 						if (newDoc.isObject()) {
-							doc.setNew((T) util().deserialize(newDoc, type));
+							doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, type));
 						}
 						final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
 						if (oldDoc.isObject()) {
-							doc.setOld((T) util().deserialize(oldDoc, type));
+							doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, type));
 						}
 						docs.add(doc);
 						documentsAndErrors.add(doc);
@@ -476,7 +477,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				final DocumentDeleteEntity<T> doc = util().deserialize(body, DocumentDeleteEntity.class);
 				final VPackSlice oldDoc = body.get(ArangoDBConstants.OLD);
 				if (oldDoc.isObject()) {
-					doc.setOld((T) util().deserialize(oldDoc, type));
+					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, type));
 				}
 				return doc;
 			}
@@ -516,7 +517,7 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 						final DocumentDeleteEntity<T> doc = util().deserialize(next, DocumentDeleteEntity.class);
 						final VPackSlice oldDoc = next.get(ArangoDBConstants.OLD);
 						if (oldDoc.isObject()) {
-							doc.setOld((T) util().deserialize(oldDoc, type));
+							doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, type));
 						}
 						docs.add(doc);
 						documentsAndErrors.add(doc);

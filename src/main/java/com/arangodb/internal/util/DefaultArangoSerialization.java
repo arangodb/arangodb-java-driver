@@ -32,12 +32,12 @@ import com.arangodb.velocypack.VPackSlice;
  * @author Mark Vollmary
  *
  */
-public class ArangoUtilImpl implements ArangoSerialization {
+public class DefaultArangoSerialization implements ArangoSerialization {
 
 	private final ArangoSerializer serializer;
 	private final ArangoDeserializer deserializer;
 
-	public ArangoUtilImpl(final ArangoSerializer serializer, final ArangoDeserializer deserializer) {
+	public DefaultArangoSerialization(final ArangoSerializer serializer, final ArangoDeserializer deserializer) {
 		super();
 		this.serializer = serializer;
 		this.deserializer = deserializer;

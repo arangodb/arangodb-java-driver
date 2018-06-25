@@ -36,6 +36,8 @@ import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
@@ -50,7 +52,6 @@ import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.UserAccessOptions;
-import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
@@ -69,7 +70,8 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 	private final String name;
 	private final A arango;
 
-	public InternalArangoDatabase(final A arango, final E executor, final ArangoSerialization util, final String name) {
+	public InternalArangoDatabase(final A arango, final E executor, final ArangoSerializationFactory util,
+		final String name) {
 		super(executor, util);
 		this.arango = arango;
 		this.name = name;
@@ -341,7 +343,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 				if (body != null) {
 					final VPackSlice result = body.get(ArangoDBConstants.RESULT);
 					if (!result.isNone() && !result.isNull()) {
-						return util().deserialize(result, type);
+						return util(Serializer.CUSTOM).deserialize(result, type);
 					}
 				}
 				return null;
@@ -400,7 +402,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		final Collection<V> vertices = new ArrayList<V>();
 		for (final Iterator<VPackSlice> iterator = vpack.get(ArangoDBConstants.VERTICES).arrayIterator(); iterator
 				.hasNext();) {
-			vertices.add((V) util().deserialize(iterator.next(), vertexClass));
+			vertices.add((V) util(Serializer.CUSTOM).deserialize(iterator.next(), vertexClass));
 		}
 		return vertices;
 	}
@@ -411,7 +413,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E, R, C>, E exten
 		final Collection<E> edges = new ArrayList<E>();
 		for (final Iterator<VPackSlice> iteratorEdge = next.get(ArangoDBConstants.EDGES).arrayIterator(); iteratorEdge
 				.hasNext();) {
-			edges.add((E) util().deserialize(iteratorEdge.next(), edgeClass));
+			edges.add((E) util(Serializer.CUSTOM).deserialize(iteratorEdge.next(), edgeClass));
 		}
 		return edges;
 	}

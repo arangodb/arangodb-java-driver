@@ -25,6 +25,8 @@ import java.lang.reflect.Type;
 import java.util.regex.Pattern;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackException;
@@ -48,18 +50,14 @@ public abstract class ArangoExecutor {
 	private final DocumentCache documentCache;
 	private final ArangoSerialization util;
 
-	protected ArangoExecutor(final ArangoSerialization util, final DocumentCache documentCache) {
+	protected ArangoExecutor(final ArangoSerializationFactory util, final DocumentCache documentCache) {
 		super();
 		this.documentCache = documentCache;
-		this.util = util;
+		this.util = util.get(Serializer.INTERNAL);
 	}
 
 	public DocumentCache documentCache() {
 		return documentCache;
-	}
-
-	protected ArangoSerialization util() {
-		return util;
 	}
 
 	protected String createPath(final String... params) {

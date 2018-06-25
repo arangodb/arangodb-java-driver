@@ -44,6 +44,8 @@ import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.HostResolver.EndpointResolver;
+import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
@@ -68,12 +70,14 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response,
 	private CommunicationProtocol cp;
 
 	public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-		final ArangoSerialization util, final CollectionCache collectionCache, final Protocol protocol,
+		final ArangoSerializationFactory util, final CollectionCache collectionCache, final Protocol protocol,
 		final HostResolver hostResolver) {
-		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util, collectionCache, protocol), util,
+		super(new ArangoExecutorSync(
+				createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), collectionCache, protocol), util,
 				new DocumentCache()), util);
 		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
-			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util, collectionCache, protocol);
+			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util.get(Serializer.INTERNAL),
+			collectionCache, protocol);
 		collectionCache.init(new DBAccess() {
 			@Override
 			public ArangoDatabase db(final String name) {
@@ -292,4 +296,5 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response,
 		this.cursorInitializer = cursorInitializer;
 		return this;
 	}
+
 }

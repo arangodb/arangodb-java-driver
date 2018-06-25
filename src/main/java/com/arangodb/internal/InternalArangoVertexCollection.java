@@ -27,6 +27,7 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
@@ -51,7 +52,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 	private final String name;
 
 	public InternalArangoVertexCollection(final G graph, final String name) {
-		super(graph.executor(), graph.util());
+		super(graph.executor(), graph.util);
 		this.graph = graph;
 		this.name = name;
 	}
@@ -108,7 +109,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 		return new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.VERTEX), type);
+				return util(Serializer.CUSTOM).deserialize(response.getBody().get(ArangoDBConstants.VERTEX), type);
 			}
 		};
 	}

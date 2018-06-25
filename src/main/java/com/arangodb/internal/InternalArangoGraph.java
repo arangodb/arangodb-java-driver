@@ -45,7 +45,7 @@ public class InternalArangoGraph<A extends InternalArangoDB<E, R, C>, D extends 
 	private final String name;
 
 	public InternalArangoGraph(final D db, final String name) {
-		super(db.executor(), db.util());
+		super(db.executor(), db.util);
 		this.db = db;
 		this.name = name;
 	}

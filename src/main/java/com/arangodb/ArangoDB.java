@@ -43,8 +43,10 @@ import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
+import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.ArangoSerializerImpl;
-import com.arangodb.internal.util.ArangoUtilImpl;
+import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocypack.VPackDocumentModule;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.model.LogOptions;
@@ -276,8 +278,10 @@ public interface ArangoDB {
 		 * 
 		 * @param serializer
 		 *            custom serializer
+		 * @deprecated use {@link #serializer(ArangoSerialization)} instead
 		 * @return builder
 		 */
+		@Deprecated
 		public Builder setSerializer(final ArangoSerializer serializer) {
 			serializer(serializer);
 			return this;
@@ -291,10 +295,27 @@ public interface ArangoDB {
 		 * 
 		 * @param deserializer
 		 *            custom deserializer
+		 * @deprecated use {@link #serializer(ArangoSerialization)} instead
 		 * @return builder
 		 */
+		@Deprecated
 		public Builder setDeserializer(final ArangoDeserializer deserializer) {
 			deserializer(deserializer);
+			return this;
+		}
+
+		/**
+		 * Replace the built-in serializer/deserializer with the given one.
+		 * 
+		 * <br />
+		 * <b>ATTENTION!:</b> Any registered custom serializer/deserializer or module will be ignored.
+		 * 
+		 * @param serialization
+		 *            custom serializer/deserializer
+		 * @return builder
+		 */
+		public Builder serializer(final ArangoSerialization serialization) {
+			setSerializer(serialization);
 			return this;
 		}
 
@@ -313,6 +334,10 @@ public interface ArangoDB {
 					: new ArangoSerializerImpl(vpacker, vpackerNull, vpackParser);
 			final ArangoDeserializer deserializerTemp = deserializer != null ? deserializer
 					: new ArangoDeserializerImpl(vpackerNull, vpackParser);
+			final DefaultArangoSerialization internal = new DefaultArangoSerialization(serializerTemp,
+					deserializerTemp);
+			final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
+			final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
 			final HostResolver hostResolver = createHostResolver();
 			final HostHandler hostHandler = createHostHandler(hostResolver);
@@ -323,7 +348,7 @@ public interface ArangoDB {
 					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections)
 							.connectionTtl(connectionTtl),
-					new ArangoUtilImpl(serializerTemp, deserializerTemp), collectionCache, protocol, hostResolver);
+					util, collectionCache, protocol, hostResolver);
 		}
 
 	}
@@ -591,4 +616,7 @@ public interface ArangoDB {
 	ArangoDB _setCursorInitializer(final ArangoCursorInitializer cursorInitializer);
 
 	ArangoSerialization util();
+
+	ArangoSerialization util(Serializer serializer);
+
 }

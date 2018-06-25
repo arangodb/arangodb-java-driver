@@ -4,7 +4,7 @@
 
 	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
-	<version>4.5.1-SNAPSHOT</version>
+	<version>4.5.2-SNAPSHOT</version>
 	<inceptionYear>2016</inceptionYear>
 	<packaging>jar</packaging>
 
@@ -23,11 +23,16 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j-api.version>1.7.13</slf4j-api.version>
+		<arangodb.velocypack.version>1.2.0</arangodb.velocypack.version>
+		
+		<!-- provided -->
+		<httpclient.version>4.5.1</httpclient.version>
+		
+		<!-- test -->		
 		<logback-classic.version>1.1.3</logback-classic.version>
 		<hamcrest-all.version>1.3</hamcrest-all.version>
 		<junit.version>4.12</junit.version>
-		<httpclient.version>4.5.1</httpclient.version>
-		<arangodb.velocypack.version>1.2.0</arangodb.velocypack.version>
+		<arangodb.velocypack.jackson.version>0.1.1</arangodb.velocypack.jackson.version>
 	</properties>
 
 	<developers>
@@ -117,6 +122,19 @@
 					<target>1.6</target>
 					<compilerArgument></compilerArgument>
 				</configuration>
+				<executions>
+					<execution>
+						<id>test-compile</id>
+						<phase>process-test-sources</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<configuration>
+							<source>1.6</source>
+							<target>1.7</target>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -214,6 +232,11 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.arangodb</groupId>
+			<artifactId>jackson-dataformat-velocypack</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
@@ -246,6 +269,11 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.arangodb</groupId>
+				<artifactId>jackson-dataformat-velocypack</artifactId>
+				<version>${arangodb.velocypack.jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>

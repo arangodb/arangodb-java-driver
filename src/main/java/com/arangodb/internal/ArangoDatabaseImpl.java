@@ -45,6 +45,7 @@ import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
@@ -58,7 +59,6 @@ import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -73,10 +73,10 @@ public class ArangoDatabaseImpl extends
 	private ArangoCursorInitializer cursorInitializer;
 
 	protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
-		super(arangoDB, arangoDB.executor(), arangoDB.util(), name);
+		super(arangoDB, arangoDB.executor(), arangoDB.util, name);
 	}
 
-	protected ArangoDatabaseImpl(final CommunicationProtocol protocol, final ArangoSerialization util,
+	protected ArangoDatabaseImpl(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
 		final DocumentCache documentCache, final String name) {
 		super(null, new ArangoExecutorSync(protocol, util, documentCache), util, name);
 	}

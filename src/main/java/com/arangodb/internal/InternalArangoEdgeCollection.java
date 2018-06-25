@@ -27,6 +27,7 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
@@ -51,7 +52,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 	private final String name;
 
 	public InternalArangoEdgeCollection(final G graph, final String name) {
-		super(graph.executor(), graph.util());
+		super(graph.executor(), graph.util);
 		this.graph = graph;
 		this.name = name;
 	}
@@ -103,7 +104,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E, R, C>, D
 		return new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
+				return util(Serializer.CUSTOM).deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
 			}
 		};
 	}

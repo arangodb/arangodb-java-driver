@@ -41,6 +41,7 @@ import com.arangodb.internal.net.RoundRobinHostHandler;
 import com.arangodb.internal.net.SimpleHostResolver;
 import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.util.ArangoDeserializer;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
@@ -81,6 +82,7 @@ public class InternalArangoDBBuilder {
 	protected ArangoDeserializer deserializer;
 	protected Boolean acquireHostList;
 	protected LoadBalancingStrategy loadBalancingStrategy;
+	protected ArangoSerialization customSerializer;
 
 	public InternalArangoDBBuilder() {
 		super();
@@ -173,6 +175,10 @@ public class InternalArangoDBBuilder {
 
 	protected void deserializer(final ArangoDeserializer deserializer) {
 		this.deserializer = deserializer;
+	}
+
+	protected void setSerializer(final ArangoSerialization serializer) {
+		this.customSerializer = serializer;
 	}
 
 	protected HostResolver createHostResolver() {

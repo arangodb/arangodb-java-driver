@@ -30,6 +30,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
@@ -37,7 +38,6 @@ import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.UserAccessOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -53,7 +53,7 @@ import com.arangodb.velocystream.Response;
  */
 public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnection> extends ArangoExecuteable<E, R, C> {
 
-	public InternalArangoDB(final E executor, final ArangoSerialization util) {
+	public InternalArangoDB(final E executor, final ArangoSerializationFactory util) {
 		super(executor, util);
 	}
 
