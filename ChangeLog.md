@@ -289,7 +289,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
-- extracted `VelocyPack` implementation to https://github.com/arangodb/java-velocypack
+- extracted VelocyPack implementation to https://github.com/arangodb/java-velocypack
 
 ### Fixed
 
