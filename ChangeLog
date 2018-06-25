@@ -1,4 +1,4 @@
-v4.5.2 (xxxx-xx-xx)
+v4.5.2 (2018-06-25)
 ---------------------------
 * added support for custom serializer
   * added ArangoDB.Builder.serializer(ArangoSerialization)
