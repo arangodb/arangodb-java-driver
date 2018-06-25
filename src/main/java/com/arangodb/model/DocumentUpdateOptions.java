@@ -36,6 +36,7 @@ public class DocumentUpdateOptions {
 	private Boolean returnNew;
 	private Boolean returnOld;
 	private Boolean serializeNull;
+	private Boolean silent;
 
 	public DocumentUpdateOptions() {
 		super();
@@ -160,6 +161,21 @@ public class DocumentUpdateOptions {
 	 */
 	public DocumentUpdateOptions serializeNull(final Boolean serializeNull) {
 		this.serializeNull = serializeNull;
+		return this;
+	}
+
+	public Boolean getSilent() {
+		return silent;
+	}
+
+	/**
+	 * @param silent
+	 *            If set to true, an empty object will be returned as response. No meta-data will be returned for the
+	 *            created document. This option can be used to save some network traffic.
+	 * @return options
+	 */
+	public DocumentUpdateOptions silent(final Boolean silent) {
+		this.silent = silent;
 		return this;
 	}
 

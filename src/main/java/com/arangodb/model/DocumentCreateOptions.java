@@ -32,6 +32,7 @@ public class DocumentCreateOptions {
 	private Boolean returnNew;
 	private Boolean returnOld;
 	private Boolean overwrite;
+	private Boolean silent;
 
 	public DocumentCreateOptions() {
 		super();
@@ -95,6 +96,21 @@ public class DocumentCreateOptions {
 	 */
 	public DocumentCreateOptions overwrite(final Boolean overwrite) {
 		this.overwrite = overwrite;
+		return this;
+	}
+
+	public Boolean getSilent() {
+		return silent;
+	}
+
+	/**
+	 * @param silent
+	 *            If set to true, an empty object will be returned as response. No meta-data will be returned for the
+	 *            created document. This option can be used to save some network traffic.
+	 * @return options
+	 */
+	public DocumentCreateOptions silent(final Boolean silent) {
+		this.silent = silent;
 		return this;
 	}
 

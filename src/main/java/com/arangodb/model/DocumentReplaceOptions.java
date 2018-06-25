@@ -33,6 +33,7 @@ public class DocumentReplaceOptions {
 	private String ifMatch;
 	private Boolean returnNew;
 	private Boolean returnOld;
+	private Boolean silent;
 
 	public DocumentReplaceOptions() {
 		super();
@@ -108,6 +109,21 @@ public class DocumentReplaceOptions {
 	 */
 	public DocumentReplaceOptions returnOld(final Boolean returnOld) {
 		this.returnOld = returnOld;
+		return this;
+	}
+
+	public Boolean getSilent() {
+		return silent;
+	}
+
+	/**
+	 * @param silent
+	 *            If set to true, an empty object will be returned as response. No meta-data will be returned for the
+	 *            created document. This option can be used to save some network traffic.
+	 * @return options
+	 */
+	public DocumentReplaceOptions silent(final Boolean silent) {
+		this.silent = silent;
 		return this;
 	}
 

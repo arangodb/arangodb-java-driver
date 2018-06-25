@@ -31,6 +31,7 @@ public class DocumentDeleteOptions {
 	private Boolean waitForSync;
 	private String ifMatch;
 	private Boolean returnOld;
+	private Boolean silent;
 
 	public DocumentDeleteOptions() {
 		super();
@@ -76,6 +77,21 @@ public class DocumentDeleteOptions {
 	 */
 	public DocumentDeleteOptions returnOld(final Boolean returnOld) {
 		this.returnOld = returnOld;
+		return this;
+	}
+
+	public Boolean getSilent() {
+		return silent;
+	}
+
+	/**
+	 * @param silent
+	 *            If set to true, an empty object will be returned as response. No meta-data will be returned for the
+	 *            created document. This option can be used to save some network traffic.
+	 * @return options
+	 */
+	public DocumentDeleteOptions silent(final Boolean silent) {
+		this.silent = silent;
 		return this;
 	}
 
