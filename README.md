@@ -1,4 +1,3 @@
-
 ![ArangoDB-Logo](https://docs.arangodb.com/assets/arangodb_logo_2016_inverted.png)
 
 # ArangoDB Java Driver
@@ -12,10 +11,9 @@ The official ArangoDB Java Driver.
 
 ## Learn more
 
-* [ArangoDB](https://www.arangodb.com/)
-* [ChangeLog](ChangeLog)
-* [Examples](src/test/java/com/arangodb/example)
-* [Tutorial](https://www.arangodb.com/tutorials/tutorial-sync-java-driver/)
-* [JavaDoc](http://arangodb.github.io/arangodb-java-driver/javadoc-4_5/index.html)
-* [JavaDoc VelocyPack](http://arangodb.github.io/java-velocypack/javadoc-1_0/index.html)
-
+- [ArangoDB](https://www.arangodb.com/)
+- [ChangeLog](ChangeLog.md)
+- [Examples](src/test/java/com/arangodb/example)
+- [Tutorial](https://www.arangodb.com/tutorials/tutorial-sync-java-driver/)
+- [JavaDoc](http://arangodb.github.io/arangodb-java-driver/javadoc-4_5/index.html)
+- [JavaDoc VelocyPack](http://arangodb.github.io/java-velocypack/javadoc-1_0/index.html)
