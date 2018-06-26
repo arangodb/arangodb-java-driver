@@ -100,7 +100,9 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return request;
 	}
 
-	protected <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(final T value) {
+	protected <T> ResponseDeserializer<DocumentCreateEntity<T>> insertDocumentResponseDeserializer(
+		final T value,
+		final DocumentCreateOptions options) {
 		return new ResponseDeserializer<DocumentCreateEntity<T>>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -115,11 +117,13 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				if (oldDoc.isObject()) {
 					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
 				}
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.ID, doc.getId());
-				values.put(DocumentField.Type.KEY, doc.getKey());
-				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache().setValues(value, values);
+				if (options == null || options.getSilent() == null || !options.getSilent().booleanValue()) {
+					final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+					values.put(DocumentField.Type.ID, doc.getId());
+					values.put(DocumentField.Type.KEY, doc.getKey());
+					values.put(DocumentField.Type.REV, doc.getRev());
+					executor.documentCache().setValues(value, values);
+				}
 				return doc;
 			}
 		};
@@ -267,7 +271,9 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return request;
 	}
 
-	protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(final T value) {
+	protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> replaceDocumentResponseDeserializer(
+		final T value,
+		final DocumentReplaceOptions options) {
 		return new ResponseDeserializer<DocumentUpdateEntity<T>>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -282,9 +288,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				if (oldDoc.isObject()) {
 					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
 				}
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache().setValues(value, values);
+				if (options == null || options.getSilent() == null || !options.getSilent().booleanValue()) {
+					final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+					values.put(DocumentField.Type.REV, doc.getRev());
+					executor.documentCache().setValues(value, values);
+				}
 				return doc;
 			}
 		};
@@ -371,7 +379,9 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 		return request;
 	}
 
-	protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> updateDocumentResponseDeserializer(final T value) {
+	protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> updateDocumentResponseDeserializer(
+		final T value,
+		final DocumentUpdateOptions options) {
 		return new ResponseDeserializer<DocumentUpdateEntity<T>>() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -386,9 +396,11 @@ public class InternalArangoCollection<A extends InternalArangoDB<E, R, C>, D ext
 				if (oldDoc.isObject()) {
 					doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
 				}
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache().setValues(value, values);
+				if (options == null || options.getSilent() == null || !options.getSilent().booleanValue()) {
+					final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
+					values.put(DocumentField.Type.REV, doc.getRev());
+					executor.documentCache().setValues(value, values);
+				}
 				return doc;
 			}
 		};

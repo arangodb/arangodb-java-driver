@@ -188,6 +188,18 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentSilentDontTouchInstance() {
+		final BaseDocument doc = new BaseDocument();
+		final String key = "testkey";
+		doc.setKey(key);
+		final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME).insertDocument(doc,
+			new DocumentCreateOptions().silent(true));
+		assertThat(meta, is(notNullValue()));
+		assertThat(meta.getKey(), is(nullValue()));
+		assertThat(doc.getKey(), is(key));
+	}
+
+	@Test
 	public void getDocument() {
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument(), null);
@@ -777,6 +789,18 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(meta.getId(), is(nullValue()));
 		assertThat(meta.getKey(), is(nullValue()));
 		assertThat(meta.getRev(), is(nullValue()));
+	}
+
+	@Test
+	public void replaceDocumentSilentDontTouchInstance() {
+		final BaseDocument doc = new BaseDocument();
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc);
+		final String revision = doc.getRevision();
+		assertThat(revision, is(notNullValue()));
+		final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
+				.replaceDocument(createResult.getKey(), doc, new DocumentReplaceOptions().silent(true));
+		assertThat(meta.getRev(), is(nullValue()));
+		assertThat(doc.getRevision(), is(revision));
 	}
 
 	@Test
