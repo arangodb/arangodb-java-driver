@@ -37,8 +37,8 @@ public class Request {
 	private final String database;
 	private final RequestType requestType;
 	private final String request;
-	private Map<String, String> queryParam;
-	private Map<String, String> headerParam;
+	private final Map<String, String> queryParam;
+	private final Map<String, String> headerParam;
 	@Expose(serialize = false)
 	private VPackSlice body;
 
@@ -83,29 +83,23 @@ public class Request {
 	}
 
 	public Map<String, String> getQueryParam() {
-		if (queryParam == null) {
-			queryParam = new HashMap<String, String>();
-		}
 		return queryParam;
 	}
 
 	public Request putQueryParam(final String key, final Object value) {
 		if (value != null) {
-			getQueryParam().put(key, value.toString());
+			queryParam.put(key, value.toString());
 		}
 		return this;
 	}
 
 	public Map<String, String> getHeaderParam() {
-		if (headerParam == null) {
-			headerParam = new HashMap<String, String>();
-		}
 		return headerParam;
 	}
 
 	public Request putHeaderParam(final String key, final String value) {
 		if (value != null) {
-			getHeaderParam().put(key, value);
+			headerParam.put(key, value);
 		}
 		return this;
 	}

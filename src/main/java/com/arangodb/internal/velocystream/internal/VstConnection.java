@@ -43,9 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.Host;
+import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -120,7 +120,7 @@ public abstract class VstConnection implements Connection {
 					socket = SocketFactory.getDefault().createSocket();
 				}
 				socket.connect(new InetSocketAddress(host.getHost(), host.getPort()),
-					timeout != null ? timeout : ArangoDBConstants.DEFAULT_TIMEOUT);
+					timeout != null ? timeout : ArangoDefaults.DEFAULT_TIMEOUT);
 				socket.setKeepAlive(true);
 				socket.setTcpNoDelay(true);
 				if (LOGGER.isDebugEnabled()) {
@@ -256,8 +256,8 @@ public abstract class VstConnection implements Connection {
 
 	private synchronized void writeChunkHead(final Chunk chunk) throws IOException {
 		final long messageLength = chunk.getMessageLength();
-		final int headLength = messageLength > -1L ? ArangoDBConstants.CHUNK_MAX_HEADER_SIZE
-				: ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
+		final int headLength = messageLength > -1L ? ArangoDefaults.CHUNK_MAX_HEADER_SIZE
+				: ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
 		final int length = chunk.getContentLength() + headLength;
 		final ByteBuffer buffer = ByteBuffer.allocate(headLength).order(ByteOrder.LITTLE_ENDIAN);
 		buffer.putInt(length);
@@ -270,18 +270,18 @@ public abstract class VstConnection implements Connection {
 	}
 
 	protected Chunk readChunk() throws IOException {
-		final ByteBuffer chunkHeadBuffer = readBytes(ArangoDBConstants.CHUNK_MIN_HEADER_SIZE);
+		final ByteBuffer chunkHeadBuffer = readBytes(ArangoDefaults.CHUNK_MIN_HEADER_SIZE);
 		final int length = chunkHeadBuffer.getInt();
 		final int chunkX = chunkHeadBuffer.getInt();
 		final long messageId = chunkHeadBuffer.getLong();
 		final long messageLength;
 		final int contentLength;
 		if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-			messageLength = readBytes(ArangoDBConstants.LONG_BYTES).getLong();
-			contentLength = length - ArangoDBConstants.CHUNK_MAX_HEADER_SIZE;
+			messageLength = readBytes(ArangoDefaults.LONG_BYTES).getLong();
+			contentLength = length - ArangoDefaults.CHUNK_MAX_HEADER_SIZE;
 		} else {
 			messageLength = -1L;
-			contentLength = length - ArangoDBConstants.CHUNK_MIN_HEADER_SIZE;
+			contentLength = length - ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
 		}
 		final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 		if (LOGGER.isDebugEnabled()) {

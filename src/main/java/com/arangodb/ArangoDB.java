@@ -34,8 +34,9 @@ import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
-import com.arangodb.internal.ArangoDBConstants;
+import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDBImpl;
+import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.net.HostHandle;
@@ -93,7 +94,7 @@ public interface ArangoDB {
 
 		private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
 			return Protocol.valueOf(
-				getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDBConstants.DEFAULT_NETWORK_PROTOCOL)
+				getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
 						.toUpperCase());
 		}
 
@@ -342,7 +343,7 @@ public interface ArangoDB {
 					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections)
 							.connectionTtl(connectionTtl),
-					util, protocol, hostResolver);
+					util, protocol, hostResolver, new ArangoContext());
 		}
 
 	}

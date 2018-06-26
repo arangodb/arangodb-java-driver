@@ -24,7 +24,11 @@ package com.arangodb.internal;
  * @author Mark Vollmary
  *
  */
-public class ArangoErrors {
+public final class ArangoErrors {
+
+	private ArangoErrors() {
+		super();
+	}
 
 	public static final Integer ERROR_ARANGO_DATA_SOURCE_NOT_FOUND = 1203;
 	public static final Integer ERROR_ARANGO_DATABASE_NOT_FOUND = 1228;

@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.Host;
 
 /**
  * @author Mark Vollmary

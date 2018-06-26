@@ -20,8 +20,6 @@
 
 package com.arangodb.internal.net;
 
-import com.arangodb.internal.Host;
-
 /**
  * @author Mark Vollmary
  *

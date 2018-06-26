@@ -22,14 +22,13 @@ package com.arangodb;
 
 import org.junit.Test;
 
-import com.arangodb.internal.ArangoExecutor;
-import com.arangodb.internal.util.ArangoSerializationFactory;
+import com.arangodb.internal.util.DocumentUtil;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoExecuteableTest {
+public class ArangoDocumentUtilTest {
 
 	@Test
 	public void validateDocumentKeyValid() {
@@ -51,9 +50,7 @@ public class ArangoExecuteableTest {
 	}
 
 	private void checkDocumentKey(final String key) throws ArangoDBException {
-		final ArangoExecutor executeBase = new ArangoExecutor(new ArangoSerializationFactory(null, null), null) {
-		};
-		executeBase.validateDocumentKey(key);
+		DocumentUtil.validateDocumentKey(key);
 	}
 
 	@Test
@@ -76,8 +73,6 @@ public class ArangoExecuteableTest {
 	}
 
 	private void checkDocumentId(final String id) throws ArangoDBException {
-		final ArangoExecutor executeBase = new ArangoExecutor(new ArangoSerializationFactory(null, null), null) {
-		};
-		executeBase.validateDocumentId(id);
+		DocumentUtil.validateDocumentId(id);
 	}
 }

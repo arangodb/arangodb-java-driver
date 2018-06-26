@@ -74,8 +74,8 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
-import com.arangodb.internal.Host;
 import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;

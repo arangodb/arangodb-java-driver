@@ -26,11 +26,11 @@ import javax.net.ssl.SSLContext;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
-import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.Host;
+import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.internal.net.DelHostHandler;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
@@ -116,7 +116,7 @@ public class HttpCommunication {
 		final Integer maxConnections, final Protocol contentType, final Long connectionTtl) {
 		super();
 		connectionPool = new ConnectionPool<HttpConnection>(
-				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_HTTP_DEFAULT) {
+				maxConnections != null ? Math.max(1, maxConnections) : ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT) {
 			@Override
 			public HttpConnection createConnection(final Host host) {
 				return new HttpConnection(timeout, user, password, useSsl, sslContext, util,

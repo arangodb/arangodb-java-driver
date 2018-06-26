@@ -31,7 +31,6 @@ import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.velocystream.internal.VstConnection;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.OptionsBuilder;
@@ -47,18 +46,22 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
- * @param <R>
- * @param <C>
  *
  */
-public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnection> extends ArangoExecuteable<E, R, C> {
+public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
 
-	public InternalArangoDB(final E executor, final ArangoSerializationFactory util) {
-		super(executor, util);
+	private static final String PATH_API_ADMIN_LOG = "/_admin/log";
+	private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
+	private static final String PATH_API_ROLE = "/_admin/server/role";
+	protected static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
+	private static final String PATH_API_USER = "/_api/user";
+
+	protected InternalArangoDB(final E executor, final ArangoSerializationFactory util, final ArangoContext context) {
+		super(executor, util, context);
 	}
 
 	protected Request getRoleRequest() {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ROLE);
+		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_ROLE);
 	}
 
 	protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
@@ -71,8 +74,8 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	}
 
 	protected Request createDatabaseRequest(final String name) {
-		final Request request = new Request(ArangoDBConstants.SYSTEM, RequestType.POST,
-				ArangoDBConstants.PATH_API_DATABASE);
+		final Request request = request(ArangoDBConstants.SYSTEM, RequestType.POST,
+			InternalArangoDatabase.PATH_API_DATABASE);
 		request.setBody(util().serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
 		return request;
 	}
@@ -87,7 +90,7 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	}
 
 	protected Request getDatabasesRequest(final String database) {
-		return new Request(database, RequestType.GET, ArangoDBConstants.PATH_API_DATABASE);
+		return request(database, RequestType.GET, InternalArangoDatabase.PATH_API_DATABASE);
 	}
 
 	protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
@@ -102,8 +105,7 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	}
 
 	protected Request getAccessibleDatabasesForRequest(final String database, final String user) {
-		return new Request(database, RequestType.GET,
-				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE));
+		return request(database, RequestType.GET, PATH_API_USER, user, ArangoDBConstants.DATABASE);
 	}
 
 	protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
@@ -127,22 +129,22 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 		final String passwd,
 		final UserCreateOptions options) {
 		final Request request;
-		request = new Request(database, RequestType.POST, ArangoDBConstants.PATH_API_USER);
+		request = request(database, RequestType.POST, PATH_API_USER);
 		request.setBody(
 			util().serialize(OptionsBuilder.build(options != null ? options : new UserCreateOptions(), user, passwd)));
 		return request;
 	}
 
 	protected Request deleteUserRequest(final String database, final String user) {
-		return new Request(database, RequestType.DELETE, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
+		return request(database, RequestType.DELETE, PATH_API_USER, user);
 	}
 
 	protected Request getUsersRequest(final String database) {
-		return new Request(database, RequestType.GET, ArangoDBConstants.PATH_API_USER);
+		return request(database, RequestType.GET, PATH_API_USER);
 	}
 
 	protected Request getUserRequest(final String database, final String user) {
-		return new Request(database, RequestType.GET, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
+		return request(database, RequestType.GET, PATH_API_USER, user);
 	}
 
 	protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
@@ -158,33 +160,33 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 
 	protected Request updateUserRequest(final String database, final String user, final UserUpdateOptions options) {
 		final Request request;
-		request = new Request(database, RequestType.PATCH, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
+		request = request(database, RequestType.PATCH, PATH_API_USER, user);
 		request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
 		return request;
 	}
 
 	protected Request replaceUserRequest(final String database, final String user, final UserUpdateOptions options) {
 		final Request request;
-		request = new Request(database, RequestType.PUT, executor.createPath(ArangoDBConstants.PATH_API_USER, user));
+		request = request(database, RequestType.PUT, PATH_API_USER, user);
 		request.setBody(util().serialize(options != null ? options : new UserUpdateOptions()));
 		return request;
 	}
 
 	protected Request updateUserDefaultDatabaseAccessRequest(final String user, final Permissions permissions) {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*"))
-						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_USER, user,
+			ArangoDBConstants.DATABASE, "*")
+					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_USER, user, ArangoDBConstants.DATABASE, "*", "*"))
-						.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_USER, user,
+			ArangoDBConstants.DATABASE, "*", "*")
+					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request getLogsRequest(final LogOptions options) {
 		final LogOptions params = options != null ? options : new LogOptions();
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ADMIN_LOG)
+		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG)
 				.putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
 				.putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
 				.putQueryParam(LogOptions.PROPERTY_START, params.getStart())
@@ -195,11 +197,11 @@ public class InternalArangoDB<E extends ArangoExecutor, R, C extends VstConnecti
 	}
 
 	protected Request getLogLevelRequest() {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_API_ADMIN_LOG_LEVEL);
+		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_LEVEL);
 	}
 
 	protected Request setLogLevelRequest(final LogLevelEntity entity) {
-		return new Request(ArangoDBConstants.SYSTEM, RequestType.PUT, ArangoDBConstants.PATH_API_ADMIN_LOG_LEVEL)
+		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_ADMIN_LOG_LEVEL)
 				.setBody(util().serialize(entity));
 	}
 

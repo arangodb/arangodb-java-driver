@@ -22,8 +22,6 @@ package com.arangodb.internal.net;
 
 import java.util.List;
 
-import com.arangodb.internal.Host;
-
 /**
  * @author Mark Vollmary
  *

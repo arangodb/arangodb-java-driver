@@ -27,7 +27,7 @@ import java.net.URLEncoder;
  * @author Mark Vollmary
  *
  */
-public class EncodeUtils {
+public final class EncodeUtils {
 
 	private EncodeUtils() {
 	}

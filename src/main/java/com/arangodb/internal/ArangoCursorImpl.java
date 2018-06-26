@@ -43,7 +43,7 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
 	private final String id;
 	private final ArangoCursorExecute execute;
 
-	protected ArangoCursorImpl(final InternalArangoDatabase<?, ?, ?, ?> db, final ArangoCursorExecute execute,
+	protected ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
 		final Class<T> type, final CursorEntity result) {
 		super();
 		this.execute = execute;
@@ -54,7 +54,7 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
 
 	protected ArangoCursorIterator<T> createIterator(
 		final ArangoCursor<T> cursor,
-		final InternalArangoDatabase<?, ?, ?, ?> db,
+		final InternalArangoDatabase<?, ?> db,
 		final ArangoCursorExecute execute,
 		final CursorEntity result) {
 		return new ArangoCursorIterator<T>(cursor, execute, db, result);

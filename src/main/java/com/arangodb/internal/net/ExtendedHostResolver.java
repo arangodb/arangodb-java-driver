@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.arangodb.internal.Host;
-
 /**
  * @author Mark Vollmary
  *

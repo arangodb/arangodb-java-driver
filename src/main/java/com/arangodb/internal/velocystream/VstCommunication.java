@@ -31,10 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.Host;
+import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.ConnectionPool;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.ResponseUtils;
@@ -53,6 +53,7 @@ import com.arangodb.velocystream.Response;
  */
 public abstract class VstCommunication<R, C extends VstConnection> {
 
+	protected static final String ENCRYPTION_PLAIN = "plain";
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
@@ -71,7 +72,7 @@ public abstract class VstCommunication<R, C extends VstConnection> {
 		this.password = password;
 		this.util = util;
 		this.connectionPool = connectionPool;
-		this.chunksize = chunksize != null ? chunksize : ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE;
+		this.chunksize = chunksize != null ? chunksize : ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
 	}
 
 	protected synchronized void connect(final C connection) {

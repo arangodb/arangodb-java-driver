@@ -23,8 +23,6 @@ package com.arangodb.internal.net;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.arangodb.internal.Host;
-
 /**
  * @author Mark Vollmary
  *

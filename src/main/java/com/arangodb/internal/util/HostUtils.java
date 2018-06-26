@@ -20,13 +20,13 @@
 
 package com.arangodb.internal.util;
 
-import com.arangodb.internal.Host;
+import com.arangodb.internal.net.Host;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class HostUtils {
+public final class HostUtils {
 
 	private HostUtils() {
 		super();

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.Host;
 
 /**
  * @author Mark Vollmary

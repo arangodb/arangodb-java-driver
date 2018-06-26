@@ -27,20 +27,18 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexDeleteOptions;
 import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoVertexCollectionImpl extends
-		InternalArangoVertexCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync, Response, ConnectionSync>
+public class ArangoVertexCollectionImpl
+		extends InternalArangoVertexCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync>
 		implements ArangoVertexCollection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoVertexCollectionImpl.class);

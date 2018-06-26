@@ -32,7 +32,7 @@ import com.arangodb.internal.InternalArangoDatabase;
 public interface ArangoCursorInitializer {
 
 	<T> ArangoCursor<T> createInstance(
-		final InternalArangoDatabase<?, ?, ?, ?> db,
+		final InternalArangoDatabase<?, ?> db,
 		final ArangoCursorExecute execute,
 		final Class<T> type,
 		final CursorEntity result);

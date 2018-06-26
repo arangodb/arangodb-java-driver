@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.ArangoDBConstants;
-import com.arangodb.internal.Host;
+import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.ConnectionPool;
 import com.arangodb.internal.net.DelHostHandler;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.ConnectionSync;
@@ -122,7 +122,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
 		final Integer chunksize, final Integer maxConnections, final Long ttl) {
 		super(timeout, user, password, useSsl, sslContext, util, chunksize, new ConnectionPool<ConnectionSync>(
-				maxConnections != null ? Math.max(1, maxConnections) : ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT) {
+				maxConnections != null ? Math.max(1, maxConnections) : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT) {
 			private final ConnectionSync.Builder builder = new ConnectionSync.Builder().timeout(timeout).ttl(ttl)
 					.useSsl(useSsl).sslContext(sslContext);
 
@@ -159,8 +159,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 	@Override
 	protected void authenticate(final ConnectionSync connection) {
 		final Response response = execute(
-			new AuthenticationRequest(user, password != null ? password : "", ArangoDBConstants.ENCRYPTION_PLAIN),
-			connection);
+			new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN), connection);
 		checkError(response);
 	}
 

@@ -20,24 +20,34 @@
 
 package com.arangodb.internal;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Map.Entry;
+
+import com.arangodb.ArangoDBException;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
-import com.arangodb.internal.velocystream.internal.VstConnection;
+import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark Vollmary
  *
  */
-public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends VstConnection> {
+public abstract class ArangoExecuteable<E extends ArangoExecutor> {
+
+	private static final String SLASH = "/";
 
 	protected final E executor;
 	protected final ArangoSerializationFactory util;
+	protected final ArangoContext context;
 
-	public ArangoExecuteable(final E executor, final ArangoSerializationFactory util) {
+	protected ArangoExecuteable(final E executor, final ArangoSerializationFactory util, final ArangoContext context) {
 		super();
 		this.executor = executor;
 		this.util = util;
+		this.context = context;
 	}
 
 	protected E executor() {
@@ -50,6 +60,35 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor, R, C extends V
 
 	public ArangoSerialization util(final Serializer serializer) {
 		return util.get(serializer);
+	}
+
+	protected Request request(final String database, final RequestType requestType, final String... path) {
+		final Request request = new Request(database, requestType, createPath(path));
+		for (final Entry<String, String> header : context.getHeaderParam().entrySet()) {
+			request.putHeaderParam(header.getKey(), header.getValue());
+		}
+		return request;
+	}
+
+	protected static String createPath(final String... params) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < params.length; i++) {
+			if (i > 0) {
+				sb.append(SLASH);
+			}
+			try {
+				final String param;
+				if (params[i].contains(SLASH)) {
+					param = createPath(params[i].split(SLASH));
+				} else {
+					param = EncodeUtils.encodeURL(params[i]);
+				}
+				sb.append(param);
+			} catch (final UnsupportedEncodingException e) {
+				throw new ArangoDBException(e);
+			}
+		}
+		return sb.toString();
 	}
 
 }

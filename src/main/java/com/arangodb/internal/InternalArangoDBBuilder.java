@@ -34,6 +34,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.ExtendedHostResolver;
 import com.arangodb.internal.net.FallbackHostHandler;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.RandomHostHandler;
@@ -90,9 +91,9 @@ public class InternalArangoDBBuilder {
 		vpackParserBuilder = new VPackParser.Builder();
 		vpackBuilder.registerModule(new VPackDriverModule());
 		vpackParserBuilder.registerModule(new VPackDriverModule());
-		host = new Host(ArangoDBConstants.DEFAULT_HOST, ArangoDBConstants.DEFAULT_PORT);
+		host = new Host(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
 		hosts = new ArrayList<Host>();
-		user = ArangoDBConstants.DEFAULT_USER;
+		user = ArangoDefaults.DEFAULT_USER;
 		loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
 	}
 
@@ -226,7 +227,7 @@ public class InternalArangoDBBuilder {
 	}
 
 	private static String loadHost(final Properties properties, final String currentValue) {
-		final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDBConstants.DEFAULT_HOST);
+		final String host = getProperty(properties, PROPERTY_KEY_HOST, currentValue, ArangoDefaults.DEFAULT_HOST);
 		if (host.contains(":")) {
 			throw new ArangoDBException(String.format(
 				"Could not load property-value arangodb.host=%s. Expect only ip. Do you mean arangodb.hosts=ip:port ?",
@@ -236,17 +237,16 @@ public class InternalArangoDBBuilder {
 	}
 
 	private static Integer loadPort(final Properties properties, final int currentValue) {
-		return Integer
-				.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDBConstants.DEFAULT_PORT));
+		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_PORT, currentValue, ArangoDefaults.DEFAULT_PORT));
 	}
 
 	private static Integer loadTimeout(final Properties properties, final Integer currentValue) {
-		return Integer.parseInt(
-			getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDBConstants.DEFAULT_TIMEOUT));
+		return Integer
+				.parseInt(getProperty(properties, PROPERTY_KEY_TIMEOUT, currentValue, ArangoDefaults.DEFAULT_TIMEOUT));
 	}
 
 	private static String loadUser(final Properties properties, final String currentValue) {
-		return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDBConstants.DEFAULT_USER);
+		return getProperty(properties, PROPERTY_KEY_USER, currentValue, ArangoDefaults.DEFAULT_USER);
 	}
 
 	private static String loadPassword(final Properties properties, final String currentValue) {
@@ -255,35 +255,35 @@ public class InternalArangoDBBuilder {
 
 	private static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {
 		return Boolean.parseBoolean(
-			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDBConstants.DEFAULT_USE_SSL));
+			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
 	}
 
 	private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
-			ArangoDBConstants.CHUNK_DEFAULT_CONTENT_SIZE));
+			ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE));
 	}
 
 	private static Integer loadMaxConnections(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_MAX_CONNECTIONS, currentValue,
-			ArangoDBConstants.MAX_CONNECTIONS_VST_DEFAULT));
+			ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT));
 	}
 
 	private static Long loadConnectionTtl(final Properties properties, final Long currentValue) {
 		final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
-			ArangoDBConstants.CONNECTION_TTL_VST_DEFAULT);
+			ArangoDefaults.CONNECTION_TTL_VST_DEFAULT);
 		return ttl != null ? Long.parseLong(ttl) : null;
 	}
 
 	private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
 		return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
-			ArangoDBConstants.DEFAULT_ACQUIRE_HOST_LIST));
+			ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST));
 	}
 
 	private static LoadBalancingStrategy loadLoadBalancingStrategy(
 		final Properties properties,
 		final LoadBalancingStrategy currentValue) {
 		return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-			ArangoDBConstants.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase());
+			ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase());
 	}
 
 	protected static <T> String getProperty(

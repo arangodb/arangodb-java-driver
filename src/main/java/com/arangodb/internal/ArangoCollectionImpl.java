@@ -37,7 +37,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.DocumentCreateOptions;
@@ -53,14 +53,12 @@ import com.arangodb.model.HashIndexOptions;
 import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoCollectionImpl
-		extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync, Response, ConnectionSync>
+public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
 		implements ArangoCollection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoCollection.class);
@@ -131,7 +129,7 @@ public class ArangoCollectionImpl
 	@Override
 	public <T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
 			throws ArangoDBException {
-		executor.validateDocumentKey(key);
+		DocumentUtil.validateDocumentKey(key);
 		try {
 			return executor.execute(getDocumentRequest(key, options), type);
 		} catch (final ArangoDBException e) {

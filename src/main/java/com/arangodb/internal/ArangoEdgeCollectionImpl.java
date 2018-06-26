@@ -27,20 +27,18 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;
 import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
-import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoEdgeCollectionImpl extends
-		InternalArangoEdgeCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync, Response, ConnectionSync>
+public class ArangoEdgeCollectionImpl
+		extends InternalArangoEdgeCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync>
 		implements ArangoEdgeCollection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);

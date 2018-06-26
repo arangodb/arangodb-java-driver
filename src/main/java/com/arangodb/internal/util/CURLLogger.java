@@ -34,7 +34,7 @@ import com.arangodb.velocystream.RequestType;
  * @author Mark Vollmary
  *
  */
-public class CURLLogger {
+public final class CURLLogger {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(CURLLogger.class);
 

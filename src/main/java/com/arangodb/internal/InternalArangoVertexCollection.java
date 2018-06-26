@@ -28,7 +28,7 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
-import com.arangodb.internal.velocystream.internal.VstConnection;
+import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.VertexCreateOptions;
 import com.arangodb.model.VertexDeleteOptions;
@@ -45,14 +45,16 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>, D extends InternalArangoDatabase<A, E, R, C>, G extends InternalArangoGraph<A, D, E, R, C>, E extends ArangoExecutor, R, C extends VstConnection>
-		extends ArangoExecuteable<E, R, C> {
+public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, G extends InternalArangoGraph<A, D, E>, E extends ArangoExecutor>
+		extends ArangoExecuteable<E> {
+
+	private static final String PATH_API_GHARIAL = "/_api/gharial";
 
 	private final G graph;
 	private final String name;
 
-	public InternalArangoVertexCollection(final G graph, final String name) {
-		super(graph.executor(), graph.util);
+	protected InternalArangoVertexCollection(final G graph, final String name) {
+		super(graph.executor, graph.util, graph.context);
 		this.graph = graph;
 		this.name = name;
 	}
@@ -66,13 +68,13 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 	}
 
 	protected Request dropRequest() {
-		return new Request(graph.db().name(), RequestType.DELETE,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name));
+		return request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX,
+			name);
 	}
 
 	protected <T> Request insertVertexRequest(final T value, final VertexCreateOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.POST,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX, name));
+		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(),
+			ArangoDBConstants.VERTEX, name);
 		final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(util().serialize(value));
@@ -96,9 +98,8 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 	}
 
 	protected Request getVertexRequest(final String key, final DocumentReadOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.GET,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX,
-					executor.createDocumentHandle(name, key)));
+		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(),
+			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -115,9 +116,8 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 	}
 
 	protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.PUT,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX,
-					executor.createDocumentHandle(name, key)));
+		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(),
+			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
@@ -141,9 +141,8 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 
 	protected <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
 		final Request request;
-		request = new Request(graph.db().name(), RequestType.PATCH,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX,
-					executor.createDocumentHandle(name, key)));
+		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(),
+			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
 		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -167,9 +166,8 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E, R, C>,
 	}
 
 	protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
-		final Request request = new Request(graph.db().name(), RequestType.DELETE,
-				executor.createPath(ArangoDBConstants.PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX,
-					executor.createDocumentHandle(name, key)));
+		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(),
+			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
 		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
 		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());

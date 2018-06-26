@@ -31,7 +31,7 @@ import java.io.UnsupportedEncodingException;
  * @author Mark Vollmary
  *
  */
-public class IOUtils {
+public final class IOUtils {
 
 	private IOUtils() {
 	}

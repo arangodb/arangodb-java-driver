@@ -47,7 +47,6 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -63,15 +62,16 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response, ConnectionSync> implements ArangoDB {
+public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
 
 	private ArangoCursorInitializer cursorInitializer;
 	private CommunicationProtocol cp;
 
 	public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
-		final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver) {
+		final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
+		final ArangoContext context) {
 		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
-				util, new DocumentCache()), util);
+				util, new DocumentCache()), util, context);
 		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
 			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util.get(Serializer.INTERNAL), protocol);
 		hostResolver.init(new EndpointResolver() {
@@ -79,8 +79,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync, Response,
 			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
 				Collection<String> response;
 				try {
-					response = executor.execute(
-						new Request(ArangoDBConstants.SYSTEM, RequestType.GET, ArangoDBConstants.PATH_ENDPOINTS),
+					response = executor.execute(new Request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_ENDPOINTS),
 						new ResponseDeserializer<Collection<String>>() {
 							@Override
 							public Collection<String> deserialize(final Response response) throws VPackException {

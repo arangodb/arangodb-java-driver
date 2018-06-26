@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2017 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2018 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,33 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
+package com.arangodb.internal;
 
-import java.io.Closeable;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
  *
  */
-public interface Connection extends Closeable {
+public class ArangoContext {
 
-	Host getHost();
+	private final Map<String, String> headerParam;
 
-	void closeOnError() throws IOException;
+	public ArangoContext() {
+		super();
+		headerParam = new HashMap<String, String>();
+	}
+
+	public Map<String, String> getHeaderParam() {
+		return headerParam;
+	}
+
+	public ArangoContext putHeaderParam(final String key, final String value) {
+		if (value != null) {
+			headerParam.put(key, value);
+		}
+		return this;
+	}
 
 }

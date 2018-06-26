@@ -31,7 +31,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class ResponseUtils {
+public final class ResponseUtils {
 
 	private static final int ERROR_STATUS = 300;
 	private static final int ERROR_INTERNAL = 503;

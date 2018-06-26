@@ -20,59 +20,15 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.Protocol;
-import com.arangodb.entity.LoadBalancingStrategy;
-
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoDBConstants {
+public final class ArangoDBConstants {
 
-	public static final String DEFAULT_HOST = "127.0.0.1";
-	public static final Integer DEFAULT_PORT = 8529;
-	public static final Integer DEFAULT_TIMEOUT = 0;
-	public static final String DEFAULT_USER = "root";
-	public static final Boolean DEFAULT_USE_SSL = false;
-
-	public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-	public static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-	public static final int CHUNK_MIN_HEADER_SIZE = INTEGER_BYTES + INTEGER_BYTES + LONG_BYTES;
-	public static final int CHUNK_MAX_HEADER_SIZE = CHUNK_MIN_HEADER_SIZE + LONG_BYTES;
-	public static final int CHUNK_DEFAULT_CONTENT_SIZE = 30000;
-	public static final int MAX_CONNECTIONS_VST_DEFAULT = 1;
-	public static final Integer CONNECTION_TTL_VST_DEFAULT = null;
-	public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
-	public static final Protocol DEFAULT_NETWORK_PROTOCOL = Protocol.VST;
-	public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
-	public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
-
-	public static final String PATH_API_DOCUMENT = "/_api/document";
-	public static final String PATH_API_COLLECTION = "/_api/collection";
-	public static final String PATH_API_DATABASE = "/_api/database";
-	public static final String PATH_API_VERSION = "/_api/version";
-	public static final String PATH_API_INDEX = "/_api/index";
-	public static final String PATH_API_USER = "/_api/user";
-	public static final String PATH_API_CURSOR = "/_api/cursor";
-	public static final String PATH_API_GHARIAL = "/_api/gharial";
-	public static final String PATH_API_TRANSACTION = "/_api/transaction";
-	public static final String PATH_API_AQLFUNCTION = "/_api/aqlfunction";
-	public static final String PATH_API_EXPLAIN = "/_api/explain";
-	public static final String PATH_API_QUERY = "/_api/query";
-	public static final String PATH_API_QUERY_CACHE = "/_api/query-cache";
-	public static final String PATH_API_QUERY_CACHE_PROPERTIES = "/_api/query-cache/properties";
-	public static final String PATH_API_QUERY_PROPERTIES = "/_api/query/properties";
-	public static final String PATH_API_QUERY_CURRENT = "/_api/query/current";
-	public static final String PATH_API_QUERY_SLOW = "/_api/query/slow";
-	public static final String PATH_API_TRAVERSAL = "/_api/traversal";
-	public static final String PATH_API_ADMIN_LOG = "/_admin/log";
-	public static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
-	public static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
-	public static final String PATH_API_IMPORT = "/_api/import";
-	public static final String PATH_API_ROLE = "/_admin/server/role";
-	public static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
-
-	public static final String ENCRYPTION_PLAIN = "plain";
+	private ArangoDBConstants() {
+		super();
+	}
 
 	public static final String SYSTEM = "_system";
 	public static final String ID = "id";

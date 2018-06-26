@@ -33,6 +33,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.arangodb.internal.net.FallbackHostHandler;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.RandomHostHandler;

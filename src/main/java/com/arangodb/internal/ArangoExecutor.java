@@ -20,14 +20,10 @@
 
 package com.arangodb.internal;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.regex.Pattern;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
-import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
@@ -38,14 +34,9 @@ import com.arangodb.velocystream.Response;
  */
 public abstract class ArangoExecutor {
 
-	private static final String SLASH = "/";
-
 	public static interface ResponseDeserializer<T> {
 		T deserialize(Response response) throws VPackException;
 	}
-
-	protected static final String REGEX_KEY = "[^/]+";
-	protected static final String REGEX_ID = "[^/]+/[^/]+";
 
 	private final DocumentCache documentCache;
 	private final ArangoSerialization util;
@@ -58,51 +49,6 @@ public abstract class ArangoExecutor {
 
 	public DocumentCache documentCache() {
 		return documentCache;
-	}
-
-	protected String createPath(final String... params) {
-		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < params.length; i++) {
-			if (i > 0) {
-				sb.append(SLASH);
-			}
-			try {
-				final String param;
-				if (params[i].contains(SLASH)) {
-					param = createPath(params[i].split(SLASH));
-				} else {
-					param = EncodeUtils.encodeURL(params[i]);
-				}
-				sb.append(param);
-			} catch (final UnsupportedEncodingException e) {
-				throw new ArangoDBException(e);
-			}
-		}
-		return sb.toString();
-	}
-
-	public void validateIndexId(final String id) {
-		validateName("index id", REGEX_ID, id);
-	}
-
-	public void validateDocumentKey(final String key) throws ArangoDBException {
-		validateName("document key", REGEX_KEY, key);
-	}
-
-	public void validateDocumentId(final String id) throws ArangoDBException {
-		validateName("document id", REGEX_ID, id);
-	}
-
-	public String createDocumentHandle(final String collection, final String key) {
-		validateDocumentKey(key);
-		return new StringBuffer().append(collection).append(SLASH).append(key).toString();
-	}
-
-	protected void validateName(final String type, final String regex, final CharSequence name)
-			throws ArangoDBException {
-		if (!Pattern.matches(regex, name)) {
-			throw new ArangoDBException(String.format("%s %s is not valid.", type, name));
-		}
 	}
 
 	@SuppressWarnings("unchecked")
