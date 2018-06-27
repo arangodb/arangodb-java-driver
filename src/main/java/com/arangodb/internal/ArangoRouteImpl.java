@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import java.util.Map;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoRoute;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.velocypack.exception.VPackException;
@@ -72,32 +73,32 @@ public class ArangoRouteImpl extends InternalArangoRoute<ArangoDBImpl, ArangoDat
 	}
 
 	@Override
-	public Response delete() {
+	public Response delete() throws ArangoDBException {
 		return request(RequestType.DELETE);
 	}
 
 	@Override
-	public Response get() {
+	public Response get() throws ArangoDBException {
 		return request(RequestType.GET);
 	}
 
 	@Override
-	public Response head() {
+	public Response head() throws ArangoDBException {
 		return request(RequestType.HEAD);
 	}
 
 	@Override
-	public Response patch() {
+	public Response patch() throws ArangoDBException {
 		return request(RequestType.PATCH);
 	}
 
 	@Override
-	public Response post() {
+	public Response post() throws ArangoDBException {
 		return request(RequestType.POST);
 	}
 
 	@Override
-	public Response put() {
+	public Response put() throws ArangoDBException {
 		return request(RequestType.PUT);
 	}
 

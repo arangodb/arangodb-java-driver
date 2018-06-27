@@ -74,47 +74,53 @@ public interface ArangoRoute {
 	 * Performs a DELETE request to the given URL and returns the server response.
 	 * 
 	 * @return server response
+	 * @throws ArangoDBException
 	 */
-	Response delete();
+	Response delete() throws ArangoDBException;
 
 	/**
 	 * Performs a GET request to the given URL and returns the server response.
 	 * 
 	 * @return server response
+	 * @throws ArangoDBException
 	 */
 
-	Response get();
+	Response get() throws ArangoDBException;
 
 	/**
 	 * Performs a HEAD request to the given URL and returns the server response.
 	 * 
 	 * @return server response
+	 * @throws ArangoDBException
 	 */
 
-	Response head();
+	Response head() throws ArangoDBException;
 
 	/**
 	 * Performs a PATCH request to the given URL and returns the server response.
 	 * 
 	 * @return server response
+	 * @throws ArangoDBException
 	 */
 
-	Response patch();
+	Response patch() throws ArangoDBException;
 
 	/**
 	 * Performs a POST request to the given URL and returns the server response.
 	 * 
 	 * @return server response
+	 * @throws ArangoDBException
 	 */
 
-	Response post();
+	Response post() throws ArangoDBException;
 
 	/**
 	 * Performs a PUT request to the given URL and returns the server response.
 	 * 
 	 * @return server response
+	 * @throws ArangoDBException
 	 */
 
-	Response put();
+	Response put() throws ArangoDBException;
 
 }
