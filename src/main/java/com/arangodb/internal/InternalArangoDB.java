@@ -48,7 +48,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
+public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
 
 	private static final String PATH_API_ADMIN_LOG = "/_admin/log";
 	private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
@@ -173,15 +173,13 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 	}
 
 	protected Request updateUserDefaultDatabaseAccessRequest(final String user, final Permissions permissions) {
-		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user,
-			ArangoRequestParam.DATABASE, "*")
-					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+			"*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
-		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user,
-			ArangoRequestParam.DATABASE, "*", "*")
-					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+			"*", "*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request getLogsRequest(final LogOptions options) {

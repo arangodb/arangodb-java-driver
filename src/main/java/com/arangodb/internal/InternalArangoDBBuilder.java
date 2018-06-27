@@ -51,7 +51,7 @@ import com.arangodb.velocypack.VPackParser;
  * @author Mark Vollmary
  *
  */
-public class InternalArangoDBBuilder {
+public abstract class InternalArangoDBBuilder {
 
 	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
 	private static final String PROPERTY_KEY_HOST = "arangodb.host";
