@@ -632,4 +632,14 @@ public interface ArangoDatabase {
 	 */
 	void reloadRouting() throws ArangoDBException;
 
+	/**
+	 * Returns a new {@link ArangoRoute} instance for the given path (relative to the database) that can be used to
+	 * perform arbitrary requests.
+	 * 
+	 * @param path
+	 *            The database-relative URL of the route
+	 * @return {@link ArangoRoute}
+	 */
+	ArangoRoute route(String... path);
+
 }

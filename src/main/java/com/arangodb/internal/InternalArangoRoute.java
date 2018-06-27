@@ -20,31 +20,20 @@
 
 package com.arangodb.internal;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Mark Vollmary
  *
  */
-public class ArangoContext {
+public class InternalArangoRoute<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
+		extends ArangoExecuteable<E> {
 
-	private final Map<String, String> headerParam;
+	protected final D db;
+	protected final String path;
 
-	public ArangoContext() {
-		super();
-		headerParam = new HashMap<String, String>();
-	}
-
-	public Map<String, String> getHeaderParam() {
-		return headerParam;
-	}
-
-	public ArangoContext putHeaderParam(final String key, final Object value) {
-		if (value != null) {
-			headerParam.put(key, value.toString());
-		}
-		return this;
+	protected InternalArangoRoute(final D db, final String path) {
+		super(db.executor, db.util, db.context);
+		this.db = db;
+		this.path = path;
 	}
 
 }

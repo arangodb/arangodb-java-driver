@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import com.arangodb.ArangoCollection;
@@ -28,6 +29,7 @@ import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
+import com.arangodb.ArangoRoute;
 import com.arangodb.entity.AqlExecutionExplainEntity;
 import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
@@ -363,6 +365,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	protected ArangoDatabaseImpl setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
 		this.cursorInitializer = cursorInitializer;
 		return this;
+	}
+
+	@Override
+	public ArangoRoute route(final String... path) {
+		return new ArangoRouteImpl(this, createPath(path), Collections.<String, String> emptyMap());
 	}
 
 }

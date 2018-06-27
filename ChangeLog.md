@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- added convenience methods for arbitrary requests
+  - added `ArangoDatabase.route(String...)`
 - added `DocumentCreateOptions#silent(Boolean)`
 - added `DocumentReplaceOptions#silent(Boolean)`
 - added `DocumentUpdateOptions#silent(Boolean)`
