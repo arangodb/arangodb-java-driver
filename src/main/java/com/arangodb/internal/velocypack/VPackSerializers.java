@@ -181,7 +181,7 @@ public class VPackSerializers {
 			final ReplicationFactor value,
 			final VPackSerializationContext context) throws VPackException {
 			final Boolean satellite = value.getSatellite();
-			if (satellite != null && satellite.booleanValue()) {
+			if (Boolean.TRUE == satellite) {
 				builder.add(attribute, "satellite");
 			} else if (value.getReplicationFactor() != null) {
 				builder.add(attribute, value.getReplicationFactor());

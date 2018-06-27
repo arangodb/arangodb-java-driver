@@ -49,6 +49,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 		extends ArangoExecuteable<E> {
 
 	private static final String PATH_API_GHARIAL = "/_api/gharial";
+	private static final String EDGE = "edge";
 
 	private final G graph;
 	private final String name;
@@ -68,10 +69,10 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.EDGE, name);
+		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE,
+			name);
 		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -80,7 +81,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 		return new ResponseDeserializer<EdgeEntity>() {
 			@Override
 			public EdgeEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
+				final VPackSlice body = response.getBody().get(EDGE);
 				final EdgeEntity doc = util().deserialize(body, EdgeEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.ID, doc.getId());
@@ -93,11 +94,11 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected Request getEdgeRequest(final String key, final DocumentReadOptions options) {
-		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.EDGE, DocumentUtil.createDocumentHandle(name, key));
+		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE,
+			DocumentUtil.createDocumentHandle(name, key));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
-		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 
@@ -105,17 +106,17 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 		return new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return util(Serializer.CUSTOM).deserialize(response.getBody().get(ArangoDBConstants.EDGE), type);
+				return util(Serializer.CUSTOM).deserialize(response.getBody().get(EDGE), type);
 			}
 		};
 	}
 
 	protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.EDGE, DocumentUtil.createDocumentHandle(name, key));
+		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE,
+			DocumentUtil.createDocumentHandle(name, key));
 		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -124,7 +125,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 		return new ResponseDeserializer<EdgeUpdateEntity>() {
 			@Override
 			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
+				final VPackSlice body = response.getBody().get(EDGE);
 				final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
@@ -136,12 +137,12 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 
 	protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
 		final Request request;
-		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), ArangoDBConstants.EDGE,
+		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE,
 			DocumentUtil.createDocumentHandle(name, key));
 		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
-		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		request.setBody(util().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
 		return request;
 	}
@@ -150,7 +151,7 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 		return new ResponseDeserializer<EdgeUpdateEntity>() {
 			@Override
 			public EdgeUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.EDGE);
+				final VPackSlice body = response.getBody().get(EDGE);
 				final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
@@ -161,11 +162,11 @@ public class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.EDGE, DocumentUtil.createDocumentHandle(name, key));
+		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE,
+			DocumentUtil.createDocumentHandle(name, key));
 		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 

@@ -103,7 +103,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	}
 
 	protected Request getAccessibleDatabasesRequest() {
-		return request(name, RequestType.GET, PATH_API_DATABASE, ArangoDBConstants.USER);
+		return request(name, RequestType.GET, PATH_API_DATABASE, "user");
 	}
 
 	protected Request getVersionRequest() {
@@ -119,7 +119,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 		final Request request;
 		request = request(name(), RequestType.GET, InternalArangoCollection.PATH_API_COLLECTION);
 		final CollectionsReadOptions params = (options != null ? options : new CollectionsReadOptions());
-		request.putQueryParam(ArangoDBConstants.EXCLUDE_SYSTEM, params.getExcludeSystem());
+		request.putQueryParam("excludeSystem", params.getExcludeSystem());
 		return request;
 	}
 
@@ -127,7 +127,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 		return new ResponseDeserializer<Collection<CollectionEntity>>() {
 			@Override
 			public Collection<CollectionEntity> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
 				return util().deserialize(result, new Type<Collection<CollectionEntity>>() {
 				}.getType());
 			}
@@ -135,38 +135,38 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	}
 
 	protected Request dropRequest() {
-		return request(ArangoDBConstants.SYSTEM, RequestType.DELETE, PATH_API_DATABASE, name);
+		return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_DATABASE, name);
 	}
 
 	protected ResponseDeserializer<Boolean> createDropResponseDeserializer() {
 		return new ResponseDeserializer<Boolean>() {
 			@Override
 			public Boolean deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoDBConstants.RESULT).getAsBoolean();
+				return response.getBody().get(ArangoResponseField.RESULT).getAsBoolean();
 			}
 		};
 	}
 
 	protected Request grantAccessRequest(final String user, final Permissions permissions) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_USER, user,
-			ArangoDBConstants.DATABASE, name)
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user,
+			ArangoRequestParam.DATABASE, name)
 					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request resetAccessRequest(final String user) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.DELETE, PATH_API_USER, user,
-			ArangoDBConstants.DATABASE, name);
+		return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_USER, user,
+			ArangoRequestParam.DATABASE, name);
 	}
 
 	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_USER, user,
-			ArangoDBConstants.DATABASE, name, "*")
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user,
+			ArangoRequestParam.DATABASE, name, "*")
 					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request getPermissionsRequest(final String user) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_USER, user,
-			ArangoDBConstants.DATABASE, name);
+		return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_USER, user,
+			ArangoRequestParam.DATABASE, name);
 	}
 
 	protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
@@ -175,7 +175,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 			public Permissions deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody();
 				if (body != null) {
-					final VPackSlice result = body.get(ArangoDBConstants.RESULT);
+					final VPackSlice result = body.get(ArangoResponseField.RESULT);
 					if (!result.isNone()) {
 						return util().deserialize(result, Permissions.class);
 					}
@@ -262,7 +262,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	protected Request deleteAqlFunctionRequest(final String name, final AqlFunctionDeleteOptions options) {
 		final Request request = request(name(), RequestType.DELETE, PATH_API_AQLFUNCTION, name);
 		final AqlFunctionDeleteOptions params = options != null ? options : new AqlFunctionDeleteOptions();
-		request.putQueryParam(ArangoDBConstants.GROUP, params.getGroup());
+		request.putQueryParam("group", params.getGroup());
 		return request;
 	}
 
@@ -288,7 +288,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	protected Request getAqlFunctionsRequest(final AqlFunctionGetOptions options) {
 		final Request request = request(name(), RequestType.GET, PATH_API_AQLFUNCTION);
 		final AqlFunctionGetOptions params = options != null ? options : new AqlFunctionGetOptions();
-		request.putQueryParam(ArangoDBConstants.NAMESPACE, params.getNamespace());
+		request.putQueryParam("namespace", params.getNamespace());
 		return request;
 	}
 
@@ -299,7 +299,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 				final VPackSlice body = response.getBody();
 				// compatibility with ArangoDB < 3.4
 				// https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
-				final VPackSlice result = body.isArray() ? body : body.get(ArangoDBConstants.RESULT);
+				final VPackSlice result = body.isArray() ? body : body.get(ArangoResponseField.RESULT);
 				return util().deserialize(result, new Type<Collection<AqlFunctionEntity>>() {
 				}.getType());
 			}
@@ -318,7 +318,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get("graph"), GraphEntity.class);
 			}
 		};
 	}
@@ -331,9 +331,8 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 		return new ResponseDeserializer<Collection<GraphEntity>>() {
 			@Override
 			public Collection<GraphEntity> deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPHS),
-					new Type<Collection<GraphEntity>>() {
-					}.getType());
+				return util().deserialize(response.getBody().get("graphs"), new Type<Collection<GraphEntity>>() {
+				}.getType());
 			}
 		};
 	}
@@ -349,7 +348,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 			public T deserialize(final Response response) throws VPackException {
 				final VPackSlice body = response.getBody();
 				if (body != null) {
-					final VPackSlice result = body.get(ArangoDBConstants.RESULT);
+					final VPackSlice result = body.get(ArangoResponseField.RESULT);
 					if (!result.isNone() && !result.isNull()) {
 						return util(Serializer.CUSTOM).deserialize(result, type);
 					}
@@ -360,14 +359,14 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	}
 
 	protected Request getInfoRequest() {
-		return request(name, RequestType.GET, PATH_API_DATABASE, ArangoDBConstants.CURRENT);
+		return request(name, RequestType.GET, PATH_API_DATABASE, "current");
 	}
 
 	protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
 		return new ResponseDeserializer<DatabaseEntity>() {
 			@Override
 			public DatabaseEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.RESULT), DatabaseEntity.class);
+				return util().deserialize(response.getBody().get(ArangoResponseField.RESULT), DatabaseEntity.class);
 			}
 		};
 	}
@@ -385,8 +384,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 			@Override
 			public TraversalEntity<V, E> deserialize(final Response response) throws VPackException {
 				final TraversalEntity<V, E> result = new TraversalEntity<V, E>();
-				final VPackSlice visited = response.getBody().get(ArangoDBConstants.RESULT)
-						.get(ArangoDBConstants.VISITED);
+				final VPackSlice visited = response.getBody().get(ArangoResponseField.RESULT).get("visited");
 				result.setVertices(deserializeVertices(vertexClass, visited));
 
 				final Collection<PathEntity<V, E>> paths = new ArrayList<PathEntity<V, E>>();
@@ -407,8 +405,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	protected <V> Collection<V> deserializeVertices(final Class<V> vertexClass, final VPackSlice vpack)
 			throws VPackException {
 		final Collection<V> vertices = new ArrayList<V>();
-		for (final Iterator<VPackSlice> iterator = vpack.get(ArangoDBConstants.VERTICES).arrayIterator(); iterator
-				.hasNext();) {
+		for (final Iterator<VPackSlice> iterator = vpack.get("vertices").arrayIterator(); iterator.hasNext();) {
 			vertices.add((V) util(Serializer.CUSTOM).deserialize(iterator.next(), vertexClass));
 		}
 		return vertices;
@@ -418,8 +415,7 @@ public class InternalArangoDatabase<A extends InternalArangoDB<E>, E extends Ara
 	protected <E> Collection<E> deserializeEdges(final Class<E> edgeClass, final VPackSlice next)
 			throws VPackException {
 		final Collection<E> edges = new ArrayList<E>();
-		for (final Iterator<VPackSlice> iteratorEdge = next.get(ArangoDBConstants.EDGES).arrayIterator(); iteratorEdge
-				.hasNext();) {
+		for (final Iterator<VPackSlice> iteratorEdge = next.get("edges").arrayIterator(); iteratorEdge.hasNext();) {
 			edges.add((E) util(Serializer.CUSTOM).deserialize(iteratorEdge.next(), edgeClass));
 		}
 		return edges;

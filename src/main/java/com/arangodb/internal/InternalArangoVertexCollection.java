@@ -49,6 +49,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 		extends ArangoExecuteable<E> {
 
 	private static final String PATH_API_GHARIAL = "/_api/gharial";
+	private static final String VERTEX = "vertex";
 
 	private final G graph;
 	private final String name;
@@ -68,15 +69,14 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 	}
 
 	protected Request dropRequest() {
-		return request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), ArangoDBConstants.VERTEX,
-			name);
+		return request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX, name);
 	}
 
 	protected <T> Request insertVertexRequest(final T value, final VertexCreateOptions options) {
-		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.VERTEX, name);
+		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), VERTEX,
+			name);
 		final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -85,7 +85,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 		return new ResponseDeserializer<VertexEntity>() {
 			@Override
 			public VertexEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
+				final VPackSlice body = response.getBody().get(VERTEX);
 				final VertexEntity doc = util().deserialize(body, VertexEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.ID, doc.getId());
@@ -98,11 +98,11 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 	}
 
 	protected Request getVertexRequest(final String key, final DocumentReadOptions options) {
-		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
+		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), VERTEX,
+			DocumentUtil.createDocumentHandle(name, key));
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
-		request.putHeaderParam(ArangoDBConstants.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 
@@ -110,17 +110,17 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 		return new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return util(Serializer.CUSTOM).deserialize(response.getBody().get(ArangoDBConstants.VERTEX), type);
+				return util(Serializer.CUSTOM).deserialize(response.getBody().get(VERTEX), type);
 			}
 		};
 	}
 
 	protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
-		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
+		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), VERTEX,
+			DocumentUtil.createDocumentHandle(name, key));
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		request.setBody(util().serialize(value));
 		return request;
 	}
@@ -129,7 +129,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 		return new ResponseDeserializer<VertexUpdateEntity>() {
 			@Override
 			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
+				final VPackSlice body = response.getBody().get(VERTEX);
 				final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
@@ -141,12 +141,12 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 
 	protected <T> Request updateVertexRequest(final String key, final T value, final VertexUpdateOptions options) {
 		final Request request;
-		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
+		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), VERTEX,
+			DocumentUtil.createDocumentHandle(name, key));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
-		request.putQueryParam(ArangoDBConstants.KEEP_NULL, params.getKeepNull());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		request.setBody(util().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
 		return request;
 	}
@@ -155,7 +155,7 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 		return new ResponseDeserializer<VertexUpdateEntity>() {
 			@Override
 			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(ArangoDBConstants.VERTEX);
+				final VPackSlice body = response.getBody().get(VERTEX);
 				final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
 				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
 				values.put(DocumentField.Type.REV, doc.getRev());
@@ -166,11 +166,11 @@ public class InternalArangoVertexCollection<A extends InternalArangoDB<E>, D ext
 	}
 
 	protected Request deleteVertexRequest(final String key, final VertexDeleteOptions options) {
-		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(),
-			ArangoDBConstants.VERTEX, DocumentUtil.createDocumentHandle(name, key));
+		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX,
+			DocumentUtil.createDocumentHandle(name, key));
 		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
-		request.putQueryParam(ArangoDBConstants.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoDBConstants.IF_MATCH, params.getIfMatch());
+		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		return request;
 	}
 

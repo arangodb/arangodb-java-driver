@@ -41,6 +41,9 @@ public class InternalArangoGraph<A extends InternalArangoDB<E>, D extends Intern
 		extends ArangoExecuteable<E> {
 
 	protected static final String PATH_API_GHARIAL = "/_api/gharial";
+	private static final String GRAPH = "graph";
+	private static final String VERTEX = "vertex";
+	private static final String EDGE = "edge";
 
 	private final D db;
 	private final String name;
@@ -72,23 +75,21 @@ public class InternalArangoGraph<A extends InternalArangoDB<E>, D extends Intern
 	}
 
 	protected Request getVertexCollectionsRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, ArangoDBConstants.VERTEX);
+		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, VERTEX);
 	}
 
 	protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
 		return new ResponseDeserializer<Collection<String>>() {
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
-					new Type<Collection<String>>() {
-					}.getType());
+				return util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+				}.getType());
 			}
 		};
 	}
 
 	protected Request addVertexCollectionRequest(final String name) {
-		final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name(),
-			ArangoDBConstants.VERTEX);
+		final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
 		request.setBody(util().serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
 		return request;
 	}
@@ -98,22 +99,21 @@ public class InternalArangoGraph<A extends InternalArangoDB<E>, D extends Intern
 	}
 
 	protected Request getEdgeDefinitionsRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, ArangoDBConstants.EDGE);
+		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, EDGE);
 	}
 
 	protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
 		return new ResponseDeserializer<Collection<String>>() {
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.COLLECTIONS),
-					new Type<Collection<String>>() {
-					}.getType());
+				return util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+				}.getType());
 			}
 		};
 	}
 
 	protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name, ArangoDBConstants.EDGE);
+		final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name, EDGE);
 		request.setBody(util().serialize(definition));
 		return request;
 	}
@@ -122,13 +122,13 @@ public class InternalArangoGraph<A extends InternalArangoDB<E>, D extends Intern
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
 			}
 		};
 	}
 
 	protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = request(db.name(), RequestType.PUT, PATH_API_GHARIAL, name, ArangoDBConstants.EDGE,
+		final Request request = request(db.name(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE,
 			definition.getCollection());
 		request.setBody(util().serialize(definition));
 		return request;
@@ -138,20 +138,20 @@ public class InternalArangoGraph<A extends InternalArangoDB<E>, D extends Intern
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
 			}
 		};
 	}
 
 	protected Request removeEdgeDefinitionRequest(final String definitionName) {
-		return request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name, ArangoDBConstants.EDGE, definitionName);
+		return request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name, EDGE, definitionName);
 	}
 
 	protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
 		return new ResponseDeserializer<GraphEntity>() {
 			@Override
 			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.GRAPH), GraphEntity.class);
+				return util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
 			}
 		};
 	}

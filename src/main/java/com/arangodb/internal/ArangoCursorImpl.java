@@ -90,7 +90,7 @@ public class ArangoCursorImpl<T> implements ArangoCursor<T> {
 	@Override
 	public boolean isCached() {
 		final Boolean cached = iterator.getResult().getCached();
-		return cached != null && cached.booleanValue();
+		return Boolean.TRUE == cached;
 	}
 
 	@Override

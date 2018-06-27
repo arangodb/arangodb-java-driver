@@ -183,8 +183,7 @@ public class InternalArangoDBBuilder {
 	}
 
 	protected HostResolver createHostResolver() {
-		return acquireHostList != null && acquireHostList.booleanValue()
-				? new ExtendedHostResolver(new ArrayList<Host>(hosts))
+		return Boolean.TRUE == acquireHostList ? new ExtendedHostResolver(new ArrayList<Host>(hosts))
 				: new SimpleHostResolver(new ArrayList<Host>(hosts));
 	}
 

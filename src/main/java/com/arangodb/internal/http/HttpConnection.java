@@ -118,7 +118,7 @@ public class HttpConnection implements Connection {
 		this.contentType = contentType;
 		final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
 				.<ConnectionSocketFactory> create();
-		if (useSsl != null && useSsl) {
+		if (Boolean.TRUE == useSsl) {
 			if (sslContext != null) {
 				registryBuilder.register("https", new SSLConnectionSocketFactory(sslContext));
 			} else {
@@ -267,7 +267,7 @@ public class HttpConnection implements Connection {
 	}
 
 	private String buildBaseUrl(final Host host) {
-		return (useSsl != null && useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+		return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
 	}
 
 	private static String buildUrl(final String baseUrl, final Request request) throws UnsupportedEncodingException {

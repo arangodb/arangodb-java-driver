@@ -79,11 +79,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
 				Collection<String> response;
 				try {
-					response = executor.execute(new Request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_ENDPOINTS),
+					response = executor.execute(
+						new Request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_ENDPOINTS),
 						new ResponseDeserializer<Collection<String>>() {
 							@Override
 							public Collection<String> deserialize(final Response response) throws VPackException {
-								final VPackSlice field = response.getBody().get(ArangoDBConstants.ENDPOINTS);
+								final VPackSlice field = response.getBody().get("endpoints");
 								Collection<String> endpoints;
 								if (field.isNone()) {
 									endpoints = Collections.<String> emptyList();
@@ -155,7 +156,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
 	@Override
 	public ArangoDatabase db() {
-		return db(ArangoDBConstants.SYSTEM);
+		return db(ArangoRequestParam.SYSTEM);
 	}
 
 	@Override

@@ -110,7 +110,7 @@ public abstract class VstConnection implements Connection {
 				LOGGER.debug(String.format("Open connection to %s", host));
 			}
 			try {
-				if (useSsl != null && useSsl) {
+				if (Boolean.TRUE == useSsl) {
 					if (sslContext != null) {
 						socket = sslContext.getSocketFactory().createSocket();
 					} else {
@@ -130,7 +130,7 @@ public abstract class VstConnection implements Connection {
 				outputStream = new BufferedOutputStream(socket.getOutputStream());
 				inputStream = socket.getInputStream();
 
-				if (useSsl != null && useSsl) {
+				if (Boolean.TRUE == useSsl) {
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug(String.format("Start Handshake on %s", socket));
 					}

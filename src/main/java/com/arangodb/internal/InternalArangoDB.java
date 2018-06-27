@@ -61,20 +61,20 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 	}
 
 	protected Request getRoleRequest() {
-		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_ROLE);
+		return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_ROLE);
 	}
 
 	protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
 		return new ResponseDeserializer<ServerRole>() {
 			@Override
 			public ServerRole deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(ArangoDBConstants.ROLE), ServerRole.class);
+				return util().deserialize(response.getBody().get("role"), ServerRole.class);
 			}
 		};
 	}
 
 	protected Request createDatabaseRequest(final String name) {
-		final Request request = request(ArangoDBConstants.SYSTEM, RequestType.POST,
+		final Request request = request(ArangoRequestParam.SYSTEM, RequestType.POST,
 			InternalArangoDatabase.PATH_API_DATABASE);
 		request.setBody(util().serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
 		return request;
@@ -84,7 +84,7 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 		return new ResponseDeserializer<Boolean>() {
 			@Override
 			public Boolean deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoDBConstants.RESULT).getAsBoolean();
+				return response.getBody().get(ArangoResponseField.RESULT).getAsBoolean();
 			}
 		};
 	}
@@ -97,7 +97,7 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 		return new ResponseDeserializer<Collection<String>>() {
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
 				return util().deserialize(result, new Type<Collection<String>>() {
 				}.getType());
 			}
@@ -105,14 +105,14 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 	}
 
 	protected Request getAccessibleDatabasesForRequest(final String database, final String user) {
-		return request(database, RequestType.GET, PATH_API_USER, user, ArangoDBConstants.DATABASE);
+		return request(database, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE);
 	}
 
 	protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
 		return new ResponseDeserializer<Collection<String>>() {
 			@Override
 			public Collection<String> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
 				final Collection<String> dbs = new ArrayList<String>();
 				for (final Iterator<Entry<String, VPackSlice>> iterator = result.objectIterator(); iterator
 						.hasNext();) {
@@ -151,7 +151,7 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 		return new ResponseDeserializer<Collection<UserEntity>>() {
 			@Override
 			public Collection<UserEntity> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoDBConstants.RESULT);
+				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
 				return util().deserialize(result, new Type<Collection<UserEntity>>() {
 				}.getType());
 			}
@@ -173,20 +173,20 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 	}
 
 	protected Request updateUserDefaultDatabaseAccessRequest(final String user, final Permissions permissions) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_USER, user,
-			ArangoDBConstants.DATABASE, "*")
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user,
+			ArangoRequestParam.DATABASE, "*")
 					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_USER, user,
-			ArangoDBConstants.DATABASE, "*", "*")
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user,
+			ArangoRequestParam.DATABASE, "*", "*")
 					.setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
 	}
 
 	protected Request getLogsRequest(final LogOptions options) {
 		final LogOptions params = options != null ? options : new LogOptions();
-		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG)
+		return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG)
 				.putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
 				.putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
 				.putQueryParam(LogOptions.PROPERTY_START, params.getStart())
@@ -197,11 +197,11 @@ public class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteabl
 	}
 
 	protected Request getLogLevelRequest() {
-		return request(ArangoDBConstants.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_LEVEL);
+		return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_LEVEL);
 	}
 
 	protected Request setLogLevelRequest(final LogLevelEntity entity) {
-		return request(ArangoDBConstants.SYSTEM, RequestType.PUT, PATH_API_ADMIN_LOG_LEVEL)
+		return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_ADMIN_LOG_LEVEL)
 				.setBody(util().serialize(entity));
 	}
 
