@@ -1156,6 +1156,34 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentsOverwrite() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
+		final BaseDocument doc1 = new BaseDocument();
+		doc1.addAttribute("value", "a");
+		final DocumentCreateEntity<BaseDocument> meta1 = db.collection(COLLECTION_NAME).insertDocument(doc1);
+		final BaseDocument doc2 = new BaseDocument();
+		doc2.addAttribute("value", "a");
+		final DocumentCreateEntity<BaseDocument> meta2 = db.collection(COLLECTION_NAME).insertDocument(doc2);
+
+		doc1.addAttribute("value", "b");
+		doc2.addAttribute("value", "b");
+
+		final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert = db.collection(COLLECTION_NAME)
+				.insertDocuments(Arrays.asList(doc1, doc2),
+					new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
+		assertThat(repsert, is(notNullValue()));
+		for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
+			assertThat(documentCreateEntity.getRev(), is(not(meta1.getRev())));
+			assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));
+			assertThat(documentCreateEntity.getOld().getAttribute("value").toString(), is("a"));
+			assertThat(documentCreateEntity.getNew().getAttribute("value").toString(), is("b"));
+		}
+		assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(2L));
+	}
+
+	@Test
 	public void insertDocumentsJson() {
 		final Collection<String> values = new ArrayList<String>();
 		values.add("{}");
