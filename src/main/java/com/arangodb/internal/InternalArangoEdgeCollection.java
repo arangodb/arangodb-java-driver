@@ -73,7 +73,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 			name);
 		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.setBody(util().serialize(value));
+		request.setBody(util(Serializer.CUSTOM).serialize(value));
 		return request;
 	}
 
@@ -117,7 +117,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		request.setBody(util().serialize(value));
+		request.setBody(util(Serializer.CUSTOM).serialize(value));
 		return request;
 	}
 
@@ -143,7 +143,8 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		request.setBody(util().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
+		request.setBody(
+			util(Serializer.CUSTOM).serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
 		return request;
 	}
 

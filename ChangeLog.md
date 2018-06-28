@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - removed unnecessary deserializer for internal `_id` field
 
+### Fixed
+
+- fixed serializing of documents/edges: use custom serializer
+
 ## [4.5.2] - 2018-06-25
 
 ### Added

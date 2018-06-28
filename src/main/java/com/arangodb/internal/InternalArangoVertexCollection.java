@@ -77,7 +77,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 			name);
 		final VertexCreateOptions params = (options != null ? options : new VertexCreateOptions());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.setBody(util().serialize(value));
+		request.setBody(util(Serializer.CUSTOM).serialize(value));
 		return request;
 	}
 
@@ -121,7 +121,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		request.setBody(util().serialize(value));
+		request.setBody(util(Serializer.CUSTOM).serialize(value));
 		return request;
 	}
 
@@ -147,7 +147,8 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		request.setBody(util().serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
+		request.setBody(
+			util(Serializer.CUSTOM).serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
 		return request;
 	}
 
