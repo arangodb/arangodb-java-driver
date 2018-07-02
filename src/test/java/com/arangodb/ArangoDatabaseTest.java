@@ -60,6 +60,7 @@ import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.PathEntity;
@@ -75,6 +76,7 @@ import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionsReadOptions;
+import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Direction;
@@ -1022,6 +1024,52 @@ public class ArangoDatabaseTest extends BaseTest {
 			final GraphEntity result = db.createGraph(GRAPH_NAME, null, null);
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getName(), is(GRAPH_NAME));
+		} finally {
+			db.graph(GRAPH_NAME).drop();
+		}
+	}
+
+	@Test
+	public void createGraphReplicationFaktor() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final String edgeCollection = COLLECTION_NAME + "edge";
+			final String fromCollection = COLLECTION_NAME + "from";
+			final String toCollection = COLLECTION_NAME + "to";
+			final Collection<EdgeDefinition> edgeDefinitions = Arrays
+					.asList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+			final GraphEntity result = db.createGraph(GRAPH_NAME, edgeDefinitions,
+				new GraphCreateOptions().replicationFactor(2));
+			assertThat(result, is(notNullValue()));
+			for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
+				final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+				assertThat(properties.getReplicationFactor(), is(2));
+			}
+		} finally {
+			db.graph(GRAPH_NAME).drop();
+		}
+	}
+
+	@Test
+	public void createGraphNumberOfShards() {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final String edgeCollection = COLLECTION_NAME + "edge";
+			final String fromCollection = COLLECTION_NAME + "from";
+			final String toCollection = COLLECTION_NAME + "to";
+			final Collection<EdgeDefinition> edgeDefinitions = Arrays
+					.asList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+			final GraphEntity result = db.createGraph(GRAPH_NAME, edgeDefinitions,
+				new GraphCreateOptions().numberOfShards(2));
+			assertThat(result, is(notNullValue()));
+			for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
+				final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+				assertThat(properties.getNumberOfShards(), is(2));
+			}
 		} finally {
 			db.graph(GRAPH_NAME).drop();
 		}
