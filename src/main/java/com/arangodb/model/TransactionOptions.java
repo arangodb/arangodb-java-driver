@@ -125,6 +125,16 @@ public class TransactionOptions {
 	}
 
 	/**
+	 * @param exclusive
+	 *            contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
+	 * @return options
+	 */
+	public TransactionOptions exclusiveCollections(final String... exclusive) {
+		collections.exclusive(exclusive);
+		return this;
+	}
+
+	/**
 	 * @param allowImplicit
 	 *            Collections that will be written to in the transaction must be declared with the write attribute or it
 	 *            will fail, whereas non-declared collections from which is solely read will be added lazily. The
@@ -189,6 +199,7 @@ public class TransactionOptions {
 
 		private Collection<String> read;
 		private Collection<String> write;
+		private Collection<String> exclusive;
 		private Boolean allowImplicit;
 
 		public Collection<String> getRead() {
@@ -206,6 +217,15 @@ public class TransactionOptions {
 
 		public TransactionCollectionOptions write(final String... write) {
 			this.write = Arrays.asList(write);
+			return this;
+		}
+
+		public Collection<String> getExclusive() {
+			return exclusive;
+		}
+
+		public TransactionCollectionOptions exclusive(final String... exclusive) {
+			this.exclusive = Arrays.asList(exclusive);
 			return this;
 		}
 

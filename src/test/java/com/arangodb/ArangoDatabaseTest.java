@@ -1178,6 +1178,28 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void transactionExclusiveWrite() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
+		try {
+			db.createCollection(COLLECTION_NAME);
+			final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"0\"}")
+					.exclusiveCollections(COLLECTION_NAME);
+			//@formatter:off
+			db.transaction("function (params) { "
+							+ "var db = require('internal').db;"
+							+ "db." + COLLECTION_NAME + ".save(JSON.parse(params));"
+							+ "}", Void.class, options);
+			//@formatter:on
+			assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(1L));
+			assertThat(db.collection(COLLECTION_NAME).getDocument("0", String.class), is(notNullValue()));
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
 	public void transactionEmpty() {
 		db.transaction("function () {}", null, null);
 	}

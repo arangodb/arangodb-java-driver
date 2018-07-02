@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added `DocumentReplaceOptions#silent(Boolean)`
 - added `DocumentUpdateOptions#silent(Boolean)`
 - added `DocumentDeleteOptions#silent(Boolean)`
+- added support for exclusive write operations (issue #190)
+  - added `TransactionOptions#exclusiveCollections(String[])`
 
 ### Removed
 
