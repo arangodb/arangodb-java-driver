@@ -127,6 +127,7 @@ public class TransactionOptions {
 	/**
 	 * @param exclusive
 	 *            contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
+	 * @since ArangoDB 3.4.0
 	 * @return options
 	 */
 	public TransactionOptions exclusiveCollections(final String... exclusive) {
