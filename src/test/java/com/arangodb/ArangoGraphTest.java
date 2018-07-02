@@ -38,9 +38,11 @@ import org.junit.runners.Parameterized;
 
 import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ArangoDBVersion.License;
+import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.ServerRole;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 
@@ -59,6 +61,8 @@ public class ArangoGraphTest extends BaseTest {
 	private static final String VERTEX_COL_2 = "db_vertex2_collection_test";
 	private static final String VERTEX_COL_3 = "db_vertex3_collection_test";
 	private static final String VERTEX_COL_4 = "db_vertex4_collection_test";
+	private static final Integer REPLICATION_FACTOR = 2;
+	private static final Integer NUMBER_OF_SHARDS = 2;
 
 	public ArangoGraphTest(final Builder builder) {
 		super(builder);
@@ -88,7 +92,11 @@ public class ArangoGraphTest extends BaseTest {
 		edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
 		edgeDefinitions
 				.add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
-		db.createGraph(GRAPH_NAME, edgeDefinitions, null);
+		final GraphCreateOptions options = new GraphCreateOptions();
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			options.replicationFactor(REPLICATION_FACTOR).numberOfShards(NUMBER_OF_SHARDS);
+		}
+		db.createGraph(GRAPH_NAME, edgeDefinitions, options);
 	}
 
 	@After
@@ -189,6 +197,11 @@ public class ArangoGraphTest extends BaseTest {
 				assertThat(e.getFrom(), hasItem(VERTEX_COL_1));
 				assertThat(e.getTo(), hasItem(VERTEX_COL_2));
 			}
+		}
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			final CollectionPropertiesEntity properties = db.collection(EDGE_COL_3).getProperties();
+			assertThat(properties.getReplicationFactor(), is(REPLICATION_FACTOR));
+			assertThat(properties.getNumberOfShards(), is(NUMBER_OF_SHARDS));
 		}
 		setup();
 	}
