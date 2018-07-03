@@ -793,9 +793,6 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void replaceDocumentSilentDontTouchInstance() {
-		if (!requireVersion(3, 3)) {
-			return;
-		}
 		final BaseDocument doc = new BaseDocument();
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc);
 		final String revision = doc.getRevision();
