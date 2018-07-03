@@ -8,13 +8,13 @@ Since version `4.1.11` you can extend the VelocyPack serialization by registerin
 
 Added support for:
 
-* java.time.Instant
-* java.time.LocalDate
-* java.time.LocalDateTime
-* java.util.Optional;
-* java.util.OptionalDouble;
-* java.util.OptionalInt;
-* java.util.OptionalLong;
+- java.time.Instant
+- java.time.LocalDate
+- java.time.LocalDateTime
+- java.util.Optional;
+- java.util.OptionalDouble;
+- java.util.OptionalInt;
+- java.util.OptionalLong;
 
 ```XML
 <dependencies>
@@ -34,9 +34,9 @@ ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJdk8Module())
 
 Added support for:
 
-* scala.Option
-* scala.collection.immutable.List
-* scala.collection.immutable.Map
+- scala.Option
+- scala.collection.immutable.List
+- scala.collection.immutable.Map
 
 ```XML
 <dependencies>
@@ -56,10 +56,10 @@ val arangoDB: ArangoDB = new ArangoDB.Builder().registerModule(new VPackScalaMod
 
 Added support for:
 
-* org.joda.time.DateTime;
-* org.joda.time.Instant;
-* org.joda.time.LocalDate;
-* org.joda.time.LocalDateTime;
+- org.joda.time.DateTime;
+- org.joda.time.Instant;
+- org.joda.time.LocalDate;
+- org.joda.time.LocalDateTime;
 
 ```XML
 <dependencies>
@@ -77,8 +77,7 @@ ArangoDB arangoDB = new ArangoDB.Builder().registerModule(new VPackJodaModule())
 
 ## Use of jackson as an alternative serializer
 
-Since version 4.5.2, the driver supports alternative serializer to de-/serialize documents, edges and query results. One implementation is [VelocyJack](https://github.com/arangodb/jackson-dataformat-velocypack#usage-within-arangodb-java-driver) which is based on [Jackson](https://github.com/FasterXML/jackson) working with [jackson-dataformat-velocypack](https://github.com/arangodb/jackson-dataformat-velocypack).
-
+Since version 4.5.2, the driver supports alternative serializer to de-/serialize documents, edges and query results. One implementation is [VelocyJack](https://github.com/arangodb/jackson-dataformat-velocypack#within-arangodb-java-driver) which is based on [Jackson](https://github.com/FasterXML/jackson) working with [jackson-dataformat-velocypack](https://github.com/arangodb/jackson-dataformat-velocypack).
 
 **Note**: Any registered custom [serializer/deserializer or module](#custom-serialization) will be ignored.
 
