@@ -636,14 +636,14 @@ public interface ArangoDB {
 	void shutdown() throws ArangoDBException;
 
 	/**
-	 * Returns a handler of the system database
+	 * Returns a <code>ArangoDatabase</code> instance for the <code>_system</code> database.
 	 * 
 	 * @return database handler
 	 */
 	ArangoDatabase db();
 
 	/**
-	 * Returns a handler of the database by the given name
+	 * Returns a <code>ArangoDatabase</code> instance for the given database name.
 	 * 
 	 * @param name
 	 *            Name of the database
@@ -652,12 +652,12 @@ public interface ArangoDB {
 	ArangoDatabase db(final String name);
 
 	/**
-	 * Creates a new database
+	 * Creates a new database with the given name.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
 	 *      Documentation</a>
 	 * @param name
-	 *            Has to contain a valid database name
+	 *            Name of the database to create
 	 * @return true if the database was created successfully.
 	 * @throws ArangoDBException
 	 */

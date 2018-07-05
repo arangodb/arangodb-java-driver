@@ -101,7 +101,7 @@ public interface ArangoDatabase {
 	Collection<String> getAccessibleDatabases() throws ArangoDBException;
 
 	/**
-	 * Returns a handler of the collection by the given name
+	 * Returns a <code>ArangoCollection</code> instance for the given collection name.
 	 * 
 	 * @param name
 	 *            Name of the collection
@@ -137,7 +137,7 @@ public interface ArangoDatabase {
 			throws ArangoDBException;
 
 	/**
-	 * Returns all collections
+	 * Fetches all collections from the database and returns an list of collection descriptions.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
 	 *      Documentation</a>
@@ -147,7 +147,7 @@ public interface ArangoDatabase {
 	Collection<CollectionEntity> getCollections() throws ArangoDBException;
 
 	/**
-	 * Returns all collections
+	 * Fetches all collections from the database and returns an list of collection descriptions.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
 	 *      Documentation</a>
@@ -191,7 +191,7 @@ public interface ArangoDatabase {
 	Boolean create() throws ArangoDBException;
 
 	/**
-	 * Drop an existing database
+	 * Deletes the database from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
 	 *      Documentation</a>
@@ -277,16 +277,17 @@ public interface ArangoDatabase {
 	Permissions getPermissions(final String user) throws ArangoDBException;
 
 	/**
-	 * Create a cursor and return the first results
+	 * Performs a database query using the given <code>query</code> and <code>bindVars</code>, then returns a new
+	 * <code>ArangoCursor</code> instance for the result list.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
 	 *      Documentation</a>
 	 * @param query
-	 *            contains the query string to be executed
+	 *            An AQL query string
 	 * @param bindVars
-	 *            key/value pairs representing the bind parameters
+	 *            key/value pairs defining the variables to bind the query to
 	 * @param options
-	 *            Additional options, can be null
+	 *            Additional options that will be passed to the query API, can be null
 	 * @param type
 	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
 	 * @return cursor of the results
@@ -494,7 +495,7 @@ public interface ArangoDatabase {
 	Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException;
 
 	/**
-	 * Returns a handler of the graph by the given name
+	 * Returns a <code>ArangoGraph</code> instance for the given graph name.
 	 * 
 	 * @param name
 	 *            Name of the graph
