@@ -553,7 +553,7 @@ public interface ArangoDB {
 		 * @param serializer
 		 *            custom serializer
 		 * @deprecated use {@link #serializer(ArangoSerialization)} instead
-		 * @return builder
+		 * @return {@link ArangoDB.Builder}
 		 */
 		@Deprecated
 		public Builder setSerializer(final ArangoSerializer serializer) {
@@ -570,7 +570,7 @@ public interface ArangoDB {
 		 * @param deserializer
 		 *            custom deserializer
 		 * @deprecated use {@link #serializer(ArangoSerialization)} instead
-		 * @return builder
+		 * @return {@link ArangoDB.Builder}
 		 */
 		@Deprecated
 		public Builder setDeserializer(final ArangoDeserializer deserializer) {
@@ -586,7 +586,7 @@ public interface ArangoDB {
 		 * 
 		 * @param serialization
 		 *            custom serializer/deserializer
-		 * @return builder
+		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder serializer(final ArangoSerialization serialization) {
 			setSerializer(serialization);
