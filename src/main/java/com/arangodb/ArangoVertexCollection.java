@@ -29,8 +29,10 @@ import com.arangodb.model.VertexReplaceOptions;
 import com.arangodb.model.VertexUpdateOptions;
 
 /**
+ * Interface for operations on ArangoDB vertex collection level.
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html">API Documentation</a>
  * @author Mark Vollmary
- *
  */
 public interface ArangoVertexCollection {
 

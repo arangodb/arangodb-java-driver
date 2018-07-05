@@ -29,8 +29,10 @@ import com.arangodb.model.EdgeReplaceOptions;
 import com.arangodb.model.EdgeUpdateOptions;
 
 /**
+ * Interface for operations on ArangoDB edge collection level.
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html">API Documentation</a>
  * @author Mark Vollmary
- *
  */
 public interface ArangoEdgeCollection {
 

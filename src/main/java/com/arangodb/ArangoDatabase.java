@@ -50,8 +50,11 @@ import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 
 /**
+ * Interface for operations on ArangoDB database level.
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
  * @author Mark Vollmary
- *
  */
 public interface ArangoDatabase {
 

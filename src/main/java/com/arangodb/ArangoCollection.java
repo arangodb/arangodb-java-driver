@@ -48,8 +48,11 @@ import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.model.SkiplistIndexOptions;
 
 /**
+ * Interface for operations on ArangoDB collection level.
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Collection API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
  * @author Mark Vollmary
- *
  */
 public interface ArangoCollection {
 

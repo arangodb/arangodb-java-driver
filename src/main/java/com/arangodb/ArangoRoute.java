@@ -24,8 +24,9 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
 
 /**
+ * Interface for a specific path to be used to perform arbitrary requests.
+ * 
  * @author Mark Vollmary
- *
  */
 public interface ArangoRoute {
 

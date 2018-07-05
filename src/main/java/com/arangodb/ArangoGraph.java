@@ -27,8 +27,10 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
 
 /**
+ * Interface for operations on ArangoDB graph level.
+ * 
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/">API Documentation</a>
  * @author Mark Vollmary
- *
  */
 public interface ArangoGraph {
 
