@@ -34,8 +34,8 @@ Performs a database query using the given _query_ and _bindVars_, then returns a
 ```Java
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
-ArangoCursor<MyObject> cursor = db.query("FOR i IN @@collection RETURN i"
-                                         new MapBuilder().put("@collection", "myCollection").get(),
-                                         new AqlQueryOptions(),
-                                         MyObject.class);
+ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@collection RETURN i"
+                                             new MapBuilder().put("@collection", "myCollection").get(),
+                                             new AqlQueryOptions(),
+                                             BaseDocument.class);
 ```
