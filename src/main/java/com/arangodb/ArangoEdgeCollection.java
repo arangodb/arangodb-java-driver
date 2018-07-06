@@ -59,7 +59,7 @@ public interface ArangoEdgeCollection {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	<T> EdgeEntity insertEdge(final T value) throws ArangoDBException;
+	<T> EdgeEntity insertEdge(T value) throws ArangoDBException;
 
 	/**
 	 * Creates a new edge in the collection
@@ -72,7 +72,7 @@ public interface ArangoEdgeCollection {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	<T> EdgeEntity insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException;
+	<T> EdgeEntity insertEdge(T value, EdgeCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches an existing edge
@@ -85,7 +85,7 @@ public interface ArangoEdgeCollection {
 	 * @return the edge identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getEdge(final String key, final Class<T> type) throws ArangoDBException;
+	<T> T getEdge(String key, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Fetches an existing edge
@@ -100,7 +100,7 @@ public interface ArangoEdgeCollection {
 	 * @return the edge identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getEdge(final String key, final Class<T> type, final DocumentReadOptions options) throws ArangoDBException;
+	<T> T getEdge(String key, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
@@ -114,7 +114,7 @@ public interface ArangoEdgeCollection {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	<T> EdgeUpdateEntity replaceEdge(final String key, final T value) throws ArangoDBException;
+	<T> EdgeUpdateEntity replaceEdge(String key, T value) throws ArangoDBException;
 
 	/**
 	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
@@ -130,8 +130,7 @@ public interface ArangoEdgeCollection {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	<T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
-			throws ArangoDBException;
+	<T> EdgeUpdateEntity replaceEdge(String key, T value, EdgeReplaceOptions options) throws ArangoDBException;
 
 	/**
 	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
@@ -146,7 +145,7 @@ public interface ArangoEdgeCollection {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	<T> EdgeUpdateEntity updateEdge(final String key, final T value) throws ArangoDBException;
+	<T> EdgeUpdateEntity updateEdge(String key, T value) throws ArangoDBException;
 
 	/**
 	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
@@ -163,8 +162,7 @@ public interface ArangoEdgeCollection {
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
-	<T> EdgeUpdateEntity updateEdge(final String key, final T value, final EdgeUpdateOptions options)
-			throws ArangoDBException;
+	<T> EdgeUpdateEntity updateEdge(String key, T value, EdgeUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Removes a edge
@@ -174,7 +172,7 @@ public interface ArangoEdgeCollection {
 	 *            The key of the edge
 	 * @throws ArangoDBException
 	 */
-	void deleteEdge(final String key) throws ArangoDBException;
+	void deleteEdge(String key) throws ArangoDBException;
 
 	/**
 	 * Removes a edge
@@ -186,6 +184,6 @@ public interface ArangoEdgeCollection {
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
 	 */
-	void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException;
+	void deleteEdge(String key, EdgeDeleteOptions options) throws ArangoDBException;
 
 }

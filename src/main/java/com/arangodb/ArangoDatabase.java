@@ -107,7 +107,7 @@ public interface ArangoDatabase {
 	 *            Name of the collection
 	 * @return collection handler
 	 */
-	ArangoCollection collection(final String name);
+	ArangoCollection collection(String name);
 
 	/**
 	 * Creates a collection for the given collection's name, then returns collection information from the server.
@@ -119,7 +119,7 @@ public interface ArangoDatabase {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	CollectionEntity createCollection(final String name) throws ArangoDBException;
+	CollectionEntity createCollection(String name) throws ArangoDBException;
 
 	/**
 	 * Creates a collection with the given {@code options} for this collection's name, then returns collection
@@ -134,8 +134,7 @@ public interface ArangoDatabase {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
-			throws ArangoDBException;
+	CollectionEntity createCollection(String name, CollectionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches all collections from the database and returns an list of collection descriptions.
@@ -157,7 +156,7 @@ public interface ArangoDatabase {
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
 	 */
-	Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException;
+	Collection<CollectionEntity> getCollections(CollectionsReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns an index
@@ -168,7 +167,7 @@ public interface ArangoDatabase {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity getIndex(final String id) throws ArangoDBException;
+	IndexEntity getIndex(String id) throws ArangoDBException;
 
 	/**
 	 * Deletes an index
@@ -179,7 +178,7 @@ public interface ArangoDatabase {
 	 * @return the id of the index
 	 * @throws ArangoDBException
 	 */
-	String deleteIndex(final String id) throws ArangoDBException;
+	String deleteIndex(String id) throws ArangoDBException;
 
 	/**
 	 * Creates the database
@@ -202,8 +201,8 @@ public interface ArangoDatabase {
 	Boolean drop() throws ArangoDBException;
 
 	/**
-	 * Grants or revoke access to the database for user {@code user}. You need permission to the _system database
-	 * in order to execute this call.
+	 * Grants or revoke access to the database for user {@code user}. You need permission to the _system database in
+	 * order to execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
@@ -213,7 +212,7 @@ public interface ArangoDatabase {
 	 *            The permissions the user grant
 	 * @throws ArangoDBException
 	 */
-	void grantAccess(final String user, final Permissions permissions) throws ArangoDBException;
+	void grantAccess(String user, Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Grants access to the database for user {@code user}. You need permission to the _system database in order to
@@ -225,11 +224,11 @@ public interface ArangoDatabase {
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	void grantAccess(final String user) throws ArangoDBException;
+	void grantAccess(String user) throws ArangoDBException;
 
 	/**
-	 * Revokes access to the database dbname for user {@code user}. You need permission to the _system database in
-	 * order to execute this call.
+	 * Revokes access to the database dbname for user {@code user}. You need permission to the _system database in order
+	 * to execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
 	 *      API Documentation</a>
@@ -237,7 +236,7 @@ public interface ArangoDatabase {
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	void revokeAccess(final String user) throws ArangoDBException;
+	void revokeAccess(String user) throws ArangoDBException;
 
 	/**
 	 * Clear the database access level, revert back to the default access level.
@@ -249,11 +248,11 @@ public interface ArangoDatabase {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	void resetAccess(final String user) throws ArangoDBException;
+	void resetAccess(String user) throws ArangoDBException;
 
 	/**
-	 * Sets the default access level for collections within this database for the user {@code user}. You need
-	 * permission to the _system database in order to execute this call.
+	 * Sets the default access level for collections within this database for the user {@code user}. You need permission
+	 * to the _system database in order to execute this call.
 	 * 
 	 * @param user
 	 *            The name of the user
@@ -262,7 +261,7 @@ public interface ArangoDatabase {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	void grantDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
+	void grantDefaultCollectionAccess(String user, Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Get specific database access level
@@ -275,7 +274,7 @@ public interface ArangoDatabase {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	Permissions getPermissions(final String user) throws ArangoDBException;
+	Permissions getPermissions(String user) throws ArangoDBException;
 
 	/**
 	 * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
@@ -294,11 +293,8 @@ public interface ArangoDatabase {
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
-	<T> ArangoCursor<T> query(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryOptions options,
-		final Class<T> type) throws ArangoDBException;
+	<T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, AqlQueryOptions options, Class<T> type)
+			throws ArangoDBException;
 
 	/**
 	 * Return an cursor from the given cursor-ID if still existing
@@ -313,7 +309,7 @@ public interface ArangoDatabase {
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
-	<T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException;
+	<T> ArangoCursor<T> cursor(String cursorId, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Explain an AQL query and return information about it
@@ -329,10 +325,8 @@ public interface ArangoDatabase {
 	 * @return information about the query
 	 * @throws ArangoDBException
 	 */
-	AqlExecutionExplainEntity explainQuery(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryExplainOptions options) throws ArangoDBException;
+	AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Parse an AQL query and return information about it This method is for query validation only. To actually query
@@ -345,7 +339,7 @@ public interface ArangoDatabase {
 	 * @return imformation about the query
 	 * @throws ArangoDBException
 	 */
-	AqlParseEntity parseQuery(final String query) throws ArangoDBException;
+	AqlParseEntity parseQuery(String query) throws ArangoDBException;
 
 	/**
 	 * Clears the AQL query cache
@@ -380,8 +374,7 @@ public interface ArangoDatabase {
 	 * @return current set of properties
 	 * @throws ArangoDBException
 	 */
-	QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
-			throws ArangoDBException;
+	QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties) throws ArangoDBException;
 
 	/**
 	 * Returns the configuration for the AQL query tracking
@@ -405,7 +398,7 @@ public interface ArangoDatabase {
 	 * @return current set of properties
 	 * @throws ArangoDBException
 	 */
-	QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
+	QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties)
 			throws ArangoDBException;
 
 	/**
@@ -449,7 +442,7 @@ public interface ArangoDatabase {
 	 *            The id of the query
 	 * @throws ArangoDBException
 	 */
-	void killQuery(final String id) throws ArangoDBException;
+	void killQuery(String id) throws ArangoDBException;
 
 	/**
 	 * Create a new AQL user function
@@ -464,8 +457,7 @@ public interface ArangoDatabase {
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
 	 */
-	void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
-			throws ArangoDBException;
+	void createAqlFunction(String name, String code, AqlFunctionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Deletes the AQL user function with the given name from the database.
@@ -480,7 +472,7 @@ public interface ArangoDatabase {
 	 * @return number of deleted functions (since ArangoDB 3.4.0)
 	 * @throws ArangoDBException
 	 */
-	Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options) throws ArangoDBException;
+	Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options) throws ArangoDBException;
 
 	/**
 	 * Gets all reqistered AQL user functions
@@ -493,7 +485,7 @@ public interface ArangoDatabase {
 	 * @return all reqistered AQL user functions
 	 * @throws ArangoDBException
 	 */
-	Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException;
+	Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns a {@code ArangoGraph} instance for the given graph name.
@@ -502,7 +494,7 @@ public interface ArangoDatabase {
 	 *            Name of the graph
 	 * @return graph handler
 	 */
-	ArangoGraph graph(final String name);
+	ArangoGraph graph(String name);
 
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
@@ -517,8 +509,7 @@ public interface ArangoDatabase {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
-			throws ArangoDBException;
+	GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException;
 
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
@@ -535,10 +526,8 @@ public interface ArangoDatabase {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity createGraph(
-		final String name,
-		final Collection<EdgeDefinition> edgeDefinitions,
-		final GraphCreateOptions options) throws ArangoDBException;
+	GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Lists all graphs known to the graph module
@@ -564,8 +553,7 @@ public interface ArangoDatabase {
 	 * @return the result of the transaction if it succeeded
 	 * @throws ArangoDBException
 	 */
-	<T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
-			throws ArangoDBException;
+	<T> T transaction(String action, Class<T> type, TransactionOptions options) throws ArangoDBException;
 
 	/**
 	 * Retrieves information about the current database
@@ -592,10 +580,8 @@ public interface ArangoDatabase {
 	 * @return Result of the executed traversal
 	 * @throws ArangoDBException
 	 */
-	<V, E> TraversalEntity<V, E> executeTraversal(
-		final Class<V> vertexClass,
-		final Class<E> edgeClass,
-		final TraversalOptions options) throws ArangoDBException;
+	<V, E> TraversalEntity<V, E> executeTraversal(Class<V> vertexClass, Class<E> edgeClass, TraversalOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Reads a single document
@@ -609,7 +595,7 @@ public interface ArangoDatabase {
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
 	 */
-	<T> T getDocument(final String id, final Class<T> type) throws ArangoDBException;
+	<T> T getDocument(String id, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Reads a single document
@@ -625,7 +611,7 @@ public interface ArangoDatabase {
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
 	 */
-	<T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options) throws ArangoDBException;
+	<T> T getDocument(String id, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Reload the routing table.

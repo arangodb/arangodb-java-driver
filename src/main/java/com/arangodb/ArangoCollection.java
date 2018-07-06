@@ -81,7 +81,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentCreateEntity<T> insertDocument(final T value) throws ArangoDBException;
+	<T> DocumentCreateEntity<T> insertDocument(T value) throws ArangoDBException;
 
 	/**
 	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
@@ -96,8 +96,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
-			throws ArangoDBException;
+	<T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -110,8 +109,7 @@ public interface ArangoCollection {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
-			throws ArangoDBException;
+	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values) throws ArangoDBException;
 
 	/**
 	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
@@ -127,8 +125,8 @@ public interface ArangoCollection {
 	 * @throws ArangoDBException
 	 */
 	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-		final Collection<T> values,
-		final DocumentCreateOptions options) throws ArangoDBException;
+		Collection<T> values,
+		DocumentCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Bulk imports the given values into the collection.
@@ -138,7 +136,7 @@ public interface ArangoCollection {
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	DocumentImportEntity importDocuments(final Collection<?> values) throws ArangoDBException;
+	DocumentImportEntity importDocuments(Collection<?> values) throws ArangoDBException;
 
 	/**
 	 * Bulk imports the given values into the collection.
@@ -150,8 +148,7 @@ public interface ArangoCollection {
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	DocumentImportEntity importDocuments(final Collection<?> values, final DocumentImportOptions options)
-			throws ArangoDBException;
+	DocumentImportEntity importDocuments(Collection<?> values, DocumentImportOptions options) throws ArangoDBException;
 
 	/**
 	 * Bulk imports the given values into the collection.
@@ -161,7 +158,7 @@ public interface ArangoCollection {
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	DocumentImportEntity importDocuments(final String values) throws ArangoDBException;
+	DocumentImportEntity importDocuments(String values) throws ArangoDBException;
 
 	/**
 	 * Bulk imports the given values into the collection.
@@ -173,8 +170,7 @@ public interface ArangoCollection {
 	 * @return information about the import
 	 * @throws ArangoDBException
 	 */
-	DocumentImportEntity importDocuments(final String values, final DocumentImportOptions options)
-			throws ArangoDBException;
+	DocumentImportEntity importDocuments(String values, DocumentImportOptions options) throws ArangoDBException;
 
 	/**
 	 * Retrieves the document with the given {@code key} from the collection.
@@ -188,7 +184,7 @@ public interface ArangoCollection {
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getDocument(final String key, final Class<T> type) throws ArangoDBException;
+	<T> T getDocument(String key, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Retrieves the document with the given {@code key} from the collection.
@@ -204,8 +200,7 @@ public interface ArangoCollection {
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
-			throws ArangoDBException;
+	<T> T getDocument(String key, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Retrieves multiple documents with the given {@code _key} from the collection.
@@ -217,8 +212,7 @@ public interface ArangoCollection {
 	 * @return the documents and possible errors
 	 * @throws ArangoDBException
 	 */
-	<T> MultiDocumentEntity<T> getDocuments(final Collection<String> keys, final Class<T> type)
-			throws ArangoDBException;
+	<T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -233,7 +227,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException;
+	<T> DocumentUpdateEntity<T> replaceDocument(String key, T value) throws ArangoDBException;
 
 	/**
 	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
@@ -250,7 +244,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value, final DocumentReplaceOptions options)
+	<T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options)
 			throws ArangoDBException;
 
 	/**
@@ -264,8 +258,7 @@ public interface ArangoCollection {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(final Collection<T> values)
-			throws ArangoDBException;
+	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values) throws ArangoDBException;
 
 	/**
 	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
@@ -281,8 +274,8 @@ public interface ArangoCollection {
 	 * @throws ArangoDBException
 	 */
 	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-		final Collection<T> values,
-		final DocumentReplaceOptions options) throws ArangoDBException;
+		Collection<T> values,
+		DocumentReplaceOptions options) throws ArangoDBException;
 
 	/**
 	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -298,7 +291,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentUpdateEntity<T> updateDocument(final String key, final T value) throws ArangoDBException;
+	<T> DocumentUpdateEntity<T> updateDocument(String key, T value) throws ArangoDBException;
 
 	/**
 	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
@@ -316,7 +309,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentUpdateEntity<T> updateDocument(final String key, final T value, final DocumentUpdateOptions options)
+	<T> DocumentUpdateEntity<T> updateDocument(String key, T value, DocumentUpdateOptions options)
 			throws ArangoDBException;
 
 	/**
@@ -332,8 +325,7 @@ public interface ArangoCollection {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
-			throws ArangoDBException;
+	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(Collection<T> values) throws ArangoDBException;
 
 	/**
 	 * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
@@ -351,8 +343,8 @@ public interface ArangoCollection {
 	 * @throws ArangoDBException
 	 */
 	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-		final Collection<T> values,
-		final DocumentUpdateOptions options) throws ArangoDBException;
+		Collection<T> values,
+		DocumentUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Deletes the document with the given {@code key} from the collection.
@@ -369,7 +361,7 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException;
+	DocumentDeleteEntity<Void> deleteDocument(String key) throws ArangoDBException;
 
 	/**
 	 * Deletes the document with the given {@code key} from the collection.
@@ -386,10 +378,8 @@ public interface ArangoCollection {
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
-	<T> DocumentDeleteEntity<T> deleteDocument(
-		final String key,
-		final Class<T> type,
-		final DocumentDeleteOptions options) throws ArangoDBException;
+	<T> DocumentDeleteEntity<T> deleteDocument(String key, Class<T> type, DocumentDeleteOptions options)
+			throws ArangoDBException;
 
 	/**
 	 * Deletes multiple documents from the collection.
@@ -405,8 +395,7 @@ public interface ArangoCollection {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
-	MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values)
-			throws ArangoDBException;
+	MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Collection<?> values) throws ArangoDBException;
 
 	/**
 	 * Deletes multiple documents from the collection.
@@ -425,9 +414,9 @@ public interface ArangoCollection {
 	 * @throws ArangoDBException
 	 */
 	<T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-		final Collection<?> values,
-		final Class<T> type,
-		final DocumentDeleteOptions options) throws ArangoDBException;
+		Collection<?> values,
+		Class<T> type,
+		DocumentDeleteOptions options) throws ArangoDBException;
 
 	/**
 	 * Checks if the document exists by reading a single document head
@@ -439,7 +428,7 @@ public interface ArangoCollection {
 	 *            The key of the document
 	 * @return true if the document was found, otherwise false
 	 */
-	Boolean documentExists(final String key);
+	Boolean documentExists(String key);
 
 	/**
 	 * Checks if the document exists by reading a single document head
@@ -455,7 +444,7 @@ public interface ArangoCollection {
 	 * @throws ArangoDBException
 	 *             only thrown when {@link DocumentExistsOptions#isCatchException()} == false
 	 */
-	Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException;
+	Boolean documentExists(String key, DocumentExistsOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches information about the index with the given {@code id} and returns it.
@@ -466,7 +455,7 @@ public interface ArangoCollection {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity getIndex(final String id) throws ArangoDBException;
+	IndexEntity getIndex(String id) throws ArangoDBException;
 
 	/**
 	 * Deletes the index with the given {@code id} from the collection.
@@ -477,7 +466,7 @@ public interface ArangoCollection {
 	 * @return the id of the index
 	 * @throws ArangoDBException
 	 */
-	String deleteIndex(final String id) throws ArangoDBException;
+	String deleteIndex(String id) throws ArangoDBException;
 
 	/**
 	 * Creates a hash index for the collection if it does not already exist.
@@ -490,7 +479,7 @@ public interface ArangoCollection {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options) throws ArangoDBException;
+	IndexEntity ensureHashIndex(Iterable<String> fields, HashIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a skip-list index for the collection, if it does not already exist.
@@ -504,8 +493,7 @@ public interface ArangoCollection {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity ensureSkiplistIndex(final Iterable<String> fields, final SkiplistIndexOptions options)
-			throws ArangoDBException;
+	IndexEntity ensureSkiplistIndex(Iterable<String> fields, SkiplistIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a persistent index for the collection, if it does not already exist.
@@ -519,8 +507,7 @@ public interface ArangoCollection {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity ensurePersistentIndex(final Iterable<String> fields, final PersistentIndexOptions options)
-			throws ArangoDBException;
+	IndexEntity ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a geo-spatial index for the collection, if it does not already exist.
@@ -534,7 +521,7 @@ public interface ArangoCollection {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options) throws ArangoDBException;
+	IndexEntity ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a fulltext index for the collection, if it does not already exist.
@@ -548,8 +535,7 @@ public interface ArangoCollection {
 	 * @return information about the index
 	 * @throws ArangoDBException
 	 */
-	IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options)
-			throws ArangoDBException;
+	IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches a list of all indexes on this collection.
@@ -611,7 +597,7 @@ public interface ArangoCollection {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	CollectionEntity create(final CollectionCreateOptions options) throws ArangoDBException;
+	CollectionEntity create(CollectionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Deletes the collection from the database.
@@ -633,7 +619,7 @@ public interface ArangoCollection {
 	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
-	void drop(final boolean isSystem) throws ArangoDBException;
+	void drop(boolean isSystem) throws ArangoDBException;
 
 	/**
 	 * Tells the server to load the collection into memory.
@@ -689,7 +675,7 @@ public interface ArangoCollection {
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 */
-	CollectionPropertiesEntity changeProperties(final CollectionPropertiesOptions options) throws ArangoDBException;
+	CollectionPropertiesEntity changeProperties(CollectionPropertiesOptions options) throws ArangoDBException;
 
 	/**
 	 * Renames the collection
@@ -701,7 +687,7 @@ public interface ArangoCollection {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 */
-	CollectionEntity rename(final String newName) throws ArangoDBException;
+	CollectionEntity rename(String newName) throws ArangoDBException;
 
 	/**
 	 * Retrieve the collections revision
@@ -726,7 +712,7 @@ public interface ArangoCollection {
 	 *            The permissions the user grant
 	 * @throws ArangoDBException
 	 */
-	void grantAccess(final String user, final Permissions permissions) throws ArangoDBException;
+	void grantAccess(String user, Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Revokes access to the collection for user user. You need permission to the _system database in order to execute
@@ -739,7 +725,7 @@ public interface ArangoCollection {
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	void revokeAccess(final String user) throws ArangoDBException;
+	void revokeAccess(String user) throws ArangoDBException;
 
 	/**
 	 * Clear the collection access level, revert back to the default access level.
@@ -752,7 +738,7 @@ public interface ArangoCollection {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	void resetAccess(final String user) throws ArangoDBException;
+	void resetAccess(String user) throws ArangoDBException;
 
 	/**
 	 * Get the collection access level
@@ -765,6 +751,6 @@ public interface ArangoCollection {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	Permissions getPermissions(final String user) throws ArangoDBException;
+	Permissions getPermissions(String user) throws ArangoDBException;
 
 }

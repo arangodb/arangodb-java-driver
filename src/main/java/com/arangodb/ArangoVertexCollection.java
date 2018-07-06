@@ -69,7 +69,7 @@ public interface ArangoVertexCollection {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	<T> VertexEntity insertVertex(final T value) throws ArangoDBException;
+	<T> VertexEntity insertVertex(T value) throws ArangoDBException;
 
 	/**
 	 * Creates a new vertex in the collection
@@ -82,7 +82,7 @@ public interface ArangoVertexCollection {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	<T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException;
+	<T> VertexEntity insertVertex(T value, VertexCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Retrieves the vertex document with the given {@code key} from the collection.
@@ -95,7 +95,7 @@ public interface ArangoVertexCollection {
 	 * @return the vertex identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getVertex(final String key, final Class<T> type) throws ArangoDBException;
+	<T> T getVertex(String key, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Retrieves the vertex document with the given {@code key} from the collection.
@@ -110,7 +110,7 @@ public interface ArangoVertexCollection {
 	 * @return the vertex identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getVertex(final String key, final Class<T> type, final DocumentReadOptions options) throws ArangoDBException;
+	<T> T getVertex(String key, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -125,7 +125,7 @@ public interface ArangoVertexCollection {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	<T> VertexUpdateEntity replaceVertex(final String key, final T value) throws ArangoDBException;
+	<T> VertexUpdateEntity replaceVertex(String key, T value) throws ArangoDBException;
 
 	/**
 	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
@@ -142,8 +142,7 @@ public interface ArangoVertexCollection {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	<T> VertexUpdateEntity replaceVertex(final String key, final T value, final VertexReplaceOptions options)
-			throws ArangoDBException;
+	<T> VertexUpdateEntity replaceVertex(String key, T value, VertexReplaceOptions options) throws ArangoDBException;
 
 	/**
 	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -158,7 +157,7 @@ public interface ArangoVertexCollection {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	<T> VertexUpdateEntity updateVertex(final String key, final T value) throws ArangoDBException;
+	<T> VertexUpdateEntity updateVertex(String key, T value) throws ArangoDBException;
 
 	/**
 	 * Partially updates the vertex identified by document-key. The value must contain a document with the attributes to
@@ -175,8 +174,7 @@ public interface ArangoVertexCollection {
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
-	<T> VertexUpdateEntity updateVertex(final String key, final T value, final VertexUpdateOptions options)
-			throws ArangoDBException;
+	<T> VertexUpdateEntity updateVertex(String key, T value, VertexUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Deletes the vertex with the given {@code key} from the collection.
@@ -186,7 +184,7 @@ public interface ArangoVertexCollection {
 	 *            The key of the vertex
 	 * @throws ArangoDBException
 	 */
-	void deleteVertex(final String key) throws ArangoDBException;
+	void deleteVertex(String key) throws ArangoDBException;
 
 	/**
 	 * Deletes the vertex with the given {@code key} from the collection.
@@ -198,6 +196,6 @@ public interface ArangoVertexCollection {
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
 	 */
-	void deleteVertex(final String key, final VertexDeleteOptions options) throws ArangoDBException;
+	void deleteVertex(String key, VertexDeleteOptions options) throws ArangoDBException;
 
 }
