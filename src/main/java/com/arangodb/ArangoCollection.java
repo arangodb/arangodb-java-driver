@@ -131,7 +131,7 @@ public interface ArangoCollection {
 		final DocumentCreateOptions options) throws ArangoDBException;
 
 	/**
-	 * Imports documents
+	 * Bulk imports the given values into the collection.
 	 * 
 	 * @param values
 	 *            a list of Objects that will be stored as documents
@@ -141,7 +141,7 @@ public interface ArangoCollection {
 	DocumentImportEntity importDocuments(final Collection<?> values) throws ArangoDBException;
 
 	/**
-	 * Imports documents
+	 * Bulk imports the given values into the collection.
 	 * 
 	 * @param values
 	 *            a list of Objects that will be stored as documents
@@ -154,7 +154,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Imports documents
+	 * Bulk imports the given values into the collection.
 	 * 
 	 * @param values
 	 *            JSON-encoded array of objects that will be stored as documents
@@ -164,7 +164,7 @@ public interface ArangoCollection {
 	DocumentImportEntity importDocuments(final String values) throws ArangoDBException;
 
 	/**
-	 * Imports documents
+	 * Bulk imports the given values into the collection.
 	 * 
 	 * @param values
 	 *            JSON-encoded array of objects that will be stored as documents
