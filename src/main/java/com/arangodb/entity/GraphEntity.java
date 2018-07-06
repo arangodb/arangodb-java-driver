@@ -31,7 +31,7 @@ public class GraphEntity {
 
 	private String name;
 	/**
-	 * Special case where <code>_key</code> is used instead of <code>name</code>.
+	 * Special case where {@code _key} is used instead of {@code name}.
 	 */
 	private String _key;
 	private Collection<EdgeDefinition> edgeDefinitions;

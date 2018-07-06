@@ -46,7 +46,7 @@ public interface ArangoRoute {
 	 * @param key
 	 *            Header key
 	 * @param value
-	 *            Header value (the <code>toString()</code> method will be called for the value}
+	 *            Header value (the {@code toString()} method will be called for the value}
 	 * @return {@link ArangoRoute}
 	 */
 	ArangoRoute withHeader(String key, Object value);
@@ -57,7 +57,7 @@ public interface ArangoRoute {
 	 * @param key
 	 *            Query parameter key
 	 * @param value
-	 *            Query parameter value (the <code>toString()</code> method will be called for the value}
+	 *            Query parameter value (the {@code toString()} method will be called for the value}
 	 * @return {@link ArangoRoute}
 	 */
 	ArangoRoute withQueryParam(String key, Object value);
@@ -66,7 +66,7 @@ public interface ArangoRoute {
 	 * The response body. The body will be serialized to {@link VPackSlice}.
 	 * 
 	 * @param body
-	 *            The response body
+	 *            The request body
 	 * @return {@link ArangoRoute}
 	 */
 	ArangoRoute withBody(Object body);

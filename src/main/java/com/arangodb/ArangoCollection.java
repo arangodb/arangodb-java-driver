@@ -177,7 +177,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Retrieves the document with the given <code>key</code> from the collection.
+	 * Retrieves the document with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
 	 *      Documentation</a>
@@ -191,7 +191,7 @@ public interface ArangoCollection {
 	<T> T getDocument(final String key, final Class<T> type) throws ArangoDBException;
 
 	/**
-	 * Retrieves the document with the given <code>key</code> from the collection.
+	 * Retrieves the document with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
 	 *      Documentation</a>
@@ -208,7 +208,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Retrieves multiple documents with the given <code>_key</code> from the collection.
+	 * Retrieves multiple documents with the given {@code _key} from the collection.
 	 * 
 	 * @param keys
 	 *            The keys of the documents
@@ -221,7 +221,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Replaces the document with <code>key</code> with the one in the body, provided there is such a document and no
+	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
 	 * precondition is violated
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
@@ -236,7 +236,7 @@ public interface ArangoCollection {
 	<T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException;
 
 	/**
-	 * Replaces the document with <code>key</code> with the one in the body, provided there is such a document and no
+	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
 	 * precondition is violated
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
@@ -355,7 +355,7 @@ public interface ArangoCollection {
 		final DocumentUpdateOptions options) throws ArangoDBException;
 
 	/**
-	 * Deletes the document with the given <code>key</code> from the collection.
+	 * Deletes the document with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
 	 *      Documentation</a>
@@ -372,7 +372,7 @@ public interface ArangoCollection {
 	DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException;
 
 	/**
-	 * Deletes the document with the given <code>key</code> from the collection.
+	 * Deletes the document with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
 	 *      Documentation</a>
@@ -458,7 +458,7 @@ public interface ArangoCollection {
 	Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException;
 
 	/**
-	 * Fetches information about the index with the given <code>id</code> and returns it.
+	 * Fetches information about the index with the given {@code id} and returns it.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
 	 * @param id
@@ -469,7 +469,7 @@ public interface ArangoCollection {
 	IndexEntity getIndex(final String id) throws ArangoDBException;
 
 	/**
-	 * Deletes the index with the given <code>id</code> from the collection.
+	 * Deletes the index with the given {@code id} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
 	 * @param id
@@ -601,7 +601,7 @@ public interface ArangoCollection {
 	CollectionEntity create() throws ArangoDBException;
 
 	/**
-	 * Creates a collection with the given <code>options</code> for this collection's name, then returns collection
+	 * Creates a collection with the given {@code options} for this collection's name, then returns collection
 	 * information from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API

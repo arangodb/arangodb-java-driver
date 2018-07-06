@@ -125,7 +125,7 @@ public interface ArangoGraph {
 	GraphEntity addVertexCollection(final String name) throws ArangoDBException;
 
 	/**
-	 * Returns a <code>ArangoVertexCollection</code> instance for the given vertex collection name.
+	 * Returns a {@code ArangoVertexCollection} instance for the given vertex collection name.
 	 * 
 	 * @param name
 	 *            Name of the vertex collection
@@ -134,7 +134,7 @@ public interface ArangoGraph {
 	ArangoVertexCollection vertexCollection(final String name);
 
 	/**
-	 * Returns a <code>ArangoEdgeCollection</code> instance for the given edge collection name.
+	 * Returns a {@code ArangoEdgeCollection} instance for the given edge collection name.
 	 * 
 	 * @param name
 	 *            Name of the edge collection

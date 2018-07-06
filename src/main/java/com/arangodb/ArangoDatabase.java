@@ -101,7 +101,7 @@ public interface ArangoDatabase {
 	Collection<String> getAccessibleDatabases() throws ArangoDBException;
 
 	/**
-	 * Returns a <code>ArangoCollection</code> instance for the given collection name.
+	 * Returns a {@code ArangoCollection} instance for the given collection name.
 	 * 
 	 * @param name
 	 *            Name of the collection
@@ -122,7 +122,7 @@ public interface ArangoDatabase {
 	CollectionEntity createCollection(final String name) throws ArangoDBException;
 
 	/**
-	 * Creates a collection with the given <code>options</code> for this collection's name, then returns collection
+	 * Creates a collection with the given {@code options} for this collection's name, then returns collection
 	 * information from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
@@ -202,7 +202,7 @@ public interface ArangoDatabase {
 	Boolean drop() throws ArangoDBException;
 
 	/**
-	 * Grants or revoke access to the database for user <code>user</code>. You need permission to the _system database
+	 * Grants or revoke access to the database for user {@code user}. You need permission to the _system database
 	 * in order to execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
@@ -216,7 +216,7 @@ public interface ArangoDatabase {
 	void grantAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
-	 * Grants access to the database for user <code>user</code>. You need permission to the _system database in order to
+	 * Grants access to the database for user {@code user}. You need permission to the _system database in order to
 	 * execute this call.
 	 *
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
@@ -228,7 +228,7 @@ public interface ArangoDatabase {
 	void grantAccess(final String user) throws ArangoDBException;
 
 	/**
-	 * Revokes access to the database dbname for user <code>user</code>. You need permission to the _system database in
+	 * Revokes access to the database dbname for user {@code user}. You need permission to the _system database in
 	 * order to execute this call.
 	 * 
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
@@ -252,7 +252,7 @@ public interface ArangoDatabase {
 	void resetAccess(final String user) throws ArangoDBException;
 
 	/**
-	 * Sets the default access level for collections within this database for the user <code>user</code>. You need
+	 * Sets the default access level for collections within this database for the user {@code user}. You need
 	 * permission to the _system database in order to execute this call.
 	 * 
 	 * @param user
@@ -278,8 +278,8 @@ public interface ArangoDatabase {
 	Permissions getPermissions(final String user) throws ArangoDBException;
 
 	/**
-	 * Performs a database query using the given <code>query</code> and <code>bindVars</code>, then returns a new
-	 * <code>ArangoCursor</code> instance for the result list.
+	 * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
+	 * {@code ArangoCursor} instance for the result list.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
 	 *      Documentation</a>
@@ -496,7 +496,7 @@ public interface ArangoDatabase {
 	Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException;
 
 	/**
-	 * Returns a <code>ArangoGraph</code> instance for the given graph name.
+	 * Returns a {@code ArangoGraph} instance for the given graph name.
 	 * 
 	 * @param name
 	 *            Name of the graph

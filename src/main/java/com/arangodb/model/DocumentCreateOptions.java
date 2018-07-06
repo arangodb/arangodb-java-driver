@@ -73,7 +73,7 @@ public class DocumentCreateOptions {
 	/**
 	 * @param returnOld
 	 *            Additionally return the complete old document under the attribute old in the result. Only available if
-	 *            the <code>overwrite</code> option is used.
+	 *            the {@code overwrite} option is used.
 	 * @since ArangoDB 3.4
 	 * @return options
 	 */
@@ -88,7 +88,7 @@ public class DocumentCreateOptions {
 
 	/**
 	 * @param overwrite
-	 *            If set to true, the insert becomes a replace-insert. If a document with the same <code>_key</code>
+	 *            If set to true, the insert becomes a replace-insert. If a document with the same {@code _key}
 	 *            already exists the new document is not rejected with unique constraint violated but will replace the
 	 *            old document.
 	 * @since ArangoDB 3.4

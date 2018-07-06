@@ -85,7 +85,7 @@ public interface ArangoVertexCollection {
 	<T> VertexEntity insertVertex(final T value, final VertexCreateOptions options) throws ArangoDBException;
 
 	/**
-	 * Retrieves the vertex document with the given <code>key</code> from the collection.
+	 * Retrieves the vertex document with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
 	 * @param key
@@ -98,7 +98,7 @@ public interface ArangoVertexCollection {
 	<T> T getVertex(final String key, final Class<T> type) throws ArangoDBException;
 
 	/**
-	 * Retrieves the vertex document with the given <code>key</code> from the collection.
+	 * Retrieves the vertex document with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
 	 * @param key
@@ -179,7 +179,7 @@ public interface ArangoVertexCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Deletes the vertex with the given <code>key</code> from the collection.
+	 * Deletes the vertex with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
 	 * @param key
@@ -189,7 +189,7 @@ public interface ArangoVertexCollection {
 	void deleteVertex(final String key) throws ArangoDBException;
 
 	/**
-	 * Deletes the vertex with the given <code>key</code> from the collection.
+	 * Deletes the vertex with the given {@code key} from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
 	 * @param key

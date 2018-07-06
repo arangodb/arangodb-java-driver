@@ -164,7 +164,7 @@ public interface ArangoDB {
 		 * Sets the username to use for authentication.
 		 * 
 		 * @param user
-		 *            the user in the database (default: <code>root</code>)
+		 *            the user in the database (default: {@code root})
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder user(final String user) {
@@ -176,7 +176,7 @@ public interface ArangoDB {
 		 * Sets the password for the user for authentication.
 		 * 
 		 * @param password
-		 *            the password of the user in the database (default: <code>null</code>)
+		 *            the password of the user in the database (default: {@code null})
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder password(final String password) {
@@ -185,10 +185,10 @@ public interface ArangoDB {
 		}
 
 		/**
-		 * If set to <code>true</code> SSL will be used when connecting to an ArangoDB server.
+		 * If set to {@code true} SSL will be used when connecting to an ArangoDB server.
 		 * 
 		 * @param useSsl
-		 *            whether or not use SSL (default: <code>false</code>)
+		 *            whether or not use SSL (default: {@code false})
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder useSsl(final Boolean useSsl) {
@@ -197,7 +197,7 @@ public interface ArangoDB {
 		}
 
 		/**
-		 * Sets the SSL context to be used when <code>true</code> is passed through {@link #useSsl(Boolean)}.
+		 * Sets the SSL context to be used when {@code true} is passed through {@link #useSsl(Boolean)}.
 		 * 
 		 * @param sslContext
 		 *            SSL context to be used
@@ -636,14 +636,14 @@ public interface ArangoDB {
 	void shutdown() throws ArangoDBException;
 
 	/**
-	 * Returns a <code>ArangoDatabase</code> instance for the <code>_system</code> database.
+	 * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
 	 * 
 	 * @return database handler
 	 */
 	ArangoDatabase db();
 
 	/**
-	 * Returns a <code>ArangoDatabase</code> instance for the given database name.
+	 * Returns a {@code ArangoDatabase} instance for the given database name.
 	 * 
 	 * @param name
 	 *            Name of the database
@@ -808,7 +808,7 @@ public interface ArangoDB {
 	UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException;
 
 	/**
-	 * Sets the default access level for databases for the user <code>user</code>. You need permission to the _system
+	 * Sets the default access level for databases for the user {@code user}. You need permission to the _system
 	 * database in order to execute this call.
 	 * 
 	 * @param user
@@ -821,7 +821,7 @@ public interface ArangoDB {
 	void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException;
 
 	/**
-	 * Sets the default access level for collections for the user <code>user</code>. You need permission to the _system
+	 * Sets the default access level for collections for the user {@code user}. You need permission to the _system
 	 * database in order to execute this call.
 	 * 
 	 * @param user
