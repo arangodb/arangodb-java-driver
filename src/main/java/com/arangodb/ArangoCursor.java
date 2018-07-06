@@ -47,8 +47,16 @@ public interface ArangoCursor<T> extends Iterable<T>, Iterator<T>, Closeable {
 	 */
 	Integer getCount();
 
+	/**
+	 * @return extra information about the query result. For data-modification queries, the stats will contain the
+	 *         number of modified documents and the number of documents that could not be modified due to an error (if
+	 *         ignoreErrors query option is specified)
+	 */
 	Stats getStats();
 
+	/**
+	 * @return warnings which the query could have been produced
+	 */
 	Collection<Warning> getWarnings();
 
 	/**
@@ -56,6 +64,9 @@ public interface ArangoCursor<T> extends Iterable<T>, Iterator<T>, Closeable {
 	 */
 	boolean isCached();
 
+	/**
+	 * @return the remaining results as a {@code List}
+	 */
 	List<T> asListRemaining();
 
 }

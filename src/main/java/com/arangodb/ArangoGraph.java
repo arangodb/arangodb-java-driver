@@ -66,7 +66,7 @@ public interface ArangoGraph {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException;
+	GraphEntity create(Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException;
 
 	/**
 	 * Creates the graph in the graph module. The creation of a graph requires the name of the graph and a definition of
@@ -81,11 +81,10 @@ public interface ArangoGraph {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options)
-			throws ArangoDBException;
+	GraphEntity create(Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) throws ArangoDBException;
 
 	/**
-	 * Delete an existing graph
+	 * Deletes the graph from the database.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API Documentation</a>
 	 * @throws ArangoDBException
@@ -93,7 +92,7 @@ public interface ArangoGraph {
 	void drop() throws ArangoDBException;
 
 	/**
-	 * Get a graph from the graph module
+	 * Retrieves general information about the graph.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#get-a-graph">API Documentation</a>
 	 * @return the definition content of this graph
@@ -102,7 +101,7 @@ public interface ArangoGraph {
 	GraphEntity getInfo() throws ArangoDBException;
 
 	/**
-	 * Lists all vertex collections used in this graph
+	 * Fetches all vertex collections from the graph and returns a list of collection names.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-vertex-collections">API
 	 *      Documentation</a>
@@ -118,32 +117,32 @@ public interface ArangoGraph {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-vertex-collection">API
 	 *      Documentation</a>
 	 * @param name
-	 *            The name of the collection
+	 *            Name of the vertex collection
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity addVertexCollection(final String name) throws ArangoDBException;
+	GraphEntity addVertexCollection(String name) throws ArangoDBException;
 
 	/**
-	 * Returns a handler of the vertex collection by the given name
+	 * Returns a {@code ArangoVertexCollection} instance for the given vertex collection name.
 	 * 
 	 * @param name
 	 *            Name of the vertex collection
 	 * @return collection handler
 	 */
-	ArangoVertexCollection vertexCollection(final String name);
+	ArangoVertexCollection vertexCollection(String name);
 
 	/**
-	 * Returns a handler of the edge collection by the given name
+	 * Returns a {@code ArangoEdgeCollection} instance for the given edge collection name.
 	 * 
 	 * @param name
 	 *            Name of the edge collection
 	 * @return collection handler
 	 */
-	ArangoEdgeCollection edgeCollection(final String name);
+	ArangoEdgeCollection edgeCollection(String name);
 
 	/**
-	 * Lists all edge collections used in this graph
+	 * Fetches all edge collections from the graph and returns a list of collection names.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-edge-definitions">API
 	 *      Documentation</a>
@@ -153,15 +152,16 @@ public interface ArangoGraph {
 	Collection<String> getEdgeDefinitions() throws ArangoDBException;
 
 	/**
-	 * Add a new edge definition to the graph
+	 * Adds the given edge definition to the graph.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-edge-definition">API
 	 *      Documentation</a>
 	 * @param definition
+	 *            The edge definition
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException;
+	GraphEntity addEdgeDefinition(EdgeDefinition definition) throws ArangoDBException;
 
 	/**
 	 * Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to
@@ -174,7 +174,7 @@ public interface ArangoGraph {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException;
+	GraphEntity replaceEdgeDefinition(EdgeDefinition definition) throws ArangoDBException;
 
 	/**
 	 * Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections
@@ -188,6 +188,6 @@ public interface ArangoGraph {
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
-	GraphEntity removeEdgeDefinition(final String definitionName) throws ArangoDBException;
+	GraphEntity removeEdgeDefinition(String definitionName) throws ArangoDBException;
 
 }

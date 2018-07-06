@@ -94,7 +94,7 @@ public interface ArangoDB {
 	 */
 	public static class Builder extends InternalArangoDBBuilder {
 
-		private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
+		private static String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 
 		protected Protocol protocol;
 
@@ -164,7 +164,7 @@ public interface ArangoDB {
 		 * Sets the username to use for authentication.
 		 * 
 		 * @param user
-		 *            the user in the database (default: <code>root</code>)
+		 *            the user in the database (default: {@code root})
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder user(final String user) {
@@ -176,7 +176,7 @@ public interface ArangoDB {
 		 * Sets the password for the user for authentication.
 		 * 
 		 * @param password
-		 *            the password of the user in the database (default: <code>null</code>)
+		 *            the password of the user in the database (default: {@code null})
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder password(final String password) {
@@ -185,10 +185,10 @@ public interface ArangoDB {
 		}
 
 		/**
-		 * If set to <code>true</code> SSL will be used when connecting to an ArangoDB server.
+		 * If set to {@code true} SSL will be used when connecting to an ArangoDB server.
 		 * 
 		 * @param useSsl
-		 *            whether or not use SSL (default: <code>false</code>)
+		 *            whether or not use SSL (default: {@code false})
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder useSsl(final Boolean useSsl) {
@@ -197,7 +197,7 @@ public interface ArangoDB {
 		}
 
 		/**
-		 * Sets the SSL context to be used when <code>true</code> is passed through {@link #useSsl(Boolean)}.
+		 * Sets the SSL context to be used when {@code true} is passed through {@link #useSsl(Boolean)}.
 		 * 
 		 * @param sslContext
 		 *            SSL context to be used
@@ -636,32 +636,32 @@ public interface ArangoDB {
 	void shutdown() throws ArangoDBException;
 
 	/**
-	 * Returns a handler of the system database
+	 * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
 	 * 
 	 * @return database handler
 	 */
 	ArangoDatabase db();
 
 	/**
-	 * Returns a handler of the database by the given name
+	 * Returns a {@code ArangoDatabase} instance for the given database name.
 	 * 
 	 * @param name
 	 *            Name of the database
 	 * @return database handler
 	 */
-	ArangoDatabase db(final String name);
+	ArangoDatabase db(String name);
 
 	/**
-	 * Creates a new database
+	 * Creates a new database with the given name.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
 	 *      Documentation</a>
 	 * @param name
-	 *            Has to contain a valid database name
+	 *            Name of the database to create
 	 * @return true if the database was created successfully.
 	 * @throws ArangoDBException
 	 */
-	Boolean createDatabase(final String name) throws ArangoDBException;
+	Boolean createDatabase(String name) throws ArangoDBException;
 
 	/**
 	 * Retrieves a list of all existing databases
@@ -695,7 +695,7 @@ public interface ArangoDB {
 	 * @return
 	 * @throws ArangoDBException
 	 */
-	Collection<String> getAccessibleDatabasesFor(final String user) throws ArangoDBException;
+	Collection<String> getAccessibleDatabasesFor(String user) throws ArangoDBException;
 
 	/**
 	 * Returns the server name and version number.
@@ -727,7 +727,7 @@ public interface ArangoDB {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	UserEntity createUser(final String user, final String passwd) throws ArangoDBException;
+	UserEntity createUser(String user, String passwd) throws ArangoDBException;
 
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
@@ -743,8 +743,7 @@ public interface ArangoDB {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
-			throws ArangoDBException;
+	UserEntity createUser(String user, String passwd, UserCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Removes an existing user, identified by user. You need access to the _system database.
@@ -754,7 +753,7 @@ public interface ArangoDB {
 	 *            The name of the user
 	 * @throws ArangoDBException
 	 */
-	void deleteUser(final String user) throws ArangoDBException;
+	void deleteUser(String user) throws ArangoDBException;
 
 	/**
 	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
@@ -766,7 +765,7 @@ public interface ArangoDB {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	UserEntity getUser(final String user) throws ArangoDBException;
+	UserEntity getUser(String user) throws ArangoDBException;
 
 	/**
 	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
@@ -790,7 +789,7 @@ public interface ArangoDB {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException;
+	UserEntity updateUser(String user, UserUpdateOptions options) throws ArangoDBException;
 
 	/**
 	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
@@ -805,10 +804,10 @@ public interface ArangoDB {
 	 * @return information about the user
 	 * @throws ArangoDBException
 	 */
-	UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException;
+	UserEntity replaceUser(String user, UserUpdateOptions options) throws ArangoDBException;
 
 	/**
-	 * Sets the default access level for databases for the user <code>user</code>. You need permission to the _system
+	 * Sets the default access level for databases for the user {@code user}. You need permission to the _system
 	 * database in order to execute this call.
 	 * 
 	 * @param user
@@ -818,10 +817,10 @@ public interface ArangoDB {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	void grantDefaultDatabaseAccess(final String user, final Permissions permissions) throws ArangoDBException;
+	void grantDefaultDatabaseAccess(String user, Permissions permissions) throws ArangoDBException;
 
 	/**
-	 * Sets the default access level for collections for the user <code>user</code>. You need permission to the _system
+	 * Sets the default access level for collections for the user {@code user}. You need permission to the _system
 	 * database in order to execute this call.
 	 * 
 	 * @param user
@@ -831,7 +830,7 @@ public interface ArangoDB {
 	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
 	 */
-	void grantDefaultCollectionAccess(final String user, final Permissions permissions) throws ArangoDBException;
+	void grantDefaultCollectionAccess(String user, Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Generic Execute. Use this method to execute custom FOXX services.
@@ -841,7 +840,7 @@ public interface ArangoDB {
 	 * @return VelocyStream response
 	 * @throws ArangoDBException
 	 */
-	Response execute(final Request request) throws ArangoDBException;
+	Response execute(Request request) throws ArangoDBException;
 
 	/**
 	 * Generic Execute. Use this method to execute custom FOXX services.
@@ -853,7 +852,7 @@ public interface ArangoDB {
 	 * @return VelocyStream response
 	 * @throws ArangoDBException
 	 */
-	Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException;
+	Response execute(Request request, HostHandle hostHandle) throws ArangoDBException;
 
 	/**
 	 * Returns fatal, error, warning or info log messages from the server's global log.
@@ -866,7 +865,7 @@ public interface ArangoDB {
 	 * @return the log messages
 	 * @throws ArangoDBException
 	 */
-	LogEntity getLogs(final LogOptions options) throws ArangoDBException;
+	LogEntity getLogs(LogOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns the server's current loglevel settings.
@@ -886,7 +885,7 @@ public interface ArangoDB {
 	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
 	 */
-	LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException;
+	LogLevelEntity setLogLevel(LogLevelEntity entity) throws ArangoDBException;
 
 	/**
 	 * <strong>Attention:</strong> Please do not use!
@@ -894,7 +893,7 @@ public interface ArangoDB {
 	 * @param cursorInitializer
 	 * @return ArangoDB
 	 */
-	ArangoDB _setCursorInitializer(final ArangoCursorInitializer cursorInitializer);
+	ArangoDB _setCursorInitializer(ArangoCursorInitializer cursorInitializer);
 
 	/**
 	 * Returns driver internal serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice}
