@@ -102,7 +102,7 @@ public interface ArangoGraph {
 	GraphEntity getInfo() throws ArangoDBException;
 
 	/**
-	 * Lists all vertex collections used in this graph
+	 * Fetches all vertex collections from the graph and returns a list of collection names.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-vertex-collections">API
 	 *      Documentation</a>
@@ -118,14 +118,14 @@ public interface ArangoGraph {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-vertex-collection">API
 	 *      Documentation</a>
 	 * @param name
-	 *            The name of the collection
+	 *            Name of the vertex collection
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */
 	GraphEntity addVertexCollection(final String name) throws ArangoDBException;
 
 	/**
-	 * Returns a handler of the vertex collection by the given name
+	 * Returns a <code>ArangoVertexCollection</code> instance for the given vertex collection name.
 	 * 
 	 * @param name
 	 *            Name of the vertex collection
@@ -134,7 +134,7 @@ public interface ArangoGraph {
 	ArangoVertexCollection vertexCollection(final String name);
 
 	/**
-	 * Returns a handler of the edge collection by the given name
+	 * Returns a <code>ArangoEdgeCollection</code> instance for the given edge collection name.
 	 * 
 	 * @param name
 	 *            Name of the edge collection
@@ -143,7 +143,7 @@ public interface ArangoGraph {
 	ArangoEdgeCollection edgeCollection(final String name);
 
 	/**
-	 * Lists all edge collections used in this graph
+	 * Fetches all edge collections from the graph and returns a list of collection names.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-edge-definitions">API
 	 *      Documentation</a>
@@ -153,11 +153,12 @@ public interface ArangoGraph {
 	Collection<String> getEdgeDefinitions() throws ArangoDBException;
 
 	/**
-	 * Add a new edge definition to the graph
+	 * Adds the given edge definition to the graph.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-edge-definition">API
 	 *      Documentation</a>
 	 * @param definition
+	 *            The edge definition
 	 * @return information about the graph
 	 * @throws ArangoDBException
 	 */

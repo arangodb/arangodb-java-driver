@@ -30,7 +30,7 @@ Boolean exists = collection.documentExists("some-key");
 ## ArangoCollection.getDocument
 
 ```
-ArangoCollection.getDocument(String key, Class<T> type) : T
+ArangoCollection.getDocument(String key, Class<T> type, DocumentReadOptions options) : T
 ```
 
 Retrieves the document with the given \_key from the collection.
@@ -44,6 +44,20 @@ Retrieves the document with the given \_key from the collection.
 - **type**: `Class<T>`
 
   The type of the document (POJO class, `VPackSlice` or `String` for Json)
+
+- **options**: `DocumentReadOptions`
+
+  - **ifNoneMatch**: `String`
+
+    Document revision must not contain If-None-Match
+
+  - **ifMatch**: `String`
+
+    Document revision must contain If-Match
+
+  - **catchException**: `Boolean`
+
+    Whether or not catch possible thrown exceptions
 
 **Examples**
 
