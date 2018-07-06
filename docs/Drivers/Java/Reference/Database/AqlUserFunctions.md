@@ -13,7 +13,9 @@ ArangoDatabase.getAqlFunctions(AqlFunctionGetOptions options) : Collection<AqlFu
 
 - **options**: `AqlFunctionGetOptions`
 
-  Additional options
+  - **namespace**: `String`
+
+    Returns all registered AQL user functions from namespace namespace
 
 **Examples**
 
@@ -42,7 +44,9 @@ ArangoDatabase.createAqlFunction(String name, String code, AqlFunctionCreateOpti
 
 - **options**: `AqlFunctionCreateOptions`
 
-  Additional options
+  - **isDeterministic**: `Boolean`
+
+    An optional boolean value to indicate that the function results are fully deterministic (function return value solely depends on the input value and return value is the same for repeated calls with same input)
 
 **Examples**
 
@@ -76,7 +80,9 @@ Deletes the AQL user function with the given name from the database.
 
 - **options**: `AqlFunctionDeleteOptions`
 
-  Additional options
+  - **group**: `Boolean`
+
+    If set to true, then the function name provided in name is treated as a namespace prefix, and all functions in the specified namespace will be deleted. If set to false, the function name provided in name must be fully qualified, including any namespaces.
 
 **Examples**
 
