@@ -30,7 +30,9 @@ arango.createDatabase("myDB");
 ArangoDatabase.create() : Boolean
 ```
 
-Creates the database. Alternative for [ArangoDB.createDatabase](#ArangoDB.createDatabase).
+Creates the database.
+
+Alternative for [ArangoDB.createDatabase](#ArangoDB.createDatabase).
 
 **Examples**
 

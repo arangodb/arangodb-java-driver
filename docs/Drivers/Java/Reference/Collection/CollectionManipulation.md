@@ -82,7 +82,9 @@ db.createCollection("potatos", new CollectionCreateOptions());
 ArangoCollection.create(CollectionCreateOptions options) : CollectionEntity
 ```
 
-Creates a collection with the given _options_ for this collection's name, then returns collection information from the server. Alternative for [ArangoDatabase.createCollection](#ArangoDatabase.createCollection).
+Creates a collection with the given _options_ for this collection's name, then returns collection information from the server.
+
+Alternative for [ArangoDatabase.createCollection](#ArangoDatabase.createCollection).
 
 **Arguments**
 

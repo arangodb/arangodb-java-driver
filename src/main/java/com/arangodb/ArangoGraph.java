@@ -85,7 +85,7 @@ public interface ArangoGraph {
 			throws ArangoDBException;
 
 	/**
-	 * Delete an existing graph
+	 * Deletes the graph from the database.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API Documentation</a>
 	 * @throws ArangoDBException
@@ -93,7 +93,7 @@ public interface ArangoGraph {
 	void drop() throws ArangoDBException;
 
 	/**
-	 * Get a graph from the graph module
+	 * Retrieves general information about the graph.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#get-a-graph">API Documentation</a>
 	 * @return the definition content of this graph
