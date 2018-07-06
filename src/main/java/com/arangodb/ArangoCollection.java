@@ -177,7 +177,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Reads a single document
+	 * Retrieves the document with the given <code>key</code> from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
 	 *      Documentation</a>
@@ -191,7 +191,7 @@ public interface ArangoCollection {
 	<T> T getDocument(final String key, final Class<T> type) throws ArangoDBException;
 
 	/**
-	 * Reads a single document
+	 * Retrieves the document with the given <code>key</code> from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
 	 *      Documentation</a>
@@ -208,7 +208,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Reads multiple documents
+	 * Retrieves multiple documents with the given <code>_key</code> from the collection.
 	 * 
 	 * @param keys
 	 *            The keys of the documents
@@ -221,8 +221,8 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
-	 * violated
+	 * Replaces the document with <code>key</code> with the one in the body, provided there is such a document and no
+	 * precondition is violated
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
 	 *      Documentation</a>
@@ -236,8 +236,8 @@ public interface ArangoCollection {
 	<T> DocumentUpdateEntity<T> replaceDocument(final String key, final T value) throws ArangoDBException;
 
 	/**
-	 * Replaces the document with key with the one in the body, provided there is such a document and no precondition is
-	 * violated
+	 * Replaces the document with <code>key</code> with the one in the body, provided there is such a document and no
+	 * precondition is violated
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
 	 *      Documentation</a>
@@ -355,7 +355,7 @@ public interface ArangoCollection {
 		final DocumentUpdateOptions options) throws ArangoDBException;
 
 	/**
-	 * Removes a document
+	 * Deletes the document with the given <code>key</code> from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
 	 *      Documentation</a>
@@ -372,7 +372,7 @@ public interface ArangoCollection {
 	DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException;
 
 	/**
-	 * Removes a document
+	 * Deletes the document with the given <code>key</code> from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
 	 *      Documentation</a>
@@ -392,7 +392,7 @@ public interface ArangoCollection {
 		final DocumentDeleteOptions options) throws ArangoDBException;
 
 	/**
-	 * Removes multiple document
+	 * Deletes multiple documents from the collection.
 	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
@@ -409,7 +409,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Removes multiple document
+	 * Deletes multiple documents from the collection.
 	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
@@ -458,7 +458,7 @@ public interface ArangoCollection {
 	Boolean documentExists(final String key, final DocumentExistsOptions options) throws ArangoDBException;
 
 	/**
-	 * Returns an index
+	 * Fetches information about the index with the given <code>id</code> and returns it.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
 	 * @param id
@@ -469,7 +469,7 @@ public interface ArangoCollection {
 	IndexEntity getIndex(final String id) throws ArangoDBException;
 
 	/**
-	 * Deletes an index
+	 * Deletes the index with the given <code>id</code> from the collection.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
 	 * @param id
@@ -552,7 +552,7 @@ public interface ArangoCollection {
 			throws ArangoDBException;
 
 	/**
-	 * Returns all indexes of the collection
+	 * Fetches a list of all indexes on this collection.
 	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-all-indexes-of-a-collection">API
@@ -591,7 +591,7 @@ public interface ArangoCollection {
 	CollectionPropertiesEntity count() throws ArangoDBException;
 
 	/**
-	 * Creates the collection
+	 * Creates a collection for this collection's name, then returns collection information from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
 	 *      Documentation</a>
@@ -601,7 +601,8 @@ public interface ArangoCollection {
 	CollectionEntity create() throws ArangoDBException;
 
 	/**
-	 * Creates the collection
+	 * Creates a collection with the given <code>options</code> for this collection's name, then returns collection
+	 * information from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
 	 *      Documentation</a>
@@ -613,7 +614,7 @@ public interface ArangoCollection {
 	CollectionEntity create(final CollectionCreateOptions options) throws ArangoDBException;
 
 	/**
-	 * Drops the collection
+	 * Deletes the collection from the database.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
 	 *      Documentation</a>
@@ -622,7 +623,7 @@ public interface ArangoCollection {
 	void drop() throws ArangoDBException;
 
 	/**
-	 * Drops the collection
+	 * Deletes the collection from the database.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
 	 *      Documentation</a>
@@ -635,7 +636,7 @@ public interface ArangoCollection {
 	void drop(final boolean isSystem) throws ArangoDBException;
 
 	/**
-	 * Loads a collection into memory.
+	 * Tells the server to load the collection into memory.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#load-collection">API
 	 *      Documentation</a>
@@ -645,8 +646,8 @@ public interface ArangoCollection {
 	CollectionEntity load() throws ArangoDBException;
 
 	/**
-	 * Removes a collection from memory. This call does not delete any documents. You can use the collection afterwards;
-	 * in which case it will be loaded into memory, again.
+	 * Tells the server to remove the collection from memory. This call does not delete any documents. You can use the
+	 * collection afterwards; in which case it will be loaded into memory, again.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#unload-collection">API
 	 *      Documentation</a>
@@ -678,7 +679,7 @@ public interface ArangoCollection {
 	CollectionPropertiesEntity getProperties() throws ArangoDBException;
 
 	/**
-	 * Changes the properties of a collection
+	 * Changes the properties of the collection
 	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#change-properties-of-a-collection">API
@@ -691,7 +692,7 @@ public interface ArangoCollection {
 	CollectionPropertiesEntity changeProperties(final CollectionPropertiesOptions options) throws ArangoDBException;
 
 	/**
-	 * Renames a collection
+	 * Renames the collection
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#rename-collection">API
 	 *      Documentation</a>

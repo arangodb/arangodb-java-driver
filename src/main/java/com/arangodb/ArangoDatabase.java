@@ -110,7 +110,7 @@ public interface ArangoDatabase {
 	ArangoCollection collection(final String name);
 
 	/**
-	 * Creates a collection
+	 * Creates a collection for the given collection's name, then returns collection information from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
 	 *      Documentation</a>
@@ -122,7 +122,8 @@ public interface ArangoDatabase {
 	CollectionEntity createCollection(final String name) throws ArangoDBException;
 
 	/**
-	 * Creates a collection
+	 * Creates a collection with the given <code>options</code> for this collection's name, then returns collection
+	 * information from the server.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
 	 *      Documentation</a>
@@ -456,9 +457,9 @@ public interface ArangoDatabase {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
 	 *      Documentation</a>
 	 * @param name
-	 *            the fully qualified name of the user functions
+	 *            A valid AQL function name, e.g.: `"myfuncs::accounting::calculate_vat"`
 	 * @param code
-	 *            a string representation of the function body
+	 *            A String evaluating to a JavaScript function
 	 * @param options
 	 *            Additional options, can be null
 	 * @throws ArangoDBException
@@ -467,13 +468,13 @@ public interface ArangoDatabase {
 			throws ArangoDBException;
 
 	/**
-	 * Remove an existing AQL user function
+	 * Deletes the AQL user function with the given name from the database.
 	 * 
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
 	 *      Documentation</a>
 	 * @param name
-	 *            the name of the AQL user function
+	 *            The name of the user function to delete
 	 * @param options
 	 *            Additional options, can be null
 	 * @return number of deleted functions (since ArangoDB 3.4.0)
@@ -550,12 +551,12 @@ public interface ArangoDatabase {
 	Collection<GraphEntity> getGraphs() throws ArangoDBException;
 
 	/**
-	 * Execute a server-side transaction
+	 * Performs a server-side transaction and returns its return value.
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
 	 *      Documentation</a>
 	 * @param action
-	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
+	 *            A String evaluating to a JavaScript function to be executed on the server.
 	 * @param type
 	 *            The type of the result (POJO class, VPackSlice or String for Json)
 	 * @param options
