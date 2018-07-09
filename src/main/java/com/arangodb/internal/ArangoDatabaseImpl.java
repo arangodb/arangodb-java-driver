@@ -193,6 +193,17 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	}
 
 	@Override
+	public <T> ArangoCursor<T> query(final String query, final Map<String, Object> bindVars, final Class<T> type)
+			throws ArangoDBException {
+		return query(query, bindVars, null, type);
+	}
+
+	@Override
+	public <T> ArangoCursor<T> query(final String query, final Class<T> type) throws ArangoDBException {
+		return query(query, null, null, type);
+	}
+
+	@Override
 	public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
 		final HostHandle hostHandle = new HostHandle();
 		final CursorEntity result = executor.execute(queryNextRequest(cursorId), CursorEntity.class, hostHandle);

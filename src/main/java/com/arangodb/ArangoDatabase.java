@@ -297,6 +297,38 @@ public interface ArangoDatabase {
 			throws ArangoDBException;
 
 	/**
+	 * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
+	 * {@code ArangoCursor} instance for the result list.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 *      Documentation</a>
+	 * @param query
+	 *            An AQL query string
+	 * @param bindVars
+	 *            key/value pairs defining the variables to bind the query to
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 * @return cursor of the results
+	 * @throws ArangoDBException
+	 */
+	<T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, Class<T> type) throws ArangoDBException;
+
+	/**
+	 * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
+	 * result list.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 *      Documentation</a>
+	 * @param query
+	 *            An AQL query string
+	 * @param type
+	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 * @return cursor of the results
+	 * @throws ArangoDBException
+	 */
+	<T> ArangoCursor<T> query(String query, Class<T> type) throws ArangoDBException;
+
+	/**
 	 * Return an cursor from the given cursor-ID if still existing
 	 * 
 	 * @see <a href=
