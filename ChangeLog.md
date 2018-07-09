@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed
+
+- fixed `ArangoCollection#rename(String)`
+
+  Change field `name` in `ArangoCollection` after rename so that future requests through the instance will be made with the new collection name.
+
 ## [4.6.0] - 2018-07-02
 
 ### Added

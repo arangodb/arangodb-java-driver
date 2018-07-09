@@ -87,7 +87,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 	private static final String SILENT = "silent";
 
 	private final D db;
-	private final String name;
+	protected volatile String name;
 
 	protected InternalArangoCollection(final D db, final String name) {
 		super(db.executor, db.util, db.context);

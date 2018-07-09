@@ -2005,6 +2005,20 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void renameDontBreaksCollectionHandler() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
+		try {
+			final ArangoCollection collection = db.collection(COLLECTION_NAME);
+			collection.rename(COLLECTION_NAME + "1");
+			assertThat(collection.getInfo(), is(notNullValue()));
+		} finally {
+			db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
+		}
+	}
+
+	@Test
 	public void getRevision() {
 		final CollectionRevisionEntity result = db.collection(COLLECTION_NAME).getRevision();
 		assertThat(result, is(notNullValue()));

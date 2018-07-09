@@ -382,8 +382,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	}
 
 	@Override
-	public CollectionEntity rename(final String newName) throws ArangoDBException {
-		return executor.execute(renameRequest(newName), CollectionEntity.class);
+	public synchronized CollectionEntity rename(final String newName) throws ArangoDBException {
+		final CollectionEntity result = executor.execute(renameRequest(newName), CollectionEntity.class);
+		name = result.getName();
+		return result;
 	}
 
 	@Override
