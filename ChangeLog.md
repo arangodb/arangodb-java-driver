@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
   Change field `name` in `ArangoCollection` after rename so that future requests through the instance will be made with the new collection name.
 
+- fixed missing `ArangoDatabase.util() : ArangoSerialization`
+- fixed missing `ArangoCollection.util() : ArangoSerialization`
+- fixed missing `ArangoGraph.util() : ArangoSerialization`
+- fixed missing `ArangoVertexCollection.util() : ArangoSerialization`
+- fixed missing `ArangoEdgeCollection.util() : ArangoSerialization`
+
+
 ## [4.6.0] - 2018-07-02
 
 ### Added

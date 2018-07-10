@@ -32,7 +32,7 @@ import com.arangodb.model.GraphCreateOptions;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/">API Documentation</a>
  * @author Mark Vollmary
  */
-public interface ArangoGraph {
+public interface ArangoGraph extends ArangoSerializationAccessor {
 
 	/**
 	 * The the handler of the database the named graph is within

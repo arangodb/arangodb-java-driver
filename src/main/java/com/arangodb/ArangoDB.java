@@ -44,7 +44,6 @@ import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
@@ -66,7 +65,6 @@ import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackParserModule;
 import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -85,7 +83,7 @@ import com.arangodb.velocystream.Response;
  * 
  * @author Mark Vollmary
  */
-public interface ArangoDB {
+public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Builder class to build an instance of {@link ArangoDB}.
@@ -894,22 +892,5 @@ public interface ArangoDB {
 	 * @return ArangoDB
 	 */
 	ArangoDB _setCursorInitializer(ArangoCursorInitializer cursorInitializer);
-
-	/**
-	 * Returns driver internal serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice}
-	 * 
-	 * @return ArangoSerialization
-	 */
-	ArangoSerialization util();
-
-	/**
-	 * Returns serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice} by the given
-	 * type
-	 * 
-	 * @param serializer
-	 *            type of serializer
-	 * @return ArangoSerialization
-	 */
-	ArangoSerialization util(Serializer serializer);
 
 }

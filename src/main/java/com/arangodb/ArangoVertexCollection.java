@@ -34,7 +34,7 @@ import com.arangodb.model.VertexUpdateOptions;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html">API Documentation</a>
  * @author Mark Vollmary
  */
-public interface ArangoVertexCollection {
+public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * The the handler of the named graph the edge collection is within
