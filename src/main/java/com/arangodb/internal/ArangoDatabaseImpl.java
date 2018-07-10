@@ -199,6 +199,12 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	}
 
 	@Override
+	public <T> ArangoCursor<T> query(final String query, final AqlQueryOptions options, final Class<T> type)
+			throws ArangoDBException {
+		return query(query, null, options, type);
+	}
+
+	@Override
 	public <T> ArangoCursor<T> query(final String query, final Class<T> type) throws ArangoDBException {
 		return query(query, null, null, type);
 	}

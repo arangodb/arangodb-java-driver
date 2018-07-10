@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - added convenience method `ArangoDatabase#query(String, Class)`
 - added convenience method `ArangoDatabase#query(String, Map<String, Object>, Class)`
+- added convenience method `ArangoDatabase#query(String, AqlQueryOptions, Class)`
 
 ### Fixed
 
