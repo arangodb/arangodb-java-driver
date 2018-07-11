@@ -60,7 +60,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 		final InternalArangoDatabase<?, ?> db,
 		final ArangoCursorExecute execute,
 		final CursorEntity result) {
-		return new ArangoCursorIterator<>(cursor, execute, db, result);
+		return new ArangoCursorIterator<T>(cursor, execute, db, result);
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 
 	@Override
 	public List<T> asListRemaining() {
-		final List<T> remaining = new ArrayList<>();
+		final List<T> remaining = new ArrayList<T>();
 		while (hasNext()) {
 			remaining.add(next());
 		}

@@ -25,7 +25,6 @@ import java.util.Iterator;
 
 import com.arangodb.ArangoIterable;
 import com.arangodb.ArangoIterator;
-import com.arangodb.Consumer;
 import com.arangodb.Function;
 import com.arangodb.Predicate;
 
@@ -37,12 +36,12 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
 
 	@Override
 	public <R> ArangoIterable<R> map(final Function<? super T, ? extends R> mapper) {
-		return new ArangoMappingIterable<>(this, mapper);
+		return new ArangoMappingIterable<T, R>(this, mapper);
 	}
 
 	@Override
 	public ArangoIterable<T> filter(final Predicate<? super T> predicate) {
-		return new ArangoFilterIterable<>(this, predicate);
+		return new ArangoFilterIterable<T>(this, predicate);
 	}
 
 	@Override
@@ -98,12 +97,9 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
 
 	@Override
 	public <R extends Collection<? super T>> R collectInto(final R target) {
-		foreach(new Consumer<T>() {
-			@Override
-			public void accept(final T t) {
-				target.add(t);
-			}
-		});
+		for (final T t : this) {
+			target.add(t);
+		}
 		return target;
 	}
 

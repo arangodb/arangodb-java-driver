@@ -42,7 +42,7 @@ public class ArangoMappingIterable<R, T> extends AbstractArangoIterable<T> imple
 
 	@Override
 	public ArangoIterator<T> iterator() {
-		return new ArangoMappingIterator<>(iterable.iterator(), mapper);
+		return new ArangoMappingIterator<R, T>(iterable.iterator(), mapper);
 	}
 
 	@Override
