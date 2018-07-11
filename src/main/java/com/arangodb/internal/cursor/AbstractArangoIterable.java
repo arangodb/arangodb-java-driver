@@ -62,8 +62,8 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
 	@Override
 	public boolean anyMatch(final Predicate<? super T> predicate) {
 		boolean match = false;
-		for (final Iterator<T> iterator = iterator(); iterator.hasNext();) {
-			if (predicate.test(iterator.next())) {
+		for (final T t : this) {
+			if (predicate.test(t)) {
 				match = true;
 				break;
 			}
@@ -74,8 +74,8 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
 	@Override
 	public boolean allMatch(final Predicate<? super T> predicate) {
 		boolean match = false;
-		for (final Iterator<T> iterator = iterator(); iterator.hasNext();) {
-			match = predicate.test(iterator.next());
+		for (final T t : this) {
+			match = predicate.test(t);
 			if (!match) {
 				break;
 			}
@@ -86,8 +86,8 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
 	@Override
 	public boolean noneMatch(final Predicate<? super T> predicate) {
 		boolean match = false;
-		for (final Iterator<T> iterator = iterator(); iterator.hasNext();) {
-			match = !predicate.test(iterator.next());
+		for (final T t : this) {
+			match = !predicate.test(t);
 			if (!match) {
 				break;
 			}
