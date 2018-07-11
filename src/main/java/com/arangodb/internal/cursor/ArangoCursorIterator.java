@@ -18,13 +18,15 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb.internal.cursor;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.arangodb.ArangoCursor;
+import com.arangodb.ArangoIterator;
 import com.arangodb.entity.CursorEntity;
+import com.arangodb.internal.ArangoCursorExecute;
+import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.VPackSlice;
 
@@ -33,7 +35,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @param <T>
  *
  */
-public class ArangoCursorIterator<T> implements Iterator<T> {
+public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 
 	private CursorEntity result;
 	private int pos;
@@ -42,7 +44,7 @@ public class ArangoCursorIterator<T> implements Iterator<T> {
 	private final InternalArangoDatabase<?, ?> db;
 	private final ArangoCursorExecute execute;
 
-	public ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
+	protected ArangoCursorIterator(final ArangoCursor<T> cursor, final ArangoCursorExecute execute,
 		final InternalArangoDatabase<?, ?> db, final CursorEntity result) {
 		super();
 		this.cursor = cursor;
