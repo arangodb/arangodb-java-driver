@@ -22,7 +22,6 @@ package com.arangodb;
 
 import java.io.Closeable;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import com.arangodb.entity.CursorEntity.Stats;
@@ -32,13 +31,16 @@ import com.arangodb.entity.CursorEntity.Warning;
  * @author Mark Vollmary
  *
  */
-public interface ArangoCursor<T> extends Iterable<T>, Iterator<T>, Closeable {
+public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, Closeable {
 
 	/**
 	 * @return id of temporary cursor created on the server
 	 */
 	String getId();
 
+	/**
+	 * @return the type of the result elements
+	 */
 	Class<T> getType();
 
 	/**
