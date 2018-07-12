@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Added
+
+- added `ArangoCursor.first()`
+- added `java.util.stream.Stream` like methods for `ArangoCursor`
+  - added `ArangoCursor.foreach(Consumer)`
+  - added `ArangoCursor.map(Function)`
+  - added `ArangoCursor.filter(Predicate)`
+  - added `ArangoCursor.anyMatch(Predicate)`
+  - added `ArangoCursor.allMatch(Predicate)`
+  - added `ArangoCursor.noneMatch(Predicate)`
+  - added `ArangoCursor.collectInto(Collection)`
+
 ## [4.6.1] - 2018-07-12
 
 ### Added
