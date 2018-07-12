@@ -47,14 +47,11 @@ public class ArangoFilterIterable<T> extends AbstractArangoIterable<T> implement
 
 	@Override
 	public void foreach(final Consumer<? super T> action) {
-		iterable.foreach(new Consumer<T>() {
-			@Override
-			public void accept(final T t) {
-				if (predicate.test(t)) {
-					action.accept(t);
-				}
+		for (final T t : iterable) {
+			if (predicate.test(t)) {
+				action.accept(t);
 			}
-		});
+		}
 	}
 
 }

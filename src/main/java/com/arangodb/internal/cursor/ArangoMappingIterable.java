@@ -47,12 +47,9 @@ public class ArangoMappingIterable<R, T> extends AbstractArangoIterable<T> imple
 
 	@Override
 	public void foreach(final Consumer<? super T> action) {
-		iterable.foreach(new Consumer<R>() {
-			@Override
-			public void accept(final R t) {
-				action.accept(mapper.apply(t));
-			}
-		});
+		for (final R t : iterable) {
+			action.accept(mapper.apply(t));
+		}
 	}
 
 }
