@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.6.1] - 2018-07-12
+
 ### Added
 
 - added convenience method `ArangoDatabase#query(String, Class)`
