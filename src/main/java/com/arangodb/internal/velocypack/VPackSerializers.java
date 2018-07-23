@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.velocypack;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,9 +32,14 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.ViewType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
+import com.arangodb.model.arangosearch.ArangoSearchProperties;
+import com.arangodb.model.arangosearch.CollectionLink;
+import com.arangodb.model.arangosearch.ConsolidateThreshold;
+import com.arangodb.model.arangosearch.FieldLink;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSerializationContext;
 import com.arangodb.velocypack.VPackSerializer;
@@ -188,4 +194,118 @@ public class VPackSerializers {
 			}
 		}
 	};
+
+	public static final VPackSerializer<ViewType> VIEW_TYPE = new VPackSerializer<ViewType>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final ViewType value,
+			final VPackSerializationContext context) throws VPackException {
+			final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase();
+			builder.add(attribute, type);
+		}
+	};
+
+	public static final VPackSerializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = new VPackSerializer<ArangoSearchProperties>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final ArangoSearchProperties value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add("properties", ValueType.OBJECT);
+			final String locale = value.getLocale();
+			if (locale != null) {
+				builder.add("locale", locale);
+			}
+			final Long commitIntervalMsec = value.getCommitIntervalMsec();
+			final Long cleanupIntervalStep = value.getCleanupIntervalStep();
+			final Collection<ConsolidateThreshold> thresholds = value.getThresholds();
+
+			if (commitIntervalMsec != null || cleanupIntervalStep != null || !thresholds.isEmpty()) {
+				builder.add("commit", ValueType.OBJECT);
+				if (commitIntervalMsec != null) {
+					builder.add("commitIntervalMsec", commitIntervalMsec);
+				}
+				if (cleanupIntervalStep != null) {
+					builder.add("cleanupIntervalStep", cleanupIntervalStep);
+				}
+				if (!thresholds.isEmpty()) {
+					builder.add("consolidate", ValueType.OBJECT);
+					for (final ConsolidateThreshold consolidateThreshold : thresholds) {
+						builder.add(consolidateThreshold.getType().name().toLowerCase(), ValueType.OBJECT);
+						final Double threshold = consolidateThreshold.getThreshold();
+						if (threshold != null) {
+							builder.add("threshold", threshold);
+						}
+						final Long segmentThreshold = consolidateThreshold.getSegmentThreshold();
+						if (segmentThreshold != null) {
+							builder.add("segmentThreshold", segmentThreshold);
+						}
+						builder.close();
+					}
+					builder.close();
+				}
+				builder.close();
+			}
+
+			final Collection<CollectionLink> links = value.getLinks();
+			if (!links.isEmpty()) {
+				builder.add("links", ValueType.OBJECT);
+				for (final CollectionLink collectionLink : links) {
+					builder.add(collectionLink.getName(), ValueType.OBJECT);
+					final Collection<String> analyzers = collectionLink.getAnalyzers();
+					if (!analyzers.isEmpty()) {
+						builder.add("analyzers", ValueType.ARRAY);
+						for (final String analyzer : analyzers) {
+							builder.add(analyzer);
+						}
+						builder.close();
+					}
+					final Boolean includeAllFields = collectionLink.getIncludeAllFields();
+					if (includeAllFields != null) {
+						builder.add("includeAllFields", includeAllFields);
+					}
+					final Boolean trackListPositions = collectionLink.getTrackListPositions();
+					if (trackListPositions != null) {
+						builder.add("trackListPositions", trackListPositions);
+					}
+					serializeFieldLinks(builder, collectionLink.getFields());
+					builder.close();
+				}
+				builder.close();
+			}
+			builder.close();
+		}
+	};
+
+	private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {
+		if (!links.isEmpty()) {
+			builder.add("fields", ValueType.OBJECT);
+			for (final FieldLink fieldLink : links) {
+				builder.add(fieldLink.getName(), ValueType.OBJECT);
+				final Collection<String> analyzers = fieldLink.getAnalyzers();
+				if (!analyzers.isEmpty()) {
+					builder.add("analyzers", ValueType.ARRAY);
+					for (final String analyzer : analyzers) {
+						builder.add(analyzer);
+					}
+					builder.close();
+				}
+				final Boolean includeAllFields = fieldLink.getIncludeAllFields();
+				if (includeAllFields != null) {
+					builder.add("includeAllFields", includeAllFields);
+				}
+				final Boolean trackListPositions = fieldLink.getTrackListPositions();
+				if (trackListPositions != null) {
+					builder.add("trackListPositions", trackListPositions);
+				}
+				serializeFieldLinks(builder, fieldLink.getFields());
+				builder.close();
+			}
+			builder.close();
+		}
+	}
+
 }

@@ -34,8 +34,10 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.ViewType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.arangosearch.ArangoSearchProperties;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
 import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParserModule;
@@ -71,6 +73,8 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
 		context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
 		context.registerSerializer(ReplicationFactor.class, VPackSerializers.REPLICATION_FACTOR);
+		context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
+		context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
 
 		context.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		context.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
@@ -83,6 +87,8 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerDeserializer(Permissions.class, VPackDeserializers.PERMISSIONS);
 		context.registerDeserializer(QueryExecutionState.class, VPackDeserializers.QUERY_EXECUTION_STATE);
 		context.registerDeserializer(ReplicationFactor.class, VPackDeserializers.REPLICATION_FACTOR);
+		context.registerDeserializer(ViewType.class, VPackDeserializers.VIEW_TYPE);
+		context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
 	}
 
 	@Override

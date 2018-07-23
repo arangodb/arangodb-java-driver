@@ -35,6 +35,8 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.model.AqlFunctionCreateOptions;
@@ -50,6 +52,9 @@ import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.UserAccessOptions;
+import com.arangodb.model.ViewCreateOptions;
+import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
@@ -421,5 +426,30 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 
 	protected Request reloadRoutingRequest() {
 		return request(name, RequestType.POST, PATH_API_ADMIN_ROUTING_RELOAD);
+	}
+
+	protected Request getViewsRequest() {
+		return request(name, RequestType.GET, InternalArangoView.PATH_API_VIEW);
+	}
+
+	protected ResponseDeserializer<Collection<ViewEntity>> getViewsResponseDeserializer() {
+		return new ResponseDeserializer<Collection<ViewEntity>>() {
+			@Override
+			public Collection<ViewEntity> deserialize(final Response response) throws VPackException {
+				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+				return util().deserialize(result, new Type<Collection<ViewEntity>>() {
+				}.getType());
+			}
+		};
+	}
+
+	protected Request createViewRequest(final String name, final ViewType type) {
+		return request(name(), RequestType.POST, InternalArangoView.PATH_API_VIEW)
+				.setBody(util().serialize(OptionsBuilder.build(new ViewCreateOptions(), name, type)));
+	}
+
+	protected Request createArangoSearchRequest(final String name, final ArangoSearchCreateOptions options) {
+		return request(name(), RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(util().serialize(
+			ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
 	}
 }

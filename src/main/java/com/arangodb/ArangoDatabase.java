@@ -37,6 +37,8 @@ import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
 import com.arangodb.model.AqlFunctionCreateOptions;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlFunctionGetOptions;
@@ -48,6 +50,7 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 
 /**
  * Interface for operations on ArangoDB database level.
@@ -681,5 +684,63 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return {@link ArangoRoute}
 	 */
 	ArangoRoute route(String... path);
+
+	/**
+	 * Fetches all views from the database and returns an list of view descriptions.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#reads-all-views">API Documentation</a>
+	 * @return list of information about all views
+	 * @throws ArangoDBException
+	 * @since ArangoDB 3.4.0
+	 */
+	Collection<ViewEntity> getViews() throws ArangoDBException;
+
+	/**
+	 * Returns a {@code ArangoView} instance for the given view name.
+	 * 
+	 * @param name
+	 *            Name of the view
+	 * @return view handler
+	 * @since ArangoDB 3.4.0
+	 */
+	ArangoView view(String name);
+
+	/**
+	 * Returns a {@code ArangoSearch} instance for the given ArangoSearch view name.
+	 * 
+	 * @param name
+	 *            Name of the view
+	 * @return ArangoSearch view handler
+	 * @since ArangoDB 3.4.0
+	 */
+	ArangoSearch arangoSearch(String name);
+
+	/**
+	 * Creates a view of the given {@code type}, then returns view information from the server.
+	 * 
+	 * @param name
+	 *            The name of the view
+	 * @param type
+	 *            The type of the view
+	 * @return information about the view
+	 * @since ArangoDB 3.4.0
+	 * @throws ArangoDBException
+	 */
+	ViewEntity createView(String name, ViewType type) throws ArangoDBException;
+
+	/**
+	 * Creates a ArangoSearch view with the given {@code options}, then returns view information from the server.
+	 * 
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+	 *      Documentation</a>
+	 * @param name
+	 *            The name of the view
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the view
+	 * @since ArangoDB 3.4.0
+	 * @throws ArangoDBException
+	 */
+	ViewEntity createArangoSearch(String name, ArangoSearchCreateOptions options) throws ArangoDBException;
 
 }

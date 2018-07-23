@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ViewType;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -114,6 +115,14 @@ public class OptionsBuilder {
 		final VertexCollectionCreateOptions options,
 		final String collection) {
 		return options.collection(collection);
+	}
+
+	public static ViewCreateOptions build(final ViewCreateOptions options, final String name, final ViewType type) {
+		return options.name(name).type(type);
+	}
+
+	public static ViewRenameOptions build(final ViewRenameOptions options, final String name) {
+		return options.name(name);
 	}
 
 }

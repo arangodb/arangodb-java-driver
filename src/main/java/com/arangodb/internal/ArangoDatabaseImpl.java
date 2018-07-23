@@ -30,6 +30,8 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.ArangoRoute;
+import com.arangodb.ArangoSearch;
+import com.arangodb.ArangoView;
 import com.arangodb.entity.AqlExecutionExplainEntity;
 import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
@@ -45,6 +47,8 @@ import com.arangodb.entity.QueryCachePropertiesEntity;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.TraversalEntity;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
@@ -59,6 +63,7 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.TransactionOptions;
 import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
@@ -388,6 +393,32 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	@Override
 	public ArangoRoute route(final String... path) {
 		return new ArangoRouteImpl(this, createPath(path), Collections.<String, String> emptyMap());
+	}
+
+	@Override
+	public Collection<ViewEntity> getViews() throws ArangoDBException {
+		return executor.execute(getViewsRequest(), getViewsResponseDeserializer());
+	}
+
+	@Override
+	public ArangoView view(final String name) {
+		return new ArangoViewImpl(this, name);
+	}
+
+	@Override
+	public ArangoSearch arangoSearch(final String name) {
+		return new ArangoSearchImpl(this, name);
+	}
+
+	@Override
+	public ViewEntity createView(final String name, final ViewType type) throws ArangoDBException {
+		return executor.execute(createViewRequest(name, type), ViewEntity.class);
+	}
+
+	@Override
+	public ViewEntity createArangoSearch(final String name, final ArangoSearchCreateOptions options)
+			throws ArangoDBException {
+		return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
 	}
 
 }
