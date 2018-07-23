@@ -39,9 +39,9 @@ public interface ArangoView extends ArangoSerializationAccessor {
 	public ArangoDatabase db();
 
 	/**
-	 * The name of the collection
+	 * The name of the view
 	 * 
-	 * @return collection name
+	 * @return view name
 	 */
 	public String name();
 
