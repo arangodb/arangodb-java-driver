@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2018 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,35 +20,10 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.entity.DocumentField.Type;
-
 /**
  * @author Mark Vollmary
  *
  */
-public class DocumentEntity implements Entity {
-
-	@DocumentField(Type.KEY)
-	private String key;
-	@DocumentField(Type.ID)
-	private String id;
-	@DocumentField(Type.REV)
-	private String rev;
-
-	public DocumentEntity() {
-		super();
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getRev() {
-		return rev;
-	}
+public interface Entity {
 
 }

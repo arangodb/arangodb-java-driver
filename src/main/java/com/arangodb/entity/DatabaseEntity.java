@@ -27,7 +27,7 @@ package com.arangodb.entity;
  *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
  *      Documentation</a>
  */
-public class DatabaseEntity {
+public class DatabaseEntity implements Entity {
 
 	private String id;
 	private String name;

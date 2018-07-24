@@ -26,7 +26,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  *
  */
-public class IndexEntity {
+public class IndexEntity implements Entity {
 
 	private String id;
 	private IndexType type;

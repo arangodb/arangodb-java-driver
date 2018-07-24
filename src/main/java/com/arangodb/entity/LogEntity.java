@@ -29,7 +29,7 @@ import java.util.List;
  *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
  *      Documentation</a>
  */
-public class LogEntity {
+public class LogEntity implements Entity {
 
 	private List<Long> lid;
 	private List<LogLevel> level;

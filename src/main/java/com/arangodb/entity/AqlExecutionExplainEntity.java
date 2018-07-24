@@ -27,7 +27,7 @@ import java.util.Collection;
  * 
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
  */
-public class AqlExecutionExplainEntity {
+public class AqlExecutionExplainEntity implements Entity {
 
 	public static class ExecutionPlan {
 		private Collection<ExecutionNode> nodes;

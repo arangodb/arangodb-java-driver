@@ -27,7 +27,7 @@ import java.util.Collection;
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API Documentation</a>
  */
-public class GraphEntity {
+public class GraphEntity implements Entity {
 
 	private String name;
 	/**

@@ -27,7 +27,7 @@ package com.arangodb.entity;
  *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#http-interface-for-the-aql-query-cache">API
  *      Documentation</a>
  */
-public class QueryCachePropertiesEntity {
+public class QueryCachePropertiesEntity implements Entity {
 
 	public enum CacheMode {
 		off, on, demand;

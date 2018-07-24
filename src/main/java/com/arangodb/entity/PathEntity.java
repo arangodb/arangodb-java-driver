@@ -28,7 +28,7 @@ import java.util.Collection;
  * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
  *      Documentation</a>
  */
-public class PathEntity<V, E> {
+public class PathEntity<V, E> implements Entity {
 
 	private Collection<E> edges;
 	private Collection<V> vertices;

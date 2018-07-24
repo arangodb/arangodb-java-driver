@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html">API Documentation</a>
  */
-public class UserEntity {
+public class UserEntity implements Entity {
 
 	private String user;
 	private Boolean active;

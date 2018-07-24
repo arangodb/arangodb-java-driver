@@ -26,7 +26,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  *
  */
-public class MultiDocumentEntity<E> {
+public class MultiDocumentEntity<E> implements Entity {
 
 	private Collection<E> documents;
 	private Collection<ErrorEntity> errors;

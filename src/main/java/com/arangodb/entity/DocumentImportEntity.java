@@ -27,7 +27,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  *
  */
-public class DocumentImportEntity {
+public class DocumentImportEntity implements Entity {
 
 	private Integer created;
 	private Integer errors;

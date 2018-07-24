@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
   - added `ArangoCursor.allMatch(Predicate)`
   - added `ArangoCursor.noneMatch(Predicate)`
   - added `ArangoCursor.collectInto(Collection)`
+- added interface `Entity`  for entities in `com.arangodb.entity`
 
 ## [4.6.1] - 2018-07-12
 

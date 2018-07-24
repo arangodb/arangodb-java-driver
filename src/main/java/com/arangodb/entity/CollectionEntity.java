@@ -25,7 +25,7 @@ package com.arangodb.entity;
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html">API Documentation</a>
  */
-public class CollectionEntity {
+public class CollectionEntity implements Entity {
 
 	private String id;
 	private String name;

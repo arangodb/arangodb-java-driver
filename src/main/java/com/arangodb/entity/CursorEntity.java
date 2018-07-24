@@ -30,7 +30,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
  *      Documentation</a>
  */
-public class CursorEntity {
+public class CursorEntity implements Entity {
 
 	private String id;
 	private Integer count;
