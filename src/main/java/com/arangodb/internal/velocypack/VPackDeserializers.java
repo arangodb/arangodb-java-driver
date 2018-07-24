@@ -233,7 +233,7 @@ public class VPackDeserializers {
 						if (consolidateThreshold.isObject()) {
 							final ConsolidateThreshold t = ConsolidateThreshold.of(type);
 							final VPackSlice threshold = consolidateThreshold.get("threshold");
-							if (threshold.isDouble()) {
+							if (threshold.isNumber()) {
 								t.threshold(threshold.getAsDouble());
 							}
 							final VPackSlice segmentThreshold = consolidateThreshold.get("segmentThreshold");

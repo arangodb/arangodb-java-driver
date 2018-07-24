@@ -34,6 +34,7 @@ public class CollectionLink {
 	private final Collection<String> analyzers;
 	private Boolean includeAllFields;
 	private Boolean trackListPositions;
+	private TrackValuesType trackValues;
 	private final Collection<FieldLink> fields;
 
 	private CollectionLink(final String name) {
@@ -86,6 +87,17 @@ public class CollectionLink {
 	}
 
 	/**
+	 * @param trackValues
+	 *            How should the view track the attribute values, this setting allows for additional value retrieval
+	 *            optimizations (default "none").
+	 * @return link
+	 */
+	public CollectionLink trackValues(final TrackValuesType trackValues) {
+		this.trackValues = trackValues;
+		return this;
+	}
+
+	/**
 	 * @param fields
 	 *            A list of linked fields
 	 * @return link
@@ -109,6 +121,10 @@ public class CollectionLink {
 
 	public Boolean getTrackListPositions() {
 		return trackListPositions;
+	}
+
+	public TrackValuesType getTrackValues() {
+		return trackValues;
 	}
 
 	public Collection<FieldLink> getFields() {

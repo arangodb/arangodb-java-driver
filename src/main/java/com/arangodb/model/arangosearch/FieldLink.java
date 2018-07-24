@@ -10,6 +10,7 @@ public class FieldLink {
 	private final Collection<String> analyzers;
 	private Boolean includeAllFields;
 	private Boolean trackListPositions;
+	private TrackValuesType trackValues;
 	private final Collection<FieldLink> fields;
 
 	private FieldLink(final String name) {
@@ -62,6 +63,17 @@ public class FieldLink {
 	}
 
 	/**
+	 * @param trackValues
+	 *            How should the view track the attribute values, this setting allows for additional value retrieval
+	 *            optimizations (default "none").
+	 * @return link
+	 */
+	public FieldLink trackValues(final TrackValuesType trackValues) {
+		this.trackValues = trackValues;
+		return this;
+	}
+
+	/**
 	 * @param fields
 	 *            A list of linked fields
 	 * @return link
@@ -85,6 +97,10 @@ public class FieldLink {
 
 	public Boolean getTrackListPositions() {
 		return trackListPositions;
+	}
+
+	public TrackValuesType getTrackValues() {
+		return trackValues;
 	}
 
 	public Collection<FieldLink> getFields() {
