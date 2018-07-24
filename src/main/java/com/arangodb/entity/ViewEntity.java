@@ -24,7 +24,7 @@ package com.arangodb.entity;
  * @author Mark Vollmary
  *
  */
-public class ViewEntity {
+public class ViewEntity implements Entity {
 
 	private String id;
 	private String name;
