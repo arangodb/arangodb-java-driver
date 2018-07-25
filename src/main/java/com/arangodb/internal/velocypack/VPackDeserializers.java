@@ -40,12 +40,15 @@ import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
-import com.arangodb.model.arangosearch.ArangoSearchProperties;
-import com.arangodb.model.arangosearch.CollectionLink;
-import com.arangodb.model.arangosearch.ConsolidateThreshold;
-import com.arangodb.model.arangosearch.ConsolidateType;
-import com.arangodb.model.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.TrackValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -268,6 +271,10 @@ public class VPackDeserializers {
 					if (trackListPositions.isBoolean()) {
 						link.trackListPositions(trackListPositions.getAsBoolean());
 					}
+					final VPackSlice trackValues = value.get("trackValues");
+					if (trackValues.isString()) {
+						link.trackValues(TrackValuesType.valueOf(trackValues.getAsString().toUpperCase()));
+					}
 					final VPackSlice fields = value.get("fields");
 					if (fields.isObject()) {
 						final Iterator<Entry<String, VPackSlice>> fieldsIterator = fields.objectIterator();
@@ -300,6 +307,10 @@ public class VPackDeserializers {
 		if (trackListPositions.isBoolean()) {
 			link.trackListPositions(trackListPositions.getAsBoolean());
 		}
+		final VPackSlice trackValues = value.get("trackValues");
+		if (trackValues.isString()) {
+			link.trackValues(TrackValuesType.valueOf(trackValues.getAsString().toUpperCase()));
+		}
 		final VPackSlice fields = value.get("fields");
 		if (fields.isObject()) {
 			final Iterator<Entry<String, VPackSlice>> fieldsIterator = fields.objectIterator();
@@ -309,5 +320,19 @@ public class VPackDeserializers {
 		}
 		return link;
 	}
+
+	public static final VPackDeserializer<ArangoSearchPropertiesEntity> ARANGO_SEARCH_PROPERTIES_ENTITY = new VPackDeserializer<ArangoSearchPropertiesEntity>() {
+		@Override
+		public ArangoSearchPropertiesEntity deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final ViewEntity entity = context.deserialize(vpack, ViewEntity.class);
+			final ArangoSearchProperties properties = context.deserialize(vpack, ArangoSearchProperties.class);
+			final ArangoSearchPropertiesEntity result = new ArangoSearchPropertiesEntity(entity.getId(),
+					entity.getName(), entity.getType(), properties);
+			return result;
+		}
+	};
 
 }

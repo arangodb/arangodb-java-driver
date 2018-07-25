@@ -23,9 +23,7 @@ package com.arangodb.entity.arangosearch;
 import java.util.Collection;
 
 import com.arangodb.entity.ViewEntity;
-import com.arangodb.model.arangosearch.ArangoSearchProperties;
-import com.arangodb.model.arangosearch.CollectionLink;
-import com.arangodb.model.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.ViewType;
 
 /**
  * @author Mark Vollmary
@@ -35,9 +33,10 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
 
 	private final ArangoSearchProperties properties;
 
-	public ArangoSearchPropertiesEntity() {
-		super();
-		this.properties = new ArangoSearchProperties();
+	public ArangoSearchPropertiesEntity(final String id, final String name, final ViewType type,
+		final ArangoSearchProperties properties) {
+		super(id, name, type);
+		this.properties = properties;
 	}
 
 	/**

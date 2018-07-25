@@ -35,9 +35,10 @@ import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
-import com.arangodb.model.arangosearch.ArangoSearchProperties;
 import com.arangodb.velocypack.VPackFieldNamingStrategy;
 import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParserModule;
@@ -89,6 +90,8 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerDeserializer(ReplicationFactor.class, VPackDeserializers.REPLICATION_FACTOR);
 		context.registerDeserializer(ViewType.class, VPackDeserializers.VIEW_TYPE);
 		context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
+		context.registerDeserializer(ArangoSearchPropertiesEntity.class,
+			VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);
 	}
 
 	@Override

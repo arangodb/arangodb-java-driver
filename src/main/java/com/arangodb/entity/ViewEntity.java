@@ -34,6 +34,13 @@ public class ViewEntity implements Entity {
 		super();
 	}
 
+	public ViewEntity(final String id, final String name, final ViewType type) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+	}
+
 	public String getId() {
 		return id;
 	}

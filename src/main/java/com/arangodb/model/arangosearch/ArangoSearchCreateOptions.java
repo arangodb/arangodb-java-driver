@@ -21,6 +21,8 @@
 package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.ConsolidateThreshold;
 
 /**
  * @author Mark Vollmary

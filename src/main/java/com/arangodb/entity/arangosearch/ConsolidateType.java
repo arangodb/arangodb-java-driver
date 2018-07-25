@@ -1,4 +1,4 @@
-package com.arangodb.model.arangosearch;
+package com.arangodb.entity.arangosearch;
 
 public enum ConsolidateType {
 

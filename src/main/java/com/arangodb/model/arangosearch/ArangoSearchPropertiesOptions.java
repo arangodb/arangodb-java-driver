@@ -20,17 +20,21 @@
 
 package com.arangodb.model.arangosearch;
 
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+
 /**
  * @author Mark Vollmary
  *
  */
 public class ArangoSearchPropertiesOptions {
 
-	private final ArangoSearchProperties properties;
+	private final ArangoSearchProperties _properties;
 
 	public ArangoSearchPropertiesOptions() {
 		super();
-		properties = new ArangoSearchProperties();
+		_properties = new ArangoSearchProperties();
 	}
 
 	/**
@@ -39,7 +43,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions locale(final String locale) {
-		properties.setLocale(locale);
+		_properties.setLocale(locale);
 		return this;
 	}
 
@@ -53,7 +57,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions commitIntervalMsec(final Long commitIntervalMsec) {
-		properties.setCommitIntervalMsec(commitIntervalMsec);
+		_properties.setCommitIntervalMsec(commitIntervalMsec);
 		return this;
 	}
 
@@ -67,7 +71,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
-		properties.setCleanupIntervalStep(cleanupIntervalStep);
+		_properties.setCleanupIntervalStep(cleanupIntervalStep);
 		return this;
 	}
 
@@ -77,7 +81,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions threshold(final ConsolidateThreshold... thresholds) {
-		properties.addThreshold(thresholds);
+		_properties.addThreshold(thresholds);
 		return this;
 	}
 
@@ -87,7 +91,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions link(final CollectionLink... links) {
-		properties.addLink(links);
+		_properties.addLink(links);
 		return this;
 	}
 

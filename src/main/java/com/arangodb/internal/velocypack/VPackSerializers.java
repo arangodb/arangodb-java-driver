@@ -33,13 +33,14 @@ import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.TrackValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
-import com.arangodb.model.arangosearch.ArangoSearchProperties;
-import com.arangodb.model.arangosearch.CollectionLink;
-import com.arangodb.model.arangosearch.ConsolidateThreshold;
-import com.arangodb.model.arangosearch.FieldLink;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSerializationContext;
 import com.arangodb.velocypack.VPackSerializer;
@@ -214,7 +215,10 @@ public class VPackSerializers {
 			final String attribute,
 			final ArangoSearchProperties value,
 			final VPackSerializationContext context) throws VPackException {
-			builder.add("properties", ValueType.OBJECT);
+			final boolean wrap = !attribute.startsWith("_");
+			if (wrap) {
+				builder.add("properties", ValueType.OBJECT);
+			}
 			final String locale = value.getLocale();
 			if (locale != null) {
 				builder.add("locale", locale);
@@ -271,12 +275,18 @@ public class VPackSerializers {
 					if (trackListPositions != null) {
 						builder.add("trackListPositions", trackListPositions);
 					}
+					final TrackValuesType trackValues = collectionLink.getTrackValues();
+					if (trackValues != null) {
+						builder.add("trackValues", trackValues.name().toLowerCase());
+					}
 					serializeFieldLinks(builder, collectionLink.getFields());
 					builder.close();
 				}
 				builder.close();
 			}
-			builder.close();
+			if (wrap) {
+				builder.close();
+			}
 		}
 	};
 
@@ -300,6 +310,10 @@ public class VPackSerializers {
 				final Boolean trackListPositions = fieldLink.getTrackListPositions();
 				if (trackListPositions != null) {
 					builder.add("trackListPositions", trackListPositions);
+				}
+				final TrackValuesType trackValues = fieldLink.getTrackValues();
+				if (trackValues != null) {
+					builder.add("trackValues", trackValues.name().toLowerCase());
 				}
 				serializeFieldLinks(builder, fieldLink.getFields());
 				builder.close();

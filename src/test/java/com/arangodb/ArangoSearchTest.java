@@ -35,12 +35,13 @@ import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.TrackValuesType;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import com.arangodb.model.arangosearch.CollectionLink;
-import com.arangodb.model.arangosearch.ConsolidateThreshold;
-import com.arangodb.model.arangosearch.ConsolidateType;
-import com.arangodb.model.arangosearch.FieldLink;
 
 /**
  * @author Mark Vollmary
@@ -141,7 +142,8 @@ public class ArangoSearchTest extends BaseTest {
 		options.commitIntervalMsec(65000L);
 		options.threshold(ConsolidateThreshold.of(ConsolidateType.COUNT).threshold(1.));
 		options.link(
-			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")));
+			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
+					.trackListPositions(true).includeAllFields(true).trackValues(TrackValuesType.EXISTS)));
 		final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(15L));
@@ -156,7 +158,11 @@ public class ArangoSearchTest extends BaseTest {
 		final CollectionLink link = properties.getLinks().iterator().next();
 		assertThat(link.getName(), is("view_update_prop_test_collection"));
 		assertThat(link.getFields().size(), is(1));
-		assertThat(link.getFields().iterator().next().getName(), is("value"));
+		final FieldLink next = link.getFields().iterator().next();
+		assertThat(next.getName(), is("value"));
+		assertThat(next.getIncludeAllFields(), is(true));
+		assertThat(next.getTrackListPositions(), is(true));
+		assertThat(next.getTrackValues(), is(TrackValuesType.EXISTS));
 	}
 
 	@Test
