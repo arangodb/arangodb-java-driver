@@ -24,7 +24,7 @@ package com.arangodb.entity.arangosearch;
  * @author Mark Vollmary
  *
  */
-public enum TrackValuesType {
+public enum StoreValuesType {
 
 	/**
 	 * Do not track values by the view
@@ -34,6 +34,6 @@ public enum TrackValuesType {
 	/**
 	 * Track only value presence, to allow use of the EXISTS() function.
 	 */
-	EXISTS
+	ID
 
 }

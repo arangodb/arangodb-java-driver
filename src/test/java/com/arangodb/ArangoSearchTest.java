@@ -39,7 +39,7 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidateThreshold;
 import com.arangodb.entity.arangosearch.ConsolidateType;
 import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.TrackValuesType;
+import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 
@@ -143,7 +143,7 @@ public class ArangoSearchTest extends BaseTest {
 		options.threshold(ConsolidateThreshold.of(ConsolidateType.COUNT).threshold(1.));
 		options.link(
 			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
-					.trackListPositions(true).includeAllFields(true).trackValues(TrackValuesType.EXISTS)));
+					.trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
 		final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(15L));
@@ -162,7 +162,7 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(next.getName(), is("value"));
 		assertThat(next.getIncludeAllFields(), is(true));
 		assertThat(next.getTrackListPositions(), is(true));
-		assertThat(next.getTrackValues(), is(TrackValuesType.EXISTS));
+		assertThat(next.getStoreValues(), is(StoreValuesType.ID));
 	}
 
 	@Test

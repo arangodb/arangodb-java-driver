@@ -48,7 +48,7 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidateThreshold;
 import com.arangodb.entity.arangosearch.ConsolidateType;
 import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.TrackValuesType;
+import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -271,9 +271,9 @@ public class VPackDeserializers {
 					if (trackListPositions.isBoolean()) {
 						link.trackListPositions(trackListPositions.getAsBoolean());
 					}
-					final VPackSlice trackValues = value.get("trackValues");
-					if (trackValues.isString()) {
-						link.trackValues(TrackValuesType.valueOf(trackValues.getAsString().toUpperCase()));
+					final VPackSlice storeValues = value.get("storeValues");
+					if (storeValues.isString()) {
+						link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase()));
 					}
 					final VPackSlice fields = value.get("fields");
 					if (fields.isObject()) {
@@ -307,9 +307,9 @@ public class VPackDeserializers {
 		if (trackListPositions.isBoolean()) {
 			link.trackListPositions(trackListPositions.getAsBoolean());
 		}
-		final VPackSlice trackValues = value.get("trackValues");
-		if (trackValues.isString()) {
-			link.trackValues(TrackValuesType.valueOf(trackValues.getAsString().toUpperCase()));
+		final VPackSlice storeValues = value.get("storeValues");
+		if (storeValues.isString()) {
+			link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase()));
 		}
 		final VPackSlice fields = value.get("fields");
 		if (fields.isObject()) {

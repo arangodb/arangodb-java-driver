@@ -37,7 +37,7 @@ import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidateThreshold;
 import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.TrackValuesType;
+import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
@@ -275,9 +275,9 @@ public class VPackSerializers {
 					if (trackListPositions != null) {
 						builder.add("trackListPositions", trackListPositions);
 					}
-					final TrackValuesType trackValues = collectionLink.getTrackValues();
-					if (trackValues != null) {
-						builder.add("trackValues", trackValues.name().toLowerCase());
+					final StoreValuesType storeValues = collectionLink.getStoreValues();
+					if (storeValues != null) {
+						builder.add("storeValues", storeValues.name().toLowerCase());
 					}
 					serializeFieldLinks(builder, collectionLink.getFields());
 					builder.close();
@@ -311,9 +311,9 @@ public class VPackSerializers {
 				if (trackListPositions != null) {
 					builder.add("trackListPositions", trackListPositions);
 				}
-				final TrackValuesType trackValues = fieldLink.getTrackValues();
-				if (trackValues != null) {
-					builder.add("trackValues", trackValues.name().toLowerCase());
+				final StoreValuesType storeValues = fieldLink.getStoreValues();
+				if (storeValues != null) {
+					builder.add("storeValues", storeValues.name().toLowerCase());
 				}
 				serializeFieldLinks(builder, fieldLink.getFields());
 				builder.close();
