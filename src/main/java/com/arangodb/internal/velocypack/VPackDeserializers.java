@@ -23,7 +23,9 @@ package com.arangodb.internal.velocypack;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,15 @@ import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -185,4 +196,143 @@ public class VPackDeserializers {
 			return replicationFactor;
 		}
 	};
+
+	public static final VPackDeserializer<ViewType> VIEW_TYPE = new VPackDeserializer<ViewType>() {
+		@Override
+		public ViewType deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			return "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
+					: ViewType.valueOf(vpack.getAsString().toUpperCase());
+		}
+	};
+
+	public static final VPackDeserializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = new VPackDeserializer<ArangoSearchProperties>() {
+		@Override
+		public ArangoSearchProperties deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final ArangoSearchProperties properties = new ArangoSearchProperties();
+			final VPackSlice locale = vpack.get("locale");
+			if (locale.isString()) {
+				properties.setLocale(locale.getAsString());
+			}
+			final VPackSlice commit = vpack.get("commit");
+			if (commit.isObject()) {
+				final VPackSlice commitIntervalMsec = commit.get("commitIntervalMsec");
+				if (commitIntervalMsec.isInteger()) {
+					properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
+				}
+				final VPackSlice cleanupIntervalStep = commit.get("cleanupIntervalStep");
+				if (cleanupIntervalStep.isInteger()) {
+					properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
+				}
+				final VPackSlice consolidate = commit.get("consolidate");
+				if (consolidate.isObject()) {
+					for (final ConsolidateType type : ConsolidateType.values()) {
+						final VPackSlice consolidateThreshold = consolidate.get(type.name().toLowerCase());
+						if (consolidateThreshold.isObject()) {
+							final ConsolidateThreshold t = ConsolidateThreshold.of(type);
+							final VPackSlice threshold = consolidateThreshold.get("threshold");
+							if (threshold.isNumber()) {
+								t.threshold(threshold.getAsDouble());
+							}
+							final VPackSlice segmentThreshold = consolidateThreshold.get("segmentThreshold");
+							if (segmentThreshold.isInteger()) {
+								t.segmentThreshold(segmentThreshold.getAsLong());
+							}
+							properties.addThreshold(t);
+						}
+					}
+				}
+			}
+
+			final VPackSlice links = vpack.get("links");
+			if (links.isObject()) {
+				final Iterator<Entry<String, VPackSlice>> collectionIterator = links.objectIterator();
+				for (; collectionIterator.hasNext();) {
+					final Entry<String, VPackSlice> entry = collectionIterator.next();
+					final VPackSlice value = entry.getValue();
+					final CollectionLink link = CollectionLink.on(entry.getKey());
+					final VPackSlice analyzers = value.get("analyzers");
+					if (analyzers.isArray()) {
+						final Iterator<VPackSlice> analyzerIterator = analyzers.arrayIterator();
+						for (; analyzerIterator.hasNext();) {
+							link.analyzers(analyzerIterator.next().getAsString());
+						}
+					}
+					final VPackSlice includeAllFields = value.get("includeAllFields");
+					if (includeAllFields.isBoolean()) {
+						link.includeAllFields(includeAllFields.getAsBoolean());
+					}
+					final VPackSlice trackListPositions = value.get("trackListPositions");
+					if (trackListPositions.isBoolean()) {
+						link.trackListPositions(trackListPositions.getAsBoolean());
+					}
+					final VPackSlice storeValues = value.get("storeValues");
+					if (storeValues.isString()) {
+						link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase()));
+					}
+					final VPackSlice fields = value.get("fields");
+					if (fields.isObject()) {
+						final Iterator<Entry<String, VPackSlice>> fieldsIterator = fields.objectIterator();
+						for (; fieldsIterator.hasNext();) {
+							link.fields(deserializeField(fieldsIterator.next()));
+						}
+					}
+					properties.addLink(link);
+				}
+			}
+			return properties;
+		}
+	};
+
+	protected static FieldLink deserializeField(final Entry<String, VPackSlice> field) {
+		final VPackSlice value = field.getValue();
+		final FieldLink link = FieldLink.on(field.getKey());
+		final VPackSlice analyzers = value.get("analyzers");
+		if (analyzers.isArray()) {
+			final Iterator<VPackSlice> analyzerIterator = analyzers.arrayIterator();
+			for (; analyzerIterator.hasNext();) {
+				link.analyzers(analyzerIterator.next().getAsString());
+			}
+		}
+		final VPackSlice includeAllFields = value.get("includeAllFields");
+		if (includeAllFields.isBoolean()) {
+			link.includeAllFields(includeAllFields.getAsBoolean());
+		}
+		final VPackSlice trackListPositions = value.get("trackListPositions");
+		if (trackListPositions.isBoolean()) {
+			link.trackListPositions(trackListPositions.getAsBoolean());
+		}
+		final VPackSlice storeValues = value.get("storeValues");
+		if (storeValues.isString()) {
+			link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase()));
+		}
+		final VPackSlice fields = value.get("fields");
+		if (fields.isObject()) {
+			final Iterator<Entry<String, VPackSlice>> fieldsIterator = fields.objectIterator();
+			for (; fieldsIterator.hasNext();) {
+				link.fields(deserializeField(fieldsIterator.next()));
+			}
+		}
+		return link;
+	}
+
+	public static final VPackDeserializer<ArangoSearchPropertiesEntity> ARANGO_SEARCH_PROPERTIES_ENTITY = new VPackDeserializer<ArangoSearchPropertiesEntity>() {
+		@Override
+		public ArangoSearchPropertiesEntity deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final ViewEntity entity = context.deserialize(vpack, ViewEntity.class);
+			final ArangoSearchProperties properties = context.deserialize(vpack, ArangoSearchProperties.class);
+			final ArangoSearchPropertiesEntity result = new ArangoSearchPropertiesEntity(entity.getId(),
+					entity.getName(), entity.getType(), properties);
+			return result;
+		}
+	};
+
 }
