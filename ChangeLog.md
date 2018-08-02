@@ -8,16 +8,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added `ArangoCursor.first()`
+- added View support
+  - added `ArangoDatabase#view(String): ArangoView`
+  - added `ArangoDatabase#getViews(): Collection<ViewEntity>`
+  - added `ArangoView`
+- added arangosearch support
+  - added `ArangoDatabase#arangoSearch(String): ArangoSearch`
+  - added `ArangoSearch`
+- added `ArangoCursor#first()`
 - added `java.util.stream.Stream` like methods for `ArangoCursor`
-  - added `ArangoCursor.foreach(Consumer)`
-  - added `ArangoCursor.map(Function)`
-  - added `ArangoCursor.filter(Predicate)`
-  - added `ArangoCursor.anyMatch(Predicate)`
-  - added `ArangoCursor.allMatch(Predicate)`
-  - added `ArangoCursor.noneMatch(Predicate)`
-  - added `ArangoCursor.collectInto(Collection)`
-- added interface `Entity`  for entities in `com.arangodb.entity`
+  - added `ArangoCursor#foreach(Consumer)`
+  - added `ArangoCursor#map(Function)`
+  - added `ArangoCursor#filter(Predicate)`
+  - added `ArangoCursor#anyMatch(Predicate)`
+  - added `ArangoCursor#allMatch(Predicate)`
+  - added `ArangoCursor#noneMatch(Predicate)`
+  - added `ArangoCursor#collectInto(Collection)`
+- added interface `Entity` for entities in `com.arangodb.entity`
+
+### Changed
+
+- upgraded dependency velocypack 1.3.0
+  - `VPackDeserializationContext#deserialize(VPackSlice, Class)` to `VPackDeserializationContext#deserialize(VPackSlice, java.lang.reflect.Type)`
 
 ## [4.6.1] - 2018-07-12
 
@@ -38,7 +50,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - fixed missing `ArangoGraph.util() : ArangoSerialization`
 - fixed missing `ArangoVertexCollection.util() : ArangoSerialization`
 - fixed missing `ArangoEdgeCollection.util() : ArangoSerialization`
-
 
 ## [4.6.0] - 2018-07-02
 
