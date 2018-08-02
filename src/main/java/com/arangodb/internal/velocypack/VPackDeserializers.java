@@ -65,7 +65,7 @@ public class VPackDeserializers {
 	private static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	public static final VPackDeserializer<Response> RESPONSE = new VPackDeserializer<Response>() {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public Response deserialize(
 			final VPackSlice parent,
@@ -76,7 +76,7 @@ public class VPackDeserializers {
 			response.setType(vpack.get(1).getAsInt());
 			response.setResponseCode(vpack.get(2).getAsInt());
 			if (vpack.size() > 3) {
-				response.setMeta((Map)context.deserialize(vpack.get(3), Map.class));
+				response.setMeta((Map) context.deserialize(vpack.get(3), Map.class));
 			}
 			return response;
 		}
@@ -104,6 +104,7 @@ public class VPackDeserializers {
 
 	@SuppressWarnings("unchecked")
 	public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = new VPackDeserializer<BaseDocument>() {
+		@SuppressWarnings("rawtypes")
 		@Override
 		public BaseDocument deserialize(
 			final VPackSlice parent,
@@ -115,12 +116,13 @@ public class VPackDeserializers {
 
 	@SuppressWarnings("unchecked")
 	public static final VPackDeserializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = new VPackDeserializer<BaseEdgeDocument>() {
+		@SuppressWarnings("rawtypes")
 		@Override
 		public BaseEdgeDocument deserialize(
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
-			return new BaseEdgeDocument((Map)context.deserialize(vpack, Map.class));
+			return new BaseEdgeDocument((Map) context.deserialize(vpack, Map.class));
 		}
 	};
 
