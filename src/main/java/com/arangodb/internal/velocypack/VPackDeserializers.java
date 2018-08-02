@@ -76,7 +76,7 @@ public class VPackDeserializers {
 			response.setType(vpack.get(1).getAsInt());
 			response.setResponseCode(vpack.get(2).getAsInt());
 			if (vpack.size() > 3) {
-				response.setMeta(context.deserialize(vpack.get(3), Map.class));
+				response.setMeta((Map)context.deserialize(vpack.get(3), Map.class));
 			}
 			return response;
 		}
@@ -109,7 +109,7 @@ public class VPackDeserializers {
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
-			return new BaseDocument(context.deserialize(vpack, Map.class));
+			return new BaseDocument((Map) context.deserialize(vpack, Map.class));
 		}
 	};
 
@@ -120,7 +120,7 @@ public class VPackDeserializers {
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
-			return new BaseEdgeDocument(context.deserialize(vpack, Map.class));
+			return new BaseEdgeDocument((Map)context.deserialize(vpack, Map.class));
 		}
 	};
 
