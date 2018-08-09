@@ -54,16 +54,24 @@ public class ArangoSearchTest extends BaseTest {
 
 	public ArangoSearchTest(final Builder builder) {
 		super(builder);
-		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+		if (requireVersion(3, 4)) {
+			db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+		}
 	}
 
 	@Test
 	public void exists() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
 	}
 
 	@Test
 	public void getInfo() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final ViewEntity info = db.arangoSearch(VIEW_NAME).getInfo();
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
@@ -73,6 +81,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void drop() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_droptest";
 		db.createArangoSearch(name, new ArangoSearchCreateOptions());
 		final ArangoView view = db.arangoSearch(name);
@@ -82,6 +93,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void rename() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_renametest";
 		final String newName = name + "_new";
 		db.createArangoSearch(name, new ArangoSearchCreateOptions());
@@ -92,6 +106,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void create() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_createtest";
 		final ViewEntity info = db.arangoSearch(name).create();
 		assertThat(info, is(not(nullValue())));
@@ -103,6 +120,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void createWithOptions() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_createtest";
 		final ViewEntity info = db.arangoSearch(name).create(new ArangoSearchCreateOptions());
 		assertThat(info, is(not(nullValue())));
@@ -114,6 +134,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void getProperties() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_getpropertiestest";
 		final ArangoSearch view = db.arangoSearch(name);
 		view.create(new ArangoSearchCreateOptions());
@@ -133,6 +156,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void updateProperties() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		db.createCollection("view_update_prop_test_collection");
 		final String name = VIEW_NAME + "_updatepropertiestest";
 		final ArangoSearch view = db.arangoSearch(name);
@@ -167,6 +193,9 @@ public class ArangoSearchTest extends BaseTest {
 
 	@Test
 	public void replaceProperties() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		db.createCollection("view_replace_prop_test_collection");
 		final String name = VIEW_NAME + "_updatepropertiestest";
 		final ArangoSearch view = db.arangoSearch(name);

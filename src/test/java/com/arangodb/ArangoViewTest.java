@@ -44,16 +44,24 @@ public class ArangoViewTest extends BaseTest {
 
 	public ArangoViewTest(final Builder builder) {
 		super(builder);
-		db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
+		if (requireVersion(3, 4)) {
+			db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
+		}
 	}
 
 	@Test
 	public void exists() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		assertThat(db.view(VIEW_NAME).exists(), is(true));
 	}
 
 	@Test
 	public void getInfo() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final ViewEntity info = db.view(VIEW_NAME).getInfo();
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
@@ -63,6 +71,9 @@ public class ArangoViewTest extends BaseTest {
 
 	@Test
 	public void drop() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_droptest";
 		db.createView(name, ViewType.ARANGO_SEARCH);
 		final ArangoView view = db.view(name);
@@ -72,6 +83,9 @@ public class ArangoViewTest extends BaseTest {
 
 	@Test
 	public void rename() {
+		if (!requireVersion(3, 4)) {
+			return;
+		}
 		final String name = VIEW_NAME + "_renametest";
 		final String newName = name + "_new";
 		db.createView(name, ViewType.ARANGO_SEARCH);
