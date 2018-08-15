@@ -39,11 +39,9 @@ import org.junit.runners.Parameterized;
 import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ArangoDBVersion.License;
 import com.arangodb.entity.CollectionPropertiesEntity;
-import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.ServerRole;
-import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 
 /**
@@ -73,20 +71,6 @@ public class ArangoGraphTest extends BaseTest {
 		try {
 			db.graph(GRAPH_NAME).drop();
 		} catch (final ArangoDBException e1) {
-		}
-		for (final String collection : new String[] { VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_2, VERTEX_COL_3,
-				VERTEX_COL_4 }) {
-			try {
-				db.createCollection(collection, null);
-			} catch (final ArangoDBException e) {
-			}
-		}
-		for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2 }) {
-			try {
-				final CollectionCreateOptions options = new CollectionCreateOptions().type(CollectionType.EDGES);
-				db.createCollection(collection, options);
-			} catch (final ArangoDBException e) {
-			}
 		}
 		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
 		edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
@@ -151,6 +135,14 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(e2.getFrom(), hasItem(VERTEX_COL_2));
 		assertThat(e2.getTo(), hasItems(VERTEX_COL_1, VERTEX_COL_3));
 		assertThat(info.getOrphanCollections(), is(empty()));
+
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2 }) {
+				final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+				assertThat(properties.getReplicationFactor(), is(REPLICATION_FACTOR));
+				assertThat(properties.getNumberOfShards(), is(NUMBER_OF_SHARDS));
+			}
+		}
 	}
 
 	@Test
