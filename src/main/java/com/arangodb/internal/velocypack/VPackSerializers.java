@@ -35,7 +35,7 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.ConsolidateType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
@@ -224,35 +224,14 @@ public class VPackSerializers {
 				builder.add("locale", locale);
 			}
 			final Long commitIntervalMsec = value.getCommitIntervalMsec();
-			final Long cleanupIntervalStep = value.getCleanupIntervalStep();
-			final Collection<ConsolidateThreshold> thresholds = value.getThresholds();
-
-			if (commitIntervalMsec != null || cleanupIntervalStep != null || !thresholds.isEmpty()) {
-				builder.add("commit", ValueType.OBJECT);
-				if (commitIntervalMsec != null) {
-					builder.add("commitIntervalMsec", commitIntervalMsec);
-				}
-				if (cleanupIntervalStep != null) {
-					builder.add("cleanupIntervalStep", cleanupIntervalStep);
-				}
-				if (!thresholds.isEmpty()) {
-					builder.add("consolidate", ValueType.OBJECT);
-					for (final ConsolidateThreshold consolidateThreshold : thresholds) {
-						builder.add(consolidateThreshold.getType().name().toLowerCase(), ValueType.OBJECT);
-						final Double threshold = consolidateThreshold.getThreshold();
-						if (threshold != null) {
-							builder.add("threshold", threshold);
-						}
-						final Long segmentThreshold = consolidateThreshold.getSegmentThreshold();
-						if (segmentThreshold != null) {
-							builder.add("segmentThreshold", segmentThreshold);
-						}
-						builder.close();
-					}
-					builder.close();
-				}
-				builder.close();
+			if (commitIntervalMsec != null) {
+				builder.add("commitIntervalMsec", commitIntervalMsec);
 			}
+			final Long cleanupIntervalStep = value.getCleanupIntervalStep();
+			if (cleanupIntervalStep != null) {
+				builder.add("cleanupIntervalStep", cleanupIntervalStep);
+			}
+			context.serialize(builder, "consolidate", value.getConsolidate());
 
 			final Collection<CollectionLink> links = value.getLinks();
 			if (!links.isEmpty()) {
@@ -321,5 +300,16 @@ public class VPackSerializers {
 			builder.close();
 		}
 	}
+
+	public static final VPackSerializer<ConsolidateType> CONSOLIDATE_TYPE = new VPackSerializer<ConsolidateType>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final ConsolidateType value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(attribute, value.toString().toLowerCase());
+		}
+	};
 
 }

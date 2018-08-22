@@ -33,12 +33,11 @@ public class ArangoSearchProperties {
 	private String locale;
 	private Long commitIntervalMsec;
 	private Long cleanupIntervalStep;
-	private final Collection<ConsolidateThreshold> thresholds;
+	private Consolidate consolidate;
 	private final Collection<CollectionLink> links;
 
 	public ArangoSearchProperties() {
 		super();
-		thresholds = new ArrayList<ConsolidateThreshold>();
 		links = new ArrayList<CollectionLink>();
 	}
 
@@ -66,12 +65,12 @@ public class ArangoSearchProperties {
 		this.cleanupIntervalStep = cleanupIntervalStep;
 	}
 
-	public Collection<ConsolidateThreshold> getThresholds() {
-		return thresholds;
+	public Consolidate getConsolidate() {
+		return consolidate;
 	}
 
-	public void addThreshold(final ConsolidateThreshold... thresholds) {
-		this.thresholds.addAll(Arrays.asList(thresholds));
+	public void setConsolidate(final Consolidate consolidate) {
+		this.consolidate = consolidate;
 	}
 
 	public Collection<CollectionLink> getLinks() {

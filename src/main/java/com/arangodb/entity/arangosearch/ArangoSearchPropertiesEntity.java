@@ -68,11 +68,8 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
 		return properties.getCleanupIntervalStep();
 	}
 
-	/**
-	 * @return A list of consolidate thresholds
-	 */
-	public Collection<ConsolidateThreshold> getThresholds() {
-		return properties.getThresholds();
+	public Consolidate getConsolidate() {
+		return properties.getConsolidate();
 	}
 
 	/**

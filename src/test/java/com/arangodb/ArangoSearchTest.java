@@ -36,7 +36,7 @@ import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.Consolidate;
 import com.arangodb.entity.arangosearch.ConsolidateType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
@@ -148,8 +148,8 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(properties.getLocale(), is(not(nullValue())));
 		assertThat(properties.getCommitIntervalMsec(), is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
-		final Collection<ConsolidateThreshold> thresholds = properties.getThresholds();
-		assertThat(thresholds.size(), is(4));
+		final Consolidate consolidate = properties.getConsolidate();
+		assertThat(consolidate, is(is(not(nullValue()))));
 		final Collection<CollectionLink> links = properties.getLinks();
 		assertThat(links.isEmpty(), is(true));
 	}
@@ -166,7 +166,7 @@ public class ArangoSearchTest extends BaseTest {
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
 		options.cleanupIntervalStep(15L);
 		options.commitIntervalMsec(65000L);
-		options.threshold(ConsolidateThreshold.of(ConsolidateType.COUNT).threshold(1.));
+		options.consolidate(Consolidate.of(ConsolidateType.COUNT).threshold(1.));
 		options.link(
 			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
 					.trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
@@ -174,12 +174,10 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(15L));
 		assertThat(properties.getCommitIntervalMsec(), is(65000L));
-		assertThat(properties.getThresholds().size() >= 1, is(true));
-		for (final ConsolidateThreshold t : properties.getThresholds()) {
-			if (t.getType() == ConsolidateType.COUNT) {
-				assertThat(t.getThreshold(), is(1.));
-			}
-		}
+		final Consolidate consolidate = properties.getConsolidate();
+		assertThat(consolidate, is(not(nullValue())));
+		assertThat(consolidate.getType(), is(ConsolidateType.COUNT));
+		assertThat(consolidate.getThreshold(), is(1.));
 		assertThat(properties.getLinks().size(), is(1));
 		final CollectionLink link = properties.getLinks().iterator().next();
 		assertThat(link.getName(), is("view_update_prop_test_collection"));

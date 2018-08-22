@@ -45,7 +45,7 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.Consolidate;
 import com.arangodb.entity.arangosearch.ConsolidateType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
@@ -221,34 +221,17 @@ public class VPackDeserializers {
 			if (locale.isString()) {
 				properties.setLocale(locale.getAsString());
 			}
-			final VPackSlice commit = vpack.get("commit");
-			if (commit.isObject()) {
-				final VPackSlice commitIntervalMsec = commit.get("commitIntervalMsec");
-				if (commitIntervalMsec.isInteger()) {
-					properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
-				}
-				final VPackSlice cleanupIntervalStep = commit.get("cleanupIntervalStep");
-				if (cleanupIntervalStep.isInteger()) {
-					properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
-				}
-				final VPackSlice consolidate = commit.get("consolidate");
-				if (consolidate.isObject()) {
-					for (final ConsolidateType type : ConsolidateType.values()) {
-						final VPackSlice consolidateThreshold = consolidate.get(type.name().toLowerCase());
-						if (consolidateThreshold.isObject()) {
-							final ConsolidateThreshold t = ConsolidateThreshold.of(type);
-							final VPackSlice threshold = consolidateThreshold.get("threshold");
-							if (threshold.isNumber()) {
-								t.threshold(threshold.getAsDouble());
-							}
-							final VPackSlice segmentThreshold = consolidateThreshold.get("segmentThreshold");
-							if (segmentThreshold.isInteger()) {
-								t.segmentThreshold(segmentThreshold.getAsLong());
-							}
-							properties.addThreshold(t);
-						}
-					}
-				}
+			final VPackSlice commitIntervalMsec = vpack.get("commitIntervalMsec");
+			if (commitIntervalMsec.isInteger()) {
+				properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
+			}
+			final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");
+			if (cleanupIntervalStep.isInteger()) {
+				properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
+			}
+			final VPackSlice consolidate = vpack.get("consolidate");
+			if (consolidate.isObject()) {
+				properties.setConsolidate((Consolidate) context.deserialize(consolidate, Consolidate.class));
 			}
 
 			final VPackSlice links = vpack.get("links");
@@ -334,6 +317,30 @@ public class VPackDeserializers {
 			final ArangoSearchPropertiesEntity result = new ArangoSearchPropertiesEntity(entity.getId(),
 					entity.getName(), entity.getType(), properties);
 			return result;
+		}
+	};
+
+	public static final VPackDeserializer<Consolidate> CONSOLIDATE = new VPackDeserializer<Consolidate>() {
+		@Override
+		public Consolidate deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final VPackSlice type = vpack.get("type");
+			if (type.isString()) {
+				final Consolidate consolidate = Consolidate
+						.of(ConsolidateType.valueOf(type.getAsString().toUpperCase()));
+				final VPackSlice threshold = vpack.get("threshold");
+				if (threshold.isNumber()) {
+					consolidate.threshold(threshold.getAsDouble());
+				}
+				final VPackSlice segmentThreshold = vpack.get("segmentThreshold");
+				if (segmentThreshold.isInteger()) {
+					consolidate.segmentThreshold(segmentThreshold.getAsLong());
+				}
+				return consolidate;
+			}
+			return null;
 		}
 	};
 

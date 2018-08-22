@@ -22,7 +22,7 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.Consolidate;
 
 /**
  * @author Mark Vollmary
@@ -86,12 +86,12 @@ public class ArangoSearchCreateOptions {
 	}
 
 	/**
-	 * @param thresholds
-	 *            A list of consolidate thresholds
+	 * @param consolidate
+	 * 
 	 * @return options
 	 */
-	public ArangoSearchCreateOptions threshold(final ConsolidateThreshold... thresholds) {
-		properties.addThreshold(thresholds);
+	public ArangoSearchCreateOptions consolidate(final Consolidate consolidate) {
+		properties.setConsolidate(consolidate);
 		return this;
 	}
 
