@@ -24,27 +24,27 @@ package com.arangodb.entity.arangosearch;
  * @author Mark Vollmary
  *
  */
-public class Consolidate {
+public class ConsolidationPolicy {
 
 	private final ConsolidateType type;
 	private Double threshold;
 	private Long segmentThreshold;
 
-	private Consolidate(final ConsolidateType type) {
+	private ConsolidationPolicy(final ConsolidateType type) {
 		super();
 		this.type = type;
 	}
 
-	public static Consolidate of(final ConsolidateType type) {
-		return new Consolidate(type);
+	public static ConsolidationPolicy of(final ConsolidateType type) {
+		return new ConsolidationPolicy(type);
 	}
 
-	public Consolidate threshold(final Double threshold) {
+	public ConsolidationPolicy threshold(final Double threshold) {
 		this.threshold = threshold;
 		return this;
 	}
 
-	public Consolidate segmentThreshold(final Long segmentThreshold) {
+	public ConsolidationPolicy segmentThreshold(final Long segmentThreshold) {
 		this.segmentThreshold = segmentThreshold;
 		return this;
 	}

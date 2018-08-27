@@ -219,19 +219,15 @@ public class VPackSerializers {
 			if (wrap) {
 				builder.add("properties", ValueType.OBJECT);
 			}
-			final String locale = value.getLocale();
-			if (locale != null) {
-				builder.add("locale", locale);
-			}
-			final Long commitIntervalMsec = value.getCommitIntervalMsec();
-			if (commitIntervalMsec != null) {
-				builder.add("commitIntervalMsec", commitIntervalMsec);
+			final Long consolidationIntervalMsec = value.getConsolidationIntervalMsec();
+			if (consolidationIntervalMsec != null) {
+				builder.add("consolidationIntervalMsec", consolidationIntervalMsec);
 			}
 			final Long cleanupIntervalStep = value.getCleanupIntervalStep();
 			if (cleanupIntervalStep != null) {
 				builder.add("cleanupIntervalStep", cleanupIntervalStep);
 			}
-			context.serialize(builder, "consolidate", value.getConsolidate());
+			context.serialize(builder, "consolidationPolicy", value.getConsolidationPolicy());
 
 			final Collection<CollectionLink> links = value.getLinks();
 			if (!links.isEmpty()) {

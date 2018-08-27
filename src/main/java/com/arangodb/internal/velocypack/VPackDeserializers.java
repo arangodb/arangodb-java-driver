@@ -45,8 +45,8 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.Consolidate;
 import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
@@ -217,21 +217,18 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			final ArangoSearchProperties properties = new ArangoSearchProperties();
-			final VPackSlice locale = vpack.get("locale");
-			if (locale.isString()) {
-				properties.setLocale(locale.getAsString());
-			}
-			final VPackSlice commitIntervalMsec = vpack.get("commitIntervalMsec");
-			if (commitIntervalMsec.isInteger()) {
-				properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
+			final VPackSlice consolidationIntervalMsec = vpack.get("consolidationIntervalMsec");
+			if (consolidationIntervalMsec.isInteger()) {
+				properties.setConsolidationIntervalMsec(consolidationIntervalMsec.getAsLong());
 			}
 			final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");
 			if (cleanupIntervalStep.isInteger()) {
 				properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
 			}
-			final VPackSlice consolidate = vpack.get("consolidate");
-			if (consolidate.isObject()) {
-				properties.setConsolidate((Consolidate) context.deserialize(consolidate, Consolidate.class));
+			final VPackSlice consolidationPolicy = vpack.get("consolidationPolicy");
+			if (consolidationPolicy.isObject()) {
+				properties.setConsolidationPolicy(
+					(ConsolidationPolicy) context.deserialize(consolidationPolicy, ConsolidationPolicy.class));
 			}
 
 			final VPackSlice links = vpack.get("links");
@@ -320,15 +317,15 @@ public class VPackDeserializers {
 		}
 	};
 
-	public static final VPackDeserializer<Consolidate> CONSOLIDATE = new VPackDeserializer<Consolidate>() {
+	public static final VPackDeserializer<ConsolidationPolicy> CONSOLIDATE = new VPackDeserializer<ConsolidationPolicy>() {
 		@Override
-		public Consolidate deserialize(
+		public ConsolidationPolicy deserialize(
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			final VPackSlice type = vpack.get("type");
 			if (type.isString()) {
-				final Consolidate consolidate = Consolidate
+				final ConsolidationPolicy consolidate = ConsolidationPolicy
 						.of(ConsolidateType.valueOf(type.getAsString().toUpperCase()));
 				final VPackSlice threshold = vpack.get("threshold");
 				if (threshold.isNumber()) {

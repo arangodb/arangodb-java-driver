@@ -22,7 +22,7 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.Consolidate;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 
 /**
  * @author Mark Vollmary
@@ -48,17 +48,7 @@ public class ArangoSearchCreateOptions {
 	}
 
 	/**
-	 * @param locale
-	 *            The default locale used for queries on analyzed string values (default: C).
-	 * @return options
-	 */
-	public ArangoSearchCreateOptions locale(final String locale) {
-		properties.setLocale(locale);
-		return this;
-	}
-
-	/**
-	 * @param commitIntervalMsec
+	 * @param consolidationIntervalMsec
 	 *            Wait at least this many milliseconds between committing index data changes and making them visible to
 	 *            queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
 	 *            lower value, until commit, will cause the index not to account for them and memory usage would
@@ -66,8 +56,8 @@ public class ArangoSearchCreateOptions {
 	 *            performance and waste disk space for each commit call without any added benefits.
 	 * @return options
 	 */
-	public ArangoSearchCreateOptions commitIntervalMsec(final Long commitIntervalMsec) {
-		properties.setCommitIntervalMsec(commitIntervalMsec);
+	public ArangoSearchCreateOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
+		properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
 		return this;
 	}
 
@@ -86,12 +76,12 @@ public class ArangoSearchCreateOptions {
 	}
 
 	/**
-	 * @param consolidate
+	 * @param consolidationPolicy
 	 * 
 	 * @return options
 	 */
-	public ArangoSearchCreateOptions consolidate(final Consolidate consolidate) {
-		properties.setConsolidate(consolidate);
+	public ArangoSearchCreateOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
+		properties.setConsolidationPolicy(consolidationPolicy);
 		return this;
 	}
 

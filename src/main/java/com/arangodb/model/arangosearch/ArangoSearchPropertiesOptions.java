@@ -22,7 +22,7 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.Consolidate;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 
 /**
  * @author Mark Vollmary
@@ -38,17 +38,7 @@ public class ArangoSearchPropertiesOptions {
 	}
 
 	/**
-	 * @param locale
-	 *            The default locale used for queries on analyzed string values (default: C).
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions locale(final String locale) {
-		_properties.setLocale(locale);
-		return this;
-	}
-
-	/**
-	 * @param commitIntervalMsec
+	 * @param consolidationIntervalMsec
 	 *            Wait at least this many milliseconds between committing index data changes and making them visible to
 	 *            queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
 	 *            lower value, until commit, will cause the index not to account for them and memory usage would
@@ -56,8 +46,8 @@ public class ArangoSearchPropertiesOptions {
 	 *            performance and waste disk space for each commit call without any added benefits.
 	 * @return options
 	 */
-	public ArangoSearchPropertiesOptions commitIntervalMsec(final Long commitIntervalMsec) {
-		_properties.setCommitIntervalMsec(commitIntervalMsec);
+	public ArangoSearchPropertiesOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
+		_properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
 		return this;
 	}
 
@@ -76,12 +66,12 @@ public class ArangoSearchPropertiesOptions {
 	}
 
 	/**
-	 * @param consolidate
+	 * @param consolidationPolicy
 	 * 
 	 * @return options
 	 */
-	public ArangoSearchPropertiesOptions consolidate(final Consolidate consolidate) {
-		_properties.setConsolidate(consolidate);
+	public ArangoSearchPropertiesOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
+		_properties.setConsolidationPolicy(consolidationPolicy);
 		return this;
 	}
 

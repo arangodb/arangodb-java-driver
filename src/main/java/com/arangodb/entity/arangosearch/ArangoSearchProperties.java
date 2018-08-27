@@ -30,10 +30,9 @@ import java.util.Collection;
  */
 public class ArangoSearchProperties {
 
-	private String locale;
-	private Long commitIntervalMsec;
+	private Long consolidationIntervalMsec;
 	private Long cleanupIntervalStep;
-	private Consolidate consolidate;
+	private ConsolidationPolicy consolidationPolicy;
 	private final Collection<CollectionLink> links;
 
 	public ArangoSearchProperties() {
@@ -41,20 +40,12 @@ public class ArangoSearchProperties {
 		links = new ArrayList<CollectionLink>();
 	}
 
-	public String getLocale() {
-		return locale;
+	public Long getConsolidationIntervalMsec() {
+		return consolidationIntervalMsec;
 	}
 
-	public void setLocale(final String locale) {
-		this.locale = locale;
-	}
-
-	public Long getCommitIntervalMsec() {
-		return commitIntervalMsec;
-	}
-
-	public void setCommitIntervalMsec(final Long commitIntervalMsec) {
-		this.commitIntervalMsec = commitIntervalMsec;
+	public void setConsolidationIntervalMsec(final Long consolidationIntervalMsec) {
+		this.consolidationIntervalMsec = consolidationIntervalMsec;
 	}
 
 	public Long getCleanupIntervalStep() {
@@ -65,12 +56,12 @@ public class ArangoSearchProperties {
 		this.cleanupIntervalStep = cleanupIntervalStep;
 	}
 
-	public Consolidate getConsolidate() {
-		return consolidate;
+	public ConsolidationPolicy getConsolidationPolicy() {
+		return consolidationPolicy;
 	}
 
-	public void setConsolidate(final Consolidate consolidate) {
-		this.consolidate = consolidate;
+	public void setConsolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
+		this.consolidationPolicy = consolidationPolicy;
 	}
 
 	public Collection<CollectionLink> getLinks() {
