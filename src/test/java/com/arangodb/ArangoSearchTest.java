@@ -124,7 +124,8 @@ public class ArangoSearchTest extends BaseTest {
 			return;
 		}
 		final String name = VIEW_NAME + "_createtest";
-		final ViewEntity info = db.arangoSearch(name).create(new ArangoSearchCreateOptions());
+		final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
+		final ViewEntity info = db.arangoSearch(name).create(options);
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
 		assertThat(info.getName(), is(name));

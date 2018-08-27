@@ -30,11 +30,15 @@ import com.arangodb.entity.arangosearch.ConsolidationPolicy;
  */
 public class ArangoSearchPropertiesOptions {
 
-	private final ArangoSearchProperties _properties;
+	private final ArangoSearchProperties properties;
 
 	public ArangoSearchPropertiesOptions() {
 		super();
-		_properties = new ArangoSearchProperties();
+		properties = new ArangoSearchProperties();
+	}
+
+	public ArangoSearchProperties getProperties() {
+		return properties;
 	}
 
 	/**
@@ -47,7 +51,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
-		_properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
+		properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
 		return this;
 	}
 
@@ -61,7 +65,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
-		_properties.setCleanupIntervalStep(cleanupIntervalStep);
+		properties.setCleanupIntervalStep(cleanupIntervalStep);
 		return this;
 	}
 
@@ -71,7 +75,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
-		_properties.setConsolidationPolicy(consolidationPolicy);
+		properties.setConsolidationPolicy(consolidationPolicy);
 		return this;
 	}
 
@@ -81,7 +85,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions link(final CollectionLink... links) {
-		_properties.addLink(links);
+		properties.addLink(links);
 		return this;
 	}
 

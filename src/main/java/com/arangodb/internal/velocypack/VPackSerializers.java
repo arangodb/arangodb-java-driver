@@ -41,6 +41,7 @@ import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
+import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSerializationContext;
 import com.arangodb.velocypack.VPackSerializer;
@@ -208,6 +209,19 @@ public class VPackSerializers {
 		}
 	};
 
+	public static final VPackSerializer<ArangoSearchPropertiesOptions> ARANGO_SEARCH_PROPERTIES_OPTIONS = new VPackSerializer<ArangoSearchPropertiesOptions>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final ArangoSearchPropertiesOptions value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(ValueType.OBJECT);
+			context.serialize(builder, attribute, value.getProperties());
+			builder.close();
+		}
+	};
+
 	public static final VPackSerializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = new VPackSerializer<ArangoSearchProperties>() {
 		@Override
 		public void serialize(
@@ -215,10 +229,6 @@ public class VPackSerializers {
 			final String attribute,
 			final ArangoSearchProperties value,
 			final VPackSerializationContext context) throws VPackException {
-			final boolean wrap = !attribute.startsWith("_");
-			if (wrap) {
-				builder.add("properties", ValueType.OBJECT);
-			}
 			final Long consolidationIntervalMsec = value.getConsolidationIntervalMsec();
 			if (consolidationIntervalMsec != null) {
 				builder.add("consolidationIntervalMsec", consolidationIntervalMsec);
@@ -257,9 +267,6 @@ public class VPackSerializers {
 					serializeFieldLinks(builder, collectionLink.getFields());
 					builder.close();
 				}
-				builder.close();
-			}
-			if (wrap) {
 				builder.close();
 			}
 		}
