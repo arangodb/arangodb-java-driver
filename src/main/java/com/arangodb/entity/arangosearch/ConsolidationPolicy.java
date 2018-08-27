@@ -39,11 +39,23 @@ public class ConsolidationPolicy {
 		return new ConsolidationPolicy(type);
 	}
 
+	/**
+	 * @param threshold
+	 *            Select a given segment for "consolidation" if and only if the formula based on type (as defined above)
+	 *            evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
+	 * @return policy
+	 */
 	public ConsolidationPolicy threshold(final Double threshold) {
 		this.threshold = threshold;
 		return this;
 	}
 
+	/**
+	 * @param segmentThreshold
+	 *            Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} <
+	 *            number_of_segments
+	 * @return policy
+	 */
 	public ConsolidationPolicy segmentThreshold(final Long segmentThreshold) {
 		this.segmentThreshold = segmentThreshold;
 		return this;
