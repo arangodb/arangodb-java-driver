@@ -22,7 +22,7 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 
 /**
  * @author Mark Vollmary
@@ -30,25 +30,19 @@ import com.arangodb.entity.arangosearch.ConsolidateThreshold;
  */
 public class ArangoSearchPropertiesOptions {
 
-	private final ArangoSearchProperties _properties;
+	private final ArangoSearchProperties properties;
 
 	public ArangoSearchPropertiesOptions() {
 		super();
-		_properties = new ArangoSearchProperties();
+		properties = new ArangoSearchProperties();
+	}
+
+	public ArangoSearchProperties getProperties() {
+		return properties;
 	}
 
 	/**
-	 * @param locale
-	 *            The default locale used for queries on analyzed string values (default: C).
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions locale(final String locale) {
-		_properties.setLocale(locale);
-		return this;
-	}
-
-	/**
-	 * @param commitIntervalMsec
+	 * @param consolidationIntervalMsec
 	 *            Wait at least this many milliseconds between committing index data changes and making them visible to
 	 *            queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
 	 *            lower value, until commit, will cause the index not to account for them and memory usage would
@@ -56,8 +50,8 @@ public class ArangoSearchPropertiesOptions {
 	 *            performance and waste disk space for each commit call without any added benefits.
 	 * @return options
 	 */
-	public ArangoSearchPropertiesOptions commitIntervalMsec(final Long commitIntervalMsec) {
-		_properties.setCommitIntervalMsec(commitIntervalMsec);
+	public ArangoSearchPropertiesOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
+		properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
 		return this;
 	}
 
@@ -71,17 +65,17 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
-		_properties.setCleanupIntervalStep(cleanupIntervalStep);
+		properties.setCleanupIntervalStep(cleanupIntervalStep);
 		return this;
 	}
 
 	/**
-	 * @param thresholds
-	 *            A list of consolidate thresholds
+	 * @param consolidationPolicy
+	 * 
 	 * @return options
 	 */
-	public ArangoSearchPropertiesOptions threshold(final ConsolidateThreshold... thresholds) {
-		_properties.addThreshold(thresholds);
+	public ArangoSearchPropertiesOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
+		properties.setConsolidationPolicy(consolidationPolicy);
 		return this;
 	}
 
@@ -91,7 +85,7 @@ public class ArangoSearchPropertiesOptions {
 	 * @return options
 	 */
 	public ArangoSearchPropertiesOptions link(final CollectionLink... links) {
-		_properties.addLink(links);
+		properties.addLink(links);
 		return this;
 	}
 

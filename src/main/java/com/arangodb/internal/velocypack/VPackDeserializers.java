@@ -45,8 +45,8 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
 import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
@@ -217,38 +217,18 @@ public class VPackDeserializers {
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
 			final ArangoSearchProperties properties = new ArangoSearchProperties();
-			final VPackSlice locale = vpack.get("locale");
-			if (locale.isString()) {
-				properties.setLocale(locale.getAsString());
+			final VPackSlice consolidationIntervalMsec = vpack.get("consolidationIntervalMsec");
+			if (consolidationIntervalMsec.isInteger()) {
+				properties.setConsolidationIntervalMsec(consolidationIntervalMsec.getAsLong());
 			}
-			final VPackSlice commit = vpack.get("commit");
-			if (commit.isObject()) {
-				final VPackSlice commitIntervalMsec = commit.get("commitIntervalMsec");
-				if (commitIntervalMsec.isInteger()) {
-					properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
-				}
-				final VPackSlice cleanupIntervalStep = commit.get("cleanupIntervalStep");
-				if (cleanupIntervalStep.isInteger()) {
-					properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
-				}
-				final VPackSlice consolidate = commit.get("consolidate");
-				if (consolidate.isObject()) {
-					for (final ConsolidateType type : ConsolidateType.values()) {
-						final VPackSlice consolidateThreshold = consolidate.get(type.name().toLowerCase());
-						if (consolidateThreshold.isObject()) {
-							final ConsolidateThreshold t = ConsolidateThreshold.of(type);
-							final VPackSlice threshold = consolidateThreshold.get("threshold");
-							if (threshold.isNumber()) {
-								t.threshold(threshold.getAsDouble());
-							}
-							final VPackSlice segmentThreshold = consolidateThreshold.get("segmentThreshold");
-							if (segmentThreshold.isInteger()) {
-								t.segmentThreshold(segmentThreshold.getAsLong());
-							}
-							properties.addThreshold(t);
-						}
-					}
-				}
+			final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");
+			if (cleanupIntervalStep.isInteger()) {
+				properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
+			}
+			final VPackSlice consolidationPolicy = vpack.get("consolidationPolicy");
+			if (consolidationPolicy.isObject()) {
+				properties.setConsolidationPolicy(
+					(ConsolidationPolicy) context.deserialize(consolidationPolicy, ConsolidationPolicy.class));
 			}
 
 			final VPackSlice links = vpack.get("links");
@@ -334,6 +314,30 @@ public class VPackDeserializers {
 			final ArangoSearchPropertiesEntity result = new ArangoSearchPropertiesEntity(entity.getId(),
 					entity.getName(), entity.getType(), properties);
 			return result;
+		}
+	};
+
+	public static final VPackDeserializer<ConsolidationPolicy> CONSOLIDATE = new VPackDeserializer<ConsolidationPolicy>() {
+		@Override
+		public ConsolidationPolicy deserialize(
+			final VPackSlice parent,
+			final VPackSlice vpack,
+			final VPackDeserializationContext context) throws VPackException {
+			final VPackSlice type = vpack.get("type");
+			if (type.isString()) {
+				final ConsolidationPolicy consolidate = ConsolidationPolicy
+						.of(ConsolidateType.valueOf(type.getAsString().toUpperCase()));
+				final VPackSlice threshold = vpack.get("threshold");
+				if (threshold.isNumber()) {
+					consolidate.threshold(threshold.getAsDouble());
+				}
+				final VPackSlice segmentThreshold = vpack.get("segmentThreshold");
+				if (segmentThreshold.isInteger()) {
+					consolidate.segmentThreshold(segmentThreshold.getAsLong());
+				}
+				return consolidate;
+			}
+			return null;
 		}
 	};
 

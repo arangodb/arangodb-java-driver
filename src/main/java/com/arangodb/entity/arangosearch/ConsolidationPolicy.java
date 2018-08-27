@@ -24,27 +24,39 @@ package com.arangodb.entity.arangosearch;
  * @author Mark Vollmary
  *
  */
-public class ConsolidateThreshold {
+public class ConsolidationPolicy {
 
 	private final ConsolidateType type;
 	private Double threshold;
 	private Long segmentThreshold;
 
-	private ConsolidateThreshold(final ConsolidateType type) {
+	private ConsolidationPolicy(final ConsolidateType type) {
 		super();
 		this.type = type;
 	}
 
-	public static ConsolidateThreshold of(final ConsolidateType type) {
-		return new ConsolidateThreshold(type);
+	public static ConsolidationPolicy of(final ConsolidateType type) {
+		return new ConsolidationPolicy(type);
 	}
 
-	public ConsolidateThreshold threshold(final Double threshold) {
+	/**
+	 * @param threshold
+	 *            Select a given segment for "consolidation" if and only if the formula based on type (as defined above)
+	 *            evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
+	 * @return policy
+	 */
+	public ConsolidationPolicy threshold(final Double threshold) {
 		this.threshold = threshold;
 		return this;
 	}
 
-	public ConsolidateThreshold segmentThreshold(final Long segmentThreshold) {
+	/**
+	 * @param segmentThreshold
+	 *            Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} <
+	 *            number_of_segments
+	 * @return policy
+	 */
+	public ConsolidationPolicy segmentThreshold(final Long segmentThreshold) {
 		this.segmentThreshold = segmentThreshold;
 		return this;
 	}

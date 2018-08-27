@@ -36,8 +36,8 @@ import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
 import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
@@ -124,7 +124,8 @@ public class ArangoSearchTest extends BaseTest {
 			return;
 		}
 		final String name = VIEW_NAME + "_createtest";
-		final ViewEntity info = db.arangoSearch(name).create(new ArangoSearchCreateOptions());
+		final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
+		final ViewEntity info = db.arangoSearch(name).create(options);
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
 		assertThat(info.getName(), is(name));
@@ -145,11 +146,10 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(properties.getId(), is(not(nullValue())));
 		assertThat(properties.getName(), is(name));
 		assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(properties.getLocale(), is(not(nullValue())));
-		assertThat(properties.getCommitIntervalMsec(), is(not(nullValue())));
+		assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
-		final Collection<ConsolidateThreshold> thresholds = properties.getThresholds();
-		assertThat(thresholds.size(), is(4));
+		final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
+		assertThat(consolidate, is(is(not(nullValue()))));
 		final Collection<CollectionLink> links = properties.getLinks();
 		assertThat(links.isEmpty(), is(true));
 	}
@@ -165,21 +165,19 @@ public class ArangoSearchTest extends BaseTest {
 		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
 		options.cleanupIntervalStep(15L);
-		options.commitIntervalMsec(65000L);
-		options.threshold(ConsolidateThreshold.of(ConsolidateType.COUNT).threshold(1.));
+		options.consolidationIntervalMsec(65000L);
+		options.consolidationPolicy(ConsolidationPolicy.of(ConsolidateType.COUNT).threshold(1.));
 		options.link(
 			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
 					.trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
 		final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(15L));
-		assertThat(properties.getCommitIntervalMsec(), is(65000L));
-		assertThat(properties.getThresholds().size() >= 1, is(true));
-		for (final ConsolidateThreshold t : properties.getThresholds()) {
-			if (t.getType() == ConsolidateType.COUNT) {
-				assertThat(t.getThreshold(), is(1.));
-			}
-		}
+		assertThat(properties.getConsolidationIntervalMsec(), is(65000L));
+		final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
+		assertThat(consolidate, is(not(nullValue())));
+		assertThat(consolidate.getType(), is(ConsolidateType.COUNT));
+		assertThat(consolidate.getThreshold(), is(1.));
 		assertThat(properties.getLinks().size(), is(1));
 		final CollectionLink link = properties.getLinks().iterator().next();
 		assertThat(link.getName(), is("view_update_prop_test_collection"));

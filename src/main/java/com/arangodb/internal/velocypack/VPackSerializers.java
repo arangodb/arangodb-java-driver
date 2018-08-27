@@ -35,12 +35,13 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateThreshold;
+import com.arangodb.entity.arangosearch.ConsolidateType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
+import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSerializationContext;
 import com.arangodb.velocypack.VPackSerializer;
@@ -208,6 +209,19 @@ public class VPackSerializers {
 		}
 	};
 
+	public static final VPackSerializer<ArangoSearchPropertiesOptions> ARANGO_SEARCH_PROPERTIES_OPTIONS = new VPackSerializer<ArangoSearchPropertiesOptions>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final ArangoSearchPropertiesOptions value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(ValueType.OBJECT);
+			context.serialize(builder, attribute, value.getProperties());
+			builder.close();
+		}
+	};
+
 	public static final VPackSerializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = new VPackSerializer<ArangoSearchProperties>() {
 		@Override
 		public void serialize(
@@ -215,44 +229,15 @@ public class VPackSerializers {
 			final String attribute,
 			final ArangoSearchProperties value,
 			final VPackSerializationContext context) throws VPackException {
-			final boolean wrap = !attribute.startsWith("_");
-			if (wrap) {
-				builder.add("properties", ValueType.OBJECT);
+			final Long consolidationIntervalMsec = value.getConsolidationIntervalMsec();
+			if (consolidationIntervalMsec != null) {
+				builder.add("consolidationIntervalMsec", consolidationIntervalMsec);
 			}
-			final String locale = value.getLocale();
-			if (locale != null) {
-				builder.add("locale", locale);
-			}
-			final Long commitIntervalMsec = value.getCommitIntervalMsec();
 			final Long cleanupIntervalStep = value.getCleanupIntervalStep();
-			final Collection<ConsolidateThreshold> thresholds = value.getThresholds();
-
-			if (commitIntervalMsec != null || cleanupIntervalStep != null || !thresholds.isEmpty()) {
-				builder.add("commit", ValueType.OBJECT);
-				if (commitIntervalMsec != null) {
-					builder.add("commitIntervalMsec", commitIntervalMsec);
-				}
-				if (cleanupIntervalStep != null) {
-					builder.add("cleanupIntervalStep", cleanupIntervalStep);
-				}
-				if (!thresholds.isEmpty()) {
-					builder.add("consolidate", ValueType.OBJECT);
-					for (final ConsolidateThreshold consolidateThreshold : thresholds) {
-						builder.add(consolidateThreshold.getType().name().toLowerCase(), ValueType.OBJECT);
-						final Double threshold = consolidateThreshold.getThreshold();
-						if (threshold != null) {
-							builder.add("threshold", threshold);
-						}
-						final Long segmentThreshold = consolidateThreshold.getSegmentThreshold();
-						if (segmentThreshold != null) {
-							builder.add("segmentThreshold", segmentThreshold);
-						}
-						builder.close();
-					}
-					builder.close();
-				}
-				builder.close();
+			if (cleanupIntervalStep != null) {
+				builder.add("cleanupIntervalStep", cleanupIntervalStep);
 			}
+			context.serialize(builder, "consolidationPolicy", value.getConsolidationPolicy());
 
 			final Collection<CollectionLink> links = value.getLinks();
 			if (!links.isEmpty()) {
@@ -282,9 +267,6 @@ public class VPackSerializers {
 					serializeFieldLinks(builder, collectionLink.getFields());
 					builder.close();
 				}
-				builder.close();
-			}
-			if (wrap) {
 				builder.close();
 			}
 		}
@@ -321,5 +303,16 @@ public class VPackSerializers {
 			builder.close();
 		}
 	}
+
+	public static final VPackSerializer<ConsolidateType> CONSOLIDATE_TYPE = new VPackSerializer<ConsolidateType>() {
+		@Override
+		public void serialize(
+			final VPackBuilder builder,
+			final String attribute,
+			final ConsolidateType value,
+			final VPackSerializationContext context) throws VPackException {
+			builder.add(attribute, value.toString().toLowerCase());
+		}
+	};
 
 }

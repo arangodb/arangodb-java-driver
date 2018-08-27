@@ -40,21 +40,14 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
 	}
 
 	/**
-	 * @return The default locale used for queries on analyzed string values (default: C).
-	 */
-	public String getLocale() {
-		return properties.getLocale();
-	}
-
-	/**
 	 * @return Wait at least this many milliseconds between committing index data changes and making them visible to
 	 *         queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
 	 *         lower value, until commit, will cause the index not to account for them and memory usage would continue
 	 *         to grow. For the case where there are a few inserts/updates, a higher value will impact performance and
 	 *         waste disk space for each commit call without any added benefits.
 	 */
-	public Long getCommitIntervalMsec() {
-		return properties.getCommitIntervalMsec();
+	public Long getConsolidationIntervalMsec() {
+		return properties.getConsolidationIntervalMsec();
 	}
 
 	/**
@@ -68,11 +61,8 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
 		return properties.getCleanupIntervalStep();
 	}
 
-	/**
-	 * @return A list of consolidate thresholds
-	 */
-	public Collection<ConsolidateThreshold> getThresholds() {
-		return properties.getThresholds();
+	public ConsolidationPolicy getConsolidationPolicy() {
+		return properties.getConsolidationPolicy();
 	}
 
 	/**
