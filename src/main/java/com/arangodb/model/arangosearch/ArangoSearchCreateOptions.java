@@ -22,6 +22,7 @@ package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 
 /**
@@ -85,4 +86,13 @@ public class ArangoSearchCreateOptions {
 		return this;
 	}
 
+	/**
+	 * @param links
+	 *            A list of linked collections
+	 * @return options
+	 */
+	public ArangoSearchCreateOptions link(final CollectionLink... links) {
+		properties.addLink(links);
+		return this;
+	}
 }
