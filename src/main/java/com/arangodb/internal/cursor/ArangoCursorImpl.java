@@ -98,7 +98,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 
 	@Override
 	public void close() throws IOException {
-		if (id != null) {
+		if (id != null && hasNext()) {
 			execute.close(id);
 		}
 	}
