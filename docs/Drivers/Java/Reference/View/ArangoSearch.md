@@ -62,7 +62,7 @@ ArangoSearch.create(ArangoSearchCreateOptions options) : ViewEntity
 
 Creates a ArangoSearch view with the given _options_, then returns view information from the server.
 
-Alternative for [ArangoDatabase.createArangoSearch](#arangodatabasecreatearangosearch).
+Alternative for `ArangoDatabase.createArangoSearch`.
 
 **Arguments**
 
