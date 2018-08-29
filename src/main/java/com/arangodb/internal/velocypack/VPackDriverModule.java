@@ -37,7 +37,7 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
@@ -81,7 +81,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerSerializer(ArangoSearchPropertiesOptions.class,
 			VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
 		context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
-		context.registerSerializer(ConsolidateType.class, VPackSerializers.CONSOLIDATE_TYPE);
+		context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
 
 		context.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
 		context.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);

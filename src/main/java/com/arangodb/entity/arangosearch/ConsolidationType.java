@@ -1,6 +1,6 @@
 package com.arangodb.entity.arangosearch;
 
-public enum ConsolidateType {
+public enum ConsolidationType {
 
 	COUNT, BYTES, BYTES_ACCUM, FILL
 

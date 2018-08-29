@@ -35,7 +35,7 @@ import com.arangodb.entity.ReplicationFactor;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
@@ -304,12 +304,12 @@ public class VPackSerializers {
 		}
 	}
 
-	public static final VPackSerializer<ConsolidateType> CONSOLIDATE_TYPE = new VPackSerializer<ConsolidateType>() {
+	public static final VPackSerializer<ConsolidationType> CONSOLIDATE_TYPE = new VPackSerializer<ConsolidationType>() {
 		@Override
 		public void serialize(
 			final VPackBuilder builder,
 			final String attribute,
-			final ConsolidateType value,
+			final ConsolidationType value,
 			final VPackSerializationContext context) throws VPackException {
 			builder.add(attribute, value.toString().toLowerCase());
 		}

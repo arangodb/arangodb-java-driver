@@ -29,7 +29,7 @@ Creates a ArangoSearch view with the given _options_, then returns view informat
 
   - **consolidationPolicy**:
 
-    - **type**: `ConsolidateType`
+    - **type**: `ConsolidationType`
 
       The type of the consolidation policy.
 
@@ -78,7 +78,7 @@ Alternative for [ArangoDatabase.createArangoSearch](#arangodatabasecreatearangos
 
   - **consolidationPolicy**:
 
-    - **type**: `ConsolidateType`
+    - **type**: `ConsolidationType`
 
       The type of the consolidation policy.
 
@@ -145,7 +145,7 @@ Partially changes properties of the view.
 
   - **consolidationPolicy**:
 
-    - **type**: `ConsolidateType`
+    - **type**: `ConsolidationType`
 
       The type of the consolidation policy.
 
@@ -193,7 +193,7 @@ Changes properties of the view.
 
   - **consolidationPolicy**:
 
-    - **type**: `ConsolidateType`
+    - **type**: `ConsolidationType`
 
       The type of the consolidation policy.
 

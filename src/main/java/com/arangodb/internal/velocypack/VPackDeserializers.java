@@ -45,7 +45,7 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidateType;
+import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
@@ -326,7 +326,7 @@ public class VPackDeserializers {
 			final VPackSlice type = vpack.get("type");
 			if (type.isString()) {
 				final ConsolidationPolicy consolidate = ConsolidationPolicy
-						.of(ConsolidateType.valueOf(type.getAsString().toUpperCase()));
+						.of(ConsolidationType.valueOf(type.getAsString().toUpperCase()));
 				final VPackSlice threshold = vpack.get("threshold");
 				if (threshold.isNumber()) {
 					consolidate.threshold(threshold.getAsDouble());

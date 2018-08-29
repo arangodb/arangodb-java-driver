@@ -26,16 +26,16 @@ package com.arangodb.entity.arangosearch;
  */
 public class ConsolidationPolicy {
 
-	private final ConsolidateType type;
+	private final ConsolidationType type;
 	private Double threshold;
 	private Long segmentThreshold;
 
-	private ConsolidationPolicy(final ConsolidateType type) {
+	private ConsolidationPolicy(final ConsolidationType type) {
 		super();
 		this.type = type;
 	}
 
-	public static ConsolidationPolicy of(final ConsolidateType type) {
+	public static ConsolidationPolicy of(final ConsolidationType type) {
 		return new ConsolidationPolicy(type);
 	}
 
@@ -61,7 +61,7 @@ public class ConsolidationPolicy {
 		return this;
 	}
 
-	public ConsolidateType getType() {
+	public ConsolidationType getType() {
 		return type;
 	}
 
