@@ -20,6 +20,8 @@
 
 package com.arangodb.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.arangodb.velocypack.VPackSlice;
@@ -370,6 +372,21 @@ public class AqlQueryOptions {
 		return this;
 	}
 
+	public Collection<String> getShardIds() {
+		return options != null ? options.shardIds : null;
+	}
+
+	/**
+	 * Restrict query to shards by given ids. This is an internal option. Use at your own risk.
+	 * 
+	 * @param shardIds
+	 * @return options
+	 */
+	public AqlQueryOptions shardIds(final String... shardIds) {
+		getOptions().getShardIds().addAll(Arrays.asList(shardIds));
+		return this;
+	}
+
 	private Options getOptions() {
 		if (options == null) {
 			options = new Options();
@@ -390,12 +407,20 @@ public class AqlQueryOptions {
 		private Boolean fullCount;
 		private Integer maxPlans;
 		private Boolean stream;
+		private Collection<String> shardIds;
 
 		protected Optimizer getOptimizer() {
 			if (optimizer == null) {
 				optimizer = new Optimizer();
 			}
 			return optimizer;
+		}
+
+		protected Collection<String> getShardIds() {
+			if (shardIds == null) {
+				shardIds = new ArrayList<String>();
+			}
+			return shardIds;
 		}
 
 	}
