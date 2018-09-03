@@ -20,7 +20,6 @@
 
 package com.arangodb.internal.cursor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
