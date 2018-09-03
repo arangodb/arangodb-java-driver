@@ -20,6 +20,7 @@
 
 package com.arangodb.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +33,9 @@ import com.arangodb.velocypack.VPackSlice;
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
  *      Documentation</a>
  */
-public class AqlQueryOptions {
+public class AqlQueryOptions implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Boolean count;
 	private Integer ttl;
