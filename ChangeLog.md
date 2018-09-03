@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [4.7.3] - 2018-09-03
+
+### Changed
+
+- made `AqlQueryOptions#Options` serializable
+
 ## [4.7.2] - 2018-09-03
 
 ### Changed
@@ -870,7 +876,8 @@ Added support for sparse indexes
 
 - Initial Release
 
-[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.2...HEAD
+[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.3...HEAD
+[4.7.3]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.2...4.7.3
 [4.7.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.1...4.7.2
 [4.7.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.0...4.7.1
 [4.7.0]: https://github.com/arangodb/arangodb-java-driver/compare/4.6.1...4.7.0
