@@ -397,7 +397,10 @@ public class AqlQueryOptions implements Serializable {
 		return options;
 	}
 
-	private static class Options {
+	private static class Options implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+
 		private Boolean failOnWarning;
 		private Boolean profile;
 		private Long maxTransactionSize;
