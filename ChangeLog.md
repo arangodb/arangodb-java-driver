@@ -6,9 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-### Changed
+### Fixed
 
 - applied arangosearch API changes for ArangoDB 3.4.0
+- fixed `ArangoCursor#close()`: check hasNext before close (issue #223)
 
 ## [4.7.0] - 2018-08-02
 
