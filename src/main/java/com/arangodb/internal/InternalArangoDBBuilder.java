@@ -32,14 +32,18 @@ import javax.net.ssl.SSLContext;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
+import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.ExtendedHostResolver;
 import com.arangodb.internal.net.FallbackHostHandler;
 import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.RandomHostHandler;
 import com.arangodb.internal.net.RoundRobinHostHandler;
 import com.arangodb.internal.net.SimpleHostResolver;
+import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
@@ -67,8 +71,8 @@ public abstract class InternalArangoDBBuilder {
 	private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
-	protected final List<Host> hosts;
-	protected Host host;
+	protected final List<HostDescription> hosts;
+	protected HostDescription host;
 	protected Integer timeout;
 	protected String user;
 	protected String password;
@@ -91,8 +95,8 @@ public abstract class InternalArangoDBBuilder {
 		vpackParserBuilder = new VPackParser.Builder();
 		vpackBuilder.registerModule(new VPackDriverModule());
 		vpackParserBuilder.registerModule(new VPackDriverModule());
-		host = new Host(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
-		hosts = new ArrayList<Host>();
+		host = new HostDescription(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
+		hosts = new ArrayList<HostDescription>();
 		user = ArangoDefaults.DEFAULT_USER;
 		loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));
 	}
@@ -114,7 +118,7 @@ public abstract class InternalArangoDBBuilder {
 		loadHosts(properties, this.hosts);
 		final String host = loadHost(properties, this.host.getHost());
 		final int port = loadPort(properties, this.host.getPort());
-		this.host = new Host(host, port);
+		this.host = new HostDescription(host, port);
 		timeout = loadTimeout(properties, timeout);
 		user = loadUser(properties, user);
 		password = loadPassword(properties, password);
@@ -127,7 +131,7 @@ public abstract class InternalArangoDBBuilder {
 	}
 
 	protected void setHost(final String host, final int port) {
-		hosts.add(new Host(host, port));
+		hosts.add(new HostDescription(host, port));
 	}
 
 	protected void setTimeout(final Integer timeout) {
@@ -182,8 +186,12 @@ public abstract class InternalArangoDBBuilder {
 		this.customSerializer = serializer;
 	}
 
-	protected HostResolver createHostResolver() {
-		return Boolean.TRUE == acquireHostList ? new ExtendedHostResolver(new ArrayList<Host>(hosts))
+	protected HostResolver createHostResolver(
+		final Collection<Host> hosts,
+		final int maxConnections,
+		final ConnectionFactory connectionFactory) {
+		return Boolean.TRUE == acquireHostList
+				? new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory)
 				: new SimpleHostResolver(new ArrayList<Host>(hosts));
 	}
 
@@ -208,7 +216,7 @@ public abstract class InternalArangoDBBuilder {
 		return hostHandler;
 	}
 
-	private static void loadHosts(final Properties properties, final Collection<Host> hosts) {
+	private static void loadHosts(final Properties properties, final Collection<HostDescription> hosts) {
 		final String hostsProp = properties.getProperty(PROPERTY_KEY_HOSTS);
 		if (hostsProp != null) {
 			final String[] hostsSplit = hostsProp.split(",");
@@ -219,7 +227,7 @@ public abstract class InternalArangoDBBuilder {
 						"Could not load property-value arangodb.hosts=%s. Expected format ip:port,ip:port,...",
 						hostsProp));
 				} else {
-					hosts.add(new Host(split[0], Integer.valueOf(split[1])));
+					hosts.add(new HostDescription(split[0], Integer.valueOf(split[1])));
 				}
 			}
 		}
@@ -294,4 +302,13 @@ public abstract class InternalArangoDBBuilder {
 			currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
 	}
 
+	protected <C extends Connection> Collection<Host> createHostList(
+		final int maxConnections,
+		final ConnectionFactory connectionFactory) {
+		final Collection<Host> hostList = new ArrayList<Host>();
+		for (final HostDescription host : hosts) {
+			hostList.add(HostUtils.createHost(host, maxConnections, connectionFactory));
+		}
+		return hostList;
+	}
 }

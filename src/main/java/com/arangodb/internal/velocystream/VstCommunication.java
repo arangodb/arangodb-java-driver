@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.velocystream;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,9 +34,10 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.internal.net.ConnectionPool;
-import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
@@ -51,61 +53,85 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public abstract class VstCommunication<R, C extends VstConnection> {
+public abstract class VstCommunication<R, C extends VstConnection> implements Closeable {
 
 	protected static final String ENCRYPTION_PLAIN = "plain";
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
 	protected final ArangoSerialization util;
-	protected final ConnectionPool<C> connectionPool;
 
 	protected final String user;
 	protected final String password;
 
 	protected final Integer chunksize;
+	private final HostHandler hostHandler;
 
 	protected VstCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
-		final ConnectionPool<C> connectionPool) {
+		final HostHandler hostHandler) {
 		this.user = user;
 		this.password = password;
 		this.util = util;
-		this.connectionPool = connectionPool;
+		this.hostHandler = hostHandler;
 		this.chunksize = chunksize != null ? chunksize : ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
 	}
 
-	protected synchronized void connect(final C connection) {
-		if (!connection.isOpen()) {
-			try {
-				connection.open();
-				if (user != null) {
-					authenticate(connection);
+	@SuppressWarnings("unchecked")
+	protected synchronized C connect(final HostHandle hostHandle) {
+		Host host = hostHandler.get(hostHandle);
+		while (true) {
+			if (host == null) {
+				hostHandler.reset();
+				throw new ArangoDBException("Was not able to connect to any host");
+			}
+			final C connection = (C) host.connection();
+			if (connection.isOpen()) {
+				return connection;
+			} else {
+				try {
+					connection.open();
+					hostHandler.success();
+					if (user != null) {
+						authenticate(connection);
+					}
+					hostHandler.confirm();
+					return connection;
+				} catch (final IOException e) {
+					hostHandler.fail();
+					final Host failedHost = host;
+					host = hostHandler.get(hostHandle);
+					if (host != null) {
+						LOGGER.warn(
+							String.format("Could not connect to %s or SSL Handshake failed. Try connecting to %s",
+								failedHost.getDescription(), host.getDescription()));
+					} else {
+						LOGGER.error(e.getMessage(), e);
+						throw new ArangoDBException(e);
+					}
 				}
-				connection.confirm();
-			} catch (final IOException e) {
-				LOGGER.error(e.getMessage(), e);
-				throw new ArangoDBException(e);
 			}
 		}
 	}
 
 	protected abstract void authenticate(final C connection);
 
-	public void disconnect() throws IOException {
-		connectionPool.disconnect();
+	@Override
+	public void close() throws IOException {
+		hostHandler.close();
 	}
 
 	public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
-		final C connection = connectionPool.connection(hostHandle);
 		try {
+			final C connection = connect(hostHandle);
 			return execute(request, connection);
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
 				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
-				final Host host = HostUtils.createFromLocation(location);
-				connectionPool.closeConnectionOnError(connection);
-				return execute(request, new HostHandle().setHost(host));
+				final HostDescription redirectHost = HostUtils.createFromLocation(location);
+				hostHandler.closeCurrentOnError();
+				hostHandler.fail();
+				return execute(request, new HostHandle().setHost(redirectHost));
 			} else {
 				throw e;
 			}

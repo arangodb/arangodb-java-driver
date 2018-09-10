@@ -26,17 +26,17 @@ package com.arangodb.internal.net;
  */
 public class HostHandle {
 
-	private Host host;
+	private HostDescription host;
 
 	public HostHandle() {
 		super();
 	}
 
-	public Host getHost() {
+	public HostDescription getHost() {
 		return host;
 	}
 
-	public HostHandle setHost(final Host host) {
+	public HostHandle setHost(final HostDescription host) {
 		this.host = host;
 		return this;
 	}

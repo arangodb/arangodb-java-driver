@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2018 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,66 +20,19 @@
 
 package com.arangodb.internal.net;
 
+import java.io.IOException;
+
 /**
  * @author Mark Vollmary
  *
  */
-public class Host {
+public interface Host {
 
-	private final String host;
-	private final int port;
+	HostDescription getDescription();
 
-	public Host(final String host, final int port) {
-		super();
-		this.host = host;
-		this.port = port;
-	}
+	Connection connection();
 
-	public String getHost() {
-		return host;
-	}
+	void closeOnError();
 
-	public int getPort() {
-		return port;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("host[addr=%s,port=%s]", host, port);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((host == null) ? 0 : host.hashCode());
-		result = prime * result + port;
-		return result;
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final Host other = (Host) obj;
-		if (host == null) {
-			if (other.host != null) {
-				return false;
-			}
-		} else if (!host.equals(other.host)) {
-			return false;
-		}
-		if (port != other.port) {
-			return false;
-		}
-		return true;
-	}
-
+	void close() throws IOException;
 }

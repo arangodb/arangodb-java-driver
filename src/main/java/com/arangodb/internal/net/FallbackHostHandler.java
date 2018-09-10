@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.net;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class FallbackHostHandler implements HostHandler {
 	}
 
 	@Override
-	public Host get() {
+	public Host get(final HostHandle hostHandle) {
 		return current != lastSuccess || iterations < 3 ? current : null;
 	}
 
@@ -74,6 +75,19 @@ public class FallbackHostHandler implements HostHandler {
 			resolver.resolve(false, false);
 			firstOpened = false;
 		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		final List<Host> hosts = resolver.resolve(false, false);
+		for (final Host host : hosts) {
+			host.close();
+		}
+	}
+
+	@Override
+	public void closeCurrentOnError() {
+		current.closeOnError();
 	}
 
 }

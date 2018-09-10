@@ -20,9 +20,10 @@
 
 package com.arangodb.internal.net;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.arangodb.internal.util.HostUtils;
 
 /**
  * @author Mark Vollmary
@@ -33,11 +34,16 @@ public class ExtendedHostResolver implements HostResolver {
 	private static final long MAX_CACHE_TIME = 60 * 60 * 1000;
 	private EndpointResolver resolver;
 	private final List<Host> hosts;
+	private final Integer maxConnections;
+	private final ConnectionFactory connectionFactory;
 	private long lastUpdate;
 
-	public ExtendedHostResolver(final List<Host> hosts) {
+	public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
+		final ConnectionFactory connectionFactory) {
 		super();
-		this.hosts = new ArrayList<Host>(hosts);
+		this.hosts = hosts;
+		this.maxConnections = maxConnections;
+		this.connectionFactory = connectionFactory;
 		lastUpdate = 0;
 	}
 
@@ -58,7 +64,8 @@ public class ExtendedHostResolver implements HostResolver {
 				if (endpoint.matches(".*://.+:[0-9]+")) {
 					final String[] s = endpoint.replaceAll(".*://", "").split(":");
 					if (s.length == 2) {
-						hosts.add(new Host(s[0], Integer.valueOf(s[1])));
+						final HostDescription description = new HostDescription(s[0], Integer.valueOf(s[1]));
+						hosts.add(HostUtils.createHost(description, maxConnections, connectionFactory));
 					}
 				}
 			}

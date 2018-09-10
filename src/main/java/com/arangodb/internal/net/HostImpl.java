@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2017 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2018 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,51 +20,47 @@
 
 package com.arangodb.internal.net;
 
+import java.io.IOException;
+
+import com.arangodb.ArangoDBException;
+
 /**
  * @author Mark Vollmary
  *
  */
-public class DelHostHandler implements HostHandler {
+public class HostImpl implements Host {
 
-	private final HostHandler hostHandler;
-	private Host host;
+	private final ConnectionPool connectionPool;
+	private final HostDescription description;
 
-	public DelHostHandler(final HostHandler hostHandler, final Host host) {
+	public HostImpl(final ConnectionPool connectionPool, final HostDescription description) {
 		super();
-		this.hostHandler = hostHandler;
-		this.host = host != null ? host : hostHandler.get();
+		this.connectionPool = connectionPool;
+		this.description = description;
 	}
 
 	@Override
-	public Host get() {
-		return host != null ? host : hostHandler.get();
+	public void close() throws IOException {
+		connectionPool.close();
 	}
 
 	@Override
-	public void success() {
-		if (host == null) {
-			hostHandler.success();
+	public HostDescription getDescription() {
+		return description;
+	}
+
+	@Override
+	public Connection connection() {
+		return connectionPool.connection();
+	}
+
+	@Override
+	public void closeOnError() {
+		try {
+			connectionPool.close();
+		} catch (final IOException e) {
+			throw new ArangoDBException(e);
 		}
-	}
-
-	@Override
-	public void fail() {
-		if (host == null) {
-			hostHandler.fail();
-		} else {
-			host = null;
-		}
-	}
-
-	@Override
-	public void reset() {
-		host = null;
-		hostHandler.reset();
-	}
-
-	@Override
-	public void confirm() {
-		hostHandler.confirm();
 	}
 
 }

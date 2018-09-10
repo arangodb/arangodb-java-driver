@@ -20,17 +20,17 @@
 
 package com.arangodb.internal.http;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.net.SocketException;
 
-import javax.net.ssl.SSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.Protocol;
-import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.internal.net.ConnectionPool;
-import com.arangodb.internal.net.DelHostHandler;
 import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
@@ -42,112 +42,73 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class HttpCommunication {
+public class HttpCommunication implements Closeable {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
 
 	public static class Builder {
 
 		private final HostHandler hostHandler;
-		private final Protocol protocol;
-		private Integer timeout;
-		private Long connectionTtl;
-		private String user;
-		private String password;
-		private Boolean useSsl;
-		private SSLContext sslContext;
-		private Integer maxConnections;
 
-		public Builder(final HostHandler hostHandler, final Protocol protocol) {
+		public Builder(final HostHandler hostHandler) {
 			super();
 			this.hostHandler = hostHandler;
-			this.protocol = protocol;
 		}
 
 		public Builder(final Builder builder) {
-			this(builder.hostHandler, builder.protocol);
-			timeout(builder.timeout).user(builder.user).password(builder.password).useSsl(builder.useSsl)
-					.sslContext(builder.sslContext).maxConnections(builder.maxConnections);
-		}
-
-		public Builder timeout(final Integer timeout) {
-			this.timeout = timeout;
-			return this;
-		}
-
-		public Builder user(final String user) {
-			this.user = user;
-			return this;
-		}
-
-		public Builder password(final String password) {
-			this.password = password;
-			return this;
-		}
-
-		public Builder useSsl(final Boolean useSsl) {
-			this.useSsl = useSsl;
-			return this;
-		}
-
-		public Builder sslContext(final SSLContext sslContext) {
-			this.sslContext = sslContext;
-			return this;
-		}
-
-		public Builder maxConnections(final Integer maxConnections) {
-			this.maxConnections = maxConnections;
-			return this;
-		}
-
-		public Builder connectionTtl(final Long connectionTtl) {
-			this.connectionTtl = connectionTtl;
-			return this;
+			this(builder.hostHandler);
 		}
 
 		public HttpCommunication build(final ArangoSerialization util) {
-			return new HttpCommunication(timeout, user, password, useSsl, sslContext, util, hostHandler, maxConnections,
-					protocol, connectionTtl);
+			return new HttpCommunication(hostHandler);
 		}
 	}
 
-	private final ConnectionPool<HttpConnection> connectionPool;
+	private final HostHandler hostHandler;
 
-	private HttpCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
-		final Integer maxConnections, final Protocol contentType, final Long connectionTtl) {
+	private HttpCommunication(final HostHandler hostHandler) {
 		super();
-		connectionPool = new ConnectionPool<HttpConnection>(
-				maxConnections != null ? Math.max(1, maxConnections) : ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT) {
-			@Override
-			public HttpConnection createConnection(final Host host) {
-				return new HttpConnection(timeout, user, password, useSsl, sslContext, util,
-						new DelHostHandler(hostHandler, host), contentType, connectionTtl);
-			}
-		};
+		this.hostHandler = hostHandler;
 	}
 
-	public void disconnect() throws IOException {
-		connectionPool.disconnect();
+	@Override
+	public void close() throws IOException {
+		hostHandler.close();
 	}
 
 	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException, IOException {
-		final HttpConnection connection = connectionPool.connection(hostHandle);
+		Host host = hostHandler.get(hostHandle);
 		try {
-			return execute(request, connection);
+			while (true) {
+				try {
+					final HttpConnection connection = (HttpConnection) host.connection();
+					final Response response = connection.execute(request);
+					hostHandler.success();
+					hostHandler.confirm();
+					return response;
+				} catch (final SocketException se) {
+					hostHandler.fail();
+					final Host failedHost = host;
+					host = hostHandler.get(hostHandle);
+					if (host != null) {
+						LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s",
+							failedHost.getDescription(), host.getDescription()));
+					} else {
+						throw se;
+					}
+				}
+			}
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
 				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
-				final Host host = HostUtils.createFromLocation(location);
-				connectionPool.closeConnectionOnError(connection);
-				return execute(request, new HostHandle().setHost(host));
+				final HostDescription redirectHost = HostUtils.createFromLocation(location);
+				hostHandler.closeCurrentOnError();
+				hostHandler.fail();
+				return execute(request, new HostHandle().setHost(redirectHost));
 			} else {
 				throw e;
 			}
 		}
-	}
-
-	protected Response execute(final Request request, final HttpConnection connection)
-			throws ArangoDBException, IOException {
-		return connection.execute(request);
 	}
 
 }

@@ -26,15 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.net.ConnectionPool;
-import com.arangodb.internal.net.DelHostHandler;
-import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.internal.velocystream.internal.Message;
-import com.arangodb.internal.velocystream.internal.MessageStore;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
@@ -44,7 +39,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class VstCommunicationSync extends VstCommunication<Response, ConnectionSync> {
+public class VstCommunicationSync extends VstCommunication<Response, VstConnectionSync> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationSync.class);
 
@@ -111,7 +106,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 			return this;
 		}
 
-		public VstCommunication<Response, ConnectionSync> build(final ArangoSerialization util) {
+		public VstCommunication<Response, VstConnectionSync> build(final ArangoSerialization util) {
 			return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util, chunksize,
 					maxConnections, connectionTtl);
 		}
@@ -121,22 +116,11 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 	protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
 		final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
 		final Integer chunksize, final Integer maxConnections, final Long ttl) {
-		super(timeout, user, password, useSsl, sslContext, util, chunksize, new ConnectionPool<ConnectionSync>(
-				maxConnections != null ? Math.max(1, maxConnections) : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT) {
-			private final ConnectionSync.Builder builder = new ConnectionSync.Builder().timeout(timeout).ttl(ttl)
-					.useSsl(useSsl).sslContext(sslContext);
-
-			@Override
-			public ConnectionSync createConnection(final Host host) {
-				return builder.messageStore(new MessageStore()).hostHandler(new DelHostHandler(hostHandler, host))
-						.build();
-			}
-		});
+		super(timeout, user, password, useSsl, sslContext, util, chunksize, hostHandler);
 	}
 
 	@Override
-	protected Response execute(final Request request, final ConnectionSync connection) throws ArangoDBException {
-		connect(connection);
+	protected Response execute(final Request request, final VstConnectionSync connection) throws ArangoDBException {
 		try {
 			final Message requestMessage = createMessage(request);
 			final Message responseMessage = send(requestMessage, connection);
@@ -148,7 +132,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 		}
 	}
 
-	private Message send(final Message message, final ConnectionSync connection) throws ArangoDBException {
+	private Message send(final Message message, final VstConnectionSync connection) throws ArangoDBException {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
 				message.getBody() != null ? message.getBody() : "{}"));
@@ -157,7 +141,7 @@ public class VstCommunicationSync extends VstCommunication<Response, ConnectionS
 	}
 
 	@Override
-	protected void authenticate(final ConnectionSync connection) {
+	protected void authenticate(final VstConnectionSync connection) {
 		final Response response = execute(
 			new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN), connection);
 		checkError(response);

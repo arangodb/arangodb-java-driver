@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.Connection;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.HostDescription;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -61,7 +60,6 @@ public abstract class VstConnection implements Connection {
 	private ExecutorService executor;
 	protected final MessageStore messageStore;
 
-	private final HostHandler hostHandler;
 	private final Integer timeout;
 	private final Long ttl;
 	private final Boolean useSsl;
@@ -71,25 +69,17 @@ public abstract class VstConnection implements Connection {
 	private OutputStream outputStream;
 	private InputStream inputStream;
 
-	private Host host;
+	private final HostDescription host;
 
-	protected VstConnection(final HostHandler hostHandler, final Integer timeout, final Long ttl, final Boolean useSsl,
+	protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
 		super();
-		this.hostHandler = hostHandler;
+		this.host = host;
 		this.timeout = timeout;
 		this.ttl = ttl;
 		this.useSsl = useSsl;
 		this.sslContext = sslContext;
 		this.messageStore = messageStore;
-	}
-
-	@Override
-	public Host getHost() {
-		if (host == null) {
-			host = hostHandler.get();
-		}
-		return host;
 	}
 
 	public boolean isOpen() {
@@ -100,55 +90,34 @@ public abstract class VstConnection implements Connection {
 		if (isOpen()) {
 			return;
 		}
-		host = hostHandler.get();
-		while (true) {
-			if (host == null) {
-				hostHandler.reset();
-				throw new ArangoDBException("Was not able to connect to any host");
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Open connection to %s", host));
+		}
+		if (Boolean.TRUE == useSsl) {
+			if (sslContext != null) {
+				socket = sslContext.getSocketFactory().createSocket();
+			} else {
+				socket = SSLSocketFactory.getDefault().createSocket();
 			}
+		} else {
+			socket = SocketFactory.getDefault().createSocket();
+		}
+		socket.connect(new InetSocketAddress(host.getHost(), host.getPort()),
+			timeout != null ? timeout : ArangoDefaults.DEFAULT_TIMEOUT);
+		socket.setKeepAlive(true);
+		socket.setTcpNoDelay(true);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(String.format("Connected to %s", socket));
+		}
+
+		outputStream = new BufferedOutputStream(socket.getOutputStream());
+		inputStream = socket.getInputStream();
+
+		if (Boolean.TRUE == useSsl) {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(String.format("Open connection to %s", host));
+				LOGGER.debug(String.format("Start Handshake on %s", socket));
 			}
-			try {
-				if (Boolean.TRUE == useSsl) {
-					if (sslContext != null) {
-						socket = sslContext.getSocketFactory().createSocket();
-					} else {
-						socket = SSLSocketFactory.getDefault().createSocket();
-					}
-				} else {
-					socket = SocketFactory.getDefault().createSocket();
-				}
-				socket.connect(new InetSocketAddress(host.getHost(), host.getPort()),
-					timeout != null ? timeout : ArangoDefaults.DEFAULT_TIMEOUT);
-				socket.setKeepAlive(true);
-				socket.setTcpNoDelay(true);
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug(String.format("Connected to %s", socket));
-				}
-
-				outputStream = new BufferedOutputStream(socket.getOutputStream());
-				inputStream = socket.getInputStream();
-
-				if (Boolean.TRUE == useSsl) {
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug(String.format("Start Handshake on %s", socket));
-					}
-					((SSLSocket) socket).startHandshake();
-				}
-				hostHandler.success();
-				break;
-			} catch (final IOException e) {
-				hostHandler.fail();
-				final Host failedHost = host;
-				host = hostHandler.get();
-				if (host != null) {
-					LOGGER.warn(String.format("Could not connect to %s or SSL Handshake failed. Try connecting to %s",
-						failedHost, host));
-				} else {
-					throw e;
-				}
-			}
+			((SSLSocket) socket).startHandshake();
 		}
 		sendProtocolHeader();
 		executor = Executors.newSingleThreadExecutor();
@@ -161,7 +130,6 @@ public abstract class VstConnection implements Connection {
 				while (true) {
 					if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {
 						close();
-						hostHandler.reset();
 						break;
 					}
 					if (!isOpen()) {
@@ -189,10 +157,6 @@ public abstract class VstConnection implements Connection {
 		});
 	}
 
-	public void confirm() {
-		hostHandler.confirm();
-	}
-
 	@Override
 	public synchronized void close() {
 		messageStore.clear();
@@ -209,12 +173,6 @@ public abstract class VstConnection implements Connection {
 				throw new ArangoDBException(e);
 			}
 		}
-	}
-
-	@Override
-	public synchronized void closeOnError() {
-		hostHandler.fail();
-		close();
 	}
 
 	private synchronized void sendProtocolHeader() throws IOException {

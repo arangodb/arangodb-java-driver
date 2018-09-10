@@ -39,6 +39,8 @@ import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
+import com.arangodb.internal.http.HttpConnectionFactory;
+import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
@@ -47,6 +49,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
+import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -219,12 +222,8 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		}
 
 		/**
-		 * Sets the maximum number of connections the built in connection pool will open.
+		 * Sets the maximum number of connections the built in connection pool will open per host.
 		 * 
-		 * <p>
-		 * In an ArangoDB cluster setup with {@link LoadBalancingStrategy#ROUND_ROBIN} set, this value should be at
-		 * least as high as the number of ArangoDB coordinators in the cluster.
-		 * </p>
 		 * <p>
 		 * Defaults:
 		 * </p>
@@ -612,16 +611,23 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
 			final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
-			final HostResolver hostResolver = createHostResolver();
+			final int max = maxConnections != null ? Math.max(1, maxConnections)
+					: protocol == Protocol.VST ? ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT
+							: ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+
+			final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
+					? new VstConnectionFactorySync(host, timeout, connectionTtl, useSsl, sslContext)
+					: new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
+							connectionTtl);
+
+			final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
+				connectionFactory);
 			final HostHandler hostHandler = createHostHandler(hostResolver);
 			return new ArangoDBImpl(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
 							.connectionTtl(connectionTtl),
-					new HttpCommunication.Builder(hostHandler, protocol).timeout(timeout).user(user).password(password)
-							.useSsl(useSsl).sslContext(sslContext).maxConnections(maxConnections)
-							.connectionTtl(connectionTtl),
-					util, protocol, hostResolver, new ArangoContext());
+					new HttpCommunication.Builder(hostHandler), util, protocol, hostResolver, new ArangoContext());
 		}
 
 	}

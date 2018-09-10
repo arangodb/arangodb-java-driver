@@ -20,13 +20,15 @@
 
 package com.arangodb.internal.net;
 
+import java.io.IOException;
+
 /**
  * @author Mark Vollmary
  *
  */
 public interface HostHandler {
 
-	Host get();
+	Host get(HostHandle hostHandle);
 
 	void success();
 
@@ -36,4 +38,7 @@ public interface HostHandler {
 
 	void confirm();
 
+	void close() throws IOException;
+
+	void closeCurrentOnError();
 }

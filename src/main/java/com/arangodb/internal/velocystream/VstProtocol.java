@@ -25,7 +25,7 @@ import java.io.IOException;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.velocystream.internal.ConnectionSync;
+import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -35,9 +35,9 @@ import com.arangodb.velocystream.Response;
  */
 public class VstProtocol implements CommunicationProtocol {
 
-	private final VstCommunication<Response, ConnectionSync> communication;
+	private final VstCommunication<Response, VstConnectionSync> communication;
 
-	public VstProtocol(final VstCommunication<Response, ConnectionSync> communication) {
+	public VstProtocol(final VstCommunication<Response, VstConnectionSync> communication) {
 		super();
 		this.communication = communication;
 	}
@@ -49,7 +49,7 @@ public class VstProtocol implements CommunicationProtocol {
 
 	@Override
 	public void close() throws IOException {
-		communication.disconnect();
+		communication.close();
 	}
 
 }

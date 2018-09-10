@@ -73,14 +73,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
 				util, new DocumentCache()), util, context);
 		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
-			new HttpCommunication.Builder(httpBuilder).maxConnections(1), util.get(Serializer.INTERNAL), protocol);
+			new HttpCommunication.Builder(httpBuilder), util.get(Serializer.INTERNAL), protocol);
 		hostResolver.init(new EndpointResolver() {
 			@Override
 			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
 				Collection<String> response;
 				try {
-					response = executor.execute(
-						new Request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_ENDPOINTS),
+					response = executor.execute(new Request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_ENDPOINTS),
 						new ResponseDeserializer<Collection<String>>() {
 							@Override
 							public Collection<String> deserialize(final Response response) throws VPackException {

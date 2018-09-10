@@ -75,8 +75,7 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
@@ -96,25 +95,86 @@ public class HttpConnection implements Connection {
 	private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
 		"utf-8");
 	private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
+
+	public static class Builder {
+		private String user;
+		private String password;
+		private ArangoSerialization util;
+		private Boolean useSsl;
+		private Protocol contentType;
+		private HostDescription host;
+		private Long ttl;
+		private SSLContext sslContext;
+		private Integer timeout;
+
+		public Builder user(final String user) {
+			this.user = user;
+			return this;
+		}
+
+		public Builder password(final String password) {
+			this.password = password;
+			return this;
+		}
+
+		public Builder serializationUtil(final ArangoSerialization util) {
+			this.util = util;
+			return this;
+		}
+
+		public Builder useSsl(final Boolean useSsl) {
+			this.useSsl = useSsl;
+			return this;
+		}
+
+		public Builder contentType(final Protocol contentType) {
+			this.contentType = contentType;
+			return this;
+		}
+
+		public Builder host(final HostDescription host) {
+			this.host = host;
+			return this;
+		}
+
+		public Builder ttl(final Long ttl) {
+			this.ttl = ttl;
+			return this;
+		}
+
+		public Builder sslContext(final SSLContext sslContext) {
+			this.sslContext = sslContext;
+			return this;
+		}
+
+		public Builder timeout(final Integer timeout) {
+			this.timeout = timeout;
+			return this;
+		}
+
+		public HttpConnection build() {
+			return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl);
+		}
+	}
+
 	private final PoolingHttpClientConnectionManager cm;
 	private final CloseableHttpClient client;
 	private final String user;
 	private final String password;
 	private final ArangoSerialization util;
-	private final HostHandler hostHandler;
 	private final Boolean useSsl;
 	private final Protocol contentType;
-	private Host host;
+	private HostDescription host;
 
-	public HttpConnection(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final ArangoSerialization util, final HostHandler hostHandler,
-		final Protocol contentType, final Long ttl) {
+	private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
+		final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
+		final Long ttl) {
 		super();
+		this.host = host;
 		this.user = user;
 		this.password = password;
 		this.useSsl = useSsl;
 		this.util = util;
-		this.hostHandler = hostHandler;
 		this.contentType = contentType;
 		final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
 				.<ConnectionSocketFactory> create();
@@ -151,14 +211,6 @@ public class HttpConnection implements Connection {
 		client = builder.build();
 	}
 
-	@Override
-	public Host getHost() {
-		if (host == null) {
-			host = hostHandler.get();
-		}
-		return host;
-	}
-
 	private long getKeepAliveDuration(final HttpResponse response) {
 		final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
 		while (it.hasNext()) {
@@ -181,49 +233,22 @@ public class HttpConnection implements Connection {
 		client.close();
 	}
 
-	@Override
-	public void closeOnError() throws IOException {
-		hostHandler.fail();
-		close();
-	}
-
-	public Response execute(final Request request) throws ArangoDBException, IOException {
-		host = hostHandler.get();
-		while (true) {
-			if (host == null) {
-				hostHandler.reset();
-				throw new ArangoDBException("Was not able to connect to any host");
-			}
-			try {
-				final String url = buildUrl(buildBaseUrl(host), request);
-				final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
-				httpRequest.setHeader("User-Agent",
-					"Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-				if (contentType == Protocol.HTTP_VPACK) {
-					httpRequest.setHeader("Accept", "application/x-velocypack");
-				}
-				addHeader(request, httpRequest);
-				final Credentials credentials = addCredentials(httpRequest);
-				if (LOGGER.isDebugEnabled()) {
-					CURLLogger.log(url, request, credentials, util);
-				}
-				Response response;
-				response = buildResponse(client.execute(httpRequest));
-				checkError(response);
-				hostHandler.success();
-				hostHandler.confirm();
-				return response;
-			} catch (final SocketException e) {
-				hostHandler.fail();
-				final Host failedHost = host;
-				host = hostHandler.get();
-				if (host != null) {
-					LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s", failedHost, host));
-				} else {
-					throw e;
-				}
-			}
+	public Response execute(final Request request) throws ArangoDBException, IOException, SocketException {
+		final String url = buildUrl(buildBaseUrl(host), request);
+		final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
+		httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+		if (contentType == Protocol.HTTP_VPACK) {
+			httpRequest.setHeader("Accept", "application/x-velocypack");
 		}
+		addHeader(request, httpRequest);
+		final Credentials credentials = addCredentials(httpRequest);
+		if (LOGGER.isDebugEnabled()) {
+			CURLLogger.log(url, request, credentials, util);
+		}
+		Response response;
+		response = buildResponse(client.execute(httpRequest));
+		checkError(response);
+		return response;
 	}
 
 	private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
@@ -266,7 +291,7 @@ public class HttpConnection implements Connection {
 		return httpRequest;
 	}
 
-	private String buildBaseUrl(final Host host) {
+	private String buildBaseUrl(final HostDescription host) {
 		return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
 	}
 

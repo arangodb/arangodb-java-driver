@@ -29,34 +29,30 @@ import java.util.concurrent.FutureTask;
 import javax.net.ssl.SSLContext;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.HostDescription;
 
 /**
  * @author Mark Vollmary
  *
  */
-public class ConnectionSync extends VstConnection {
+public class VstConnectionSync extends VstConnection {
 
 	public static class Builder {
 
+		private HostDescription host;
 		private MessageStore messageStore;
-		private HostHandler hostHandler;
 		private Integer timeout;
 		private Long ttl;
 		private Boolean useSsl;
 		private SSLContext sslContext;
 
-		public Builder() {
-			super();
+		public Builder host(final HostDescription host) {
+			this.host = host;
+			return this;
 		}
 
 		public Builder messageStore(final MessageStore messageStore) {
 			this.messageStore = messageStore;
-			return this;
-		}
-
-		public Builder hostHandler(final HostHandler hostHandler) {
-			this.hostHandler = hostHandler;
 			return this;
 		}
 
@@ -80,14 +76,14 @@ public class ConnectionSync extends VstConnection {
 			return this;
 		}
 
-		public ConnectionSync build() {
-			return new ConnectionSync(hostHandler, timeout, ttl, useSsl, sslContext, messageStore);
+		public VstConnectionSync build() {
+			return new VstConnectionSync(host, timeout, ttl, useSsl, sslContext, messageStore);
 		}
 	}
 
-	private ConnectionSync(final HostHandler hostHandler, final Integer timeout, final Long ttl, final Boolean useSsl,
+	private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
-		super(hostHandler, timeout, ttl, useSsl, sslContext, messageStore);
+		super(host, timeout, ttl, useSsl, sslContext, messageStore);
 	}
 
 	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {

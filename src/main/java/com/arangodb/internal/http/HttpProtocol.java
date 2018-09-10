@@ -56,7 +56,7 @@ public class HttpProtocol implements CommunicationProtocol {
 
 	@Override
 	public void close() throws IOException {
-		httpCommunitaction.disconnect();
+		httpCommunitaction.close();
 	}
 
 }

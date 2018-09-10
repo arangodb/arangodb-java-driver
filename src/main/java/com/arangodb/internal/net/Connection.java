@@ -21,16 +21,11 @@
 package com.arangodb.internal.net;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * @author Mark Vollmary
  *
  */
 public interface Connection extends Closeable {
-
-	Host getHost();
-
-	void closeOnError() throws IOException;
 
 }
