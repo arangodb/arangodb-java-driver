@@ -8,7 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added dirty read support ([reading from followers](https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower)) for `ArangoDatabase#query` with option `AqlQueryOptions#allowDirtyRead`.
+- added dirty read support ([reading from followers](https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower))
+
+  - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument` and `ArangoCollection#getDocuments`
 
 ### Changed
 

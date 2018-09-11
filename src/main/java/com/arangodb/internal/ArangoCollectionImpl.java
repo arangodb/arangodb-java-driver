@@ -148,7 +148,14 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	@Override
 	public <T> MultiDocumentEntity<T> getDocuments(final Collection<String> keys, final Class<T> type)
 			throws ArangoDBException {
-		final DocumentReadOptions options = new DocumentReadOptions();
+		return getDocuments(keys, type, new DocumentReadOptions());
+	}
+
+	@Override
+	public <T> MultiDocumentEntity<T> getDocuments(
+		final Collection<String> keys,
+		final Class<T> type,
+		final DocumentReadOptions options) throws ArangoDBException {
 		return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type, options));
 	}
 

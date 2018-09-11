@@ -20,6 +20,8 @@
 
 package com.arangodb.model;
 
+import com.arangodb.velocypack.annotations.Expose;
+
 /**
  * @author Mark Vollmary
  * 
@@ -31,6 +33,8 @@ public class DocumentReadOptions {
 	private String ifNoneMatch;
 	private String ifMatch;
 	private boolean catchException;
+	@Expose(serialize = false)
+	private Boolean allowDirtyRead;
 
 	public DocumentReadOptions() {
 		super();
@@ -77,6 +81,23 @@ public class DocumentReadOptions {
 	public DocumentReadOptions catchException(final boolean catchException) {
 		this.catchException = catchException;
 		return this;
+	}
+
+	/**
+	 * @see <a href="https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower">API
+	 *      Documentation</a>
+	 * @param allowDirtyRead
+	 *            Set to {@code true} allows reading from followers in an active-failover setup.
+	 * @since ArangoDB 3.4.0
+	 * @return options
+	 */
+	public DocumentReadOptions allowDirtyRead(final Boolean allowDirtyRead) {
+		this.allowDirtyRead = allowDirtyRead;
+		return this;
+	}
+
+	public Boolean getAllowDirtyRead() {
+		return allowDirtyRead;
 	}
 
 }

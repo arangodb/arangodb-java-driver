@@ -215,6 +215,21 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	<T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type) throws ArangoDBException;
 
 	/**
+	 * Retrieves multiple documents with the given {@code _key} from the collection.
+	 * 
+	 * @param keys
+	 *            The keys of the documents
+	 * @param type
+	 *            The type of the documents (POJO class, VPackSlice or String for Json)
+	 * @param options
+	 *            Additional options, can be null
+	 * @return the documents and possible errors
+	 * @throws ArangoDBException
+	 */
+	<T> MultiDocumentEntity<T> getDocuments(Collection<String> keys, Class<T> type, DocumentReadOptions options)
+			throws ArangoDBException;
+
+	/**
 	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
 	 * precondition is violated
 	 * 

@@ -35,6 +35,10 @@ public final class RequestUtils {
 		super();
 	}
 
+	public static Request allowDirtyRead(final Request request) {
+		return request.putHeaderParam(HEADER_ALLOW_DIRTY_READ, "true");
+	}
+
 	public static AccessType determineAccessType(final Request request) {
 		if (request.getHeaderParam().containsKey(HEADER_ALLOW_DIRTY_READ)) {
 			return AccessType.DIRTY_READ;

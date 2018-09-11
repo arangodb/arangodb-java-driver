@@ -198,7 +198,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 			util().serialize(OptionsBuilder.build(opt, query, bindVars != null
 					? util().serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) : null)));
 		if (opt.getAllowDirtyRead() == Boolean.TRUE) {
-			request.putHeaderParam(RequestUtils.HEADER_ALLOW_DIRTY_READ, "true");
+			RequestUtils.allowDirtyRead(request);
 		}
 		return request;
 	}
