@@ -100,7 +100,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		if (params.getAllowDirtyRead()) {
+		if (params.getAllowDirtyRead() == Boolean.TRUE) {
 			RequestUtils.allowDirtyRead(request);
 		}
 		return request;
