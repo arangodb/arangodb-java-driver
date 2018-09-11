@@ -29,6 +29,7 @@ import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.DocumentUtil;
+import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.EdgeCreateOptions;
 import com.arangodb.model.EdgeDeleteOptions;
@@ -99,6 +100,9 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
+		if (params.getAllowDirtyRead()) {
+			RequestUtils.allowDirtyRead(request);
+		}
 		return request;
 	}
 

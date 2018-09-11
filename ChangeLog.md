@@ -11,7 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added dirty read support ([reading from followers](https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower))
 
   - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
-  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument` and `ArangoCollection#getDocuments`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocuments`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoVertexCollection#getVertex`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoEdgeCollection#getEdge`
 
 ### Changed
 
