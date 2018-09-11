@@ -37,9 +37,7 @@ public abstract class BaseTest {
 		return Arrays.asList(//
 			new ArangoDB.Builder().useProtocol(Protocol.VST), //
 			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK), //
-			new ArangoDB.Builder().useProtocol(Protocol.VST).serializer(new VelocyJack()), //
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).serializer(new VelocyJack()) //
+			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
 		);
 	}
 
