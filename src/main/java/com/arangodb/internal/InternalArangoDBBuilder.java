@@ -34,6 +34,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
+import com.arangodb.internal.net.DirtyReadHostHandler;
 import com.arangodb.internal.net.ExtendedHostResolver;
 import com.arangodb.internal.net.FallbackHostHandler;
 import com.arangodb.internal.net.Host;
@@ -213,7 +214,7 @@ public abstract class InternalArangoDBBuilder {
 		} else {
 			hostHandler = new FallbackHostHandler(hostResolver);
 		}
-		return hostHandler;
+		return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
 	}
 
 	private static void loadHosts(final Properties properties, final Collection<HostDescription> hosts) {

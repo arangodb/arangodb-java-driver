@@ -44,7 +44,7 @@ public class RandomHostHandler implements HostHandler {
 	}
 
 	@Override
-	public Host get(final HostHandle hostHandle) {
+	public Host get(final HostHandle hostHandle, AccessType accessType) {
 		if (current == null) {
 			origin = current = getRandomHost(false, true);
 		}
@@ -59,7 +59,7 @@ public class RandomHostHandler implements HostHandler {
 	@Override
 	public void fail() {
 		fallback.fail();
-		current = fallback.get(null);
+		current = fallback.get(null, null);
 	}
 
 	private Host getRandomHost(final boolean initial, final boolean closeConnections) {

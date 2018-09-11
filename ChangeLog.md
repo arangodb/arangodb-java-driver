@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Added
+
+- added dirty read support ([reading from followers](https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower))
+
+  - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocuments`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoVertexCollection#getVertex`
+  - added option `DocumentReadOptions#allowDirtyRead` for `ArangoEdgeCollection#getEdge`
+
 ### Changed
 
 - changed the internal connection pool and host management. There now exists a connection pool for every configured host. This changes the behavior of `ArangoDB.Builder#maxConnections` which now allows to configure the maximal number of connection per host and not overall.

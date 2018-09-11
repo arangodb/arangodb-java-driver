@@ -73,6 +73,7 @@ import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.DocumentReplaceOptions;
 import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -300,6 +301,14 @@ public class ArangoCollectionTest extends BaseTest {
 		db.collection(COLLECTION_NAME).getDocument("no/no", BaseDocument.class);
 	}
 
+	public void getDocumentDirtyRead() {
+		final BaseDocument doc = new BaseDocument();
+		db.collection(COLLECTION_NAME).insertDocument(doc);
+		final VPackSlice document = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), VPackSlice.class,
+			new DocumentReadOptions().allowDirtyRead(true));
+		assertThat(document, is(notNullValue()));
+	}
+
 	@Test
 	public void getDocuments() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
@@ -309,6 +318,23 @@ public class ArangoCollectionTest extends BaseTest {
 		db.collection(COLLECTION_NAME).insertDocuments(values);
 		final MultiDocumentEntity<BaseDocument> documents = db.collection(COLLECTION_NAME)
 				.getDocuments(Arrays.asList("1", "2", "3"), BaseDocument.class);
+		assertThat(documents, is(notNullValue()));
+		assertThat(documents.getDocuments().size(), is(3));
+		for (final BaseDocument document : documents.getDocuments()) {
+			assertThat(document.getId(),
+				isOneOf(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3"));
+		}
+	}
+
+	@Test
+	public void getDocumentsDirtyRead() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		values.add(new BaseDocument("1"));
+		values.add(new BaseDocument("2"));
+		values.add(new BaseDocument("3"));
+		db.collection(COLLECTION_NAME).insertDocuments(values);
+		final MultiDocumentEntity<BaseDocument> documents = db.collection(COLLECTION_NAME).getDocuments(
+			Arrays.asList("1", "2", "3"), BaseDocument.class, new DocumentReadOptions().allowDirtyRead(true));
 		assertThat(documents, is(notNullValue()));
 		assertThat(documents.getDocuments().size(), is(3));
 		for (final BaseDocument document : documents.getDocuments()) {

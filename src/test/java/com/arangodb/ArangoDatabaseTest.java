@@ -853,6 +853,19 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void queryAllowDirtyRead() throws IOException {
+		try {
+			db.createCollection(COLLECTION_NAME);
+			final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
+				new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(),
+				new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
+			cursor.close();
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+
+	@Test
 	public void explainQuery() {
 		final AqlExecutionExplainEntity explain = arangoDB.db().explainQuery("for i in 1..1 return i", null, null);
 		assertThat(explain, is(notNullValue()));

@@ -33,12 +33,14 @@ import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.Host;
 import com.arangodb.internal.util.HostUtils;
+import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
@@ -78,8 +80,8 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 	}
 
 	@SuppressWarnings("unchecked")
-	protected synchronized C connect(final HostHandle hostHandle) {
-		Host host = hostHandler.get(hostHandle);
+	protected synchronized C connect(final HostHandle hostHandle, final AccessType accessType) {
+		Host host = hostHandler.get(hostHandle, accessType);
 		while (true) {
 			if (host == null) {
 				hostHandler.reset();
@@ -100,7 +102,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 				} catch (final IOException e) {
 					hostHandler.fail();
 					final Host failedHost = host;
-					host = hostHandler.get(hostHandle);
+					host = hostHandler.get(hostHandle, accessType);
 					if (host != null) {
 						LOGGER.warn(
 							String.format("Could not connect to %s or SSL Handshake failed. Try connecting to %s",
@@ -123,7 +125,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 
 	public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
 		try {
-			final C connection = connect(hostHandle);
+			final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
 			return execute(request, connection);
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {

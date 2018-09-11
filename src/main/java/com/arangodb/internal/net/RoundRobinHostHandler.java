@@ -42,7 +42,7 @@ public class RoundRobinHostHandler implements HostHandler {
 	}
 
 	@Override
-	public Host get(final HostHandle hostHandle) {
+	public Host get(final HostHandle hostHandle, AccessType accessType) {
 		final List<Host> hosts = resolver.resolve(false, false);
 		final int size = hosts.size();
 		if (fails > size) {

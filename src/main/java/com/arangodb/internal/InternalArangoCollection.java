@@ -38,6 +38,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.DocumentUtil;
+import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.CollectionRenameOptions;
 import com.arangodb.model.DocumentCreateOptions;
@@ -221,13 +222,22 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
 		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
+		if (params.getAllowDirtyRead() == Boolean.TRUE) {
+			RequestUtils.allowDirtyRead(request);
+		}
 		return request;
 	}
 
 	protected Request getDocumentsRequest(final Collection<String> keys, final DocumentReadOptions options) {
-		return request(db.name(), RequestType.PUT, PATH_API_DOCUMENT, name).putQueryParam("onlyget", true)
-				.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, options.getIfNoneMatch())
-				.putHeaderParam(ArangoRequestParam.IF_MATCH, options.getIfMatch()).setBody(util().serialize(keys));
+		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
+		final Request request = request(db.name(), RequestType.PUT, PATH_API_DOCUMENT, name)
+				.putQueryParam("onlyget", true)
+				.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch())
+				.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch()).setBody(util().serialize(keys));
+		if (params.getAllowDirtyRead() == Boolean.TRUE) {
+			RequestUtils.allowDirtyRead(request);
+		}
+		return request;
 	}
 
 	protected <T> ResponseDeserializer<MultiDocumentEntity<T>> getDocumentsResponseDeserializer(
