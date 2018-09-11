@@ -180,6 +180,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void insertDocumentSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument(), new DocumentCreateOptions().silent(true));
 		assertThat(meta, is(notNullValue()));
@@ -190,6 +193,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void insertDocumentSilentDontTouchInstance() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final BaseDocument doc = new BaseDocument();
 		final String key = "testkey";
 		doc.setKey(key);
@@ -656,6 +662,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void updateDocumentSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument());
 		final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
@@ -807,6 +816,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void replaceDocumentSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument());
 		final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
@@ -819,6 +831,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void replaceDocumentSilentDontTouchInstance() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final BaseDocument doc = new BaseDocument();
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc);
 		final String revision = doc.getRevision();
@@ -882,6 +897,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void deleteDocumentSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument());
 		final DocumentDeleteEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
