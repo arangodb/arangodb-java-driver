@@ -28,12 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.net.AccessType;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
+import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
@@ -77,7 +79,8 @@ public class HttpCommunication implements Closeable {
 	}
 
 	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException, IOException {
-		Host host = hostHandler.get(hostHandle);
+		final AccessType accessType = RequestUtils.determineAccessType(request);
+		Host host = hostHandler.get(hostHandle, accessType);
 		try {
 			while (true) {
 				try {
@@ -89,7 +92,7 @@ public class HttpCommunication implements Closeable {
 				} catch (final SocketException se) {
 					hostHandler.fail();
 					final Host failedHost = host;
-					host = hostHandler.get(hostHandle);
+					host = hostHandler.get(hostHandle, accessType);
 					if (host != null) {
 						LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s",
 							failedHost.getDescription(), host.getDescription()));

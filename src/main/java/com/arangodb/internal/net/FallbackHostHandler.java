@@ -43,7 +43,7 @@ public class FallbackHostHandler implements HostHandler {
 	}
 
 	@Override
-	public Host get(final HostHandle hostHandle) {
+	public Host get(final HostHandle hostHandle, AccessType accessType) {
 		return current != lastSuccess || iterations < 3 ? current : null;
 	}
 

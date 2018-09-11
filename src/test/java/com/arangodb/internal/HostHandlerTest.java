@@ -79,26 +79,26 @@ public class HostHandlerTest {
 	@Test
 	public void fallbachHostHandlerSingleHost() {
 		final HostHandler handler = new FallbackHostHandler(SINGLE_HOST);
-		assertThat(handler.get(null), is(HOST_0));
+		assertThat(handler.get(null, null), is(HOST_0));
 		handler.fail();
-		assertThat(handler.get(null), is(HOST_0));
+		assertThat(handler.get(null, null), is(HOST_0));
 	}
 
 	@Test
 	public void fallbackHostHandlerMultipleHosts() {
 		final HostHandler handler = new FallbackHostHandler(MULTIPLE_HOSTS);
 		for (int i = 0; i < 3; i++) {
-			assertThat(handler.get(null), is(HOST_0));
+			assertThat(handler.get(null, null), is(HOST_0));
 			handler.fail();
-			assertThat(handler.get(null), is(HOST_1));
+			assertThat(handler.get(null, null), is(HOST_1));
 			handler.fail();
-			assertThat(handler.get(null), is(HOST_2));
+			assertThat(handler.get(null, null), is(HOST_2));
 			if (i < 2) {
 				handler.fail();
-				assertThat(handler.get(null), is(HOST_0));
+				assertThat(handler.get(null, null), is(HOST_0));
 			} else {
 				handler.fail();
-				assertThat(handler.get(null), is(nullValue()));
+				assertThat(handler.get(null, null), is(nullValue()));
 			}
 		}
 	}
@@ -106,42 +106,42 @@ public class HostHandlerTest {
 	@Test
 	public void randomHostHandlerSingleHost() {
 		final HostHandler handler = new RandomHostHandler(SINGLE_HOST, new FallbackHostHandler(SINGLE_HOST));
-		assertThat(handler.get(null), is(HOST_0));
+		assertThat(handler.get(null, null), is(HOST_0));
 		handler.fail();
-		assertThat(handler.get(null), is(HOST_0));
+		assertThat(handler.get(null, null), is(HOST_0));
 	}
 
 	@Test
 	public void randomHostHandlerMultipeHosts() {
 		final HostHandler handler = new RandomHostHandler(MULTIPLE_HOSTS, new FallbackHostHandler(MULTIPLE_HOSTS));
-		final Host pick0 = handler.get(null);
+		final Host pick0 = handler.get(null, null);
 		assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
 		handler.fail();
-		assertThat(handler.get(null), anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+		assertThat(handler.get(null, null), anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
 		handler.success();
-		assertThat(handler.get(null), is(pick0));
+		assertThat(handler.get(null, null), is(pick0));
 	}
 
 	@Test
 	public void roundRobinHostHandlerSingleHost() {
 		final HostHandler handler = new RoundRobinHostHandler(SINGLE_HOST);
-		assertThat(handler.get(null), is(HOST_0));
+		assertThat(handler.get(null, null), is(HOST_0));
 		handler.fail();
-		assertThat(handler.get(null), is(HOST_0));
+		assertThat(handler.get(null, null), is(HOST_0));
 	}
 
 	@Test
 	public void roundRobinHostHandlerMultipleHosts() {
 		final HostHandler handler = new RoundRobinHostHandler(MULTIPLE_HOSTS);
-		final Host pick0 = handler.get(null);
+		final Host pick0 = handler.get(null, null);
 		assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-		final Host pick1 = handler.get(null);
+		final Host pick1 = handler.get(null, null);
 		assertThat(pick1, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
 		assertThat(pick1, is(not(pick0)));
-		final Host pick2 = handler.get(null);
+		final Host pick2 = handler.get(null, null);
 		assertThat(pick2, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
 		assertThat(pick2, not(anyOf(is(pick0), is(pick1))));
-		final Host pick4 = handler.get(null);
+		final Host pick4 = handler.get(null, null);
 		assertThat(pick4, is(pick0));
 	}
 

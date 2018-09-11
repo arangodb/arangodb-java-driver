@@ -41,6 +41,7 @@ import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.ConnectionFactory;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
@@ -620,8 +621,8 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 					: new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
 							connectionTtl);
 
-			final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
-				connectionFactory);
+			final Collection<Host> hostList = createHostList(max, connectionFactory);
+			final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
 			final HostHandler hostHandler = createHostHandler(hostResolver);
 			return new ArangoDBImpl(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
