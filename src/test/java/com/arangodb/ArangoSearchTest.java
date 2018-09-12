@@ -27,17 +27,19 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.arangodb.ArangoDB.Builder;
+import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
+import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
@@ -54,8 +56,13 @@ public class ArangoSearchTest extends BaseTest {
 
 	public ArangoSearchTest(final Builder builder) {
 		super(builder);
-		if (requireVersion(3, 4)) {
-			db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+	}
+
+	@After
+	public void teardown() {
+		try {
+			db.view(VIEW_NAME).drop();
+		} catch (final ArangoDBException e) {
 		}
 	}
 
@@ -64,6 +71,7 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
+		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
 		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
 	}
 
@@ -72,6 +80,7 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
+		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
 		final ViewEntity info = db.arangoSearch(VIEW_NAME).getInfo();
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
@@ -84,24 +93,25 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_droptest";
-		db.createArangoSearch(name, new ArangoSearchCreateOptions());
-		final ArangoView view = db.arangoSearch(name);
+		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+		final ArangoView view = db.arangoSearch(VIEW_NAME);
 		view.drop();
 		assertThat(view.exists(), is(false));
 	}
 
 	@Test
 	public void rename() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_renametest";
-		final String newName = name + "_new";
+		final String name = VIEW_NAME + "_new";
 		db.createArangoSearch(name, new ArangoSearchCreateOptions());
-		db.arangoSearch(name).rename(newName);
+		db.arangoSearch(name).rename(VIEW_NAME);
 		assertThat(db.arangoSearch(name).exists(), is(false));
-		assertThat(db.arangoSearch(newName).exists(), is(true));
+		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
 	}
 
 	@Test
@@ -109,13 +119,12 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_createtest";
-		final ViewEntity info = db.arangoSearch(name).create();
+		final ViewEntity info = db.arangoSearch(VIEW_NAME).create();
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(name));
+		assertThat(info.getName(), is(VIEW_NAME));
 		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(db.arangoSearch(name).exists(), is(true));
+		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
 	}
 
 	@Test
@@ -123,14 +132,13 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_createtest";
 		final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
-		final ViewEntity info = db.arangoSearch(name).create(options);
+		final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(name));
+		assertThat(info.getName(), is(VIEW_NAME));
 		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(db.arangoSearch(name).exists(), is(true));
+		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
 	}
 
 	@Test
@@ -138,13 +146,12 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_getpropertiestest";
-		final ArangoSearch view = db.arangoSearch(name);
+		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
 		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesEntity properties = view.getProperties();
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getId(), is(not(nullValue())));
-		assertThat(properties.getName(), is(name));
+		assertThat(properties.getName(), is(VIEW_NAME));
 		assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
 		assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
@@ -160,8 +167,7 @@ public class ArangoSearchTest extends BaseTest {
 			return;
 		}
 		db.createCollection("view_update_prop_test_collection");
-		final String name = VIEW_NAME + "_updatepropertiestest";
-		final ArangoSearch view = db.arangoSearch(name);
+		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
 		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
 		options.cleanupIntervalStep(15L);
@@ -195,8 +201,7 @@ public class ArangoSearchTest extends BaseTest {
 			return;
 		}
 		db.createCollection("view_replace_prop_test_collection");
-		final String name = VIEW_NAME + "_updatepropertiestest";
-		final ArangoSearch view = db.arangoSearch(name);
+		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
 		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
 		options.link(
