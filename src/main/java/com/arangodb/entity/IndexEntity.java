@@ -31,7 +31,7 @@ public class IndexEntity implements Entity {
 	private String id;
 	private IndexType type;
 	private Collection<String> fields;
-	private Integer selectivityEstimate;
+	private Double selectivityEstimate;
 	private Boolean unique;
 	private Boolean sparse;
 	private Integer minLength;
@@ -56,7 +56,7 @@ public class IndexEntity implements Entity {
 		return fields;
 	}
 
-	public Integer getSelectivityEstimate() {
+	public Double getSelectivityEstimate() {
 		return selectivityEstimate;
 	}
 
