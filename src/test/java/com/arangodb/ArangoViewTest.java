@@ -25,11 +25,13 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.arangodb.ArangoDB.Builder;
+import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 
@@ -44,8 +46,13 @@ public class ArangoViewTest extends BaseTest {
 
 	public ArangoViewTest(final Builder builder) {
 		super(builder);
-		if (requireVersion(3, 4)) {
-			db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
+	}
+
+	@After
+	public void teardown() {
+		try {
+			db.view(VIEW_NAME).drop();
+		} catch (final ArangoDBException e) {
 		}
 	}
 
@@ -54,6 +61,7 @@ public class ArangoViewTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
+		db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
 		assertThat(db.view(VIEW_NAME).exists(), is(true));
 	}
 
@@ -62,6 +70,7 @@ public class ArangoViewTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
+		db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
 		final ViewEntity info = db.view(VIEW_NAME).getInfo();
 		assertThat(info, is(not(nullValue())));
 		assertThat(info.getId(), is(not(nullValue())));
@@ -74,24 +83,25 @@ public class ArangoViewTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_droptest";
-		db.createView(name, ViewType.ARANGO_SEARCH);
-		final ArangoView view = db.view(name);
+		db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
+		final ArangoView view = db.view(VIEW_NAME);
 		view.drop();
 		assertThat(view.exists(), is(false));
 	}
 
 	@Test
 	public void rename() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		final String name = VIEW_NAME + "_renametest";
-		final String newName = name + "_new";
+		final String name = VIEW_NAME + "_new";
 		db.createView(name, ViewType.ARANGO_SEARCH);
-		db.view(name).rename(newName);
+		db.view(name).rename(VIEW_NAME);
 		assertThat(db.view(name).exists(), is(false));
-		assertThat(db.view(newName).exists(), is(true));
+		assertThat(db.view(VIEW_NAME).exists(), is(true));
 	}
 
 }
