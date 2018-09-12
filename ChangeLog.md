@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [5.0.0-RC.1] - 2018-09-12
+
 ### Added
 
 - added dirty read support ([reading from followers](https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower))
@@ -891,7 +893,8 @@ Added support for sparse indexes
 
 - Initial Release
 
-[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.3...HEAD
+[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.0-RC.1...HEAD
+[5.0.0-rc.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.3...5.0.0-RC.1
 [4.7.3]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.2...4.7.3
 [4.7.2]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.1...4.7.2
 [4.7.1]: https://github.com/arangodb/arangodb-java-driver/compare/4.7.0...4.7.1
