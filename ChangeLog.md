@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed
+
+- upgraded dependency velocypack 1.4.0
+
+  - added support for generic types
+
+    Serialize the class name in a field \_class when necessary. Field name can be configured through VPack.Builder#typeKey(String)
+
 ## [5.0.0-RC.1] - 2018-09-12
 
 ### Added
