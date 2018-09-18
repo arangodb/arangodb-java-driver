@@ -4,7 +4,7 @@
 
 	<groupId>com.arangodb</groupId>
 	<artifactId>arangodb-java-driver</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.0.0</version>
 	<inceptionYear>2016</inceptionYear>
 	<packaging>jar</packaging>
 
@@ -23,7 +23,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j-api.version>1.7.13</slf4j-api.version>
-		<arangodb.velocypack.version>1.4.0</arangodb.velocypack.version>
+		<arangodb.velocypack.version>1.4.1</arangodb.velocypack.version>
 
 		<!-- provided -->
 		<httpclient.version>4.5.1</httpclient.version>
