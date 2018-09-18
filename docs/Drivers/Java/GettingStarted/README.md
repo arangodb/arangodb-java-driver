@@ -25,7 +25,7 @@ ArangoDB 3.x.x
   <dependency>
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>4.6.0</version>
+    <version>5.0.0</version>
   </dependency>
 </dependencies>
 ```
