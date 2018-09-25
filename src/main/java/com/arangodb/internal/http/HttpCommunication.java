@@ -91,6 +91,9 @@ public class HttpCommunication implements Closeable {
 					return response;
 				} catch (final SocketException se) {
 					hostHandler.fail();
+					if (hostHandle != null && hostHandle.getHost() != null) {
+						hostHandle.setHost(null);
+					}
 					final Host failedHost = host;
 					host = hostHandler.get(hostHandle, accessType);
 					if (host != null) {

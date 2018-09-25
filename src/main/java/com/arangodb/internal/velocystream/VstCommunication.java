@@ -101,6 +101,9 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 					return connection;
 				} catch (final IOException e) {
 					hostHandler.fail();
+					if (hostHandle != null && hostHandle.getHost() != null) {
+						hostHandle.setHost(null);
+					}
 					final Host failedHost = host;
 					host = hostHandler.get(hostHandle, accessType);
 					if (host != null) {

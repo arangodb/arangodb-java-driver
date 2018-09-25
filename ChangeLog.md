@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - fixed `ArangoCursor#next` when performing a dirty read
+- fixed connection stickiness
 
 ## [5.0.0] - 2018-09-18
 
