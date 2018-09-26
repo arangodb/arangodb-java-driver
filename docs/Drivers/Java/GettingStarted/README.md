@@ -4,6 +4,7 @@
 
 <table>
 <tr><th>arangodb-java-driver</th><th>ArangoDB</th><th>network protocol</th><th>Java version</th></tr>
+<tr><td>5.x.x+</td><td>3.0.0+</td><td>VelocyStream, HTTP</td><td>1.6+</td></tr>
 <tr><td>4.2.x+</td><td>3.0.0+</td><td>VelocyStream, HTTP</td><td>1.6+</td></tr>
 <tr><td>4.1.x</td><td>3.1.0+</td><td>VelocyStream</td><td>1.6+</td></tr>
 <tr><td>3.1.x</td><td>3.1.0+</td><td>HTTP</td><td>1.6+</td></tr>
