@@ -48,4 +48,9 @@ public class ArangoMappingIterator<R, T> implements ArangoIterator<T> {
 		return mapper.apply(iterator.next());
 	}
 
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
+
 }

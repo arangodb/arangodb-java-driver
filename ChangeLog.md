@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed
+
+- fixed compatibility of `ArangoCursor#filter` with Java 6
+
 ## [5.0.1] - 2018-09-25
 
 ### Fixed

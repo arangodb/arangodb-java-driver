@@ -66,4 +66,9 @@ public class ArangoFilterIterator<T> implements ArangoIterator<T> {
 		next = null;
 		return tmp;
 	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 }
