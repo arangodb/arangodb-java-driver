@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - fixed compatibility of `ArangoCursor#filter` with Java 6
+- fixed replace-insert with `DocumentCreateOptions#overwrite(Boolean)` for `ArangoCollection#insertDocuments`
 
 ## [5.0.1] - 2018-09-25
 

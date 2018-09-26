@@ -1218,6 +1218,8 @@ public class ArangoCollectionTest extends BaseTest {
 				.insertDocuments(Arrays.asList(doc1, doc2),
 					new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
 		assertThat(repsert, is(notNullValue()));
+		assertThat(repsert.getDocuments().size(), is(2));
+		assertThat(repsert.getErrors().size(), is(0));
 		for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
 			assertThat(documentCreateEntity.getRev(), is(not(meta1.getRev())));
 			assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));

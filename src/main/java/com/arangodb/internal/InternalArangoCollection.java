@@ -84,6 +84,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 	private static final String RETURN_NEW = "returnNew";
 	private static final String NEW = "new";
 	private static final String RETURN_OLD = "returnOld";
+	private static final String OVERWRITE = "overwrite";
 	private static final String OLD = "old";
 	private static final String SILENT = "silent";
 
@@ -111,7 +112,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 		request.putQueryParam(RETURN_NEW, params.getReturnNew());
 		request.putQueryParam(RETURN_OLD, params.getReturnOld());
 		request.putQueryParam(SILENT, params.getSilent());
-		request.putQueryParam("overwrite", params.getOverwrite());
+		request.putQueryParam(OVERWRITE, params.getOverwrite());
 		request.setBody(util(Serializer.CUSTOM).serialize(value));
 		return request;
 	}
@@ -149,7 +150,9 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 		final Request request = request(db.name(), RequestType.POST, PATH_API_DOCUMENT, name);
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putQueryParam(RETURN_NEW, params.getReturnNew());
+		request.putQueryParam(RETURN_OLD, params.getReturnOld());
 		request.putQueryParam(SILENT, params.getSilent());
+		request.putQueryParam(OVERWRITE, params.getOverwrite());
 		request.setBody(util(Serializer.CUSTOM).serialize(values,
 			new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
 		return request;
@@ -186,6 +189,10 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 						if (newDoc.isObject()) {
 							doc.setNew((T) util(Serializer.CUSTOM).deserialize(newDoc, type));
 						}
+						final VPackSlice oldDoc = next.get(OLD);
+						if (oldDoc.isObject()) {
+							doc.setOld((T) util(Serializer.CUSTOM).deserialize(oldDoc, type));
+						}
 						docs.add(doc);
 						documentsAndErrors.add(doc);
 					}
@@ -212,7 +219,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 		return request(db.name(), RequestType.POST, PATH_API_IMPORT).putQueryParam(COLLECTION, name)
 				.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync())
 				.putQueryParam("fromPrefix", params.getFromPrefix()).putQueryParam("toPrefix", params.getToPrefix())
-				.putQueryParam("overwrite", params.getOverwrite()).putQueryParam("onDuplicate", params.getOnDuplicate())
+				.putQueryParam(OVERWRITE, params.getOverwrite()).putQueryParam("onDuplicate", params.getOnDuplicate())
 				.putQueryParam("complete", params.getComplete()).putQueryParam("details", params.getDetails());
 	}
 
