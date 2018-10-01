@@ -76,8 +76,8 @@ Creates a skip-list index for the collection if it does not already exist.
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoCollection collection = db.collection("some-collection");
-
-IndexEntity index = collection.ensureSkipListIndex(Arrays.asList("a", "b.c"));
+SkiplistIndexOptions opts = new SkiplistIndexOptions();
+IndexEntity index = collection.ensureSkiplistIndex(Arrays.asList("a", "b.c"), opts);
 // the index has been created with the handle `index.getId()`
 ```
 
