@@ -123,7 +123,7 @@ The second load balancing strategy allows to pick a random host from the configu
 
 ## Connection time to live
 
-Since version 4.4 the driver supports setting a TTL for connections managed by the internal connection pool.
+Since version 4.4 the driver supports setting a TTL (time to life) in milliseconds for connections managed by the internal connection pool.
 
 ```Java
 ArangoDB arango = new ArangoDB.Builder().connectionTtl(5 * 60 * 1000).build();

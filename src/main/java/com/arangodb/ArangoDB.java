@@ -248,7 +248,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		 * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
 		 * 
 		 * @param connectionTtl
-		 *            the maximum time to life of a connection.
+		 *            the maximum time to life of a connection in milliseconds
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder connectionTtl(final Long connectionTtl) {
