@@ -60,7 +60,7 @@ public abstract class VstConnection implements Connection {
 	private ExecutorService executor;
 	protected final MessageStore messageStore;
 
-	private final Integer timeout;
+	protected final Integer timeout;
 	private final Long ttl;
 	private final Boolean useSsl;
 	private final SSLContext sslContext;

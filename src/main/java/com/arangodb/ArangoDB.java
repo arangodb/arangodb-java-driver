@@ -75,23 +75,23 @@ import com.arangodb.velocystream.Response;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
- * 
+ *
  * <p>
  * Will be instantiated through {@link ArangoDB.Builder}
  * </p>
- * 
+ *
  * <pre>
  * ArangoDB arango = new ArangoDB.Builder().build();
  * ArangoDB arango = new ArangoDB.Builder().host("127.0.0.1", 8529).build();
  * </pre>
- * 
+ *
  * @author Mark Vollmary
  */
 public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Builder class to build an instance of {@link ArangoDB}.
-	 * 
+	 *
 	 * @author Mark Vollmary
 	 */
 	public static class Builder extends InternalArangoDBBuilder {
@@ -129,7 +129,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Adds a host to connect to. Multiple hosts can be added to provide fallbacks.
-		 * 
+		 *
 		 * @param host
 		 *            address of the host
 		 * @param port
@@ -142,19 +142,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		}
 
 		/**
-		 * Sets the timeout in milliseconds.
-		 * 
-		 * <p>
-		 * For network protocol {@link Protocol#VST} it is used as socket timeout when opening a VecloyStream
-		 * connection.
-		 * </p>
-		 * <p>
-		 * For network protocol {@link Protocol#HTTP_JSON} and {@link Protocol#HTTP_VPACK} it is used as timeout for a
-		 * single request.
-		 * </p>
-		 * 
+		 * Sets the connection and request timeout in milliseconds.
+		 *
 		 * @param timeout
-		 *            timeout in milliseconds
+		 *          timeout in milliseconds
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder timeout(final Integer timeout) {
@@ -164,7 +155,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Sets the username to use for authentication.
-		 * 
+		 *
 		 * @param user
 		 *            the user in the database (default: {@code root})
 		 * @return {@link ArangoDB.Builder}
@@ -176,7 +167,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Sets the password for the user for authentication.
-		 * 
+		 *
 		 * @param password
 		 *            the password of the user in the database (default: {@code null})
 		 * @return {@link ArangoDB.Builder}
@@ -188,7 +179,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * If set to {@code true} SSL will be used when connecting to an ArangoDB server.
-		 * 
+		 *
 		 * @param useSsl
 		 *            whether or not use SSL (default: {@code false})
 		 * @return {@link ArangoDB.Builder}
@@ -200,7 +191,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Sets the SSL context to be used when {@code true} is passed through {@link #useSsl(Boolean)}.
-		 * 
+		 *
 		 * @param sslContext
 		 *            SSL context to be used
 		 * @return {@link ArangoDB.Builder}
@@ -212,7 +203,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Sets the chunk size when {@link Protocol#VST} is used.
-		 * 
+		 *
 		 * @param chunksize
 		 *            size of a chunk in bytes
 		 * @return {@link ArangoDB.Builder}
@@ -224,17 +215,17 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Sets the maximum number of connections the built in connection pool will open per host.
-		 * 
+		 *
 		 * <p>
 		 * Defaults:
 		 * </p>
-		 * 
+		 *
 		 * <pre>
 		 * {@link Protocol#VST} == 1
 		 * {@link Protocol#HTTP_JSON} == 20
 		 * {@link Protocol#HTTP_VPACK} == 20
 		 * </pre>
-		 * 
+		 *
 		 * @param maxConnections
 		 *            max number of connections
 		 * @return {@link ArangoDB.Builder}
@@ -246,7 +237,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Set the maximum time to life of a connection. After this time the connection will be closed automatically.
-		 * 
+		 *
 		 * @param connectionTtl
 		 *            the maximum time to life of a connection.
 		 * @return {@link ArangoDB.Builder}
@@ -259,11 +250,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
 		 * server with active failover.
-		 * 
+		 *
 		 * <p>
 		 * The host list will be used for failover and load balancing.
 		 * </p>
-		 * 
+		 *
 		 * @param acquireHostList
 		 *            whether or not automatically acquire a list of available hosts (default: false)
 		 * @return {@link ArangoDB.Builder}
@@ -275,7 +266,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
-		 * 
+		 *
 		 * @param loadBalancingStrategy
 		 *            the load balancing strategy to be used (default: {@link LoadBalancingStrategy#NONE}
 		 * @return {@link ArangoDB.Builder}
@@ -288,11 +279,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackSerializer} for a specific type to be used within the internal serialization
 		 * process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param clazz
 		 *            the type the serializer should be registered for
 		 * @param serializer
@@ -306,11 +297,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Register a special serializer for a member class which can only be identified by its enclosing class.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param clazz
 		 *            the type of the enclosing class
 		 * @param serializer
@@ -325,11 +316,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackDeserializer} for a specific type to be used within the internal serialization
 		 * process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param clazz
 		 *            the type the serializer should be registered for
 		 * @param deserializer
@@ -343,11 +334,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackInstanceCreator} for a specific type to be used within the internal
 		 * serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param clazz
 		 *            the type the instance creator should be registered for
 		 * @param creator
@@ -361,11 +352,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackJsonDeserializer} for a specific type to be used within the internal
 		 * serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param type
 		 *            the type the serializer should be registered for
 		 * @param deserializer
@@ -379,11 +370,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackJsonDeserializer} for a specific type and attribute name to be used within the
 		 * internal serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param attribute
 		 * @param type
 		 *            the type the serializer should be registered for
@@ -401,11 +392,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackJsonSerializer} for a specific type to be used within the internal
 		 * serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param clazz
 		 *            the type the serializer should be registered for
 		 * @param serializer
@@ -419,11 +410,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackJsonSerializer} for a specific type and attribute name to be used within the
 		 * internal serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param attribute
 		 * @param clazz
 		 *            the type the serializer should be registered for
@@ -441,11 +432,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackAnnotationFieldFilter} for a specific type to be used within the internal
 		 * serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param type
 		 *            the type the serializer should be registered for
 		 * @param fieldFilter
@@ -461,11 +452,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		/**
 		 * Register a custom {@link VPackAnnotationFieldNaming} for a specific type to be used within the internal
 		 * serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param type
 		 *            the type the serializer should be registered for
 		 * @param fieldNaming
@@ -480,11 +471,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Register a {@link VPackModule} to be used within the internal serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
-		 * 
+		 *
 		 * @param module
 		 *            module to register
 		 * @return {@link ArangoDB.Builder}
@@ -496,7 +487,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Register a list of {@link VPackModule} to be used within the internal serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
@@ -512,7 +503,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Register a {@link VPackParserModule} to be used within the internal serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
@@ -528,7 +519,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Register a list of {@link VPackParserModule} to be used within the internal serialization process.
-		 * 
+		 *
 		 * <p>
 		 * <strong>Attention:</strong>can not be used together with {@link #serializer(ArangoSerialization)}
 		 * </p>
@@ -544,10 +535,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Replace the built-in serializer with the given serializer.
-		 * 
+		 *
 		 * <br />
 		 * <b>ATTENTION!:</b> Use at your own risk
-		 * 
+		 *
 		 * @param serializer
 		 *            custom serializer
 		 * @deprecated use {@link #serializer(ArangoSerialization)} instead
@@ -561,10 +552,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Replace the built-in deserializer with the given deserializer.
-		 * 
+		 *
 		 * <br />
 		 * <b>ATTENTION!:</b> Use at your own risk
-		 * 
+		 *
 		 * @param deserializer
 		 *            custom deserializer
 		 * @deprecated use {@link #serializer(ArangoSerialization)} instead
@@ -578,10 +569,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Replace the built-in serializer/deserializer with the given one.
-		 * 
+		 *
 		 * <br />
 		 * <b>ATTENTION!:</b> Any registered custom serializer/deserializer or module will be ignored.
-		 * 
+		 *
 		 * @param serialization
 		 *            custom serializer/deserializer
 		 * @return {@link ArangoDB.Builder}
@@ -593,7 +584,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 		/**
 		 * Returns an instance of {@link ArangoDB}.
-		 * 
+		 *
 		 * @return {@link ArangoDB}
 		 */
 		public synchronized ArangoDB build() {
@@ -635,21 +626,21 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Releases all connections to the server and clear the connection pool.
-	 * 
+	 *
 	 * @throws ArangoDBException
 	 */
 	void shutdown() throws ArangoDBException;
 
 	/**
 	 * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
-	 * 
+	 *
 	 * @return database handler
 	 */
 	ArangoDatabase db();
 
 	/**
 	 * Returns a {@code ArangoDatabase} instance for the given database name.
-	 * 
+	 *
 	 * @param name
 	 *            Name of the database
 	 * @return database handler
@@ -658,7 +649,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a new database with the given name.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
 	 *      Documentation</a>
 	 * @param name
@@ -670,7 +661,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieves a list of all existing databases
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-databases">API
 	 *      Documentation</a>
 	 * @return a list of all existing databases
@@ -680,7 +671,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieves a list of all databases the current user can access
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
 	 *      Documentation</a>
@@ -691,7 +682,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * List available database to the specified user
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-the-databases-available-to-a-user">API
 	 *      Documentation</a>
@@ -704,7 +695,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Returns the server name and version number.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
 	 *      Documentation</a>
 	 * @return the server version, number
@@ -714,7 +705,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Returns the server role.
-	 * 
+	 *
 	 * @return the server role
 	 * @throws ArangoDBException
 	 */
@@ -723,7 +714,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
 	 * order to execute this call.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
@@ -737,7 +728,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
 	 * order to execute this call.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
@@ -752,7 +743,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Removes an existing user, identified by user. You need access to the _system database.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#remove-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
@@ -763,7 +754,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
 	 * _system database in order to execute this call.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#fetch-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
@@ -774,7 +765,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-available-users">API
 	 *      Documentation</a>
 	 * @return informations about all users
@@ -785,7 +776,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
 	 * only change the password of your self. You need access to the _system database to change the active flag.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#update-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
@@ -799,7 +790,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
 	 * change the password of your self. You need access to the _system database to change the active flag.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#replace-user">API
 	 *      Documentation</a>
 	 * @param user
@@ -814,7 +805,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Sets the default access level for databases for the user {@code user}. You need permission to the _system
 	 * database in order to execute this call.
-	 * 
+	 *
 	 * @param user
 	 *            The name of the user
 	 * @param permissions
@@ -827,7 +818,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Sets the default access level for collections for the user {@code user}. You need permission to the _system
 	 * database in order to execute this call.
-	 * 
+	 *
 	 * @param user
 	 *            The name of the user
 	 * @param permissions
@@ -839,7 +830,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Generic Execute. Use this method to execute custom FOXX services.
-	 * 
+	 *
 	 * @param request
 	 *            VelocyStream request
 	 * @return VelocyStream response
@@ -849,7 +840,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Generic Execute. Use this method to execute custom FOXX services.
-	 * 
+	 *
 	 * @param request
 	 *            VelocyStream request
 	 * @param hostHandle
@@ -861,7 +852,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Returns fatal, error, warning or info log messages from the server's global log.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
 	 *      Documentation</a>
@@ -874,7 +865,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Returns the server's current loglevel settings.
-	 * 
+	 *
 	 * @return the server's current loglevel settings
 	 * @since ArangoDB 3.1.0
 	 * @throws ArangoDBException
@@ -883,7 +874,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * Modifies and returns the server's current loglevel settings.
-	 * 
+	 *
 	 * @param entity
 	 *            loglevel settings
 	 * @return the server's current loglevel settings
@@ -894,7 +885,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
 	 * <strong>Attention:</strong> Please do not use!
-	 * 
+	 *
 	 * @param cursorInitializer
 	 * @return ArangoDB
 	 */
