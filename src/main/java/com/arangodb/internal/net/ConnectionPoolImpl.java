@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arangodb.internal.util.IOUtils;
+
 /**
  * @author Mark Vollmary
  *
@@ -68,7 +70,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 	@Override
 	public void close() throws IOException {
 		for (final Connection connection : connections) {
-			connection.close();
+			IOUtils.closeQuietly(connection);
 		}
 		connections.clear();
 	}

@@ -23,6 +23,7 @@ package com.arangodb.internal.net;
 import java.io.IOException;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.util.IOUtils;
 
 /**
  * @author Mark Vollmary
@@ -42,6 +43,12 @@ public class HostImpl implements Host {
 	@Override
 	public void close() throws IOException {
 		connectionPool.close();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		IOUtils.closeQuietly(connectionPool);
 	}
 
 	@Override
