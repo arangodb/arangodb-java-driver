@@ -59,11 +59,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			connections.add(connection);
 			current++;
 		} else {
-			current++;
 			if (current < 0) {
 				current = 0;
 			}
 			final int index = current % connections.size();
+			current++;
 			connection = connections.get(index);
 		}
 		return connection;
