@@ -124,17 +124,20 @@ public abstract class VstConnection implements Connection {
 		executor.submit(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				LOGGER.warn("started reader thread for {}", VstConnection.this);
 				final long openTime = new Date().getTime();
 				final Long ttlTime = ttl != null ? openTime + ttl : null;
 				final ChunkStore chunkStore = new ChunkStore(messageStore);
 				while (true) {
 					if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {
 						close();
+						LOGGER.warn("reader thread for {} exiting due to ttl reached", VstConnection.this);
 						break;
 					}
 					if (!isOpen()) {
 						messageStore.clear(new IOException("The socket is closed."));
 						close();
+						LOGGER.warn("reader thread for {} exiting due to socket closed", VstConnection.this);
 						break;
 					}
 					try {
@@ -149,6 +152,7 @@ public abstract class VstConnection implements Connection {
 					} catch (final Exception e) {
 						messageStore.clear(e);
 						close();
+						LOGGER.warn("reader thread for {} exiting due to read error: {}", VstConnection.this, e.getMessage());
 						break;
 					}
 				}

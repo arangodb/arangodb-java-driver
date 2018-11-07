@@ -31,6 +31,8 @@ import com.arangodb.internal.util.IOUtils;
  */
 public class HostImpl implements Host {
 
+	private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HostImpl.class);
+
 	private final ConnectionPool connectionPool;
 	private final HostDescription description;
 
@@ -42,13 +44,15 @@ public class HostImpl implements Host {
 
 	@Override
 	public void close() throws IOException {
-		connectionPool.close();
+		IOUtils.closeQuietly(connectionPool);
+		LOGGER.warn("HostImpl {} being closed", this);
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		IOUtils.closeQuietly(connectionPool);
+		close();
+		LOGGER.warn("HostImpl {} finalize() called", this);
 	}
 
 	@Override

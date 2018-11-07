@@ -49,10 +49,10 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		connections = new ArrayList<Connection>();
 		current = 0;
 
-		if (LOGGER.isInfoEnabled()) {
+		if (LOGGER.isWarnEnabled()) {
 			// instantiate an exception so we know the stacktrace to know the instances when this is invoked
 			Exception ex = new RuntimeException();
-			LOGGER.info("Instantiated a connection pool\n", ex);
+			LOGGER.warn("Instantiated a connection pool {}\n", this, ex);
 		}
 	}
 
@@ -81,6 +81,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			IOUtils.closeQuietly(connection);
 		}
 		connections.clear();
+		LOGGER.warn("connection pool {} is closing", this);
 	}
 
 }
