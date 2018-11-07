@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.arangodb.internal.util.HostUtils;
+import com.arangodb.internal.util.IOUtils;
 
 /**
  * @author Mark Vollmary
@@ -58,6 +59,9 @@ public class ExtendedHostResolver implements HostResolver {
 			lastUpdate = System.currentTimeMillis();
 			final Collection<String> endpoints = resolver.resolve(closeConnections);
 			if (!endpoints.isEmpty()) {
+				for(Host h : hosts) {
+					IOUtils.closeQuietly(h);
+				}
 				hosts.clear();
 			}
 			for (final String endpoint : endpoints) {

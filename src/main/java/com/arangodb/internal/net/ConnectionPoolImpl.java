@@ -32,8 +32,6 @@ import com.arangodb.internal.util.IOUtils;
  */
 public class ConnectionPoolImpl implements ConnectionPool {
 
-	private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ConnectionPoolImpl.class);
-
 	private final HostDescription host;
 	private final int maxConnections;
 	private final List<Connection> connections;
@@ -48,12 +46,6 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		this.factory = factory;
 		connections = new ArrayList<Connection>();
 		current = 0;
-
-		if (LOGGER.isWarnEnabled()) {
-			// instantiate an exception so we know the stacktrace to know the instances when this is invoked
-			Exception ex = new RuntimeException();
-			LOGGER.warn("Instantiated a connection pool {}\n", this, ex);
-		}
 	}
 
 	@Override
@@ -81,7 +73,6 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			IOUtils.closeQuietly(connection);
 		}
 		connections.clear();
-		LOGGER.warn("connection pool {} is closing", this);
 	}
 
 }
