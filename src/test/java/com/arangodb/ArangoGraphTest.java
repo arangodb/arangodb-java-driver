@@ -29,6 +29,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.junit.After;
@@ -255,4 +256,31 @@ public class ArangoGraphTest extends BaseTest {
 			assertThat(graph.getNumberOfShards(), is(2));
 		}
 	}
+
+	@Test
+	public void drop() {
+		final String edgeCollection = "edge_drop";
+		final String vertexCollection = "vertex_drop";
+		final String graph = GRAPH_NAME + "_drop";
+		final GraphEntity result = db.graph(graph).create(Collections
+				.singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)));
+		assertThat(result, is(notNullValue()));
+		db.graph(graph).drop();
+		assertThat(db.collection(edgeCollection).exists(), is(true));
+		assertThat(db.collection(vertexCollection).exists(), is(true));
+	}
+
+	@Test
+	public void dropPlusDropCollections() {
+		final String edgeCollection = "edge_dropC";
+		final String vertexCollection = "vertex_dropC";
+		final String graph = GRAPH_NAME + "_dropC";
+		final GraphEntity result = db.graph(graph).create(Collections
+				.singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)));
+		assertThat(result, is(notNullValue()));
+		db.graph(graph).drop(true);
+		assertThat(db.collection(edgeCollection).exists(), is(false));
+		assertThat(db.collection(vertexCollection).exists(), is(false));
+	}
+
 }
