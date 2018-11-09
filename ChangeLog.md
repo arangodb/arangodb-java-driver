@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed
+
+- changed `ArangoDB#timeout` to also set the request timeout when using VelocyStream (issue #230)
+
 ### Fixed
 
 - fixed compatibility of `ArangoCursor#filter` with Java 6
