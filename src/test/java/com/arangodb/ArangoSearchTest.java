@@ -172,7 +172,7 @@ public class ArangoSearchTest extends BaseTest {
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
 		options.cleanupIntervalStep(15L);
 		options.consolidationIntervalMsec(65000L);
-		options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.COUNT).threshold(1.));
+		options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.));
 		options.link(
 			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
 					.trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
@@ -182,7 +182,7 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(properties.getConsolidationIntervalMsec(), is(65000L));
 		final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
 		assertThat(consolidate, is(not(nullValue())));
-		assertThat(consolidate.getType(), is(ConsolidationType.COUNT));
+		assertThat(consolidate.getType(), is(ConsolidationType.BYTES_ACCUM));
 		assertThat(consolidate.getThreshold(), is(1.));
 		assertThat(properties.getLinks().size(), is(1));
 		final CollectionLink link = properties.getLinks().iterator().next();
