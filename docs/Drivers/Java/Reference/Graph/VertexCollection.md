@@ -48,7 +48,8 @@ Collection<String> collections = graph.getVertexCollections();
 ArangoGraph.addVertexCollection(String name) : GraphEntity
 ```
 
-Adds a vertex collection to the set of collections of the graph. If the collection does not exist, it will be created.
+Adds a vertex collection to the set of collections of the graph.
+If the collection does not exist, it will be created.
 
 **Arguments**
 
