@@ -99,7 +99,9 @@ Creates a geo index for the collection if it does not already exist.
 
   - **geoJson**: `Boolean`
 
-    If a geo-spatial index on a location is constructed and geoJson is true, then the order within the array is longitude followed by latitude. This corresponds to the format described in.
+    If a geo-spatial index on a location is constructed and geoJson is true,
+    then the order within the array is longitude followed by latitude.
+    This corresponds to the format described in.
 
 **Examples**
 
@@ -130,7 +132,9 @@ Creates a fulltext index for the collection if it does not already exist.
 
   - **minLength**: `Integer`
 
-    Minimum character length of words to index. Will default to a server-defined value if unspecified. It is thus recommended to set this value explicitly when creating the index.
+    Minimum character length of words to index. Will default to a server-defined
+    value if unspecified. It is thus recommended to set this value explicitly
+    when creating the index.
 
 **Examples**
 
