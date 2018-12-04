@@ -6,7 +6,7 @@
 ArangoVertexCollection.getVertex(String key, Class<T> type, DocumentReadOptions options) : T
 ```
 
-Retrieves the vertex document with the given <code>key</code> from the collection.
+Retrieves the vertex document with the given `key` from the collection.
 
 **Arguments**
 
@@ -44,7 +44,7 @@ Creates a new vertex in the collection.
 
 - **value**: `T`
 
-  A representation of a single vertex (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single vertex (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `VertexCreateOptions`
 
@@ -71,7 +71,8 @@ collection.insertVertex(document, new VertexCreateOptions());
 ArangoVertexCollection.replaceVertex(String key, T value, VertexReplaceOptions options) : VertexUpdateEntity
 ```
 
-Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is violated.
+Replaces the vertex with key with the one in the body, provided there is such
+a vertex and no precondition is violated.
 
 **Arguments**
 
@@ -81,7 +82,7 @@ Replaces the vertex with key with the one in the body, provided there is such a 
 
 - **value**: `T`
 
-  A representation of a single vertex (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single vertex (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `VertexReplaceOptions`
 
@@ -111,7 +112,8 @@ collection.replaceVertex("some-key", document, new VertexReplaceOptions());
 ArangoVertexCollection.updateVertex(String key, T value, VertexUpdateOptions options) : VertexUpdateEntity
 ```
 
-Updates the vertex with key with the one in the body, provided there is such a vertex and no precondition is violated.
+Updates the vertex with key with the one in the body, provided there is such
+a vertex and no precondition is violated.
 
 **Arguments**
 
@@ -121,7 +123,7 @@ Updates the vertex with key with the one in the body, provided there is such a v
 
 - **value**: `T`
 
-  A representation of a single vertex (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single vertex (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `VertexUpdateOptions`
 
@@ -135,7 +137,11 @@ Updates the vertex with key with the one in the body, provided there is such a v
 
   - **keepNull**: `Boolean`
 
-    If the intention is to delete existing attributes with the patch command, the URL query parameter keepNull can be used with a value of false. This will modify the behavior of the patch command to remove any attributes from the existing document that are contained in the patch document with an attribute value of null.
+    If the intention is to delete existing attributes with the patch command,
+    the URL query parameter keepNull can be used with a value of false.
+    This will modify the behavior of the patch command to remove any attributes
+    from the existing document that are contained in the patch document with
+    an attribute value of null.
 
 **Examples**
 
