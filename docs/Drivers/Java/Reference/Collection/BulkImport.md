@@ -5,13 +5,9 @@ This function implements the
 
 ## ArangoCollection.importDocuments
 
-```
-ArangoCollection.importDocuments(Collection<?> values, DocumentImportOptions options) : DocumentImportEntity
-```
+`ArangoCollection.importDocuments(Collection<?> values, DocumentImportOptions options) : DocumentImportEntity`
 
-```
-ArangoCollection.importDocuments(String values, DocumentImportOptions options) : DocumentImportEntity
-```
+`ArangoCollection.importDocuments(String values, DocumentImportOptions options) : DocumentImportEntity`
 
 Bulk imports the given values into the collection.
 
