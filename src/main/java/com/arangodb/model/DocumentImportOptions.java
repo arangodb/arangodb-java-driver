@@ -79,7 +79,7 @@ public class DocumentImportOptions {
 	/**
 	 * @param overwrite
 	 *            If this parameter has a value of true, then all data in the collection will be removed prior to the
-	 *            import. Note that any existing index definitions will be preseved.
+	 *            import. Note that any existing index definitions will be preserved.
 	 * @return options
 	 */
 	public DocumentImportOptions overwrite(final Boolean overwrite) {
@@ -113,7 +113,7 @@ public class DocumentImportOptions {
 	 *            This is the default setting.</li>
 	 *            <li>update: this will update an existing document in the database with the data specified in the
 	 *            request. Attributes of the existing document that are not present in the request will be
-	 *            preseved.</li>
+	 *            preserved.</li>
 	 *            <li>replace: this will replace an existing document in the database with the data specified in the
 	 *            request.</li>
 	 *            <li>ignore: this will not update an existing document and simply ignore the error caused by the unique
