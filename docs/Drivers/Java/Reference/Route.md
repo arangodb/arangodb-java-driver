@@ -1,6 +1,8 @@
 # Route API
 
-_ArangoRoute_ instances provide access for arbitrary HTTP requests. This allows easy access to Foxx services and other HTTP APIs not covered by the driver itself.
+_ArangoRoute_ instances provide access for arbitrary HTTP requests.
+This allows easy access to Foxx services and other HTTP APIs not covered
+by the driver itself.
 
 ## ArangoRoute.route
 
@@ -8,7 +10,8 @@ _ArangoRoute_ instances provide access for arbitrary HTTP requests. This allows 
 ArangoRoute.route(String... path) : ArangoRoute
 ```
 
-Returns a new _ArangoRoute_ instance for the given path (relative to the current route) that can be used to perform arbitrary requests.
+Returns a new _ArangoRoute_ instance for the given path (relative to the
+current route) that can be used to perform arbitrary requests.
 
 **Arguments**
 
