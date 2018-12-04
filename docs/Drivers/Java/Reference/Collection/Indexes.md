@@ -5,9 +5,7 @@ These functions implement the
 
 ## ArangoCollection.ensureHashIndex
 
-```
-ArangoCollection.ensureHashIndex(Iterable<String> fields, HashIndexOptions options) : IndexEntity
-```
+`ArangoCollection.ensureHashIndex(Iterable<String> fields, HashIndexOptions options) : IndexEntity`
 
 Creates a hash index for the collection if it does not already exist.
 
@@ -29,7 +27,7 @@ Creates a hash index for the collection if it does not already exist.
 
   - **deduplicate**: `Boolean`
 
-    If false, the deduplication of array values is turned off.
+    If false, the de-duplication of array values is turned off.
 
 **Examples**
 
@@ -44,9 +42,7 @@ IndexEntity index = collection.ensureHashIndex(Arrays.asList("a", "b.c"));
 
 ## ArangoCollection.ensureSkipListIndex
 
-```
-ArangoCollection.ensureSkipListIndex(Iterable<String> fields, SkipListIndexOptions options) : IndexEntity
-```
+`ArangoCollection.ensureSkipListIndex(Iterable<String> fields, SkipListIndexOptions options) : IndexEntity`
 
 Creates a skip-list index for the collection if it does not already exist.
 
@@ -68,7 +64,7 @@ Creates a skip-list index for the collection if it does not already exist.
 
   - **deduplicate**: `Boolean`
 
-    If false, the deduplication of array values is turned off.
+    If false, the de-duplication of array values is turned off.
 
 **Examples**
 
@@ -77,15 +73,15 @@ ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoCollection collection = db.collection("some-collection");
 
-IndexEntity index = collection.ensureSkipListIndex(Arrays.asList("a", "b.c"));
+IndexEntity index = collection.ensureSkipListIndex(
+  Arrays.asList("a", "b.c")
+);
 // the index has been created with the handle `index.getId()`
 ```
 
 ## ArangoCollection.ensureGeoIndex
 
-```
-ArangoCollection.ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options) : IndexEntity
-```
+`ArangoCollection.ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options) : IndexEntity`
 
 Creates a geo index for the collection if it does not already exist.
 
@@ -110,15 +106,15 @@ ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoCollection collection = db.collection("some-collection");
 
-IndexEntity index = collection.ensureGeoIndex(Arrays.asList("latitude", "longitude"));
+IndexEntity index = collection.ensureGeoIndex(
+  Arrays.asList("latitude", "longitude")
+);
 // the index has been created with the handle `index.getId()`
 ```
 
 ## ArangoCollection.ensureFulltextIndex
 
-```
-ArangoCollection.ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) : IndexEntity
-```
+`ArangoCollection.ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) : IndexEntity`
 
 Creates a fulltext index for the collection if it does not already exist.
 
@@ -143,15 +139,15 @@ ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoCollection collection = db.collection("some-collection");
 
-IndexEntity index = collection.ensureFulltextIndex(Arrays.asList("description"));
+IndexEntity index = collection.ensureFulltextIndex(
+  Arrays.asList("description")
+);
 // the index has been created with the handle `index.getId()`
 ```
 
 ## ArangoCollection.ensurePersistentIndex
 
-```
-ArangoCollection.ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) : IndexEntity
-```
+`ArangoCollection.ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) : IndexEntity`
 
 Creates a persistent index for the collection if it does not already exist.
 
@@ -184,9 +180,7 @@ IndexEntity index = collection.ensurePersistentIndex(Arrays.asList("a", "b.c"));
 
 ## ArangoCollection.getIndex
 
-```
-ArangoCollection.getIndex(String id) : IndexEntity
-```
+`ArangoCollection.getIndex(String id) : IndexEntity`
 
 Fetches information about the index with the given _id_ and returns it.
 
@@ -208,9 +202,7 @@ IndexEntity index = collection.getIndex("some-index");
 
 ## ArangoCollection.getIndexes
 
-```
-ArangoCollection.getIndexes() : Collection<IndexEntity>
-```
+`ArangoCollection.getIndexes() : Collection<IndexEntity>`
 
 Fetches a list of all indexes on this collection.
 
@@ -226,9 +218,7 @@ Collection<IndexEntity> indexes = collection.getIndexs();
 
 ## ArangoCollection.deleteIndex
 
-```
-ArangoCollection.deleteIndex(String id) : String
-```
+`ArangoCollection.deleteIndex(String id) : String`
 
 Deletes the index with the given _id_ from the collection.
 

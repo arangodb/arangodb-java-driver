@@ -5,9 +5,7 @@ These functions implement the
 
 ## ArangoDatabase.createGraph
 
-```
-## ArangoDatabase.createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) : GraphEntity
-```
+`ArangoDatabase.createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) : GraphEntity`
 
 Create a new graph in the graph module. The creation of a graph requires the
 name of the graph and a definition of its edges.
@@ -65,15 +63,15 @@ EdgeDefinition edgeDefinition = new EdgeDefinition()
                                   .collection("edges")
                                   .from("start-vertices")
                                   .to("end-vertices");
-GraphEntity graph = db.createGraph("some-graph", Arrays.asList(edgeDefinition), new GraphCreateOptions());
+GraphEntity graph = db.createGraph(
+  "some-graph", Arrays.asList(edgeDefinition), new GraphCreateOptions()
+);
 // graph now exists
 ```
 
 ## ArangoGraph.create
 
-```
-## ArangoGraph.create(Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) : GraphEntity
-```
+`ArangoGraph.create(Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) : GraphEntity`
 
 Create a new graph in the graph module. The creation of a graph requires the
 name of the graph and a definition of its edges.
@@ -136,9 +134,7 @@ graph.create(Arrays.asList(edgeDefinition), new GraphCreateOptions());
 
 ## ArangoGraph.exists
 
-```
-ArangoGraph.exists() : boolean
-```
+`ArangoGraph.exists() : boolean`
 
 Checks whether the graph exists
 
@@ -154,9 +150,7 @@ boolean exists = graph.exists();
 
 ## ArangoGraph.getInfo
 
-```
-ArangoGraph.getInfo() : GraphEntity
-```
+`ArangoGraph.getInfo() : GraphEntity`
 
 Retrieves general information about the graph.
 
@@ -172,9 +166,7 @@ GraphEntity info = graph.getInfo();
 
 ## ArangoGraph.drop
 
-```
-ArangoGraph.drop(boolean dropCollections) : void
-```
+`ArangoGraph.drop(boolean dropCollections) : void`
 
 Deletes the graph from the database.
 

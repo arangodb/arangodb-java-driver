@@ -2,9 +2,7 @@
 
 ## ArangoVertexCollection.getVertex
 
-```
-ArangoVertexCollection.getVertex(String key, Class<T> type, DocumentReadOptions options) : T
-```
+`ArangoVertexCollection.getVertex(String key, Class<T> type, DocumentReadOptions options) : T`
 
 Retrieves the vertex document with the given `key` from the collection.
 
@@ -34,9 +32,7 @@ Retrieves the vertex document with the given `key` from the collection.
 
 ## ArangoVertexCollection.insertVertex
 
-```
-ArangoVertexCollection.insertVertex(T value, VertexCreateOptions options) : VertexEntity
-```
+`ArangoVertexCollection.insertVertex(T value, VertexCreateOptions options) : VertexEntity`
 
 Creates a new vertex in the collection.
 
@@ -67,9 +63,7 @@ collection.insertVertex(document, new VertexCreateOptions());
 
 ## ArangoVertexCollection.replaceVertex
 
-```
-ArangoVertexCollection.replaceVertex(String key, T value, VertexReplaceOptions options) : VertexUpdateEntity
-```
+`ArangoVertexCollection.replaceVertex(String key, T value, VertexReplaceOptions options) : VertexUpdateEntity`
 
 Replaces the vertex with key with the one in the body, provided there is such
 a vertex and no precondition is violated.
@@ -108,9 +102,7 @@ collection.replaceVertex("some-key", document, new VertexReplaceOptions());
 
 ## ArangoVertexCollection.updateVertex
 
-```
-ArangoVertexCollection.updateVertex(String key, T value, VertexUpdateOptions options) : VertexUpdateEntity
-```
+`ArangoVertexCollection.updateVertex(String key, T value, VertexUpdateOptions options) : VertexUpdateEntity`
 
 Updates the vertex with key with the one in the body, provided there is such
 a vertex and no precondition is violated.
@@ -157,9 +149,7 @@ collection.updateVertex("some-key", document, new VertexUpdateOptions());
 
 ## ArangoVertexCollection.deleteVertex
 
-```
-ArangoVertexCollection.deleteVertex(String key, VertexDeleteOptions options) : void
-```
+`ArangoVertexCollection.deleteVertex(String key, VertexDeleteOptions options) : void`
 
 Deletes the vertex with the given _key_ from the collection.
 

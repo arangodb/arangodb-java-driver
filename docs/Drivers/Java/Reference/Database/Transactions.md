@@ -5,9 +5,7 @@ This function implements the
 
 ## ArangoDatabase.transaction
 
-```
-ArangoDatabase.transaction(String action, Class<T> type, TransactionOptions options) : T
-```
+`ArangoDatabase.transaction(String action, Class<T> type, TransactionOptions options) : T`
 
 Performs a server-side transaction and returns its return value.
 
@@ -34,5 +32,7 @@ String action = "function (params) {"
                 + "const db = require('@arangodb').db;"
                 + "return db._query('FOR i IN test RETURN i._key').toArray();"
               + "}";
-String[] keys = arango.db().transaction(action, String[].class, new TransactionOptions());
+String[] keys = arango.db().transaction(
+  action, String[].class, new TransactionOptions()
+);
 ```

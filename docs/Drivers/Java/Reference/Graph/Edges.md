@@ -2,9 +2,7 @@
 
 ## ArangoEdgeCollection.getEdge
 
-```
-ArangoEdgeCollection.getEdge(String key, Class<T> type, DocumentReadOptions options) : T
-```
+`ArangoEdgeCollection.getEdge(String key, Class<T> type, DocumentReadOptions options) : T`
 
 Retrieves the edge document with the given `key` from the collection.
 
@@ -34,9 +32,7 @@ Retrieves the edge document with the given `key` from the collection.
 
 ## ArangoEdgeCollection.insertEdge
 
-```
-ArangoEdgeCollection.insertEdge(T value, EdgeCreateOptions options) : EdgeEntity
-```
+`ArangoEdgeCollection.insertEdge(T value, EdgeCreateOptions options) : EdgeEntity`
 
 Creates a new edge in the collection.
 
@@ -67,9 +63,7 @@ collection.insertEdge(document, new EdgeCreateOptions());
 
 ## ArangoEdgeCollection.replaceEdge
 
-```
-ArangoEdgeCollection.replaceEdge(String key, T value, EdgeReplaceOptions options) : EdgeUpdateEntity
-```
+`ArangoEdgeCollection.replaceEdge(String key, T value, EdgeReplaceOptions options) : EdgeUpdateEntity`
 
 Replaces the edge with key with the one in the body, provided there is such
 a edge and no precondition is violated.
@@ -108,9 +102,7 @@ collection.replaceEdge("some-key", document, new EdgeReplaceOptions());
 
 ## ArangoEdgeCollection.updateEdge
 
-```
-ArangoEdgeCollection.updateEdge(String key, T value, EdgeUpdateOptions options) : EdgeUpdateEntity
-```
+`ArangoEdgeCollection.updateEdge(String key, T value, EdgeUpdateOptions options) : EdgeUpdateEntity`
 
 Updates the edge with key with the one in the body, provided there is such a
 edge and no precondition is violated.
@@ -157,9 +149,7 @@ collection.updateEdge("some-key", document, new EdgeUpdateOptions());
 
 ## ArangoEdgeCollection.deleteEdge
 
-```
-ArangoEdgeCollection.deleteEdge(String key, EdgeDeleteOptions options) : void
-```
+`ArangoEdgeCollection.deleteEdge(String key, EdgeDeleteOptions options) : void`
 
 Deletes the edge with the given _key_ from the collection.
 

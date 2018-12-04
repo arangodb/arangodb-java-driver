@@ -88,5 +88,8 @@ ArangoCollection collection = db.collection("some-collection");
 BaseDocument doc1 = new BaseDocument();
 BaseDocument doc2 = new BaseDocument();
 BaseDocument doc3 = new BaseDocument();
-collection.importDocuments(Arrays.asList(doc1, doc2, doc3), new DocumentImportOptions());
+collection.importDocuments(
+  Arrays.asList(doc1, doc2, doc3),
+  new DocumentImportOptions()
+);
 ```

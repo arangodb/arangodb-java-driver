@@ -5,9 +5,7 @@ These functions implement the
 
 ## ArangoDatabase.createArangoSearch
 
-```
-ArangoDatabase.createArangoSearch(String name, ArangoSearchCreateOptions options) : ViewEntity
-```
+`ArangoDatabase.createArangoSearch(String name, ArangoSearchCreateOptions options) : ViewEntity`
 
 Creates a ArangoSearch view with the given _options_, then returns
 view information from the server.
@@ -53,7 +51,8 @@ view information from the server.
 
     - **segmentThreshold**: `Long`
 
-      Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} < number_of_segments
+      Apply the "consolidation" operation if and only if (default: 300):
+      `{segmentThreshold} < number_of_segments`
 
     - **link**: `CollectionLink[]`
 
@@ -70,9 +69,7 @@ db.createArangoSearch("potatoes", new ArangoSearchPropertiesOptions());
 
 ## ArangoSearch.create
 
-```
-ArangoSearch.create(ArangoSearchCreateOptions options) : ViewEntity
-```
+`ArangoSearch.create(ArangoSearchCreateOptions options) : ViewEntity`
 
 Creates a ArangoSearch view with the given _options_, then returns view information from the server.
 
@@ -115,7 +112,8 @@ Alternative for `ArangoDatabase.createArangoSearch`.
 
     - **segmentThreshold**: `Long`
 
-      Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} < number_of_segments
+      Apply the "consolidation" operation if and only if (default: 300):
+      `{segmentThreshold} < number_of_segments`
 
     - **link**: `CollectionLink[]`
 
@@ -134,9 +132,7 @@ view.create(new ArangoSearchPropertiesOptions());
 
 ## ArangoSearch.getProperties
 
-```
-ArangoSearch.getProperties() : ArangoSearchPropertiesEntity
-```
+`ArangoSearch.getProperties() : ArangoSearchPropertiesEntity`
 
 Reads the properties of the specified view.
 
@@ -152,9 +148,7 @@ ArangoSearchPropertiesEntity properties = view.getProperties();
 
 ## ArangoSearch.updateProperties
 
-```
-ArangoSearch.updateProperties(ArangoSearchPropertiesOptions options) : ArangoSearchPropertiesEntity
-```
+`ArangoSearch.updateProperties(ArangoSearchPropertiesOptions options) : ArangoSearchPropertiesEntity`
 
 Partially changes properties of the view.
 
@@ -195,7 +189,8 @@ Partially changes properties of the view.
 
     - **segmentThreshold**: `Long`
 
-      Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} < number_of_segments
+      Apply the "consolidation" operation if and only if (default: 300):
+      `{segmentThreshold} < number_of_segments`
 
     - **link**: `CollectionLink[]`
 
@@ -208,14 +203,15 @@ ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoSearch view = db.arangoSearch("some-view");
 
-view.updateProperties(new ArangoSearchPropertiesOptions().link(CollectionLink.on("myCollection").fields(FieldLink.on("value").analyzers("identity"))));
+view.updateProperties(
+  new ArangoSearchPropertiesOptions()
+    .link(CollectionLink.on("myCollection").fields(FieldLink.on("value").analyzers("identity")))
+);
 ```
 
 ## ArangoSearch.replaceProperties
 
-```
-ArangoSearch.replaceProperties(ArangoSearchPropertiesOptions options) : ArangoSearchPropertiesEntity
-```
+`ArangoSearch.replaceProperties(ArangoSearchPropertiesOptions options) : ArangoSearchPropertiesEntity`
 
 Changes properties of the view.
 
@@ -251,11 +247,13 @@ Changes properties of the view.
     - **threshold**: `Double`
 
       Select a given segment for "consolidation" if and only if the formula
-      based on type (as defined above) evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
+      based on type (as defined above) evaluates to true, valid value range
+      [0.0, 1.0] (default: 0.85)
 
     - **segmentThreshold**: `Long`
 
-      Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} < number_of_segments
+      Apply the "consolidation" operation if and only if (default: 300):
+      `{segmentThreshold} < number_of_segments`
 
     - **link**: `CollectionLink[]`
 
@@ -268,5 +266,8 @@ ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoSearch view = db.arangoSearch("some-view");
 
-view.replaceProperties(new ArangoSearchPropertiesOptions().link(CollectionLink.on("myCollection").fields(FieldLink.on("value").analyzers("identity"))));
+view.replaceProperties(
+  new ArangoSearchPropertiesOptions()
+    .link(CollectionLink.on("myCollection").fields(FieldLink.on("value").analyzers("identity")))
+);
 ```

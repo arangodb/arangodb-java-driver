@@ -11,9 +11,7 @@ for details.
 
 ## ArangoView.exists
 
-```
-ArangoView.exists() : boolean
-```
+`ArangoView.exists() : boolean`
 
 Checks whether the view exists
 
@@ -29,9 +27,7 @@ boolean exists = view.exists();
 
 ## ArangoView.getInfo
 
-```
-ArangoView.getInfo() : ViewEntity
-```
+`ArangoView.getInfo() : ViewEntity`
 
 Returns information about the view.
 

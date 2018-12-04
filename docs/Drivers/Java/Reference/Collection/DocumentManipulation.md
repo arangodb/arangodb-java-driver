@@ -5,9 +5,7 @@ These functions implement the
 
 ## ArangoCollection.documentExists
 
-```
-ArangoCollection.documentExists(String key) : Boolean
-```
+`ArangoCollection.documentExists(String key) : Boolean`
 
 Checks if the document exists by reading a single document head
 
@@ -29,9 +27,7 @@ Boolean exists = collection.documentExists("some-key");
 
 ## ArangoCollection.getDocument
 
-```
-ArangoCollection.getDocument(String key, Class<T> type, DocumentReadOptions options) : T
-```
+`ArangoCollection.getDocument(String key, Class<T> type, DocumentReadOptions options) : T`
 
 Retrieves the document with the given \_key from the collection.
 
@@ -71,9 +67,7 @@ BaseDocument document = collection.getDocument("some-key", BaseDocument.class);
 
 ## ArangoCollection.getDocuments
 
-```
-ArangoCollection.getDocuments(Collection<String> keys, Class<T> type) : MultiDocumentEntity<T>
-```
+`ArangoCollection.getDocuments(Collection<String> keys, Class<T> type) : MultiDocumentEntity<T>`
 
 Retrieves multiple documents with the given \_key from the collection.
 
@@ -100,9 +94,7 @@ MultiDocumentEntity<BaseDocument> documents = collection.getDocuments(keys, Base
 
 ## ArangoCollection.insertDocument
 
-```
-ArangoCollection.insertDocument(T value, DocumentCreateOptions options) : DocumentCreateEntity<T>
-```
+`ArangoCollection.insertDocument(T value, DocumentCreateOptions options) : DocumentCreateEntity<T>`
 
 Creates a new document from the given document, unless there is already a
 document with the \_key given. If no \_key is given, a new unique \_key is
@@ -157,9 +149,7 @@ collection.insertDocument(document, new DocumentCreateOptions());
 
 ## ArangoCollection.insertDocuments
 
-```
-ArangoCollection.insertDocuments(Collection<T> values, DocumentCreateOptions options) : MultiDocumentEntity<DocumentCreateEntity<T>>
-```
+`ArangoCollection.insertDocuments(Collection<T> values, DocumentCreateOptions options) : MultiDocumentEntity<DocumentCreateEntity<T>>`
 
 Creates new documents from the given documents, unless there is already a
 document with the \_key given. If no \_key is given, a new unique \_key is
@@ -210,14 +200,15 @@ ArangoCollection collection = db.collection("some-collection");
 BaseDocument doc1 = new BaseDocument();
 BaseDocument doc2 = new BaseDocument();
 BaseDocument doc3 = new BaseDocument();
-collection.insertDocuments(Arrays.asList(doc1, doc2, doc3), new DocumentCreateOptions());
+collection.insertDocuments(
+  Arrays.asList(doc1, doc2, doc3),
+  new DocumentCreateOptions()
+);
 ```
 
 ## ArangoCollection.replaceDocument
 
-```
-ArangoCollection.replaceDocument(String key, T value, DocumentReplaceOptions options) : DocumentUpdateEntity<T>
-```
+`ArangoCollection.replaceDocument(String key, T value, DocumentReplaceOptions options) : DocumentUpdateEntity<T>`
 
 Replaces the document with _key_ with the one in the body, provided there is
 such a document and no precondition is violated.
@@ -283,9 +274,7 @@ assertThat(doc.getAttribute("hello"), is("world2"));
 
 ## ArangoCollection.replaceDocuments
 
-```
-ArangoCollection.replaceDocuments(Collection<T> values, DocumentReplaceOptions options) : MultiDocumentEntity<DocumentUpdateEntity<T>>
-```
+`ArangoCollection.replaceDocuments(Collection<T> values, DocumentReplaceOptions options) : MultiDocumentEntity<DocumentUpdateEntity<T>>`
 
 Replaces multiple documents in the specified collection with the ones in the
 values, the replaced documents are specified by the \_key attributes in the
@@ -342,14 +331,15 @@ collection.insertDocuments(Arrays.asList(doc1, doc2, doc3));
 
 // change values of doc1, doc2, doc3
 
-collection.replaceDocuments(Arrays.asList(doc1, doc2, doc3), new DocumentReplaceOptions());
+collection.replaceDocuments(
+  Arrays.asList(doc1, doc2, doc3),
+  new DocumentReplaceOptions()
+);
 ```
 
 ## ArangoCollection.updateDocument
 
-```
-ArangoCollection.updateDocument(String key, T value, DocumentUpdateOptions options) : DocumentUpdateEntity<T>
-```
+`ArangoCollection.updateDocument(String key, T value, DocumentUpdateOptions options) : DocumentUpdateEntity<T>`
 
 Updates the document with _key_ with the one in the body, provided there is
 such a document and no precondition is violated.
@@ -415,9 +405,7 @@ assertThat(doc.getAttribute("hello"), is("world2"));
 
 ## ArangoCollection.updateDocuments
 
-```
-ArangoCollection.updateDocuments(Collection<T> values, DocumentUpdateOptions options) : MultiDocumentEntity<DocumentUpdateEntity<T>>
-```
+`ArangoCollection.updateDocuments(Collection<T> values, DocumentUpdateOptions options) : MultiDocumentEntity<DocumentUpdateEntity<T>>`
 
 Updates multiple documents in the specified collection with the ones in the
 values, the replaced documents are specified by the \_key attributes in the
@@ -474,14 +462,15 @@ collection.insertDocuments(Arrays.asList(doc1, doc2, doc3));
 
 // change values of doc1, doc2, doc3
 
-collection.updateDocuments(Arrays.asList(doc1, doc2, doc3), new DocumentUpdateOptions());
+collection.updateDocuments(
+  Arrays.asList(doc1, doc2, doc3),
+  new DocumentUpdateOptions()
+);
 ```
 
 ## ArangoCollection.deleteDocument
 
-```
-ArangoCollection.deleteDocument(String key) : DocumentDeleteEntity<Void>
-```
+`ArangoCollection.deleteDocument(String key) : DocumentDeleteEntity<Void>`
 
 Deletes the document with the given _key_ from the collection.
 
@@ -510,9 +499,7 @@ assertThat(exists, is(false));
 
 ## ArangoCollection.deleteDocuments
 
-```
-ArangoCollection.deleteDocuments(Collection<?> values) : MultiDocumentEntity<DocumentDeleteEntity<Void>>
-```
+`ArangoCollection.deleteDocuments(Collection<?> values) : MultiDocumentEntity<DocumentDeleteEntity<Void>>`
 
 Deletes multiple documents from the collection.
 

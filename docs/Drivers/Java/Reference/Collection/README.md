@@ -14,9 +14,7 @@ for details.
 
 ## ArangoCollection.exists
 
-```
-ArangoCollection.exists() : boolean
-```
+`ArangoCollection.exists() : boolean`
 
 Checks whether the collection exists
 
@@ -32,9 +30,7 @@ boolean exists = collection.exists();
 
 ## ArangoCollection.getInfo
 
-```
-ArangoCollection.getInfo() : CollectionEntity
-```
+`ArangoCollection.getInfo() : CollectionEntity`
 
 Returns information about the collection.
 
@@ -50,9 +46,7 @@ CollectionEntity info = collection.getInfo();
 
 ## ArangoCollection.getProperties
 
-```
-ArangoCollection.getProperties() : CollectionPropertiesEntity
-```
+`ArangoCollection.getProperties() : CollectionPropertiesEntity`
 
 Reads the properties of the specified collection.
 
@@ -68,9 +62,7 @@ CollectionPropertiesEntity properties = collection.getProperties();
 
 ## ArangoCollection.getRevision
 
-```
-ArangoCollection.getRevision() : CollectionRevisionEntity
-```
+`ArangoCollection.getRevision() : CollectionRevisionEntity`
 
 Retrieve the collections revision.
 
@@ -86,9 +78,7 @@ CollectionRevisionEntity revision = collection.getRevision();
 
 ## ArangoCollection.getIndexes
 
-```
-ArangoCollection.getIndexes() : Collection<IndexEntity>
-```
+`ArangoCollection.getIndexes() : Collection<IndexEntity>`
 
 Fetches a list of all indexes on this collection.
 

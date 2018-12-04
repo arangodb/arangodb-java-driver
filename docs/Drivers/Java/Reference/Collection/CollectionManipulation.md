@@ -5,9 +5,7 @@ These functions implement
 
 ## ArangoDatabase.createCollection
 
-```
-ArangoDatabase.createCollection(String name, CollectionCreateOptions options) : CollectionEntity
-```
+`ArangoDatabase.createCollection(String name, CollectionCreateOptions options) : CollectionEntity`
 
 Creates a collection with the given _options_ for this collection's name,
 then returns collection information from the server.
@@ -123,9 +121,7 @@ db.createCollection("potatoes", new CollectionCreateOptions());
 
 ## ArangoCollection.create
 
-```
-ArangoCollection.create(CollectionCreateOptions options) : CollectionEntity
-```
+`ArangoCollection.create(CollectionCreateOptions options) : CollectionEntity`
 
 Creates a collection with the given _options_ for this collection's name,
 then returns collection information from the server.
@@ -240,9 +236,7 @@ collection.create(new CollectionCreateOptions());
 
 ## ArangoCollection.load
 
-```
-ArangoCollection.load() : CollectionEntity
-```
+`ArangoCollection.load() : CollectionEntity`
 
 Tells the server to load the collection into memory.
 
@@ -258,9 +252,7 @@ collection.load();
 
 ## ArangoCollection.unload
 
-```
-ArangoCollection.unload() : CollectionEntity
-```
+`ArangoCollection.unload() : CollectionEntity`
 
 Tells the server to remove the collection from memory. This call does not
 delete any documents. You can use the collection afterwards; in which case
@@ -278,9 +270,7 @@ collection.unload();
 
 ## ArangoCollection.changeProperties
 
-```
-ArangoCollection.changeProperties(CollectionPropertiesOptions options) : CollectionPropertiesEntity
-```
+`ArangoCollection.changeProperties(CollectionPropertiesOptions options) : CollectionPropertiesEntity`
 
 Changes the properties of the collection.
 
@@ -298,7 +288,9 @@ ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 ArangoCollection collection = db.collection("some-collection");
 
-CollectionPropertiesEntity result = collection.changeProperties(new CollectionPropertiesEntity().waitForSync(true));
+CollectionPropertiesEntity result = collection.changeProperties(
+  new CollectionPropertiesEntity().waitForSync(true)
+);
 assertThat(result.getWaitForSync(), is(true));
 // the collection will now wait for data being written to disk
 // whenever a document is changed
@@ -306,9 +298,7 @@ assertThat(result.getWaitForSync(), is(true));
 
 ## ArangoCollection.rename
 
-```
-ArangoCollection.rename(String newName) : CollectionEntity
-```
+`ArangoCollection.rename(String newName) : CollectionEntity`
 
 Renames the collection
 
@@ -332,9 +322,7 @@ assertThat(result.getName(), is("new-collection-name");
 
 ## ArangoCollection.truncate
 
-```
-ArangoCollection.truncate() : CollectionEntity
-```
+`ArangoCollection.truncate() : CollectionEntity`
 
 Removes all documents from the collection, but leaves the indexes intact.
 
@@ -351,9 +339,7 @@ collection.truncate();
 
 ## ArangoCollection.drop
 
-```
-ArangoCollection.drop() : void
-```
+`ArangoCollection.drop() : void`
 
 Deletes the collection from the database.
 
