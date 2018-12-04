@@ -16,7 +16,7 @@ Retrieves the vertex document with the given `key` from the collection.
 
 - **type**: `Class<T>`
 
-  The type of the vertex-document (POJO class, `VPackSlice` or `String` for Json)
+  The type of the vertex-document (POJO class, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentReadOptions`
 

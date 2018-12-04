@@ -92,7 +92,7 @@ then returns collection information from the server.
 
   - **indexBuckets**: `Integer`
 
-    The: number of buckets into which indexes using a hash table are split.
+    The number of buckets into which indexes using a hash table are split.
     The default is 16 and this number has to be a power of 2 and less than or
     equal to 1024. For very large collections one should increase this to avoid
     long pauses when the hash table has to be initially built or resized, since
@@ -208,7 +208,7 @@ Alternative for [ArangoDatabase.createCollection](#arangodatabasecreatecollectio
 
   - **indexBuckets**: `Integer`
 
-    The: number of buckets into which indexes using a hash table are split.
+    The number of buckets into which indexes using a hash table are split.
     The default is 16 and this number has to be a power of 2 and less than or
     equal to 1024. For very large collections one should increase this to avoid
     long pauses when the hash table has to be initially built or resized, since

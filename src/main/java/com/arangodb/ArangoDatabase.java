@@ -292,7 +292,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options
 	 *            Additional options that will be passed to the query API, can be null
 	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
@@ -310,7 +310,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options
 	 *            Additional options that will be passed to the query API, can be null
 	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
@@ -327,7 +327,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param bindVars
 	 *            key/value pairs defining the variables to bind the query to
 	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
@@ -342,7 +342,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param query
 	 *            An AQL query string
 	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
@@ -357,7 +357,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param cursorId
 	 *            The ID of the cursor
 	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
+	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 */
@@ -599,7 +599,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param action
 	 *            A String evaluating to a JavaScript function to be executed on the server.
 	 * @param type
-	 *            The type of the result (POJO class, VPackSlice or String for Json)
+	 *            The type of the result (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the result of the transaction if it succeeded
@@ -624,9 +624,9 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
 	 *      Documentation</a>
 	 * @param vertexClass
-	 *            The type of the vertex documents (POJO class, VPackSlice or String for Json)
+	 *            The type of the vertex documents (POJO class, VPackSlice or String for JSON)
 	 * @param edgeClass
-	 *            The type of the edge documents (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge documents (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options
 	 * @return Result of the executed traversal
@@ -643,7 +643,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param id
 	 *            The id of the document
 	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 *            The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
 	 */
@@ -657,7 +657,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param id
 	 *            The id of the document
 	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 *            The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the document identified by the id

@@ -19,7 +19,7 @@ Performs a server-side transaction and returns its return value.
 
 - **type**: `Class`
 
-  The type of the result (POJO class, `VPackSlice` or `String` for Json)
+  The type of the result (POJO class, `VPackSlice` or `String` for JSON)
 
 - **options**: `TransactionOptions`
 

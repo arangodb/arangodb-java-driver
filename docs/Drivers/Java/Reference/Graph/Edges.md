@@ -16,7 +16,7 @@ Retrieves the edge document with the given `key` from the collection.
 
 - **type**: `Class<T>`
 
-  The type of the edge-document (POJO class, `VPackSlice` or `String` for Json)
+  The type of the edge-document (POJO class, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentReadOptions`
 
@@ -44,7 +44,7 @@ Creates a new edge in the collection.
 
 - **value**: `T`
 
-  A representation of a single edge (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single edge (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `EdgeCreateOptions`
 

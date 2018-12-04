@@ -277,8 +277,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
-- fixed default Json parsing, include null values (Issue #163)
-- fixed Json parsing of negative long (Issue #151)
+- fixed default JSON parsing, include null values (Issue #163)
+- fixed JSON parsing of negative long (Issue #151)
 
 ## [4.3.0] - 2017-11-23
 
@@ -386,7 +386,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added `ArangoDBException#getException()`
 - added protocol switch (`ArangoDB.Builder#useProtocol(Protocol)`)
   - `Protocol#VST` = VeclocyStream (default)
-  - `Protocol#HTTP_JSON` = Json over HTTP
+  - `Protocol#HTTP_JSON` = JSON over HTTP
   - `Protocol#HTTP_VPACK` = VelocyPack over HTTP
 
 ## [4.1.12] - 2017-04-13
@@ -472,13 +472,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 - fixed URL encoding bug (#97)
-- fixed update/replaceDocumets with Json (#98)
+- fixed update/replaceDocumets with JSON (#98)
 
 ## [4.1.7] - 2017-01-26
 
 ### Fixed
 
-- fixed `importDocuments`, `insertDocuments` to work with raw Jsons (issue #91)
+- fixed `importDocuments`, `insertDocuments` to work with raw JSONs (issue #91)
 
 ## [4.1.6] - 2017-01-18
 
@@ -523,7 +523,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added `VelocyPack` UTC_DATE parsing to Json String (ISO 8601)
+- added `VelocyPack` UTC_DATE parsing to JSON String (ISO 8601)
 - added configuration methods for `VPackParser` in `ArangoDB.Builder`
 - added `VPackJsonSerializer` for `VPackParser`
 

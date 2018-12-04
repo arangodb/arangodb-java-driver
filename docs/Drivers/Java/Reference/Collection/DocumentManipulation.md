@@ -43,7 +43,7 @@ Retrieves the document with the given \_key from the collection.
 
 - **type**: `Class<T>`
 
-  The type of the document (POJO class, `VPackSlice` or `String` for Json)
+  The type of the document (POJO class, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentReadOptions`
 
@@ -85,7 +85,7 @@ Retrieves multiple documents with the given \_key from the collection.
 
 - **type**: `Class<T>`
 
-  The type of the document (POJO class, `VPackSlice` or `String` for Json)
+  The type of the document (POJO class, `VPackSlice` or `String` for JSON)
 
 **Examples**
 
@@ -112,7 +112,7 @@ generated automatically.
 
 - **value**: `T`
 
-  A representation of a single document (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single document (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentCreateOptions`
 
@@ -169,7 +169,7 @@ generated automatically.
 
 - **values**: `Collection<T>`
 
-  A List of documents (POJO, `VPackSlice` or `String` for Json)
+  A List of documents (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentCreateOptions`
 
@@ -230,7 +230,7 @@ such a document and no precondition is violated.
 
 - **value**: `T`
 
-  A representation of a single document (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single document (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentReplaceOptions`
 
@@ -295,7 +295,7 @@ documents in values.
 
 - **values**: `Collection<T>`
 
-  A List of documents (POJO, `VPackSlice` or `String` for Json)
+  A List of documents (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentReplaceOptions`
 
@@ -362,7 +362,7 @@ such a document and no precondition is violated.
 
 - **value**: `T`
 
-  A representation of a single document (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single document (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentUpdateOptions`
 
@@ -427,7 +427,7 @@ documents in values.
 
 - **values**: `Collection<T>`
 
-  A List of documents (POJO, `VPackSlice` or `String` for Json)
+  A List of documents (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentUpdateOptions`
 

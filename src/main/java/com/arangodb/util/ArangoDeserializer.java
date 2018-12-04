@@ -37,7 +37,7 @@ public interface ArangoDeserializer {
 	 * @param vpack
 	 *            The VelocyPack to deserialize
 	 * @param type
-	 *            The target type to deserialize to. Use String for raw Json.
+	 *            The target type to deserialize to. Use String for raw JSON.
 	 * @return The deserialized VelocyPack
 	 * @throws ArangoDBException
 	 */
