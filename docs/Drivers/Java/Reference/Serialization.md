@@ -2,7 +2,8 @@
 
 ## VelocyPack serialization
 
-Since version `4.1.11` you can extend the VelocyPack serialization by registering additional `VPackModule`s on `ArangoDB.Builder`.
+Since version `4.1.11` you can extend the VelocyPack serialization by
+registering additional `VPackModule`s on `ArangoDB.Builder`.
 
 ### Java 8 types
 
@@ -94,7 +95,8 @@ documents, edges and query results. One implementation is
 which is based on [Jackson](https://github.com/FasterXML/jackson) working with
 [jackson-dataformat-velocypack](https://github.com/arangodb/jackson-dataformat-velocypack).
 
-**Note**: Any registered custom [serializer/deserializer or module](#custom-serialization) will be ignored.
+**Note**: Any registered custom [serializer/deserializer or module](#custom-serialization)
+will be ignored.
 
 ## custom serialization
 
@@ -126,7 +128,8 @@ which is based on [Jackson](https://github.com/FasterXML/jackson) working with
 
 ## JavaBeans
 
-The driver can serialize/deserialize JavaBeans. They need at least a constructor without parameter.
+The driver can serialize/deserialize JavaBeans. They need at least a
+constructor without parameter.
 
 ```Java
   public class MyObject {
@@ -144,7 +147,8 @@ The driver can serialize/deserialize JavaBeans. They need at least a constructor
 
 ## internal fields
 
-To use Arango-internal fields (like \_id, \_key, \_rev, \_from, \_to) in your JavaBeans, use the annotation `DocumentField`.
+To use Arango-internal fields (like \_id, \_key, \_rev, \_from, \_to) in your
+JavaBeans, use the annotation `DocumentField`.
 
 ```Java
   public class MyObject {
@@ -233,7 +237,9 @@ To ignore fields at serialization/deserialization, use the annotation `Expose`
 
 ## manually serialization
 
-To de-/serialize from and to VelocyPack before or after a database call, use the `ArangoUtil` from the method `util()` in `ArangoDB`, `ArangoDatabase`, `ArangoCollection`, `ArangoGraph`, `ArangoEdgeCollection`or `ArangoVertexCollection`.
+To de-/serialize from and to VelocyPack before or after a database call, use the
+`ArangoUtil` from the method `util()` in `ArangoDB`, `ArangoDatabase`,
+`ArangoCollection`, `ArangoGraph`, `ArangoEdgeCollection`or `ArangoVertexCollection`.
 
 ```Java
   ArangoDB arangoDB = new ArangoDB.Builder();
