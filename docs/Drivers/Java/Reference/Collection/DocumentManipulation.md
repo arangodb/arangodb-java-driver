@@ -104,7 +104,9 @@ MultiDocumentEntity<BaseDocument> documents = collection.getDocuments(keys, Base
 ArangoCollection.insertDocument(T value, DocumentCreateOptions options) : DocumentCreateEntity<T>
 ```
 
-Creates a new document from the given document, unless there is already a document with the \_key given. If no \_key is given, a new unique \_key is generated automatically.
+Creates a new document from the given document, unless there is already a
+document with the \_key given. If no \_key is given, a new unique \_key is
+generated automatically.
 
 **Arguments**
 
@@ -124,15 +126,22 @@ Creates a new document from the given document, unless there is already a docume
 
   - **returnOld**: `Boolean`
 
-    This options requires ArangoDB version 3.4.0 or higher. Additionally return the complete old document under the attribute old in the result. Only available if the _overwrite_ option is used.
+    This options requires ArangoDB version 3.4.0 or higher. Additionally return
+    the complete old document under the attribute old in the result.
+    Only available if the _overwrite_ option is used.
 
   - **overwrite**: `Boolean`
 
-    This options requires ArangoDB version 3.4.0 or higher. If set to true, the insert becomes a replace-insert. If a document with the same \_key already exists the new document is not rejected with unique constraint violated but will replace the old document.
+    This options requires ArangoDB version 3.4.0 or higher. If set to true, the
+    insert becomes a replace-insert. If a document with the same \_key already
+    exists the new document is not rejected with unique constraint violated but
+    will replace the old document.
 
   - **silent**: `Boolean`
 
-    If set to true, an empty object will be returned as response. No meta-data will be returned for the created document. This option can be used to save some network traffic.
+    If set to true, an empty object will be returned as response. No meta-data
+    will be returned for the created document. This option can be used to save
+    some network traffic.
 
 **Examples**
 
@@ -152,7 +161,9 @@ collection.insertDocument(document, new DocumentCreateOptions());
 ArangoCollection.insertDocuments(Collection<T> values, DocumentCreateOptions options) : MultiDocumentEntity<DocumentCreateEntity<T>>
 ```
 
-Creates new documents from the given documents, unless there is already a document with the \_key given. If no \_key is given, a new unique \_key is generated automatically.
+Creates new documents from the given documents, unless there is already a
+document with the \_key given. If no \_key is given, a new unique \_key is
+generated automatically.
 
 **Arguments**
 
@@ -172,15 +183,22 @@ Creates new documents from the given documents, unless there is already a docume
 
   - **returnOld**: `Boolean`
 
-    This options requires ArangoDB version 3.4.0 or higher. Additionally return the complete old document under the attribute old in the result. Only available if the _overwrite_ option is used.
+    This options requires ArangoDB version 3.4.0 or higher. Additionally return
+    the complete old document under the attribute old in the result.
+    Only available if the _overwrite_ option is used.
 
   - **overwrite**: `Boolean`
 
-    This options requires ArangoDB version 3.4.0 or higher. If set to true, the insert becomes a replace-insert. If a document with the same \_key already exists the new document is not rejected with unique constraint violated but will replace the old document.
+    This options requires ArangoDB version 3.4.0 or higher. If set to true, the
+    insert becomes a replace-insert. If a document with the same \_key already
+    exists the new document is not rejected with unique constraint violated but
+    will replace the old document.
 
   - **silent**: `Boolean`
 
-    If set to true, an empty object will be returned as response. No meta-data will be returned for the created document. This option can be used to save some network traffic.
+    If set to true, an empty object will be returned as response. No meta-data
+    will be returned for the created document. This option can be used to save
+    some network traffic.
 
 **Examples**
 
@@ -201,7 +219,8 @@ collection.insertDocuments(Arrays.asList(doc1, doc2, doc3), new DocumentCreateOp
 ArangoCollection.replaceDocument(String key, T value, DocumentReplaceOptions options) : DocumentUpdateEntity<T>
 ```
 
-Replaces the document with _key_ with the one in the body, provided there is such a document and no precondition is violated.
+Replaces the document with _key_ with the one in the body, provided there is
+such a document and no precondition is violated.
 
 **Arguments**
 
@@ -221,7 +240,10 @@ Replaces the document with _key_ with the one in the body, provided there is suc
 
   - **ignoreRevs**: `Boolean`
 
-    By default, or if this is set to true, the \_rev attributes in the given document is ignored. If this is set to false, then the \_rev attribute given in the body document is taken as a precondition. The document is only replaced if the current revision is the one specified.
+    By default, or if this is set to true, the \_rev attributes in the given
+    document is ignored. If this is set to false, then the \_rev attribute
+    given in the body document is taken as a precondition. The document is
+    only replaced if the current revision is the one specified.
 
   - **ifMatch**: `String`
 
@@ -237,7 +259,9 @@ Replaces the document with _key_ with the one in the body, provided there is suc
 
   - **silent**: `Boolean`
 
-    If set to true, an empty object will be returned as response. No meta-data will be returned for the created document. This option can be used to save some network traffic.
+    If set to true, an empty object will be returned as response. No meta-data
+    will be returned for the created document. This option can be used to save
+    some network traffic.
 
 **Examples**
 
@@ -263,7 +287,9 @@ assertThat(doc.getAttribute("hello"), is("world2"));
 ArangoCollection.replaceDocuments(Collection<T> values, DocumentReplaceOptions options) : MultiDocumentEntity<DocumentUpdateEntity<T>>
 ```
 
-Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are specified by the \_key attributes in the documents in values.
+Replaces multiple documents in the specified collection with the ones in the
+values, the replaced documents are specified by the \_key attributes in the
+documents in values.
 
 **Arguments**
 
@@ -279,7 +305,10 @@ Replaces multiple documents in the specified collection with the ones in the val
 
   - **ignoreRevs**: `Boolean`
 
-    By default, or if this is set to true, the \_rev attributes in the given document is ignored. If this is set to false, then the \_rev attribute given in the body document is taken as a precondition. The document is only replaced if the current revision is the one specified.
+    By default, or if this is set to true, the \_rev attributes in the given
+    document is ignored. If this is set to false, then the \_rev attribute
+    given in the body document is taken as a precondition. The document is
+    only replaced if the current revision is the one specified.
 
   - **ifMatch**: `String`
 
@@ -295,7 +324,9 @@ Replaces multiple documents in the specified collection with the ones in the val
 
   - **silent**: `Boolean`
 
-    If set to true, an empty object will be returned as response. No meta-data will be returned for the created document. This option can be used to save some network traffic.
+    If set to true, an empty object will be returned as response. No meta-data
+    will be returned for the created document. This option can be used to save
+    some network traffic.
 
 **Examples**
 
@@ -320,7 +351,8 @@ collection.replaceDocuments(Arrays.asList(doc1, doc2, doc3), new DocumentReplace
 ArangoCollection.updateDocument(String key, T value, DocumentUpdateOptions options) : DocumentUpdateEntity<T>
 ```
 
-Updates the document with _key_ with the one in the body, provided there is such a document and no precondition is violated.
+Updates the document with _key_ with the one in the body, provided there is
+such a document and no precondition is violated.
 
 **Arguments**
 
@@ -340,7 +372,10 @@ Updates the document with _key_ with the one in the body, provided there is such
 
   - **ignoreRevs**: `Boolean`
 
-    By default, or if this is set to true, the \_rev attributes in the given document is ignored. If this is set to false, then the \_rev attribute given in the body document is taken as a precondition. The document is only replaced if the current revision is the one specified.
+    By default, or if this is set to true, the \_rev attributes in the given
+    document is ignored. If this is set to false, then the \_rev attribute
+    given in the body document is taken as a precondition. The document is
+    only replaced if the current revision is the one specified.
 
   - **ifMatch**: `String`
 
@@ -356,7 +391,9 @@ Updates the document with _key_ with the one in the body, provided there is such
 
   - **silent**: `Boolean`
 
-    If set to true, an empty object will be returned as response. No meta-data will be returned for the created document. This option can be used to save some network traffic.
+    If set to true, an empty object will be returned as response. No meta-data
+    will be returned for the created document. This option can be used to save
+    some network traffic.
 
 **Examples**
 
@@ -382,7 +419,9 @@ assertThat(doc.getAttribute("hello"), is("world2"));
 ArangoCollection.updateDocuments(Collection<T> values, DocumentUpdateOptions options) : MultiDocumentEntity<DocumentUpdateEntity<T>>
 ```
 
-Updates multiple documents in the specified collection with the ones in the values, the replaced documents are specified by the \_key attributes in the documents in values.
+Updates multiple documents in the specified collection with the ones in the
+values, the replaced documents are specified by the \_key attributes in the
+documents in values.
 
 **Arguments**
 
@@ -398,7 +437,10 @@ Updates multiple documents in the specified collection with the ones in the valu
 
   - **ignoreRevs**: `Boolean`
 
-    By default, or if this is set to true, the \_rev attributes in the given document is ignored. If this is set to false, then the \_rev attribute given in the body document is taken as a precondition. The document is only replaced if the current revision is the one specified.
+    By default, or if this is set to true, the \_rev attributes in the given
+    document is ignored. If this is set to false, then the \_rev attribute
+    given in the body document is taken as a precondition. The document is
+    only replaced if the current revision is the one specified.
 
   - **ifMatch**: `String`
 
@@ -414,7 +456,9 @@ Updates multiple documents in the specified collection with the ones in the valu
 
   - **silent**: `Boolean`
 
-    If set to true, an empty object will be returned as response. No meta-data will be returned for the created document. This option can be used to save some network traffic.
+    If set to true, an empty object will be returned as response. No meta-data
+    will be returned for the created document. This option can be used to save
+    some network traffic.
 
 **Examples**
 
