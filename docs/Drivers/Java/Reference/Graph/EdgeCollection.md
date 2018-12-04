@@ -77,7 +77,8 @@ graph.addEdgeDefinition(edgeDefinition);
 ArangoGraph.replaceEdgeDefinition(EdgeDefinition definition) : GraphEntity
 ```
 
-Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to your database.
+Change one specific edge definition. This will modify all occurrences of this
+definition in all graphs known to your database.
 
 **Arguments**
 
@@ -106,7 +107,9 @@ graph.replaceEdgeDefinition(edgeDefinition);
 ArangoGraph.removeEdgeDefinition(String definitionName) : GraphEntity
 ```
 
-Remove one edge definition from the graph. This will only remove the edge collection, the vertex collections remain untouched and can still be used in your queries.
+Remove one edge definition from the graph. This will only remove the
+edge collection, the vertex collections remain untouched and can still
+be used in your queries.
 
 **Arguments**
 
