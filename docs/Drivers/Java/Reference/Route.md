@@ -1,14 +1,15 @@
 # Route API
 
-_ArangoRoute_ instances provide access for arbitrary HTTP requests. This allows easy access to Foxx services and other HTTP APIs not covered by the driver itself.
+_ArangoRoute_ instances provide access for arbitrary HTTP requests.
+This allows easy access to Foxx services and other HTTP APIs not covered
+by the driver itself.
 
 ## ArangoRoute.route
 
-```
-ArangoRoute.route(String... path) : ArangoRoute
-```
+`ArangoRoute.route(String... path) : ArangoRoute`
 
-Returns a new _ArangoRoute_ instance for the given path (relative to the current route) that can be used to perform arbitrary requests.
+Returns a new _ArangoRoute_ instance for the given path (relative to the
+current route) that can be used to perform arbitrary requests.
 
 **Arguments**
 
@@ -30,9 +31,7 @@ ArangoRoute users = route.route("users");
 
 ## ArangoRoute.withHeader
 
-```
-ArangoRoute.withHeader(String key, Object value) : ArangoRoute
-```
+`ArangoRoute.withHeader(String key, Object value) : ArangoRoute`
 
 Header that should be sent with each request to the route.
 
@@ -48,9 +47,7 @@ Header that should be sent with each request to the route.
 
 ## ArangoRoute.withQueryParam
 
-```
-ArangoRoute.withQueryParam(String key, Object value) : ArangoRoute
-```
+`ArangoRoute.withQueryParam(String key, Object value) : ArangoRoute`
 
 Query parameter that should be sent with each request to the route.
 
@@ -66,9 +63,7 @@ Query parameter that should be sent with each request to the route.
 
 ## ArangoRoute.withBody
 
-```
-ArangoRoute.withBody(Object body) : ArangoRoute
-```
+`ArangoRoute.withBody(Object body) : ArangoRoute`
 
 The response body. The body will be serialized to _VPackSlice_.
 
@@ -80,9 +75,7 @@ The response body. The body will be serialized to _VPackSlice_.
 
 ## ArangoRoute.delete
 
-```
-ArangoRoute.delete() : Response
-```
+`ArangoRoute.delete() : Response`
 
 Performs a DELETE request to the given URL and returns the server response.
 
@@ -112,9 +105,7 @@ ArangoRoute route = route.route("users/admin").withQueryParam("permanent", true)
 
 ## ArangoRoute.get
 
-```
-ArangoRoute.get() : Response
-```
+`ArangoRoute.get() : Response`
 
 Performs a GET request to the given URL and returns the server response.
 
@@ -144,9 +135,7 @@ Response response = route.route("users").withQueryParam("group", "admin").get();
 
 ## ArangoRoute.head
 
-```
-ArangoRoute.head() : Response
-```
+`ArangoRoute.head() : Response`
 
 Performs a HEAD request to the given URL and returns the server response.
 
@@ -164,9 +153,7 @@ ArangoRoute route = route.head();
 
 ## ArangoRoute.patch
 
-```
-ArangoRoute.patch() : Response
-```
+`ArangoRoute.patch() : Response`
 
 Performs a PATCH request to the given URL and returns the server response.
 
@@ -198,7 +185,8 @@ ArangoRoute route = route.route("users/admin").withBody(body).patch();
 // -- or --
 
 VPackSlice body = arango.util().serialize("{ password: 'hunter2' }");
-ArangoRoute route = route.route("users/admin").withBody(body).withQueryParam("admin", true).patch();
+ArangoRoute route = route.route("users/admin")
+  .withBody(body).withQueryParam("admin", true).patch();
 // response.getBody() is the response body of calling
 // PATCH _db/_system/my-foxx-service/users/admin?admin=true
 // with JSON request body {"password": "hunter2"}
@@ -206,9 +194,7 @@ ArangoRoute route = route.route("users/admin").withBody(body).withQueryParam("ad
 
 ## ArangoRoute.post
 
-```
-ArangoRoute.post() : Response
-```
+`ArangoRoute.post() : Response`
 
 Performs a POST request to the given URL and returns the server response.
 
@@ -240,7 +226,8 @@ ArangoRoute route = route.route("users").withBody(body).post();
 // -- or --
 
 VPackSlice body = arango.util().serialize("{ password: 'hunter2' }");
-ArangoRoute route = route.route("users").withBody(body).withQueryParam("admin", true).post();
+ArangoRoute route = route.route("users")
+  .withBody(body).withQueryParam("admin", true).post();
 // response.getBody() is the response body of calling
 // POST _db/_system/my-foxx-service/users?admin=true
 // with JSON request body {"username": "admin", "password": "hunter2"}
@@ -248,9 +235,7 @@ ArangoRoute route = route.route("users").withBody(body).withQueryParam("admin", 
 
 ## ArangoRoute.put
 
-```
-ArangoRoute.put() : Response
-```
+`ArangoRoute.put() : Response`
 
 Performs a PUT request to the given URL and returns the server response.
 
@@ -282,7 +267,8 @@ ArangoRoute route = route.route("users/admin").withBody(body).put();
 // -- or --
 
 VPackSlice body = arango.util().serialize("{ password: 'hunter2' }");
-ArangoRoute route = route.route("users/admin").withBody(body).withQueryParam("admin", true).put();
+ArangoRoute route = route.route("users/admin")
+  .withBody(body).withQueryParam("admin", true).put();
 // response.getBody() is the response body of calling
 // PUT _db/_system/my-foxx-service/users/admin?admin=true
 // with JSON request body {"username": "admin", "password": "hunter2"}

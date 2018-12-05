@@ -77,7 +77,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param value
-	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 *            A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
@@ -90,7 +90,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param value
-	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 *            A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the document
@@ -105,7 +105,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param values
-	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 *            A List of documents (POJO, VPackSlice or String for JSON)
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
@@ -118,7 +118,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param values
-	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 *            A List of documents (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the documents
@@ -180,7 +180,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 *            The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
 	 */
@@ -194,7 +194,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json)
+	 *            The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the document identified by the key
@@ -208,7 +208,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param keys
 	 *            The keys of the documents
 	 * @param type
-	 *            The type of the documents (POJO class, VPackSlice or String for Json)
+	 *            The type of the documents (POJO class, VPackSlice or String for JSON)
 	 * @return the documents and possible errors
 	 * @throws ArangoDBException
 	 */
@@ -220,7 +220,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param keys
 	 *            The keys of the documents
 	 * @param type
-	 *            The type of the documents (POJO class, VPackSlice or String for Json)
+	 *            The type of the documents (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the documents and possible errors
@@ -238,7 +238,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param value
-	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 *            A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
@@ -253,7 +253,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param value
-	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 *            A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the document
@@ -269,7 +269,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
 	 *      Documentation</a>
 	 * @param values
-	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 *            A List of documents (POJO, VPackSlice or String for JSON)
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
@@ -282,7 +282,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
 	 *      Documentation</a>
 	 * @param values
-	 *            A List of documents (POJO, VPackSlice or String for Json)
+	 *            A List of documents (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the documents
@@ -302,7 +302,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param value
-	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 *            A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
@@ -318,7 +318,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param value
-	 *            A representation of a single document (POJO, VPackSlice or String for Json)
+	 *            A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the document
@@ -336,7 +336,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
 	 *      Documentation</a>
 	 * @param values
-	 *            A list of documents (POJO, VPackSlice or String for Json)
+	 *            A list of documents (POJO, VPackSlice or String for JSON)
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */
@@ -351,7 +351,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
 	 *      Documentation</a>
 	 * @param values
-	 *            A list of documents (POJO, VPackSlice or String for Json)
+	 *            A list of documents (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the documents
@@ -369,7 +369,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            The type of the document (POJO class, VPackSlice or String for JSON). Only necessary if
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @param options
 	 *            Additional options, can be null
@@ -386,7 +386,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the document
 	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            The type of the document (POJO class, VPackSlice or String for JSON). Only necessary if
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @param options
 	 *            Additional options, can be null
@@ -405,7 +405,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param values
 	 *            The keys of the documents or the documents themselves
 	 * @param type
-	 *            The type of the documents (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            The type of the documents (POJO class, VPackSlice or String for JSON). Only necessary if
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @return information about the documents
 	 * @throws ArangoDBException
@@ -421,7 +421,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param values
 	 *            The keys of the documents or the documents themselves
 	 * @param type
-	 *            The type of the documents (POJO class, VPackSlice or String for Json). Only necessary if
+	 *            The type of the documents (POJO class, VPackSlice or String for JSON). Only necessary if
 	 *            options.returnOld is set to true, otherwise can be null.
 	 * @param options
 	 *            Additional options, can be null

@@ -65,7 +65,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
 	 * @param value
-	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
+	 *            A representation of a single vertex (POJO, VPackSlice or String for JSON)
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
@@ -76,7 +76,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
 	 * @param value
-	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
+	 *            A representation of a single vertex (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the vertex
@@ -91,7 +91,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the vertex
 	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for JSON)
 	 * @return the vertex identified by the key
 	 * @throws ArangoDBException
 	 */
@@ -104,7 +104,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the vertex
 	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the vertex identified by the key
@@ -121,7 +121,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the vertex
 	 * @param value
-	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
+	 *            A representation of a single vertex (POJO, VPackSlice or String for JSON)
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
@@ -136,7 +136,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the vertex
 	 * @param value
-	 *            A representation of a single vertex (POJO, VPackSlice or String for Json)
+	 *            A representation of a single vertex (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the vertex
@@ -153,7 +153,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the vertex
 	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for JSON)
 	 * @return information about the vertex
 	 * @throws ArangoDBException
 	 */
@@ -168,7 +168,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the vertex
 	 * @param type
-	 *            The type of the vertex-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the vertex-document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the vertex

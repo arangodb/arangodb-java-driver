@@ -55,7 +55,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
 	 * @param value
-	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
+	 *            A representation of a single edge (POJO, VPackSlice or String for JSON)
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
@@ -66,7 +66,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * 
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
 	 * @param value
-	 *            A representation of a single edge (POJO, VPackSlice or String for Json)
+	 *            A representation of a single edge (POJO, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the edge
@@ -81,7 +81,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the edge
 	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
 	 * @return the edge identified by the key
 	 * @throws ArangoDBException
 	 */
@@ -94,7 +94,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the edge
 	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return the edge identified by the key
@@ -110,7 +110,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the edge
 	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
@@ -124,7 +124,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the edge
 	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the edge
@@ -141,7 +141,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the edge
 	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
 	 * @return information about the edge
 	 * @throws ArangoDBException
 	 */
@@ -156,7 +156,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @param key
 	 *            The key of the edge
 	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for Json)
+	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null
 	 * @return information about the edge

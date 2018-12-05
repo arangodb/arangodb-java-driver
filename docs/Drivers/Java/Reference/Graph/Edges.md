@@ -2,11 +2,9 @@
 
 ## ArangoEdgeCollection.getEdge
 
-```
-ArangoEdgeCollection.getEdge(String key, Class<T> type, DocumentReadOptions options) : T
-```
+`ArangoEdgeCollection.getEdge(String key, Class<T> type, DocumentReadOptions options) : T`
 
-Retrieves the edge document with the given <code>key</code> from the collection.
+Retrieves the edge document with the given `key` from the collection.
 
 **Arguments**
 
@@ -16,7 +14,7 @@ Retrieves the edge document with the given <code>key</code> from the collection.
 
 - **type**: `Class<T>`
 
-  The type of the edge-document (POJO class, `VPackSlice` or `String` for Json)
+  The type of the edge-document (POJO class, `VPackSlice` or `String` for JSON)
 
 - **options**: `DocumentReadOptions`
 
@@ -34,9 +32,7 @@ Retrieves the edge document with the given <code>key</code> from the collection.
 
 ## ArangoEdgeCollection.insertEdge
 
-```
-ArangoEdgeCollection.insertEdge(T value, EdgeCreateOptions options) : EdgeEntity
-```
+`ArangoEdgeCollection.insertEdge(T value, EdgeCreateOptions options) : EdgeEntity`
 
 Creates a new edge in the collection.
 
@@ -44,7 +40,7 @@ Creates a new edge in the collection.
 
 - **value**: `T`
 
-  A representation of a single edge (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single edge (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `EdgeCreateOptions`
 
@@ -67,11 +63,10 @@ collection.insertEdge(document, new EdgeCreateOptions());
 
 ## ArangoEdgeCollection.replaceEdge
 
-```
-ArangoEdgeCollection.replaceEdge(String key, T value, EdgeReplaceOptions options) : EdgeUpdateEntity
-```
+`ArangoEdgeCollection.replaceEdge(String key, T value, EdgeReplaceOptions options) : EdgeUpdateEntity`
 
-Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is violated.
+Replaces the edge with key with the one in the body, provided there is such
+a edge and no precondition is violated.
 
 **Arguments**
 
@@ -81,7 +76,7 @@ Replaces the edge with key with the one in the body, provided there is such a ed
 
 - **value**: `T`
 
-  A representation of a single edge (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single edge (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `EdgeReplaceOptions`
 
@@ -107,11 +102,10 @@ collection.replaceEdge("some-key", document, new EdgeReplaceOptions());
 
 ## ArangoEdgeCollection.updateEdge
 
-```
-ArangoEdgeCollection.updateEdge(String key, T value, EdgeUpdateOptions options) : EdgeUpdateEntity
-```
+`ArangoEdgeCollection.updateEdge(String key, T value, EdgeUpdateOptions options) : EdgeUpdateEntity`
 
-Updates the edge with key with the one in the body, provided there is such a edge and no precondition is violated.
+Updates the edge with key with the one in the body, provided there is such a
+edge and no precondition is violated.
 
 **Arguments**
 
@@ -121,7 +115,7 @@ Updates the edge with key with the one in the body, provided there is such a edg
 
 - **value**: `T`
 
-  A representation of a single edge (POJO, `VPackSlice` or `String` for Json)
+  A representation of a single edge (POJO, `VPackSlice` or `String` for JSON)
 
 - **options**: `EdgeUpdateOptions`
 
@@ -135,7 +129,11 @@ Updates the edge with key with the one in the body, provided there is such a edg
 
   - **keepNull**: `Boolean`
 
-    If the intention is to delete existing attributes with the patch command, the URL query parameter keepNull can be used with a value of false. This will modify the behavior of the patch command to remove any attributes from the existing document that are contained in the patch document with an attribute value of null.
+    If the intention is to delete existing attributes with the patch command,
+    the URL query parameter keepNull can be used with a value of false.
+    This will modify the behavior of the patch command to remove any attributes
+    from the existing document that are contained in the patch document with an
+    attribute value of null.
 
 **Examples**
 
@@ -151,9 +149,7 @@ collection.updateEdge("some-key", document, new EdgeUpdateOptions());
 
 ## ArangoEdgeCollection.deleteEdge
 
-```
-ArangoEdgeCollection.deleteEdge(String key, EdgeDeleteOptions options) : void
-```
+`ArangoEdgeCollection.deleteEdge(String key, EdgeDeleteOptions options) : void`
 
 Deletes the edge with the given _key_ from the collection.
 

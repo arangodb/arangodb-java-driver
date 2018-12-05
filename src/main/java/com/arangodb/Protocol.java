@@ -32,7 +32,7 @@ public enum Protocol {
 	 */
 	VST,
 	/**
-	 * HTTP with Json body
+	 * HTTP with JSON body
 	 */
 	HTTP_JSON,
 	/**
