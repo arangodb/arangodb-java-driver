@@ -5,9 +5,7 @@ These functions implement the
 
 ## ArangoDatabase.getAqlFunctions
 
-```
-ArangoDatabase.getAqlFunctions(AqlFunctionGetOptions options) : Collection<AqlFunctionEntity>
-```
+`ArangoDatabase.getAqlFunctions(AqlFunctionGetOptions options) : Collection<AqlFunctionEntity>`
 
 **Arguments**
 
@@ -22,15 +20,15 @@ ArangoDatabase.getAqlFunctions(AqlFunctionGetOptions options) : Collection<AqlFu
 ```Java
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
-Collection<AqlFunctionEntity> functions = db.getAqlFunctions(new AqlFunctionGetOptions().namespace("myfuncs"));
+Collection<AqlFunctionEntity> functions = db.getAqlFunctions(
+  new AqlFunctionGetOptions().namespace("myfuncs")
+);
 // functions is a list of function descriptions
 ```
 
 ## ArangoDatabase.createAqlFunction
 
-```
-ArangoDatabase.createAqlFunction(String name, String code, AqlFunctionCreateOptions options) : void
-```
+`ArangoDatabase.createAqlFunction(String name, String code, AqlFunctionCreateOptions options) : void`
 
 **Arguments**
 
@@ -46,7 +44,9 @@ ArangoDatabase.createAqlFunction(String name, String code, AqlFunctionCreateOpti
 
   - **isDeterministic**: `Boolean`
 
-    An optional boolean value to indicate that the function results are fully deterministic (function return value solely depends on the input value and return value is the same for repeated calls with same input)
+    An optional boolean value to indicate that the function results are fully
+    deterministic (function return value solely depends on the input value
+    and return value is the same for repeated calls with same input)
 
 **Examples**
 
@@ -66,9 +66,7 @@ ArangoCursor<Double> cursor = db.query(query, null, new AqlQueryOptions(), Doubl
 
 ## ArangoDatabase.deleteAqlFunction
 
-```
-ArangoDatabase.deleteAqlFunction(String name, AqlFunctionDeleteOptions options): Integer
-```
+`ArangoDatabase.deleteAqlFunction(String name, AqlFunctionDeleteOptions options): Integer`
 
 Deletes the AQL user function with the given name from the database.
 
@@ -82,7 +80,10 @@ Deletes the AQL user function with the given name from the database.
 
   - **group**: `Boolean`
 
-    If set to true, then the function name provided in name is treated as a namespace prefix, and all functions in the specified namespace will be deleted. If set to false, the function name provided in name must be fully qualified, including any namespaces.
+    If set to true, then the function name provided in name is treated as a
+    namespace prefix, and all functions in the specified namespace will be deleted.
+    If set to false, the function name provided in name must be fully qualified,
+    including any namespaces.
 
 **Examples**
 

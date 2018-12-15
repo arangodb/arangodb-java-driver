@@ -112,7 +112,7 @@ public interface ArangoSerializer {
 	 * Serialize a given Object to VelocyPack
 	 * 
 	 * @param entity
-	 *            The Object to serialize. If it is from type String, it will be handled as a Json.
+	 *            The Object to serialize. If it is from type String, it will be handled as a JSON.
 	 * @return The serialized VelocyPack
 	 * @throws ArangoDBException
 	 */
@@ -122,7 +122,7 @@ public interface ArangoSerializer {
 	 * Serialize a given Object to VelocyPack
 	 * 
 	 * @param entity
-	 *            The Object to serialize. If it is from type String, it will be handled as a Json.
+	 *            The Object to serialize. If it is from type String, it will be handled as a JSON.
 	 * @param options
 	 *            Additional options
 	 * @return the serialized VelocyPack
