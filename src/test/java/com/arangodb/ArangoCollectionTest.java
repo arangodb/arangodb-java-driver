@@ -207,6 +207,19 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void insertDocumentsSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
+		final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info = db.collection(COLLECTION_NAME).insertDocuments(
+				Arrays.asList(new BaseDocument(), new BaseDocument()), new DocumentCreateOptions().silent(true));
+		assertThat(info, is(notNullValue()));
+		assertThat(info.getDocuments().isEmpty(), is(true));
+		assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
+		assertThat(info.getErrors().isEmpty(), is(true));
+	}
+
+	@Test
 	public void getDocument() {
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(new BaseDocument(), null);
@@ -676,6 +689,21 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void updateDocumentsSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument());
+		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info = db.collection(COLLECTION_NAME).updateDocuments(
+				Arrays.asList(new BaseDocument(createResult.getKey())), new DocumentUpdateOptions().silent(true));
+		assertThat(info, is(notNullValue()));
+		assertThat(info.getDocuments().isEmpty(), is(true));
+		assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
+		assertThat(info.getErrors().isEmpty(), is(true));
+	}
+
+	@Test
 	public void replaceDocument() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
@@ -845,6 +873,22 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void replaceDocumentsSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument());
+		final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info = db.collection(COLLECTION_NAME)
+				.replaceDocuments(Arrays.asList(new BaseDocument(createResult.getKey())),
+						new DocumentReplaceOptions().silent(true));
+		assertThat(info, is(notNullValue()));
+		assertThat(info.getDocuments().isEmpty(), is(true));
+		assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
+		assertThat(info.getErrors().isEmpty(), is(true));
+	}
+
+	@Test
 	public void deleteDocument() {
 		final BaseDocument doc = new BaseDocument();
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc,
@@ -908,6 +952,21 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(meta.getId(), is(nullValue()));
 		assertThat(meta.getKey(), is(nullValue()));
 		assertThat(meta.getRev(), is(nullValue()));
+	}
+
+	@Test
+	public void deleteDocumentsSilent() {
+		if (arangoDB.getRole() != ServerRole.SINGLE) {
+			return;
+		}
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument());
+		final MultiDocumentEntity<DocumentDeleteEntity<BaseDocument>> info = db.collection(COLLECTION_NAME).deleteDocuments(
+				Arrays.asList(createResult.getKey()), BaseDocument.class, new DocumentDeleteOptions().silent(true));
+		assertThat(info, is(notNullValue()));
+		assertThat(info.getDocuments().isEmpty(), is(true));
+		assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
+		assertThat(info.getErrors().isEmpty(), is(true));
 	}
 
 	@Test

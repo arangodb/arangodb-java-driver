@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed
+
+- fixed bug with multi document operations when using parameter `silent` (issue #241)
+
 ## [5.0.3] - 2018-11-12
 
 ### Fixed
