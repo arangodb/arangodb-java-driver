@@ -10,16 +10,16 @@ ArangoDB arangoDB = new ArangoDB.Builder().build();
 
 The driver is configured with some default values:
 
-property-key             | description                             | default value
--------------------------|-----------------------------------------|----------------
-arangodb.hosts           | ArangoDB hosts                          | 127.0.0.1:8529
-arangodb.timeout         | connect & request timeout (millisecond) | 0
-arangodb.user            | Basic Authentication User               | 
-arangodb.password        | Basic Authentication Password           | 
-arangodb.useSsl          | use SSL connection                      | false
-arangodb.chunksize       | VelocyStream Chunk content-size (bytes) | 30000
-arangodb.connections.max | max number of connections               | 1 VST, 20 HTTP
-arangodb.protocol        | used network protocol                   | VST
+| property-key             | description                             | default value  |
+| ------------------------ | --------------------------------------- | -------------- |
+| arangodb.hosts           | ArangoDB hosts                          | 127.0.0.1:8529 |
+| arangodb.timeout         | connect & request timeout (millisecond) | 0              |
+| arangodb.user            | Basic Authentication User               |
+| arangodb.password        | Basic Authentication Password           |
+| arangodb.useSsl          | use SSL connection                      | false          |
+| arangodb.chunksize       | VelocyStream Chunk content-size (bytes) | 30000          |
+| arangodb.connections.max | max number of connections               | 1 VST, 20 HTTP |
+| arangodb.protocol        | used network protocol                   | VST            |
 
 To customize the configuration the parameters can be changed in the code...
 
