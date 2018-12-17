@@ -11,9 +11,7 @@ for details.
 
 ## ArangoView.exists
 
-```
-ArangoView.exists() : boolean
-```
+`ArangoView.exists() : boolean`
 
 Checks whether the view exists
 
@@ -22,16 +20,14 @@ Checks whether the view exists
 ```Java
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
-ArangoView view = db.view("potatos");
+ArangoView view = db.view("potatoes");
 
 boolean exists = view.exists();
 ```
 
 ## ArangoView.getInfo
 
-```
-ArangoView.getInfo() : ViewEntity
-```
+`ArangoView.getInfo() : ViewEntity`
 
 Returns information about the view.
 
@@ -40,7 +36,7 @@ Returns information about the view.
 ```Java
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
-ArangoView view = db.view("potatos");
+ArangoView view = db.view("potatoes");
 
 ViewEntity info = view.getInfo();
 ```

@@ -71,6 +71,11 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
 	}
 
 	@Override
+	public void drop(final boolean dropCollections) throws ArangoDBException {
+		executor.execute(dropRequest(dropCollections), Void.class);
+	}
+
+	@Override
 	public GraphEntity getInfo() throws ArangoDBException {
 		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
 	}

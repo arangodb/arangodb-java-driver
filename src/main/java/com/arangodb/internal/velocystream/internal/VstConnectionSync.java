@@ -22,9 +22,8 @@ package com.arangodb.internal.velocystream.internal;
 
 import java.util.Collection;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -96,12 +95,8 @@ public class VstConnectionSync extends VstConnection {
 		messageStore.storeMessage(message.getId(), task);
 		super.writeIntern(message, chunks);
 		try {
-			return task.get();
-		} catch (final InterruptedException e) {
-			throw new ArangoDBException(e);
-		} catch (final ExecutionException e) {
-			throw new ArangoDBException(e);
-		} catch (final CancellationException e) {
+			return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
+		} catch (final Exception e) {
 			throw new ArangoDBException(e);
 		}
 	}

@@ -261,7 +261,7 @@ public class CollectionCreateOptions {
 
 	/**
 	 * @param indexBuckets
-	 *            The: number of buckets into which indexes using a hash table are split. The default is 16 and this
+	 *            The number of buckets into which indexes using a hash table are split. The default is 16 and this
 	 *            number has to be a power of 2 and less than or equal to 1024. For very large collections one should
 	 *            increase this to avoid long pauses when the hash table has to be initially built or resized, since
 	 *            buckets are resized individually and can be initially built in parallel. For example, 64 might be a

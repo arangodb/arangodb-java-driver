@@ -63,7 +63,15 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected Request dropRequest() {
-		return request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name);
+		return dropRequest(false);
+	}
+
+	protected Request dropRequest(final boolean dropCollections) {
+		final Request request = request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name);
+		if (dropCollections) {
+			request.putQueryParam("dropCollections", dropCollections);
+		}
+		return request;
 	}
 
 	protected Request getInfoRequest() {

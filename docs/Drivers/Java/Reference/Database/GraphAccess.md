@@ -5,9 +5,7 @@ These functions implement the
 
 ## ArangoDatabase.graph
 
-```
-ArangoDatabase.graph(String name) : ArangoGraph
-```
+`ArangoDatabase.graph(String name) : ArangoGraph`
 
 Returns a _ArangoGraph_ instance for the given graph name.
 
