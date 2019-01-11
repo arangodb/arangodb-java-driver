@@ -591,6 +591,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			if (hosts.isEmpty()) {
 				hosts.add(host);
 			}
+			if (protocol == null) {
+				protocol = Protocol.VST;
+			}
 			final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
 			final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
 			final VPackParser vpackParser = vpackParserBuilder.build();
@@ -607,7 +610,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 					: protocol == Protocol.VST ? ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT
 							: ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
 
-			final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
+			final ConnectionFactory connectionFactory = Protocol.VST == protocol
 					? new VstConnectionFactorySync(host, timeout, connectionTtl, useSsl, sslContext)
 					: new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
 							connectionTtl);
