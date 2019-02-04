@@ -29,26 +29,32 @@ import com.arangodb.entity.ErrorEntity;
 public class ArangoDBException extends RuntimeException {
 
 	private static final long serialVersionUID = 6165638002614173801L;
-	private ErrorEntity entity = null;
-	private Integer responseCode;
+	private final ErrorEntity entity;
+	private final Integer responseCode;
 
 	public ArangoDBException(final ErrorEntity errorEntity) {
 		super(String.format("Response: %s, Error: %s - %s", errorEntity.getCode(), errorEntity.getErrorNum(),
 			errorEntity.getErrorMessage()));
 		this.entity = errorEntity;
+		this.responseCode = null;
 	}
 
 	public ArangoDBException(final String message) {
 		super(message);
+		this.entity = null;
+		this.responseCode = null;
 	}
 
 	public ArangoDBException(final String message, final Integer responseCode) {
 		super(message);
+		this.entity = null;
 		this.responseCode = responseCode;
 	}
 
 	public ArangoDBException(final Throwable cause) {
 		super(cause);
+		this.entity = null;
+		this.responseCode = null;
 	}
 
 	/**
@@ -69,7 +75,8 @@ public class ArangoDBException extends RuntimeException {
 	 * @return HTTP response code
 	 */
 	public Integer getResponseCode() {
-		return responseCode != null ? responseCode : entity != null ? entity.getCode() : null;
+		Integer entityResponseCode = entity != null ? entity.getCode() : null;
+		return responseCode != null ? responseCode : entityResponseCode;
 	}
 
 	/**

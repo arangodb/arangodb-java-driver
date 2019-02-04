@@ -32,7 +32,7 @@ import com.arangodb.velocypack.VPackSlice;
 public interface ArangoDeserializer {
 
 	/**
-	 * Deserialze a given VelocPack to an instance of a given type
+	 * Deserialize a given VelocyPack to an instance of a given type
 	 * 
 	 * @param vpack
 	 *            The VelocyPack to deserialize

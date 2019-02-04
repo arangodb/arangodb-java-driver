@@ -34,6 +34,6 @@ public enum Permissions {
 	 * read-only access
 	 */
 	RO,
-	NONE;
+	NONE
 
 }

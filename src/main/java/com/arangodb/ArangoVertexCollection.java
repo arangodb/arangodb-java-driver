@@ -152,7 +152,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
-	 * @param type
+	 * @param <T>
 	 *            The type of the vertex-document (POJO class, VPackSlice or String for JSON)
 	 * @return information about the vertex
 	 * @throws ArangoDBException
@@ -167,7 +167,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
-	 * @param type
+	 * @param <T>
 	 *            The type of the vertex-document (POJO class, VPackSlice or String for JSON)
 	 * @param options
 	 *            Additional options, can be null

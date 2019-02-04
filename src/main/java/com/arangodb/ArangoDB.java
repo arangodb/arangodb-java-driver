@@ -603,9 +603,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
 			final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
-			final int max = maxConnections != null ? Math.max(1, maxConnections)
-					: protocol == Protocol.VST ? ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT
-							: ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+			int protocolMaxConnections = protocol == Protocol.VST ?
+					ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT :
+					ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+			final int max = maxConnections != null ? Math.max(1, maxConnections) : protocolMaxConnections;
 
 			final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
 					? new VstConnectionFactorySync(host, timeout, connectionTtl, useSsl, sslContext)
@@ -688,7 +689,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 *      Documentation</a>
 	 * @param user
 	 *            The name of the user for which you want to query the databases
-	 * @return
+	 * @return list of database names which are available for the specified user
 	 * @throws ArangoDBException
 	 */
 	Collection<String> getAccessibleDatabasesFor(String user) throws ArangoDBException;

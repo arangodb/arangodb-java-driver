@@ -36,14 +36,14 @@ public interface ArangoView extends ArangoSerializationAccessor {
 	 * 
 	 * @return database handler
 	 */
-	public ArangoDatabase db();
+	ArangoDatabase db();
 
 	/**
 	 * The name of the view
 	 * 
 	 * @return view name
 	 */
-	public String name();
+	String name();
 
 	/**
 	 * Checks whether the view exists.
