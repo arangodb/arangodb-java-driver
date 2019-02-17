@@ -28,18 +28,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.SSLContext;
 
+import com.arangodb.internal.Communication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.AccessType;
-import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
@@ -55,7 +53,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public abstract class VstCommunication<R, C extends VstConnection> implements Closeable {
+public abstract class VstCommunication<R, C extends VstConnection> extends Communication<R> implements Closeable {
 
 	protected static final String ENCRYPTION_PLAIN = "plain";
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
@@ -67,15 +65,15 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 	protected final String password;
 
 	protected final Integer chunksize;
-	private final HostHandler hostHandler;
 
 	protected VstCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
 		final HostHandler hostHandler) {
+		super(hostHandler);
+
 		this.user = user;
 		this.password = password;
 		this.util = util;
-		this.hostHandler = hostHandler;
 		this.chunksize = chunksize != null ? chunksize : ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
 	}
 
@@ -126,20 +124,13 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 		hostHandler.close();
 	}
 
-	public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+	@Override
+	public R execute(final Request request, final HostHandle hostHandle) {
 		try {
 			final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
 			return execute(request, connection);
-		} catch (final ArangoDBException e) {
-			if (e instanceof ArangoDBRedirectException) {
-				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
-				final HostDescription redirectHost = HostUtils.createFromLocation(location);
-				hostHandler.closeCurrentOnError();
-				hostHandler.fail();
-				return execute(request, new HostHandle().setHost(redirectHost));
-			} else {
-				throw e;
-			}
+		} catch (ArangoDBException e) {
+			return handleArangoDBException(e, request);
 		}
 	}
 

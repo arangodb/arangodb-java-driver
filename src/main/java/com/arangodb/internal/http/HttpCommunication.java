@@ -24,17 +24,15 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketException;
 
+import com.arangodb.internal.Communication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.AccessType;
-import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
@@ -44,7 +42,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  *
  */
-public class HttpCommunication implements Closeable {
+public class HttpCommunication extends Communication<Response> implements Closeable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
 
@@ -53,7 +51,6 @@ public class HttpCommunication implements Closeable {
 		private final HostHandler hostHandler;
 
 		public Builder(final HostHandler hostHandler) {
-			super();
 			this.hostHandler = hostHandler;
 		}
 
@@ -66,11 +63,8 @@ public class HttpCommunication implements Closeable {
 		}
 	}
 
-	private final HostHandler hostHandler;
-
 	private HttpCommunication(final HostHandler hostHandler) {
-		super();
-		this.hostHandler = hostHandler;
+		super(hostHandler);
 	}
 
 	@Override
@@ -78,7 +72,8 @@ public class HttpCommunication implements Closeable {
 		hostHandler.close();
 	}
 
-	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException, IOException {
+	@Override
+	public Response execute(final Request request, final HostHandle hostHandle) {
 		final AccessType accessType = RequestUtils.determineAccessType(request);
 		Host host = hostHandler.get(hostHandle, accessType);
 		try {
@@ -104,16 +99,10 @@ public class HttpCommunication implements Closeable {
 					}
 				}
 			}
-		} catch (final ArangoDBException e) {
-			if (e instanceof ArangoDBRedirectException) {
-				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
-				final HostDescription redirectHost = HostUtils.createFromLocation(location);
-				hostHandler.closeCurrentOnError();
-				hostHandler.fail();
-				return execute(request, new HostHandle().setHost(redirectHost));
-			} else {
-				throw e;
-			}
+		} catch (ArangoDBException e) {
+			return handleArangoDBException(e, request);
+		} catch (IOException e) {
+			throw new ArangoDBException(e);
 		}
 	}
 
