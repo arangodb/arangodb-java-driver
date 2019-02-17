@@ -130,7 +130,7 @@ public abstract class VstCommunication<R, C extends VstConnection> extends Commu
 			final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
 			return execute(request, connection);
 		} catch (ArangoDBException e) {
-			return handleArangoDBException(e, request);
+			return handleException(e, request);
 		}
 	}
 

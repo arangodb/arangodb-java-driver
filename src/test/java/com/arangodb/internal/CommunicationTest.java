@@ -21,7 +21,7 @@ public class CommunicationTest {
 		HostHandler handler = EasyMock.createMock(HostHandler.class);
 		EasyMock.replay(handler);
 
-		new TrackingCommunication(handler).handleArangoDBException(new ArangoDBException(""), REQUEST);
+		new TrackingCommunication(handler).handleException(new ArangoDBException(""), REQUEST);
 	}
 
 	@Test(expected = ArangoDBException.class)
@@ -37,7 +37,7 @@ public class CommunicationTest {
 		EasyMock.replay(handler);
 
 		try {
-			new TrackingCommunication(handler).handleArangoDBException(REDIRECT_EXCEPTION, REQUEST);
+			new TrackingCommunication(handler).handleException(REDIRECT_EXCEPTION, REQUEST);
 		} finally {
 			EasyMock.verify(handler);
 		}
@@ -51,7 +51,7 @@ public class CommunicationTest {
 		EasyMock.replay(handler);
 
 		TrackingCommunication trackingCommunication = new TrackingCommunication(handler);
-		trackingCommunication.handleArangoDBException(REDIRECT_EXCEPTION, REQUEST);
+		trackingCommunication.handleException(REDIRECT_EXCEPTION, REQUEST);
 		assertTrue(trackingCommunication.isExecuted());
 	}
 

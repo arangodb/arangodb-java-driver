@@ -100,7 +100,7 @@ public class HttpCommunication extends Communication<Response> implements Closea
 				}
 			}
 		} catch (ArangoDBException e) {
-			return handleArangoDBException(e, request);
+			return handleException(e, request);
 		} catch (IOException e) {
 			throw new ArangoDBException(e);
 		}
