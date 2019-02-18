@@ -18,7 +18,7 @@ public abstract class Communication<T> {
 
 	public abstract T execute(Request request, HostHandle hostHandle);
 
-	public T handleException(ArangoDBException e, Request request) {
+	protected T handleException(ArangoDBException e, Request request) {
 		if (e instanceof ArangoDBRedirectException) {
 			try {
 				hostHandler.closeCurrentOnError();
