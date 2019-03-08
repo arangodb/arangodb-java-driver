@@ -26,18 +26,15 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Test;
 
 import com.arangodb.internal.net.FallbackHostHandler;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostImpl;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostSet;
 import com.arangodb.internal.net.RandomHostHandler;
 import com.arangodb.internal.net.RoundRobinHostHandler;
 
@@ -52,28 +49,39 @@ public class HostHandlerTest {
 	private static final Host HOST_2 = new HostImpl(null, new HostDescription("127.0.0.3", 8529));
 
 	private static final HostResolver SINGLE_HOST = new HostResolver() {
+		
 		@Override
-		public List<Host> resolve(final boolean initial, final boolean closeConnections) {
-			return Collections.<Host> singletonList(HOST_0);
+		public HostSet resolve(final boolean initial, final boolean closeConnections) {
+		
+			HostSet set = new HostSet();
+			set.addHost(HOST_0);
+			return set;
 		}
 
 		@Override
 		public void init(final EndpointResolver resolver) {
+			
 		}
+		
 	};
+	
 	private static final HostResolver MULTIPLE_HOSTS = new HostResolver() {
+		
 		@Override
-		public List<Host> resolve(final boolean initial, final boolean closeConnections) {
-			final ArrayList<Host> hosts = new ArrayList<Host>();
-			hosts.add(HOST_0);
-			hosts.add(HOST_1);
-			hosts.add(HOST_2);
-			return hosts;
+		public HostSet resolve(final boolean initial, final boolean closeConnections) {
+			
+			HostSet set = new HostSet();
+			set.addHost(HOST_0);
+			set.addHost(HOST_1);
+			set.addHost(HOST_2);
+			return set;
 		}
 
 		@Override
 		public void init(final EndpointResolver resolver) {
+			
 		}
+		
 	};
 
 	@Test

@@ -87,6 +87,9 @@ public abstract class VstConnection implements Connection {
 	}
 
 	public synchronized void open() throws IOException {
+		
+		System.out.println("Start Connection " + this.toString());
+		
 		if (isOpen()) {
 			return;
 		}
@@ -124,6 +127,9 @@ public abstract class VstConnection implements Connection {
 		executor.submit(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				
+				System.out.println("Start Callable for " + this.toString());
+				
 				final long openTime = new Date().getTime();
 				final Long ttlTime = ttl != null ? openTime + ttl : null;
 				final ChunkStore chunkStore = new ChunkStore(messageStore);
@@ -152,6 +158,9 @@ public abstract class VstConnection implements Connection {
 						break;
 					}
 				}
+				
+				System.out.println("Stop Callable for " + this.toString());
+				
 				return null;
 			}
 		});

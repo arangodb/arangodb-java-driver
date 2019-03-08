@@ -38,7 +38,7 @@ public class FallbackHostHandler implements HostHandler {
 	public FallbackHostHandler(final HostResolver resolver) {
 		this.resolver = resolver;
 		iterations = 0;
-		current = lastSuccess = resolver.resolve(true, false).get(0);
+		current = lastSuccess = resolver.resolve(true, false).getHostsList().get(0);
 		firstOpened = true;
 	}
 
@@ -54,7 +54,7 @@ public class FallbackHostHandler implements HostHandler {
 
 	@Override
 	public void fail() {
-		final List<Host> hosts = resolver.resolve(false, false);
+		final List<Host> hosts = resolver.resolve(false, false).getHostsList();
 		final int index = hosts.indexOf(current) + 1;
 		final boolean inBound = index < hosts.size();
 		current = hosts.get(inBound ? index : 0);
@@ -79,10 +79,8 @@ public class FallbackHostHandler implements HostHandler {
 
 	@Override
 	public void close() throws IOException {
-		final List<Host> hosts = resolver.resolve(false, false);
-		for (final Host host : hosts) {
-			host.close();
-		}
+		final HostSet hosts = resolver.resolve(false, false);
+		hosts.close();
 	}
 
 	@Override
