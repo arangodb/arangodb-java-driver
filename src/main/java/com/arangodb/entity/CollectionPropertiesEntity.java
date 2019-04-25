@@ -85,8 +85,7 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	}
 
 	/**
-	 * @return contains the names of document attributes that are used to determine the target shard for documents. Only
-	 *         in a cluster setup
+	 * @return the number of shards of the collection. Only in a cluster setup (else returning null).
 	 */
 	public Integer getNumberOfShards() {
 		return numberOfShards;
@@ -97,7 +96,8 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	}
 
 	/**
-	 * @return the number of shards of the collection. Only in a cluster setup.
+	 * @return the names of document attributes that are used to determine the target shard for documents.
+	 *         Only in a cluster setup (else returning null).
 	 */
 	public Collection<String> getShardKeys() {
 		return shardKeys;
@@ -116,7 +116,7 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	}
 
 	/**
-	 * @return whether the collection is a satellite collection. Only in a enterprise cluster setup.
+	 * @return whether the collection is a satellite collection. Only in an enterprise cluster setup (else returning null).
 	 */
 	public Boolean getSatellite() {
 		return this.replicationFactor.getSatellite();
