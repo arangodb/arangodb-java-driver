@@ -34,6 +34,7 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerLicense;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -60,6 +61,7 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
+ * @author Heiko Kernbach
  *
  */
 public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
@@ -192,6 +194,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 	@Override
 	public ServerRole getRole() throws ArangoDBException {
 		return executor.execute(getRoleRequest(), getRoleResponseDeserializer());
+	}
+	
+	@Override
+	public ServerLicense getLicense() throws ArangoDBException {
+		return executor.execute(getLicenseRequest(), getLicenseResponseDeserializer());
 	}
 
 	@Override

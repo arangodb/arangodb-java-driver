@@ -32,6 +32,7 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerLicense;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoContext;
@@ -710,6 +711,14 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	ServerRole getRole() throws ArangoDBException;
+	
+	/**
+	 * Returns the server license.
+	 *
+	 * @return the server license
+	 * @throws ArangoDBException
+	 */
+	ServerLicense getLicense() throws ArangoDBException;
 
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in

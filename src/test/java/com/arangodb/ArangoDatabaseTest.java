@@ -69,6 +69,7 @@ import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
+import com.arangodb.entity.ServerLicense;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
@@ -170,6 +171,11 @@ public class ArangoDatabaseTest extends BaseTest {
 		if (arangoDB.getRole() == ServerRole.SINGLE) {
 			return;
 		}
+		
+		if (arangoDB.getLicense() == ServerLicense.community) {
+			return;
+		}
+		
 		try {
 			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
 				new CollectionCreateOptions().satellite(true));
