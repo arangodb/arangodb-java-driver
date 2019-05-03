@@ -44,6 +44,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.AqlExecutionExplainEntity;
@@ -69,7 +71,6 @@ import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
-import com.arangodb.entity.ServerLicense;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
@@ -92,6 +93,8 @@ import com.arangodb.velocypack.exception.VPackException;
  */
 @RunWith(Parameterized.class)
 public class ArangoDatabaseTest extends BaseTest {
+	
+	Logger LOG = LoggerFactory.getLogger(ArangoDatabaseTest.class);
 
 	private static final String COLLECTION_NAME = "db_test";
 	private static final String GRAPH_NAME = "graph_test";
@@ -168,21 +171,26 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createSatelliteCollection() {
-		if (arangoDB.getRole() == ServerRole.SINGLE) {
+
+		if (arangoDB.getVersion().getLicense() == ArangoDBVersion.License.COMMUNITY) {
+			LOG.info("Skip Test on COMMUNITY VERSION");
 			return;
 		}
 		
-		if (arangoDB.getLicense() == ServerLicense.community) {
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			LOG.info("Skip Test on SINGLE SERVER");
 			return;
 		}
 		
 		try {
-			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
-				new CollectionCreateOptions().satellite(true));
+			
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().satellite(true));
+			
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(nullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(true));
+			
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}

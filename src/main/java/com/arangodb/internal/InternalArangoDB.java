@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerLicense;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -76,20 +75,6 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 		};
 	}
 	
-	protected Request getLicenseRequest() {
-		return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_VERSION);
-	}
-	
-	protected ResponseDeserializer<ServerLicense> getLicenseResponseDeserializer() {
-		return new ResponseDeserializer<ServerLicense>() {
-			@Override
-			public ServerLicense deserialize(final Response response) throws VPackException {
-				System.out.println(response.getBody().toString());
-				return util().deserialize(response.getBody().get("license"), ServerLicense.class);
-			}
-		};
-	}
-
 	protected Request createDatabaseRequest(final String name) {
 		final Request request = request(ArangoRequestParam.SYSTEM, RequestType.POST,
 			InternalArangoDatabase.PATH_API_DATABASE);

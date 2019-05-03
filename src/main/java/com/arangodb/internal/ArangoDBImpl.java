@@ -34,7 +34,6 @@ import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LogEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerLicense;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -196,11 +195,6 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 		return executor.execute(getRoleRequest(), getRoleResponseDeserializer());
 	}
 	
-	@Override
-	public ServerLicense getLicense() throws ArangoDBException {
-		return executor.execute(getLicenseRequest(), getLicenseResponseDeserializer());
-	}
-
 	@Override
 	public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
 		return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
