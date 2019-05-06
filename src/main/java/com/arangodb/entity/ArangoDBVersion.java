@@ -28,10 +28,6 @@ package com.arangodb.entity;
  */
 public class ArangoDBVersion implements Entity {
 
-	public enum License {
-		ENTERPRISE, COMMUNITY
-	}
-
 	private String server;
 	private String version;
 	private License license;

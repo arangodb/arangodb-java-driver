@@ -53,13 +53,13 @@ public class ArangoExecutorSync extends ArangoExecutor {
 		return execute(request, new ResponseDeserializer<T>() {
 			@Override
 			public T deserialize(final Response response) throws VPackException {
-				return createResult(type, response);
+				T result = createResult(type, response);
+				return result;
 			}
 		}, hostHandle);
 	}
 
-	public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer)
-			throws ArangoDBException {
+	public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer) throws ArangoDBException {
 		return execute(request, responseDeserializer, null);
 	}
 
@@ -67,9 +67,14 @@ public class ArangoExecutorSync extends ArangoExecutor {
 		final Request request,
 		final ResponseDeserializer<T> responseDeserializer,
 		final HostHandle hostHandle) throws ArangoDBException {
+		
 		try {
+			
 			final Response response = protocol.execute(request, hostHandle);
-			return responseDeserializer.deserialize(response);
+			T deserialize = responseDeserializer.deserialize(response);
+			
+			return deserialize;
+			
 		} catch (final VPackException e) {
 			throw new ArangoDBException(e);
 		}

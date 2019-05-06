@@ -46,6 +46,9 @@ public class CollectionCreateOptions {
 	private CollectionType type;
 	private Integer indexBuckets;
 	private String distributeShardsLike;
+	
+	private String shardingStrategy; // cluster option 
+	private String smartJoinAttribute; // enterprise option
 
 	public CollectionCreateOptions() {
 		super();
@@ -209,10 +212,32 @@ public class CollectionCreateOptions {
 		return this;
 	}
 
-	public Integer getNumberOfShards() {
-		return numberOfShards;
+	/**
+	 * @param smartJoinAttribute
+	 * @return options
+	 */
+	public CollectionCreateOptions smartJoinAttribute(final String smartJoinAttribute) {
+		this.smartJoinAttribute = smartJoinAttribute;
+		return this;
 	}
 
+	public String getSmartJoinAttribute() {
+		return smartJoinAttribute;
+	}
+
+	/**
+	 * @param shardingStrategy
+	 * @return options
+	 */
+	public CollectionCreateOptions shardingStrategy(final String shardingStrategy) {
+		this.shardingStrategy = shardingStrategy;
+		return this;
+	}
+
+	public String getShardingStrategy() {
+		return shardingStrategy;
+	}
+	
 	/**
 	 * @param numberOfShards
 	 *            (The default is 1): in a cluster, this value determines the number of shards to create for the
@@ -223,7 +248,11 @@ public class CollectionCreateOptions {
 		this.numberOfShards = numberOfShards;
 		return this;
 	}
-
+	
+	public Integer getNumberOfShards() {
+		return numberOfShards;
+	}
+	
 	public Boolean getIsSystem() {
 		return isSystem;
 	}

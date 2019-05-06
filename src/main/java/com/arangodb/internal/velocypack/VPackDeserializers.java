@@ -31,11 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.ArangoDBVersion.License;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.License;
 import com.arangodb.entity.LogLevel;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryExecutionState;
@@ -45,8 +45,8 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
+import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
@@ -153,12 +153,13 @@ public class VPackDeserializers {
 		}
 	};
 
-	public static final VPackDeserializer<ArangoDBVersion.License> LICENSE = new VPackDeserializer<ArangoDBVersion.License>() {
+	public static final VPackDeserializer<License> LICENSE = new VPackDeserializer<License>() {
 		@Override
 		public License deserialize(
 			final VPackSlice parent,
 			final VPackSlice vpack,
 			final VPackDeserializationContext context) throws VPackException {
+			
 			return License.valueOf(vpack.getAsString().toUpperCase());
 		}
 	};

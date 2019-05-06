@@ -117,8 +117,13 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 	}
 
 	protected Request createCollectionRequest(final String name, final CollectionCreateOptions options) {
-		return request(name(), RequestType.POST, InternalArangoCollection.PATH_API_COLLECTION).setBody(
-			util().serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name)));
+		
+		VPackSlice body = util().serialize(OptionsBuilder.build(options != null ? options : new CollectionCreateOptions(), name));
+		
+		return request(
+					name(), 
+					RequestType.POST, 
+					InternalArangoCollection.PATH_API_COLLECTION).setBody(body);
 	}
 
 	protected Request getCollectionsRequest(final CollectionsReadOptions options) {
