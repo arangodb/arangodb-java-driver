@@ -22,10 +22,13 @@ package com.arangodb.internal.util;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+
+import com.arangodb.internal.net.Host;
 
 /**
  * @author Mark Vollmary
@@ -72,5 +75,21 @@ public final class IOUtils {
 		}
 		buffer.flush();
 		return buffer.toByteArray();
+	}
+
+	public static void closeQuietly(final Closeable c) {
+		try {
+			c.close();
+		} catch (Exception e) {
+			// TODO: at least log a message. can we use SLF4J?
+		}
+	}
+
+	public static void closeQuietly(final Host h) {
+		try {
+			h.close();
+		} catch (Exception e) {
+			// TODO: at least log a message. can we use SLF4J?
+		}
 	}
 }

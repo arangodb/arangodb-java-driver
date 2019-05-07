@@ -48,7 +48,11 @@ public class RoundRobinHostHandler implements HostHandler {
 		if (fails > size) {
 			return null;
 		}
-		final int index = (current++) % size;
+		if (current < 0) {
+			current = 0;
+		}
+		final int index = current % size;
+		current++;
 		Host host = hosts.get(index);
 		if (hostHandle != null) {
 			final HostDescription hostDescription = hostHandle.getHost();

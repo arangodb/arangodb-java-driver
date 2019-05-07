@@ -229,8 +229,8 @@ public class HttpConnection implements Connection {
 
 	@Override
 	public void close() throws IOException {
-		cm.shutdown();
-		client.close();
+		IOUtils.closeQuietly(cm);
+		IOUtils.closeQuietly(client);
 	}
 
 	public Response execute(final Request request) throws ArangoDBException, IOException, SocketException {
