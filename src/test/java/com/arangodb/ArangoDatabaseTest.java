@@ -220,20 +220,26 @@ public class ArangoDatabaseTest extends BaseTest {
 	
 	@Test
 	public void createCollectionWithShardingStrategys() {
-		
+	    if (!requireVersion(3, 4)) {
+	    	LOG.info("Skip Test because feature not implemented yet.");
+	        return;
+	    }
+
 		if (arangoDB.getRole() == ServerRole.SINGLE) {
 			LOG.info("Skip Test on SINGLE SERVER");
 			return;
 		}
 		
 		try {
-			
 			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().shardingStrategy(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
 			
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getShardingStrategy(), is(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
 			
+		} catch (ArangoDBException e) {
+			System.out.println(e);
+			assertTrue(false);
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
@@ -241,6 +247,10 @@ public class ArangoDatabaseTest extends BaseTest {
 	
 	@Test
 	public void createCollectionWithSmartJoinAttribute() {
+	    if (!requireVersion(3, 5)) {
+	    	LOG.info("Skip Test because feature not implemented yet.");
+	        return;
+	    }
 		
 		if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
 			LOG.info("Skip Test on COMMUNITY SERVER");
@@ -249,7 +259,6 @@ public class ArangoDatabaseTest extends BaseTest {
 		
 		try {
 			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123").shardKeys("_key:"));
-			
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getSmartJoinAttribute(), is("test123"));
@@ -963,7 +972,9 @@ public class ArangoDatabaseTest extends BaseTest {
 				new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(),
 				new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
 			cursor.close();
-		} finally {
+		} catch (ArangoDBException e) {
+			System.out.println(e);
+        } finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
 	}

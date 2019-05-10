@@ -29,9 +29,10 @@ import java.io.IOException;
 public class RoundRobinHostHandler implements HostHandler {
 
 	private final HostResolver resolver;
-	
+
 	private int current;
 	private int fails;
+	private Host currentHost;
 
 	public RoundRobinHostHandler(final HostResolver resolver) {
 		super();
@@ -43,14 +44,14 @@ public class RoundRobinHostHandler implements HostHandler {
 
 	@Override
 	public Host get(final HostHandle hostHandle, AccessType accessType) {
-		
+
 		final HostSet hosts = resolver.resolve(false, false);
 		final int size = hosts.getHostsList().size();
-		
+
 		if (fails > size) {
 			return null;
 		}
-		
+
 		final int index = (current++) % size;
 		Host host = hosts.getHostsList().get(index);
 		if (hostHandle != null) {
@@ -66,6 +67,7 @@ public class RoundRobinHostHandler implements HostHandler {
 				hostHandle.setHost(host.getDescription());
 			}
 		}
+		currentHost = host;
 		return host;
 	}
 
