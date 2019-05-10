@@ -38,10 +38,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.ArangoDBVersion.License;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.model.GraphCreateOptions;
 
@@ -232,24 +232,28 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void smartGraph() {
+		
 		if (arangoDB.getVersion().getLicense() == License.ENTERPRISE) {
-			for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2,
-					VERTEX_COL_3, VERTEX_COL_4 }) {
+			
+			for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4 }) {
 				try {
 					db.collection(collection).drop();
 				} catch (final ArangoDBException e) {
+					
 				}
 			}
 			try {
 				db.graph(GRAPH_NAME).drop();
 			} catch (final ArangoDBException e) {
 			}
+			
 			final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+			
 			edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
-			edgeDefinitions
-					.add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
-			final GraphEntity graph = db.createGraph(GRAPH_NAME, edgeDefinitions,
-				new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").numberOfShards(2));
+			edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
+			
+			final GraphEntity graph = db.createGraph(GRAPH_NAME, edgeDefinitions, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").numberOfShards(2));
+			
 			assertThat(graph, is(notNullValue()));
 			assertThat(graph.getIsSmart(), is(true));
 			assertThat(graph.getSmartGraphAttribute(), is("test"));
