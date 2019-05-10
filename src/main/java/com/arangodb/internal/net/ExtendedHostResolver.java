@@ -20,8 +20,12 @@
 
 package com.arangodb.internal.net;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.arangodb.internal.util.HostUtils;
 
@@ -30,6 +34,8 @@ import com.arangodb.internal.util.HostUtils;
  *
  */
 public class ExtendedHostResolver implements HostResolver {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
 
 	private static final long MAX_CACHE_TIME = 60 * 60 * 1000;
 	private EndpointResolver resolver;
@@ -54,22 +60,39 @@ public class ExtendedHostResolver implements HostResolver {
 
 	@Override
 	public List<Host> resolve(final boolean initial, final boolean closeConnections) {
+		
 		if (!initial && isExpired()) {
+			
 			lastUpdate = System.currentTimeMillis();
+			
 			final Collection<String> endpoints = resolver.resolve(closeConnections);
+			LOGGER.info("Resolve " + endpoints.size() + " Endpoints");
+			LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
+			
+			
 			if (!endpoints.isEmpty()) {
 				hosts.clear();
 			}
+			
 			for (final String endpoint : endpoints) {
+				LOGGER.debug("Create HOST from " + endpoint);
+				
 				if (endpoint.matches(".*://.+:[0-9]+")) {
+					
 					final String[] s = endpoint.replaceAll(".*://", "").split(":");
 					if (s.length == 2) {
 						final HostDescription description = new HostDescription(s[0], Integer.valueOf(s[1]));
 						hosts.add(HostUtils.createHost(description, maxConnections, connectionFactory));
+					} else {
+						LOGGER.warn("Skip Endpoint (Missung Port)" + endpoint);
 					}
+					
+				} else {
+					LOGGER.warn("Skip Endpoint (Format)" + endpoint);
 				}
 			}
 		}
+		
 		return hosts;
 	}
 
