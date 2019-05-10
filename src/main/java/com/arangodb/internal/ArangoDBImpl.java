@@ -60,6 +60,7 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
+ * @author Heiko Kernbach
  *
  */
 public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
@@ -193,7 +194,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 	public ServerRole getRole() throws ArangoDBException {
 		return executor.execute(getRoleRequest(), getRoleResponseDeserializer());
 	}
-
+	
 	@Override
 	public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
 		return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),

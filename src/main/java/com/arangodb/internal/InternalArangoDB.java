@@ -46,15 +46,16 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
+ * @author Heiko Kernbach
  *
  */
 public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
 
-	private static final String PATH_API_ADMIN_LOG = "/_admin/log";
-	private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
-	private static final String PATH_API_ROLE = "/_admin/server/role";
-	protected static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
-	private static final String PATH_API_USER = "/_api/user";
+	private static final String PATH_API_ADMIN_LOG = 		"/_admin/log";
+	private static final String PATH_API_ADMIN_LOG_LEVEL = 	"/_admin/log/level";
+	private static final String PATH_API_ROLE = 			"/_admin/server/role";
+	protected static final String PATH_ENDPOINTS = 			"/_api/cluster/endpoints";
+	private static final String PATH_API_USER = 			"/_api/user";
 
 	protected InternalArangoDB(final E executor, final ArangoSerializationFactory util, final ArangoContext context) {
 		super(executor, util, context);
@@ -72,7 +73,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 			}
 		};
 	}
-
+	
 	protected Request createDatabaseRequest(final String name) {
 		final Request request = request(ArangoRequestParam.SYSTEM, RequestType.POST,
 			InternalArangoDatabase.PATH_API_DATABASE);

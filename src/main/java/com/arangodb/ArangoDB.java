@@ -711,7 +711,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	ServerRole getRole() throws ArangoDBException;
-
+	
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
 	 * order to execute this call.

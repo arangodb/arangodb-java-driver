@@ -172,16 +172,26 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createSatelliteCollection() {
-		if (arangoDB.getRole() == ServerRole.SINGLE) {
+
+		if (arangoDB.getVersion().getLicense() == ArangoDBVersion.License.COMMUNITY) {
+			LOG.info("Skip Test on COMMUNITY VERSION");
 			return;
 		}
+		
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			LOG.info("Skip Test on SINGLE SERVER");
+			return;
+		}
+		
 		try {
-			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
-				new CollectionCreateOptions().satellite(true));
+			
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().satellite(true));
+			
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(nullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(true));
+			
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
