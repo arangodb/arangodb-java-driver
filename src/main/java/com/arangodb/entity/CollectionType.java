@@ -30,7 +30,7 @@ public enum CollectionType {
 
 	private final int type;
 
-	private CollectionType(final int type) {
+	CollectionType(final int type) {
 		this.type = type;
 	}
 

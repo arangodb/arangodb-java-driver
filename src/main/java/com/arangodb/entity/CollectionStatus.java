@@ -30,7 +30,7 @@ public enum CollectionStatus {
 
 	private final int status;
 
-	private CollectionStatus(final int status) {
+	CollectionStatus(final int status) {
 		this.status = status;
 	}
 

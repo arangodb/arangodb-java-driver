@@ -368,11 +368,6 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *      Documentation</a>
 	 * @param key
 	 *            The key of the document
-	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for JSON). Only necessary if
-	 *            options.returnOld is set to true, otherwise can be null.
-	 * @param options
-	 *            Additional options, can be null
 	 * @return information about the document
 	 * @throws ArangoDBException
 	 */
@@ -404,9 +399,6 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *      Documentation</a>
 	 * @param values
 	 *            The keys of the documents or the documents themselves
-	 * @param type
-	 *            The type of the documents (POJO class, VPackSlice or String for JSON). Only necessary if
-	 *            options.returnOld is set to true, otherwise can be null.
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 */

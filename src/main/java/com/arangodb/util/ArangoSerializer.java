@@ -33,7 +33,7 @@ import com.arangodb.velocypack.VPackSlice;
  */
 public interface ArangoSerializer {
 
-	public static class Options {
+	class Options {
 		private Type type;
 		private boolean serializeNullValues;
 		private Map<String, Object> additionalFields;

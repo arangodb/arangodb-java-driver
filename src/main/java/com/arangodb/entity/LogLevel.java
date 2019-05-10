@@ -30,7 +30,7 @@ public enum LogLevel {
 
 	private final int level;
 
-	private LogLevel(final int level) {
+	LogLevel(final int level) {
 		this.level = level;
 	}
 

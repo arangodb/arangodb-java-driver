@@ -39,14 +39,14 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 *
 	 * @return database handler
 	 */
-	public ArangoDatabase db();
+	ArangoDatabase db();
 
 	/**
 	 * The name of the collection
 	 *
 	 * @return collection name
 	 */
-	public String name();
+	String name();
 
 	/**
 	 * Checks whether the graph exists

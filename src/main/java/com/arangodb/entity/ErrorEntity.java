@@ -48,7 +48,6 @@ public class ErrorEntity implements Serializable, Entity {
 
 	/**
 	 * @return the exception message, passed when transaction fails
-	 * @return
 	 */
 	public String getException() {
 		return exception;
