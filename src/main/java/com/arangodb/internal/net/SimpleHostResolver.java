@@ -40,8 +40,8 @@ public class SimpleHostResolver implements HostResolver {
 	}
 
 	@Override
-	public List<Host> resolve(final boolean initial, final boolean closeConnections) {
-		return hosts;
+	public HostSet resolve(final boolean initial, final boolean closeConnections) {
+		return new HostSet(hosts);
 	}
 
 }

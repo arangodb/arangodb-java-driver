@@ -38,16 +38,19 @@ public class ExtendedHostResolver implements HostResolver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
 
 	private static final long MAX_CACHE_TIME = 60 * 60 * 1000;
+	
 	private EndpointResolver resolver;
-	private final List<Host> hosts;
+	private HostSet hosts;
+	
 	private final Integer maxConnections;
 	private final ConnectionFactory connectionFactory;
+	
 	private long lastUpdate;
 
 	public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
 		final ConnectionFactory connectionFactory) {
 		super();
-		this.hosts = hosts;
+		this.hosts = new HostSet(hosts);
 		this.maxConnections = maxConnections;
 		this.connectionFactory = connectionFactory;
 		lastUpdate = 0;
@@ -59,7 +62,8 @@ public class ExtendedHostResolver implements HostResolver {
 	}
 
 	@Override
-	public List<Host> resolve(final boolean initial, final boolean closeConnections) {
+
+	public HostSet resolve(final boolean initial, final boolean closeConnections) {
 		
 		if (!initial && isExpired()) {
 			
@@ -68,7 +72,6 @@ public class ExtendedHostResolver implements HostResolver {
 			final Collection<String> endpoints = resolver.resolve(closeConnections);
 			LOGGER.info("Resolve " + endpoints.size() + " Endpoints");
 			LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
-			
 			
 			if (!endpoints.isEmpty()) {
 				hosts.clear();
@@ -82,7 +85,7 @@ public class ExtendedHostResolver implements HostResolver {
 					final String[] s = endpoint.replaceAll(".*://", "").split(":");
 					if (s.length == 2) {
 						final HostDescription description = new HostDescription(s[0], Integer.valueOf(s[1]));
-						hosts.add(HostUtils.createHost(description, maxConnections, connectionFactory));
+						hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
 					} else {
 						LOGGER.warn("Skip Endpoint (Missung Port)" + endpoint);
 					}

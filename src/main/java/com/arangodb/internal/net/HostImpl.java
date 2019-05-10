@@ -63,4 +63,9 @@ public class HostImpl implements Host {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "HostImpl [connectionPool=" + connectionPool + ", description=" + description + "]";
+	}
+	
 }
