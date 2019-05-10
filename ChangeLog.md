@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Fixed
+
+- host handling (issue #241)
+- logging extended hostresolver
+
+### Added
+
+- add smartJoinAttribute and shardingStrategy
+
 ## [5.0.4] - 2019-18-01
 
 ### Fixed
