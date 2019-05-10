@@ -87,6 +87,7 @@ public abstract class VstConnection implements Connection {
 	}
 
 	public synchronized void open() throws IOException {
+		
 		if (isOpen()) {
 			return;
 		}
@@ -102,8 +103,7 @@ public abstract class VstConnection implements Connection {
 		} else {
 			socket = SocketFactory.getDefault().createSocket();
 		}
-		socket.connect(new InetSocketAddress(host.getHost(), host.getPort()),
-			timeout != null ? timeout : ArangoDefaults.DEFAULT_TIMEOUT);
+		socket.connect(new InetSocketAddress(host.getHost(), host.getPort()), timeout != null ? timeout : ArangoDefaults.DEFAULT_TIMEOUT);
 		socket.setKeepAlive(true);
 		socket.setTcpNoDelay(true);
 		if (LOGGER.isDebugEnabled()) {
@@ -124,6 +124,9 @@ public abstract class VstConnection implements Connection {
 		executor.submit(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
+				
+				LOGGER.info("Start Callable for " + this.toString());
+				
 				final long openTime = new Date().getTime();
 				final Long ttlTime = ttl != null ? openTime + ttl : null;
 				final ChunkStore chunkStore = new ChunkStore(messageStore);
@@ -152,6 +155,9 @@ public abstract class VstConnection implements Connection {
 						break;
 					}
 				}
+				
+				LOGGER.info("Stop Callable for " + this.toString());
+				
 				return null;
 			}
 		});

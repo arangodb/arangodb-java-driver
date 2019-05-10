@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2017 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2019 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,28 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
-
-import java.util.List;
+package com.arangodb.entity;
 
 /**
- * @author Mark Vollmary
- *
+ * @author Axel Becker
+ * https://www.arangodb.com/docs/3.4/http/collection-creating.html
  */
-public class SimpleHostResolver implements HostResolver {
-
-	private final List<Host> hosts;
-
-	public SimpleHostResolver(final List<Host> hosts) {
-		super();
-		this.hosts = hosts;
+public enum ShardingStrategy {
+	
+	COMMUNITY_COMPAT("community-compat"), 
+	ENTERPRISE_COMPAT("enterprise-compat"), 
+	ENTERPRISE_SMART_EDGE_COMPAT("enterprise-smart-edge-compat"), 
+	HASH("hash"), 
+	ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge");
+	
+	private String internalName;
+	
+	private ShardingStrategy(String internalName) {
+		this.internalName = internalName;
 	}
-
-	@Override
-	public void init(final EndpointResolver resolver) {
-	}
-
-	@Override
-	public HostSet resolve(final boolean initial, final boolean closeConnections) {
-		return new HostSet(hosts);
+	
+	public String getInternalName() {
+		return this.internalName;
 	}
 
 }

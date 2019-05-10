@@ -21,7 +21,6 @@
 package com.arangodb.internal.net;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.arangodb.ArangoDBException;
 
@@ -37,6 +36,6 @@ public interface HostResolver {
 
 	void init(final EndpointResolver resolver);
 
-	List<Host> resolve(boolean initial, boolean closeConnections);
+	HostSet resolve(boolean initial, boolean closeConnections);
 
 }

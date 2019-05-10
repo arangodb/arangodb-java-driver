@@ -53,7 +53,6 @@ import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.AqlFunctionEntity;
 import com.arangodb.entity.AqlParseEntity;
 import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.ArangoDBVersion.License;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionEntity;
@@ -64,6 +63,7 @@ import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.License;
 import com.arangodb.entity.PathEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryCachePropertiesEntity;
@@ -72,6 +72,7 @@ import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.QueryTrackingPropertiesEntity;
 import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.ShardingStrategy;
 import com.arangodb.entity.TraversalEntity;
 import com.arangodb.model.AqlFunctionDeleteOptions;
 import com.arangodb.model.AqlQueryOptions;
@@ -198,25 +199,75 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createCollectionWithNumberOfShards() {
+		
 		if (arangoDB.getRole() == ServerRole.SINGLE) {
 			return;
 		}
+		
 		try {
-			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
-				new CollectionCreateOptions().numberOfShards(2));
+			
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(2));
+			
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
+			
 		} finally {
 			db.collection(COLLECTION_NAME).drop();
 		}
 	}
+	
+	@Test
+	public void createCollectionWithShardingStrategys() {
+		
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			LOG.info("Skip Test on SINGLE SERVER");
+			return;
+		}
+		
+		try {
+			
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().shardingStrategy(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
+			
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getShardingStrategy(), is(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
+			
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+	
+	@Test
+	public void createCollectionWithSmartJoinAttribute() {
+		
+		if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
+			LOG.info("Skip Test on COMMUNITY SERVER");
+			return;
+		}
+		
+		try {
+			
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123"));
+			
+			assertThat(result, is(notNullValue()));
+			assertThat(result.getId(), is(notNullValue()));
+			assertThat(db.collection(COLLECTION_NAME).getProperties().getSmartJoinAttribute(), is("test123"));
+			
+		} finally {
+			db.collection(COLLECTION_NAME).drop();
+		}
+	}
+	
 
 	@Test
 	public void createCollectionWithNumberOfShardsAndShardKey() {
+		
 		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			LOG.info("Skip Test on SINGLE SERVER");
 			return;
 		}
+		
 		try {
 			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
 				new CollectionCreateOptions().numberOfShards(2).shardKeys("a"));
@@ -232,9 +283,12 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createCollectionWithNumberOfShardsAndShardKeys() {
+		
 		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			LOG.info("Skip Test on SINGLE SERVER");
 			return;
 		}
+		
 		try {
 			final CollectionEntity result = db.createCollection(COLLECTION_NAME,
 				new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
@@ -250,14 +304,19 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void createCollectionWithDistributeShardsLike() {
+		
 		if (arangoDB.getVersion().getLicense() == License.ENTERPRISE && arangoDB.getRole() != ServerRole.SINGLE) {
+			
+			
 			final Integer numberOfShards = 3;
+			
 			db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(numberOfShards));
-			db.createCollection(COLLECTION_NAME + "2",
-				new CollectionCreateOptions().distributeShardsLike(COLLECTION_NAME));
+			db.createCollection(COLLECTION_NAME + "2", new CollectionCreateOptions().distributeShardsLike(COLLECTION_NAME));
+			
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(numberOfShards));
 			assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
 		}
+		
 	}
 
 	@Test
@@ -273,9 +332,11 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void deleteSystemCollection() {
+		
 		if (arangoDB.getRole() != ServerRole.SINGLE) {
 			return;
 		}
+		
 		final String name = "_system_test";
 		db.createCollection(name, new CollectionCreateOptions().isSystem(true));
 		db.collection(name).drop(true);

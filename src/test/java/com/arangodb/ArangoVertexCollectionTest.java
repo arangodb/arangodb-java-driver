@@ -25,10 +25,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Test;
@@ -92,6 +94,43 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
 
+	@Test
+	public void duplicateInsertSameObjectVertex() {
+		
+		final ArangoVertexCollection vertexCollection = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME);
+		
+		// ######################################################### 
+		// Create a new BaseDocument 
+		// #########################################################
+		
+		UUID uuid = UUID.randomUUID(); 
+		BaseDocument bd = new BaseDocument(); 
+		bd.setKey(uuid.toString()); 
+		bd.addAttribute("name", "Paul");
+		
+		vertexCollection.insertVertex(bd);
+		
+		UUID uuid2 = UUID.randomUUID(); 
+		BaseDocument bd2 = new BaseDocument(); 
+		bd2.setKey(uuid2.toString()); 
+		bd2.addAttribute("name", "Paul");
+		
+		vertexCollection.insertVertex(bd2);
+		
+//		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(uuid.toString(), BaseDocument.class, null);
+//		assertThat(document, is(notNullValue()));
+//		assertThat(document.getKey(), is(uuid.toString()));
+//
+//		try {
+//			vertexCollection.insertVertex(bd);	
+//		} catch (ArangoDBException e) {
+//			assertEquals(e.getResponseCode().intValue(), 409);
+//		}
+		
+		System.out.println("aaaaa");
+	
+	}
+	
 	@Test
 	public void insertVertexUpdateRev() {
 		final BaseDocument doc = new BaseDocument();

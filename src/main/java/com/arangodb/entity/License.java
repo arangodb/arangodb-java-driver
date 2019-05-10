@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2017 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2019 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,13 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.net;
-
-import java.util.List;
+package com.arangodb.entity;
 
 /**
- * @author Mark Vollmary
- *
+ * @author Axel Becker
  */
-public class SimpleHostResolver implements HostResolver {
+public enum License {
 
-	private final List<Host> hosts;
-
-	public SimpleHostResolver(final List<Host> hosts) {
-		super();
-		this.hosts = hosts;
-	}
-
-	@Override
-	public void init(final EndpointResolver resolver) {
-	}
-
-	@Override
-	public HostSet resolve(final boolean initial, final boolean closeConnections) {
-		return new HostSet(hosts);
-	}
-
+	ENTERPRISE, COMMUNITY
+	
 }

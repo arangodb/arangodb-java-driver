@@ -39,6 +39,9 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 	private Collection<String> shardKeys;
 	private final ReplicationFactor replicationFactor;
 
+	private String shardingStrategy; // cluster option
+	private String smartJoinAttribute; // enterprise option
+
 	public CollectionPropertiesEntity() {
 		super();
 		replicationFactor = new ReplicationFactor();
@@ -124,6 +127,22 @@ public class CollectionPropertiesEntity extends CollectionEntity {
 
 	public void setSatellite(final Boolean satellite) {
 		this.replicationFactor.setSatellite(satellite);
+	}
+
+	public String getShardingStrategy() {
+		return shardingStrategy;
+	}
+
+	public void setShardingStrategy(String shardingStrategy) {
+		this.shardingStrategy = shardingStrategy;
+	}
+
+	public String getSmartJoinAttribute() {
+		return smartJoinAttribute;
+	}
+
+	public void setSmartJoinAttribute(String smartJoinAttribute) {
+		this.smartJoinAttribute = smartJoinAttribute;
 	}
 
 }
