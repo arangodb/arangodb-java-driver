@@ -29,6 +29,9 @@ import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
@@ -57,6 +60,8 @@ import com.arangodb.velocypack.VPackParser;
  *
  */
 public abstract class InternalArangoDBBuilder {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
 
 	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
 	private static final String PROPERTY_KEY_HOST = "arangodb.host";
@@ -187,13 +192,16 @@ public abstract class InternalArangoDBBuilder {
 		this.customSerializer = serializer;
 	}
 
-	protected HostResolver createHostResolver(
-		final Collection<Host> hosts,
-		final int maxConnections,
-		final ConnectionFactory connectionFactory) {
-		return Boolean.TRUE == acquireHostList
-				? new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory)
-				: new SimpleHostResolver(new ArrayList<Host>(hosts));
+	protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,final ConnectionFactory connectionFactory) {
+		
+		if(acquireHostList) {
+			LOGGER.info("acquireHostList -> Use ExtendedHostResolver");
+			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory);
+		} else {
+			LOGGER.info("Use SimpleHostResolver");
+			return new SimpleHostResolver(new ArrayList<Host>(hosts));
+		}
+		
 	}
 
 	protected HostHandler createHostHandler(final HostResolver hostResolver) {
