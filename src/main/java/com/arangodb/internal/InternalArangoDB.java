@@ -51,12 +51,11 @@ import com.arangodb.velocystream.Response;
  */
 public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
 
-	private static final String PATH_API_ADMIN_LOG = "/_admin/log";
-	private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
-	private static final String PATH_API_ROLE = "/_admin/server/role";
-	private static final String PATH_API_VERSION = "/_api/version";
-	protected static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
-	private static final String PATH_API_USER = "/_api/user";
+	private static final String PATH_API_ADMIN_LOG = 		"/_admin/log";
+	private static final String PATH_API_ADMIN_LOG_LEVEL = 	"/_admin/log/level";
+	private static final String PATH_API_ROLE = 			"/_admin/server/role";
+	protected static final String PATH_ENDPOINTS = 			"/_api/cluster/endpoints";
+	private static final String PATH_API_USER = 			"/_api/user";
 
 	protected InternalArangoDB(final E executor, final ArangoSerializationFactory util, final ArangoContext context) {
 		super(executor, util, context);
