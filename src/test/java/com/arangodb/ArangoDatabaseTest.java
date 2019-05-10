@@ -277,6 +277,11 @@ public class ArangoDatabaseTest extends BaseTest {
 	
 	@Test
 	public void createCollectionWithSmartJoinAttributeWrong() {
+		if (!requireVersion(3, 5)) {
+	    	LOG.info("Skip Test because feature not implemented yet.");
+	        return;
+	    }
+		
 		if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
 			LOG.info("Skip Test on COMMUNITY SERVER");
 			return;
