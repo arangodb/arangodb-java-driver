@@ -116,19 +116,6 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		bd2.addAttribute("name", "Paul");
 		
 		vertexCollection.insertVertex(bd2);
-		
-//		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(uuid.toString(), BaseDocument.class, null);
-//		assertThat(document, is(notNullValue()));
-//		assertThat(document.getKey(), is(uuid.toString()));
-//
-//		try {
-//			vertexCollection.insertVertex(bd);	
-//		} catch (ArangoDBException e) {
-//			assertEquals(e.getResponseCode().intValue(), 409);
-//		}
-		
-		System.out.println("aaaaa");
-	
 	}
 	
 	@Test
