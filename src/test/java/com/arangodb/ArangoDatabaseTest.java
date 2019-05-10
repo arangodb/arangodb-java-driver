@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Ignore;
@@ -173,7 +174,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test
 	public void createSatelliteCollection() {
 
-		if (arangoDB.getVersion().getLicense() == ArangoDBVersion.License.COMMUNITY) {
+		if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
 			LOG.info("Skip Test on COMMUNITY VERSION");
 			return;
 		}
@@ -247,18 +248,45 @@ public class ArangoDatabaseTest extends BaseTest {
 		}
 		
 		try {
-			
-			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123"));
+			final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123").shardKeys("_key:"));
 			
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
 			assertThat(db.collection(COLLECTION_NAME).getProperties().getSmartJoinAttribute(), is("test123"));
 			
+		} catch (Exception e) {
+			System.out.println(e);
+			assertTrue(false);
 		} finally {
-			db.collection(COLLECTION_NAME).drop();
+			try {
+				db.collection(COLLECTION_NAME).drop();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 	}
 	
+	@Test
+	public void createCollectionWithSmartJoinAttributeWrong() {
+		if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
+			LOG.info("Skip Test on COMMUNITY SERVER");
+			return;
+		}
+
+		try {
+			db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123"));
+		} catch (ArangoDBException e) {
+			assertThat(e.getErrorNum(), is(4006));
+			assertThat(e.getResponseCode(), is(500));
+		} finally {
+			try {
+				db.collection(COLLECTION_NAME).drop();
+				assertTrue(false);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+	}
 
 	@Test
 	public void createCollectionWithNumberOfShardsAndShardKey() {
