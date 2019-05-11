@@ -53,7 +53,6 @@ import com.arangodb.velocypack.VPackSlice;
  *
  */
 public abstract class VstConnection implements Connection {
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
 	private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
 
@@ -87,7 +86,6 @@ public abstract class VstConnection implements Connection {
 	}
 
 	public synchronized void open() throws IOException {
-		
 		if (isOpen()) {
 			return;
 		}
@@ -124,8 +122,7 @@ public abstract class VstConnection implements Connection {
 		executor.submit(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				
-				LOGGER.info("Start Callable for " + this.toString());
+				LOGGER.debug("Start Callable for " + this.toString());
 				
 				final long openTime = new Date().getTime();
 				final Long ttlTime = ttl != null ? openTime + ttl : null;
@@ -156,7 +153,7 @@ public abstract class VstConnection implements Connection {
 					}
 				}
 				
-				LOGGER.info("Stop Callable for " + this.toString());
+				LOGGER.debug("Stop Callable for " + this.toString());
 				
 				return null;
 			}

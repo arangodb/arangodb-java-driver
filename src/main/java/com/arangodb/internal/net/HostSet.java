@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostSet {
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(HostSet.class);
 
 	private ArrayList<Host> hosts = new ArrayList<Host>();
@@ -32,22 +31,19 @@ public class HostSet {
 	}
 	
 	public void addHost(Host newHost) {
-		
 		if(hosts.contains(newHost)) {
 			LOGGER.debug("Host" + newHost + " allready in Set");
 		} else {
 			hosts.add(newHost);
-			LOGGER.info("Added Host " + newHost + " - now " + hosts.size() + " Hosts in List");
+			LOGGER.debug("Added Host " + newHost + " - now " + hosts.size() + " Hosts in List");
 		}
 		
 	}
 	
 	public void close() {
-		
-		LOGGER.info("Close all Hosts in Set");
+		LOGGER.debug("Close all Hosts in Set");
 		
 		for (Host host : hosts) {
-			
 			try {
 				
 				LOGGER.debug("Try to close Host " + host);
@@ -56,18 +52,13 @@ public class HostSet {
 			} catch (IOException e) {
 				LOGGER.warn("Error during closing the Host " + host, e);
 			}
-			
 		}
-		
 	}
 	
 	public void clear() {
-		
-		LOGGER.info("Clear all Hosts in Set");
+		LOGGER.debug("Clear all Hosts in Set");
 		
 		close();
 		hosts.clear();
-		
 	}
-	
 }

@@ -195,10 +195,10 @@ public abstract class InternalArangoDBBuilder {
 	protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,final ConnectionFactory connectionFactory) {
 		
 		if(acquireHostList) {
-			LOGGER.info("acquireHostList -> Use ExtendedHostResolver");
+			LOGGER.debug("acquireHostList -> Use ExtendedHostResolver");
 			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory);
 		} else {
-			LOGGER.info("Use SimpleHostResolver");
+			LOGGER.debug("Use SimpleHostResolver");
 			return new SimpleHostResolver(new ArrayList<Host>(hosts));
 		}
 		
