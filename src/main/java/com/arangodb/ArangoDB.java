@@ -616,6 +616,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			final Collection<Host> hostList = createHostList(max, connectionFactory);
 			final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
 			final HostHandler hostHandler = createHostHandler(hostResolver);
+			
 			return new ArangoDBImpl(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)

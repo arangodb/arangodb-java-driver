@@ -21,10 +21,7 @@
 package com.arangodb.internal;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
@@ -42,7 +39,6 @@ import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.net.HostResolver.EndpointResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
@@ -52,10 +48,8 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 
 /**
@@ -71,51 +65,22 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 	public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
 		final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
 		final ArangoContext context) {
-		super(new ArangoExecutorSync(createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
-				util, new DocumentCache()), util, context);
-		cp = createProtocol(new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
-			new HttpCommunication.Builder(httpBuilder), util.get(Serializer.INTERNAL), protocol);
-		hostResolver.init(new EndpointResolver() {
-			@Override
-			public Collection<String> resolve(final boolean closeConnections) throws ArangoDBException {
-				Collection<String> response;
-				try {
-					response = executor.execute(new Request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_ENDPOINTS),
-						new ResponseDeserializer<Collection<String>>() {
-							@Override
-							public Collection<String> deserialize(final Response response) throws VPackException {
-								final VPackSlice field = response.getBody().get("endpoints");
-								Collection<String> endpoints;
-								if (field.isNone()) {
-									endpoints = Collections.<String> emptyList();
-								} else {
-									final Collection<Map<String, String>> tmp = util().deserialize(field,
-										Collection.class);
-									endpoints = new ArrayList<String>();
-									for (final Map<String, String> map : tmp) {
-										for (final String value : map.values()) {
-											endpoints.add(value);
-										}
-									}
-								}
-								return endpoints;
-							}
-						}, null);
-				} catch (final ArangoDBException e) {
-					final Integer responseCode = e.getResponseCode();
-					if (responseCode != null && responseCode == 403) {
-						response = Collections.<String> emptyList();
-					} else {
-						throw e;
-					}
-				} finally {
-					if (closeConnections) {
-						ArangoDBImpl.this.shutdown();
-					}
-				}
-				return response;
-			}
-		});
+		
+		super(new ArangoExecutorSync(
+				createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
+				util, 
+				new DocumentCache()), 
+				util, 
+				context);
+		
+		cp = createProtocol(
+				new VstCommunicationSync.Builder(vstBuilder).maxConnections(1),
+				new HttpCommunication.Builder(httpBuilder), 
+				util.get(Serializer.INTERNAL), 
+				protocol);
+		
+		hostResolver.init(this.executor(), util());
+		
 	}
 
 	private static CommunicationProtocol createProtocol(
@@ -123,6 +88,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 		final HttpCommunication.Builder httpBuilder,
 		final ArangoSerialization util,
 		final Protocol protocol) {
+		
 		return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
 				: createHTTP(httpBuilder, util);
 	}

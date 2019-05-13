@@ -37,6 +37,7 @@ import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.net.HostSet;
 import com.arangodb.internal.net.RandomHostHandler;
 import com.arangodb.internal.net.RoundRobinHostHandler;
+import com.arangodb.util.ArangoSerialization;
 
 /**
  * @author Mark Vollmary
@@ -59,7 +60,7 @@ public class HostHandlerTest {
 		}
 
 		@Override
-		public void init(final EndpointResolver resolver) {
+		public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
 			
 		}
 		
@@ -78,7 +79,7 @@ public class HostHandlerTest {
 		}
 
 		@Override
-		public void init(final EndpointResolver resolver) {
+		public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
 			
 		}
 		
