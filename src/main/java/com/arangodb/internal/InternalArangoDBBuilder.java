@@ -74,6 +74,7 @@ public abstract class InternalArangoDBBuilder {
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
 	private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
 	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
+	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL = "arangodb.acquireHostList.interval";
 	private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
@@ -92,8 +93,11 @@ public abstract class InternalArangoDBBuilder {
 	protected ArangoSerializer serializer;
 	protected ArangoDeserializer deserializer;
 	protected Boolean acquireHostList;
+	protected Integer acquireHostListInterval;
 	protected LoadBalancingStrategy loadBalancingStrategy;
 	protected ArangoSerialization customSerializer;
+
+	
 
 	public InternalArangoDBBuilder() {
 		super();
@@ -133,6 +137,7 @@ public abstract class InternalArangoDBBuilder {
 		maxConnections = loadMaxConnections(properties, maxConnections);
 		connectionTtl = loadConnectionTtl(properties, connectionTtl);
 		acquireHostList = loadAcquireHostList(properties, acquireHostList);
+		acquireHostListInterval = loadAcquireHostListInterval(properties, acquireHostListInterval);
 		loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
 	}
 
@@ -196,7 +201,7 @@ public abstract class InternalArangoDBBuilder {
 		
 		if(acquireHostList) {
 			LOGGER.debug("acquireHostList -> Use ExtendedHostResolver");
-			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory);
+			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory, acquireHostListInterval);
 		} else {
 			LOGGER.debug("Use SimpleHostResolver");
 			return new SimpleHostResolver(new ArrayList<Host>(hosts));
@@ -293,6 +298,11 @@ public abstract class InternalArangoDBBuilder {
 	private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
 		return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
 			ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST));
+	}
+
+	private static int loadAcquireHostListInterval(final Properties properties, final Integer currentValue) {
+		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL, currentValue,
+			ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL));
 	}
 
 	private static LoadBalancingStrategy loadLoadBalancingStrategy(

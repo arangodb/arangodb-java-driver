@@ -50,24 +50,26 @@ public class ExtendedHostResolver implements HostResolver {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
 
-	private static final long MAX_CACHE_TIME = 60 * 60 * 1000;
-
 	private HostSet hosts;
 
 	private final Integer maxConnections;
 	private final ConnectionFactory connectionFactory;
 
 	private long lastUpdate;
+	private Integer acquireHostListInterval;
 
 	private ArangoExecutorSync executor;
 	private ArangoSerialization arangoSerialization;
 
+
 	public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
-		final ConnectionFactory connectionFactory) {
-		super();
+		final ConnectionFactory connectionFactory, Integer acquireHostListInterval) {
+		
+		this.acquireHostListInterval = acquireHostListInterval;
 		this.hosts = new HostSet(hosts);
 		this.maxConnections = maxConnections;
 		this.connectionFactory = connectionFactory;
+		
 		lastUpdate = 0;
 	}
 
@@ -160,6 +162,7 @@ public class ExtendedHostResolver implements HostResolver {
 	}
 
 	private boolean isExpired() {
-		return System.currentTimeMillis() > lastUpdate + MAX_CACHE_TIME;
+		return System.currentTimeMillis() > (lastUpdate + acquireHostListInterval);
 	}
+	
 }
