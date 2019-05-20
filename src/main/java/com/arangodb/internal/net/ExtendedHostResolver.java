@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.net;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,18 +82,18 @@ public class ExtendedHostResolver implements HostResolver {
 
 	@Override
 
-	public HostSet resolve(final boolean initial, final boolean closeConnections) {
-
+	public HostSet resolve(boolean initial, boolean closeConnections) {
+		
 		if (!initial && isExpired()) {
 
 			lastUpdate = System.currentTimeMillis();
 
 			final Collection<String> endpoints = resolveFromServer();
-			LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
+			LOGGER.info("Resolve " + endpoints.size() + " Endpoints");
 			LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
 
 			if (!endpoints.isEmpty()) {
-				hosts.clear();
+				hosts.markAllForDeletion();
 			}
 
 			for (final String endpoint : endpoints) {
@@ -117,6 +118,13 @@ public class ExtendedHostResolver implements HostResolver {
 					LOGGER.warn("Skip Endpoint (Format)" + endpoint);
 				}
 			}
+			
+			try {
+				hosts.clearAllMarkedForDeletion();
+			} catch (IOException e) {
+				LOGGER.error("Cant close all Hosts with MarkedForDeletion", e);
+			}
+			
 		}
 
 		return hosts;

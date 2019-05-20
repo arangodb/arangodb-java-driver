@@ -31,8 +31,16 @@ public class HostSet {
 	}
 	
 	public void addHost(Host newHost) {
+		
 		if(hosts.contains(newHost)) {
 			LOGGER.debug("Host" + newHost + " allready in Set");
+			
+			for (Host host : hosts) {
+				if(host.equals(newHost)) {
+					host.setMarkforDeletion(false);
+				}
+			}
+			
 		} else {
 			hosts.add(newHost);
 			LOGGER.debug("Added Host " + newHost + " - now " + hosts.size() + " Hosts in List");
@@ -53,6 +61,33 @@ public class HostSet {
 				LOGGER.warn("Error during closing the Host " + host, e);
 			}
 		}
+	}
+	
+	public void markAllForDeletion() {
+		
+		for (Host host : hosts) {
+			host.setMarkforDeletion(true);
+		}
+		
+	}
+	
+	public void clearAllMarkedForDeletion() throws IOException {
+		
+		LOGGER.debug("Clear all Hosts in Set with markForDeletion");
+		
+		for (Host host : hosts) {
+			if(host.isMarkforDeletion()) {
+				try {
+					
+					LOGGER.debug("Try to close Host " + host);
+					host.close();
+					
+				} catch (IOException e) {
+					LOGGER.warn("Error during closing the Host " + host, e);
+				}
+			}
+		}
+		
 	}
 	
 	public void clear() {

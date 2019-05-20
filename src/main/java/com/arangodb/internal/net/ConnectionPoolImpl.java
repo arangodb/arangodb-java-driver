@@ -24,11 +24,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.arangodb.internal.velocystream.internal.VstConnection;
+import com.arangodb.internal.velocystream.internal.VstConnectionSync;
+
 /**
  * @author Mark Vollmary
  *
  */
 public class ConnectionPoolImpl implements ConnectionPool {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPoolImpl.class);
 
 	private final HostDescription host;
 	private final int maxConnections;
@@ -53,7 +61,9 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
 	@Override
 	public synchronized Connection connection() {
+		
 		final Connection connection;
+		
 		if (connections.size() < maxConnections) {
 			connection = createConnection(host);
 			connections.add(connection);
@@ -62,6 +72,11 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			final int index = (current++) % connections.size();
 			connection = connections.get(index);
 		}
+		
+		if(connection instanceof VstConnectionSync) {
+			LOGGER.debug("Return Connection " + ((VstConnection)connection).getConnectionName());	
+		}
+		
 		return connection;
 	}
 
@@ -71,6 +86,12 @@ public class ConnectionPoolImpl implements ConnectionPool {
 			connection.close();
 		}
 		connections.clear();
+	}
+
+	@Override
+	public String toString() {
+		return "ConnectionPoolImpl [host=" + host + ", maxConnections=" + maxConnections + ", connections="
+				+ connections.size() + ", current=" + current + ", factory=" + factory.getClass().getSimpleName() + "]";
 	}
 
 }

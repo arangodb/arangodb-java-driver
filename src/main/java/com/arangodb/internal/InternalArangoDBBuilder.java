@@ -55,13 +55,14 @@ import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 
+
 /**
  * @author Mark Vollmary
  *
  */
 public abstract class InternalArangoDBBuilder {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
 
 	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
 	private static final String PROPERTY_KEY_HOST = "arangodb.host";
@@ -200,17 +201,19 @@ public abstract class InternalArangoDBBuilder {
 	protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,final ConnectionFactory connectionFactory) {
 		
 		if(acquireHostList) {
-			LOGGER.debug("acquireHostList -> Use ExtendedHostResolver");
+			LOG.debug("acquireHostList -> Use ExtendedHostResolver");
 			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory, acquireHostListInterval);
 		} else {
-			LOGGER.debug("Use SimpleHostResolver");
+			LOG.debug("Use SimpleHostResolver");
 			return new SimpleHostResolver(new ArrayList<Host>(hosts));
 		}
 		
 	}
 
 	protected HostHandler createHostHandler(final HostResolver hostResolver) {
+		
 		final HostHandler hostHandler;
+		
 		if (loadBalancingStrategy != null) {
 			switch (loadBalancingStrategy) {
 			case ONE_RANDOM:
@@ -227,6 +230,9 @@ public abstract class InternalArangoDBBuilder {
 		} else {
 			hostHandler = new FallbackHostHandler(hostResolver);
 		}
+		
+		LOG.info("HostHandler is " + hostHandler.getClass().getSimpleName());
+		
 		return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
 	}
 

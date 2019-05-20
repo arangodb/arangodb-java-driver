@@ -30,6 +30,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -69,6 +70,10 @@ public abstract class VstConnection implements Connection {
 	private InputStream inputStream;
 
 	private final HostDescription host;
+	
+	private HashMap<Long, Long> sendTimestamps = new HashMap<Long, Long>();
+	
+	private String connectionName;
 
 	protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
@@ -79,6 +84,9 @@ public abstract class VstConnection implements Connection {
 		this.useSsl = useSsl;
 		this.sslContext = sslContext;
 		this.messageStore = messageStore;
+		
+		connectionName = "conenction_" + System.currentTimeMillis() + "_" + Math.random();
+		LOGGER.debug("Connection " + connectionName + " created");
 	}
 
 	public boolean isOpen() {
@@ -118,11 +126,12 @@ public abstract class VstConnection implements Connection {
 			((SSLSocket) socket).startHandshake();
 		}
 		sendProtocolHeader();
+		
 		executor = Executors.newSingleThreadExecutor();
 		executor.submit(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				LOGGER.debug("Start Callable for " + this.toString());
+				LOGGER.debug("Start Callable for " + connectionName);
 				
 				final long openTime = new Date().getTime();
 				final Long ttlTime = ttl != null ? openTime + ttl : null;
@@ -153,7 +162,7 @@ public abstract class VstConnection implements Connection {
 					}
 				}
 				
-				LOGGER.debug("Stop Callable for " + this.toString());
+				LOGGER.debug("Stop Callable for " + connectionName);
 				
 				return null;
 			}
@@ -193,6 +202,7 @@ public abstract class VstConnection implements Connection {
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
 						chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+					sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
 				}
 				writeChunkHead(chunk);
 				final int contentOffset = chunk.getContentOffset();
@@ -210,6 +220,7 @@ public abstract class VstConnection implements Connection {
 				}
 				outputStream.flush();
 			} catch (final IOException e) {
+				LOGGER.error("Error on Connection " + connectionName);
 				throw new ArangoDBException(e);
 			}
 		}
@@ -245,10 +256,13 @@ public abstract class VstConnection implements Connection {
 			contentLength = length - ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
 		}
 		final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
+		
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(),
-				chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+			
+			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+			LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (sendTimestamps.get(chunk.getMessageId())-System.currentTimeMillis()));
 		}
+		
 		return chunk;
 	}
 
@@ -267,6 +281,10 @@ public abstract class VstConnection implements Connection {
 				readed += read;
 			}
 		}
+	}
+	
+	public String getConnectionName() {
+		return this.connectionName;
 	}
 
 }

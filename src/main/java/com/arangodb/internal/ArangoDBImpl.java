@@ -23,6 +23,9 @@ package com.arangodb.internal;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
@@ -58,6 +61,8 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
 
 	private ArangoCursorInitializer cursorInitializer;
 	private CommunicationProtocol cp;
@@ -80,6 +85,8 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 				protocol);
 		
 		hostResolver.init(this.executor(), util());
+		
+		LOGGER.info("ArangoDB Client is ready to use");
 		
 	}
 

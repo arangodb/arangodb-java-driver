@@ -35,4 +35,8 @@ public interface Host {
 	void closeOnError();
 
 	void close() throws IOException;
+
+	void setMarkforDeletion(boolean markforDeletion);
+
+	boolean isMarkforDeletion();
 }
