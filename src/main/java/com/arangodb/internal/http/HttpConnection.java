@@ -159,7 +159,7 @@ public class HttpConnection implements Connection {
 		}
 
 		public HttpConnection build() {
-			return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl);
+			return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl, httpCookieSpec);
 		}
 	}
 
