@@ -55,13 +55,14 @@ import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
 
+
 /**
  * @author Mark Vollmary
  *
  */
 public abstract class InternalArangoDBBuilder {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InternalArangoDBBuilder.class);
 
 	private static final String PROPERTY_KEY_HOSTS = "arangodb.hosts";
 	private static final String PROPERTY_KEY_HOST = "arangodb.host";
@@ -70,10 +71,12 @@ public abstract class InternalArangoDBBuilder {
 	private static final String PROPERTY_KEY_USER = "arangodb.user";
 	private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
 	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
+	private static final String PROPERTY_KEY_COOKIE_SPEC = "arangodb.httpCookieSpec";
 	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
 	private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
 	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
+	private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL = "arangodb.acquireHostList.interval";
 	private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
@@ -83,6 +86,7 @@ public abstract class InternalArangoDBBuilder {
 	protected String user;
 	protected String password;
 	protected Boolean useSsl;
+	protected String httpCookieSpec;
 	protected SSLContext sslContext;
 	protected Integer chunksize;
 	protected Integer maxConnections;
@@ -92,8 +96,11 @@ public abstract class InternalArangoDBBuilder {
 	protected ArangoSerializer serializer;
 	protected ArangoDeserializer deserializer;
 	protected Boolean acquireHostList;
+	protected Integer acquireHostListInterval;
 	protected LoadBalancingStrategy loadBalancingStrategy;
 	protected ArangoSerialization customSerializer;
+
+	
 
 	public InternalArangoDBBuilder() {
 		super();
@@ -129,10 +136,12 @@ public abstract class InternalArangoDBBuilder {
 		user = loadUser(properties, user);
 		password = loadPassword(properties, password);
 		useSsl = loadUseSsl(properties, useSsl);
+		httpCookieSpec = loadhttpCookieSpec(properties, useSsl);
 		chunksize = loadChunkSize(properties, chunksize);
 		maxConnections = loadMaxConnections(properties, maxConnections);
 		connectionTtl = loadConnectionTtl(properties, connectionTtl);
 		acquireHostList = loadAcquireHostList(properties, acquireHostList);
+		acquireHostListInterval = loadAcquireHostListInterval(properties, acquireHostListInterval);
 		loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
 	}
 
@@ -195,17 +204,19 @@ public abstract class InternalArangoDBBuilder {
 	protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,final ConnectionFactory connectionFactory) {
 		
 		if(acquireHostList) {
-			LOGGER.debug("acquireHostList -> Use ExtendedHostResolver");
-			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory);
+			LOG.debug("acquireHostList -> Use ExtendedHostResolver");
+			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory, acquireHostListInterval);
 		} else {
-			LOGGER.debug("Use SimpleHostResolver");
+			LOG.debug("Use SimpleHostResolver");
 			return new SimpleHostResolver(new ArrayList<Host>(hosts));
 		}
 		
 	}
 
 	protected HostHandler createHostHandler(final HostResolver hostResolver) {
+		
 		final HostHandler hostHandler;
+		
 		if (loadBalancingStrategy != null) {
 			switch (loadBalancingStrategy) {
 			case ONE_RANDOM:
@@ -222,6 +233,9 @@ public abstract class InternalArangoDBBuilder {
 		} else {
 			hostHandler = new FallbackHostHandler(hostResolver);
 		}
+		
+		LOG.info("HostHandler is " + hostHandler.getClass().getSimpleName());
+		
 		return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
 	}
 
@@ -273,6 +287,10 @@ public abstract class InternalArangoDBBuilder {
 		return Boolean.parseBoolean(
 			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
 	}
+	
+	private static String loadhttpCookieSpec(final Properties properties, final Boolean currentValue) {
+        	return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
+    	}
 
 	private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
@@ -293,6 +311,11 @@ public abstract class InternalArangoDBBuilder {
 	private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {
 		return Boolean.parseBoolean(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST, currentValue,
 			ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST));
+	}
+
+	private static int loadAcquireHostListInterval(final Properties properties, final Integer currentValue) {
+		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL, currentValue,
+			ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL));
 	}
 
 	private static LoadBalancingStrategy loadLoadBalancingStrategy(

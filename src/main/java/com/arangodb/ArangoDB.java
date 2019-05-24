@@ -611,11 +611,12 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
 					? new VstConnectionFactorySync(host, timeout, connectionTtl, useSsl, sslContext)
 					: new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
-							connectionTtl);
+							connectionTtl, httpCookieSpec);
 
 			final Collection<Host> hostList = createHostList(max, connectionFactory);
 			final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
 			final HostHandler hostHandler = createHostHandler(hostResolver);
+			
 			return new ArangoDBImpl(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)

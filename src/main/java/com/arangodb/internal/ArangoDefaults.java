@@ -49,6 +49,7 @@ public final class ArangoDefaults {
 	public static final int MAX_CONNECTIONS_HTTP_DEFAULT = 20;
 	public static final Protocol DEFAULT_NETWORK_PROTOCOL = Protocol.VST;
 	public static final boolean DEFAULT_ACQUIRE_HOST_LIST = false;
+	public static final int DEFAULT_ACQUIRE_HOST_LIST_INTERVAL = 60 * 60 * 1000; // hour
 	public static final LoadBalancingStrategy DEFAULT_LOAD_BALANCING_STRATEGY = LoadBalancingStrategy.NONE;
 
 }

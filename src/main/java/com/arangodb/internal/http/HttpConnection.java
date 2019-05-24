@@ -101,6 +101,7 @@ public class HttpConnection implements Connection {
 		private String password;
 		private ArangoSerialization util;
 		private Boolean useSsl;
+		private String httpCookieSpec;
 		private Protocol contentType;
 		private HostDescription host;
 		private Long ttl;
@@ -126,6 +127,11 @@ public class HttpConnection implements Connection {
 			this.useSsl = useSsl;
 			return this;
 		}
+		
+		public Builder httpCookieSpec(String httpCookieSpec) {
+			this.httpCookieSpec = httpCookieSpec;
+			return this;
+        	}
 
 		public Builder contentType(final Protocol contentType) {
 			this.contentType = contentType;
@@ -153,7 +159,7 @@ public class HttpConnection implements Connection {
 		}
 
 		public HttpConnection build() {
-			return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl);
+			return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl, httpCookieSpec);
 		}
 	}
 
@@ -168,7 +174,7 @@ public class HttpConnection implements Connection {
 
 	private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
 		final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
-		final Long ttl) {
+		final Long ttl, final String httpCookieSpec) {
 		super();
 		this.host = host;
 		this.user = user;
@@ -196,6 +202,11 @@ public class HttpConnection implements Connection {
 			requestConfig.setConnectionRequestTimeout(timeout);
 			requestConfig.setSocketTimeout(timeout);
 		}
+		
+		if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
+            		requestConfig.setCookieSpec(httpCookieSpec);
+        	}
+		
 		final ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
 			@Override
 			public long getKeepAliveDuration(final HttpResponse response, final HttpContext context) {
