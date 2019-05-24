@@ -130,7 +130,7 @@ public class HttpConnection implements Connection {
 		
 		public Builder httpCookieSpec(String httpCookieSpec) {
 			this.httpCookieSpec = httpCookieSpec;
-			eturn this;
+			return this;
         	}
 
 		public Builder contentType(final Protocol contentType) {
