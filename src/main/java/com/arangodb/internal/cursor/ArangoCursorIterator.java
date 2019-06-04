@@ -66,7 +66,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 	@Override
 	public T next() {
 		if (pos >= result.getResult().size() && result.getHasMore()) {
-			result = execute.next(cursor.getId());
+			result = execute.next(cursor.getId(), result.getMeta());
 			pos = 0;
 		}
 		if (!hasNext()) {

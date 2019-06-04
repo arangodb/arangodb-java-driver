@@ -208,21 +208,36 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		return request;
 	}
 
-	protected Request queryNextRequest(final String id, final AqlQueryOptions options) {
+	protected Request queryNextRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
+		
 		final Request request = request(name, RequestType.PUT, PATH_API_CURSOR, id);
+		
+		if(meta != null) {
+			request.getHeaderParam().putAll(meta);
+		}
+		
 		final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
+		
 		if (opt.getAllowDirtyRead() == Boolean.TRUE) {
 			RequestUtils.allowDirtyRead(request);
 		}
 		return request;
 	}
 
-	protected Request queryCloseRequest(final String id, final AqlQueryOptions options) {
+	protected Request queryCloseRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
+		
 		final Request request = request(name, RequestType.DELETE, PATH_API_CURSOR, id);
+
+		if(meta != null) {
+			request.getHeaderParam().putAll(meta);
+		}
+		
 		final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
+		
 		if (opt.getAllowDirtyRead() == Boolean.TRUE) {
 			RequestUtils.allowDirtyRead(request);
 		}
+		
 		return request;
 	}
 
