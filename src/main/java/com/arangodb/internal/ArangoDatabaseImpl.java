@@ -192,10 +192,13 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 		final Map<String, Object> bindVars,
 		final AqlQueryOptions options,
 		final Class<T> type) throws ArangoDBException {
+		
 		final Request request = queryRequest(query, bindVars, options);
 		final HostHandle hostHandle = new HostHandle();
 		final CursorEntity result = executor.execute(request, CursorEntity.class, hostHandle);
+		
 		return createCursor(result, type, options, hostHandle);
+		
 	}
 
 	@Override
@@ -218,7 +221,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	@Override
 	public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
 		final HostHandle hostHandle = new HostHandle();
-		final CursorEntity result = executor.execute(queryNextRequest(cursorId, null), CursorEntity.class, hostHandle);
+		final CursorEntity result = executor.execute(queryNextRequest(cursorId, null, null), CursorEntity.class, hostHandle);
 		return createCursor(result, type, null, hostHandle);
 	}
 
@@ -227,17 +230,19 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 		final Class<T> type,
 		final AqlQueryOptions options,
 		final HostHandle hostHandle) {
+		
 		final ArangoCursorExecute execute = new ArangoCursorExecute() {
 			@Override
-			public CursorEntity next(final String id) {
-				return executor.execute(queryNextRequest(id, options), CursorEntity.class, hostHandle);
+			public CursorEntity next(final String id, Map<String, String> meta) {
+				return executor.execute(queryNextRequest(id, options, meta), CursorEntity.class, hostHandle);
 			}
 
 			@Override
-			public void close(final String id) {
-				executor.execute(queryCloseRequest(id, options), Void.class, hostHandle);
+			public void close(final String id, Map<String, String> meta) {
+				executor.execute(queryCloseRequest(id, options, meta), Void.class, hostHandle);
 			}
 		};
+		
 		return cursorInitializer != null ? cursorInitializer.createInstance(this, execute, type, result)
 				: new ArangoCursorImpl<T>(this, execute, type, result);
 	}

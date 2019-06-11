@@ -136,7 +136,7 @@ public abstract class InternalArangoDBBuilder {
 		user = loadUser(properties, user);
 		password = loadPassword(properties, password);
 		useSsl = loadUseSsl(properties, useSsl);
-		httpCookieSpec = loadhttpCookieSpec(properties, useSsl);
+		httpCookieSpec = loadhttpCookieSpec(properties, httpCookieSpec);
 		chunksize = loadChunkSize(properties, chunksize);
 		maxConnections = loadMaxConnections(properties, maxConnections);
 		connectionTtl = loadConnectionTtl(properties, connectionTtl);
@@ -203,7 +203,7 @@ public abstract class InternalArangoDBBuilder {
 
 	protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,final ConnectionFactory connectionFactory) {
 		
-		if(acquireHostList) {
+		if(acquireHostList != null && acquireHostList) {
 			LOG.debug("acquireHostList -> Use ExtendedHostResolver");
 			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory, acquireHostListInterval);
 		} else {
@@ -288,7 +288,7 @@ public abstract class InternalArangoDBBuilder {
 			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
 	}
 	
-	private static String loadhttpCookieSpec(final Properties properties, final Boolean currentValue) {
+	private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
         	return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
     	}
 
@@ -330,8 +330,16 @@ public abstract class InternalArangoDBBuilder {
 		final String key,
 		final T currentValue,
 		final T defaultValue) {
-		return properties.getProperty(key,
-			currentValue != null ? currentValue.toString() : defaultValue != null ? defaultValue.toString() : null);
+		
+		String overrideDefaultValue = null;
+		
+		if(currentValue != null) {
+			overrideDefaultValue = currentValue.toString();
+		} else if(defaultValue != null) {
+			overrideDefaultValue = defaultValue.toString();
+		}
+		
+		return properties.getProperty(key, overrideDefaultValue);
 	}
 
 	protected <C extends Connection> Collection<Host> createHostList(

@@ -36,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.arangodb.ArangoDB.Builder;
+import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -56,6 +57,17 @@ public class ArangoCursorTest extends BaseTest {
 		assertThat(first, is(not(nullValue())));
 		assertThat(first.isInteger(), is(true));
 		assertThat(first.getAsLong(), is(0L));
+	}
+	
+	@Test
+	public void next() {
+		
+		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), VPackSlice.class);
+	
+		while(cursor.hasNext()) {
+			cursor.next();	
+		}
+		
 	}
 
 	@Test

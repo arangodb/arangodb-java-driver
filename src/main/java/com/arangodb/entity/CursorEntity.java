@@ -21,6 +21,9 @@
 package com.arangodb.entity;
 
 import java.util.Collection;
+import java.util.Map;
+
+import org.apache.http.protocol.HTTP;
 
 import com.arangodb.velocypack.VPackSlice;
 
@@ -30,7 +33,7 @@ import com.arangodb.velocypack.VPackSlice;
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
  *      Documentation</a>
  */
-public class CursorEntity implements Entity {
+public class CursorEntity implements Entity, MetaAware {
 
 	private String id;
 	private Integer count;
@@ -38,6 +41,8 @@ public class CursorEntity implements Entity {
 	private Boolean cached;
 	private Boolean hasMore;
 	private VPackSlice result;
+	
+	private Map<String, String> meta;
 
 	public String getId() {
 		return id;
@@ -82,6 +87,23 @@ public class CursorEntity implements Entity {
 	 */
 	public VPackSlice getResult() {
 		return result;
+	}
+	
+	public Map<String, String> getMeta() {
+		return meta;
+	}
+
+	/**
+	 * @return remove not allowed (valid storable) meta information
+	 */
+	public Map<String, String> cleanupMeta(Map<String, String> meta) {
+		meta.remove(HTTP.CONTENT_LEN);
+		meta.remove(HTTP.TRANSFER_ENCODING);
+		return meta;
+	}
+
+	public void setMeta(Map<String, String> meta) {
+		this.meta = cleanupMeta(meta);
 	}
 
 	public static class Warning {

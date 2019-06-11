@@ -20,6 +20,8 @@
 
 package com.arangodb.internal;
 
+import java.util.Map;
+
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CursorEntity;
 
@@ -29,8 +31,8 @@ import com.arangodb.entity.CursorEntity;
  */
 public interface ArangoCursorExecute {
 
-	CursorEntity next(String id) throws ArangoDBException;
+	CursorEntity next(String id, Map<String, String> meta) throws ArangoDBException;
 
-	void close(String id) throws ArangoDBException;
+	void close(String id, Map<String, String> meta) throws ArangoDBException;
 
 }

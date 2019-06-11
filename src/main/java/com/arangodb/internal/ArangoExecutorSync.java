@@ -23,7 +23,11 @@ package com.arangodb.internal;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.arangodb.ArangoDBException;
+import com.arangodb.entity.MetaAware;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.ArangoSerializationFactory;
@@ -36,6 +40,8 @@ import com.arangodb.velocystream.Response;
  *
  */
 public class ArangoExecutorSync extends ArangoExecutor {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ArangoExecutorSync.class);
 
 	private final CommunicationProtocol protocol;
 
@@ -72,6 +78,11 @@ public class ArangoExecutorSync extends ArangoExecutor {
 			
 			final Response response = protocol.execute(request, hostHandle);
 			T deserialize = responseDeserializer.deserialize(response);
+			
+			if(deserialize instanceof MetaAware) {
+				LOG.debug("Respone is MetaAware " + deserialize.getClass().getName());
+				((MetaAware) deserialize).setMeta(response.getMeta());
+			}
 			
 			return deserialize;
 			
