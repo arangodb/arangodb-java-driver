@@ -89,7 +89,7 @@ public class ExtendedHostResolver implements HostResolver {
 			lastUpdate = System.currentTimeMillis();
 
 			final Collection<String> endpoints = resolveFromServer();
-			LOGGER.info("Resolve " + endpoints.size() + " Endpoints");
+			LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
 			LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
 
 			if (!endpoints.isEmpty()) {

@@ -234,7 +234,7 @@ public abstract class InternalArangoDBBuilder {
 			hostHandler = new FallbackHostHandler(hostResolver);
 		}
 		
-		LOG.info("HostHandler is " + hostHandler.getClass().getSimpleName());
+		LOG.debug("HostHandler is " + hostHandler.getClass().getSimpleName());
 		
 		return new DirtyReadHostHandler(hostHandler, new RoundRobinHostHandler(hostResolver));
 	}
