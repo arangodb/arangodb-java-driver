@@ -58,6 +58,11 @@ public class DocumentTest extends BaseTest {
 	@After
 	public void teardown() {
 		collection.truncate();
+		try {
+			db.collection(COLLECTION_NAME).drop();
+		} catch (final ArangoDBException e) {
+			
+		}
 	}
 
 	@SuppressWarnings("unchecked")

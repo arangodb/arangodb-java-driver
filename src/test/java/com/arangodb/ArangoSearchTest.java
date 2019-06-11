@@ -28,6 +28,8 @@ import static org.junit.Assert.assertThat;
 import java.util.Collection;
 
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -61,11 +63,23 @@ public class ArangoSearchTest extends BaseTest {
 	@After
 	public void teardown() {
 		try {
+			ArangoCollection c = db.collection("view_update_prop_test_collection");
+			c.drop();
+		} catch (final ArangoDBException e) {
+		}
+		
+		try {
+			ArangoCollection c = db.collection("view_replace_prop_test_collection");
+			c.drop();
+		} catch (final ArangoDBException e) {
+		}
+		
+		try {
 			db.view(VIEW_NAME).drop();
 		} catch (final ArangoDBException e) {
 		}
 	}
-
+	
 	@Test
 	public void exists() {
 		if (!requireVersion(3, 4)) {
@@ -200,6 +214,7 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
+		
 		db.createCollection("view_replace_prop_test_collection");
 		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
 		view.create(new ArangoSearchCreateOptions());

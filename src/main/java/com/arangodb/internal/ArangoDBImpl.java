@@ -86,7 +86,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 		
 		hostResolver.init(this.executor(), util());
 		
-		LOGGER.info("ArangoDB Client is ready to use");
+		LOGGER.debug("ArangoDB Client is ready to use");
 		
 	}
 
