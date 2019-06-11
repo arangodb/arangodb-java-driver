@@ -69,13 +69,20 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	@Before
 	public void setup() {
 		try {
+		  db.graph(GRAPH_NAME).drop(true);
+		} catch (final ArangoDBException e) {
+		}
+
+		try {
 			db.createCollection(VERTEX_COLLECTION_NAME, null);
 		} catch (final ArangoDBException e) {
 		}
+
 		try {
 			db.createCollection(EDGE_COLLECTION_NAME, new CollectionCreateOptions().type(CollectionType.EDGES));
 		} catch (final ArangoDBException e) {
 		}
+
 		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
 		edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COLLECTION_NAME).from(VERTEX_COLLECTION_NAME)
 				.to(VERTEX_COLLECTION_NAME));
