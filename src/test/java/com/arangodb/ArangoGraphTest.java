@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -65,9 +66,9 @@ public class ArangoGraphTest extends BaseTest {
 
 	public ArangoGraphTest(final Builder builder) {
 		super(builder);
-		setup();
 	}
 
+	@Before
 	public void setup() {
 		try {
 			db.graph(GRAPH_NAME).drop(true);

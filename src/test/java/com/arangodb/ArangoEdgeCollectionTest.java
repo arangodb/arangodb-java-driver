@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -63,9 +64,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 
 	public ArangoEdgeCollectionTest(final Builder builder) {
 		super(builder);
-		setup();
 	}
 
+	@Before
 	public void setup() {
 		try {
 			db.createCollection(VERTEX_COLLECTION_NAME, null);
@@ -89,8 +90,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		
 		try {
 		  db.graph(GRAPH_NAME).drop(true);	
-		} catch (final ArangoDBException e) {	
-		}
+		} catch (final ArangoDBException e) {}
 	}
 
 	private BaseEdgeDocument createEdgeValue() {
