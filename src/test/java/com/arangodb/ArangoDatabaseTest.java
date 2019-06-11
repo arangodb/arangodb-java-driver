@@ -41,6 +41,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -104,6 +106,45 @@ public class ArangoDatabaseTest extends BaseTest {
         public ArangoDatabaseTest(final Builder builder) {
                 super(builder);
         }
+        
+        @Before
+    	public void setUp() {
+    		try {
+    			ArangoCollection c = db.collection(COLLECTION_NAME);
+    			c.drop();
+    		} catch (final ArangoDBException e) {
+    		}
+    		
+    		try {
+    			ArangoCollection c = db.collection(COLLECTION_NAME + "1");
+    			c.drop();
+    		} catch (final ArangoDBException e) {
+    		}
+    		
+    		try {
+    			ArangoCollection c = db.collection(COLLECTION_NAME + "2");
+    			c.drop();
+    		} catch (final ArangoDBException e) {
+    		}
+    		
+    		try {
+    			ArangoCollection c = db.collection(COLLECTION_NAME + "edge");
+    			c.drop();
+    		} catch (final ArangoDBException e) {
+    		}
+    		
+    		try {
+    			ArangoCollection c = db.collection(COLLECTION_NAME + "from");
+    			c.drop();
+    		} catch (final ArangoDBException e) {
+    		}
+    		
+    		try {
+    			ArangoCollection c = db.collection(COLLECTION_NAME + "to");
+    			c.drop();
+    		} catch (final ArangoDBException e) {
+    		}
+       	}
 
         @Test
         public void create() {
@@ -469,15 +510,21 @@ public class ArangoDatabaseTest extends BaseTest {
                 try {
                         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
                         final Collection<CollectionEntity> systemCollections = db.getCollections(options);
+                        
                         assertThat(systemCollections.size(), is(0));
                         db.createCollection(COLLECTION_NAME + "1", null);
                         db.createCollection(COLLECTION_NAME + "2", null);
                         final Collection<CollectionEntity> collections = db.getCollections(options);
                         assertThat(collections.size(), is(2));
                         assertThat(collections, is(notNullValue()));
+                } catch (final ArangoDBException e) {
+                  System.out.println(e.getErrorMessage());
                 } finally {
-                        db.collection(COLLECTION_NAME + "1").drop();
+                	try {
+                		db.collection(COLLECTION_NAME + "1").drop();
                         db.collection(COLLECTION_NAME + "2").drop();
+                	} catch (final ArangoDBException e) {
+                	}
                 }
         }
 
@@ -684,7 +731,9 @@ public class ArangoDatabaseTest extends BaseTest {
                         for (int i = 0; i < 10; i++, cursor.next()) {
                                 assertThat(cursor.hasNext(), is(i != 10));
                         }
-
+                } catch (final ArangoDBException e) {
+                	System.out.println(e.getErrorMessage());
+                	System.out.println(e.getErrorNum());
                 } finally {
                         db.collection(COLLECTION_NAME).drop();
                 }

@@ -68,12 +68,18 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		} catch (final ArangoDBException e) {
 		}
 		final GraphCreateOptions options = new GraphCreateOptions().orphanCollections(COLLECTION_NAME);
-		db.createGraph(GRAPH_NAME, null, options);
+		try {
+			db.createGraph(GRAPH_NAME, null, options);
+		} catch (final ArangoDBException e) {
+		}
+		
 	}
 
 	@After
 	public void teardown() {
-		db.collection(COLLECTION_NAME).truncate();
+		try {db.graph(GRAPH_NAME).drop();} catch (final ArangoDBException e) {}
+		try {db.collection(COLLECTION_NAME).drop();} catch (final ArangoDBException e) {}
+		
 	}
 
 	@Test

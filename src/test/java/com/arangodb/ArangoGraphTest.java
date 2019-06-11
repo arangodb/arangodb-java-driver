@@ -70,7 +70,7 @@ public class ArangoGraphTest extends BaseTest {
 
 	public void setup() {
 		try {
-			db.graph(GRAPH_NAME).drop();
+			db.graph(GRAPH_NAME).drop(true);
 		} catch (final ArangoDBException e1) {
 		}
 		final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();

@@ -87,12 +87,18 @@ public class ArangoCollectionTest extends BaseTest {
 
 	public ArangoCollectionTest(final Builder builder) {
 		super(builder);
-		db.createCollection(COLLECTION_NAME, null);
+		try {
+			db.createCollection(COLLECTION_NAME, null);	
+		} catch (final ArangoDBException e) {
+			
+		}
 	}
 
 	@After
 	public void teardown() {
-		db.collection(COLLECTION_NAME).truncate();
+		try {db.collection(COLLECTION_NAME).drop();} catch (final ArangoDBException e) {};
+		try {db.collection(EDGE_COLLECTION_NAME).drop();} catch (final ArangoDBException e) {};
+		try {db.collection(COLLECTION_NAME + "_1").drop();} catch (final ArangoDBException e) {};
 	}
 
 	@Test

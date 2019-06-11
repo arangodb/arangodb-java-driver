@@ -96,23 +96,10 @@ public class ArangoDBTest {
 	}
 
 	@Test
-	public void createDatabase() {
-		try {
-			final Boolean result = arangoDB.createDatabase(BaseTest.TEST_DB);
-			assertThat(result, is(true));
-		} finally {
-			try {
-				arangoDB.db(BaseTest.TEST_DB).drop();
-			} catch (final ArangoDBException e) {
-			}
-		}
-	}
-
-	@Test
-	public void deleteDatabase() {
-		final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB);
+	public void createAndDeleteDatabase() {
+		final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
 		assertThat(resultCreate, is(true));
-		final Boolean resultDelete = arangoDB.db(BaseTest.TEST_DB).drop();
+		final Boolean resultDelete = arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
 		assertThat(resultDelete, is(true));
 	}
 
@@ -123,14 +110,16 @@ public class ArangoDBTest {
 			assertThat(dbs, is(notNullValue()));
 			assertThat(dbs.size(), is(greaterThan(0)));
 			final int dbCount = dbs.size();
-			assertThat(dbs.iterator().next(), is("_system"));
-			arangoDB.createDatabase(BaseTest.TEST_DB);
+			//assertThat(dbs.iterator().next(), is("_system"));
+			assertThat(dbs, hasItem(BaseTest.TEST_DB));
+			arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
 			dbs = arangoDB.getDatabases();
 			assertThat(dbs.size(), is(greaterThan(dbCount)));
 			assertThat(dbs, hasItem("_system"));
+			assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
 			assertThat(dbs, hasItem(BaseTest.TEST_DB));
 		} finally {
-			arangoDB.db(BaseTest.TEST_DB).drop();
+			arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
 		}
 	}
 

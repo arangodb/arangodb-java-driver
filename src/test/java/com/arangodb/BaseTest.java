@@ -42,6 +42,7 @@ public abstract class BaseTest {
 	}
 
 	protected static final String TEST_DB = "java_driver_test_db";
+	protected static final String TEST_DB_CUSTOM = "java_driver_test_db_custom";
 	protected static ArangoDB arangoDB;
 	protected static ArangoDatabase db;
 
@@ -50,18 +51,21 @@ public abstract class BaseTest {
 		if (arangoDB != null) {
 			shutdown();
 		}
-		arangoDB = builder.build();
+		arangoDB = builder.build();		
+		db = arangoDB.db(TEST_DB);	
+		
+		// only create the database if not existing
 		try {
-			arangoDB.db(TEST_DB).drop();
+			db.getVersion().getVersion();
 		} catch (final ArangoDBException e) {
+			if (e.getErrorNum() == 1228) { // DATABASE NOT FOUND
+				arangoDB.createDatabase(TEST_DB);
+			}
 		}
-		arangoDB.createDatabase(TEST_DB);
-		db = arangoDB.db(TEST_DB);
 	}
 
 	@AfterClass
 	public static void shutdown() {
-		arangoDB.db(TEST_DB).drop();
 		arangoDB.shutdown();
 		arangoDB = null;
 	}

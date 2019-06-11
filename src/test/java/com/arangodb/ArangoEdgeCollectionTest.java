@@ -86,6 +86,11 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		for (final String collection : new String[] { VERTEX_COLLECTION_NAME, EDGE_COLLECTION_NAME }) {
 			db.collection(collection).truncate();
 		}
+		
+		try {
+		  db.graph(GRAPH_NAME).drop(true);	
+		} catch (final ArangoDBException e) {	
+		}
 	}
 
 	private BaseEdgeDocument createEdgeValue() {
