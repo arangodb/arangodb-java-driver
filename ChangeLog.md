@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [5.0.6] - 2019-05-24
+
+### Added
+
+- requests are now storing header information
+- faster test code execution
 
 ## [5.0.5] - 2019-05-24
 
@@ -946,7 +952,9 @@ Added support for sparse indexes
 
 - Initial Release
 
-[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.4...HEAD
+[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.6...HEAD
+[5.0.6]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.5...5.0.6
+[5.0.5]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.4...5.0.5
 [5.0.4]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.3...5.0.4
 [5.0.3]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.2...5.0.3
 [5.0.2]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.1...5.0.2
