@@ -509,14 +509,14 @@ public class ArangoDatabaseTest extends BaseTest {
         public void getCollectionsExcludeSystem() {
                 try {
                         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
-                        final Collection<CollectionEntity> systemCollections = db.getCollections(options);
+                        final Collection<CollectionEntity> nonSystemCollections = db.getCollections(options);
                         
-                        assertThat(systemCollections.size(), is(0));
+                        assertThat(nonSystemCollections.size(), is(0));
                         db.createCollection(COLLECTION_NAME + "1", null);
                         db.createCollection(COLLECTION_NAME + "2", null);
-                        final Collection<CollectionEntity> collections = db.getCollections(options);
-                        assertThat(collections.size(), is(2));
-                        assertThat(collections, is(notNullValue()));
+                        final Collection<CollectionEntity> newCollections = db.getCollections(options);
+                        assertThat(newCollections.size(), is(2));
+                        assertThat(newCollections, is(notNullValue()));
                 } catch (final ArangoDBException e) {
                   System.out.println(e.getErrorMessage());
                 } finally {
