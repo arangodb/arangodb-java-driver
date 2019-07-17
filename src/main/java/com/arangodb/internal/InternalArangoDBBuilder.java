@@ -183,6 +183,15 @@ public abstract class InternalArangoDBBuilder {
 
 	protected void setAcquireHostList(final Boolean acquireHostList) {
 		this.acquireHostList = acquireHostList;
+		// we need to check for acquireHostListInterval as well, as 
+		// acquireHostList depends on that attribute is being set.
+		if (this.acquireHostListInterval == null) {
+		  this.setAcquireHostListInterval(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
+		}
+	}
+	
+	protected void setAcquireHostListInterval(final Integer acquireHostListInterval) {
+		this.acquireHostListInterval = acquireHostListInterval;
 	}
 
 	protected void setLoadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
@@ -203,7 +212,7 @@ public abstract class InternalArangoDBBuilder {
 
 	protected HostResolver createHostResolver(final Collection<Host> hosts, final int maxConnections,final ConnectionFactory connectionFactory) {
 		
-		if(acquireHostList != null && acquireHostList) {
+		if (acquireHostList != null && acquireHostList) {
 			LOG.debug("acquireHostList -> Use ExtendedHostResolver");
 			return new ExtendedHostResolver(new ArrayList<Host>(hosts), maxConnections, connectionFactory, acquireHostListInterval);
 		} else {
@@ -333,7 +342,7 @@ public abstract class InternalArangoDBBuilder {
 		
 		String overrideDefaultValue = null;
 		
-		if(currentValue != null) {
+		if (currentValue != null) {
 			overrideDefaultValue = currentValue.toString();
 		} else if(defaultValue != null) {
 			overrideDefaultValue = defaultValue.toString();

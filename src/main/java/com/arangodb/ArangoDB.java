@@ -263,6 +263,23 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			setAcquireHostList(acquireHostList);
 			return this;
 		}
+		
+		/**
+		 * The interval in seconds which will be used if the boolean acquireHostList is set to true. 
+		 * e.g. if 60 is defined, the client will call /_api/cluster/endpoint every 60s to listen for a change. 
+		 *
+		 * <p>
+		 * The host list interval will be used for failover and load balancing.
+		 * </p>
+		 *
+		 * @param acquireHostListInterval
+		 *            interval to fetch endpoints list every x seconds (default: 60 * 60 * 1000; // hour)
+		 * @return {@link ArangoDB.Builder}
+		 */
+		public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
+			setAcquireHostListInterval(acquireHostListInterval);
+			return this;
+		}
 
 		/**
 		 * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
