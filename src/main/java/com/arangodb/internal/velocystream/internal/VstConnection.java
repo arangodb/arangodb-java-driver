@@ -258,7 +258,6 @@ public abstract class VstConnection implements Connection {
 		final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 		
 		if (LOGGER.isDebugEnabled()) {
-			
 			LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
 			LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (sendTimestamps.get(chunk.getMessageId())-System.currentTimeMillis()));
 		}
