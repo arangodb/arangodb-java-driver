@@ -263,6 +263,18 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			setAcquireHostList(acquireHostList);
 			return this;
 		}
+		
+		/**
+		 * Setting the Interval for acquireHostList
+		 *
+		 * @param acquireHostListInterval Interval in Seconds
+		 * 
+		 * @return {@link ArangoDB.Builder}
+		 */
+		public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
+			setAcquireHostListInterval(acquireHostListInterval);
+			return this;
+		}
 
 		/**
 		 * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
