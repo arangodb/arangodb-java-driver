@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [5.0.7] - 2019-07-19
+
+### Fixed
+
+- properly all load all configuration defaults
+
+### Added
+
+- added acquireHostListInterval configuration parameter
+
 ## [5.0.6] - 2019-05-24
 
 ### Added
@@ -952,7 +962,8 @@ Added support for sparse indexes
 
 - Initial Release
 
-[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.6...HEAD
+[unreleased]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.7...HEAD
+[5.0.7]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.6...5.0.7
 [5.0.6]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.5...5.0.6
 [5.0.5]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.4...5.0.5
 [5.0.4]: https://github.com/arangodb/arangodb-java-driver/compare/5.0.3...5.0.4
