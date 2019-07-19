@@ -120,7 +120,8 @@ public class ArangoGraphTest extends BaseTest {
             final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2));
             assertThat(graph, is(notNullValue()));
             assertThat(graph.getName(), is(GRAPH_NAME + "_1"));
-            assertThat(graph.g, is(GRAPH_NAME + "_1"));
+            assertThat(graph.getMinReplicationFactor(), is(2));
+            assertThat(graph.getReplicationFactor(), is(2));
         } finally {
             db.graph(GRAPH_NAME + "_1").drop();
         }
