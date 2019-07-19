@@ -185,6 +185,10 @@ public abstract class InternalArangoDBBuilder {
 		this.acquireHostList = acquireHostList;
 	}
 
+	protected void setAcquireHostListInterval(final Integer acquireHostListInterval) {
+		this.acquireHostListInterval = acquireHostListInterval;
+	}
+
 	protected void setLoadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
 		this.loadBalancingStrategy = loadBalancingStrategy;
 	}
