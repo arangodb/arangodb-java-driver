@@ -115,16 +115,22 @@ public abstract class InternalArangoDBBuilder {
 	}
 
 	public InternalArangoDBBuilder loadProperties(final InputStream in) throws ArangoDBException {
+		
+		final Properties properties = new Properties();
+		
 		if (in != null) {
-			final Properties properties = new Properties();
+			
 			try {
 				properties.load(in);
-				loadProperties(properties);
 			} catch (final IOException e) {
 				throw new ArangoDBException(e);
 			}
 		}
+
+		loadProperties(properties);
+
 		return this;
+		
 	}
 
 	protected void loadProperties(final Properties properties) {
@@ -183,6 +189,10 @@ public abstract class InternalArangoDBBuilder {
 
 	protected void setAcquireHostList(final Boolean acquireHostList) {
 		this.acquireHostList = acquireHostList;
+	}
+
+	protected void setAcquireHostListInterval(final Integer acquireHostListInterval) {
+		this.acquireHostListInterval = acquireHostListInterval;
 	}
 
 	protected void setLoadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
