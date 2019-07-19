@@ -25,14 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewType;
+import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidationType;
@@ -194,6 +187,17 @@ public class VPackSerializers {
 			} else if (value.getReplicationFactor() != null) {
 				builder.add(attribute, value.getReplicationFactor());
 			}
+		}
+	};
+
+	public static final VPackSerializer<MinReplicationFactor> MIN_REPLICATION_FACTOR = new VPackSerializer<MinReplicationFactor>() {
+		@Override
+		public void serialize(
+				final VPackBuilder builder,
+				final String attribute,
+				final MinReplicationFactor value,
+				final VPackSerializationContext context) throws VPackException {
+				builder.add(attribute, value.getMinReplicationFactor());
 		}
 	};
 
