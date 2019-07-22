@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -288,4 +289,8 @@ public class ArangoGraphTest extends BaseTest {
 		assertThat(db.collection(vertexCollection).exists(), is(false));
 	}
 
+	@AfterClass
+	public static void shutdown() {
+		db.drop();
+	}
 }
