@@ -29,6 +29,7 @@ import java.util.Collection;
 public class IndexEntity implements Entity {
 
 	private String id;
+	private String name;
 	private IndexType type;
 	private Collection<String> fields;
 	private Double selectivityEstimate;
@@ -46,6 +47,10 @@ public class IndexEntity implements Entity {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public IndexType getType() {

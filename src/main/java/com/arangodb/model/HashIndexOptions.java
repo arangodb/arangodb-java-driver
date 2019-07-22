@@ -34,6 +34,7 @@ public class HashIndexOptions {
 	private Boolean unique;
 	private Boolean sparse;
 	private Boolean deduplicate;
+	private String name;
 
 	public HashIndexOptions() {
 		super();
@@ -97,6 +98,20 @@ public class HashIndexOptions {
 	public HashIndexOptions deduplicate(final Boolean deduplicate) {
 		this.deduplicate = deduplicate;
 		return this;
+	}
+
+	/**
+	 * @param name
+	 *            the name of the index
+	 * @return options
+	 */
+	public HashIndexOptions name(final String name) {
+		this.name = name;
+		return this;
+	}
+
+	protected String getName() {
+		return name;
 	}
 
 }

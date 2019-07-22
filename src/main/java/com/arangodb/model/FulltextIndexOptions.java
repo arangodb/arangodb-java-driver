@@ -33,6 +33,7 @@ public class FulltextIndexOptions {
 	private Iterable<String> fields;
 	private final IndexType type = IndexType.fulltext;
 	private Integer minLength;
+	private String name;
 
 	public FulltextIndexOptions() {
 		super();
@@ -58,6 +59,20 @@ public class FulltextIndexOptions {
 
 	public Integer getMinLength() {
 		return minLength;
+	}
+
+	/**
+	 * @param name
+	 *            the name of the index
+	 * @return options
+	 */
+	public FulltextIndexOptions name(final String name) {
+		this.name = name;
+		return this;
+	}
+
+	protected String getName() {
+		return name;
 	}
 
 	/**
