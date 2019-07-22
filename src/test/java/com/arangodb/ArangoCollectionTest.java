@@ -1275,7 +1275,7 @@ public class ArangoCollectionTest extends BaseTest {
 
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, null);
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, options);
 		assertThat(indexResult, is(notNullValue()));
 		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
