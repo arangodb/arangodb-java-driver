@@ -1729,14 +1729,17 @@ public class ArangoCollectionTest extends BaseTest {
 	@Test
 	public void importDocumentsBatchSizeNumThreads() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
-		for( int i = 1; i <= 100; i++) {
+		for (int i = 1; i <= 100; i++) {
 			values.add(new BaseDocument(String.valueOf(i)));
 		}
+		int batchSize = 5;
+		int numThreads = 8;
 		final Collection<DocumentImportEntity> docsList = db.collection(COLLECTION_NAME).importDocuments(values,
-				new DocumentImportOptions(),10, 8);
+				new DocumentImportOptions(), batchSize, numThreads);
+		assertThat(docsList.size(), is(values.size() / batchSize));
 		for (final DocumentImportEntity docs : docsList) {
 			assertThat(docs, is(notNullValue()));
-			assertThat(docs.getCreated(), is(10));
+			assertThat(docs.getCreated(), is(batchSize));
 			assertThat(docs.getEmpty(), is(0));
 			assertThat(docs.getErrors(), is(0));
 			assertThat(docs.getIgnored(), is(0));
@@ -1744,6 +1747,7 @@ public class ArangoCollectionTest extends BaseTest {
 			assertThat(docs.getDetails(), is(empty()));
 		}
 	}
+
 
 	@Test
 	public void deleteDocumentsByKey() {
