@@ -1727,6 +1727,25 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void importDocumentsBatchSizeNumThreads() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		for( int i = 1; i <= 100; i++) {
+			values.add(new BaseDocument(String.valueOf(i)));
+		}
+		final Collection<DocumentImportEntity> docsList = db.collection(COLLECTION_NAME).importDocuments(values,
+				new DocumentImportOptions(),10, 8);
+		for (final DocumentImportEntity docs : docsList) {
+			assertThat(docs, is(notNullValue()));
+			assertThat(docs.getCreated(), is(10));
+			assertThat(docs.getEmpty(), is(0));
+			assertThat(docs.getErrors(), is(0));
+			assertThat(docs.getIgnored(), is(0));
+			assertThat(docs.getUpdated(), is(0));
+			assertThat(docs.getDetails(), is(empty()));
+		}
+	}
+
+	@Test
 	public void deleteDocumentsByKey() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		{
