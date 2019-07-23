@@ -105,22 +105,17 @@ public class ArangoDBTest {
 
 	@Test
 	public void getDatabases() {
-		try {
-			Collection<String> dbs = arangoDB.getDatabases();
-			assertThat(dbs, is(notNullValue()));
-			assertThat(dbs.size(), is(greaterThan(0)));
-			final int dbCount = dbs.size();
-			//assertThat(dbs.iterator().next(), is("_system"));
-			assertThat(dbs, hasItem(BaseTest.TEST_DB));
-			arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
-			dbs = arangoDB.getDatabases();
-			assertThat(dbs.size(), is(greaterThan(dbCount)));
-			assertThat(dbs, hasItem("_system"));
-			assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
-			assertThat(dbs, hasItem(BaseTest.TEST_DB));
-		} finally {
-			arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
-		}
+        Collection<String> dbs = arangoDB.getDatabases();
+        assertThat(dbs, is(notNullValue()));
+        assertThat(dbs.size(), is(greaterThan(0)));
+        final int dbCount = dbs.size();
+        assertThat(dbs.iterator().next(), is("_system"));
+        arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
+        dbs = arangoDB.getDatabases();
+        assertThat(dbs.size(), is(greaterThan(dbCount)));
+        assertThat(dbs, hasItem("_system"));
+        assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
+        arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
 	}
 
 	@Test
