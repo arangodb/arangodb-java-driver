@@ -118,6 +118,15 @@ public class ArangoDBTest {
 			assertThat(dbs, hasItem("_system"));
 			assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
 			assertThat(dbs, hasItem(BaseTest.TEST_DB));
+		} catch (ArangoDBException e) {
+			System.out.println("ArangoDBException");
+			System.out.println(e.getException());
+			System.out.println("Response code: " + e.getResponseCode());
+			System.out.println("Error num: " + e.getErrorNum());
+			System.out.println("Message: " + e.getMessage());
+		} catch (AssertionError assertionError) {
+			System.out.println("AssertionError");
+			System.out.println(assertionError.getMessage());
 		} finally {
 			arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
 		}
