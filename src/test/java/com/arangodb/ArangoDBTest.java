@@ -105,31 +105,17 @@ public class ArangoDBTest {
 
 	@Test
 	public void getDatabases() {
-		try {
-			Collection<String> dbs = arangoDB.getDatabases();
-			assertThat(dbs, is(notNullValue()));
-			assertThat(dbs.size(), is(greaterThan(0)));
-			final int dbCount = dbs.size();
-			//assertThat(dbs.iterator().next(), is("_system"));
-			assertThat(dbs, hasItem(BaseTest.TEST_DB));
-			arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
-			dbs = arangoDB.getDatabases();
-			assertThat(dbs.size(), is(greaterThan(dbCount)));
-			assertThat(dbs, hasItem("_system"));
-			assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
-			assertThat(dbs, hasItem(BaseTest.TEST_DB));
-		} catch (ArangoDBException e) {
-			System.out.println("ArangoDBException");
-			System.out.println(e.getException());
-			System.out.println("Response code: " + e.getResponseCode());
-			System.out.println("Error num: " + e.getErrorNum());
-			System.out.println("Message: " + e.getMessage());
-		} catch (AssertionError assertionError) {
-			System.out.println("AssertionError");
-			System.out.println(assertionError.getMessage());
-		} finally {
-			arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
-		}
+        Collection<String> dbs = arangoDB.getDatabases();
+        assertThat(dbs, is(notNullValue()));
+        assertThat(dbs.size(), is(greaterThan(0)));
+        final int dbCount = dbs.size();
+        assertThat(dbs.iterator().next(), is("_system"));
+        arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
+        dbs = arangoDB.getDatabases();
+        assertThat(dbs.size(), is(greaterThan(dbCount)));
+        assertThat(dbs, hasItem("_system"));
+        assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
+        arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
 	}
 
 	@Test
