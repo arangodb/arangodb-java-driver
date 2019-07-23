@@ -24,6 +24,7 @@ import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.KeyOptions;
 import com.arangodb.entity.KeyType;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.MinReplicationFactor;
 
 /**
  * @author Mark Vollmary
@@ -36,6 +37,7 @@ public class CollectionCreateOptions {
 	private String name;
 	private Long journalSize;
 	private final ReplicationFactor replicationFactor;
+	private final MinReplicationFactor minReplicationFactor;
 	private KeyOptions keyOptions;
 	private Boolean waitForSync;
 	private Boolean doCompact;
@@ -53,6 +55,7 @@ public class CollectionCreateOptions {
 	public CollectionCreateOptions() {
 		super();
 		replicationFactor = new ReplicationFactor();
+		minReplicationFactor = new MinReplicationFactor();
 	}
 
 	protected String getName() {
@@ -87,6 +90,10 @@ public class CollectionCreateOptions {
 		return replicationFactor.getReplicationFactor();
 	}
 
+	public Integer getMinReplicationFactor() {
+		return minReplicationFactor.getMinReplicationFactor();
+	}
+
 	/**
 	 * @param replicationFactor
 	 *            (The default is 1): in a cluster, this attribute determines how many copies of each shard are kept on
@@ -100,6 +107,24 @@ public class CollectionCreateOptions {
 	 */
 	public CollectionCreateOptions replicationFactor(final Integer replicationFactor) {
 		this.replicationFactor.setReplicationFactor(replicationFactor);
+		return this;
+	}
+
+	/**
+	 * @param minReplicationFactor
+	 *            (optional, default is 1): in a cluster, this attribute determines how many desired copies of each
+	 *            shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
+	 *            replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
+	 *            a shard of a collection has less than minReplicationFactor many insync followers it will go into
+	 *            "read-only" mode and will reject writes until enough followers are insync again. In more detail:
+	 *            Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
+	 *            are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
+	 *            to allow writes.
+	 *
+	 * @return options
+	 */
+	public CollectionCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
+		this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
 		return this;
 	}
 

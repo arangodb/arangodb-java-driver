@@ -34,6 +34,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryEntity;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.MinReplicationFactor;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
@@ -77,6 +78,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
 		context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
 		context.registerSerializer(ReplicationFactor.class, VPackSerializers.REPLICATION_FACTOR);
+		context.registerSerializer(MinReplicationFactor.class, VPackSerializers.MIN_REPLICATION_FACTOR);
 		context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
 		context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
 		context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);

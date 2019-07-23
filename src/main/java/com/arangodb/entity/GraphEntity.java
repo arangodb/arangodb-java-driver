@@ -39,6 +39,8 @@ public class GraphEntity implements Entity {
 	private Boolean isSmart;
 	private Integer numberOfShards;
 	private String smartGraphAttribute;
+	private Integer replicationFactor;
+	private Integer minReplicationFactor;
 
 	public String getName() {
 		return name != null ? name : _key;
@@ -58,6 +60,13 @@ public class GraphEntity implements Entity {
 
 	public Integer getNumberOfShards() {
 		return numberOfShards;
+	}
+
+	public Integer getReplicationFactor() {
+		return replicationFactor;
+	}
+	public Integer getMinReplicationFactor() {
+		return minReplicationFactor;
 	}
 
 	public String getSmartGraphAttribute() {
