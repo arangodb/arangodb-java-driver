@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.arangodb.model.*;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,16 +64,7 @@ import com.arangodb.entity.IndexType;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionPropertiesOptions;
-import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.model.DocumentDeleteOptions;
-import com.arangodb.model.DocumentExistsOptions;
-import com.arangodb.model.DocumentImportOptions;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.DocumentReplaceOptions;
-import com.arangodb.model.DocumentUpdateOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -1045,6 +1037,35 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void createHashIndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		final HashIndexOptions options = new HashIndexOptions();
+		options.name("myHashIndex");
+
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		fields.add("b");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, options);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getFields(), hasItem("b"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		if (arangoDB.getRole() == ServerRole.SINGLE) {
+			assertThat(indexResult.getSelectivityEstimate(), is(1.));
+		}
+		assertThat(indexResult.getSparse(), is(false));
+		assertThat(indexResult.getType(), is(IndexType.hash));
+		assertThat(indexResult.getUnique(), is(false));
+		assertThat(indexResult.getName(), is("myHashIndex"));
+	}
+
+	@Test
 	public void createGeoIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
@@ -1061,6 +1082,33 @@ public class ArangoCollectionTest extends BaseTest {
 		} else {
 			assertThat(indexResult.getType(), is(IndexType.geo1));
 		}
+	}
+
+	@Test
+	public void createGeoIndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		final GeoIndexOptions options = new GeoIndexOptions();
+		options.name("myGeoIndex1");
+
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, options);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(true));
+		assertThat(indexResult.getUnique(), is(false));
+		if (requireVersion(3, 4)) {
+			assertThat(indexResult.getType(), is(IndexType.geo));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo1));
+		}
+		assertThat(indexResult.getName(), is("myGeoIndex1"));
 	}
 
 	@Test
@@ -1085,6 +1133,35 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void createGeo2IndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		final GeoIndexOptions options = new GeoIndexOptions();
+		options.name("myGeoIndex2");
+
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		fields.add("b");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, options);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getFields(), hasItem("b"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(true));
+		assertThat(indexResult.getUnique(), is(false));
+		if (requireVersion(3, 4)) {
+			assertThat(indexResult.getType(), is(IndexType.geo));
+		} else {
+			assertThat(indexResult.getType(), is(IndexType.geo2));
+		}
+		assertThat(indexResult.getName(), is("myGeoIndex2"));
+	}
+
+	@Test
 	public void createSkiplistIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
@@ -1100,6 +1177,32 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getSparse(), is(false));
 		assertThat(indexResult.getType(), is(IndexType.skiplist));
 		assertThat(indexResult.getUnique(), is(false));
+	}
+
+	@Test
+	public void createSkiplistIndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		final SkiplistIndexOptions options = new SkiplistIndexOptions();
+		options.name("mySkiplistIndex");
+
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		fields.add("b");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureSkiplistIndex(fields, options);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getFields(), hasItem("b"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(false));
+		assertThat(indexResult.getType(), is(IndexType.skiplist));
+		assertThat(indexResult.getUnique(), is(false));
+		assertThat(indexResult.getName(), is("mySkiplistIndex"));
 	}
 
 	@Test
@@ -1121,6 +1224,32 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void createPersistentIndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		final PersistentIndexOptions options = new PersistentIndexOptions();
+		options.name("myPersistentIndex");
+
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		fields.add("b");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, options);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getFields(), hasItem("b"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getMinLength(), is(nullValue()));
+		assertThat(indexResult.getSparse(), is(false));
+		assertThat(indexResult.getType(), is(IndexType.persistent));
+		assertThat(indexResult.getUnique(), is(false));
+		assertThat(indexResult.getName(), is("myPersistentIndex"));
+	}
+
+	@Test
 	public void createFulltextIndex() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
@@ -1133,6 +1262,29 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getSparse(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.fulltext));
 		assertThat(indexResult.getUnique(), is(false));
+	}
+
+	@Test
+	public void createFulltextIndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		final FulltextIndexOptions options = new FulltextIndexOptions();
+		options.name("myFulltextIndex");
+
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, options);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getSparse(), is(true));
+		assertThat(indexResult.getType(), is(IndexType.fulltext));
+		assertThat(indexResult.getUnique(), is(false));
+		assertThat(indexResult.getName(), is("myFulltextIndex"));
 	}
 
 	@Test
