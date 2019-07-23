@@ -27,21 +27,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.arangodb.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionStatus;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.License;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryExecutionState;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
@@ -197,6 +186,18 @@ public class VPackDeserializers {
 				replicationFactor.setReplicationFactor(vpack.getAsInt());
 			}
 			return replicationFactor;
+		}
+	};
+
+	public static final VPackDeserializer<MinReplicationFactor> MIN_REPLICATION_FACTOR = new VPackDeserializer<MinReplicationFactor>() {
+		@Override
+		public MinReplicationFactor deserialize(
+				final VPackSlice parent,
+				final VPackSlice vpack,
+				final VPackDeserializationContext context) throws VPackException {
+			final MinReplicationFactor minReplicationFactor = new MinReplicationFactor();
+         	minReplicationFactor.setMinReplicationFactor(vpack.getAsInt());
+			return minReplicationFactor;
 		}
 	};
 

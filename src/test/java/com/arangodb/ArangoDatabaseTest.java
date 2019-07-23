@@ -213,6 +213,37 @@ public class ArangoDatabaseTest extends BaseTest {
         }
 
         @Test
+        public void createCollectionWithMinReplicationFactor() {
+
+                // if we do not have version at least 3.5+ => exit
+                if (!requireVersion(3, 5)) {
+                        LOG.info("Skip Test 'createCollectionWithMinReplicationFactor' because feature not implemented yet.");
+                        return;
+                }
+
+                // if we do not have a cluster => exit
+                if (arangoDB.getRole() == ServerRole.SINGLE) {
+                        return;
+                }
+
+                try {
+                        final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+                                new CollectionCreateOptions().replicationFactor(2).minReplicationFactor(2));
+                        assertThat(result, is(notNullValue()));
+                        assertThat(result.getId(), is(notNullValue()));
+                        assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
+                        assertThat(db.collection(COLLECTION_NAME).getProperties().getMinReplicationFactor(), is(2));
+                        assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(nullValue()));
+                } catch (final ArangoDBException e) {
+                        e.printStackTrace();
+                } finally {
+                        db.collection(COLLECTION_NAME).drop();
+                }
+
+        }
+
+
+        @Test
         public void createSatelliteCollection() {
                 if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
                         LOG.info("Skip Test 'createSatelliteCollection' on COMMUNITY VERSION");

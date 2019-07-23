@@ -119,6 +119,28 @@ public class GraphCreateOptions {
 		return this;
 	}
 
+	public Integer getMinReplicationFactor() {
+		return getOptions().getMinReplicationFactor();
+	}
+
+	/**
+	 * @param minReplicationFactor
+	 *            (optional, default is 1): in a cluster, this attribute determines how many desired copies of each
+	 *            shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
+	 *            replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
+	 *            a shard of a collection has less than minReplicationFactor many insync followers it will go into
+	 *            "read-only" mode and will reject writes until enough followers are insync again. In more detail:
+	 *            Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
+	 *            are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
+	 *            to allow writes.
+	 *
+	 * @return options
+	 */
+	public GraphCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
+		getOptions().setMinReplicationFactor(minReplicationFactor);
+		return this;
+	}
+
 	public Integer getNumberOfShards() {
 		return getOptions().getNumberOfShards();
 	}
@@ -157,6 +179,7 @@ public class GraphCreateOptions {
 
 	public static class SmartOptions {
 		private Integer replicationFactor;
+		private Integer minReplicationFactor;
 		private Integer numberOfShards;
 		private String smartGraphAttribute;
 
@@ -170,6 +193,14 @@ public class GraphCreateOptions {
 
 		public void setReplicationFactor(final Integer replicationFactor) {
 			this.replicationFactor = replicationFactor;
+		}
+
+		public Integer getMinReplicationFactor() {
+			return minReplicationFactor;
+		}
+
+		public void setMinReplicationFactor(final Integer minReplicationFactor) {
+			this.minReplicationFactor = minReplicationFactor;
 		}
 
 		public Integer getNumberOfShards() {
