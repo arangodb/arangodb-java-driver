@@ -99,8 +99,9 @@ public class ArangoCollectionTest extends BaseTest {
 			final CollectionEntity result = db.collection(COLLECTION_NAME + "_1").create();
 			assertThat(result, is(notNullValue()));
 			assertThat(result.getId(), is(notNullValue()));
-		} finally {
 			db.collection(COLLECTION_NAME + "_1").drop();
+		} catch (final ArangoDBException e) {
+			throw e;
 		}
 	}
 

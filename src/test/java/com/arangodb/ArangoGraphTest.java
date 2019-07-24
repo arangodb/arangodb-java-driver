@@ -115,6 +115,15 @@ public class ArangoGraphTest extends BaseTest {
 
     @Test
     public void createWithReplicationAndMinReplicationFactor() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        // if we do not have a cluster => exit
+        if (arangoDB.getRole() == ServerRole.SINGLE) {
+            return;
+        }
+
         try {
             final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
             final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2));
