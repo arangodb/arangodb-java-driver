@@ -1289,18 +1289,34 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
-	public void createTtlIndex() {
+	public void createTtlIndexWithoutOptions() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
-		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, null);
+		try {
+			final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureTtlIndex(fields, null);
+		} catch (final ArangoDBException e) {
+			assertThat(e.getResponseCode(), is(400));
+			assertThat(e.getErrorNum(), is(10));
+			assertThat(e.getMessage(), containsString("expireAfter attribute must be a number"));
+		}
+	}
+
+	@Test
+	public void createTtlIndexWithOptions() {
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+
+		final TtlIndexOptions options = new TtlIndexOptions();
+		options.name("myTtlIndex");
+		options.expireAfter(3600);
+
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureTtlIndex(fields, options);
 		assertThat(indexResult, is(notNullValue()));
-		assertThat(indexResult.getConstraint(), is(nullValue()));
 		assertThat(indexResult.getFields(), hasItem("a"));
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
-		assertThat(indexResult.getSparse(), is(true));
-		assertThat(indexResult.getType(), is(IndexType.fulltext));
-		assertThat(indexResult.getUnique(), is(false));
+		assertThat(indexResult.getType(), is(IndexType.ttl));
+		assertThat(indexResult.getName(), is("myTtlIndex"));
 	}
 
 	@Test
