@@ -152,6 +152,23 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Bulk imports the given values into the collection.
+	 *
+	 * @param values
+	 *            a list of Objects that will be stored as documents
+	 * @param options
+	 *            Additional options, can be null
+	 * @param batchSize
+	 *            Size for individual data batches of the original collection of values
+	 * @param numThreads
+	 *            Number of parallel import threads
+	 * @return list of information about the imported batches
+	 * @throws ArangoDBException
+	 */
+	Collection<DocumentImportEntity> importDocuments(Collection<?> values, DocumentImportOptions options,
+													 int batchSize, int numThreads) throws ArangoDBException;
+
+	/**
+	 * Bulk imports the given values into the collection.
 	 * 
 	 * @param values
 	 *            JSON-encoded array of objects that will be stored as documents

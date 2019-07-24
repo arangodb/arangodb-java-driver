@@ -20,8 +20,15 @@
 
 package com.arangodb.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +110,32 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	public DocumentImportEntity importDocuments(final Collection<?> values, final DocumentImportOptions options)
 			throws ArangoDBException {
 		return executor.execute(importDocumentsRequest(values, options), DocumentImportEntity.class);
+	}
+
+	@Override
+	public Collection<DocumentImportEntity> importDocuments(Collection<?> values, DocumentImportOptions options,
+															int batchSize, int numThreads) throws ArangoDBException {
+		List<? extends List<?>> batches = ListUtils.partition(new ArrayList<>(values), batchSize);
+		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+		List<CompletableFuture<DocumentImportEntity>> completableFutureList = new ArrayList<>();
+		for (List<?> batch : batches) {
+			CompletableFuture<DocumentImportEntity> completableFuture = CompletableFuture.supplyAsync(() -> {
+				DocumentImportEntity documentImportEntity = importDocuments(batch, options);
+				return documentImportEntity;
+			}, executorService);
+			completableFutureList.add(completableFuture);
+		}
+		List<DocumentImportEntity> documentImportEntityList = new ArrayList<>();
+		for (CompletableFuture<DocumentImportEntity> completableFuture : completableFutureList) {
+			DocumentImportEntity documentImportEntity = null;
+			try {
+				documentImportEntity = completableFuture.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new ArangoDBException(e);
+			}
+			documentImportEntityList.add(documentImportEntity);
+		}
+		return documentImportEntityList;
 	}
 
 	@Override
