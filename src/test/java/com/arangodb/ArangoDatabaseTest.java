@@ -234,10 +234,9 @@ public class ArangoDatabaseTest extends BaseTest {
                         assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
                         assertThat(db.collection(COLLECTION_NAME).getProperties().getMinReplicationFactor(), is(2));
                         assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(nullValue()));
+                        db.collection(COLLECTION_NAME).drop();
                 } catch (final ArangoDBException e) {
                         e.printStackTrace();
-                } finally {
-                        db.collection(COLLECTION_NAME).drop();
                 }
 
         }

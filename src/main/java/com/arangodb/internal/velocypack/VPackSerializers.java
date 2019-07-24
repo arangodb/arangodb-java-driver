@@ -197,7 +197,9 @@ public class VPackSerializers {
 				final String attribute,
 				final MinReplicationFactor value,
 				final VPackSerializationContext context) throws VPackException {
-				builder.add(attribute, value.getMinReplicationFactor());
+			    if (value.getMinReplicationFactor() != null) {
+					builder.add(attribute, value.getMinReplicationFactor());
+				}
 		}
 	};
 
