@@ -1748,6 +1748,41 @@ public class ArangoCollectionTest extends BaseTest {
 		}
 	}
 
+	@Test
+	public void importDocumentsBatchSizeNumThreadsIllegalBatchSize() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		for (int i = 1; i <= 10; i++) {
+			values.add(new BaseDocument(String.valueOf(i)));
+		}
+
+		int batchSize = 0;
+		int numThreads = 8;
+
+		try {
+			final Collection<DocumentImportEntity> docsList = db.collection(COLLECTION_NAME).importDocuments(values,
+					new DocumentImportOptions(), batchSize, numThreads);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+	}
+
+	@Test
+	public void importDocumentsBatchSizeNumThreadsIllegalNumThreads() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		for (int i = 1; i <= 10; i++) {
+			values.add(new BaseDocument(String.valueOf(i)));
+		}
+
+		int batchSize = 5;
+		int numThreads = 0;
+
+		try {
+			final Collection<DocumentImportEntity> docsList = db.collection(COLLECTION_NAME).importDocuments(values,
+					new DocumentImportOptions(), batchSize, numThreads);
+			fail();
+		} catch (IllegalArgumentException e) {
+		}
+	}
 
 	@Test
 	public void deleteDocumentsByKey() {
