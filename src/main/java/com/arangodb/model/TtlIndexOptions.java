@@ -31,7 +31,7 @@ public class TtlIndexOptions {
 
 	private Iterable<String> fields;
 	private final IndexType type = IndexType.ttl;
-	private Long expireAfter;
+	private Integer expireAfter;
 	private String name;
 
 	public TtlIndexOptions() {
@@ -61,12 +61,12 @@ public class TtlIndexOptions {
 	 *            The time (in seconds) after a document’s creation after which the documents count as “expired”.
 	 * @return options
 	 */
-	public TtlIndexOptions expireAfter(final Long expireAfter) {
+	public TtlIndexOptions expireAfter(final Integer expireAfter) {
 		this.expireAfter = expireAfter;
 		return this;
 	}
 
-	protected Long getExpireAfter() {
+	protected Integer getExpireAfter() {
 		return expireAfter;
 	}
 

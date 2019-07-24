@@ -40,6 +40,7 @@ public class IndexEntity implements Entity {
 	private Boolean geoJson;
 	private Boolean constraint;
 	private Boolean deduplicate;
+	private Integer expireAfter;
 
 	public IndexEntity() {
 		super();
@@ -83,6 +84,10 @@ public class IndexEntity implements Entity {
 
 	public Boolean getGeoJson() {
 		return geoJson;
+	}
+
+	public Integer getExpireAfter() {
+		return expireAfter;
 	}
 
 	public Boolean getConstraint() {
