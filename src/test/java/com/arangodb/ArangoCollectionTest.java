@@ -1290,6 +1290,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void createTtlIndexWithoutOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
 		try {
@@ -1303,6 +1306,9 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void createTtlIndexWithOptions() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");
 
