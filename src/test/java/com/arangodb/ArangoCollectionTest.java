@@ -1322,6 +1322,7 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
 		assertThat(indexResult.getIsNewlyCreated(), is(true));
 		assertThat(indexResult.getType(), is(IndexType.ttl));
+		assertThat(indexResult.getExpireAfter(), is(3600));
 		assertThat(indexResult.getName(), is("myTtlIndex"));
 	}
 
