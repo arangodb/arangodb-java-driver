@@ -1288,6 +1288,21 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void createTtlIndex() {
+		final Collection<String> fields = new ArrayList<String>();
+		fields.add("a");
+		final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, null);
+		assertThat(indexResult, is(notNullValue()));
+		assertThat(indexResult.getConstraint(), is(nullValue()));
+		assertThat(indexResult.getFields(), hasItem("a"));
+		assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+		assertThat(indexResult.getIsNewlyCreated(), is(true));
+		assertThat(indexResult.getSparse(), is(true));
+		assertThat(indexResult.getType(), is(IndexType.fulltext));
+		assertThat(indexResult.getUnique(), is(false));
+	}
+
+	@Test
 	public void getIndexes() {
 		final Collection<String> fields = new ArrayList<String>();
 		fields.add("a");

@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import java.util.Collection;
 
+import com.arangodb.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,20 +39,6 @@ import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.internal.util.DocumentUtil;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionPropertiesOptions;
-import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.model.DocumentDeleteOptions;
-import com.arangodb.model.DocumentExistsOptions;
-import com.arangodb.model.DocumentImportOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.DocumentReplaceOptions;
-import com.arangodb.model.DocumentUpdateOptions;
-import com.arangodb.model.FulltextIndexOptions;
-import com.arangodb.model.GeoIndexOptions;
-import com.arangodb.model.HashIndexOptions;
-import com.arangodb.model.PersistentIndexOptions;
-import com.arangodb.model.SkiplistIndexOptions;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
@@ -299,6 +286,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	public IndexEntity ensureFulltextIndex(final Iterable<String> fields, final FulltextIndexOptions options)
 			throws ArangoDBException {
 		return executor.execute(createFulltextIndexRequest(fields, options), IndexEntity.class);
+	}
+
+	@Override
+	public IndexEntity ensureTtlIndex(final Iterable<String> fields, final TtlIndexOptions options)
+			throws ArangoDBException {
+		return executor.execute(createTtlIndexRequest(fields, options), IndexEntity.class);
 	}
 
 	@Override
