@@ -39,6 +39,32 @@ public class IndexOptions {
 	/**
 	 * @param inBackground
 	 *            create the the index in the background
+	 *            this is a RocksDB only flag.
+	 * @return options
+	 */
+	public IndexOptions inBackground(final Boolean inBackground) {
+		this.inBackground = inBackground;
+		return this;
+	}
+
+	public Boolean getInBackground() {
+		return inBackground;
+	}
+
+	/**
+	 * @param name
+	 *            the name of the index
+	 * @return options
+	 */
+	public IndexOptions name(final String name) {
+		this.name = name;
+		return this;
+	}
+
+	protected String getName() {
+		return name;
+	}
+}
 	 * @return options
 	 */
 	public IndexOptions inBackground(final Boolean inBackground) {
