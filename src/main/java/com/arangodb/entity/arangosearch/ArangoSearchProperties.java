@@ -31,8 +31,10 @@ import java.util.Collection;
 public class ArangoSearchProperties {
 
 	private Long consolidationIntervalMsec;
+	private Long commitIntervalMsec;
 	private Long cleanupIntervalStep;
 	private ConsolidationPolicy consolidationPolicy;
+	private ArrayList<PrimarySort> primarySort;
 	private final Collection<CollectionLink> links;
 
 	public ArangoSearchProperties() {
