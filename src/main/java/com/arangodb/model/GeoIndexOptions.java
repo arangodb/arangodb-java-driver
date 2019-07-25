@@ -27,12 +27,11 @@ import com.arangodb.entity.IndexType;
  *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API Documentation</a>
  */
-public class GeoIndexOptions {
+public class GeoIndexOptions extends IndexOptions {
 
 	private Iterable<String> fields;
 	private final IndexType type = IndexType.geo;
 	private Boolean geoJson;
-	private String name;
 
 	public GeoIndexOptions() {
 		super();
@@ -54,20 +53,6 @@ public class GeoIndexOptions {
 
 	protected IndexType getType() {
 		return type;
-	}
-
-	/**
-	 * @param name
-	 *            the name of the index
-	 * @return options
-	 */
-	public GeoIndexOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
-
-	protected String getName() {
-		return name;
 	}
 
 	public Boolean getGeoJson() {
