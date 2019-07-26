@@ -24,6 +24,7 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
+import com.arangodb.entity.arangosearch.PrimarySort;
 
 /**
  * @author Mark Vollmary
@@ -93,6 +94,16 @@ public class ArangoSearchCreateOptions {
 	 */
 	public ArangoSearchCreateOptions link(final CollectionLink... links) {
 		properties.addLink(links);
+		return this;
+	}
+
+	/**
+	 * @param primarySorts
+	 *            A list of linked collections
+	 * @return options
+	 */
+	public ArangoSearchCreateOptions primarySort(final PrimarySort... primarySorts) {
+		properties.addPrimarySort(primarySorts);
 		return this;
 	}
 }

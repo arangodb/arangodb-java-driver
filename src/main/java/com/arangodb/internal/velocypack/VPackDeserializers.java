@@ -263,6 +263,7 @@ public class VPackDeserializers {
 					properties.addLink(link);
 				}
 			}
+
 			final VPackSlice primarySorts = vpack.get("primarySort");
 			if (primarySorts.isArray()) {
 				final Iterator<VPackSlice> primarySortsIterator = primarySorts.arrayIterator();
@@ -270,7 +271,7 @@ public class VPackDeserializers {
 					final VPackSlice entry = primarySortsIterator.next();
 					if (entry.isObject()) {
 						if (entry.get("field").isString() && entry.get("asc").isBoolean()) {
-							final PrimarySort primarySort = PrimarySort.on(entry.get("field").getAsString();
+							final PrimarySort primarySort = PrimarySort.on(entry.get("field").getAsString());
 							primarySort.ascending(entry.get("asc").getAsBoolean());
 							properties.addPrimarySort(primarySort);
 						}
