@@ -116,7 +116,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	public Collection<DocumentImportEntity> importDocuments(Collection<?> values, DocumentImportOptions options,
 															int batchSize, int numThreads) throws ArangoDBException {
 		List<? extends List<?>> batches = ListUtils.partition(new ArrayList<>(values), batchSize);
+		LOGGER.info("Partitioned [{}] values into [{}] batches of at most [{}] in size.",
+				values.size(), batches.size(), batchSize);
 		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+		LOGGER.info("Created fixed thread pool of [{}] threads.", numThreads);
 		List<CompletableFuture<DocumentImportEntity>> completableFutureList = new ArrayList<>();
 		for (List<?> batch : batches) {
 			CompletableFuture<DocumentImportEntity> completableFuture = CompletableFuture.supplyAsync(() -> {
@@ -135,6 +138,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			}
 			documentImportEntityList.add(documentImportEntity);
 		}
+		executorService.shutdown();
+		LOGGER.info("Shutdown fixed thread pool of [{}] threads.", numThreads);
 		return documentImportEntityList;
 	}
 
