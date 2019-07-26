@@ -217,10 +217,17 @@ public class VPackDeserializers {
 			if (consolidationIntervalMsec.isInteger()) {
 				properties.setConsolidationIntervalMsec(consolidationIntervalMsec.getAsLong());
 			}
+
+			final VPackSlice commitIntervalMsec = vpack.get("commitIntervalMsec");
+			if (commitIntervalMsec.isInteger()) {
+				properties.setConsolidationIntervalMsec(commitIntervalMsec.getAsLong());
+			}
+
 			final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");
 			if (cleanupIntervalStep.isInteger()) {
 				properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
 			}
+
 			final VPackSlice consolidationPolicy = vpack.get("consolidationPolicy");
 			if (consolidationPolicy.isObject()) {
 				properties.setConsolidationPolicy(
