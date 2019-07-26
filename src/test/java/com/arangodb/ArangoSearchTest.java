@@ -160,6 +160,7 @@ public class ArangoSearchTest extends BaseTest {
 		final PrimarySort primarySort = PrimarySort.on("myFieldName");
 		primarySort.ascending(true);
 		options.primarySort(primarySort);
+		options.consolidationIntervalMsec(666666L);
 
 		final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
 		assertThat(info, is(not(nullValue())));
