@@ -147,12 +147,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 		long elapsedTimeSeconds = TimeUnit.SECONDS.convert(elapsedTimeMillis, TimeUnit.MILLISECONDS);
 		if( elapsedTimeSeconds > 0) {
 			String performance = String.format("%.2f", (float) values.size() / elapsedTimeSeconds);
-			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] sec" +
-					"  Performance: [{}] documents/sec.", values.size(), elapsedTimeSeconds, performance);
+			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] seconds" +
+					"  Performance: [{}] documents/second.", values.size(), elapsedTimeSeconds, performance);
 		} else {
 			String performance = String.format("%.2f", (float) values.size() / elapsedTimeMillis);
-			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] msec" +
-					"  Performance: [{}] documents/msec.", values.size(), elapsedTimeMillis, performance);
+			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] milliseconds" +
+					"  Performance: [{}] documents/millisecond.", values.size(), elapsedTimeMillis, performance);
 		}
 
 		return documentImportEntityList;
