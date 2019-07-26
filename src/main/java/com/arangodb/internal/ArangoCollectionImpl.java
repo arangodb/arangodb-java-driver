@@ -23,10 +23,7 @@ package com.arangodb.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
@@ -146,10 +143,17 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 		executorService.shutdown();
 		LOGGER.info("Shutdown fixed thread pool of [{}] threads.", numThreads);
 
-		long elapsedTimeMillis  = System.currentTimeMillis() - startTimeMillis;
-		String performance = String.format("%.2f", (float) values.size() / elapsedTimeMillis);
-		LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] ms" +
-				"  Performance: [{}] documents/ms.", values.size(), elapsedTimeMillis, performance);
+		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+		long elapsedTimeSeconds = TimeUnit.SECONDS.convert(elapsedTimeMillis, TimeUnit.MILLISECONDS);
+		if( elapsedTimeSeconds > 0) {
+			String performance = String.format("%.2f", (float) values.size() / elapsedTimeSeconds);
+			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] sec" +
+					"  Performance: [{}] documents/sec.", values.size(), elapsedTimeSeconds, performance);
+		} else {
+			String performance = String.format("%.2f", (float) values.size() / elapsedTimeMillis);
+			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] msec" +
+					"  Performance: [{}] documents/msec.", values.size(), elapsedTimeMillis, performance);
+		}
 
 		return documentImportEntityList;
 	}
