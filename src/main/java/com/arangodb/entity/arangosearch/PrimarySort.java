@@ -34,7 +34,7 @@ public class PrimarySort {
 		this.fieldName = fieldName;
 	}
 
-	public static PrimarySort of(final String fieldName) {
+	public static PrimarySort on(final String fieldName) {
 		return new PrimarySort(fieldName);
 	}
 

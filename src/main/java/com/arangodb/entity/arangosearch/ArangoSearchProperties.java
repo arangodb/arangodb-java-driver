@@ -26,6 +26,7 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
+ * @author Heiko Kernbach
  *
  */
 public class ArangoSearchProperties {
