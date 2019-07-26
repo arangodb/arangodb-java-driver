@@ -234,6 +234,12 @@ public class VPackSerializers {
             if (consolidationIntervalMsec != null) {
                 builder.add("consolidationIntervalMsec", consolidationIntervalMsec);
             }
+
+            final Long commitIntervalMsec = value.getCommitIntervalMsec();
+            if (commitIntervalMsec != null) {
+                builder.add("commitIntervalMsec", commitIntervalMsec);
+            }
+
             final Long cleanupIntervalStep = value.getCleanupIntervalStep();
             if (cleanupIntervalStep != null) {
                 builder.add("cleanupIntervalStep", cleanupIntervalStep);
