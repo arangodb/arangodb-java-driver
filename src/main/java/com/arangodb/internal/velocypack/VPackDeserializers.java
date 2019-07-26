@@ -220,7 +220,7 @@ public class VPackDeserializers {
 
 			final VPackSlice commitIntervalMsec = vpack.get("commitIntervalMsec");
 			if (commitIntervalMsec.isInteger()) {
-				properties.setConsolidationIntervalMsec(commitIntervalMsec.getAsLong());
+				properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
 			}
 
 			final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");

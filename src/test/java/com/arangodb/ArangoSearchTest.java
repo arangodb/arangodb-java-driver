@@ -187,9 +187,8 @@ public class ArangoSearchTest extends BaseTest {
 
 		// check commit interval msec property
 		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
-		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesEntity properties = view.getProperties();
-		assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
+		assertThat(properties.getCommitIntervalMsec(), is(666666L));
 	}
 
 	@Test
