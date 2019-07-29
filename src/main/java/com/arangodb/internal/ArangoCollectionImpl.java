@@ -112,7 +112,6 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	@Override
 	public Collection<DocumentImportEntity> importDocuments(Collection<?> values, DocumentImportOptions options,
 															int batchSize, int numThreads) throws ArangoDBException {
-		long startTimeMillis = System.currentTimeMillis();
 
 		List<? extends List<?>> batches = ListUtils.partition(new ArrayList<>(values), batchSize);
 		LOGGER.info("Partitioned [{}] values into [{}] batches of at most [{}] in size.",
@@ -121,13 +120,19 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 		LOGGER.info("Created fixed thread pool of [{}] threads.", numThreads);
 
+		long startTimeMillis = System.currentTimeMillis();
+		LOGGER.info("Started importing batches into collection: [{}].", this.name);
+
+		int batchNumber = 1;
 		List<CompletableFuture<DocumentImportEntity>> completableFutureList = new ArrayList<>();
 		for (List<?> batch : batches) {
+			LOGGER.info("Started/queued import of batch: [{}/{}] of size: [{}].", batchNumber, batches.size(), batch.size());
 			CompletableFuture<DocumentImportEntity> completableFuture = CompletableFuture.supplyAsync(() -> {
 				DocumentImportEntity documentImportEntity = importDocuments(batch, options);
 				return documentImportEntity;
 			}, executorService);
 			completableFutureList.add(completableFuture);
+			batchNumber++;
 		}
 		List<DocumentImportEntity> documentImportEntityList = new ArrayList<>();
 		for (CompletableFuture<DocumentImportEntity> completableFuture : completableFutureList) {
@@ -138,7 +143,17 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 				throw new ArangoDBException(e);
 			}
 			documentImportEntityList.add(documentImportEntity);
+			LOGGER.info("Completed import of batch: [{}/{}].", batchNumber, batches.size());
+			LOGGER.info("Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}], Empty: [{}]",
+					documentImportEntity.getCreated(),
+					documentImportEntity.getErrors(),
+					documentImportEntity.getUpdated(),
+					documentImportEntity.getIgnored(),
+					documentImportEntity.getEmpty()
+			);
+			LOGGER.info("Details: [{}]", documentImportEntity.getDetails());
 		}
+		LOGGER.info("Finished importing batches into collection: [{}].", this.name);
 
 		executorService.shutdown();
 		LOGGER.info("Shutdown fixed thread pool of [{}] threads.", numThreads);
