@@ -134,6 +134,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			completableFutureList.add(completableFuture);
 			batchNumber++;
 		}
+
+		int completedBatchNumber = 1;
 		List<DocumentImportEntity> documentImportEntityList = new ArrayList<>();
 		for (CompletableFuture<DocumentImportEntity> completableFuture : completableFutureList) {
 			DocumentImportEntity documentImportEntity = null;
@@ -143,7 +145,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 				throw new ArangoDBException(e);
 			}
 			documentImportEntityList.add(documentImportEntity);
-			LOGGER.info("Completed import of batch: [{}/{}].", batchNumber, batches.size());
+			LOGGER.info("Completed import of batch: [{}/{}].", completedBatchNumber, batches.size());
 			LOGGER.info("Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}], Empty: [{}]",
 					documentImportEntity.getCreated(),
 					documentImportEntity.getErrors(),
@@ -152,6 +154,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 					documentImportEntity.getEmpty()
 			);
 			LOGGER.info("Details: [{}]", documentImportEntity.getDetails());
+			completedBatchNumber++;
 		}
 		LOGGER.info("Finished importing batches into collection: [{}].", this.name);
 
