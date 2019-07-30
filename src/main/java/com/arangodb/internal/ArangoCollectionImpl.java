@@ -146,15 +146,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 				throw new ArangoDBException(e);
 			}
 			documentImportEntityList.add(documentImportEntity);
-			LOGGER.info("Completed import of batch: [{}/{}].", completedBatchNumber, batches.size());
-			LOGGER.info("Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}], Empty: [{}]",
-					documentImportEntity.getCreated(),
-					documentImportEntity.getErrors(),
-					documentImportEntity.getUpdated(),
-					documentImportEntity.getIgnored(),
-					documentImportEntity.getEmpty()
+			LOGGER.info("Completed import of batch: [{}/{}]. Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}],"
+							+ " Empty: [{}], Details: [{}]", completedBatchNumber, batches.size(),
+					documentImportEntity.getCreated(), documentImportEntity.getErrors(),
+					documentImportEntity.getUpdated(), documentImportEntity.getIgnored(),
+					documentImportEntity.getEmpty(), documentImportEntity.getDetails()
 			);
-			LOGGER.info("Details: [{}]", documentImportEntity.getDetails());
 			combinedDocumentImportEntity.setCreated(
 					combinedDocumentImportEntity.getCreated() == null ? 0 : combinedDocumentImportEntity.getCreated()
 							+ documentImportEntity.getCreated()
