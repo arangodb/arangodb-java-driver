@@ -1902,6 +1902,59 @@ public class ArangoCollectionTest extends BaseTest {
 	}
 
 	@Test
+	public void importDocumentsBatchSizeNumThreadsDuplicateDefaultError() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		for (int i = 1; i <= 100; i++) {
+			if (i % 10 == 0) {
+				values.add(new BaseDocument(String.valueOf(i - 1)));
+			} else {
+				values.add(new BaseDocument(String.valueOf(i)));
+			}
+		}
+		int batchSize = 10;
+		int numThreads = 8;
+		final Collection<DocumentImportEntity> docsList = db.collection(COLLECTION_NAME).importDocuments(values,
+				new DocumentImportOptions(), batchSize, numThreads);
+		assertThat(docsList.size(), is(values.size() / batchSize));
+		for (final DocumentImportEntity docs : docsList) {
+			assertThat(docs, is(notNullValue()));
+			assertThat(docs.getCreated(), is(batchSize - 1));
+			assertThat(docs.getEmpty(), is(0));
+			assertThat(docs.getErrors(), is(1));
+			assertThat(docs.getIgnored(), is(0));
+			assertThat(docs.getUpdated(), is(0));
+			assertThat(docs.getDetails(), is(empty()));
+		}
+	}
+
+	@Test
+	public void importDocumentsBatchSizeNumThreadsDetails() {
+		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
+		for (int i = 1; i <= 100; i++) {
+			if (i % 10 == 0) {
+				values.add(new BaseDocument(String.valueOf(i - 1)));
+			} else {
+				values.add(new BaseDocument(String.valueOf(i)));
+			}
+		}
+		int batchSize = 10;
+		int numThreads = 8;
+		final Collection<DocumentImportEntity> docsList = db.collection(COLLECTION_NAME).importDocuments(values,
+				new DocumentImportOptions().details(true), batchSize, numThreads);
+		assertThat(docsList.size(), is(values.size() / batchSize));
+		for (final DocumentImportEntity docs : docsList) {
+			assertThat(docs, is(notNullValue()));
+			assertThat(docs.getCreated(), is(batchSize - 1));
+			assertThat(docs.getEmpty(), is(0));
+			assertThat(docs.getErrors(), is(1));
+			assertThat(docs.getIgnored(), is(0));
+			assertThat(docs.getUpdated(), is(0));
+			assertThat(docs.getDetails().size(), is(1));
+			assertThat(docs.getDetails().iterator().next(), containsString("unique constraint violated"));
+		}
+	}
+
+	@Test
 	public void importDocumentsBatchSizeNumThreadsIllegalBatchSize() {
 		final Collection<BaseDocument> values = new ArrayList<BaseDocument>();
 		for (int i = 1; i <= 10; i++) {
