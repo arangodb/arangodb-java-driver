@@ -137,6 +137,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 		int completedBatchNumber = 1;
 		List<DocumentImportEntity> documentImportEntityList = new ArrayList<>();
+		DocumentImportEntity combinedDocumentImportEntity = new DocumentImportEntity();
 		for (CompletableFuture<DocumentImportEntity> completableFuture : completableFutureList) {
 			DocumentImportEntity documentImportEntity = null;
 			try {
@@ -145,30 +146,66 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 				throw new ArangoDBException(e);
 			}
 			documentImportEntityList.add(documentImportEntity);
-			LOGGER.info("Completed import of batch: [{}/{}]. Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}],"
+			LOGGER.info("Completed import of batch: [{}/{}].  Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}],"
 							+ " Empty: [{}], Details: [{}]", completedBatchNumber, batches.size(),
 					documentImportEntity.getCreated(), documentImportEntity.getErrors(),
 					documentImportEntity.getUpdated(), documentImportEntity.getIgnored(),
 					documentImportEntity.getEmpty(), documentImportEntity.getDetails()
 			);
+			combinedDocumentImportEntity.setCreated(
+					combinedDocumentImportEntity.getCreated() == null ? 0 : combinedDocumentImportEntity.getCreated()
+							+ documentImportEntity.getCreated()
+			);
+			combinedDocumentImportEntity.setErrors(
+					combinedDocumentImportEntity.getErrors() == null ? 0 : combinedDocumentImportEntity.getErrors()
+							+ documentImportEntity.getErrors()
+			);
+			combinedDocumentImportEntity.setUpdated(
+					combinedDocumentImportEntity.getUpdated() == null ? 0 : combinedDocumentImportEntity.getUpdated()
+							+ documentImportEntity.getUpdated()
+			);
+			combinedDocumentImportEntity.setIgnored(
+					combinedDocumentImportEntity.getIgnored() == null ? 0 : combinedDocumentImportEntity.getIgnored()
+							+ documentImportEntity.getIgnored()
+			);
+			combinedDocumentImportEntity.setEmpty(
+					combinedDocumentImportEntity.getEmpty() == null ? 0 : combinedDocumentImportEntity.getEmpty()
+							+ documentImportEntity.getEmpty()
+			);
+			Collection<String> combinedDetails = new ArrayList<>();
+			combinedDetails.addAll(combinedDocumentImportEntity.getDetails());
+			combinedDetails.addAll(documentImportEntity.getDetails());
+			combinedDocumentImportEntity.setDetails(combinedDetails);
 			completedBatchNumber++;
 		}
 		LOGGER.info("Finished importing batches into collection: [{}].", this.name);
+		LOGGER.info("Totals.  Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}], Empty: [{}]",
+				combinedDocumentImportEntity.getCreated(), combinedDocumentImportEntity.getErrors(),
+				combinedDocumentImportEntity.getUpdated(), combinedDocumentImportEntity.getIgnored(),
+				combinedDocumentImportEntity.getEmpty()
+		);
 
 		executorService.shutdown();
 		LOGGER.info("Shutdown fixed thread pool of [{}] threads.", numThreads);
 
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 		long elapsedTimeSeconds = TimeUnit.SECONDS.convert(elapsedTimeMillis, TimeUnit.MILLISECONDS);
+		int numDocumentsImported = combinedDocumentImportEntity.getCreated() + combinedDocumentImportEntity.getUpdated();
 		if( elapsedTimeSeconds > 0) {
-			String performance = String.format("%.2f", (float) values.size() / elapsedTimeSeconds);
-			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] seconds" +
-					"  Performance: [{}] documents/second.", values.size(), elapsedTimeSeconds, performance);
+			String performance = String.format("%.2f", (float) numDocumentsImported / elapsedTimeSeconds);
+			LOGGER.info("Total number of documents imported (created + updated): [{}]  Time taken: [{}] seconds" +
+					"  Performance: [{}] documents/second.", numDocumentsImported, elapsedTimeSeconds, performance);
 		} else {
-			String performance = String.format("%.2f", (float) values.size() / elapsedTimeMillis);
-			LOGGER.info("Total number of documents imported: [{}]  Time taken: [{}] milliseconds" +
-					"  Performance: [{}] documents/millisecond.", values.size(), elapsedTimeMillis, performance);
+			String performance = String.format("%.2f", (float) numDocumentsImported / elapsedTimeMillis);
+			LOGGER.info("Total number of documents imported (created + updated): [{}]  Time taken: [{}] milliseconds" +
+					"  Performance: [{}] documents/millisecond.", numDocumentsImported, elapsedTimeMillis, performance);
 		}
+		// It would be nice to return a combinedDocumentImportEntity, but since details reflect the position of
+		// documents within each batch, such as when reporting errors as shown below it doesn't seem like a good idea to
+		// return a combinedDocumentImportEntity unless the positions can be adjusted to reflect the positions in the
+		// original Collection<?> values.
+		// [at position 9: creating document failed with error 'unique constraint violated', offending document: {"_key":"9"}]
+		// [at position 9: creating document failed with error 'unique constraint violated', offending document: {"_key":"19"}]
 		return documentImportEntityList;
 	}
 
