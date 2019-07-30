@@ -137,7 +137,6 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 		int completedBatchNumber = 1;
 		List<DocumentImportEntity> documentImportEntityList = new ArrayList<>();
-		DocumentImportEntity combinedDocumentImportEntity = new DocumentImportEntity();
 		for (CompletableFuture<DocumentImportEntity> completableFuture : completableFutureList) {
 			DocumentImportEntity documentImportEntity = null;
 			try {
@@ -152,30 +151,6 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 					documentImportEntity.getUpdated(), documentImportEntity.getIgnored(),
 					documentImportEntity.getEmpty(), documentImportEntity.getDetails()
 			);
-			combinedDocumentImportEntity.setCreated(
-					combinedDocumentImportEntity.getCreated() == null ? 0 : combinedDocumentImportEntity.getCreated()
-							+ documentImportEntity.getCreated()
-			);
-			combinedDocumentImportEntity.setErrors(
-					combinedDocumentImportEntity.getErrors() == null ? 0 : combinedDocumentImportEntity.getErrors()
-							+ documentImportEntity.getErrors()
-			);
-			combinedDocumentImportEntity.setUpdated(
-					combinedDocumentImportEntity.getUpdated() == null ? 0 : combinedDocumentImportEntity.getUpdated()
-							+ documentImportEntity.getUpdated()
-			);
-			combinedDocumentImportEntity.setIgnored(
-					combinedDocumentImportEntity.getIgnored() == null ? 0 : combinedDocumentImportEntity.getIgnored()
-							+ documentImportEntity.getIgnored()
-			);
-			combinedDocumentImportEntity.setEmpty(
-					combinedDocumentImportEntity.getEmpty() == null ? 0 : combinedDocumentImportEntity.getEmpty()
-							+ documentImportEntity.getEmpty()
-			);
-			Collection<String> combinedDetails = new ArrayList<>();
-			combinedDetails.addAll(combinedDocumentImportEntity.getDetails());
-			combinedDetails.addAll(documentImportEntity.getDetails());
-			combinedDocumentImportEntity.setDetails(combinedDetails);
 			completedBatchNumber++;
 		}
 		LOGGER.info("Finished importing batches into collection: [{}].", this.name);
