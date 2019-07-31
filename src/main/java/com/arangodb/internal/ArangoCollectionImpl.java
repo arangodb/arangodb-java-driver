@@ -153,24 +153,24 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 					documentImportEntity.getEmpty(), documentImportEntity.getDetails()
 			);
 			combinedDocumentImportEntity.setCreated(
-					combinedDocumentImportEntity.getCreated() == null ? 0 : combinedDocumentImportEntity.getCreated()
-							+ documentImportEntity.getCreated()
+					combinedDocumentImportEntity.getCreated() == null ? documentImportEntity.getCreated()
+							: combinedDocumentImportEntity.getCreated() + documentImportEntity.getCreated()
 			);
 			combinedDocumentImportEntity.setErrors(
-					combinedDocumentImportEntity.getErrors() == null ? 0 : combinedDocumentImportEntity.getErrors()
-							+ documentImportEntity.getErrors()
+					combinedDocumentImportEntity.getErrors() == null ? documentImportEntity.getErrors()
+							: combinedDocumentImportEntity.getErrors() + documentImportEntity.getErrors()
 			);
 			combinedDocumentImportEntity.setUpdated(
-					combinedDocumentImportEntity.getUpdated() == null ? 0 : combinedDocumentImportEntity.getUpdated()
-							+ documentImportEntity.getUpdated()
+					combinedDocumentImportEntity.getUpdated() == null ? documentImportEntity.getUpdated()
+							: combinedDocumentImportEntity.getUpdated() + documentImportEntity.getUpdated()
 			);
 			combinedDocumentImportEntity.setIgnored(
-					combinedDocumentImportEntity.getIgnored() == null ? 0 : combinedDocumentImportEntity.getIgnored()
-							+ documentImportEntity.getIgnored()
+					combinedDocumentImportEntity.getIgnored() == null ? documentImportEntity.getIgnored()
+							: combinedDocumentImportEntity.getIgnored() + documentImportEntity.getIgnored()
 			);
 			combinedDocumentImportEntity.setEmpty(
-					combinedDocumentImportEntity.getEmpty() == null ? 0 : combinedDocumentImportEntity.getEmpty()
-							+ documentImportEntity.getEmpty()
+					combinedDocumentImportEntity.getEmpty() == null ? documentImportEntity.getEmpty()
+							: combinedDocumentImportEntity.getEmpty() + documentImportEntity.getEmpty()
 			);
 			Collection<String> combinedDetails = new ArrayList<>();
 			combinedDetails.addAll(combinedDocumentImportEntity.getDetails());
@@ -178,8 +178,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			combinedDocumentImportEntity.setDetails(combinedDetails);
 			completedBatchNumber++;
 		}
-		LOGGER.info("Finished importing batches into collection: [{}].", this.name);
-		LOGGER.info("Totals.  Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}], Empty: [{}]",
+		LOGGER.info("Finished importing batches into collection: [{}].  Created: [{}], Errors: [{}], Updated: [{}], "
+						+ "Ignored: [{}], Empty: [{}]", this.name,
 				combinedDocumentImportEntity.getCreated(), combinedDocumentImportEntity.getErrors(),
 				combinedDocumentImportEntity.getUpdated(), combinedDocumentImportEntity.getIgnored(),
 				combinedDocumentImportEntity.getEmpty()
