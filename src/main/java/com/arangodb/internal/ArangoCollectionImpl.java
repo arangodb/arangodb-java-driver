@@ -135,9 +135,15 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			batchNumber++;
 		}
 
+		int combinedCreated = 0;
+		int combinedErrors = 0;
+		int combinedUpdated = 0;
+		int combinedIgnored = 0;
+		int combinedEmpty = 0;
+		Collection<String> combinedDetails = new ArrayList<>();
+
 		int completedBatchNumber = 1;
 		List<DocumentImportEntity> documentImportEntityList = new ArrayList<>();
-		DocumentImportEntity combinedDocumentImportEntity = new DocumentImportEntity();
 		for (CompletableFuture<DocumentImportEntity> completableFuture : completableFutureList) {
 			DocumentImportEntity documentImportEntity = null;
 			try {
@@ -152,32 +158,24 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 					documentImportEntity.getUpdated(), documentImportEntity.getIgnored(),
 					documentImportEntity.getEmpty(), documentImportEntity.getDetails()
 			);
-			combinedDocumentImportEntity.setCreated(
-					combinedDocumentImportEntity.getCreated() == null ? documentImportEntity.getCreated()
-							: combinedDocumentImportEntity.getCreated() + documentImportEntity.getCreated()
-			);
-			combinedDocumentImportEntity.setErrors(
-					combinedDocumentImportEntity.getErrors() == null ? documentImportEntity.getErrors()
-							: combinedDocumentImportEntity.getErrors() + documentImportEntity.getErrors()
-			);
-			combinedDocumentImportEntity.setUpdated(
-					combinedDocumentImportEntity.getUpdated() == null ? documentImportEntity.getUpdated()
-							: combinedDocumentImportEntity.getUpdated() + documentImportEntity.getUpdated()
-			);
-			combinedDocumentImportEntity.setIgnored(
-					combinedDocumentImportEntity.getIgnored() == null ? documentImportEntity.getIgnored()
-							: combinedDocumentImportEntity.getIgnored() + documentImportEntity.getIgnored()
-			);
-			combinedDocumentImportEntity.setEmpty(
-					combinedDocumentImportEntity.getEmpty() == null ? documentImportEntity.getEmpty()
-							: combinedDocumentImportEntity.getEmpty() + documentImportEntity.getEmpty()
-			);
-			Collection<String> combinedDetails = new ArrayList<>();
-			combinedDetails.addAll(combinedDocumentImportEntity.getDetails());
+			combinedCreated += documentImportEntity.getCreated();
+			combinedErrors += documentImportEntity.getErrors();
+			combinedUpdated += documentImportEntity.getUpdated();
+			combinedIgnored += documentImportEntity.getIgnored();
+			combinedEmpty += documentImportEntity.getEmpty();
 			combinedDetails.addAll(documentImportEntity.getDetails());
-			combinedDocumentImportEntity.setDetails(combinedDetails);
+
 			completedBatchNumber++;
 		}
+
+		DocumentImportEntity combinedDocumentImportEntity = new DocumentImportEntity();
+		combinedDocumentImportEntity.setCreated(combinedCreated);
+		combinedDocumentImportEntity.setErrors(combinedErrors);
+		combinedDocumentImportEntity.setUpdated(combinedUpdated);
+		combinedDocumentImportEntity.setIgnored(combinedIgnored);
+		combinedDocumentImportEntity.setEmpty(combinedEmpty);
+		combinedDocumentImportEntity.setDetails(combinedDetails);
+
 		LOGGER.info("Finished importing batches into collection: [{}].  Created: [{}], Errors: [{}], Updated: [{}], "
 						+ "Ignored: [{}], Empty: [{}]", this.name,
 				combinedDocumentImportEntity.getCreated(), combinedDocumentImportEntity.getErrors(),
