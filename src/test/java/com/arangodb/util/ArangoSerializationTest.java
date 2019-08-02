@@ -77,6 +77,14 @@ public class ArangoSerializationTest {
 	}
 
 	@Test
+	public void skipSerializeNullValues() {
+		final BaseDocument entity = new BaseDocument();
+		entity.addAttribute("bar", null);
+		final VPackSlice vpack = util.serialize(entity);
+		assertThat(vpack.get("bar").isNone(), is(true));
+	}
+
+	@Test
 	public void serializeType() {
 		final Collection<BaseDocument> list = new ArrayList<BaseDocument>();
 		list.add(new BaseDocument());
