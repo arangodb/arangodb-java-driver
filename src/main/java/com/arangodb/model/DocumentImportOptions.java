@@ -20,6 +20,9 @@
 
 package com.arangodb.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
  * @author Mark Vollmary
  *
@@ -156,6 +159,19 @@ public class DocumentImportOptions {
 	public DocumentImportOptions details(final Boolean details) {
 		this.details = details;
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s [fromPrefix=%s, toPrefix=%s, overwrite=%s, waitForSync=%s, onDuplicate=%s, " +
+						"complete=%s, details=%s]", this.getClass().getSimpleName(), fromPrefix, toPrefix, overwrite,
+				waitForSync, onDuplicate, complete, details);
+	}
+
+	public String toJSONString() {
+		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+		return String.format("{\"%s\":%s}", this.getClass().getSimpleName(), gson.toJson(this))
+				.replace("\\\"", "\"");
 	}
 
 }
