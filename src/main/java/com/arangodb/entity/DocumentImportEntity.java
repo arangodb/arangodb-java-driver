@@ -20,6 +20,9 @@
 
 package com.arangodb.entity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -107,6 +110,18 @@ public class DocumentImportEntity implements Entity {
 
 	public void setDetails(final Collection<String> details) {
 		this.details = details;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s [created=%d, errors=%d, empty=%d, updated=%d, ignored=%d, details=%s]",
+				this.getClass().getSimpleName(), created, errors, empty, updated, ignored, details);
+	}
+
+	public String toJSONString() {
+		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+		return String.format("{\"%s\":%s}", this.getClass().getSimpleName(), gson.toJson(this))
+				.replace("\\\"", "\"");
 	}
 
 }
