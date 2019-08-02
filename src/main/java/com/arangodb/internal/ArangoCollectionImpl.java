@@ -118,10 +118,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			try {
 				documentImportEntity = completableFuture.get();
 			} catch (InterruptedException | ExecutionException e) {
+				executorService.shutdown();
 				throw new ArangoDBException(e);
 			}
 			documentImportEntityList.add(documentImportEntity);
 		}
+	    executorService.shutdown();
 		return documentImportEntityList;
 	}
 
