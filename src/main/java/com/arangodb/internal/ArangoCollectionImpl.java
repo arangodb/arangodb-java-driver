@@ -120,6 +120,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 		LOGGER.info("Created fixed thread pool of [{}] threads.", numThreads);
 
+		LOGGER.info("Importing documents with: {}", options.toJSONString());
+
 		long startTimeMillis = System.currentTimeMillis();
 		LOGGER.info("Started importing batches into collection: [{}].", this.name);
 
@@ -152,12 +154,9 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 				throw new ArangoDBException(e);
 			}
 			documentImportEntityList.add(documentImportEntity);
-			LOGGER.info("Completed import of batch: [{}/{}].  Created: [{}], Errors: [{}], Updated: [{}], Ignored: [{}],"
-							+ " Empty: [{}], Details: [{}]", completedBatchNumber, batches.size(),
-					documentImportEntity.getCreated(), documentImportEntity.getErrors(),
-					documentImportEntity.getUpdated(), documentImportEntity.getIgnored(),
-					documentImportEntity.getEmpty(), documentImportEntity.getDetails()
-			);
+			LOGGER.info("Completed import of batch: [{}/{}]. {}", completedBatchNumber, batches.size(),
+					documentImportEntity.toJSONString());
+
 			combinedCreated += documentImportEntity.getCreated();
 			combinedErrors += documentImportEntity.getErrors();
 			combinedUpdated += documentImportEntity.getUpdated();
@@ -174,17 +173,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 		combinedDocumentImportEntity.setUpdated(combinedUpdated);
 		combinedDocumentImportEntity.setIgnored(combinedIgnored);
 		combinedDocumentImportEntity.setEmpty(combinedEmpty);
-		combinedDocumentImportEntity.setDetails(combinedDetails);
+		//combinedDocumentImportEntity.setDetails(combinedDetails);
 
-		LOGGER.info("Finished importing batches into collection: [{}].  Created: [{}], Errors: [{}], Updated: [{}], "
-						+ "Ignored: [{}], Empty: [{}]", this.name,
-				combinedDocumentImportEntity.getCreated(), combinedDocumentImportEntity.getErrors(),
-				combinedDocumentImportEntity.getUpdated(), combinedDocumentImportEntity.getIgnored(),
-				combinedDocumentImportEntity.getEmpty()
-		);
-
-		executorService.shutdown();
-		LOGGER.info("Shutdown fixed thread pool of [{}] threads.", numThreads);
+		LOGGER.info("Finished importing batches into collection: [{}]. {}", this.name,
+				combinedDocumentImportEntity.toJSONString());
 
 		long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
 		long elapsedTimeSeconds = TimeUnit.SECONDS.convert(elapsedTimeMillis, TimeUnit.MILLISECONDS);
@@ -198,6 +190,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			LOGGER.info("Total number of documents imported (created + updated): [{}]  Time taken: [{}] milliseconds" +
 					"  Performance: [{}] documents/millisecond.", numDocumentsImported, elapsedTimeMillis, performance);
 		}
+
+		executorService.shutdown();
+		LOGGER.info("Shutdown fixed thread pool of [{}] threads.", numThreads);
+
 		// It would be nice to return a combinedDocumentImportEntity, but since details reflect the position of
 		// documents within each batch, such as when reporting errors as shown below it doesn't seem like a good idea to
 		// return a combinedDocumentImportEntity unless the positions can be adjusted to reflect the positions in the
