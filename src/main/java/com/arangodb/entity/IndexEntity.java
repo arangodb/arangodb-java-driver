@@ -40,6 +40,7 @@ public class IndexEntity implements Entity {
 	private Boolean geoJson;
 	private Boolean constraint;
 	private Boolean deduplicate;
+	private Boolean inBackground;
 
 	public IndexEntity() {
 		super();
@@ -47,6 +48,10 @@ public class IndexEntity implements Entity {
 
 	public String getId() {
 		return id;
+	}
+
+	public Boolean getInBackground() {
+		return inBackground;
 	}
 
 	public String getName() {
