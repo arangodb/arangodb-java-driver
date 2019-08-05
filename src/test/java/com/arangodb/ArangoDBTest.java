@@ -441,17 +441,20 @@ public class ArangoDBTest {
 
 	@Test
 	public void accessMultipleDatabases() {
-		try {
-			arangoDB.createDatabase("db1");
-			arangoDB.createDatabase("db2");
+		String db1 = "multipledb1";
+		String db2 = "multipledb2";
 
-			final ArangoDBVersion version1 = arangoDB.db("db1").getVersion();
+		try {
+			arangoDB.createDatabase(db1);
+			arangoDB.createDatabase(db2);
+
+			final ArangoDBVersion version1 = arangoDB.db(db1).getVersion();
 			assertThat(version1, is(notNullValue()));
-			final ArangoDBVersion version2 = arangoDB.db("db2").getVersion();
+			final ArangoDBVersion version2 = arangoDB.db(db2).getVersion();
 			assertThat(version2, is(notNullValue()));
 		} finally {
-			arangoDB.db("db1").drop();
-			arangoDB.db("db2").drop();
+			arangoDB.db(db1).drop();
+			arangoDB.db(db2).drop();
 		}
 	}
 
