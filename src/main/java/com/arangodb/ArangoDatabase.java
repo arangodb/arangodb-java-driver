@@ -596,6 +596,16 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) throws ArangoDBException;
 
 	/**
+	 * Aborts a Stream Transaction.
+	 *
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#abort-transaction">API
+	 *      Documentation</a>
+	 * @return information about the transaction
+	 * @throws ArangoDBException
+	 */
+	StreamTransactionEntity abortStreamTransaction(String id) throws ArangoDBException;
+
+	/**
 	 * Retrieves information about the current database
 	 * 
 	 * @see <a href=

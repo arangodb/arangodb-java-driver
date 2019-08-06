@@ -378,6 +378,10 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
                 util().serialize(options != null ? options : new StreamTransactionOptions()));
     }
 
+    protected Request abortStreamTransactionRequest(String id) {
+        return request(name, RequestType.DELETE, PATH_API_TRANSACTION, id);
+    }
+
     protected ResponseDeserializer<StreamTransactionEntity> streamTransactionResponseDeserializer() {
         return new ResponseDeserializer<StreamTransactionEntity>() {
             @Override

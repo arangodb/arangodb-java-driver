@@ -1407,6 +1407,20 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
+    public void abortStreamTransaction() {
+        StreamTransactionEntity begunTx = db.beginStreamTransaction(null);
+        StreamTransactionEntity abortedTx = db.abortStreamTransaction(begunTx.getId());
+        assertThat(abortedTx.getId(), is(notNullValue()));
+        assertThat(abortedTx.getId(), is(begunTx.getId()));
+        assertThat(abortedTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.aborted));
+    }
+
+    @Test(expected = ArangoDBException.class)
+    public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+        db.abortStreamTransaction("notExistingTransactionId");
+    }
+
+    @Test
     public void getInfo() {
         final DatabaseEntity info = db.getInfo();
         assertThat(info, is(notNullValue()));
