@@ -32,37 +32,11 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.ArangoRoute;
 import com.arangodb.ArangoSearch;
 import com.arangodb.ArangoView;
-import com.arangodb.entity.AqlExecutionExplainEntity;
-import com.arangodb.entity.AqlFunctionEntity;
-import com.arangodb.entity.AqlParseEntity;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CursorEntity;
-import com.arangodb.entity.DatabaseEntity;
-import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.GraphEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryCachePropertiesEntity;
-import com.arangodb.entity.QueryEntity;
-import com.arangodb.entity.QueryTrackingPropertiesEntity;
-import com.arangodb.entity.TraversalEntity;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
+import com.arangodb.entity.*;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
-import com.arangodb.model.AqlFunctionCreateOptions;
-import com.arangodb.model.AqlFunctionDeleteOptions;
-import com.arangodb.model.AqlFunctionGetOptions;
-import com.arangodb.model.AqlQueryExplainOptions;
-import com.arangodb.model.AqlQueryOptions;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionsReadOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.GraphCreateOptions;
-import com.arangodb.model.TransactionOptions;
-import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocypack.Type;
@@ -70,361 +44,365 @@ import com.arangodb.velocystream.Request;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, ArangoExecutorSync>
-		implements ArangoDatabase {
+        implements ArangoDatabase {
 
-	private ArangoCursorInitializer cursorInitializer;
+    private ArangoCursorInitializer cursorInitializer;
 
-	protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
-		super(arangoDB, name);
-	}
+    protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
+        super(arangoDB, name);
+    }
 
-	@Override
-	public ArangoDBVersion getVersion() throws ArangoDBException {
-		return executor.execute(getVersionRequest(), ArangoDBVersion.class);
-	}
+    @Override
+    public ArangoDBVersion getVersion() throws ArangoDBException {
+        return executor.execute(getVersionRequest(), ArangoDBVersion.class);
+    }
 
-	@Override
-	public boolean exists() throws ArangoDBException {
-		try {
-			getInfo();
-			return true;
-		} catch (final ArangoDBException e) {
-			if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
-				return false;
-			}
-			throw e;
-		}
-	}
+    @Override
+    public boolean exists() throws ArangoDBException {
+        try {
+            getInfo();
+            return true;
+        } catch (final ArangoDBException e) {
+            if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
+                return false;
+            }
+            throw e;
+        }
+    }
 
-	@Override
-	public Collection<String> getAccessibleDatabases() throws ArangoDBException {
-		return executor.execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
-	}
+    @Override
+    public Collection<String> getAccessibleDatabases() throws ArangoDBException {
+        return executor.execute(getAccessibleDatabasesRequest(), getDatabaseResponseDeserializer());
+    }
 
-	@Override
-	public ArangoCollection collection(final String name) {
-		return new ArangoCollectionImpl(this, name);
-	}
+    @Override
+    public ArangoCollection collection(final String name) {
+        return new ArangoCollectionImpl(this, name);
+    }
 
-	@Override
-	public CollectionEntity createCollection(final String name) throws ArangoDBException {
-		return executor.execute(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
-	}
+    @Override
+    public CollectionEntity createCollection(final String name) throws ArangoDBException {
+        return executor.execute(createCollectionRequest(name, new CollectionCreateOptions()), CollectionEntity.class);
+    }
 
-	@Override
-	public CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
-			throws ArangoDBException {
-		return executor.execute(createCollectionRequest(name, options), CollectionEntity.class);
-	}
+    @Override
+    public CollectionEntity createCollection(final String name, final CollectionCreateOptions options)
+            throws ArangoDBException {
+        return executor.execute(createCollectionRequest(name, options), CollectionEntity.class);
+    }
 
-	@Override
-	public Collection<CollectionEntity> getCollections() throws ArangoDBException {
-		return executor.execute(getCollectionsRequest(new CollectionsReadOptions()),
-			getCollectionsResponseDeserializer());
-	}
+    @Override
+    public Collection<CollectionEntity> getCollections() throws ArangoDBException {
+        return executor.execute(getCollectionsRequest(new CollectionsReadOptions()),
+                getCollectionsResponseDeserializer());
+    }
 
-	@Override
-	public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
-		return executor.execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
-	}
+    @Override
+    public Collection<CollectionEntity> getCollections(final CollectionsReadOptions options) throws ArangoDBException {
+        return executor.execute(getCollectionsRequest(options), getCollectionsResponseDeserializer());
+    }
 
-	@Override
-	public IndexEntity getIndex(final String id) throws ArangoDBException {
-		DocumentUtil.validateIndexId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getIndex(split[1]);
-	}
+    @Override
+    public IndexEntity getIndex(final String id) throws ArangoDBException {
+        DocumentUtil.validateIndexId(id);
+        final String[] split = id.split("/");
+        return collection(split[0]).getIndex(split[1]);
+    }
 
-	@Override
-	public String deleteIndex(final String id) throws ArangoDBException {
-		DocumentUtil.validateIndexId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).deleteIndex(split[1]);
-	}
+    @Override
+    public String deleteIndex(final String id) throws ArangoDBException {
+        DocumentUtil.validateIndexId(id);
+        final String[] split = id.split("/");
+        return collection(split[0]).deleteIndex(split[1]);
+    }
 
-	@Override
-	public Boolean create() throws ArangoDBException {
-		return arango().createDatabase(name());
-	}
+    @Override
+    public Boolean create() throws ArangoDBException {
+        return arango().createDatabase(name());
+    }
 
-	@Override
-	public Boolean drop() throws ArangoDBException {
-		return executor.execute(dropRequest(), createDropResponseDeserializer());
-	}
+    @Override
+    public Boolean drop() throws ArangoDBException {
+        return executor.execute(dropRequest(), createDropResponseDeserializer());
+    }
 
-	@Override
-	public void grantAccess(final String user, final Permissions permissions) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, permissions), Void.class);
-	}
+    @Override
+    public void grantAccess(final String user, final Permissions permissions) throws ArangoDBException {
+        executor.execute(grantAccessRequest(user, permissions), Void.class);
+    }
 
-	@Override
-	public void grantAccess(final String user) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, Permissions.RW), Void.class);
-	}
+    @Override
+    public void grantAccess(final String user) throws ArangoDBException {
+        executor.execute(grantAccessRequest(user, Permissions.RW), Void.class);
+    }
 
-	@Override
-	public void revokeAccess(final String user) throws ArangoDBException {
-		executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
-	}
+    @Override
+    public void revokeAccess(final String user) throws ArangoDBException {
+        executor.execute(grantAccessRequest(user, Permissions.NONE), Void.class);
+    }
 
-	@Override
-	public void resetAccess(final String user) throws ArangoDBException {
-		executor.execute(resetAccessRequest(user), Void.class);
-	}
+    @Override
+    public void resetAccess(final String user) throws ArangoDBException {
+        executor.execute(resetAccessRequest(user), Void.class);
+    }
 
-	@Override
-	public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
-			throws ArangoDBException {
-		executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
-	}
+    @Override
+    public void grantDefaultCollectionAccess(final String user, final Permissions permissions)
+            throws ArangoDBException {
+        executor.execute(updateUserDefaultCollectionAccessRequest(user, permissions), Void.class);
+    }
 
-	@Override
-	public Permissions getPermissions(final String user) throws ArangoDBException {
-		return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
-	}
+    @Override
+    public Permissions getPermissions(final String user) throws ArangoDBException {
+        return executor.execute(getPermissionsRequest(user), getPermissionsResponseDeserialzer());
+    }
 
-	@Override
-	public <T> ArangoCursor<T> query(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryOptions options,
-		final Class<T> type) throws ArangoDBException {
-		
-		final Request request = queryRequest(query, bindVars, options);
-		final HostHandle hostHandle = new HostHandle();
-		final CursorEntity result = executor.execute(request, CursorEntity.class, hostHandle);
-		
-		return createCursor(result, type, options, hostHandle);
-		
-	}
+    @Override
+    public <T> ArangoCursor<T> query(
+            final String query,
+            final Map<String, Object> bindVars,
+            final AqlQueryOptions options,
+            final Class<T> type) throws ArangoDBException {
 
-	@Override
-	public <T> ArangoCursor<T> query(final String query, final Map<String, Object> bindVars, final Class<T> type)
-			throws ArangoDBException {
-		return query(query, bindVars, null, type);
-	}
+        final Request request = queryRequest(query, bindVars, options);
+        final HostHandle hostHandle = new HostHandle();
+        final CursorEntity result = executor.execute(request, CursorEntity.class, hostHandle);
 
-	@Override
-	public <T> ArangoCursor<T> query(final String query, final AqlQueryOptions options, final Class<T> type)
-			throws ArangoDBException {
-		return query(query, null, options, type);
-	}
+        return createCursor(result, type, options, hostHandle);
 
-	@Override
-	public <T> ArangoCursor<T> query(final String query, final Class<T> type) throws ArangoDBException {
-		return query(query, null, null, type);
-	}
+    }
 
-	@Override
-	public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
-		final HostHandle hostHandle = new HostHandle();
-		final CursorEntity result = executor.execute(queryNextRequest(cursorId, null, null), CursorEntity.class, hostHandle);
-		return createCursor(result, type, null, hostHandle);
-	}
+    @Override
+    public <T> ArangoCursor<T> query(final String query, final Map<String, Object> bindVars, final Class<T> type)
+            throws ArangoDBException {
+        return query(query, bindVars, null, type);
+    }
 
-	private <T> ArangoCursor<T> createCursor(
-		final CursorEntity result,
-		final Class<T> type,
-		final AqlQueryOptions options,
-		final HostHandle hostHandle) {
-		
-		final ArangoCursorExecute execute = new ArangoCursorExecute() {
-			@Override
-			public CursorEntity next(final String id, Map<String, String> meta) {
-				return executor.execute(queryNextRequest(id, options, meta), CursorEntity.class, hostHandle);
-			}
+    @Override
+    public <T> ArangoCursor<T> query(final String query, final AqlQueryOptions options, final Class<T> type)
+            throws ArangoDBException {
+        return query(query, null, options, type);
+    }
 
-			@Override
-			public void close(final String id, Map<String, String> meta) {
-				executor.execute(queryCloseRequest(id, options, meta), Void.class, hostHandle);
-			}
-		};
-		
-		return cursorInitializer != null ? cursorInitializer.createInstance(this, execute, type, result)
-				: new ArangoCursorImpl<T>(this, execute, type, result);
-	}
+    @Override
+    public <T> ArangoCursor<T> query(final String query, final Class<T> type) throws ArangoDBException {
+        return query(query, null, null, type);
+    }
 
-	@Override
-	public AqlExecutionExplainEntity explainQuery(
-		final String query,
-		final Map<String, Object> bindVars,
-		final AqlQueryExplainOptions options) throws ArangoDBException {
-		return executor.execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
-	}
+    @Override
+    public <T> ArangoCursor<T> cursor(final String cursorId, final Class<T> type) throws ArangoDBException {
+        final HostHandle hostHandle = new HostHandle();
+        final CursorEntity result = executor.execute(queryNextRequest(cursorId, null, null), CursorEntity.class, hostHandle);
+        return createCursor(result, type, null, hostHandle);
+    }
 
-	@Override
-	public AqlParseEntity parseQuery(final String query) throws ArangoDBException {
-		return executor.execute(parseQueryRequest(query), AqlParseEntity.class);
-	}
+    private <T> ArangoCursor<T> createCursor(
+            final CursorEntity result,
+            final Class<T> type,
+            final AqlQueryOptions options,
+            final HostHandle hostHandle) {
 
-	@Override
-	public void clearQueryCache() throws ArangoDBException {
-		executor.execute(clearQueryCacheRequest(), Void.class);
-	}
+        final ArangoCursorExecute execute = new ArangoCursorExecute() {
+            @Override
+            public CursorEntity next(final String id, Map<String, String> meta) {
+                return executor.execute(queryNextRequest(id, options, meta), CursorEntity.class, hostHandle);
+            }
 
-	@Override
-	public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException {
-		return executor.execute(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
-	}
+            @Override
+            public void close(final String id, Map<String, String> meta) {
+                executor.execute(queryCloseRequest(id, options, meta), Void.class, hostHandle);
+            }
+        };
 
-	@Override
-	public QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
-			throws ArangoDBException {
-		return executor.execute(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
-	}
+        return cursorInitializer != null ? cursorInitializer.createInstance(this, execute, type, result)
+                : new ArangoCursorImpl<T>(this, execute, type, result);
+    }
 
-	@Override
-	public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException {
-		return executor.execute(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
-	}
+    @Override
+    public AqlExecutionExplainEntity explainQuery(
+            final String query,
+            final Map<String, Object> bindVars,
+            final AqlQueryExplainOptions options) throws ArangoDBException {
+        return executor.execute(explainQueryRequest(query, bindVars, options), AqlExecutionExplainEntity.class);
+    }
 
-	@Override
-	public QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
-			throws ArangoDBException {
-		return executor.execute(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
-	}
+    @Override
+    public AqlParseEntity parseQuery(final String query) throws ArangoDBException {
+        return executor.execute(parseQueryRequest(query), AqlParseEntity.class);
+    }
 
-	@Override
-	public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
-		return executor.execute(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
-		}.getType());
-	}
+    @Override
+    public void clearQueryCache() throws ArangoDBException {
+        executor.execute(clearQueryCacheRequest(), Void.class);
+    }
 
-	@Override
-	public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
-		return executor.execute(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
-		}.getType());
-	}
+    @Override
+    public QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException {
+        return executor.execute(getQueryCachePropertiesRequest(), QueryCachePropertiesEntity.class);
+    }
 
-	@Override
-	public void clearSlowQueries() throws ArangoDBException {
-		executor.execute(clearSlowQueriesRequest(), Void.class);
-	}
+    @Override
+    public QueryCachePropertiesEntity setQueryCacheProperties(final QueryCachePropertiesEntity properties)
+            throws ArangoDBException {
+        return executor.execute(setQueryCachePropertiesRequest(properties), QueryCachePropertiesEntity.class);
+    }
 
-	@Override
-	public void killQuery(final String id) throws ArangoDBException {
-		executor.execute(killQueryRequest(id), Void.class);
-	}
+    @Override
+    public QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException {
+        return executor.execute(getQueryTrackingPropertiesRequest(), QueryTrackingPropertiesEntity.class);
+    }
 
-	@Override
-	public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
-			throws ArangoDBException {
-		executor.execute(createAqlFunctionRequest(name, code, options), Void.class);
-	}
+    @Override
+    public QueryTrackingPropertiesEntity setQueryTrackingProperties(final QueryTrackingPropertiesEntity properties)
+            throws ArangoDBException {
+        return executor.execute(setQueryTrackingPropertiesRequest(properties), QueryTrackingPropertiesEntity.class);
+    }
 
-	@Override
-	public Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options)
-			throws ArangoDBException {
-		return executor.execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
-	}
+    @Override
+    public Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException {
+        return executor.execute(getCurrentlyRunningQueriesRequest(), new Type<Collection<QueryEntity>>() {
+        }.getType());
+    }
 
-	@Override
-	public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
-		return executor.execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
-	}
+    @Override
+    public Collection<QueryEntity> getSlowQueries() throws ArangoDBException {
+        return executor.execute(getSlowQueriesRequest(), new Type<Collection<QueryEntity>>() {
+        }.getType());
+    }
 
-	@Override
-	public ArangoGraph graph(final String name) {
-		return new ArangoGraphImpl(this, name);
-	}
+    @Override
+    public void clearSlowQueries() throws ArangoDBException {
+        executor.execute(clearSlowQueriesRequest(), Void.class);
+    }
 
-	@Override
-	public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
-			throws ArangoDBException {
-		return executor.execute(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
-			createGraphResponseDeserializer());
-	}
+    @Override
+    public void killQuery(final String id) throws ArangoDBException {
+        executor.execute(killQueryRequest(id), Void.class);
+    }
 
-	@Override
-	public GraphEntity createGraph(
-		final String name,
-		final Collection<EdgeDefinition> edgeDefinitions,
-		final GraphCreateOptions options) throws ArangoDBException {
-		return executor.execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
-	}
+    @Override
+    public void createAqlFunction(final String name, final String code, final AqlFunctionCreateOptions options)
+            throws ArangoDBException {
+        executor.execute(createAqlFunctionRequest(name, code, options), Void.class);
+    }
 
-	@Override
-	public Collection<GraphEntity> getGraphs() throws ArangoDBException {
-		return executor.execute(getGraphsRequest(), getGraphsResponseDeserializer());
-	}
+    @Override
+    public Integer deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options)
+            throws ArangoDBException {
+        return executor.execute(deleteAqlFunctionRequest(name, options), deleteAqlFunctionResponseDeserializer());
+    }
 
-	@Override
-	public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
-			throws ArangoDBException {
-		return executor.execute(transactionRequest(action, options), transactionResponseDeserializer(type));
-	}
+    @Override
+    public Collection<AqlFunctionEntity> getAqlFunctions(final AqlFunctionGetOptions options) throws ArangoDBException {
+        return executor.execute(getAqlFunctionsRequest(options), getAqlFunctionsResponseDeserializer());
+    }
 
-	@Override
-	public DatabaseEntity getInfo() throws ArangoDBException {
-		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
-	}
+    @Override
+    public ArangoGraph graph(final String name) {
+        return new ArangoGraphImpl(this, name);
+    }
 
-	@Override
-	public <V, E> TraversalEntity<V, E> executeTraversal(
-		final Class<V> vertexClass,
-		final Class<E> edgeClass,
-		final TraversalOptions options) throws ArangoDBException {
-		final Request request = executeTraversalRequest(options);
-		return executor.execute(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
-	}
+    @Override
+    public GraphEntity createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions)
+            throws ArangoDBException {
+        return executor.execute(createGraphRequest(name, edgeDefinitions, new GraphCreateOptions()),
+                createGraphResponseDeserializer());
+    }
 
-	@Override
-	public <T> T getDocument(final String id, final Class<T> type) throws ArangoDBException {
-		DocumentUtil.validateDocumentId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getDocument(split[1], type);
-	}
+    @Override
+    public GraphEntity createGraph(
+            final String name,
+            final Collection<EdgeDefinition> edgeDefinitions,
+            final GraphCreateOptions options) throws ArangoDBException {
+        return executor.execute(createGraphRequest(name, edgeDefinitions, options), createGraphResponseDeserializer());
+    }
 
-	@Override
-	public <T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
-			throws ArangoDBException {
-		DocumentUtil.validateDocumentId(id);
-		final String[] split = id.split("/");
-		return collection(split[0]).getDocument(split[1], type, options);
-	}
+    @Override
+    public Collection<GraphEntity> getGraphs() throws ArangoDBException {
+        return executor.execute(getGraphsRequest(), getGraphsResponseDeserializer());
+    }
 
-	@Override
-	public void reloadRouting() throws ArangoDBException {
-		executor.execute(reloadRoutingRequest(), Void.class);
-	}
+    @Override
+    public <T> T transaction(final String action, final Class<T> type, final TransactionOptions options)
+            throws ArangoDBException {
+        return executor.execute(transactionRequest(action, options), transactionResponseDeserializer(type));
+    }
 
-	protected ArangoDatabaseImpl setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
-		this.cursorInitializer = cursorInitializer;
-		return this;
-	}
+    @Override
+    public StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) throws ArangoDBException {
+        return executor.execute(beginStreamTransactionRequest(options), streamTransactionResponseDeserializer());
+    }
 
-	@Override
-	public ArangoRoute route(final String... path) {
-		return new ArangoRouteImpl(this, createPath(path), Collections.<String, String> emptyMap());
-	}
+    @Override
+    public DatabaseEntity getInfo() throws ArangoDBException {
+        return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
+    }
 
-	@Override
-	public Collection<ViewEntity> getViews() throws ArangoDBException {
-		return executor.execute(getViewsRequest(), getViewsResponseDeserializer());
-	}
+    @Override
+    public <V, E> TraversalEntity<V, E> executeTraversal(
+            final Class<V> vertexClass,
+            final Class<E> edgeClass,
+            final TraversalOptions options) throws ArangoDBException {
+        final Request request = executeTraversalRequest(options);
+        return executor.execute(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
+    }
 
-	@Override
-	public ArangoView view(final String name) {
-		return new ArangoViewImpl(this, name);
-	}
+    @Override
+    public <T> T getDocument(final String id, final Class<T> type) throws ArangoDBException {
+        DocumentUtil.validateDocumentId(id);
+        final String[] split = id.split("/");
+        return collection(split[0]).getDocument(split[1], type);
+    }
 
-	@Override
-	public ArangoSearch arangoSearch(final String name) {
-		return new ArangoSearchImpl(this, name);
-	}
+    @Override
+    public <T> T getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
+            throws ArangoDBException {
+        DocumentUtil.validateDocumentId(id);
+        final String[] split = id.split("/");
+        return collection(split[0]).getDocument(split[1], type, options);
+    }
 
-	@Override
-	public ViewEntity createView(final String name, final ViewType type) throws ArangoDBException {
-		return executor.execute(createViewRequest(name, type), ViewEntity.class);
-	}
+    @Override
+    public void reloadRouting() throws ArangoDBException {
+        executor.execute(reloadRoutingRequest(), Void.class);
+    }
 
-	@Override
-	public ViewEntity createArangoSearch(final String name, final ArangoSearchCreateOptions options)
-			throws ArangoDBException {
-		return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
-	}
+    protected ArangoDatabaseImpl setCursorInitializer(final ArangoCursorInitializer cursorInitializer) {
+        this.cursorInitializer = cursorInitializer;
+        return this;
+    }
+
+    @Override
+    public ArangoRoute route(final String... path) {
+        return new ArangoRouteImpl(this, createPath(path), Collections.<String, String>emptyMap());
+    }
+
+    @Override
+    public Collection<ViewEntity> getViews() throws ArangoDBException {
+        return executor.execute(getViewsRequest(), getViewsResponseDeserializer());
+    }
+
+    @Override
+    public ArangoView view(final String name) {
+        return new ArangoViewImpl(this, name);
+    }
+
+    @Override
+    public ArangoSearch arangoSearch(final String name) {
+        return new ArangoSearchImpl(this, name);
+    }
+
+    @Override
+    public ViewEntity createView(final String name, final ViewType type) throws ArangoDBException {
+        return executor.execute(createViewRequest(name, type), ViewEntity.class);
+    }
+
+    @Override
+    public ViewEntity createArangoSearch(final String name, final ArangoSearchCreateOptions options)
+            throws ArangoDBException {
+        return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
+    }
 
 }

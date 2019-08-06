@@ -24,49 +24,19 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
- *      Documentation</a>
+ * @since ArangoDB 3.5.0
+ * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html">API Documentation</a>
  */
-public class TransactionOptions {
+public class StreamTransactionOptions {
 
-	private String action;
-	private Object params;
 	private final TransactionCollectionOptions collections;
 	private Integer lockTimeout;
 	private Boolean waitForSync;
 	private Long maxTransactionSize;
 
-	public TransactionOptions() {
+	public StreamTransactionOptions() {
 		super();
 		collections = new TransactionCollectionOptions();
-	}
-
-	protected String getAction() {
-		return action;
-	}
-
-	/**
-	 * @param action
-	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
-	 * @return options
-	 */
-	protected TransactionOptions action(final String action) {
-		this.action = action;
-		return this;
-	}
-
-	public Object getParams() {
-		return params;
-	}
-
-	/**
-	 * @param params
-	 *            optional arguments passed to action
-	 * @return options
-	 */
-	public TransactionOptions params(final Object params) {
-		this.params = params;
-		return this;
 	}
 
 	public Integer getLockTimeout() {
@@ -80,7 +50,7 @@ public class TransactionOptions {
 	 *            waiting for a lock.
 	 * @return options
 	 */
-	public TransactionOptions lockTimeout(final Integer lockTimeout) {
+	public StreamTransactionOptions lockTimeout(final Integer lockTimeout) {
 		this.lockTimeout = lockTimeout;
 		return this;
 	}
@@ -95,7 +65,7 @@ public class TransactionOptions {
 	 *            returning
 	 * @return options
 	 */
-	public TransactionOptions waitForSync(final Boolean waitForSync) {
+	public StreamTransactionOptions waitForSync(final Boolean waitForSync) {
 		this.waitForSync = waitForSync;
 		return this;
 	}
@@ -105,7 +75,7 @@ public class TransactionOptions {
 	 *            contains the array of collection-names to be used in the transaction (mandatory) for read
 	 * @return options
 	 */
-	public TransactionOptions readCollections(final String... read) {
+	public StreamTransactionOptions readCollections(final String... read) {
 		collections.read(read);
 		return this;
 	}
@@ -115,7 +85,7 @@ public class TransactionOptions {
 	 *            contains the array of collection-names to be used in the transaction (mandatory) for write
 	 * @return options
 	 */
-	public TransactionOptions writeCollections(final String... write) {
+	public StreamTransactionOptions writeCollections(final String... write) {
 		collections.write(write);
 		return this;
 	}
@@ -123,10 +93,9 @@ public class TransactionOptions {
 	/**
 	 * @param exclusive
 	 *            contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
-	 * @since ArangoDB 3.4.0
 	 * @return options
 	 */
-	public TransactionOptions exclusiveCollections(final String... exclusive) {
+	public StreamTransactionOptions exclusiveCollections(final String... exclusive) {
 		collections.exclusive(exclusive);
 		return this;
 	}
@@ -140,7 +109,7 @@ public class TransactionOptions {
 	 *            deadlocks.
 	 * @return options
 	 */
-	public TransactionOptions allowImplicit(final Boolean allowImplicit) {
+	public StreamTransactionOptions allowImplicit(final Boolean allowImplicit) {
 		collections.allowImplicit(allowImplicit);
 		return this;
 	}
@@ -152,10 +121,9 @@ public class TransactionOptions {
 	/**
 	 * @param maxTransactionSize
 	 *            Transaction size limit in bytes. Honored by the RocksDB storage engine only.
-	 * @since ArangoDB 3.2.0
 	 * @return options
 	 */
-	public TransactionOptions maxTransactionSize(final Long maxTransactionSize) {
+	public StreamTransactionOptions maxTransactionSize(final Long maxTransactionSize) {
 		this.maxTransactionSize = maxTransactionSize;
 		return this;
 	}

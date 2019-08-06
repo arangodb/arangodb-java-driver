@@ -23,33 +23,8 @@ package com.arangodb;
 import java.util.Collection;
 import java.util.Map;
 
-import com.arangodb.entity.AqlExecutionExplainEntity;
-import com.arangodb.entity.AqlFunctionEntity;
-import com.arangodb.entity.AqlParseEntity;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.DatabaseEntity;
-import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.GraphEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryCachePropertiesEntity;
-import com.arangodb.entity.QueryEntity;
-import com.arangodb.entity.QueryTrackingPropertiesEntity;
-import com.arangodb.entity.TraversalEntity;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
-import com.arangodb.model.AqlFunctionCreateOptions;
-import com.arangodb.model.AqlFunctionDeleteOptions;
-import com.arangodb.model.AqlFunctionGetOptions;
-import com.arangodb.model.AqlQueryExplainOptions;
-import com.arangodb.model.AqlQueryOptions;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionsReadOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.GraphCreateOptions;
-import com.arangodb.model.TransactionOptions;
-import com.arangodb.model.TraversalOptions;
+import com.arangodb.entity.*;
+import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 
 /**
@@ -58,6 +33,7 @@ import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public interface ArangoDatabase extends ArangoSerializationAccessor {
 
@@ -593,7 +569,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 
 	/**
 	 * Performs a server-side transaction and returns its return value.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
 	 *      Documentation</a>
 	 * @param action
@@ -606,6 +582,18 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	<T> T transaction(String action, Class<T> type, TransactionOptions options) throws ArangoDBException;
+
+	/**
+	 * Begins a Stream Transaction.
+	 *
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#begin-a-transaction">API
+	 *      Documentation</a>
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the transaction
+	 * @throws ArangoDBException
+	 */
+	StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) throws ArangoDBException;
 
 	/**
 	 * Retrieves information about the current database
