@@ -24,6 +24,7 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchProperties;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
+import com.arangodb.entity.arangosearch.PrimarySort;
 
 /**
  * @author Mark Vollmary
@@ -63,6 +64,28 @@ public class ArangoSearchCreateOptions {
 	}
 
 	/**
+	 * @param commitIntervalMsec
+	 *
+	 * Wait at least this many milliseconds between committing view data store changes and making documents visible to
+	 * queries (default: 1000, to disable use: 0). For the case where there are a lot of inserts/updates, a lower value,
+	 * until commit, will cause the index not to account for them and memory usage would continue to grow. For the case
+	 * where there are a few inserts/updates, a higher value will impact performance and waste disk space for each
+	 * commit call without any added benefits. Background: For data retrieval ArangoSearch views follow the concept of
+	 * “eventually-consistent”, i.e. eventually all the data in ArangoDB will be matched by corresponding query
+	 * expressions. The concept of ArangoSearch view “commit” operation is introduced to control the upper-bound on the
+	 * time until document addition/removals are actually reflected by corresponding query expressions. Once a “commit”
+	 * operation is complete all documents added/removed prior to the start of the “commit” operation will be reflected
+	 * by queries invoked in subsequent ArangoDB transactions, in-progress ArangoDB transactions will still continue to
+	 * return a repeatable-read state.
+	 *
+	 * @return options
+	 */
+	public ArangoSearchCreateOptions commitIntervalMsec(final Long commitIntervalMsec) {
+		properties.setCommitIntervalMsec(commitIntervalMsec);
+		return this;
+	}
+
+	/**
 	 * @param cleanupIntervalStep
 	 *            Wait at least this many commits between removing unused files in data directory (default: 10, to
 	 *            disable use: 0). For the case where the consolidation policies merge segments often (i.e. a lot of
@@ -93,6 +116,16 @@ public class ArangoSearchCreateOptions {
 	 */
 	public ArangoSearchCreateOptions link(final CollectionLink... links) {
 		properties.addLink(links);
+		return this;
+	}
+
+	/**
+	 * @param primarySorts
+	 *            A list of linked collections
+	 * @return options
+	 */
+	public ArangoSearchCreateOptions primarySort(final PrimarySort... primarySorts) {
+		properties.addPrimarySort(primarySorts);
 		return this;
 	}
 }

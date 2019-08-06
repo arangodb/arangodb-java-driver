@@ -32,20 +32,7 @@ import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.IndexEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionPropertiesOptions;
-import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.model.DocumentDeleteOptions;
-import com.arangodb.model.DocumentExistsOptions;
-import com.arangodb.model.DocumentImportOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.DocumentReplaceOptions;
-import com.arangodb.model.DocumentUpdateOptions;
-import com.arangodb.model.FulltextIndexOptions;
-import com.arangodb.model.GeoIndexOptions;
-import com.arangodb.model.HashIndexOptions;
-import com.arangodb.model.PersistentIndexOptions;
-import com.arangodb.model.SkiplistIndexOptions;
+import com.arangodb.model.*;
 
 /**
  * Interface for operations on ArangoDB collection level.
@@ -53,6 +40,7 @@ import com.arangodb.model.SkiplistIndexOptions;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Collection API Documentation</a>
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
  * @author Mark Vollmary
+ * @author Heiko Kernbach
  */
 public interface ArangoCollection extends ArangoSerializationAccessor {
 
@@ -560,6 +548,20 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) throws ArangoDBException;
+
+	/**
+	 * Creates a ttl index for the collection, if it does not already exist.
+	 *
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-ttl.html">API
+	 *      Documentation</a>
+	 * @param fields
+	 *            A list of attribute paths
+	 * @param options
+	 *            Additional options, can be null
+	 * @return information about the index
+	 * @throws ArangoDBException
+	 */
+	IndexEntity ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches a list of all indexes on this collection.

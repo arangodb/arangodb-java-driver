@@ -39,23 +39,7 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
-import com.arangodb.model.CollectionPropertiesOptions;
-import com.arangodb.model.CollectionRenameOptions;
-import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.model.DocumentDeleteOptions;
-import com.arangodb.model.DocumentExistsOptions;
-import com.arangodb.model.DocumentImportOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.DocumentReplaceOptions;
-import com.arangodb.model.DocumentUpdateOptions;
-import com.arangodb.model.FulltextIndexOptions;
-import com.arangodb.model.GeoIndexOptions;
-import com.arangodb.model.HashIndexOptions;
-import com.arangodb.model.ImportType;
-import com.arangodb.model.OptionsBuilder;
-import com.arangodb.model.PersistentIndexOptions;
-import com.arangodb.model.SkiplistIndexOptions;
-import com.arangodb.model.UserAccessOptions;
+import com.arangodb.model.*;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
@@ -651,6 +635,14 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 		request.putQueryParam(COLLECTION, name);
 		request.setBody(
 			util().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
+		return request;
+	}
+
+	protected Request createTtlIndexRequest(final Iterable<String> fields, final TtlIndexOptions options) {
+		final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+		request.putQueryParam(COLLECTION, name);
+		request.setBody(
+				util().serialize(OptionsBuilder.build(options != null ? options : new TtlIndexOptions(), fields)));
 		return request;
 	}
 
