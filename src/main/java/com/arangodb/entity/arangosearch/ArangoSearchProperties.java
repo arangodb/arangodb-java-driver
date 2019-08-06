@@ -26,18 +26,30 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
+ * @author Heiko Kernbach
  *
  */
 public class ArangoSearchProperties {
 
 	private Long consolidationIntervalMsec;
+	private Long commitIntervalMsec;
 	private Long cleanupIntervalStep;
 	private ConsolidationPolicy consolidationPolicy;
+	private final Collection<PrimarySort> primarySorts;
 	private final Collection<CollectionLink> links;
 
 	public ArangoSearchProperties() {
 		super();
 		links = new ArrayList<CollectionLink>();
+		primarySorts = new ArrayList<PrimarySort>();
+	}
+
+	public Long getCommitIntervalMsec() {
+		return commitIntervalMsec;
+	}
+
+	public void setCommitIntervalMsec(final Long commitIntervalMsec) {
+		this.commitIntervalMsec = commitIntervalMsec;
 	}
 
 	public Long getConsolidationIntervalMsec() {
@@ -72,4 +84,11 @@ public class ArangoSearchProperties {
 		this.links.addAll(Arrays.asList(links));
 	}
 
+	public Collection<PrimarySort> getPrimarySort() {
+		return primarySorts;
+	}
+
+	public void addPrimarySort(final PrimarySort... primarySorts) {
+		this.primarySorts.addAll(Arrays.asList(primarySorts));
+	}
 }

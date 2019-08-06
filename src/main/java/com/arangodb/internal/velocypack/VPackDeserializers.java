@@ -28,16 +28,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.velocypack.VPackDeserializationContext;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
@@ -223,10 +217,17 @@ public class VPackDeserializers {
 			if (consolidationIntervalMsec.isInteger()) {
 				properties.setConsolidationIntervalMsec(consolidationIntervalMsec.getAsLong());
 			}
+
+			final VPackSlice commitIntervalMsec = vpack.get("commitIntervalMsec");
+			if (commitIntervalMsec.isInteger()) {
+				properties.setCommitIntervalMsec(commitIntervalMsec.getAsLong());
+			}
+
 			final VPackSlice cleanupIntervalStep = vpack.get("cleanupIntervalStep");
 			if (cleanupIntervalStep.isInteger()) {
 				properties.setCleanupIntervalStep(cleanupIntervalStep.getAsLong());
 			}
+
 			final VPackSlice consolidationPolicy = vpack.get("consolidationPolicy");
 			if (consolidationPolicy.isObject()) {
 				properties.setConsolidationPolicy(
@@ -269,6 +270,22 @@ public class VPackDeserializers {
 					properties.addLink(link);
 				}
 			}
+
+			final VPackSlice primarySorts = vpack.get("primarySort");
+			if (primarySorts.isArray()) {
+				final Iterator<VPackSlice> primarySortsIterator = primarySorts.arrayIterator();
+				for (; primarySortsIterator.hasNext();) {
+					final VPackSlice entry = primarySortsIterator.next();
+					if (entry.isObject()) {
+						if (entry.get("field").isString() && entry.get("asc").isBoolean()) {
+							final PrimarySort primarySort = PrimarySort.on(entry.get("field").getAsString());
+							primarySort.ascending(entry.get("asc").getAsBoolean());
+							properties.addPrimarySort(primarySort);
+						}
+					}
+				}
+			}
+
 			return properties;
 		}
 	};

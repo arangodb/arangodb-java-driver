@@ -27,14 +27,13 @@ import com.arangodb.entity.IndexType;
  * 
  * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API Documentation</a>
  */
-public class SkiplistIndexOptions {
+public class SkiplistIndexOptions extends IndexOptions {
 
 	private Iterable<String> fields;
 	private final IndexType type = IndexType.skiplist;
 	private Boolean unique;
 	private Boolean sparse;
 	private Boolean deduplicate;
-	private String name;
 
 	public SkiplistIndexOptions() {
 		super();
@@ -99,19 +98,4 @@ public class SkiplistIndexOptions {
 		this.deduplicate = deduplicate;
 		return this;
 	}
-
-	/**
-	 * @param name
-	 *            the name of the index
-	 * @return options
-	 */
-	public SkiplistIndexOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
-
-	protected String getName() {
-		return name;
-	}
-
 }

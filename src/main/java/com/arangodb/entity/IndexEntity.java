@@ -41,6 +41,7 @@ public class IndexEntity implements Entity {
 	private Boolean constraint;
 	private Boolean deduplicate;
 	private Integer expireAfter;
+	private Boolean inBackground;
 
 	public IndexEntity() {
 		super();
@@ -48,6 +49,10 @@ public class IndexEntity implements Entity {
 
 	public String getId() {
 		return id;
+	}
+
+	public Boolean getInBackground() {
+		return inBackground;
 	}
 
 	public String getName() {
