@@ -24,64 +24,46 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Heiko Kernbach
- *
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-ttl.html">API Documentation</a>
  */
-public class TtlIndexOptions {
+public class TtlIndexOptions extends IndexOptions {
 
-	private Iterable<String> fields;
-	private final IndexType type = IndexType.ttl;
-	private Integer expireAfter;
-	private String name;
+    private Iterable<String> fields;
+    private final IndexType type = IndexType.ttl;
+    private Integer expireAfter;
 
-	public TtlIndexOptions() {
-		super();
-	}
+    public TtlIndexOptions() {
+        super();
+    }
 
-	protected Iterable<String> getFields() {
-		return fields;
-	}
+    protected Iterable<String> getFields() {
+        return fields;
+    }
 
-	/**
-	 * @param fields
-	 *            A list of attribute paths
-	 * @return options
-	 */
-	protected TtlIndexOptions fields(final Iterable<String> fields) {
-		this.fields = fields;
-		return this;
-	}
+    /**
+     * @param fields A list of attribute paths
+     * @return options
+     */
+    protected TtlIndexOptions fields(final Iterable<String> fields) {
+        this.fields = fields;
+        return this;
+    }
 
-	protected IndexType getType() {
-		return type;
-	}
+    protected IndexType getType() {
+        return type;
+    }
 
-	/**
-	 * @param expireAfter
-	 *            The time (in seconds) after a document’s creation after which the documents count as “expired”.
-	 * @return options
-	 */
-	public TtlIndexOptions expireAfter(final Integer expireAfter) {
-		this.expireAfter = expireAfter;
-		return this;
-	}
+    /**
+     * @param expireAfter The time (in seconds) after a document’s creation after which the documents count as “expired”.
+     * @return options
+     */
+    public TtlIndexOptions expireAfter(final Integer expireAfter) {
+        this.expireAfter = expireAfter;
+        return this;
+    }
 
-	protected Integer getExpireAfter() {
-		return expireAfter;
-	}
-
-	/**
-	 * @param name
-	 *            the name of the index
-	 * @return options
-	 */
-	public TtlIndexOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
-
-	protected String getName() {
-		return name;
-	}
+    protected Integer getExpireAfter() {
+        return expireAfter;
+    }
 
 }
