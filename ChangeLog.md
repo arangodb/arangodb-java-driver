@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Added
 
 - added support for named indices
+- added support for TTL indices
 - added minReplicationAttribute for collections and graphs
 - added batched thread support in ArangoCollection.importDocuments (by @rkhaja)
 
