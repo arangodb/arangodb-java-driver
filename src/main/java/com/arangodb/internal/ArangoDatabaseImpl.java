@@ -344,6 +344,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	}
 
 	@Override
+	public StreamTransactionEntity commitStreamTransaction(String id) throws ArangoDBException {
+		return executor.execute(commitStreamTransactionRequest(id), streamTransactionResponseDeserializer());
+	}
+
+	@Override
 	public DatabaseEntity getInfo() throws ArangoDBException {
 		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
 	}

@@ -1454,6 +1454,16 @@ public class ArangoDatabaseTest extends BaseTest {
 		db.abortStreamTransaction("invalidTransactionId");
 	}
 
+	@Test(expected = ArangoDBException.class)
+	public void abortCommittedStreamTransactionShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
+		db.commitStreamTransaction(createdTx.getId());
+		db.abortStreamTransaction(createdTx.getId());
+	}
+
 	@Test
 	public void getStreamTransaction() {
 		if (!requireVersion(3, 5)) {
@@ -1462,6 +1472,7 @@ public class ArangoDatabaseTest extends BaseTest {
 		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
 		StreamTransactionEntity gotTx = db.getStreamTransaction(createdTx.getId());
 		assertThat(gotTx.getId(), is(notNullValue()));
+		assertThat(gotTx.getId(), is(createdTx.getId()));
 		assertThat(gotTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.running));
 		db.abortStreamTransaction(createdTx.getId());
 	}
@@ -1480,6 +1491,44 @@ public class ArangoDatabaseTest extends BaseTest {
 			return;
 		}
 		db.getStreamTransaction("invalidTransactionId");
+	}
+
+	@Test
+	public void commitStreamTransaction() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
+		StreamTransactionEntity committedTx = db.commitStreamTransaction(createdTx.getId());
+		assertThat(committedTx.getId(), is(notNullValue()));
+		assertThat(committedTx.getId(), is(createdTx.getId()));
+		assertThat(committedTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.committed));
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+		db.commitStreamTransaction("000000");
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void commitStreamTransactionWithInvalidTransactionIdShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+		db.commitStreamTransaction("invalidTransactionId");
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void commitAbortedStreamTransactionShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
+		db.abortStreamTransaction(createdTx.getId());
+		db.commitStreamTransaction(createdTx.getId());
 	}
 
 	@Test
