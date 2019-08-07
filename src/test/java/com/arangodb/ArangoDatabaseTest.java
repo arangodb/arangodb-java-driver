@@ -1417,7 +1417,12 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test(expected = ArangoDBException.class)
     public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
-        db.abortStreamTransaction("notExistingTransactionId");
+        db.abortStreamTransaction("000000");
+    }
+
+    @Test(expected = ArangoDBException.class)
+    public void abortStreamTransactionWithInvalidTransactionIdShouldThrow() {
+        db.abortStreamTransaction("invalidTransactionId");
     }
 
     @Test
