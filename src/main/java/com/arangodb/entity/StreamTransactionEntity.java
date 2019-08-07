@@ -27,19 +27,19 @@ package com.arangodb.entity;
  */
 public class StreamTransactionEntity implements Entity {
 
-    private String id;
-    private StreamTransactionStatus status;
+	private String id;
+	private StreamTransactionStatus status;
 
-    public enum StreamTransactionStatus {
-        running, committed, aborted
-    }
+	public enum StreamTransactionStatus {
+		running, committed, aborted
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public StreamTransactionStatus getStatus() {
-        return status;
-    }
+	public StreamTransactionStatus getStatus() {
+		return status;
+	}
 
 }

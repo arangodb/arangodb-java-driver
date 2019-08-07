@@ -29,167 +29,158 @@ import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 
 /**
  * Interface for operations on ArangoDB database level.
- * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
+ *
  * @author Mark Vollmary
  * @author Michele Rastelli
+ * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
+ * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
  */
 public interface ArangoDatabase extends ArangoSerializationAccessor {
 
 	/**
 	 * Return the main entry point for the ArangoDB driver
-	 * 
+	 *
 	 * @return main entry point
 	 */
 	ArangoDB arango();
 
 	/**
 	 * Returns the name of the database
-	 * 
+	 *
 	 * @return database name
 	 */
 	String name();
 
 	/**
 	 * Returns the server name and version number.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
-	 *      Documentation</a>
+	 *
 	 * @return the server version, number
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 * Documentation</a>
 	 */
 	ArangoDBVersion getVersion() throws ArangoDBException;
 
 	/**
 	 * Checks whether the database exists
-	 * 
+	 *
 	 * @return true if the database exists, otherwise false
 	 */
 	boolean exists() throws ArangoDBException;
 
 	/**
 	 * Retrieves a list of all databases the current user can access
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
-	 *      Documentation</a>
+	 *
 	 * @return a list of all databases the current user can access
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+	 * Documentation</a>
 	 */
 	Collection<String> getAccessibleDatabases() throws ArangoDBException;
 
 	/**
 	 * Returns a {@code ArangoCollection} instance for the given collection name.
-	 * 
-	 * @param name
-	 *            Name of the collection
+	 *
+	 * @param name Name of the collection
 	 * @return collection handler
 	 */
 	ArangoCollection collection(String name);
 
 	/**
 	 * Creates a collection for the given collection's name, then returns collection information from the server.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
-	 *      Documentation</a>
-	 * @param name
-	 *            The name of the collection
+	 *
+	 * @param name The name of the collection
 	 * @return information about the collection
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 * Documentation</a>
 	 */
 	CollectionEntity createCollection(String name) throws ArangoDBException;
 
 	/**
 	 * Creates a collection with the given {@code options} for this collection's name, then returns collection
 	 * information from the server.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
-	 *      Documentation</a>
-	 * @param name
-	 *            The name of the collection
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param name    The name of the collection
+	 * @param options Additional options, can be null
 	 * @return information about the collection
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 * Documentation</a>
 	 */
 	CollectionEntity createCollection(String name, CollectionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Fetches all collections from the database and returns an list of collection descriptions.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
-	 *      Documentation</a>
+	 *
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 * Documentation</a>
 	 */
 	Collection<CollectionEntity> getCollections() throws ArangoDBException;
 
 	/**
 	 * Fetches all collections from the database and returns an list of collection descriptions.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
-	 *      Documentation</a>
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param options Additional options, can be null
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 * Documentation</a>
 	 */
 	Collection<CollectionEntity> getCollections(CollectionsReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns an index
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
-	 * @param id
-	 *            The index-handle
+	 *
+	 * @param id The index-handle
 	 * @return information about the index
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
 	 */
 	IndexEntity getIndex(String id) throws ArangoDBException;
 
 	/**
 	 * Deletes an index
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
-	 * @param id
-	 *            The index-handle
+	 *
+	 * @param id The index-handle
 	 * @return the id of the index
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
 	 */
 	String deleteIndex(String id) throws ArangoDBException;
 
 	/**
 	 * Creates the database
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
-	 *      Documentation</a>
+	 *
 	 * @return true if the database was created successfully.
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+	 * Documentation</a>
 	 */
 	Boolean create() throws ArangoDBException;
 
 	/**
 	 * Deletes the database from the server.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
-	 *      Documentation</a>
+	 *
 	 * @return true if the database was dropped successfully
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
+	 * Documentation</a>
 	 */
 	Boolean drop() throws ArangoDBException;
 
 	/**
 	 * Grants or revoke access to the database for user {@code user}. You need permission to the _system database in
 	 * order to execute this call.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
-	 *      API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @param permissions
-	 *            The permissions the user grant
+	 *
+	 * @param user        The name of the user
+	 * @param permissions The permissions the user grant
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * API Documentation</a>
 	 */
 	void grantAccess(String user, Permissions permissions) throws ArangoDBException;
 
@@ -197,80 +188,70 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * Grants access to the database for user {@code user}. You need permission to the _system database in order to
 	 * execute this call.
 	 *
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
-	 *      API Documentation</a>
-	 * @param user
-	 *            The name of the user
+	 * @param user The name of the user
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * API Documentation</a>
 	 */
 	void grantAccess(String user) throws ArangoDBException;
 
 	/**
 	 * Revokes access to the database dbname for user {@code user}. You need permission to the _system database in order
 	 * to execute this call.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
-	 *      API Documentation</a>
-	 * @param user
-	 *            The name of the user
+	 *
+	 * @param user The name of the user
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * API Documentation</a>
 	 */
 	void revokeAccess(String user) throws ArangoDBException;
 
 	/**
 	 * Clear the database access level, revert back to the default access level.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
-	 *      API Documentation</a>
-	 * @param user
-	 *            The name of the user
-	 * @since ArangoDB 3.2.0
+	 *
+	 * @param user The name of the user
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * API Documentation</a>
+	 * @since ArangoDB 3.2.0
 	 */
 	void resetAccess(String user) throws ArangoDBException;
 
 	/**
 	 * Sets the default access level for collections within this database for the user {@code user}. You need permission
 	 * to the _system database in order to execute this call.
-	 * 
-	 * @param user
-	 *            The name of the user
-	 * @param permissions
-	 *            The permissions the user grant
-	 * @since ArangoDB 3.2.0
+	 *
+	 * @param user        The name of the user
+	 * @param permissions The permissions the user grant
 	 * @throws ArangoDBException
+	 * @since ArangoDB 3.2.0
 	 */
 	void grantDefaultCollectionAccess(String user, Permissions permissions) throws ArangoDBException;
 
 	/**
 	 * Get specific database access level
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-database-access-level"> API
-	 *      Documentation</a>
-	 * @param user
-	 *            The name of the user
+	 *
+	 * @param user The name of the user
 	 * @return permissions of the user
-	 * @since ArangoDB 3.2.0
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-database-access-level"> API
+	 * Documentation</a>
+	 * @since ArangoDB 3.2.0
 	 */
 	Permissions getPermissions(String user) throws ArangoDBException;
 
 	/**
 	 * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
 	 * {@code ArangoCursor} instance for the result list.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
-	 *      Documentation</a>
-	 * @param query
-	 *            An AQL query string
-	 * @param bindVars
-	 *            key/value pairs defining the variables to bind the query to
-	 * @param options
-	 *            Additional options that will be passed to the query API, can be null
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+	 *
+	 * @param query    An AQL query string
+	 * @param bindVars key/value pairs defining the variables to bind the query to
+	 * @param options  Additional options that will be passed to the query API, can be null
+	 * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, AqlQueryOptions options, Class<T> type)
 			throws ArangoDBException;
@@ -278,80 +259,67 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	/**
 	 * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
 	 * result list.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
-	 *      Documentation</a>
-	 * @param query
-	 *            An AQL query string
-	 * @param options
-	 *            Additional options that will be passed to the query API, can be null
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+	 *
+	 * @param query   An AQL query string
+	 * @param options Additional options that will be passed to the query API, can be null
+	 * @param type    The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, AqlQueryOptions options, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Performs a database query using the given {@code query} and {@code bindVars}, then returns a new
 	 * {@code ArangoCursor} instance for the result list.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
-	 *      Documentation</a>
-	 * @param query
-	 *            An AQL query string
-	 * @param bindVars
-	 *            key/value pairs defining the variables to bind the query to
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+	 *
+	 * @param query    An AQL query string
+	 * @param bindVars key/value pairs defining the variables to bind the query to
+	 * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Performs a database query using the given {@code query}, then returns a new {@code ArangoCursor} instance for the
 	 * result list.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
-	 *      Documentation</a>
-	 * @param query
-	 *            An AQL query string
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+	 *
+	 * @param query An AQL query string
+	 * @param type  The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Return an cursor from the given cursor-ID if still existing
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#read-next-batch-from-cursor">API
-	 *      Documentation</a>
-	 * @param cursorId
-	 *            The ID of the cursor
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
+	 *
+	 * @param cursorId The ID of the cursor
+	 * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#read-next-batch-from-cursor">API
+	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> cursor(String cursorId, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Explain an AQL query and return information about it
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
-	 *      Documentation</a>
-	 * @param query
-	 *            the query which you want explained
-	 * @param bindVars
-	 *            key/value pairs representing the bind parameters
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param query    the query which you want explained
+	 * @param bindVars key/value pairs representing the bind parameters
+	 * @param options  Additional options, can be null
 	 * @return information about the query
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
+	 * Documentation</a>
 	 */
 	AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options)
 			throws ArangoDBException;
@@ -359,167 +327,156 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	/**
 	 * Parse an AQL query and return information about it This method is for query validation only. To actually query
 	 * the database, see {@link ArangoDatabase#query(String, Map, AqlQueryOptions, Class)}
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
-	 *      Documentation</a>
-	 * @param query
-	 *            the query which you want parse
+	 *
+	 * @param query the query which you want parse
 	 * @return imformation about the query
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
+	 * Documentation</a>
 	 */
 	AqlParseEntity parseQuery(String query) throws ArangoDBException;
 
 	/**
 	 * Clears the AQL query cache
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
-	 *      Documentation</a>
+	 *
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
+	 * Documentation</a>
 	 */
 	void clearQueryCache() throws ArangoDBException;
 
 	/**
 	 * Returns the global configuration for the AQL query cache
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
-	 *      Documentation</a>
+	 *
 	 * @return configuration for the AQL query cache
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
+	 * Documentation</a>
 	 */
 	QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException;
 
 	/**
 	 * Changes the configuration for the AQL query cache. Note: changing the properties may invalidate all results in
 	 * the cache.
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
-	 *      Documentation</a>
-	 * @param properties
-	 *            properties to be set
+	 *
+	 * @param properties properties to be set
 	 * @return current set of properties
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
+	 * Documentation</a>
 	 */
 	QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties) throws ArangoDBException;
 
 	/**
 	 * Returns the configuration for the AQL query tracking
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
-	 *      Documentation</a>
+	 *
 	 * @return configuration for the AQL query tracking
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
+	 * Documentation</a>
 	 */
 	QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException;
 
 	/**
 	 * Changes the configuration for the AQL query tracking
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
-	 *      Documentation</a>
-	 * @param properties
-	 *            properties to be set
+	 *
+	 * @param properties properties to be set
 	 * @return current set of properties
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
+	 * Documentation</a>
 	 */
 	QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties)
 			throws ArangoDBException;
 
 	/**
 	 * Returns a list of currently running AQL queries
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
-	 *      Documentation</a>
+	 *
 	 * @return a list of currently running AQL queries
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
+	 * Documentation</a>
 	 */
 	Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException;
 
 	/**
 	 * Returns a list of slow running AQL queries
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
-	 *      Documentation</a>
+	 *
 	 * @return a list of slow running AQL queries
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
+	 * Documentation</a>
 	 */
 	Collection<QueryEntity> getSlowQueries() throws ArangoDBException;
 
 	/**
 	 * Clears the list of slow AQL queries
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
-	 *      Documentation</a>
+	 *
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
+	 * Documentation</a>
 	 */
 	void clearSlowQueries() throws ArangoDBException;
 
 	/**
 	 * Kills a running query. The query will be terminated at the next cancelation point.
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
-	 *      Documentation</a>
-	 * @param id
-	 *            The id of the query
+	 *
+	 * @param id The id of the query
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
+	 * Documentation</a>
 	 */
 	void killQuery(String id) throws ArangoDBException;
 
 	/**
 	 * Create a new AQL user function
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
-	 *      Documentation</a>
-	 * @param name
-	 *            A valid AQL function name, e.g.: `"myfuncs::accounting::calculate_vat"`
-	 * @param code
-	 *            A String evaluating to a JavaScript function
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param name    A valid AQL function name, e.g.: `"myfuncs::accounting::calculate_vat"`
+	 * @param code    A String evaluating to a JavaScript function
+	 * @param options Additional options, can be null
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
+	 * Documentation</a>
 	 */
 	void createAqlFunction(String name, String code, AqlFunctionCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Deletes the AQL user function with the given name from the database.
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
-	 *      Documentation</a>
-	 * @param name
-	 *            The name of the user function to delete
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param name    The name of the user function to delete
+	 * @param options Additional options, can be null
 	 * @return number of deleted functions (since ArangoDB 3.4.0)
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
+	 * Documentation</a>
 	 */
 	Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options) throws ArangoDBException;
 
 	/**
 	 * Gets all reqistered AQL user functions
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
-	 *      Documentation</a>
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param options Additional options, can be null
 	 * @return all reqistered AQL user functions
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+	 * Documentation</a>
 	 */
 	Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options) throws ArangoDBException;
 
 	/**
 	 * Returns a {@code ArangoGraph} instance for the given graph name.
-	 * 
-	 * @param name
-	 *            Name of the graph
+	 *
+	 * @param name Name of the graph
 	 * @return graph handler
 	 */
 	ArangoGraph graph(String name);
@@ -527,187 +484,168 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
 	 * of its edges.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
-	 *      Documentation</a>
-	 * @param name
-	 *            Name of the graph
-	 * @param edgeDefinitions
-	 *            An array of definitions for the edge
+	 *
+	 * @param name            Name of the graph
+	 * @param edgeDefinitions An array of definitions for the edge
 	 * @return information about the graph
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 * Documentation</a>
 	 */
 	GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException;
 
 	/**
 	 * Create a new graph in the graph module. The creation of a graph requires the name of the graph and a definition
 	 * of its edges.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
-	 *      Documentation</a>
-	 * @param name
-	 *            Name of the graph
-	 * @param edgeDefinitions
-	 *            An array of definitions for the edge
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param name            Name of the graph
+	 * @param edgeDefinitions An array of definitions for the edge
+	 * @param options         Additional options, can be null
 	 * @return information about the graph
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 * Documentation</a>
 	 */
 	GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options)
 			throws ArangoDBException;
 
 	/**
 	 * Lists all graphs known to the graph module
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
-	 *      Documentation</a>
+	 *
 	 * @return graphs stored in this database
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
+	 * Documentation</a>
 	 */
 	Collection<GraphEntity> getGraphs() throws ArangoDBException;
 
 	/**
 	 * Performs a server-side transaction and returns its return value.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
-	 *      Documentation</a>
-	 * @param action
-	 *            A String evaluating to a JavaScript function to be executed on the server.
-	 * @param type
-	 *            The type of the result (POJO class, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options, can be null
+	 * @param action  A String evaluating to a JavaScript function to be executed on the server.
+	 * @param type    The type of the result (POJO class, VPackSlice or String for JSON)
+	 * @param options Additional options, can be null
 	 * @return the result of the transaction if it succeeded
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+	 * Documentation</a>
 	 */
 	<T> T transaction(String action, Class<T> type, TransactionOptions options) throws ArangoDBException;
 
 	/**
 	 * Begins a Stream Transaction.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#begin-a-transaction">API
-	 *      Documentation</a>
-	 * @param options
-	 *            Additional options, can be null
+	 * @param options Additional options, can be null
 	 * @return information about the transaction
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#begin-a-transaction">API
+	 * Documentation</a>
 	 */
 	StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) throws ArangoDBException;
 
 	/**
 	 * Aborts a Stream Transaction.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#abort-transaction">API
-	 *      Documentation</a>
 	 * @return information about the transaction
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#abort-transaction">API
+	 * Documentation</a>
 	 */
 	StreamTransactionEntity abortStreamTransaction(String id) throws ArangoDBException;
 
 	/**
 	 * Gets information about a Stream Transaction.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#get-transaction-status">
-	 *     API Documentation</a>
 	 * @return information about the transaction
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#get-transaction-status">
+	 * API Documentation</a>
 	 */
 	StreamTransactionEntity getStreamTransaction(String id) throws ArangoDBException;
 
 	/**
 	 * Retrieves information about the current database
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
-	 *      Documentation</a>
+	 *
 	 * @return information about the current database
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+	 * Documentation</a>
 	 */
 	DatabaseEntity getInfo() throws ArangoDBException;
 
 	/**
 	 * Execute a server-side traversal
-	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
-	 *      Documentation</a>
-	 * @param vertexClass
-	 *            The type of the vertex documents (POJO class, VPackSlice or String for JSON)
-	 * @param edgeClass
-	 *            The type of the edge documents (POJO class, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options
+	 *
+	 * @param vertexClass The type of the vertex documents (POJO class, VPackSlice or String for JSON)
+	 * @param edgeClass   The type of the edge documents (POJO class, VPackSlice or String for JSON)
+	 * @param options     Additional options
 	 * @return Result of the executed traversal
 	 * @throws ArangoDBException
+	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
+	 * Documentation</a>
 	 */
 	<V, E> TraversalEntity<V, E> executeTraversal(Class<V> vertexClass, Class<E> edgeClass, TraversalOptions options)
 			throws ArangoDBException;
 
 	/**
 	 * Reads a single document
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
-	 *      Documentation</a>
-	 * @param id
-	 *            The id of the document
-	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for JSON)
+	 *
+	 * @param id   The id of the document
+	 * @param type The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 * Documentation</a>
 	 */
 	<T> T getDocument(String id, Class<T> type) throws ArangoDBException;
 
 	/**
 	 * Reads a single document
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
-	 *      Documentation</a>
-	 * @param id
-	 *            The id of the document
-	 * @param type
-	 *            The type of the document (POJO class, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param id      The id of the document
+	 * @param type    The type of the document (POJO class, VPackSlice or String for JSON)
+	 * @param options Additional options, can be null
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 * Documentation</a>
 	 */
 	<T> T getDocument(String id, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Reload the routing table.
-	 * 
-	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
-	 *      Documentation</a>
+	 *
 	 * @throws ArangoDBException
+	 * @see <a href=
+	 * "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
+	 * Documentation</a>
 	 */
 	void reloadRouting() throws ArangoDBException;
 
 	/**
 	 * Returns a new {@link ArangoRoute} instance for the given path (relative to the database) that can be used to
 	 * perform arbitrary requests.
-	 * 
-	 * @param path
-	 *            The database-relative URL of the route
+	 *
+	 * @param path The database-relative URL of the route
 	 * @return {@link ArangoRoute}
 	 */
 	ArangoRoute route(String... path);
 
 	/**
 	 * Fetches all views from the database and returns an list of view descriptions.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#reads-all-views">API Documentation</a>
+	 *
 	 * @return list of information about all views
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#reads-all-views">API Documentation</a>
 	 * @since ArangoDB 3.4.0
 	 */
 	Collection<ViewEntity> getViews() throws ArangoDBException;
 
 	/**
 	 * Returns a {@code ArangoView} instance for the given view name.
-	 * 
-	 * @param name
-	 *            Name of the view
+	 *
+	 * @param name Name of the view
 	 * @return view handler
 	 * @since ArangoDB 3.4.0
 	 */
@@ -715,9 +653,8 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 
 	/**
 	 * Returns a {@code ArangoSearch} instance for the given ArangoSearch view name.
-	 * 
-	 * @param name
-	 *            Name of the view
+	 *
+	 * @param name Name of the view
 	 * @return ArangoSearch view handler
 	 * @since ArangoDB 3.4.0
 	 */
@@ -725,29 +662,25 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a view of the given {@code type}, then returns view information from the server.
-	 * 
-	 * @param name
-	 *            The name of the view
-	 * @param type
-	 *            The type of the view
+	 *
+	 * @param name The name of the view
+	 * @param type The type of the view
 	 * @return information about the view
-	 * @since ArangoDB 3.4.0
 	 * @throws ArangoDBException
+	 * @since ArangoDB 3.4.0
 	 */
 	ViewEntity createView(String name, ViewType type) throws ArangoDBException;
 
 	/**
 	 * Creates a ArangoSearch view with the given {@code options}, then returns view information from the server.
-	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
-	 *      Documentation</a>
-	 * @param name
-	 *            The name of the view
-	 * @param options
-	 *            Additional options, can be null
+	 *
+	 * @param name    The name of the view
+	 * @param options Additional options, can be null
 	 * @return information about the view
-	 * @since ArangoDB 3.4.0
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+	 * Documentation</a>
+	 * @since ArangoDB 3.4.0
 	 */
 	ViewEntity createArangoSearch(String name, ArangoSearchCreateOptions options) throws ArangoDBException;
 

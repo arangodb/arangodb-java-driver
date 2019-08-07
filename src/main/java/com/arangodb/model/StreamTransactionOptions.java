@@ -23,9 +23,8 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- *
- * @since ArangoDB 3.5.0
  * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html">API Documentation</a>
+ * @since ArangoDB 3.5.0
  */
 public class StreamTransactionOptions {
 
@@ -44,10 +43,9 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param lockTimeout
-	 *            an optional numeric value that can be used to set a timeout for waiting on collection locks. If not
-	 *            specified, a default value will be used. Setting lockTimeout to 0 will make ArangoDB not time out
-	 *            waiting for a lock.
+	 * @param lockTimeout an optional numeric value that can be used to set a timeout for waiting on collection locks. If not
+	 *                    specified, a default value will be used. Setting lockTimeout to 0 will make ArangoDB not time out
+	 *                    waiting for a lock.
 	 * @return options
 	 */
 	public StreamTransactionOptions lockTimeout(final Integer lockTimeout) {
@@ -60,9 +58,8 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param waitForSync
-	 *            an optional boolean flag that, if set, will force the transaction to write all data to disk before
-	 *            returning
+	 * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk before
+	 *                    returning
 	 * @return options
 	 */
 	public StreamTransactionOptions waitForSync(final Boolean waitForSync) {
@@ -71,8 +68,7 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param read
-	 *            contains the array of collection-names to be used in the transaction (mandatory) for read
+	 * @param read contains the array of collection-names to be used in the transaction (mandatory) for read
 	 * @return options
 	 */
 	public StreamTransactionOptions readCollections(final String... read) {
@@ -81,8 +77,7 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param write
-	 *            contains the array of collection-names to be used in the transaction (mandatory) for write
+	 * @param write contains the array of collection-names to be used in the transaction (mandatory) for write
 	 * @return options
 	 */
 	public StreamTransactionOptions writeCollections(final String... write) {
@@ -91,8 +86,7 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param exclusive
-	 *            contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
+	 * @param exclusive contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
 	 * @return options
 	 */
 	public StreamTransactionOptions exclusiveCollections(final String... exclusive) {
@@ -101,12 +95,11 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param allowImplicit
-	 *            Collections that will be written to in the transaction must be declared with the write attribute or it
-	 *            will fail, whereas non-declared collections from which is solely read will be added lazily. The
-	 *            optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
-	 *            collections for reading. Collections for reading should be fully declared if possible, to avoid
-	 *            deadlocks.
+	 * @param allowImplicit Collections that will be written to in the transaction must be declared with the write attribute or it
+	 *                      will fail, whereas non-declared collections from which is solely read will be added lazily. The
+	 *                      optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
+	 *                      collections for reading. Collections for reading should be fully declared if possible, to avoid
+	 *                      deadlocks.
 	 * @return options
 	 */
 	public StreamTransactionOptions allowImplicit(final Boolean allowImplicit) {
@@ -119,8 +112,7 @@ public class StreamTransactionOptions {
 	}
 
 	/**
-	 * @param maxTransactionSize
-	 *            Transaction size limit in bytes. Honored by the RocksDB storage engine only.
+	 * @param maxTransactionSize Transaction size limit in bytes. Honored by the RocksDB storage engine only.
 	 * @return options
 	 */
 	public StreamTransactionOptions maxTransactionSize(final Long maxTransactionSize) {

@@ -23,9 +23,8 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class TransactionOptions {
 
@@ -46,8 +45,7 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param action
-	 *            the actual transaction operations to be executed, in the form of stringified JavaScript code
+	 * @param action the actual transaction operations to be executed, in the form of stringified JavaScript code
 	 * @return options
 	 */
 	protected TransactionOptions action(final String action) {
@@ -60,8 +58,7 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param params
-	 *            optional arguments passed to action
+	 * @param params optional arguments passed to action
 	 * @return options
 	 */
 	public TransactionOptions params(final Object params) {
@@ -74,10 +71,9 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param lockTimeout
-	 *            an optional numeric value that can be used to set a timeout for waiting on collection locks. If not
-	 *            specified, a default value will be used. Setting lockTimeout to 0 will make ArangoDB not time out
-	 *            waiting for a lock.
+	 * @param lockTimeout an optional numeric value that can be used to set a timeout for waiting on collection locks. If not
+	 *                    specified, a default value will be used. Setting lockTimeout to 0 will make ArangoDB not time out
+	 *                    waiting for a lock.
 	 * @return options
 	 */
 	public TransactionOptions lockTimeout(final Integer lockTimeout) {
@@ -90,9 +86,8 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param waitForSync
-	 *            an optional boolean flag that, if set, will force the transaction to write all data to disk before
-	 *            returning
+	 * @param waitForSync an optional boolean flag that, if set, will force the transaction to write all data to disk before
+	 *                    returning
 	 * @return options
 	 */
 	public TransactionOptions waitForSync(final Boolean waitForSync) {
@@ -101,8 +96,7 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param read
-	 *            contains the array of collection-names to be used in the transaction (mandatory) for read
+	 * @param read contains the array of collection-names to be used in the transaction (mandatory) for read
 	 * @return options
 	 */
 	public TransactionOptions readCollections(final String... read) {
@@ -111,8 +105,7 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param write
-	 *            contains the array of collection-names to be used in the transaction (mandatory) for write
+	 * @param write contains the array of collection-names to be used in the transaction (mandatory) for write
 	 * @return options
 	 */
 	public TransactionOptions writeCollections(final String... write) {
@@ -121,10 +114,9 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param exclusive
-	 *            contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
-	 * @since ArangoDB 3.4.0
+	 * @param exclusive contains the array of collection-names to be used in the transaction (mandatory) for exclusive write
 	 * @return options
+	 * @since ArangoDB 3.4.0
 	 */
 	public TransactionOptions exclusiveCollections(final String... exclusive) {
 		collections.exclusive(exclusive);
@@ -132,12 +124,11 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param allowImplicit
-	 *            Collections that will be written to in the transaction must be declared with the write attribute or it
-	 *            will fail, whereas non-declared collections from which is solely read will be added lazily. The
-	 *            optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
-	 *            collections for reading. Collections for reading should be fully declared if possible, to avoid
-	 *            deadlocks.
+	 * @param allowImplicit Collections that will be written to in the transaction must be declared with the write attribute or it
+	 *                      will fail, whereas non-declared collections from which is solely read will be added lazily. The
+	 *                      optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
+	 *                      collections for reading. Collections for reading should be fully declared if possible, to avoid
+	 *                      deadlocks.
 	 * @return options
 	 */
 	public TransactionOptions allowImplicit(final Boolean allowImplicit) {
@@ -150,10 +141,9 @@ public class TransactionOptions {
 	}
 
 	/**
-	 * @param maxTransactionSize
-	 *            Transaction size limit in bytes. Honored by the RocksDB storage engine only.
-	 * @since ArangoDB 3.2.0
+	 * @param maxTransactionSize Transaction size limit in bytes. Honored by the RocksDB storage engine only.
 	 * @return options
+	 * @since ArangoDB 3.2.0
 	 */
 	public TransactionOptions maxTransactionSize(final Long maxTransactionSize) {
 		this.maxTransactionSize = maxTransactionSize;
