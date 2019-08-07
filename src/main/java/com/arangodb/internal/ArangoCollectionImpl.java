@@ -110,8 +110,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	}
 
 	@Override
-	public Collection<DocumentImportEntity> importDocuments(Collection<?> values, DocumentImportOptions options,
-															int batchSize, int numThreads) throws ArangoDBException {
+	public Collection<DocumentImportEntity> importDocuments(
+			final Collection<?> values,
+			final DocumentImportOptions options,
+			final int batchSize,
+			final int numThreads) throws ArangoDBException {
 
 		List<? extends List<?>> batches = ListUtils.partition(new ArrayList<>(values), batchSize);
 		LOGGER.info("Partitioned [{}] values into [{}] batches of at most [{}] in size.",
