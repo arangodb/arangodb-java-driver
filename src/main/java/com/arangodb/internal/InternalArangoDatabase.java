@@ -382,6 +382,10 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
         return request(name, RequestType.DELETE, PATH_API_TRANSACTION, id);
     }
 
+    protected Request getStreamTransactionRequest(String id) {
+        return request(name, RequestType.GET, PATH_API_TRANSACTION, id);
+    }
+
     protected ResponseDeserializer<StreamTransactionEntity> streamTransactionResponseDeserializer() {
         return new ResponseDeserializer<StreamTransactionEntity>() {
             @Override
