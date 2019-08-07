@@ -1409,6 +1409,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test
 	public void beginStreamTransaction() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		StreamTransactionEntity tx = db.beginStreamTransaction(null);
 		assertThat(tx.getId(), is(notNullValue()));
 		assertThat(tx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.running));
@@ -1417,11 +1420,17 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void beginStreamTransactionWithNonExistingCollectionsShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		db.beginStreamTransaction(new StreamTransactionOptions().writeCollections("notExistingCollection"));
 	}
 
 	@Test
 	public void abortStreamTransaction() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		StreamTransactionEntity begunTx = db.beginStreamTransaction(null);
 		StreamTransactionEntity abortedTx = db.abortStreamTransaction(begunTx.getId());
 		assertThat(abortedTx.getId(), is(notNullValue()));
@@ -1431,16 +1440,25 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		db.abortStreamTransaction("000000");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWithInvalidTransactionIdShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		db.abortStreamTransaction("invalidTransactionId");
 	}
 
 	@Test
 	public void getStreamTransaction() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
 		StreamTransactionEntity gotTx = db.getStreamTransaction(createdTx.getId());
 		assertThat(gotTx.getId(), is(notNullValue()));
@@ -1450,11 +1468,17 @@ public class ArangoDatabaseTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		db.getStreamTransaction("000000");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void getStreamTransactionWithInvalidTransactionIdShouldThrow() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		db.getStreamTransaction("invalidTransactionId");
 	}
 
