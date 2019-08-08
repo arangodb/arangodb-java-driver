@@ -34,6 +34,7 @@ public class DocumentReplaceOptions {
 	private Boolean returnNew;
 	private Boolean returnOld;
 	private Boolean silent;
+	private String streamTransactionId;
 
 	public DocumentReplaceOptions() {
 		super();
@@ -124,6 +125,19 @@ public class DocumentReplaceOptions {
 	 */
 	public DocumentReplaceOptions silent(final Boolean silent) {
 		this.silent = silent;
+		return this;
+	}
+
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
+
+	/**
+	 * @param streamTransactionId If set, the operation will be executed within the transaction.
+	 * @return options
+	 */
+	public DocumentReplaceOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
 		return this;
 	}
 

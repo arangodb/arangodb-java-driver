@@ -583,7 +583,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Removes all documents from the collection, but leaves the indexes intact
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
 	 *      Documentation</a>
 	 * @return information about the collection
@@ -592,8 +592,19 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	CollectionEntity truncate() throws ArangoDBException;
 
 	/**
+	 * Removes all documents from the collection, but leaves the indexes intact
+	 *
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 * @return information about the collection
+	 * @throws ArangoDBException
+	 */
+	CollectionEntity truncate(CollectionTruncateOptions options) throws ArangoDBException;
+
+	/**
 	 * Counts the documents in a collection
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
 	 *      Documentation</a>
@@ -601,6 +612,18 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	CollectionPropertiesEntity count() throws ArangoDBException;
+
+	/**
+	 * Counts the documents in a collection
+	 *
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 * @return information about the collection, including the number of documents
+	 * @throws ArangoDBException
+	 */
+	CollectionPropertiesEntity count(CollectionCountOptions options) throws ArangoDBException;
 
 	/**
 	 * Creates a collection for this collection's name, then returns collection information from the server.

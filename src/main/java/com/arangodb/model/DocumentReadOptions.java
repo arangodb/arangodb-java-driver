@@ -35,6 +35,7 @@ public class DocumentReadOptions {
 	private boolean catchException;
 	@Expose(serialize = false)
 	private Boolean allowDirtyRead;
+	private String streamTransactionId;
 
 	public DocumentReadOptions() {
 		super();
@@ -98,6 +99,19 @@ public class DocumentReadOptions {
 
 	public Boolean getAllowDirtyRead() {
 		return allowDirtyRead;
+	}
+
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
+
+	/**
+	 * @param streamTransactionId If set, the operation will be executed within the transaction.
+	 * @return options
+	 */
+	public DocumentReadOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
+		return this;
 	}
 
 }
