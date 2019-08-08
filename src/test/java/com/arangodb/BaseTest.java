@@ -23,21 +23,21 @@ package com.arangodb;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.arangodb.entity.ArangoDBEngine;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author Mark Vollmary
- *
  */
 public abstract class BaseTest {
 
 	@Parameters
 	public static Collection<ArangoDB.Builder> builders() {
 		return Arrays.asList(//
-			new ArangoDB.Builder().useProtocol(Protocol.VST), //
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
+				new ArangoDB.Builder().useProtocol(Protocol.VST), //
+				new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
+				new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
 		);
 	}
 
@@ -51,9 +51,9 @@ public abstract class BaseTest {
 		if (arangoDB != null) {
 			shutdown();
 		}
-		arangoDB = builder.build();		
-		db = arangoDB.db(TEST_DB);	
-		
+		arangoDB = builder.build();
+		db = arangoDB.db(TEST_DB);
+
 		// only create the database if not existing
 		try {
 			db.getVersion().getVersion();
@@ -73,6 +73,10 @@ public abstract class BaseTest {
 	protected boolean requireVersion(final int major, final int minor) {
 		final String[] split = arangoDB.getVersion().getVersion().split("\\.");
 		return Integer.valueOf(split[0]) >= major && Integer.valueOf(split[1]) >= minor;
+	}
+
+	protected boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
+		return name.equals(arangoDB.getEngine().getName());
 	}
 
 }

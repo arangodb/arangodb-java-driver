@@ -1418,6 +1418,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test
 	public void beginStreamTransaction() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		StreamTransactionEntity tx = db.beginStreamTransaction(null);
 		assertThat(tx.getId(), is(notNullValue()));
 		assertThat(tx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.running));
@@ -1427,12 +1428,14 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test(expected = ArangoDBException.class)
 	public void beginStreamTransactionWithNonExistingCollectionsShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.beginStreamTransaction(new StreamTransactionOptions().writeCollections("notExistingCollection"));
 	}
 
 	@Test
 	public void abortStreamTransaction() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		StreamTransactionEntity begunTx = db.beginStreamTransaction(null);
 		StreamTransactionEntity abortedTx = db.abortStreamTransaction(begunTx.getId());
 		assertThat(abortedTx.getId(), is(notNullValue()));
@@ -1443,18 +1446,21 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.abortStreamTransaction("000000");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWithInvalidTransactionIdShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.abortStreamTransaction("invalidTransactionId");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void abortCommittedStreamTransactionShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
 		db.commitStreamTransaction(createdTx.getId());
 		db.abortStreamTransaction(createdTx.getId());
@@ -1463,6 +1469,7 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test
 	public void getStreamTransaction() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
 		StreamTransactionEntity gotTx = db.getStreamTransaction(createdTx.getId());
 		assertThat(gotTx.getId(), is(notNullValue()));
@@ -1474,18 +1481,21 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test(expected = ArangoDBException.class)
 	public void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.getStreamTransaction("000000");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void getStreamTransactionWithInvalidTransactionIdShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.getStreamTransaction("invalidTransactionId");
 	}
 
 	@Test
 	public void commitStreamTransaction() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
 		StreamTransactionEntity committedTx = db.commitStreamTransaction(createdTx.getId());
 		assertThat(committedTx.getId(), is(notNullValue()));
@@ -1496,18 +1506,21 @@ public class ArangoDatabaseTest extends BaseTest {
 	@Test(expected = ArangoDBException.class)
 	public void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.commitStreamTransaction("000000");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void commitStreamTransactionWithInvalidTransactionIdShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		db.commitStreamTransaction("invalidTransactionId");
 	}
 
 	@Test(expected = ArangoDBException.class)
 	public void commitAbortedStreamTransactionShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
 		db.abortStreamTransaction(createdTx.getId());
 		db.commitStreamTransaction(createdTx.getId());
