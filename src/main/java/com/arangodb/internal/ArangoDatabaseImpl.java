@@ -60,6 +60,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	}
 
 	@Override
+	public ArangoDBEngine getEngine() throws ArangoDBException {
+		return executor.execute(getEngineRequest(), ArangoDBEngine.class);
+	}
+
+	@Override
 	public boolean exists() throws ArangoDBException {
 		try {
 			getInfo();

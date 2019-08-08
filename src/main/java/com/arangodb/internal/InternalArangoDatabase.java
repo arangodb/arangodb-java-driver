@@ -48,6 +48,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 
 	protected static final String PATH_API_DATABASE = "/_api/database";
 	private static final String PATH_API_VERSION = "/_api/version";
+	private static final String PATH_API_ENGINE = "/_api/engine";
 	private static final String PATH_API_CURSOR = "/_api/cursor";
 	private static final String PATH_API_TRANSACTION = "/_api/transaction";
 	private static final String PATH_API_BEGIN_STREAM_TRANSACTION = "/_api/transaction/begin";
@@ -90,6 +91,10 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 
 	protected Request getVersionRequest() {
 		return request(name, RequestType.GET, PATH_API_VERSION);
+	}
+
+	protected Request getEngineRequest() {
+		return request(name, RequestType.GET, PATH_API_ENGINE);
 	}
 
 	protected Request createCollectionRequest(final String name, final CollectionCreateOptions options) {

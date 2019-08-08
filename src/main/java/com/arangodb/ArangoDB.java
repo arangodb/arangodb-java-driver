@@ -27,13 +27,7 @@ import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
 
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
@@ -716,6 +710,16 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	ArangoDBVersion getVersion() throws ArangoDBException;
+
+	/**
+	 * Returns the server storage engine.
+	 *
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-database-engine-type">API
+	 *      Documentation</a>
+	 * @return the storage engine name
+	 * @throws ArangoDBException
+	 */
+	ArangoDBEngine getEngine() throws ArangoDBException;
 
 	/**
 	 * Returns the server role.

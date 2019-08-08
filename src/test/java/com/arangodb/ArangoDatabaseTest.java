@@ -128,6 +128,13 @@ public class ArangoDatabaseTest extends BaseTest {
 	}
 
 	@Test
+	public void getEngine() {
+		final ArangoDBEngine engine = db.getEngine();
+		assertThat(engine, is(notNullValue()));
+		assertThat(engine.getName(), is(notNullValue()));
+	}
+
+	@Test
 	public void exists() {
 		assertThat(db.exists(), is(true));
 		assertThat(arangoDB.db("no").exists(), is(false));

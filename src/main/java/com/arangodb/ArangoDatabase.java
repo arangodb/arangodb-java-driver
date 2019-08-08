@@ -62,6 +62,16 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	ArangoDBVersion getVersion() throws ArangoDBException;
 
 	/**
+	 * Returns the name of the used storage engine.
+	 *
+	 * @return the storage engine name
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-database-engine-type">API
+	 * Documentation</a>
+	 */
+	ArangoDBEngine getEngine() throws ArangoDBException;
+
+	/**
 	 * Checks whether the database exists
 	 *
 	 * @return true if the database exists, otherwise false
