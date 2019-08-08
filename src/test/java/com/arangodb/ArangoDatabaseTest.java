@@ -1443,6 +1443,15 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(abortedTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.aborted));
 	}
 
+	@Test
+	public void abortStreamTransactionTwice() {
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+		StreamTransactionEntity begunTx = db.beginStreamTransaction(null);
+		db.abortStreamTransaction(begunTx.getId());
+		db.abortStreamTransaction(begunTx.getId());
+	}
+
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
 		assumeTrue(requireVersion(3, 5));
@@ -1501,6 +1510,15 @@ public class ArangoDatabaseTest extends BaseTest {
 		assertThat(committedTx.getId(), is(notNullValue()));
 		assertThat(committedTx.getId(), is(createdTx.getId()));
 		assertThat(committedTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.committed));
+	}
+
+	@Test
+	public void commitStreamTransactionTwice() {
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+		StreamTransactionEntity createdTx = db.beginStreamTransaction(null);
+		db.commitStreamTransaction(createdTx.getId());
+		db.commitStreamTransaction(createdTx.getId());
 	}
 
 	@Test(expected = ArangoDBException.class)
