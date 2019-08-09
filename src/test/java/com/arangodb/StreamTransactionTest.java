@@ -24,6 +24,7 @@ import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.DocumentReplaceOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import org.junit.After;
 import org.junit.Test;
@@ -31,6 +32,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.*;
@@ -48,6 +51,9 @@ public class StreamTransactionTest extends BaseTest {
 	public StreamTransactionTest(final Builder builder) {
 		super(builder);
 		try {
+			if (db.collection(COLLECTION_NAME).exists())
+				db.collection(COLLECTION_NAME).drop();
+
 			db.createCollection(COLLECTION_NAME, null);
 		} catch (final ArangoDBException e) {
 
@@ -161,6 +167,82 @@ public class StreamTransactionTest extends BaseTest {
 
 		// assert that the document is found after commit
 		assertThat(db.collection(COLLECTION_NAME).getDocument(id1, BaseDocument.class, null), is(notNullValue()));
+	}
+
+	@Test
+	public void replaceDocument() {
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		BaseDocument doc = new BaseDocument();
+		doc.addAttribute("test", "foo");
+
+		DocumentCreateEntity<BaseDocument> createdDoc = db.collection(COLLECTION_NAME).insertDocument(doc, null);
+
+		StreamTransactionEntity tx = db.beginStreamTransaction(
+				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+
+		// replace document from within the tx
+		doc.getProperties().clear();
+		doc.addAttribute("test", "bar");
+		DocumentUpdateEntity<BaseDocument> replacedDoc = db.collection(COLLECTION_NAME)
+				.replaceDocument(createdDoc.getKey(), doc,
+						new DocumentReplaceOptions().streamTransactionId(tx.getId()));
+
+		// assert that the document has not been replaced from outside the tx
+		assertThat(db.collection(COLLECTION_NAME).getDocument(createdDoc.getKey(), BaseDocument.class, null)
+				.getProperties().get("test"), is("foo"));
+
+		// assert that the document has been replaced from within the tx
+		assertThat(db.collection(COLLECTION_NAME).getDocument(createdDoc.getKey(), BaseDocument.class,
+				new DocumentReadOptions().streamTransactionId(tx.getId())).getProperties().get("test"), is("bar"));
+
+		db.commitStreamTransaction(tx.getId());
+
+		// assert that the document has been replaced after commit
+		assertThat(db.collection(COLLECTION_NAME).getDocument(createdDoc.getKey(), BaseDocument.class, null)
+				.getProperties().get("test"), is("bar"));
+	}
+
+	@Test
+	public void replaceDocuments() {
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		List<String> ids = Arrays.asList("1", "2");
+		List<BaseDocument> docs = ids.stream().map(BaseDocument::new).peek(doc -> doc.addAttribute("test", "foo"))
+				.collect(Collectors.toList());
+
+		MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> createdDocs = db.collection(COLLECTION_NAME)
+				.insertDocuments(docs, null);
+
+		StreamTransactionEntity tx = db.beginStreamTransaction(
+				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+
+		List<BaseDocument> modifiedDocs = docs.stream().peek(doc -> {
+			doc.getProperties().clear();
+			doc.addAttribute("test", "bar");
+		}).collect(Collectors.toList());
+
+		// replace document from within the tx
+		MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> replacedDocs = db.collection(COLLECTION_NAME)
+				.replaceDocuments(modifiedDocs, new DocumentReplaceOptions().streamTransactionId(tx.getId()));
+
+		// assert that the documents has not been replaced from outside the tx
+		assertThat(db.collection(COLLECTION_NAME).getDocuments(ids, BaseDocument.class, null).getDocuments().stream()
+				.map(it -> ((String) it.getAttribute("test"))).collect(Collectors.toList()), everyItem(is("foo")));
+
+		// assert that the document has been replaced from within the tx
+		assertThat(db.collection(COLLECTION_NAME)
+						.getDocuments(ids, BaseDocument.class, new DocumentReadOptions().streamTransactionId(tx.getId()))
+						.getDocuments().stream().map(it -> ((String) it.getAttribute("test"))).collect(Collectors.toList()),
+				everyItem(is("bar")));
+
+		db.commitStreamTransaction(tx.getId());
+
+		// assert that the document has been replaced after commit
+		assertThat(db.collection(COLLECTION_NAME).getDocuments(ids, BaseDocument.class, null).getDocuments().stream()
+				.map(it -> ((String) it.getAttribute("test"))).collect(Collectors.toList()), everyItem(is("bar")));
 	}
 
 }
