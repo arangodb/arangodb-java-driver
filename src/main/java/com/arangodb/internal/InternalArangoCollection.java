@@ -50,6 +50,7 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
 		extends ArangoExecuteable<E> {

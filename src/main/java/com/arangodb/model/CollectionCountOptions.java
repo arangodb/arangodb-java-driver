@@ -21,7 +21,7 @@
 package com.arangodb.model;
 
 /**
- * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class CollectionCountOptions {
 

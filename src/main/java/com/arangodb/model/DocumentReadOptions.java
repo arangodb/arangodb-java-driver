@@ -24,7 +24,8 @@ import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark Vollmary
- * 
+ * @author Michele Rastelli
+ *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
  *      Documentation</a>
  */

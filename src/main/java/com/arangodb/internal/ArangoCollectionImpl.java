@@ -50,6 +50,7 @@ import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  *
  */
 public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>

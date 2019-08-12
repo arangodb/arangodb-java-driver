@@ -22,6 +22,7 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
  * Documentation</a>
  */

@@ -44,6 +44,7 @@ import com.arangodb.velocystream.Request;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, ArangoExecutorSync>
 		implements ArangoDatabase {

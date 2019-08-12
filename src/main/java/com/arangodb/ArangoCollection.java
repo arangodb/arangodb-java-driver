@@ -41,6 +41,7 @@ import com.arangodb.model.*;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
  * @author Mark Vollmary
  * @author Heiko Kernbach
+ * @author Michele Rastelli
  */
 public interface ArangoCollection extends ArangoSerializationAccessor {
 

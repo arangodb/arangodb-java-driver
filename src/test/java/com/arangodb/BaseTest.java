@@ -29,6 +29,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public abstract class BaseTest {
 

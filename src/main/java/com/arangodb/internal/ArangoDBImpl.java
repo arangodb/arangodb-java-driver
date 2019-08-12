@@ -53,6 +53,7 @@ import com.arangodb.velocystream.Response;
 /**
  * @author Mark Vollmary
  * @author Heiko Kernbach
+ * @author Michele Rastelli
  *
  */
 public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {

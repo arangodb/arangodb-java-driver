@@ -80,6 +80,7 @@ import com.arangodb.velocystream.Response;
  * </pre>
  *
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public interface ArangoDB extends ArangoSerializationAccessor {
 
