@@ -109,6 +109,7 @@ public class DocumentReadOptions {
 	/**
 	 * @param streamTransactionId If set, the operation will be executed within the transaction.
 	 * @return options
+	 * @since ArangoDB 3.5.0
 	 */
 	public DocumentReadOptions streamTransactionId(final String streamTransactionId) {
 		this.streamTransactionId = streamTransactionId;

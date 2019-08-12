@@ -550,6 +550,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#begin-a-transaction">API
 	 * Documentation</a>
+	 * @since ArangoDB 3.5.0
 	 */
 	StreamTransactionEntity beginStreamTransaction(StreamTransactionOptions options) throws ArangoDBException;
 
@@ -570,6 +571,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#get-transaction-status">
 	 * API Documentation</a>
+	 * @since ArangoDB 3.5.0
 	 */
 	StreamTransactionEntity getStreamTransaction(String id) throws ArangoDBException;
 
@@ -580,6 +582,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#commit-or-abort-a-transaction">
 	 * API Documentation</a>
+	 * @since ArangoDB 3.5.0
 	 */
 	StreamTransactionEntity commitStreamTransaction(String id) throws ArangoDBException;
 

@@ -84,6 +84,7 @@ public class DocumentExistsOptions {
 	/**
 	 * @param streamTransactionId If set, the operation will be executed within the transaction.
 	 * @return options
+	 * @since ArangoDB 3.5.0
 	 */
 	public DocumentExistsOptions streamTransactionId(final String streamTransactionId) {
 		this.streamTransactionId = streamTransactionId;
