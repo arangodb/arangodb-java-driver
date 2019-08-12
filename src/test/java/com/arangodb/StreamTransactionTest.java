@@ -258,7 +258,7 @@ public class StreamTransactionTest extends BaseTest {
 	}
 
 	@Test
-	public void insertDocumentWithinStreamTransaction() {
+	public void insertDocument() {
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -285,7 +285,7 @@ public class StreamTransactionTest extends BaseTest {
 	}
 
 	@Test
-	public void insertDocumentsWithinStreamTransaction() {
+	public void insertDocuments() {
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
