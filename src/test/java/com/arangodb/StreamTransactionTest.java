@@ -359,7 +359,7 @@ public class StreamTransactionTest extends BaseTest {
 
 		List<String> keys = db.collection(COLLECTION_NAME)
 				.insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument(), new BaseDocument()), null)
-				.getDocuments().stream().map(DocumentEntity::getId).collect(Collectors.toList());
+				.getDocuments().stream().map(DocumentEntity::getKey).collect(Collectors.toList());
 
 		StreamTransactionEntity tx = db.beginStreamTransaction(
 				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
@@ -440,7 +440,7 @@ public class StreamTransactionTest extends BaseTest {
 		// assert that the collection has not been truncated from outside the tx
 		assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(greaterThan(0L)));
 
-		// assert that the collection has been truncated from inside the tx
+		// assert that the collection has been truncated from within the tx
 		assertThat(db.collection(COLLECTION_NAME).count(new CollectionCountOptions().streamTransactionId(tx.getId()))
 				.getCount(), is(0L));
 
@@ -448,6 +448,63 @@ public class StreamTransactionTest extends BaseTest {
 
 		// assert that the collection has been truncated after commit
 		assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(0L));
+	}
+
+	@Test
+	public void createCursor() {
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		StreamTransactionEntity tx = db
+				.beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME));
+
+		// insert a document from outside the tx
+		DocumentCreateEntity<BaseDocument> externalDoc = db.collection(COLLECTION_NAME)
+				.insertDocument(new BaseDocument(), null);
+
+		final Map<String, Object> bindVars = new HashMap<>();
+		bindVars.put("@collection", COLLECTION_NAME);
+		bindVars.put("key", externalDoc.getKey());
+
+		ArangoCursor<BaseDocument> cursor = db
+				.query("FOR doc IN @@collection FILTER doc._key == @key RETURN doc", bindVars,
+						new AqlQueryOptions().streamTransactionId(tx.getId()), BaseDocument.class);
+
+		// assert that the document is not found from within the tx
+		assertThat(cursor.hasNext(), is(false));
+
+		db.abortStreamTransaction(tx.getId());
+	}
+
+	@Test
+	public void nextCursor() {
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		StreamTransactionEntity tx = db.beginStreamTransaction(
+				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+
+		// insert documents from within the tx
+		List<String> keys = db.collection(COLLECTION_NAME)
+				.insertDocuments(IntStream.range(0, 10).mapToObj(it -> new BaseDocument()).collect(Collectors.toList()),
+						new DocumentCreateOptions().streamTransactionId(tx.getId())).getDocuments().stream()
+				.map(DocumentEntity::getKey).collect(Collectors.toList());
+
+		final Map<String, Object> bindVars = new HashMap<>();
+		bindVars.put("@collection", COLLECTION_NAME);
+		bindVars.put("keys", keys);
+
+		ArangoCursor<BaseDocument> cursor = db
+				.query("FOR doc IN @@collection FILTER CONTAINS_ARRAY(@keys, doc._key) RETURN doc", bindVars,
+						new AqlQueryOptions().streamTransactionId(tx.getId()).batchSize(2), BaseDocument.class);
+
+		List<BaseDocument> docs = cursor.asListRemaining();
+
+		// assert that all the keys are returned from the query
+		assertThat(docs.stream().map(BaseDocument::getKey).collect(Collectors.toList()),
+				containsInAnyOrder(keys.toArray()));
+
+		db.abortStreamTransaction(tx.getId());
 	}
 
 }

@@ -64,6 +64,8 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 	private static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
 	private static final String PATH_API_USER = "/_api/user";
 
+	private static final String TRANSACTION_ID = "x-arango-trx-id";
+
 	private final String name;
 	private final A arango;
 
@@ -183,6 +185,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		if (opt.getAllowDirtyRead() == Boolean.TRUE) {
 			RequestUtils.allowDirtyRead(request);
 		}
+		request.putHeaderParam(TRANSACTION_ID, opt.getStreamTransactionId());
 		return request;
 	}
 
@@ -199,6 +202,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		if (opt.getAllowDirtyRead() == Boolean.TRUE) {
 			RequestUtils.allowDirtyRead(request);
 		}
+		request.putHeaderParam(TRANSACTION_ID, opt.getStreamTransactionId());
 		return request;
 	}
 
@@ -215,7 +219,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		if (opt.getAllowDirtyRead() == Boolean.TRUE) {
 			RequestUtils.allowDirtyRead(request);
 		}
-
+		request.putHeaderParam(TRANSACTION_ID, opt.getStreamTransactionId());
 		return request;
 	}
 
