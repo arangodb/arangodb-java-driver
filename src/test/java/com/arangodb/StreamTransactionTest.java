@@ -70,8 +70,8 @@ public class StreamTransactionTest extends BaseTest {
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-		StreamTransactionEntity tx = db.beginStreamTransaction(
-				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+		StreamTransactionEntity tx = db
+				.beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME));
 
 		// insert a document from outside the tx
 		DocumentCreateEntity<BaseDocument> externalDoc = db.collection(COLLECTION_NAME)
@@ -89,8 +89,8 @@ public class StreamTransactionTest extends BaseTest {
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-		StreamTransactionEntity tx = db.beginStreamTransaction(
-				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+		StreamTransactionEntity tx = db
+				.beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME));
 
 		// insert documents from outside the tx
 		DocumentCreateEntity<BaseDocument> externalDoc1 = db.collection(COLLECTION_NAME)
@@ -389,8 +389,8 @@ public class StreamTransactionTest extends BaseTest {
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-		StreamTransactionEntity tx = db.beginStreamTransaction(
-				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+		StreamTransactionEntity tx = db
+				.beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME));
 
 		// insert a document from outside the tx
 		DocumentCreateEntity<BaseDocument> externalDoc = db.collection(COLLECTION_NAME)
@@ -411,8 +411,8 @@ public class StreamTransactionTest extends BaseTest {
 
 		Long initialCount = db.collection(COLLECTION_NAME).count().getCount();
 
-		StreamTransactionEntity tx = db.beginStreamTransaction(
-				new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+		StreamTransactionEntity tx = db
+				.beginStreamTransaction(new StreamTransactionOptions().readCollections(COLLECTION_NAME));
 
 		// insert a document from outside the tx
 		db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
