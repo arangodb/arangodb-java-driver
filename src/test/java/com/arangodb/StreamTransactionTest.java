@@ -248,6 +248,26 @@ public class StreamTransactionTest extends BaseTest {
 		db.abortStreamTransaction(tx.getId());
 	}
 
+	@Test(expected = ArangoDBException.class)
+	public void getDocumentWithNonExistingTransactionIdShouldThrow() {
+		assumeTrue(requireSingleServer());
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		db.collection(COLLECTION_NAME)
+				.getDocument("docId", BaseDocument.class, new DocumentReadOptions().streamTransactionId("123456"));
+	}
+
+	@Test(expected = ArangoDBException.class)
+	public void getDocumentWithInvalidTransactionIdShouldThrow() {
+		assumeTrue(requireSingleServer());
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		db.collection(COLLECTION_NAME)
+				.getDocument("docId", BaseDocument.class, new DocumentReadOptions().streamTransactionId("abcde"));
+	}
+
 	@Test
 	public void getDocuments() {
 		assumeTrue(requireSingleServer());
