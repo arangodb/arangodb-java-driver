@@ -67,6 +67,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void beginStreamTransaction() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -78,6 +79,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void beginStreamTransactionWithNonExistingCollectionsShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -86,6 +88,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void abortStreamTransaction() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -99,6 +102,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void abortStreamTransactionTwice() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -109,6 +113,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -117,6 +122,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void abortStreamTransactionWithInvalidTransactionIdShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -125,6 +131,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void abortCommittedStreamTransactionShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -135,6 +142,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void getStreamTransaction() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -150,6 +158,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -158,6 +167,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void getStreamTransactionWithInvalidTransactionIdShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -166,6 +176,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void commitStreamTransaction() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -179,6 +190,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void commitStreamTransactionTwice() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -189,6 +201,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -197,6 +210,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void commitStreamTransactionWithInvalidTransactionIdShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -205,6 +219,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test(expected = ArangoDBException.class)
 	public void commitAbortedStreamTransactionShouldThrow() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -215,6 +230,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void getDocument() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -234,6 +250,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void getDocuments() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -259,6 +276,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void insertDocument() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -286,6 +304,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void insertDocuments() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -317,6 +336,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void replaceDocument() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -351,6 +371,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void replaceDocuments() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -394,6 +415,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void updateDocument() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -429,6 +451,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void updateDocuments() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -472,6 +495,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void deleteDocument() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -502,6 +526,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void deleteDocuments() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -534,6 +559,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void documentExists() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -554,6 +580,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void count() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -574,6 +601,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void truncate() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -600,6 +628,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void createCursor() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -626,6 +655,7 @@ public class StreamTransactionTest extends BaseTest {
 
 	@Test
 	public void nextCursor() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 

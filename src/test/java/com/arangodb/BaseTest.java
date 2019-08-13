@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -78,6 +79,10 @@ public abstract class BaseTest {
 
 	protected boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
 		return name.equals(arangoDB.getEngine().getName());
+	}
+
+	protected boolean requireSingleServer() {
+		return (arangoDB.getRole() == ServerRole.SINGLE);
 	}
 
 }
