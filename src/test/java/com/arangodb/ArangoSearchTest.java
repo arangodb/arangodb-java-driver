@@ -32,10 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -264,10 +261,12 @@ public class ArangoSearchTest extends BaseTest {
 	}
 
 	@Test
-	public void createAnalyzer() {
+	public void createGetAndDeleteAnalyzer() {
 		if (!requireVersion(3, 5)) {
 			return;
 		}
+
+		String name = "test-" + UUID.randomUUID().toString();
 
 		Set<AnalyzerFeature> features = new HashSet<>();
 		features.add(AnalyzerFeature.frequency);
@@ -276,16 +275,32 @@ public class ArangoSearchTest extends BaseTest {
 
 		AnalyzerEntity options = new AnalyzerEntity();
 		options.setFeatures(features);
-		options.setName("testAnalyzer");
+		options.setName(name);
 		options.setType(AnalyzerType.delimiter);
 		options.setProperties(Collections.singletonMap("delimiter", "-"));
 
-		AnalyzerEntity analyzer = db.createAnalyzer(options);
+		AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
 
-		assertThat(analyzer.getName(), is(db.name() + "::" + options.getName()));
-		assertThat(analyzer.getType(), is(options.getType()));
-		assertThat(analyzer.getFeatures(), is(options.getFeatures()));
-		assertThat(analyzer.getProperties(), is(options.getProperties()));
+		assertThat(createdAnalyzer.getName(), is(db.name() + "::" + options.getName()));
+		assertThat(createdAnalyzer.getType(), is(options.getType()));
+		assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
+
+		AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
+		assertThat(gotAnalyzer.getName(), is(db.name() + "::" + options.getName()));
+		assertThat(gotAnalyzer.getType(), is(options.getType()));
+		assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
+
+		db.deleteAnalyzer(options.getName());
+
+		try {
+			db.getAnalyzer(options.getName());
+			throw new RuntimeException("deleted analyzer should not be found!");
+		} catch (ArangoDBException e) {
+			// ok
+		}
+
 	}
 
 }

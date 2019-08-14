@@ -31,6 +31,7 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
 import com.arangodb.util.ArangoSerializer;
@@ -495,9 +496,19 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 				ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
 	}
 
+	protected Request getAnalyzerRequest(final String name) {
+		return request(name(), RequestType.GET, InternalArangoView.PATH_API_ANALYZER, name);
+	}
+
 	protected Request createAnalyzerRequest(final AnalyzerEntity options) {
 		return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
 				.setBody(util().serialize(options));
+	}
+
+	protected Request deleteAnalyzerRequest(final String name, final AnalyzerDeleteOptions options) {
+		Request request = request(name(), RequestType.DELETE, InternalArangoView.PATH_API_ANALYZER, name);
+		request.putQueryParam("force", options != null ? options.getForce() : null);
+		return request;
 	}
 
 }

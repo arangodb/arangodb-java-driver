@@ -26,6 +26,7 @@ import java.util.Map;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 
 /**
@@ -709,7 +710,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	ViewEntity createArangoSearch(String name, ArangoSearchCreateOptions options) throws ArangoDBException;
 
 	/**
-	 * Creates a Analyzer
+	 * Creates an Analyzer
 	 *
 	 * @param options AnalyzerEntity
 	 * @return the created Analyzer
@@ -718,5 +719,36 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @since ArangoDB 3.5.0
 	 */
 	AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException;
+
+	/**
+	 * Gets information about an Analyzer
+	 *
+	 * @param name id of the Analyzer without database prefix
+	 * @return information about an Analyzer
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	AnalyzerEntity getAnalyzer(String name) throws ArangoDBException;
+
+	/**
+	 * Deletes an Analyzer
+	 *
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	void deleteAnalyzer(String name) throws ArangoDBException;
+
+	/**
+	 * Deletes an Analyzer
+	 *
+	 * @param name id of the Analyzer without database prefix
+	 * @param options AnalyzerDeleteOptions
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException;
 
 }

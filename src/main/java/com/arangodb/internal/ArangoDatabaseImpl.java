@@ -38,6 +38,7 @@ import com.arangodb.internal.cursor.ArangoCursorImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.model.*;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocypack.Type;
@@ -427,6 +428,21 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	@Override
 	public AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException {
 		return executor.execute(createAnalyzerRequest(options), AnalyzerEntity.class);
+	}
+
+	@Override
+	public AnalyzerEntity getAnalyzer(String name) throws ArangoDBException {
+		return executor.execute(getAnalyzerRequest(name), AnalyzerEntity.class);
+	}
+
+	@Override
+	public void deleteAnalyzer(String name) throws ArangoDBException {
+		executor.execute(deleteAnalyzerRequest(name, null), Void.class);
+	}
+
+	@Override
+	public void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException {
+		executor.execute(deleteAnalyzerRequest(name, options), Void.class);
 	}
 
 }
