@@ -20,31 +20,28 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.Collection;
-
-import com.arangodb.entity.arangosearch.*;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
- *
  */
 @RunWith(Parameterized.class)
 public class ArangoSearchTest extends BaseTest {
@@ -62,19 +59,19 @@ public class ArangoSearchTest extends BaseTest {
 			c.drop();
 		} catch (final ArangoDBException e) {
 		}
-		
+
 		try {
 			ArangoCollection c = db.collection("view_replace_prop_test_collection");
 			c.drop();
 		} catch (final ArangoDBException e) {
 		}
-		
+
 		try {
 			db.view(VIEW_NAME).drop();
 		} catch (final ArangoDBException e) {
 		}
 	}
-	
+
 	@Test
 	public void exists() {
 		if (!requireVersion(3, 4)) {
@@ -223,9 +220,9 @@ public class ArangoSearchTest extends BaseTest {
 		options.cleanupIntervalStep(15L);
 		options.consolidationIntervalMsec(65000L);
 		options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.));
-		options.link(
-			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
-					.trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
+		options.link(CollectionLink.on("view_update_prop_test_collection")
+				.fields(FieldLink.on("value").analyzers("identity").trackListPositions(true).includeAllFields(true)
+						.storeValues(StoreValuesType.ID)));
 		final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(15L));
@@ -250,13 +247,13 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		
+
 		db.createCollection("view_replace_prop_test_collection");
 		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
 		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
-		options.link(
-			CollectionLink.on("view_replace_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")));
+		options.link(CollectionLink.on("view_replace_prop_test_collection")
+				.fields(FieldLink.on("value").analyzers("identity")));
 		final ArangoSearchPropertiesEntity properties = view.replaceProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getLinks().size(), is(1));
@@ -264,6 +261,31 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(link.getName(), is("view_replace_prop_test_collection"));
 		assertThat(link.getFields().size(), is(1));
 		assertThat(link.getFields().iterator().next().getName(), is("value"));
+	}
+
+	@Test
+	public void createAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName("testAnalyzer");
+		options.setType(AnalyzerType.delimiter);
+		options.setProperties(Collections.singletonMap("delimiter", "-"));
+
+		AnalyzerEntity analyzer = db.createAnalyzer(options);
+
+		assertThat(analyzer.getName(), is(db.name() + "::" + options.getName()));
+		assertThat(analyzer.getType(), is(options.getType()));
+		assertThat(analyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(analyzer.getProperties(), is(options.getProperties()));
 	}
 
 }

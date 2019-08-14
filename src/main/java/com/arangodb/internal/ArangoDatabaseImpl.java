@@ -33,6 +33,7 @@ import com.arangodb.ArangoRoute;
 import com.arangodb.ArangoSearch;
 import com.arangodb.ArangoView;
 import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
@@ -421,6 +422,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	public ViewEntity createArangoSearch(final String name, final ArangoSearchCreateOptions options)
 			throws ArangoDBException {
 		return executor.execute(createArangoSearchRequest(name, options), ViewEntity.class);
+	}
+
+	@Override
+	public AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException {
+		return executor.execute(createAnalyzerRequest(options), AnalyzerEntity.class);
 	}
 
 }

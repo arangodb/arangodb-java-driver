@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.RequestUtils;
@@ -493,4 +494,10 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		return request(name(), RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(util().serialize(
 				ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
 	}
+
+	protected Request createAnalyzerRequest(final AnalyzerEntity options) {
+		return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
+				.setBody(util().serialize(options));
+	}
+
 }
