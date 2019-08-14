@@ -22,9 +22,9 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
+ * @author Michele Rastelli
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class DocumentCreateOptions {
 
@@ -33,6 +33,7 @@ public class DocumentCreateOptions {
 	private Boolean returnOld;
 	private Boolean overwrite;
 	private Boolean silent;
+	private String streamTransactionId;
 
 	public DocumentCreateOptions() {
 		super();
@@ -43,8 +44,7 @@ public class DocumentCreateOptions {
 	}
 
 	/**
-	 * @param waitForSync
-	 *            Wait until document has been synced to disk.
+	 * @param waitForSync Wait until document has been synced to disk.
 	 * @return options
 	 */
 	public DocumentCreateOptions waitForSync(final Boolean waitForSync) {
@@ -57,8 +57,7 @@ public class DocumentCreateOptions {
 	}
 
 	/**
-	 * @param returnNew
-	 *            Return additionally the complete new document under the attribute new in the result.
+	 * @param returnNew Return additionally the complete new document under the attribute new in the result.
 	 * @return options
 	 */
 	public DocumentCreateOptions returnNew(final Boolean returnNew) {
@@ -71,11 +70,10 @@ public class DocumentCreateOptions {
 	}
 
 	/**
-	 * @param returnOld
-	 *            Additionally return the complete old document under the attribute old in the result. Only available if
-	 *            the {@code overwrite} option is used.
-	 * @since ArangoDB 3.4
+	 * @param returnOld Additionally return the complete old document under the attribute old in the result. Only
+	 *                  available if the {@code overwrite} option is used.
 	 * @return options
+	 * @since ArangoDB 3.4
 	 */
 	public DocumentCreateOptions returnOld(final Boolean returnOld) {
 		this.returnOld = returnOld;
@@ -87,12 +85,11 @@ public class DocumentCreateOptions {
 	}
 
 	/**
-	 * @param overwrite
-	 *            If set to true, the insert becomes a replace-insert. If a document with the same {@code _key}
-	 *            already exists the new document is not rejected with unique constraint violated but will replace the
-	 *            old document.
-	 * @since ArangoDB 3.4
+	 * @param overwrite If set to true, the insert becomes a replace-insert. If a document with the same {@code _key}
+	 *                  already exists the new document is not rejected with unique constraint violated but will replace
+	 *                  the old document.
 	 * @return options
+	 * @since ArangoDB 3.4
 	 */
 	public DocumentCreateOptions overwrite(final Boolean overwrite) {
 		this.overwrite = overwrite;
@@ -104,13 +101,26 @@ public class DocumentCreateOptions {
 	}
 
 	/**
-	 * @param silent
-	 *            If set to true, an empty object will be returned as response. No meta-data will be returned for the
-	 *            created document. This option can be used to save some network traffic.
+	 * @param silent If set to true, an empty object will be returned as response. No meta-data will be returned for the
+	 *               created document. This option can be used to save some network traffic.
 	 * @return options
 	 */
 	public DocumentCreateOptions silent(final Boolean silent) {
 		this.silent = silent;
+		return this;
+	}
+
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
+
+	/**
+	 * @param streamTransactionId If set, the operation will be executed within the transaction.
+	 * @return options
+	 * @since ArangoDB 3.5.0
+	 */
+	public DocumentCreateOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
 		return this;
 	}
 

@@ -22,7 +22,8 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
+ * @author Michele Rastelli
+ *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
  *      Documentation</a>
  */
@@ -34,6 +35,7 @@ public class DocumentReplaceOptions {
 	private Boolean returnNew;
 	private Boolean returnOld;
 	private Boolean silent;
+	private String streamTransactionId;
 
 	public DocumentReplaceOptions() {
 		super();
@@ -124,6 +126,20 @@ public class DocumentReplaceOptions {
 	 */
 	public DocumentReplaceOptions silent(final Boolean silent) {
 		this.silent = silent;
+		return this;
+	}
+
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
+
+	/**
+	 * @param streamTransactionId If set, the operation will be executed within the transaction.
+	 * @return options
+	 * @since ArangoDB 3.5.0
+	 */
+	public DocumentReplaceOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
 		return this;
 	}
 

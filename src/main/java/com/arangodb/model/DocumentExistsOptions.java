@@ -22,15 +22,16 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
+ * @author Michele Rastelli
  * @see <a href= "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class DocumentExistsOptions {
 
 	private String ifNoneMatch;
 	private String ifMatch;
 	private boolean catchException;
+	private String streamTransactionId;
 
 	public DocumentExistsOptions() {
 		super();
@@ -42,8 +43,7 @@ public class DocumentExistsOptions {
 	}
 
 	/**
-	 * @param ifNoneMatch
-	 *            document revision must not contain If-None-Match
+	 * @param ifNoneMatch document revision must not contain If-None-Match
 	 * @return options
 	 */
 	public DocumentExistsOptions ifNoneMatch(final String ifNoneMatch) {
@@ -56,8 +56,7 @@ public class DocumentExistsOptions {
 	}
 
 	/**
-	 * @param ifMatch
-	 *            document revision must contain If-Match
+	 * @param ifMatch document revision must contain If-Match
 	 * @return options
 	 */
 	public DocumentExistsOptions ifMatch(final String ifMatch) {
@@ -70,12 +69,25 @@ public class DocumentExistsOptions {
 	}
 
 	/**
-	 * @param catchException
-	 *            whether or not catch possible thrown exceptions
+	 * @param catchException whether or not catch possible thrown exceptions
 	 * @return options
 	 */
 	public DocumentExistsOptions catchException(final boolean catchException) {
 		this.catchException = catchException;
+		return this;
+	}
+
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
+
+	/**
+	 * @param streamTransactionId If set, the operation will be executed within the transaction.
+	 * @return options
+	 * @since ArangoDB 3.5.0
+	 */
+	public DocumentExistsOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
 		return this;
 	}
 

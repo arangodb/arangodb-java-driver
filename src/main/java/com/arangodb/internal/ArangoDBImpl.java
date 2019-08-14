@@ -23,6 +23,7 @@ package com.arangodb.internal;
 import java.io.IOException;
 import java.util.Collection;
 
+import com.arangodb.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +31,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.Protocol;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
@@ -58,6 +53,7 @@ import com.arangodb.velocystream.Response;
 /**
  * @author Mark Vollmary
  * @author Heiko Kernbach
+ * @author Michele Rastelli
  *
  */
 public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implements ArangoDB {
@@ -161,6 +157,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 	@Override
 	public ArangoDBVersion getVersion() throws ArangoDBException {
 		return db().getVersion();
+	}
+
+	@Override
+	public ArangoDBEngine getEngine() throws ArangoDBException {
+		return db().getEngine();
 	}
 
 	@Override

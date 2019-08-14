@@ -50,6 +50,7 @@ import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  *
  */
 public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
@@ -349,12 +350,22 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 	@Override
 	public CollectionEntity truncate() throws ArangoDBException {
-		return executor.execute(truncateRequest(), CollectionEntity.class);
+		return truncate(null);
+	}
+
+	@Override
+	public CollectionEntity truncate(CollectionTruncateOptions options) throws ArangoDBException {
+		return executor.execute(truncateRequest(options), CollectionEntity.class);
 	}
 
 	@Override
 	public CollectionPropertiesEntity count() throws ArangoDBException {
-		return executor.execute(countRequest(), CollectionPropertiesEntity.class);
+		return count(null);
+	}
+
+	@Override
+	public CollectionPropertiesEntity count(CollectionCountOptions options) throws ArangoDBException {
+		return executor.execute(countRequest(options), CollectionPropertiesEntity.class);
 	}
 
 	@Override

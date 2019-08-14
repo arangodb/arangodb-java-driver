@@ -24,7 +24,8 @@ import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark Vollmary
- * 
+ * @author Michele Rastelli
+ *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
  *      Documentation</a>
  */
@@ -35,6 +36,7 @@ public class DocumentReadOptions {
 	private boolean catchException;
 	@Expose(serialize = false)
 	private Boolean allowDirtyRead;
+	private String streamTransactionId;
 
 	public DocumentReadOptions() {
 		super();
@@ -98,6 +100,20 @@ public class DocumentReadOptions {
 
 	public Boolean getAllowDirtyRead() {
 		return allowDirtyRead;
+	}
+
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
+
+	/**
+	 * @param streamTransactionId If set, the operation will be executed within the transaction.
+	 * @return options
+	 * @since ArangoDB 3.5.0
+	 */
+	public DocumentReadOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
+		return this;
 	}
 
 }

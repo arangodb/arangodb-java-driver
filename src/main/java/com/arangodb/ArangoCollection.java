@@ -36,24 +36,25 @@ import com.arangodb.model.*;
 
 /**
  * Interface for operations on ArangoDB collection level.
- * 
+ *
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Collection API Documentation</a>
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
  * @author Mark Vollmary
  * @author Heiko Kernbach
+ * @author Michele Rastelli
  */
 public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * The the handler of the database the collection is within
-	 * 
+	 *
 	 * @return database handler
 	 */
 	public ArangoDatabase db();
 
 	/**
 	 * The name of the collection
-	 * 
+	 *
 	 * @return collection name
 	 */
 	public String name();
@@ -61,7 +62,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
 	 * _key is given, a new unique _key is generated automatically.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param value
@@ -74,7 +75,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
 	 * _key is given, a new unique _key is generated automatically.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param value
@@ -89,7 +90,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
 	 * _key is given, a new unique _key is generated automatically.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param values
@@ -102,7 +103,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates new documents from the given documents, unless there is already a document with the _key given. If no
 	 * _key is given, a new unique _key is generated automatically.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
 	 *      Documentation</a>
 	 * @param values
@@ -118,7 +119,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Bulk imports the given values into the collection.
-	 * 
+	 *
 	 * @param values
 	 *            a list of Objects that will be stored as documents
 	 * @return information about the import
@@ -128,7 +129,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Bulk imports the given values into the collection.
-	 * 
+	 *
 	 * @param values
 	 *            a list of Objects that will be stored as documents
 	 * @param options
@@ -157,7 +158,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Bulk imports the given values into the collection.
-	 * 
+	 *
 	 * @param values
 	 *            JSON-encoded array of objects that will be stored as documents
 	 * @return information about the import
@@ -167,7 +168,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Bulk imports the given values into the collection.
-	 * 
+	 *
 	 * @param values
 	 *            JSON-encoded array of objects that will be stored as documents
 	 * @param options
@@ -179,7 +180,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieves the document with the given {@code key} from the collection.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -193,7 +194,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieves the document with the given {@code key} from the collection.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -209,7 +210,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieves multiple documents with the given {@code _key} from the collection.
-	 * 
+	 *
 	 * @param keys
 	 *            The keys of the documents
 	 * @param type
@@ -221,7 +222,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieves multiple documents with the given {@code _key} from the collection.
-	 * 
+	 *
 	 * @param keys
 	 *            The keys of the documents
 	 * @param type
@@ -237,7 +238,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
 	 * precondition is violated
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -252,7 +253,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Replaces the document with {@code key} with the one in the body, provided there is such a document and no
 	 * precondition is violated
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -270,7 +271,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
 	 * specified by the _key attributes in the documents in values.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
 	 *      Documentation</a>
 	 * @param values
@@ -283,7 +284,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
 	 * specified by the _key attributes in the documents in values.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
 	 *      Documentation</a>
 	 * @param values
@@ -301,7 +302,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
 	 * to patch (the patch document). All attributes from the patch document will be added to the existing document if
 	 * they do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -317,7 +318,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * Partially updates the document identified by document-key. The value must contain a document with the attributes
 	 * to patch (the patch document). All attributes from the patch document will be added to the existing document if
 	 * they do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -337,7 +338,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
 	 * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
 	 * overwritten in the existing documents if they do exist there.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
 	 *      Documentation</a>
 	 * @param values
@@ -352,7 +353,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
 	 * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
 	 * overwritten in the existing documents if they do exist there.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
 	 *      Documentation</a>
 	 * @param values
@@ -368,7 +369,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes the document with the given {@code key} from the collection.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -380,7 +381,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes the document with the given {@code key} from the collection.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
 	 *      Documentation</a>
 	 * @param key
@@ -398,7 +399,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes multiple documents from the collection.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
 	 *      Documentation</a>
@@ -411,7 +412,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes multiple documents from the collection.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
 	 *      Documentation</a>
@@ -432,7 +433,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Checks if the document exists by reading a single document head
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
 	 *      Documentation</a>
@@ -444,7 +445,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Checks if the document exists by reading a single document head
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
 	 *      Documentation</a>
@@ -460,7 +461,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Fetches information about the index with the given {@code id} and returns it.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
 	 * @param id
 	 *            The index-handle
@@ -471,7 +472,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes the index with the given {@code id} from the collection.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
 	 * @param id
 	 *            The index-handle
@@ -482,7 +483,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a hash index for the collection if it does not already exist.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
 	 * @param fields
 	 *            A list of attribute paths
@@ -495,7 +496,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a skip-list index for the collection, if it does not already exist.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
 	 *      Documentation</a>
 	 * @param fields
@@ -509,7 +510,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a persistent index for the collection, if it does not already exist.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
 	 *      Documentation</a>
 	 * @param fields
@@ -523,7 +524,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a geo-spatial index for the collection, if it does not already exist.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
 	 *      Documentation</a>
 	 * @param fields
@@ -537,7 +538,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Creates a fulltext index for the collection, if it does not already exist.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
 	 *      Documentation</a>
 	 * @param fields
@@ -565,7 +566,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Fetches a list of all indexes on this collection.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-all-indexes-of-a-collection">API
 	 *      Documentation</a>
@@ -576,14 +577,14 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Checks whether the collection exists
-	 * 
+	 *
 	 * @return true if the collection exists, otherwise false
 	 */
 	boolean exists() throws ArangoDBException;
 
 	/**
 	 * Removes all documents from the collection, but leaves the indexes intact
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
 	 *      Documentation</a>
 	 * @return information about the collection
@@ -592,8 +593,20 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	CollectionEntity truncate() throws ArangoDBException;
 
 	/**
+	 * Removes all documents from the collection, but leaves the indexes intact
+	 *
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 * @return information about the collection
+	 * @since ArangoDB 3.5.0
+	 * @throws ArangoDBException
+	 */
+	CollectionEntity truncate(CollectionTruncateOptions options) throws ArangoDBException;
+
+	/**
 	 * Counts the documents in a collection
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
 	 *      Documentation</a>
@@ -603,8 +616,21 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	CollectionPropertiesEntity count() throws ArangoDBException;
 
 	/**
+	 * Counts the documents in a collection
+	 *
+	 * @see <a href=
+	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+	 *      Documentation</a>
+	 * @param options
+	 * @return information about the collection, including the number of documents
+	 * @since ArangoDB 3.5.0
+	 * @throws ArangoDBException
+	 */
+	CollectionPropertiesEntity count(CollectionCountOptions options) throws ArangoDBException;
+
+	/**
 	 * Creates a collection for this collection's name, then returns collection information from the server.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
 	 *      Documentation</a>
 	 * @return information about the collection
@@ -615,7 +641,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a collection with the given {@code options} for this collection's name, then returns collection
 	 * information from the server.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
 	 *      Documentation</a>
 	 * @param options
@@ -627,7 +653,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes the collection from the database.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
 	 *      Documentation</a>
 	 * @throws ArangoDBException
@@ -636,7 +662,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Deletes the collection from the database.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
 	 *      Documentation</a>
 	 * @param isSystem
@@ -649,7 +675,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Tells the server to load the collection into memory.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#load-collection">API
 	 *      Documentation</a>
 	 * @return information about the collection
@@ -660,7 +686,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Tells the server to remove the collection from memory. This call does not delete any documents. You can use the
 	 * collection afterwards; in which case it will be loaded into memory, again.
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#unload-collection">API
 	 *      Documentation</a>
 	 * @return information about the collection
@@ -670,7 +696,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Returns information about the collection
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-information-about-a-collection">API
 	 *      Documentation</a>
@@ -681,7 +707,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Reads the properties of the specified collection
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
 	 *      Documentation</a>
@@ -692,7 +718,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Changes the properties of the collection
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#change-properties-of-a-collection">API
 	 *      Documentation</a>
@@ -705,7 +731,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Renames the collection
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#rename-collection">API
 	 *      Documentation</a>
 	 * @param newName
@@ -717,7 +743,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Retrieve the collections revision
-	 * 
+	 *
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
 	 *      Documentation</a>
 	 * @return information about the collection, including the collections revision
@@ -728,7 +754,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Grants or revoke access to the collection for user user. You need permission to the _system database in order to
 	 * execute this call.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
 	 *      Documentation</a>
@@ -743,7 +769,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	/**
 	 * Revokes access to the collection for user user. You need permission to the _system database in order to execute
 	 * this call.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
 	 *      Documentation</a>
@@ -755,7 +781,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Clear the collection access level, revert back to the default access level.
-	 * 
+	 *
 	 * @see <a href=
 	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
 	 *      Documentation</a>
@@ -768,7 +794,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
 	 * Get the collection access level
-	 * 
+	 *
 	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-specific-collection-access-level">
 	 *      API Documentation</a>
 	 * @param user
