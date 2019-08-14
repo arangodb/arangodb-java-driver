@@ -29,6 +29,7 @@ import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -261,25 +262,9 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(link.getFields().iterator().next().getName(), is("value"));
 	}
 
-	@Test
-	public void createGetAndDeleteAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
+	private void createGetAndDeleteAnalyzer(AnalyzerEntity options){
 
-		String name = "test-" + UUID.randomUUID().toString();
-		String fullyQualifiedName = db.name() + "::" + name;
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.delimiter);
-		options.setProperties(Collections.singletonMap("delimiter", "-"));
+		String fullyQualifiedName = db.name() + "::" + options.getName();
 
 		// createAnalyzer
 		AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
@@ -320,5 +305,158 @@ public class ArangoSearchTest extends BaseTest {
 		}
 
 	}
+
+	@Test
+	public void identityAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.identity);
+		options.setProperties(Collections.emptyMap());
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void delimiterAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.delimiter);
+		options.setProperties(Collections.singletonMap("delimiter", "-"));
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void stemAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.stem);
+		options.setProperties(Collections.singletonMap("locale", "ru.utf-8"));
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void normAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("locale", "ru.utf-8");
+		properties.put("case", "lower");
+		properties.put("accent", true);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.norm);
+		options.setProperties(properties);
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void ngramAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("max", 6L);
+		properties.put("min", 3L);
+		properties.put("preserveOriginal", true);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.ngram);
+		options.setProperties(properties);
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	@Ignore
+	public void textAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("locale", "ru.utf-8");
+//		properties.put("case", "lower");
+//		properties.put("stopwords", Collections.emptyList());
+//		properties.put("stopwordsPath", Collections.emptyList());
+//		properties.put("accent", true);
+//		properties.put("stemming", true);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.text);
+		options.setProperties(properties);
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+
 
 }
