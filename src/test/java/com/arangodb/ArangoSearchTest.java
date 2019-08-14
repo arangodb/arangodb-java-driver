@@ -20,31 +20,26 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.Collection;
-
-import com.arangodb.entity.arangosearch.*;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.*;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.*;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
- *
  */
 @RunWith(Parameterized.class)
 public class ArangoSearchTest extends BaseTest {
@@ -62,19 +57,19 @@ public class ArangoSearchTest extends BaseTest {
 			c.drop();
 		} catch (final ArangoDBException e) {
 		}
-		
+
 		try {
 			ArangoCollection c = db.collection("view_replace_prop_test_collection");
 			c.drop();
 		} catch (final ArangoDBException e) {
 		}
-		
+
 		try {
 			db.view(VIEW_NAME).drop();
 		} catch (final ArangoDBException e) {
 		}
 	}
-	
+
 	@Test
 	public void exists() {
 		if (!requireVersion(3, 4)) {
@@ -223,9 +218,9 @@ public class ArangoSearchTest extends BaseTest {
 		options.cleanupIntervalStep(15L);
 		options.consolidationIntervalMsec(65000L);
 		options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.));
-		options.link(
-			CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
-					.trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
+		options.link(CollectionLink.on("view_update_prop_test_collection")
+				.fields(FieldLink.on("value").analyzers("identity").trackListPositions(true).includeAllFields(true)
+						.storeValues(StoreValuesType.ID)));
 		final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getCleanupIntervalStep(), is(15L));
@@ -250,13 +245,13 @@ public class ArangoSearchTest extends BaseTest {
 		if (!requireVersion(3, 4)) {
 			return;
 		}
-		
+
 		db.createCollection("view_replace_prop_test_collection");
 		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
 		view.create(new ArangoSearchCreateOptions());
 		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
-		options.link(
-			CollectionLink.on("view_replace_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")));
+		options.link(CollectionLink.on("view_replace_prop_test_collection")
+				.fields(FieldLink.on("value").analyzers("identity")));
 		final ArangoSearchPropertiesEntity properties = view.replaceProperties(options);
 		assertThat(properties, is(not(nullValue())));
 		assertThat(properties.getLinks().size(), is(1));
@@ -265,5 +260,200 @@ public class ArangoSearchTest extends BaseTest {
 		assertThat(link.getFields().size(), is(1));
 		assertThat(link.getFields().iterator().next().getName(), is("value"));
 	}
+
+	private void createGetAndDeleteAnalyzer(AnalyzerEntity options){
+
+		String fullyQualifiedName = db.name() + "::" + options.getName();
+
+		// createAnalyzer
+		AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
+
+		assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
+		assertThat(createdAnalyzer.getType(), is(options.getType()));
+		assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
+
+		// getAnalyzer
+		AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
+		assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
+		assertThat(gotAnalyzer.getType(), is(options.getType()));
+		assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
+
+		// getAnalyzers
+		@SuppressWarnings("OptionalGetWithoutIsPresent")
+		AnalyzerEntity foundAnalyzer = db.getAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
+				.findFirst().get();
+
+		assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
+		assertThat(foundAnalyzer.getType(), is(options.getType()));
+		assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(foundAnalyzer.getProperties(), is(options.getProperties()));
+
+		AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
+		deleteOptions.setForce(true);
+
+		// deleteAnalyzer
+		db.deleteAnalyzer(options.getName(), deleteOptions);
+
+		try {
+			db.getAnalyzer(options.getName());
+			throw new RuntimeException("deleted analyzer should not be found!");
+		} catch (ArangoDBException e) {
+			// ok
+		}
+
+	}
+
+	@Test
+	public void identityAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.identity);
+		options.setProperties(Collections.emptyMap());
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void delimiterAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.delimiter);
+		options.setProperties(Collections.singletonMap("delimiter", "-"));
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void stemAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.stem);
+		options.setProperties(Collections.singletonMap("locale", "ru.utf-8"));
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void normAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("locale", "ru.utf-8");
+		properties.put("case", "lower");
+		properties.put("accent", true);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.norm);
+		options.setProperties(properties);
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void ngramAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("max", 6L);
+		properties.put("min", 3L);
+		properties.put("preserveOriginal", true);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.ngram);
+		options.setProperties(properties);
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+	@Test
+	public void textAnalyzer() {
+		if (!requireVersion(3, 5)) {
+			return;
+		}
+
+		String name = "test-" + UUID.randomUUID().toString();
+
+		Set<AnalyzerFeature> features = new HashSet<>();
+		features.add(AnalyzerFeature.frequency);
+		features.add(AnalyzerFeature.norm);
+		features.add(AnalyzerFeature.position);
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("locale", "ru.utf-8");
+		properties.put("case", "lower");
+		properties.put("stopwords", Collections.emptyList());
+		properties.put("accent", true);
+		properties.put("stemming", true);
+
+		AnalyzerEntity options = new AnalyzerEntity();
+		options.setFeatures(features);
+		options.setName(name);
+		options.setType(AnalyzerType.text);
+		options.setProperties(properties);
+
+		createGetAndDeleteAnalyzer(options);
+	}
+
+
 
 }

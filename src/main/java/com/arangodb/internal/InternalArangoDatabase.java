@@ -26,10 +26,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
 import com.arangodb.util.ArangoSerializer;
@@ -493,4 +495,35 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		return request(name(), RequestType.POST, InternalArangoView.PATH_API_VIEW).setBody(util().serialize(
 				ArangoSearchOptionsBuilder.build(options != null ? options : new ArangoSearchCreateOptions(), name)));
 	}
+
+	protected Request getAnalyzerRequest(final String name) {
+		return request(name(), RequestType.GET, InternalArangoView.PATH_API_ANALYZER, name);
+	}
+
+	protected Request getAnalyzersRequest() {
+		return request(name(), RequestType.GET, InternalArangoView.PATH_API_ANALYZER);
+	}
+
+	protected ResponseDeserializer<Collection<AnalyzerEntity>> getAnalyzersResponseDeserializer() {
+		return new ResponseDeserializer<Collection<AnalyzerEntity>>() {
+			@Override
+			public Collection<AnalyzerEntity> deserialize(final Response response) throws VPackException {
+				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+				return util().deserialize(result, new Type<Collection<AnalyzerEntity>>() {
+				}.getType());
+			}
+		};
+	}
+
+	protected Request createAnalyzerRequest(final AnalyzerEntity options) {
+		return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
+				.setBody(util().serialize(options));
+	}
+
+	protected Request deleteAnalyzerRequest(final String name, final AnalyzerDeleteOptions options) {
+		Request request = request(name(), RequestType.DELETE, InternalArangoView.PATH_API_ANALYZER, name);
+		request.putQueryParam("force", options != null ? options.getForce() : null);
+		return request;
+	}
+
 }

@@ -25,6 +25,8 @@ import java.util.Map;
 
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
+import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 
 /**
@@ -706,5 +708,58 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @since ArangoDB 3.4.0
 	 */
 	ViewEntity createArangoSearch(String name, ArangoSearchCreateOptions options) throws ArangoDBException;
+
+	/**
+	 * Creates an Analyzer
+	 *
+	 * @param options AnalyzerEntity
+	 * @return the created Analyzer
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException;
+
+	/**
+	 * Gets information about an Analyzer
+	 *
+	 * @param name of the Analyzer without database prefix
+	 * @return information about an Analyzer
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	AnalyzerEntity getAnalyzer(String name) throws ArangoDBException;
+
+	/**
+	 * Retrieves all analyzers definitions.
+	 *
+	 * @return collection of all analyzers definitions
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException;
+
+	/**
+	 * Deletes an Analyzer
+	 *
+	 * @param name    of the Analyzer without database prefix
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	void deleteAnalyzer(String name) throws ArangoDBException;
+
+	/**
+	 * Deletes an Analyzer
+	 *
+	 * @param name    of the Analyzer without database prefix
+	 * @param options AnalyzerDeleteOptions
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException;
 
 }
