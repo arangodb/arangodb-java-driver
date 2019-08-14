@@ -427,7 +427,6 @@ public class ArangoSearchTest extends BaseTest {
 	}
 
 	@Test
-	@Ignore
 	public void textAnalyzer() {
 		if (!requireVersion(3, 5)) {
 			return;
@@ -442,11 +441,10 @@ public class ArangoSearchTest extends BaseTest {
 
 		Map<String, Object> properties = new HashMap<>();
 		properties.put("locale", "ru.utf-8");
-//		properties.put("case", "lower");
-//		properties.put("stopwords", Collections.emptyList());
-//		properties.put("stopwordsPath", Collections.emptyList());
-//		properties.put("accent", true);
-//		properties.put("stemming", true);
+		properties.put("case", "lower");
+		properties.put("stopwords", Collections.emptyList());
+		properties.put("accent", true);
+		properties.put("stemming", true);
 
 		AnalyzerEntity options = new AnalyzerEntity();
 		options.setFeatures(features);
