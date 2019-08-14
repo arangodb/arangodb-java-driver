@@ -723,7 +723,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	/**
 	 * Gets information about an Analyzer
 	 *
-	 * @param name id of the Analyzer without database prefix
+	 * @param name of the Analyzer without database prefix
 	 * @return information about an Analyzer
 	 * @throws ArangoDBException
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
@@ -732,8 +732,19 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	AnalyzerEntity getAnalyzer(String name) throws ArangoDBException;
 
 	/**
+	 * Retrieves all analyzers definitions.
+	 *
+	 * @return collection of all analyzers definitions
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException;
+
+	/**
 	 * Deletes an Analyzer
 	 *
+	 * @param name    of the Analyzer without database prefix
 	 * @throws ArangoDBException
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
 	 * @since ArangoDB 3.5.0
@@ -743,7 +754,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	/**
 	 * Deletes an Analyzer
 	 *
-	 * @param name id of the Analyzer without database prefix
+	 * @param name    of the Analyzer without database prefix
 	 * @param options AnalyzerDeleteOptions
 	 * @throws ArangoDBException
 	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>

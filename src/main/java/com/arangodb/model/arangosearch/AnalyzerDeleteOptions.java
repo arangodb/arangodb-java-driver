@@ -21,14 +21,13 @@
 package com.arangodb.model.arangosearch;
 
 /**
- * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class AnalyzerDeleteOptions {
 
 	private Boolean force;
 
-	public AnalyzerDeleteOptions(Boolean force) {
-		this.force = force;
+	public AnalyzerDeleteOptions() {
 	}
 
 	public Boolean getForce() {

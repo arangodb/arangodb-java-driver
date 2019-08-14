@@ -25,6 +25,7 @@ import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
+import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import org.junit.After;
@@ -267,6 +268,7 @@ public class ArangoSearchTest extends BaseTest {
 		}
 
 		String name = "test-" + UUID.randomUUID().toString();
+		String fullyQualifiedName = db.name() + "::" + name;
 
 		Set<AnalyzerFeature> features = new HashSet<>();
 		features.add(AnalyzerFeature.frequency);
@@ -279,20 +281,36 @@ public class ArangoSearchTest extends BaseTest {
 		options.setType(AnalyzerType.delimiter);
 		options.setProperties(Collections.singletonMap("delimiter", "-"));
 
+		// createAnalyzer
 		AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
 
-		assertThat(createdAnalyzer.getName(), is(db.name() + "::" + options.getName()));
+		assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
 		assertThat(createdAnalyzer.getType(), is(options.getType()));
 		assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
 		assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
 
+		// getAnalyzer
 		AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
-		assertThat(gotAnalyzer.getName(), is(db.name() + "::" + options.getName()));
+		assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
 		assertThat(gotAnalyzer.getType(), is(options.getType()));
 		assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
 		assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
 
-		db.deleteAnalyzer(options.getName());
+		// getAnalyzers
+		@SuppressWarnings("OptionalGetWithoutIsPresent")
+		AnalyzerEntity foundAnalyzer = db.getAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
+				.findFirst().get();
+
+		assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
+		assertThat(foundAnalyzer.getType(), is(options.getType()));
+		assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
+		assertThat(foundAnalyzer.getProperties(), is(options.getProperties()));
+
+		AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
+		deleteOptions.setForce(true);
+
+		// deleteAnalyzer
+		db.deleteAnalyzer(options.getName(), deleteOptions);
 
 		try {
 			db.getAnalyzer(options.getName());

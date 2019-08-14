@@ -436,6 +436,11 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 	}
 
 	@Override
+	public Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException {
+		return executor.execute(getAnalyzersRequest(), getAnalyzersResponseDeserializer());
+	}
+
+	@Override
 	public void deleteAnalyzer(String name) throws ArangoDBException {
 		executor.execute(deleteAnalyzerRequest(name, null), Void.class);
 	}
