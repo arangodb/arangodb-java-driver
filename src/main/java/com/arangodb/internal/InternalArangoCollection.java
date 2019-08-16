@@ -710,6 +710,12 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 		return request;
 	}
 
+	protected <T> Request responsibleShardRequest(final T value) {
+		final Request request = request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "responsibleShard");
+		request.setBody(util(Serializer.CUSTOM).serialize(value));
+		return request;
+	}
+
 	protected Request getRevisionRequest() {
 		return request(db.name(), RequestType.GET, PATH_API_COLLECTION, name, "revision");
 	}

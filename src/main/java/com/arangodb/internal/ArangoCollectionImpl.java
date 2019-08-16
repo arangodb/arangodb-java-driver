@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.arangodb.entity.*;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,23 +36,12 @@ import org.slf4j.LoggerFactory;
 import com.arangodb.model.*;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CollectionPropertiesEntity;
-import com.arangodb.entity.CollectionRevisionEntity;
-import com.arangodb.entity.DocumentCreateEntity;
-import com.arangodb.entity.DocumentDeleteEntity;
-import com.arangodb.entity.DocumentImportEntity;
-import com.arangodb.entity.DocumentUpdateEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.MultiDocumentEntity;
-import com.arangodb.entity.Permissions;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- *
  */
 public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
 		implements ArangoCollection {
@@ -70,23 +60,22 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	@Override
 	public <T> DocumentCreateEntity<T> insertDocument(final T value, final DocumentCreateOptions options)
 			throws ArangoDBException {
-		return executor.execute(insertDocumentRequest(value, options),
-			insertDocumentResponseDeserializer(value, options));
+		return executor
+				.execute(insertDocumentRequest(value, options), insertDocumentResponseDeserializer(value, options));
 	}
 
 	@Override
 	public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(final Collection<T> values)
 			throws ArangoDBException {
-				return insertDocuments(values, new DocumentCreateOptions());
+		return insertDocuments(values, new DocumentCreateOptions());
 	}
 
 	@Override
 	public <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
-		final Collection<T> values,
-		final DocumentCreateOptions options) throws ArangoDBException {
+			final Collection<T> values, final DocumentCreateOptions options) throws ArangoDBException {
 		final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
-		return executor.execute(insertDocumentsRequest(values, params),
-			insertDocumentsResponseDeserializer(values, params));
+		return executor
+				.execute(insertDocumentsRequest(values, params), insertDocumentsResponseDeserializer(values, params));
 	}
 
 	@Override
@@ -101,8 +90,9 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	}
 
 	@Override
-	public Collection<DocumentImportEntity> importDocuments(Collection<?> values, DocumentImportOptions options,
-															int batchSize, int numThreads) throws ArangoDBException {
+	public Collection<DocumentImportEntity> importDocuments(
+			Collection<?> values, DocumentImportOptions options, int batchSize, int numThreads)
+			throws ArangoDBException {
 		List<? extends List<?>> batches = ListUtils.partition(new ArrayList<>(values), batchSize);
 		ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 		List<CompletableFuture<DocumentImportEntity>> completableFutureList = new ArrayList<>();
@@ -124,7 +114,7 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			}
 			documentImportEntityList.add(documentImportEntity);
 		}
-	    executorService.shutdown();
+		executorService.shutdown();
 		return documentImportEntityList;
 	}
 
@@ -154,9 +144,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
-			if ((e.getResponseCode() != null && (e.getResponseCode() == 404
-					|| e.getResponseCode() == 304 || e.getResponseCode() == 412))
-					&& (options == null || options.isCatchException())) {
+			if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
+					|| e.getResponseCode() == 412)) && (options == null || options.isCatchException())) {
 				return null;
 			}
 			throw e;
@@ -171,9 +160,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 	@Override
 	public <T> MultiDocumentEntity<T> getDocuments(
-		final Collection<String> keys,
-		final Class<T> type,
-		final DocumentReadOptions options) throws ArangoDBException {
+			final Collection<String> keys, final Class<T> type, final DocumentReadOptions options)
+			throws ArangoDBException {
 		return executor.execute(getDocumentsRequest(keys, options), getDocumentsResponseDeserializer(type, options));
 	}
 
@@ -184,11 +172,9 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 	@Override
 	public <T> DocumentUpdateEntity<T> replaceDocument(
-		final String key,
-		final T value,
-		final DocumentReplaceOptions options) throws ArangoDBException {
+			final String key, final T value, final DocumentReplaceOptions options) throws ArangoDBException {
 		return executor.execute(replaceDocumentRequest(key, value, options),
-			replaceDocumentResponseDeserializer(value, options));
+				replaceDocumentResponseDeserializer(value, options));
 	}
 
 	@Override
@@ -199,11 +185,10 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 	@Override
 	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
-		final Collection<T> values,
-		final DocumentReplaceOptions options) throws ArangoDBException {
+			final Collection<T> values, final DocumentReplaceOptions options) throws ArangoDBException {
 		final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
-		return executor.execute(replaceDocumentsRequest(values, params),
-			replaceDocumentsResponseDeserializer(values, params));
+		return executor
+				.execute(replaceDocumentsRequest(values, params), replaceDocumentsResponseDeserializer(values, params));
 	}
 
 	@Override
@@ -213,39 +198,34 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 
 	@Override
 	public <T> DocumentUpdateEntity<T> updateDocument(
-		final String key,
-		final T value,
-		final DocumentUpdateOptions options) throws ArangoDBException {
+			final String key, final T value, final DocumentUpdateOptions options) throws ArangoDBException {
 		return executor.execute(updateDocumentRequest(key, value, options),
-			updateDocumentResponseDeserializer(value, options));
+				updateDocumentResponseDeserializer(value, options));
 	}
 
 	@Override
 	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(final Collection<T> values)
 			throws ArangoDBException {
-				return updateDocuments(values, new DocumentUpdateOptions());
+		return updateDocuments(values, new DocumentUpdateOptions());
 	}
 
 	@Override
 	public <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
-		final Collection<T> values,
-		final DocumentUpdateOptions options) throws ArangoDBException {
+			final Collection<T> values, final DocumentUpdateOptions options) throws ArangoDBException {
 		final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
-		return executor.execute(updateDocumentsRequest(values, params),
-			updateDocumentsResponseDeserializer(values, params));
+		return executor
+				.execute(updateDocumentsRequest(values, params), updateDocumentsResponseDeserializer(values, params));
 	}
 
 	@Override
 	public DocumentDeleteEntity<Void> deleteDocument(final String key) throws ArangoDBException {
 		return executor.execute(deleteDocumentRequest(key, new DocumentDeleteOptions()),
-			deleteDocumentResponseDeserializer(Void.class));
+				deleteDocumentResponseDeserializer(Void.class));
 	}
 
 	@Override
 	public <T> DocumentDeleteEntity<T> deleteDocument(
-		final String key,
-		final Class<T> type,
-		final DocumentDeleteOptions options) throws ArangoDBException {
+			final String key, final Class<T> type, final DocumentDeleteOptions options) throws ArangoDBException {
 		return executor.execute(deleteDocumentRequest(key, options), deleteDocumentResponseDeserializer(type));
 	}
 
@@ -253,14 +233,13 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 	public MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(final Collection<?> values)
 			throws ArangoDBException {
 		return executor.execute(deleteDocumentsRequest(values, new DocumentDeleteOptions()),
-			deleteDocumentsResponseDeserializer(Void.class));
+				deleteDocumentsResponseDeserializer(Void.class));
 	}
 
 	@Override
 	public <T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
-		final Collection<?> values,
-		final Class<T> type,
-		final DocumentDeleteOptions options) throws ArangoDBException {
+			final Collection<?> values, final Class<T> type, final DocumentDeleteOptions options)
+			throws ArangoDBException {
 		return executor.execute(deleteDocumentsRequest(values, options), deleteDocumentsResponseDeserializer(type));
 	}
 
@@ -275,9 +254,8 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
 			return true;
 		} catch (final ArangoDBException e) {
-			if ((e.getResponseCode() != null && (e.getResponseCode() == 404
-					|| e.getResponseCode() == 304 || e.getResponseCode() == 412))
-					&& (options == null || options.isCatchException())) {
+			if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
+					|| e.getResponseCode() == 412)) && (options == null || options.isCatchException())) {
 				return false;
 			}
 			throw e;
@@ -419,6 +397,11 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 		final CollectionEntity result = executor.execute(renameRequest(newName), CollectionEntity.class);
 		name = result.getName();
 		return result;
+	}
+
+	@Override
+	public ShardEntity getResponsibleShard(final Object value) throws ArangoDBException {
+		return executor.execute(responsibleShardRequest(value), ShardEntity.class);
 	}
 
 	@Override
