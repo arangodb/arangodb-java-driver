@@ -664,6 +664,8 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *              which the responsible shard should be determined
 	 * @return information about the responsible shard
 	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/collection-getting.html#return-responsible-shard-for-a-document">
+	 * API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
 	ShardEntity getResponsibleShard(final Object value);
