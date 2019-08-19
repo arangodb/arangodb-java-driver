@@ -54,7 +54,7 @@ Retrieves all analyzers definitions.
 
 ## ArangoDatabase.deleteAnalyzer
 
-`ArangoDatabase.getAnalyzers(String name) : void`
+`ArangoDatabase.deleteAnalyzer(String name) : void`
 
 Deletes an Analyzer.
 
@@ -67,7 +67,7 @@ Deletes an Analyzer.
 
 ## ArangoDatabase.deleteAnalyzer
 
-`ArangoDatabase.getAnalyzers(String name, AnalyzerDeleteOptions options) : void`
+`ArangoDatabase.deleteAnalyzer(String name, AnalyzerDeleteOptions options) : void`
 
 Deletes an Analyzer.
 
