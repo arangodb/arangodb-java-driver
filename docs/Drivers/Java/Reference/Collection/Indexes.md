@@ -29,6 +29,11 @@ Creates a hash index for the collection if it does not already exist.
 
     If false, the de-duplication of array values is turned off.
 
+  - **inBackground**: `Boolean`
+
+    Indexes created with the 'inBackground' option, will not hold an exclusive collection
+    lock for the entire index creation period (rocksdb only).
+
 **Examples**
 
 ```Java
@@ -66,6 +71,11 @@ Creates a skip-list index for the collection if it does not already exist.
 
     If false, the de-duplication of array values is turned off.
 
+  - **inBackground**: `Boolean`
+
+    Indexes created with the 'inBackground' option, will not hold an exclusive collection
+    lock for the entire index creation period (rocksdb only).
+
 **Examples**
 
 ```Java
@@ -99,6 +109,11 @@ Creates a geo index for the collection if it does not already exist.
     then the order within the array is longitude followed by latitude.
     This corresponds to the format described in.
 
+  - **inBackground**: `Boolean`
+
+    Indexes created with the 'inBackground' option, will not hold an exclusive collection
+    lock for the entire index creation period (rocksdb only).
+
 **Examples**
 
 ```Java
@@ -131,6 +146,11 @@ Creates a fulltext index for the collection if it does not already exist.
     Minimum character length of words to index. Will default to a server-defined
     value if unspecified. It is thus recommended to set this value explicitly
     when creating the index.
+
+  - **inBackground**: `Boolean`
+
+    Indexes created with the 'inBackground' option, will not hold an exclusive collection
+    lock for the entire index creation period (rocksdb only).
 
 **Examples**
 
@@ -166,6 +186,11 @@ Creates a persistent index for the collection if it does not already exist.
   - **sparse**: `Boolean`
 
     If true, then create a sparse index
+
+  - **inBackground**: `Boolean`
+
+    Indexes created with the 'inBackground' option, will not hold an exclusive collection
+    lock for the entire index creation period (rocksdb only).
 
 **Examples**
 
