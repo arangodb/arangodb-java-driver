@@ -18,6 +18,24 @@ view information from the server.
 
 - **options**: `ArangoSearchCreateOptions`
 
+  - **commitIntervalMsec**: `Long`
+
+    Wait at least this many milliseconds between committing view data store changes
+    and making documents visible to queries (default: 1000, to disable use: 0). For
+    the case where there are a lot of inserts/updates, a lower value, until commit,
+    will cause the index not to account for them and memory usage would continue to
+    grow. For the case where there are a few inserts/updates, a higher value will
+    impact performance and waste disk space for each commit call without any added
+    benefits. Background: For data retrieval ArangoSearch views follow the concept
+    of "eventually-consistent", i.e. eventually all the data in ArangoDB will be
+    matched by corresponding query expressions. The concept of ArangoSearch view
+    "commit" operation is introduced to control the upper-bound on the time until
+    document addition/removals are actually reflected by corresponding query
+    expressions. Once a "commit" operation is complete all documents added/removed
+    prior to the start of the "commit" operation will be reflected by queries
+    invoked in subsequent ArangoDB transactions, in-progress ArangoDB transactions
+    will still continue to return a repeatable-read state.
+
   - **consolidationIntervalMsec**: `Long`
 
     Wait at least this many milliseconds between committing index data changes
@@ -54,9 +72,14 @@ view information from the server.
       Apply the "consolidation" operation if and only if (default: 300):
       `{segmentThreshold} < number_of_segments`
 
-    - **link**: `CollectionLink[]`
+    - **links**: `CollectionLink[]`
 
       A list of linked collections
+
+    - **primarySorts**: `CollectionLink[]`
+
+      A list of primary sort objects. When creating an ArangoSearch View, you
+      can optionally define a default sort order.
 
 **Examples**
 

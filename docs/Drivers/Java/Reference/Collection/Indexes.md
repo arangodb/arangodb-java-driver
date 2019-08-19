@@ -17,6 +17,11 @@ Creates a hash index for the collection if it does not already exist.
 
 - **options**: `HashIndexOptions`
 
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
   - **unique**: `Boolean`
 
     If true, then create a unique index
@@ -58,6 +63,11 @@ Creates a skip-list index for the collection if it does not already exist.
   A list of attribute paths
 
 - **options**: `SkipListIndexOptions`
+
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
 
   - **unique**: `Boolean`
 
@@ -103,6 +113,11 @@ Creates a geo index for the collection if it does not already exist.
 
 - **options**: `GeoIndexOptions`
 
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
   - **geoJson**: `Boolean`
 
     If a geo-spatial index on a location is constructed and geoJson is true,
@@ -140,6 +155,11 @@ Creates a fulltext index for the collection if it does not already exist.
   A list of attribute paths
 
 - **options**: `FulltextIndexOptions`
+
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
 
   - **minLength**: `Integer`
 
@@ -179,6 +199,11 @@ Creates a persistent index for the collection if it does not already exist.
 
 - **options**: `PersistentIndexOptions`
 
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
   - **unique**: `Boolean`
 
     If true, then create a unique index
@@ -200,6 +225,49 @@ ArangoDatabase db = arango.db("myDB");
 ArangoCollection collection = db.collection("some-collection");
 
 IndexEntity index = collection.ensurePersistentIndex(Arrays.asList("a", "b.c"));
+// the index has been created with the handle `index.getId()`
+```
+
+## ArangoCollection.ensureTtlIndex
+
+`ArangoCollection.ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options) : IndexEntity`
+
+Creates a ttl index for the collection if it does not already exist.
+
+**Arguments**
+
+- **fields**: `Iterable<String>`
+
+  A list of attribute paths
+
+- **options**: `PersistentIndexOptions`
+
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
+  - **expireAfter**: `Integer`
+
+    The time (in seconds) after a document's creation after which the documents count as "expired".
+
+  - **inBackground**: `Boolean`
+
+    Indexes created with the 'inBackground' option, will not hold an exclusive collection
+    lock for the entire index creation period (rocksdb only).
+
+**Examples**
+
+```Java
+ArangoDB arango = new ArangoDB.Builder().build();
+ArangoDatabase db = arango.db("myDB");
+ArangoCollection collection = db.collection("some-collection");
+
+final TtlIndexOptions options = new TtlIndexOptions();
+		options.name("myTtlIndex");
+		options.expireAfter(3600);
+
+IndexEntity index = collection.ensureTtlIndex(Arrays.asList("a", "b.c"), options);
 // the index has been created with the handle `index.getId()`
 ```
 

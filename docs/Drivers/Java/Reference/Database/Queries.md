@@ -151,6 +151,10 @@ a new _ArangoCursor_ instance for the result list.
     query statistics, warnings and profiling data will only be available after
     the query is finished. The default value is false.
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 - **type**: `Class<T>`
 
   The type of the result (POJO class, `VPackSlice`, `String` for JSON, or `Collection`/`List`/`Map`)
