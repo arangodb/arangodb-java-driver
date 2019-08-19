@@ -387,8 +387,23 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
 		return request(name, RequestType.DELETE, PATH_API_TRANSACTION, id);
 	}
 
+	protected Request getStreamTransactionsRequest() {
+		return request(name, RequestType.GET, PATH_API_TRANSACTION);
+	}
+
 	protected Request getStreamTransactionRequest(String id) {
 		return request(name, RequestType.GET, PATH_API_TRANSACTION, id);
+	}
+
+	protected ResponseDeserializer<Collection<TransactionEntity>> transactionsResponseDeserializer() {
+		return new ResponseDeserializer<Collection<TransactionEntity>>() {
+			@Override
+			public Collection<TransactionEntity> deserialize(final Response response) throws VPackException {
+				final VPackSlice result = response.getBody().get("transactions");
+				return util().deserialize(result, new Type<Collection<TransactionEntity>>() {
+				}.getType());
+			}
+		};
 	}
 
 	protected Request commitStreamTransactionRequest(String id) {

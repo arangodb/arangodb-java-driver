@@ -578,6 +578,17 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	StreamTransactionEntity getStreamTransaction(String id) throws ArangoDBException;
 
 	/**
+	 * Gets all the currently running Stream Transactions.
+	 *
+	 * @return all the currently running Stream Transactions
+	 * @throws ArangoDBException
+	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#list-currently-ongoing-transactions">
+	 * API Documentation</a>
+	 * @since ArangoDB 3.5.0
+	 */
+	Collection<TransactionEntity> getStreamTransactions() throws ArangoDBException;
+
+	/**
 	 * Commits a Stream Transaction.
 	 *
 	 * @return information about the transaction

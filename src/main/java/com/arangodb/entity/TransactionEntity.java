@@ -23,20 +23,20 @@ package com.arangodb.entity;
 /**
  * @author Michele Rastelli
  * @see <a href=
- * "https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html">API Documentation</a>
+ * "https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#list-currently-ongoing-transactions</a>
  * @since ArangoDB 3.5.0
  */
-public class StreamTransactionEntity implements Entity {
+public class TransactionEntity implements Entity {
 
 	private String id;
-	private StreamTransactionStatus status;
+	private StreamTransactionStatus state;
 
 	public String getId() {
 		return id;
 	}
 
 	public StreamTransactionStatus getStatus() {
-		return status;
+		return state;
 	}
 
 }
