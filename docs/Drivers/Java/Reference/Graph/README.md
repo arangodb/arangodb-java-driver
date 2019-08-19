@@ -43,6 +43,17 @@ name of the graph and a definition of its edges.
     automatically and one of the servers holding copies take over, usually
     without an error being reported.
 
+  - **minReplicationFactor**: `Integer`
+
+    (optional, default is 1): in a cluster, this
+    attribute determines how many copies of each shard are required
+    to be in sync on the different DBServers. If we have less then these
+    many copies in the cluster a shard will refuse to write. The
+    minReplicationFactor can not be larger than replicationFactor.
+    Please note: during server failures this might lead to writes
+    not being possible until the failover is sorted out and might cause
+    write slow downs in trade of data durability.
+
   - **numberOfShards**: `Integer`
 
     The number of shards that is used for every collection within this graph.
