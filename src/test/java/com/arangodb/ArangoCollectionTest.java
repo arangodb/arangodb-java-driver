@@ -2294,6 +2294,9 @@ public class ArangoCollectionTest extends BaseTest {
 		if (arangoDB.getRole() != ServerRole.COORDINATOR) {
 			return;
 		}
+		if (!requireVersion(3, 5)) {
+			return;
+		}
 		ShardEntity shard = db.collection(COLLECTION_NAME).getResponsibleShard(new BaseDocument("testKey"));
 		assertThat(shard, is(notNullValue()));
 		assertThat(shard.getShardId(), is(notNullValue()));
