@@ -17,6 +17,11 @@ Creates a hash index for the collection if it does not already exist.
 
 - **options**: `HashIndexOptions`
 
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
   - **unique**: `Boolean`
 
     If true, then create a unique index
@@ -58,6 +63,11 @@ Creates a skip-list index for the collection if it does not already exist.
   A list of attribute paths
 
 - **options**: `SkipListIndexOptions`
+
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
 
   - **unique**: `Boolean`
 
@@ -103,6 +113,11 @@ Creates a geo index for the collection if it does not already exist.
 
 - **options**: `GeoIndexOptions`
 
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
   - **geoJson**: `Boolean`
 
     If a geo-spatial index on a location is constructed and geoJson is true,
@@ -141,6 +156,11 @@ Creates a fulltext index for the collection if it does not already exist.
 
 - **options**: `FulltextIndexOptions`
 
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
+
   - **minLength**: `Integer`
 
     Minimum character length of words to index. Will default to a server-defined
@@ -178,6 +198,11 @@ Creates a persistent index for the collection if it does not already exist.
   A list of attribute paths
 
 - **options**: `PersistentIndexOptions`
+
+  - **name**: `String`
+
+    Specify a custom name during index creation (optional). When running AQL queries you might then refer
+    to these name as your preferred index for lookups (e.g. Index Hints).
 
   - **unique**: `Boolean`
 
