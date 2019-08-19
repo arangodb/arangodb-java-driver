@@ -2,7 +2,7 @@
 
 ## ArangoVertexCollection.getVertex
 
-`ArangoVertexCollection.getVertex(String key, Class<T> type, DocumentReadOptions options) : T`
+`ArangoVertexCollection.getVertex(String key, Class<T> type, GraphDocumentReadOptions options) : T`
 
 Retrieves the vertex document with the given `key` from the collection.
 
@@ -16,7 +16,7 @@ Retrieves the vertex document with the given `key` from the collection.
 
   The type of the vertex-document (POJO class, `VPackSlice` or `String` for JSON)
 
-- **options**: `DocumentReadOptions`
+- **options**: `GraphDocumentReadOptions`
 
   - **ifNoneMatch**: `String`
 
