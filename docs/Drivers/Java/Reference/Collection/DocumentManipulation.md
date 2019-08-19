@@ -55,6 +55,10 @@ Retrieves the document with the given \_key from the collection.
 
     Whether or not catch possible thrown exceptions
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -135,6 +139,10 @@ generated automatically.
     will be returned for the created document. This option can be used to save
     some network traffic.
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -189,6 +197,10 @@ generated automatically.
     If set to true, an empty object will be returned as response. No meta-data
     will be returned for the created document. This option can be used to save
     some network traffic.
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
@@ -254,6 +266,10 @@ such a document and no precondition is violated.
     will be returned for the created document. This option can be used to save
     some network traffic.
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -316,6 +332,10 @@ documents in values.
     If set to true, an empty object will be returned as response. No meta-data
     will be returned for the created document. This option can be used to save
     some network traffic.
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
@@ -385,6 +405,10 @@ such a document and no precondition is violated.
     will be returned for the created document. This option can be used to save
     some network traffic.
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -447,6 +471,10 @@ documents in values.
     If set to true, an empty object will be returned as response. No meta-data
     will be returned for the created document. This option can be used to save
     some network traffic.
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
