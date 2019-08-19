@@ -73,7 +73,7 @@ public class StreamTransactionTest extends BaseTest {
 
 		StreamTransactionEntity tx = db.beginStreamTransaction(null);
 		assertThat(tx.getId(), is(notNullValue()));
-		assertThat(tx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.running));
+		assertThat(tx.getStatus(), is(StreamTransactionStatus.running));
 		db.abortStreamTransaction(tx.getId());
 	}
 
@@ -97,7 +97,7 @@ public class StreamTransactionTest extends BaseTest {
 
 		assertThat(abortedTx.getId(), is(notNullValue()));
 		assertThat(abortedTx.getId(), is(begunTx.getId()));
-		assertThat(abortedTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.aborted));
+		assertThat(abortedTx.getStatus(), is(StreamTransactionStatus.aborted));
 	}
 
 	@Test
@@ -151,7 +151,7 @@ public class StreamTransactionTest extends BaseTest {
 
 		assertThat(gotTx.getId(), is(notNullValue()));
 		assertThat(gotTx.getId(), is(createdTx.getId()));
-		assertThat(gotTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.running));
+		assertThat(gotTx.getStatus(), is(StreamTransactionStatus.running));
 
 		db.abortStreamTransaction(createdTx.getId());
 	}
@@ -185,7 +185,7 @@ public class StreamTransactionTest extends BaseTest {
 
 		assertThat(committedTx.getId(), is(notNullValue()));
 		assertThat(committedTx.getId(), is(createdTx.getId()));
-		assertThat(committedTx.getStatus(), is(StreamTransactionEntity.StreamTransactionStatus.committed));
+		assertThat(committedTx.getStatus(), is(StreamTransactionStatus.committed));
 	}
 
 	@Test
@@ -703,6 +703,27 @@ public class StreamTransactionTest extends BaseTest {
 				containsInAnyOrder(keys.toArray()));
 
 		db.abortStreamTransaction(tx.getId());
+	}
+
+	@Test
+	public void getStreamTransactions() {
+		assumeTrue(requireSingleServer());
+		assumeTrue(requireVersion(3, 5));
+		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+		StreamTransactionEntity tx1 = db.beginStreamTransaction(null);
+		StreamTransactionEntity tx2 = db.beginStreamTransaction(null);
+
+		List<String> createdIds = Arrays.asList(tx1.getId(), tx2.getId());
+		Set<TransactionEntity> gotTxs = db.getStreamTransactions().stream().
+				filter(it -> createdIds.contains(it.getId())).collect(Collectors.toSet());
+
+		assertThat(gotTxs.size(), is(createdIds.size()));
+		assertThat(gotTxs.stream()
+				.allMatch(it -> it.getStatus() == StreamTransactionStatus.running), is(true));
+
+		db.abortStreamTransaction(tx1.getId());
+		db.abortStreamTransaction(tx2.getId());
 	}
 
 }

@@ -29,6 +29,13 @@ Gets information about a Stream Transaction.
   transaction id
 
 
+## ArangoDatabase.getStreamTransactions
+
+`ArangoDatabase.getStreamTransactions() : Collection<TransactionEntity>`
+
+Gets all the currently running Stream Transactions.
+
+
 ## ArangoDatabase.commitStreamTransaction
 
 `ArangoDatabase.commitStreamTransaction(String id) : StreamTransactionEntity`
