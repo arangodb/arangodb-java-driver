@@ -1,6 +1,13 @@
 com.arangodb
 com.arangodb.entity
 com.arangodb.entity.arangosearch
+com.arangodb.internal.cursor
+com.arangodb.internal.http
+com.arangodb.internal.net
+com.arangodb.internal.util
+com.arangodb.internal.velocypack
+com.arangodb.internal.velocystream
+com.arangodb.internal.velocystream.internal
 com.arangodb.model
 com.arangodb.model.arangosearch
 com.arangodb.util
