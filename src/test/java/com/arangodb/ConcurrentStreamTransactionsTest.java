@@ -65,6 +65,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
 	@Test
 	public void conflictOnInsertDocumentWithNotYetCommittedTx() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -96,6 +97,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
 	@Test
 	public void conflictOnInsertDocumentWithAlreadyCommittedTx() {
+		assumeTrue(requireSingleServer());
 		assumeTrue(requireVersion(3, 5));
 		assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
