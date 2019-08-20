@@ -31,6 +31,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.arangodb.model.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,11 +46,6 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
 import com.arangodb.entity.VertexEntity;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.EdgeDeleteOptions;
-import com.arangodb.model.EdgeReplaceOptions;
-import com.arangodb.model.EdgeUpdateOptions;
 
 /**
  * @author Mark Vollmary
@@ -148,7 +144,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	public void getEdgeIfMatch() {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifMatch(edge.getRev());
+		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch(edge.getRev());
 		final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
 			BaseDocument.class, options);
 		assertThat(document, is(notNullValue()));
@@ -159,7 +155,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	public void getEdgeIfMatchFail() {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
+		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
 		final BaseEdgeDocument edge2 = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
 			BaseEdgeDocument.class, options);
 		assertThat(edge2, is(nullValue()));
@@ -169,7 +165,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	public void getEdgeIfNoneMatch() {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
+		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch("no");
 		final BaseDocument document = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
 			BaseDocument.class, options);
 		assertThat(document, is(notNullValue()));
@@ -180,7 +176,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 	public void getEdgeIfNoneMatchFail() {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
-		final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(edge.getRev());
+		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev());
 		final BaseEdgeDocument edge2 = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).getEdge(edge.getKey(),
 			BaseEdgeDocument.class, options);
 		assertThat(edge2, is(nullValue()));

@@ -30,11 +30,7 @@ import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.DocumentUtil;
 import com.arangodb.internal.util.RequestUtils;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.VertexCreateOptions;
-import com.arangodb.model.VertexDeleteOptions;
-import com.arangodb.model.VertexReplaceOptions;
-import com.arangodb.model.VertexUpdateOptions;
+import com.arangodb.model.*;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -98,10 +94,10 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 		};
 	}
 
-	protected Request getVertexRequest(final String key, final DocumentReadOptions options) {
+	protected Request getVertexRequest(final String key, final GraphDocumentReadOptions options) {
 		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), VERTEX,
 			DocumentUtil.createDocumentHandle(name, key));
-		final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
+		final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
 		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		if (params.getAllowDirtyRead() == Boolean.TRUE) {

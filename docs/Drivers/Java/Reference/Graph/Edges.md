@@ -2,7 +2,7 @@
 
 ## ArangoEdgeCollection.getEdge
 
-`ArangoEdgeCollection.getEdge(String key, Class<T> type, DocumentReadOptions options) : T`
+`ArangoEdgeCollection.getEdge(String key, Class<T> type, GraphDocumentReadOptions options) : T`
 
 Retrieves the edge document with the given `key` from the collection.
 
@@ -16,7 +16,7 @@ Retrieves the edge document with the given `key` from the collection.
 
   The type of the edge-document (POJO class, `VPackSlice` or `String` for JSON)
 
-- **options**: `DocumentReadOptions`
+- **options**: `GraphDocumentReadOptions`
 
   - **ifNoneMatch**: `String`
 

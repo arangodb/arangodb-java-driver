@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +28,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.EdgeCreateOptions;
-import com.arangodb.model.EdgeDeleteOptions;
-import com.arangodb.model.EdgeReplaceOptions;
-import com.arangodb.model.EdgeUpdateOptions;
 
 /**
  * @author Mark Vollmary
@@ -61,7 +57,7 @@ public class ArangoEdgeCollectionImpl
 	@Override
 	public <T> T getEdge(final String key, final Class<T> type) throws ArangoDBException {
 		try {
-			return executor.execute(getEdgeRequest(key, new DocumentReadOptions()), getEdgeResponseDeserializer(type));
+			return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()), getEdgeResponseDeserializer(type));
 		} catch (final ArangoDBException e) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
@@ -71,7 +67,7 @@ public class ArangoEdgeCollectionImpl
 	}
 
 	@Override
-	public <T> T getEdge(final String key, final Class<T> type, final DocumentReadOptions options)
+	public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options)
 			throws ArangoDBException {
 		try {
 			return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));

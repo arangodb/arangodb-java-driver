@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +28,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.VertexCreateOptions;
-import com.arangodb.model.VertexDeleteOptions;
-import com.arangodb.model.VertexReplaceOptions;
-import com.arangodb.model.VertexUpdateOptions;
 
 /**
  * @author Mark Vollmary
@@ -66,7 +62,7 @@ public class ArangoVertexCollectionImpl
 	@Override
 	public <T> T getVertex(final String key, final Class<T> type) throws ArangoDBException {
 		try {
-			return executor.execute(getVertexRequest(key, new DocumentReadOptions()),
+			return executor.execute(getVertexRequest(key, new GraphDocumentReadOptions()),
 				getVertexResponseDeserializer(type));
 		} catch (final ArangoDBException e) {
 			if (LOGGER.isDebugEnabled()) {
@@ -77,7 +73,7 @@ public class ArangoVertexCollectionImpl
 	}
 
 	@Override
-	public <T> T getVertex(final String key, final Class<T> type, final DocumentReadOptions options)
+	public <T> T getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options)
 			throws ArangoDBException {
 		try {
 			return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));

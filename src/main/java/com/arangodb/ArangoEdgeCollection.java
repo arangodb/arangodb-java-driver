@@ -22,11 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.EdgeCreateOptions;
-import com.arangodb.model.EdgeDeleteOptions;
-import com.arangodb.model.EdgeReplaceOptions;
-import com.arangodb.model.EdgeUpdateOptions;
+import com.arangodb.model.*;
 
 /**
  * Interface for operations on ArangoDB edge collection level.
@@ -100,7 +96,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * @return the edge identified by the key
 	 * @throws ArangoDBException
 	 */
-	<T> T getEdge(String key, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
+	<T> T getEdge(String key, Class<T> type, GraphDocumentReadOptions options) throws ArangoDBException;
 
 	/**
 	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
