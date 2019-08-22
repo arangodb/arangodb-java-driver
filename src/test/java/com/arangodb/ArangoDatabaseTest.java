@@ -340,7 +340,10 @@ public class ArangoDatabaseTest extends BaseTest {
 			db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123"));
 		} catch (ArangoDBException e) {
 			assertThat(e.getErrorNum(), is(4006));
-			assertThat(e.getResponseCode(), is(500));
+			// TODO:
+			//  	at the moment older server versions reply with response code 500, which is a misbehavior
+			//		when the fix has been backported to all the supported db versions uncomment the following:
+			//		assertThat(e.getResponseCode(), is(400));
 		} finally {
 			try {
 				db.collection(COLLECTION_NAME).drop();
