@@ -108,6 +108,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(e.getMessage(), e);
 			}
+
+			// handle Response: 404, Error: 1655 - transaction not found
+			if (e.getErrorNum() != null && e.getErrorNum() == 1655) {
+				throw e;
+			}
+
 			if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
 					|| e.getResponseCode() == 412)) && (options == null || options.isCatchException())) {
 				return null;
@@ -218,6 +224,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
 			executor.execute(documentExistsRequest(key, options), VPackSlice.class);
 			return true;
 		} catch (final ArangoDBException e) {
+
+			// handle Response: 404, Error: 1655 - transaction not found
+			if (e.getErrorNum() != null && e.getErrorNum() == 1655) {
+				throw e;
+			}
+
 			if ((e.getResponseCode() != null && (e.getResponseCode() == 404 || e.getResponseCode() == 304
 					|| e.getResponseCode() == 412)) && (options == null || options.isCatchException())) {
 				return false;
