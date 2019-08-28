@@ -29,6 +29,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.arangodb.model.*;
@@ -126,6 +127,30 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 		final BaseEdgeDocument value = createEdgeValue();
 		final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null);
 		assertThat(value.getRevision(), is(edge.getRev()));
+	}
+
+	@Test
+	public void insertEdgeViolatingUniqueConstraint() {
+		db.collection(EDGE_COLLECTION_NAME)
+				.ensureSkiplistIndex(Arrays.asList("_from", "_to"), new SkiplistIndexOptions().unique(true));
+
+		final VertexEntity v1 = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME)
+				.insertVertex(new BaseDocument("v1"), null);
+		final VertexEntity v2 = db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME)
+				.insertVertex(new BaseDocument("v2"), null);
+
+		BaseEdgeDocument edge = new BaseEdgeDocument();
+		edge.setFrom(v1.getId());
+		edge.setTo(v2.getId());
+
+		db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(edge, null);
+
+		try {
+			db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(edge, null);
+		} catch (ArangoDBException e) {
+			assertThat(e.getResponseCode(), is(409));
+			assertThat(e.getErrorNum(), is(1210));
+		}
 	}
 
 	@Test
