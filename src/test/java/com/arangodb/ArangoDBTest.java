@@ -32,12 +32,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -71,9 +66,9 @@ public class ArangoDBTest {
 	@Parameters
 	public static Collection<ArangoDB.Builder> builders() {
 		return Arrays.asList(//
-			new ArangoDB.Builder().useProtocol(Protocol.VST), //
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
-			new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
+				new ArangoDB.Builder().useProtocol(Protocol.VST), //
+				new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
+				new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
 		);
 	}
 
@@ -97,25 +92,27 @@ public class ArangoDBTest {
 
 	@Test
 	public void createAndDeleteDatabase() {
-		final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
+		final String dbName = "testDB-" + UUID.randomUUID().toString();
+		final Boolean resultCreate = arangoDB.createDatabase(dbName);
 		assertThat(resultCreate, is(true));
-		final Boolean resultDelete = arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
+		final Boolean resultDelete = arangoDB.db(dbName).drop();
 		assertThat(resultDelete, is(true));
 	}
 
 	@Test
 	public void getDatabases() {
-        Collection<String> dbs = arangoDB.getDatabases();
-        assertThat(dbs, is(notNullValue()));
-        assertThat(dbs.size(), is(greaterThan(0)));
-        final int dbCount = dbs.size();
-        assertThat(dbs.contains("_system"), is(true));
-        arangoDB.createDatabase(BaseTest.TEST_DB_CUSTOM);
-        dbs = arangoDB.getDatabases();
-        assertThat(dbs.size(), is(greaterThan(dbCount)));
-        assertThat(dbs, hasItem("_system"));
-        assertThat(dbs, hasItem(BaseTest.TEST_DB_CUSTOM));
-        arangoDB.db(BaseTest.TEST_DB_CUSTOM).drop();
+		final String dbName = "testDB-" + UUID.randomUUID().toString();
+		Collection<String> dbs = arangoDB.getDatabases();
+		assertThat(dbs, is(notNullValue()));
+		assertThat(dbs.size(), is(greaterThan(0)));
+		final int dbCount = dbs.size();
+		assertThat(dbs.contains("_system"), is(true));
+		arangoDB.createDatabase(dbName);
+		dbs = arangoDB.getDatabases();
+		assertThat(dbs.size(), is(greaterThan(dbCount)));
+		assertThat(dbs, hasItem("_system"));
+		assertThat(dbs, hasItem(dbName));
+		arangoDB.db(dbName).drop();
 	}
 
 	@Test
