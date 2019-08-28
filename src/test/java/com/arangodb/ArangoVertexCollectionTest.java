@@ -20,32 +20,26 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import java.util.Collection;
-import java.util.UUID;
-
+import com.arangodb.ArangoDB.Builder;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.VertexEntity;
+import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.VertexEntity;
-import com.arangodb.entity.VertexUpdateEntity;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.UUID;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
- *
  */
 @RunWith(Parameterized.class)
 public class ArangoVertexCollectionTest extends BaseTest {
@@ -68,14 +62,20 @@ public class ArangoVertexCollectionTest extends BaseTest {
 			db.createGraph(GRAPH_NAME, null, options);
 		} catch (final ArangoDBException e) {
 		}
-		
+
 	}
 
 	@After
 	public void teardown() {
-		try {db.graph(GRAPH_NAME).drop();} catch (final ArangoDBException e) {}
-		try {db.collection(COLLECTION_NAME).drop();} catch (final ArangoDBException e) {}
-		
+		try {
+			db.graph(GRAPH_NAME).drop();
+		} catch (final ArangoDBException e) {
+		}
+		try {
+			db.collection(COLLECTION_NAME).drop();
+		} catch (final ArangoDBException e) {
+		}
+
 	}
 
 	@Test
@@ -90,36 +90,51 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		assertThat(vertex, is(notNullValue()));
-		final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(vertex.getKey(), BaseDocument.class,
-			null);
+		final BaseDocument document = db.collection(COLLECTION_NAME)
+				.getDocument(vertex.getKey(), BaseDocument.class, null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
 
 	@Test
+	public void insertVertexViolatingUniqueConstraint() {
+		db.collection(COLLECTION_NAME)
+				.ensureSkiplistIndex(Collections.singletonList("properties"), new SkiplistIndexOptions().unique(true));
+
+		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(new BaseDocument(), null);
+
+		try {
+			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(new BaseDocument(), null);
+		} catch (ArangoDBException e) {
+			assertThat(e.getResponseCode(), is(409));
+			assertThat(e.getErrorNum(), is(1210));
+		}
+	}
+
+	@Test
 	public void duplicateInsertSameObjectVertex() {
-		
+
 		final ArangoVertexCollection vertexCollection = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME);
-		
+
 		// ######################################################### 
 		// Create a new BaseDocument 
 		// #########################################################
-		
-		UUID uuid = UUID.randomUUID(); 
-		BaseDocument bd = new BaseDocument(); 
-		bd.setKey(uuid.toString()); 
+
+		UUID uuid = UUID.randomUUID();
+		BaseDocument bd = new BaseDocument();
+		bd.setKey(uuid.toString());
 		bd.addAttribute("name", "Paul");
-		
+
 		vertexCollection.insertVertex(bd);
-		
-		UUID uuid2 = UUID.randomUUID(); 
-		BaseDocument bd2 = new BaseDocument(); 
-		bd2.setKey(uuid2.toString()); 
+
+		UUID uuid2 = UUID.randomUUID();
+		BaseDocument bd2 = new BaseDocument();
+		bd2.setKey(uuid2.toString());
 		bd2.addAttribute("name", "Paul");
-		
+
 		vertexCollection.insertVertex(bd2);
 	}
-	
+
 	@Test
 	public void insertVertexUpdateRev() {
 		final BaseDocument doc = new BaseDocument();
@@ -131,8 +146,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	public void getVertex() {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
-		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
-			BaseDocument.class, null);
+		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(vertex.getKey(), BaseDocument.class, null);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
@@ -142,8 +157,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch(vertex.getRev());
-		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
-			BaseDocument.class, options);
+		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(vertex.getKey(), BaseDocument.class, options);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
@@ -153,8 +168,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
-		final BaseDocument vertex2 = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
-			BaseDocument.class, options);
+		final BaseDocument vertex2 = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(vertex.getKey(), BaseDocument.class, options);
 		assertThat(vertex2, is(nullValue()));
 	}
 
@@ -163,8 +178,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch("no");
-		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
-			BaseDocument.class, options);
+		final BaseDocument document = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(vertex.getKey(), BaseDocument.class, options);
 		assertThat(document, is(notNullValue()));
 		assertThat(document.getKey(), is(vertex.getKey()));
 	}
@@ -174,8 +189,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.insertVertex(new BaseDocument(), null);
 		final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev());
-		final BaseDocument vertex2 = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).getVertex(vertex.getKey(),
-			BaseDocument.class, options);
+		final BaseDocument vertex2 = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.getVertex(vertex.getKey(), BaseDocument.class, options);
 		assertThat(vertex2, is(nullValue()));
 	}
 
@@ -183,8 +198,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	public void replaceVertex() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
@@ -206,8 +221,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	@Test
 	public void replaceVertexUpdateRev() {
 		final BaseDocument doc = new BaseDocument();
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		assertThat(doc.getRevision(), is(createResult.getRev()));
 		final VertexUpdateEntity replaceResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.replaceVertex(createResult.getKey(), doc, null);
@@ -218,8 +233,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	public void replaceVertexIfMatch() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		final VertexReplaceOptions options = new VertexReplaceOptions().ifMatch(createResult.getRev());
@@ -243,8 +258,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	public void replaceVertexIfMatchFail() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.getProperties().clear();
 		doc.addAttribute("b", "test");
 		try {
@@ -260,8 +275,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		doc.addAttribute("c", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		doc.updateAttribute("c", null);
@@ -286,8 +301,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	@Test
 	public void updateVertexUpdateRev() {
 		final BaseDocument doc = new BaseDocument();
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		assertThat(doc.getRevision(), is(createResult.getRev()));
 		final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.updateVertex(createResult.getKey(), doc, null);
@@ -299,8 +314,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		doc.addAttribute("c", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		doc.updateAttribute("c", null);
@@ -328,8 +343,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
 		doc.addAttribute("c", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.updateAttribute("a", "test1");
 		doc.addAttribute("b", "test");
 		doc.updateAttribute("c", null);
@@ -345,8 +360,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	public void updateVertexKeepNullTrue() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.updateAttribute("a", null);
 		final VertexUpdateOptions options = new VertexUpdateOptions().keepNull(true);
 		final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
@@ -367,8 +382,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	public void updateVertexKeepNullFalse() {
 		final BaseDocument doc = new BaseDocument();
 		doc.addAttribute("a", "test");
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		doc.updateAttribute("a", null);
 		final VertexUpdateOptions options = new VertexUpdateOptions().keepNull(false);
 		final VertexUpdateEntity updateResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
@@ -389,8 +404,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	@Test
 	public void deleteVertex() {
 		final BaseDocument doc = new BaseDocument();
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), null);
 		final BaseDocument vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
 				.getVertex(createResult.getKey(), BaseDocument.class, null);
@@ -400,8 +415,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	@Test
 	public void deleteVertexIfMatch() {
 		final BaseDocument doc = new BaseDocument();
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch(createResult.getRev());
 		db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
 		final BaseDocument vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
@@ -412,8 +427,8 @@ public class ArangoVertexCollectionTest extends BaseTest {
 	@Test
 	public void deleteVertexIfMatchFail() {
 		final BaseDocument doc = new BaseDocument();
-		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).insertVertex(doc,
-			null);
+		final VertexEntity createResult = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
+				.insertVertex(doc, null);
 		final VertexDeleteOptions options = new VertexDeleteOptions().ifMatch("no");
 		try {
 			db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
