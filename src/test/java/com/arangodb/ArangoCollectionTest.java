@@ -35,12 +35,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
@@ -700,6 +695,42 @@ public class ArangoCollectionTest extends BaseTest {
 		assertThat(info.getDocuments().isEmpty(), is(true));
 		assertThat(info.getDocumentsAndErrors().isEmpty(), is(true));
 		assertThat(info.getErrors().isEmpty(), is(true));
+	}
+
+	@Test
+	public void updateNonExistingDocument() {
+		final BaseDocument doc = new BaseDocument("test-" + UUID.randomUUID().toString());
+		doc.addAttribute("a", "test");
+		doc.addAttribute("c", "test");
+
+		try {
+			db.collection(COLLECTION_NAME).updateDocument(doc.getKey(), doc, null);
+		} catch (ArangoDBException e) {
+			assertThat(e.getResponseCode(), is(404));
+			assertThat(e.getErrorNum(), is(1202));
+		}
+	}
+
+	@Test
+	public void updateDocumentPreconditionFailed() {
+		final BaseDocument doc = new BaseDocument();
+		doc.addAttribute("a", "test");
+		doc.addAttribute("c", "test");
+		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+				.insertDocument(doc, null);
+
+		doc.updateAttribute("a", "test1");
+		doc.addAttribute("b", "test");
+		doc.updateAttribute("c", null);
+		final DocumentUpdateEntity<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
+				.updateDocument(createResult.getKey(), doc, null);
+
+		try {
+			db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, new DocumentUpdateOptions().ifMatch(createResult.getRev()));
+		} catch (ArangoDBException e) {
+			assertThat(e.getResponseCode(), is(412));
+			assertThat(e.getErrorNum(), is(1200));
+		}
 	}
 
 	@Test
