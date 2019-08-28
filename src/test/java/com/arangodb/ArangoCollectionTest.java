@@ -713,24 +713,23 @@ public class ArangoCollectionTest extends BaseTest {
 
 	@Test
 	public void updateDocumentPreconditionFailed() {
-		final BaseDocument doc = new BaseDocument();
-		doc.addAttribute("a", "test");
-		doc.addAttribute("c", "test");
+		final BaseDocument doc = new BaseDocument("test-" + UUID.randomUUID().toString());
+		doc.addAttribute("foo", "a");
 		final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
 				.insertDocument(doc, null);
 
-		doc.updateAttribute("a", "test1");
-		doc.addAttribute("b", "test");
-		doc.updateAttribute("c", null);
-		final DocumentUpdateEntity<BaseDocument> updateResult = db.collection(COLLECTION_NAME)
-				.updateDocument(createResult.getKey(), doc, null);
+		doc.updateAttribute("foo", "b");
+		db.collection(COLLECTION_NAME).updateDocument(doc.getKey(), doc, null);
 
+		doc.updateAttribute("foo", "c");
 		try {
-			db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, new DocumentUpdateOptions().ifMatch(createResult.getRev()));
+			db.collection(COLLECTION_NAME).updateDocument(doc.getKey(), doc, new DocumentUpdateOptions().ifMatch(createResult.getRev()));
 		} catch (ArangoDBException e) {
 			assertThat(e.getResponseCode(), is(412));
 			assertThat(e.getErrorNum(), is(1200));
 		}
+		BaseDocument readDocument = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class);
+		assertThat(readDocument.getAttribute("foo"), is("b"));
 	}
 
 	@Test
