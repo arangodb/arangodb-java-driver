@@ -37,6 +37,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -98,6 +99,9 @@ public class ArangoVertexCollectionTest extends BaseTest {
 
 	@Test
 	public void insertVertexViolatingUniqueConstraint() {
+		// FIXME: remove once fix is backported to 3.4
+		assumeTrue(requireVersion(3, 5));
+
 		db.collection(COLLECTION_NAME)
 				.ensureSkiplistIndex(Collections.singletonList("properties"), new SkiplistIndexOptions().unique(true));
 

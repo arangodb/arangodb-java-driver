@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,6 +132,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
 
 	@Test
 	public void insertEdgeViolatingUniqueConstraint() {
+		// FIXME: remove once fix is backported to 3.4
+		assumeTrue(requireVersion(3, 5));
+
 		db.collection(EDGE_COLLECTION_NAME)
 				.ensureSkiplistIndex(Arrays.asList("_from", "_to"), new SkiplistIndexOptions().unique(true));
 
