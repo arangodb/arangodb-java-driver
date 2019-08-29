@@ -27,7 +27,6 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.VelocyJack;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.model.DocumentCreateOptions;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +58,6 @@ public class CustomSerdeTest {
         velocyJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
-            SimpleModule module = new SimpleModule();
         });
         ArangoDB arangoDB = new ArangoDB.Builder().serializer(velocyJack).build();
 
