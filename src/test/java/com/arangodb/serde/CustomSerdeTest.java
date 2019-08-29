@@ -35,7 +35,6 @@ import org.junit.Test;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
@@ -82,79 +81,89 @@ public class CustomSerdeTest {
     }
 
     @Test
-    public void documentDeserialization() {
-        BaseDocument doc = new BaseDocument("test-" + UUID.randomUUID().toString());
-        doc.addAttribute("int", 10);
-
-        collection.insertDocument(doc, null);
-
-        final BaseDocument getDocumentResult = db.collection(COLLECTION_NAME).getDocument(
-                doc.getKey(),
-                BaseDocument.class,
-                null);
-
-        assertThat(getDocumentResult.getAttribute("int"), instanceOf(BigInteger.class));
-    }
-
-    @Test
-    public void aqlDeserialization() {
-        BaseDocument doc = new BaseDocument("test-" + UUID.randomUUID().toString());
-        doc.addAttribute("int", 10);
-
-        collection.insertDocument(doc, null);
-
-        final BaseDocument queryResult = db.query(
-                "RETURN DOCUMENT(@docId)",
-                Collections.singletonMap("docId", COLLECTION_NAME + "/" + doc.getKey()),
-                BaseDocument.class
-        ).first();
-
-        assertThat(queryResult.getAttribute("int"), instanceOf(BigInteger.class));
-    }
-
-    @Test
-    public void documentSerialization() {
-        String key = "test-" + UUID.randomUUID().toString();
-
-        String hello = "hello";
-        List<String> arr = Collections.singletonList(hello);
-
-        BaseDocument doc = new BaseDocument(key);
-        doc.addAttribute("arr", arr);
-
-        BaseDocument insertedDoc = collection.insertDocument(
-                doc,
-                new DocumentCreateOptions().returnNew(true)
-        ).getNew();
-
-        Object gotArr = insertedDoc.getAttribute("arr");
-        assertThat(gotArr, instanceOf(String.class));
-        assertThat(gotArr, is(hello));
-    }
-
-    @Test
     public void aqlSerialization() {
         String key = "test-" + UUID.randomUUID().toString();
 
-        String hello = "hello";
-        List<String> arr = Collections.singletonList(hello);
-
         BaseDocument doc = new BaseDocument(key);
-        doc.addAttribute("arr", arr);
+        doc.addAttribute("arr", Collections.singletonList("hello"));
+        doc.addAttribute("int", 10);
 
         HashMap<String, Object> params = new HashMap<>();
         params.put("doc", doc);
         params.put("@collection", COLLECTION_NAME);
 
-        BaseDocument insertedQuery = db.query(
+        BaseDocument result = db.query(
                 "INSERT @doc INTO @@collection RETURN NEW",
                 params,
                 BaseDocument.class
         ).first();
 
-        Object gotArr = insertedQuery.getAttribute("arr");
-        assertThat(gotArr, instanceOf(String.class));
-        assertThat(gotArr, is(hello));
+        assertThat(result.getAttribute("arr"), instanceOf(String.class));
+        assertThat(result.getAttribute("arr"), is("hello"));
+        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
+        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+    }
+
+    @Test
+    public void aqlDeserialization() {
+        String key = "test-" + UUID.randomUUID().toString();
+
+        BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("arr", Collections.singletonList("hello"));
+        doc.addAttribute("int", 10);
+
+        collection.insertDocument(doc, null);
+
+        final BaseDocument result = db.query(
+                "RETURN DOCUMENT(@docId)",
+                Collections.singletonMap("docId", COLLECTION_NAME + "/" + key),
+                BaseDocument.class
+        ).first();
+
+        assertThat(result.getAttribute("arr"), instanceOf(String.class));
+        assertThat(result.getAttribute("arr"), is("hello"));
+        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
+        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+    }
+
+    @Test
+    public void insertDocument() {
+        String key = "test-" + UUID.randomUUID().toString();
+
+        BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("arr", Collections.singletonList("hello"));
+        doc.addAttribute("int", 10);
+
+        BaseDocument result = collection.insertDocument(
+                doc,
+                new DocumentCreateOptions().returnNew(true)
+        ).getNew();
+
+        assertThat(result.getAttribute("arr"), instanceOf(String.class));
+        assertThat(result.getAttribute("arr"), is("hello"));
+        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
+        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+    }
+
+    @Test
+    public void getDocument() {
+        String key = "test-" + UUID.randomUUID().toString();
+
+        BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("arr", Collections.singletonList("hello"));
+        doc.addAttribute("int", 10);
+
+        collection.insertDocument(doc, null);
+
+        final BaseDocument result = db.collection(COLLECTION_NAME).getDocument(
+                key,
+                BaseDocument.class,
+                null);
+
+        assertThat(result.getAttribute("arr"), instanceOf(String.class));
+        assertThat(result.getAttribute("arr"), is("hello"));
+        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
+        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
     }
 
 }
