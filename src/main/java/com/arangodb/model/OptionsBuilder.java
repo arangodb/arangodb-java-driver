@@ -20,16 +20,16 @@
 
 package com.arangodb.model;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ViewType;
 import com.arangodb.velocypack.VPackSlice;
 
+import java.util.Collection;
+
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  *
  */
 public class OptionsBuilder {
@@ -77,7 +77,7 @@ public class OptionsBuilder {
 	public static AqlQueryExplainOptions build(
 		final AqlQueryExplainOptions options,
 		final String query,
-		final Map<String, Object> bindVars) {
+		final VPackSlice bindVars) {
 		return options.query(query).bindVars(bindVars);
 	}
 

@@ -185,7 +185,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
         final Request request = request(name, RequestType.POST, PATH_API_CURSOR)
                 .setBody(util().serialize(OptionsBuilder
                         .build(opt, query, bindVars != null ?
-								util(ArangoSerializationFactory.Serializer.CUSTOM).serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) :
+                                util(ArangoSerializationFactory.Serializer.CUSTOM).serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) :
                                 null)));
         if (opt.getAllowDirtyRead() == Boolean.TRUE) {
             RequestUtils.allowDirtyRead(request);
@@ -229,9 +229,20 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
     }
 
     protected Request explainQueryRequest(
-            final String query, final Map<String, Object> bindVars, final AqlQueryExplainOptions options) {
-        return request(name, RequestType.POST, PATH_API_EXPLAIN).setBody(util().serialize(
-                OptionsBuilder.build(options != null ? options : new AqlQueryExplainOptions(), query, bindVars)));
+            final String query,
+            final Map<String, Object> bindVars,
+            final AqlQueryExplainOptions options
+    ) {
+
+        final AqlQueryExplainOptions opt = options != null ? options : new AqlQueryExplainOptions();
+
+        return request(name, RequestType.POST, PATH_API_EXPLAIN)
+                .setBody(util().serialize(OptionsBuilder.build(
+                        opt,
+                        query,
+                        bindVars != null ? util(ArangoSerializationFactory.Serializer.CUSTOM).serialize(
+                                bindVars,
+                                new ArangoSerializer.Options().serializeNullValues(true)) : null)));
     }
 
     protected Request parseQueryRequest(final String query) {

@@ -20,17 +20,19 @@
 
 package com.arangodb.model;
 
+import com.arangodb.velocypack.VPackSlice;
+
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author Mark Vollmary
- * 
+ * @author Michele Rastelli
+ *
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
  */
 public class AqlQueryExplainOptions {
 
-	private Map<String, Object> bindVars;
+	private VPackSlice bindVars;
 	private String query;
 	private Options options;
 
@@ -38,7 +40,7 @@ public class AqlQueryExplainOptions {
 		super();
 	}
 
-	protected Map<String, Object> getBindVars() {
+	protected VPackSlice getBindVars() {
 		return bindVars;
 	}
 
@@ -47,7 +49,7 @@ public class AqlQueryExplainOptions {
 	 *            key/value pairs representing the bind parameters
 	 * @return options
 	 */
-	protected AqlQueryExplainOptions bindVars(final Map<String, Object> bindVars) {
+	protected AqlQueryExplainOptions bindVars(final VPackSlice bindVars) {
 		this.bindVars = bindVars;
 		return this;
 	}
