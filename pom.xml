@@ -219,6 +219,12 @@
 			<artifactId>hamcrest-all</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.arangodb</groupId>
+			<artifactId>jackson-dataformat-velocypack</artifactId>
+			<version>0.1.4</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
