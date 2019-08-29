@@ -183,7 +183,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<E>, E ex
             final String query, final Map<String, Object> bindVars, final AqlQueryOptions options) {
         final AqlQueryOptions opt = options != null ? options : new AqlQueryOptions();
         final Request request = request(name, RequestType.POST, PATH_API_CURSOR)
-                .setBody(util(ArangoSerializationFactory.Serializer.CUSTOM).serialize(OptionsBuilder
+                .setBody(util().serialize(OptionsBuilder
                         .build(opt, query, bindVars != null ?
 								util(ArangoSerializationFactory.Serializer.CUSTOM).serialize(bindVars, new ArangoSerializer.Options().serializeNullValues(true)) :
                                 null)));
