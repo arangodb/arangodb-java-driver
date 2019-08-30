@@ -34,55 +34,49 @@ import org.junit.runners.Parameterized.Parameters;
  */
 public abstract class BaseTest {
 
-	@Parameters
-	public static Collection<ArangoDB.Builder> builders() {
-		return Arrays.asList(//
-				new ArangoDB.Builder().useProtocol(Protocol.VST), //
-				new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
-				new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
-		);
-	}
+    @Parameters
+    public static Collection<ArangoDB.Builder> builders() {
+        return Arrays.asList(//
+                new ArangoDB.Builder().useProtocol(Protocol.VST), //
+                new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
+                new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
+        );
+    }
 
-	protected static final String TEST_DB = "java_driver_test_db";
-	protected static final String TEST_DB_CUSTOM = "java_driver_test_db_custom";
-	protected static ArangoDB arangoDB;
-	protected static ArangoDatabase db;
+    protected static final String TEST_DB = "java_driver_test_db";
+    protected static final String TEST_DB_CUSTOM = "java_driver_test_db_custom";
+    protected static ArangoDB arangoDB;
+    protected static ArangoDatabase db;
 
-	public BaseTest(final ArangoDB.Builder builder) {
-		super();
-		if (arangoDB != null) {
-			shutdown();
-		}
-		arangoDB = builder.build();
-		db = arangoDB.db(TEST_DB);
+    public BaseTest(final ArangoDB.Builder builder) {
+        super();
+        if (arangoDB != null) {
+            shutdown();
+        }
+        arangoDB = builder.build();
+        db = arangoDB.db(TEST_DB);
 
-		// only create the database if not existing
-		try {
-			db.getVersion().getVersion();
-		} catch (final ArangoDBException e) {
-			if (e.getErrorNum() == 1228) { // DATABASE NOT FOUND
-				arangoDB.createDatabase(TEST_DB);
-			}
-		}
-	}
+        if (!db.exists())
+            db.create();
+    }
 
-	@AfterClass
-	public static void shutdown() {
-		arangoDB.shutdown();
-		arangoDB = null;
-	}
+    @AfterClass
+    public static void shutdown() {
+        arangoDB.shutdown();
+        arangoDB = null;
+    }
 
-	protected boolean requireVersion(final int major, final int minor) {
-		final String[] split = arangoDB.getVersion().getVersion().split("\\.");
-		return Integer.valueOf(split[0]) >= major && Integer.valueOf(split[1]) >= minor;
-	}
+    protected boolean requireVersion(final int major, final int minor) {
+        final String[] split = arangoDB.getVersion().getVersion().split("\\.");
+        return Integer.valueOf(split[0]) >= major && Integer.valueOf(split[1]) >= minor;
+    }
 
-	protected boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
-		return name.equals(arangoDB.getEngine().getName());
-	}
+    protected boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
+        return name.equals(arangoDB.getEngine().getName());
+    }
 
-	protected boolean requireSingleServer() {
-		return (arangoDB.getRole() == ServerRole.SINGLE);
-	}
+    protected boolean requireSingleServer() {
+        return (arangoDB.getRole() == ServerRole.SINGLE);
+    }
 
 }

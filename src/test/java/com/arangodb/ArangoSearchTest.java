@@ -37,6 +37,7 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
@@ -44,416 +45,405 @@ import static org.junit.Assert.assertThat;
 @RunWith(Parameterized.class)
 public class ArangoSearchTest extends BaseTest {
 
-	private static final String VIEW_NAME = "view_test";
-
-	public ArangoSearchTest(final Builder builder) {
-		super(builder);
-	}
-
-	@After
-	public void teardown() {
-		try {
-			ArangoCollection c = db.collection("view_update_prop_test_collection");
-			c.drop();
-		} catch (final ArangoDBException e) {
-		}
-
-		try {
-			ArangoCollection c = db.collection("view_replace_prop_test_collection");
-			c.drop();
-		} catch (final ArangoDBException e) {
-		}
-
-		try {
-			db.view(VIEW_NAME).drop();
-		} catch (final ArangoDBException e) {
-		}
-	}
-
-	@Test
-	public void exists() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
-		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
-	}
-
-	@Test
-	public void getInfo() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
-		final ViewEntity info = db.arangoSearch(VIEW_NAME).getInfo();
-		assertThat(info, is(not(nullValue())));
-		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(VIEW_NAME));
-		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-	}
-
-	@Test
-	public void drop() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
-		final ArangoView view = db.arangoSearch(VIEW_NAME);
-		view.drop();
-		assertThat(view.exists(), is(false));
-	}
-
-	@Test
-	public void rename() {
-		if (arangoDB.getRole() != ServerRole.SINGLE) {
-			return;
-		}
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		final String name = VIEW_NAME + "_new";
-		db.createArangoSearch(name, new ArangoSearchCreateOptions());
-		db.arangoSearch(name).rename(VIEW_NAME);
-		assertThat(db.arangoSearch(name).exists(), is(false));
-		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
-	}
-
-	@Test
-	public void create() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		final ViewEntity info = db.arangoSearch(VIEW_NAME).create();
-		assertThat(info, is(not(nullValue())));
-		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(VIEW_NAME));
-		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
-	}
-
-	@Test
-	public void createWithOptions() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
-		final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
-		assertThat(info, is(not(nullValue())));
-		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(VIEW_NAME));
-		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
-	}
-
-	@Test
-	public void createWithPrimarySort() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-		final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
-
-		final PrimarySort primarySort = PrimarySort.on("myFieldName");
-		primarySort.ascending(true);
-		options.primarySort(primarySort);
-		options.consolidationIntervalMsec(666666L);
-
-		final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
-		assertThat(info, is(not(nullValue())));
-		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(VIEW_NAME));
-		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
-	}
-
-	@Test
-	public void createWithCommitIntervalMsec() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-		final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
-		options.commitIntervalMsec(666666L);
-
-		final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
-		assertThat(info, is(not(nullValue())));
-		assertThat(info.getId(), is(not(nullValue())));
-		assertThat(info.getName(), is(VIEW_NAME));
-		assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
-
-		// check commit interval msec property
-		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
-		final ArangoSearchPropertiesEntity properties = view.getProperties();
-		assertThat(properties.getCommitIntervalMsec(), is(666666L));
-	}
-
-	@Test
-	public void getProperties() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
-		view.create(new ArangoSearchCreateOptions());
-		final ArangoSearchPropertiesEntity properties = view.getProperties();
-		assertThat(properties, is(not(nullValue())));
-		assertThat(properties.getId(), is(not(nullValue())));
-		assertThat(properties.getName(), is(VIEW_NAME));
-		assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
-		assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
-		assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
-		final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
-		assertThat(consolidate, is(is(not(nullValue()))));
-		final Collection<CollectionLink> links = properties.getLinks();
-		assertThat(links.isEmpty(), is(true));
-	}
-
-	@Test
-	public void updateProperties() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-		db.createCollection("view_update_prop_test_collection");
-		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
-		view.create(new ArangoSearchCreateOptions());
-		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
-		options.cleanupIntervalStep(15L);
-		options.consolidationIntervalMsec(65000L);
-		options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.));
-		options.link(CollectionLink.on("view_update_prop_test_collection")
-				.fields(FieldLink.on("value").analyzers("identity").trackListPositions(true).includeAllFields(true)
-						.storeValues(StoreValuesType.ID)));
-		final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
-		assertThat(properties, is(not(nullValue())));
-		assertThat(properties.getCleanupIntervalStep(), is(15L));
-		assertThat(properties.getConsolidationIntervalMsec(), is(65000L));
-		final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
-		assertThat(consolidate, is(not(nullValue())));
-		assertThat(consolidate.getType(), is(ConsolidationType.BYTES_ACCUM));
-		assertThat(consolidate.getThreshold(), is(1.));
-		assertThat(properties.getLinks().size(), is(1));
-		final CollectionLink link = properties.getLinks().iterator().next();
-		assertThat(link.getName(), is("view_update_prop_test_collection"));
-		assertThat(link.getFields().size(), is(1));
-		final FieldLink next = link.getFields().iterator().next();
-		assertThat(next.getName(), is("value"));
-		assertThat(next.getIncludeAllFields(), is(true));
-		assertThat(next.getTrackListPositions(), is(true));
-		assertThat(next.getStoreValues(), is(StoreValuesType.ID));
-	}
-
-	@Test
-	public void replaceProperties() {
-		if (!requireVersion(3, 4)) {
-			return;
-		}
-
-		db.createCollection("view_replace_prop_test_collection");
-		final ArangoSearch view = db.arangoSearch(VIEW_NAME);
-		view.create(new ArangoSearchCreateOptions());
-		final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
-		options.link(CollectionLink.on("view_replace_prop_test_collection")
-				.fields(FieldLink.on("value").analyzers("identity")));
-		final ArangoSearchPropertiesEntity properties = view.replaceProperties(options);
-		assertThat(properties, is(not(nullValue())));
-		assertThat(properties.getLinks().size(), is(1));
-		final CollectionLink link = properties.getLinks().iterator().next();
-		assertThat(link.getName(), is("view_replace_prop_test_collection"));
-		assertThat(link.getFields().size(), is(1));
-		assertThat(link.getFields().iterator().next().getName(), is("value"));
-	}
-
-	private void createGetAndDeleteAnalyzer(AnalyzerEntity options){
-
-		String fullyQualifiedName = db.name() + "::" + options.getName();
-
-		// createAnalyzer
-		AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
-
-		assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
-		assertThat(createdAnalyzer.getType(), is(options.getType()));
-		assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
-		assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
-
-		// getAnalyzer
-		AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
-		assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
-		assertThat(gotAnalyzer.getType(), is(options.getType()));
-		assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
-		assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
-
-		// getAnalyzers
-		@SuppressWarnings("OptionalGetWithoutIsPresent")
-		AnalyzerEntity foundAnalyzer = db.getAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
-				.findFirst().get();
-
-		assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
-		assertThat(foundAnalyzer.getType(), is(options.getType()));
-		assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
-		assertThat(foundAnalyzer.getProperties(), is(options.getProperties()));
-
-		AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
-		deleteOptions.setForce(true);
-
-		// deleteAnalyzer
-		db.deleteAnalyzer(options.getName(), deleteOptions);
-
-		try {
-			db.getAnalyzer(options.getName());
-			throw new RuntimeException("deleted analyzer should not be found!");
-		} catch (ArangoDBException e) {
-			// ok
-		}
-
-	}
-
-	@Test
-	public void identityAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-
-		String name = "test-" + UUID.randomUUID().toString();
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.identity);
-		options.setProperties(Collections.emptyMap());
-
-		createGetAndDeleteAnalyzer(options);
-	}
-
-	@Test
-	public void delimiterAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-
-		String name = "test-" + UUID.randomUUID().toString();
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.delimiter);
-		options.setProperties(Collections.singletonMap("delimiter", "-"));
-
-		createGetAndDeleteAnalyzer(options);
-	}
-
-	@Test
-	public void stemAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-
-		String name = "test-" + UUID.randomUUID().toString();
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.stem);
-		options.setProperties(Collections.singletonMap("locale", "ru.utf-8"));
-
-		createGetAndDeleteAnalyzer(options);
-	}
-
-	@Test
-	public void normAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-
-		String name = "test-" + UUID.randomUUID().toString();
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		Map<String, Object> properties = new HashMap<>();
-		properties.put("locale", "ru.utf-8");
-		properties.put("case", "lower");
-		properties.put("accent", true);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.norm);
-		options.setProperties(properties);
-
-		createGetAndDeleteAnalyzer(options);
-	}
-
-	@Test
-	public void ngramAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-
-		String name = "test-" + UUID.randomUUID().toString();
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		Map<String, Object> properties = new HashMap<>();
-		properties.put("max", 6L);
-		properties.put("min", 3L);
-		properties.put("preserveOriginal", true);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.ngram);
-		options.setProperties(properties);
-
-		createGetAndDeleteAnalyzer(options);
-	}
-
-	@Test
-	public void textAnalyzer() {
-		if (!requireVersion(3, 5)) {
-			return;
-		}
-
-		String name = "test-" + UUID.randomUUID().toString();
-
-		Set<AnalyzerFeature> features = new HashSet<>();
-		features.add(AnalyzerFeature.frequency);
-		features.add(AnalyzerFeature.norm);
-		features.add(AnalyzerFeature.position);
-
-		Map<String, Object> properties = new HashMap<>();
-		properties.put("locale", "ru.utf-8");
-		properties.put("case", "lower");
-		properties.put("stopwords", Collections.emptyList());
-		properties.put("accent", true);
-		properties.put("stemming", true);
-
-		AnalyzerEntity options = new AnalyzerEntity();
-		options.setFeatures(features);
-		options.setName(name);
-		options.setType(AnalyzerType.text);
-		options.setProperties(properties);
-
-		createGetAndDeleteAnalyzer(options);
-	}
-
+    private static final String VIEW_NAME = "view_test";
+
+    public ArangoSearchTest(final Builder builder) {
+        super(builder);
+    }
+
+    @After
+    public void teardown() {
+        if (db.collection("view_update_prop_test_collection").exists())
+            db.collection("view_update_prop_test_collection").drop();
+        if (db.collection("view_replace_prop_test_collection").exists())
+            db.collection("view_replace_prop_test_collection").drop();
+        if (db.view(VIEW_NAME).exists())
+            db.view(VIEW_NAME).drop();
+    }
+
+    @Test
+    public void exists() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+        assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
+    }
+
+    @Test
+    public void getInfo() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+        final ViewEntity info = db.arangoSearch(VIEW_NAME).getInfo();
+        assertThat(info, is(not(nullValue())));
+        assertThat(info.getId(), is(not(nullValue())));
+        assertThat(info.getName(), is(VIEW_NAME));
+        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+    }
+
+    @Test
+    public void drop() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
+        final ArangoView view = db.arangoSearch(VIEW_NAME);
+        view.drop();
+        assertThat(view.exists(), is(false));
+    }
+
+    @Test
+    public void rename() {
+        if (arangoDB.getRole() != ServerRole.SINGLE) {
+            return;
+        }
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        final String name = VIEW_NAME + "_new";
+        db.createArangoSearch(name, new ArangoSearchCreateOptions());
+        db.arangoSearch(name).rename(VIEW_NAME);
+        assertThat(db.arangoSearch(name).exists(), is(false));
+        assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
+    }
+
+    @Test
+    public void create() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        final ViewEntity info = db.arangoSearch(VIEW_NAME).create();
+        assertThat(info, is(not(nullValue())));
+        assertThat(info.getId(), is(not(nullValue())));
+        assertThat(info.getName(), is(VIEW_NAME));
+        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
+    }
+
+    @Test
+    public void createWithOptions() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
+        final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
+        assertThat(info, is(not(nullValue())));
+        assertThat(info.getId(), is(not(nullValue())));
+        assertThat(info.getName(), is(VIEW_NAME));
+        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
+    }
+
+    @Test
+    public void createWithPrimarySort() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+        final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
+
+        final PrimarySort primarySort = PrimarySort.on("myFieldName");
+        primarySort.ascending(true);
+        options.primarySort(primarySort);
+        options.consolidationIntervalMsec(666666L);
+
+        final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
+        assertThat(info, is(not(nullValue())));
+        assertThat(info.getId(), is(not(nullValue())));
+        assertThat(info.getName(), is(VIEW_NAME));
+        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
+    }
+
+    @Test
+    public void createWithCommitIntervalMsec() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+        final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
+        options.commitIntervalMsec(666666L);
+
+        final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
+        assertThat(info, is(not(nullValue())));
+        assertThat(info.getId(), is(not(nullValue())));
+        assertThat(info.getName(), is(VIEW_NAME));
+        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
+
+        // check commit interval msec property
+        final ArangoSearch view = db.arangoSearch(VIEW_NAME);
+        final ArangoSearchPropertiesEntity properties = view.getProperties();
+        assertThat(properties.getCommitIntervalMsec(), is(666666L));
+    }
+
+    @Test
+    public void getProperties() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        final ArangoSearch view = db.arangoSearch(VIEW_NAME);
+        view.create(new ArangoSearchCreateOptions());
+        final ArangoSearchPropertiesEntity properties = view.getProperties();
+        assertThat(properties, is(not(nullValue())));
+        assertThat(properties.getId(), is(not(nullValue())));
+        assertThat(properties.getName(), is(VIEW_NAME));
+        assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
+        assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
+        final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
+        assertThat(consolidate, is(is(not(nullValue()))));
+        final Collection<CollectionLink> links = properties.getLinks();
+        assertThat(links.isEmpty(), is(true));
+    }
+
+    @Test
+    public void updateProperties() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+        db.createCollection("view_update_prop_test_collection");
+        final ArangoSearch view = db.arangoSearch(VIEW_NAME);
+        view.create(new ArangoSearchCreateOptions());
+        final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
+        options.cleanupIntervalStep(15L);
+        options.consolidationIntervalMsec(65000L);
+        options.consolidationPolicy(ConsolidationPolicy.of(ConsolidationType.BYTES_ACCUM).threshold(1.));
+        options.link(CollectionLink.on("view_update_prop_test_collection")
+                .fields(FieldLink.on("value").analyzers("identity").trackListPositions(true).includeAllFields(true)
+                        .storeValues(StoreValuesType.ID)));
+        final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
+        assertThat(properties, is(not(nullValue())));
+        assertThat(properties.getCleanupIntervalStep(), is(15L));
+        assertThat(properties.getConsolidationIntervalMsec(), is(65000L));
+        final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
+        assertThat(consolidate, is(not(nullValue())));
+        assertThat(consolidate.getType(), is(ConsolidationType.BYTES_ACCUM));
+        assertThat(consolidate.getThreshold(), is(1.));
+        assertThat(properties.getLinks().size(), is(1));
+        final CollectionLink link = properties.getLinks().iterator().next();
+        assertThat(link.getName(), is("view_update_prop_test_collection"));
+        assertThat(link.getFields().size(), is(1));
+        final FieldLink next = link.getFields().iterator().next();
+        assertThat(next.getName(), is("value"));
+        assertThat(next.getIncludeAllFields(), is(true));
+        assertThat(next.getTrackListPositions(), is(true));
+        assertThat(next.getStoreValues(), is(StoreValuesType.ID));
+    }
+
+    @Test
+    public void replaceProperties() {
+        if (!requireVersion(3, 4)) {
+            return;
+        }
+
+        db.createCollection("view_replace_prop_test_collection");
+        final ArangoSearch view = db.arangoSearch(VIEW_NAME);
+        view.create(new ArangoSearchCreateOptions());
+        final ArangoSearchPropertiesOptions options = new ArangoSearchPropertiesOptions();
+        options.link(CollectionLink.on("view_replace_prop_test_collection")
+                .fields(FieldLink.on("value").analyzers("identity")));
+        final ArangoSearchPropertiesEntity properties = view.replaceProperties(options);
+        assertThat(properties, is(not(nullValue())));
+        assertThat(properties.getLinks().size(), is(1));
+        final CollectionLink link = properties.getLinks().iterator().next();
+        assertThat(link.getName(), is("view_replace_prop_test_collection"));
+        assertThat(link.getFields().size(), is(1));
+        assertThat(link.getFields().iterator().next().getName(), is("value"));
+    }
+
+    private void createGetAndDeleteAnalyzer(AnalyzerEntity options) {
+
+        String fullyQualifiedName = db.name() + "::" + options.getName();
+
+        // createAnalyzer
+        AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
+
+        assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
+        assertThat(createdAnalyzer.getType(), is(options.getType()));
+        assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
+
+        // getAnalyzer
+        AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
+        assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
+        assertThat(gotAnalyzer.getType(), is(options.getType()));
+        assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
+
+        // getAnalyzers
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        AnalyzerEntity foundAnalyzer = db.getAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
+                .findFirst().get();
+
+        assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
+        assertThat(foundAnalyzer.getType(), is(options.getType()));
+        assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(foundAnalyzer.getProperties(), is(options.getProperties()));
+
+        AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
+        deleteOptions.setForce(true);
+
+        // deleteAnalyzer
+        db.deleteAnalyzer(options.getName(), deleteOptions);
+
+        try {
+            db.getAnalyzer(options.getName());
+            fail("deleted analyzer should not be found!");
+        } catch (ArangoDBException e) {
+            // ok
+        }
+
+    }
+
+    @Test
+    public void identityAnalyzer() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.identity);
+        options.setProperties(Collections.emptyMap());
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void delimiterAnalyzer() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.delimiter);
+        options.setProperties(Collections.singletonMap("delimiter", "-"));
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void stemAnalyzer() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.stem);
+        options.setProperties(Collections.singletonMap("locale", "ru.utf-8"));
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void normAnalyzer() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("locale", "ru.utf-8");
+        properties.put("case", "lower");
+        properties.put("accent", true);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.norm);
+        options.setProperties(properties);
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void ngramAnalyzer() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("max", 6L);
+        properties.put("min", 3L);
+        properties.put("preserveOriginal", true);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.ngram);
+        options.setProperties(properties);
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void textAnalyzer() {
+        if (!requireVersion(3, 5)) {
+            return;
+        }
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("locale", "ru.utf-8");
+        properties.put("case", "lower");
+        properties.put("stopwords", Collections.emptyList());
+        properties.put("accent", true);
+        properties.put("stemming", true);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.text);
+        options.setProperties(properties);
+
+        createGetAndDeleteAnalyzer(options);
+    }
 
 
 }

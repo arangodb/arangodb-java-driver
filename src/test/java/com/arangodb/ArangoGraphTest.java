@@ -70,10 +70,8 @@ public class ArangoGraphTest extends BaseTest {
 
     @Before
     public void setup() {
-        try {
+        if (db.graph(GRAPH_NAME).exists())
             db.graph(GRAPH_NAME).drop(true);
-        } catch (final ArangoDBException e1) {
-        }
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
         edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
         edgeDefinitions
@@ -260,16 +258,12 @@ public class ArangoGraphTest extends BaseTest {
         if (arangoDB.getVersion().getLicense() == License.ENTERPRISE) {
 
             for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4}) {
-                try {
+                if (db.collection(collection).exists())
                     db.collection(collection).drop();
-                } catch (final ArangoDBException e) {
+            }
 
-                }
-            }
-            try {
+            if (db.graph(GRAPH_NAME).exists())
                 db.graph(GRAPH_NAME).drop();
-            } catch (final ArangoDBException e) {
-            }
 
             final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
 

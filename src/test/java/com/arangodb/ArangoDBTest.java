@@ -415,7 +415,6 @@ public class ArangoDBTest {
 		} catch (final ArangoDBException e) {
 			assertThat(e.getResponseCode(), is(404));
 			assertThat(e.getErrorNum(), is(1228));
-			assertThat(e.getErrorMessage(), is("database not found"));
 		}
 	}
 

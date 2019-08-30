@@ -75,7 +75,8 @@ public class CustomSerdeTest {
 
     @After
     public void shutdown() {
-        db.drop();
+        if (db.exists())
+            db.drop();
     }
 
     @Test
