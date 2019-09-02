@@ -53,7 +53,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
         setup();
     }
 
-    public void setup() {
+    private void setup() {
         if (!db.collection(COLLECTION_NAME).exists())
             db.createCollection(COLLECTION_NAME, null);
 
@@ -261,6 +261,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).replaceVertex(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(412));
         }
     }
 
@@ -347,6 +348,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).updateVertex(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(412));
         }
     }
 
@@ -428,6 +430,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(412));
         }
     }
 }

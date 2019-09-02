@@ -30,7 +30,6 @@ import org.junit.Test;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
@@ -222,6 +221,7 @@ public class AQLActorsAndMoviesExample {
                         new Actor("actors/TomH", 2), new Actor("actors/VictorG", 1)));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class Actor {
         private String actor;
         private Integer movies;
@@ -265,17 +265,13 @@ public class AQLActorsAndMoviesExample {
                 return false;
             }
             if (movies == null) {
-                if (other.movies != null) {
-                    return false;
-                }
-            } else if (!movies.equals(other.movies)) {
-                return false;
-            }
-            return true;
+                return other.movies == null;
+            } else return movies.equals(other.movies);
         }
 
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class Movie {
         private String movie;
         private Integer actors;
@@ -319,13 +315,8 @@ public class AQLActorsAndMoviesExample {
                 return false;
             }
             if (movie == null) {
-                if (other.movie != null) {
-                    return false;
-                }
-            } else if (!movie.equals(other.movie)) {
-                return false;
-            }
-            return true;
+                return other.movie == null;
+            } else return movie.equals(other.movie);
         }
 
     }
@@ -356,7 +347,7 @@ public class AQLActorsAndMoviesExample {
         return actors.insertDocument(value);
     }
 
-    private static DocumentCreateEntity<BaseEdgeDocument> saveActsIn(
+    private static void saveActsIn(
             final ArangoCollection actsIn,
             final String actor,
             final String movie,
@@ -367,7 +358,7 @@ public class AQLActorsAndMoviesExample {
         value.setTo(movie);
         value.addAttribute("roles", roles);
         value.addAttribute("year", year);
-        return actsIn.insertDocument(value);
+        actsIn.insertDocument(value);
     }
 
     private static void createData() {

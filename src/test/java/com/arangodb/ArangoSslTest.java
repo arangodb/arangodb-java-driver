@@ -79,7 +79,7 @@ public class ArangoSslTest {
 
 	@Test
 	@Ignore
-	public void connectWithoutValidSslContext() throws Exception {
+	public void connectWithoutValidSslContext() {
 		try {
 			final ArangoDB arangoDB = new ArangoDB.Builder()
 					.loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)

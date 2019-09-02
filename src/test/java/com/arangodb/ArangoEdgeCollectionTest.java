@@ -74,7 +74,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         if (!db.collection(EDGE_COLLECTION_NAME).exists())
             db.createCollection(EDGE_COLLECTION_NAME, new CollectionCreateOptions().type(CollectionType.EDGES));
 
-        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COLLECTION_NAME).from(VERTEX_COLLECTION_NAME)
                 .to(VERTEX_COLLECTION_NAME));
         db.createGraph(GRAPH_NAME, edgeDefinitions, null);
@@ -272,6 +272,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).replaceEdge(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(412));
         }
     }
 
@@ -354,6 +355,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).updateEdge(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(412));
         }
     }
 
@@ -430,6 +432,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(412));
         }
     }
 }

@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -57,7 +56,7 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class ArangoDatabaseTest extends BaseTest {
 
-    Logger LOG = LoggerFactory.getLogger(ArangoDatabaseTest.class);
+    private final Logger LOG = LoggerFactory.getLogger(ArangoDatabaseTest.class);
 
     private static final String COLLECTION_NAME = "db_test";
     private static final String GRAPH_NAME = "graph_test";
@@ -367,6 +366,7 @@ public class ArangoDatabaseTest extends BaseTest {
             db.collection(name).getInfo();
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(404));
         }
     }
 
@@ -376,17 +376,23 @@ public class ArangoDatabaseTest extends BaseTest {
             return;
         }
         final String name = "_system_test";
+        ArangoCollection collection = db.collection(name);
+        if (collection.exists())
+            collection.drop(true);
+
         db.createCollection(name, new CollectionCreateOptions().isSystem(true));
         try {
-            db.collection(name).drop();
+            collection.drop();
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(403));
         }
-        db.collection(name).drop(true);
+        collection.drop(true);
         try {
-            db.collection(name).getInfo();
+            collection.getInfo();
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(404));
         }
     }
 
@@ -394,7 +400,7 @@ public class ArangoDatabaseTest extends BaseTest {
     public void getIndex() {
         try {
             db.createCollection(COLLECTION_NAME, null);
-            final Collection<String> fields = new ArrayList<String>();
+            final Collection<String> fields = new ArrayList<>();
             fields.add("a");
             final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
             final IndexEntity readResult = db.getIndex(createResult.getId());
@@ -408,7 +414,7 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void deleteIndex() {
         db.createCollection(COLLECTION_NAME, null);
-        final Collection<String> fields = new ArrayList<String>();
+        final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
         final String id = db.deleteIndex(createResult.getId());
@@ -417,6 +423,7 @@ public class ArangoDatabaseTest extends BaseTest {
             db.getIndex(id);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(404));
         }
         db.collection(COLLECTION_NAME).drop();
     }
@@ -438,22 +445,18 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void getCollectionsExcludeSystem() {
-        try {
-            final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
-            final Collection<CollectionEntity> nonSystemCollections = db.getCollections(options);
+        final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
+        final Collection<CollectionEntity> nonSystemCollections = db.getCollections(options);
 
-            assertThat(nonSystemCollections.size(), is(0));
-            db.createCollection(COLLECTION_NAME + "1", null);
-            db.createCollection(COLLECTION_NAME + "2", null);
-            final Collection<CollectionEntity> newCollections = db.getCollections(options);
-            assertThat(newCollections.size(), is(2));
-            assertThat(newCollections, is(notNullValue()));
-        } catch (final ArangoDBException e) {
-            System.out.println(e.getErrorMessage());
-        } finally {
-            db.collection(COLLECTION_NAME + "1").drop();
-            db.collection(COLLECTION_NAME + "2").drop();
-        }
+        assertThat(nonSystemCollections.size(), is(0));
+        db.createCollection(COLLECTION_NAME + "1", null);
+        db.createCollection(COLLECTION_NAME + "2", null);
+        final Collection<CollectionEntity> newCollections = db.getCollections(options);
+        assertThat(newCollections.size(), is(2));
+        assertThat(newCollections, is(notNullValue()));
+
+        db.collection(COLLECTION_NAME + "1").drop();
+        db.collection(COLLECTION_NAME + "2").drop();
     }
 
     @Test
@@ -556,7 +559,7 @@ public class ArangoDatabaseTest extends BaseTest {
             final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
             assertThat(cursor, is(notNullValue()));
             for (int i = 0; i < 10; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != 10));
+                assertThat(cursor.hasNext(), is(true));
             }
         } finally {
             db.collection(COLLECTION_NAME).drop();
@@ -614,7 +617,7 @@ public class ArangoDatabaseTest extends BaseTest {
                             String.class);
             assertThat(cursor, is(notNullValue()));
             for (int i = 0; i < 6; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != 6));
+                assertThat(cursor.hasNext(), is(true));
             }
             assertThat(cursor.getCount(), is(6));
 
@@ -636,7 +639,7 @@ public class ArangoDatabaseTest extends BaseTest {
                             String.class);
             assertThat(cursor, is(notNullValue()));
             for (int i = 0; i < 5; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != 5));
+                assertThat(cursor.hasNext(), is(true));
             }
             assertThat(cursor.getStats(), is(notNullValue()));
             assertThat(cursor.getStats().getFullCount(), is(10L));
@@ -660,7 +663,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
             assertThat(cursor, is(notNullValue()));
             for (int i = 0; i < 10; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != 10));
+                assertThat(cursor.hasNext(), is(true));
             }
         } catch (final ArangoDBException e) {
             System.out.println(e.getErrorMessage());
@@ -715,7 +718,7 @@ public class ArangoDatabaseTest extends BaseTest {
             assertThat(cursor, is(notNullValue()));
 
             for (int i = 0; i < 10; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != 10));
+                assertThat(cursor.hasNext(), is(true));
                 if (i == 1) {
                     Thread.sleep(wait * 1000);
                 }
@@ -751,7 +754,7 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    public void queryWithCache() throws InterruptedException {
+    public void queryWithCache() {
         if (arangoDB.getRole() != ServerRole.SINGLE) {
             return;
         }
@@ -843,7 +846,7 @@ public class ArangoDatabaseTest extends BaseTest {
             assertThat(cursor2.hasNext(), is(true));
 
             for (int i = 0; i < batchSize; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != batchSize));
+                assertThat(cursor.hasNext(), is(true));
             }
         } finally {
             db.collection(COLLECTION_NAME).drop();
@@ -874,7 +877,7 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    public void queryWithBindVars() throws InterruptedException {
+    public void queryWithBindVars() {
         try {
             db.createCollection(COLLECTION_NAME, null);
             for (int i = 0; i < 10; i++) {
@@ -882,7 +885,7 @@ public class ArangoDatabaseTest extends BaseTest {
                 baseDocument.addAttribute("age", 20 + i);
                 db.collection(COLLECTION_NAME).insertDocument(baseDocument, null);
             }
-            final Map<String, Object> bindVars = new HashMap<String, Object>();
+            final Map<String, Object> bindVars = new HashMap<>();
             bindVars.put("@coll", COLLECTION_NAME);
             bindVars.put("age", 25);
 
@@ -893,7 +896,7 @@ public class ArangoDatabaseTest extends BaseTest {
             assertThat(cursor, is(notNullValue()));
 
             for (int i = 0; i < 5; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(i != 5));
+                assertThat(cursor.hasNext(), is(true));
             }
 
         } finally {
@@ -963,17 +966,12 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void queryAllowDirtyRead() throws IOException {
-        try {
-            db.createCollection(COLLECTION_NAME);
-            final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
-                    new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(),
-                    new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
-            cursor.close();
-        } catch (ArangoDBException e) {
-            System.out.println(e);
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        db.createCollection(COLLECTION_NAME);
+        final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
+                new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(),
+                new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
+        cursor.close();
+        db.collection(COLLECTION_NAME).drop();
     }
 
     @Test
@@ -1001,7 +999,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     @Ignore
-    public void getCurrentlyRunningQueries() throws InterruptedException, ExecutionException {
+    public void getCurrentlyRunningQueries() throws InterruptedException {
         final Thread t = new Thread() {
             @Override
             public void run() {
@@ -1024,47 +1022,40 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    @Ignore
-    public void getAndClearSlowQueries() throws InterruptedException, ExecutionException {
+    public void getAndClearSlowQueries() {
         final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties();
         final Long slowQueryThreshold = properties.getSlowQueryThreshold();
-        try {
-            properties.setSlowQueryThreshold(1L);
-            db.setQueryTrackingProperties(properties);
+        properties.setSlowQueryThreshold(1L);
+        db.setQueryTrackingProperties(properties);
 
-            db.query("return sleep(1.1)", null, null, Void.class);
-            final Collection<QueryEntity> slowQueries = db.getSlowQueries();
-            assertThat(slowQueries, is(notNullValue()));
-            assertThat(slowQueries.size(), is(1));
-            final QueryEntity queryEntity = slowQueries.iterator().next();
-            assertThat(queryEntity.getQuery(), is("return sleep(1.1)"));
+        db.query("return sleep(1.1)", null, null, Void.class);
+        final Collection<QueryEntity> slowQueries = db.getSlowQueries();
+        assertThat(slowQueries, is(notNullValue()));
+        assertThat(slowQueries.size(), is(1));
+        final QueryEntity queryEntity = slowQueries.iterator().next();
+        assertThat(queryEntity.getQuery(), is("return sleep(1.1)"));
 
-            db.clearSlowQueries();
-            assertThat(db.getSlowQueries().size(), is(0));
-        } finally {
-            properties.setSlowQueryThreshold(slowQueryThreshold);
-            db.setQueryTrackingProperties(properties);
-        }
+        db.clearSlowQueries();
+        assertThat(db.getSlowQueries().size(), is(0));
+        properties.setSlowQueryThreshold(slowQueryThreshold);
+        db.setQueryTrackingProperties(properties);
     }
 
     @Test
     @Ignore
-    public void killQuery() throws InterruptedException, ExecutionException {
+    public void killQuery() throws InterruptedException {
         final Thread t = new Thread() {
             @Override
             public void run() {
                 super.run();
-                try {
-                    db.query("return sleep(0.2)", null, null, Void.class);
-                    fail();
-                } catch (final ArangoDBException e) {
-                }
+                db.query("return sleep(0.2)", null, null, Void.class);
+                fail();
             }
         };
         t.start();
         Thread.sleep(100);
+
         final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
-        assertThat(currentlyRunningQueries, is(notNullValue()));
         assertThat(currentlyRunningQueries.size(), is(1));
 
         final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
@@ -1138,8 +1129,7 @@ public class ArangoDatabaseTest extends BaseTest {
             final String edgeCollection = COLLECTION_NAME + "edge";
             final String fromCollection = COLLECTION_NAME + "from";
             final String toCollection = COLLECTION_NAME + "to";
-            final Collection<EdgeDefinition> edgeDefinitions = Arrays
-                    .asList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+            final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
             final GraphEntity result = db
                     .createGraph(GRAPH_NAME, edgeDefinitions, new GraphCreateOptions().replicationFactor(2));
             assertThat(result, is(notNullValue()));
@@ -1161,8 +1151,7 @@ public class ArangoDatabaseTest extends BaseTest {
             final String edgeCollection = COLLECTION_NAME + "edge";
             final String fromCollection = COLLECTION_NAME + "from";
             final String toCollection = COLLECTION_NAME + "to";
-            final Collection<EdgeDefinition> edgeDefinitions = Arrays
-                    .asList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+            final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
             final GraphEntity result = db
                     .createGraph(GRAPH_NAME, edgeDefinitions, new GraphCreateOptions().numberOfShards(2));
             assertThat(result, is(notNullValue()));
@@ -1249,7 +1238,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void transactionCollection() {
-        final Collection<String> params = new ArrayList<String>();
+        final Collection<String> params = new ArrayList<>();
         params.add("hello");
         params.add("world");
         final TransactionOptions options = new TransactionOptions().params(params);
@@ -1318,11 +1307,13 @@ public class ArangoDatabaseTest extends BaseTest {
             db.transaction(action, VPackSlice.class, options);
             fail();
         } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(400));
         }
         db.collection("someCollection").drop();
         db.collection("someOtherCollection").drop();
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     protected static class TransactionTestEntity {
         private String value;
 
@@ -1379,7 +1370,7 @@ public class ArangoDatabaseTest extends BaseTest {
             assertThat(vertices.size(), is(4));
 
             final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-            final Collection<String> v = Arrays.asList(new String[]{"Alice", "Bob", "Charlie", "Dave"});
+            final Collection<String> v = Arrays.asList("Alice", "Bob", "Charlie", "Dave");
             for (; verticesIterator.hasNext(); ) {
                 assertThat(v.contains(verticesIterator.next().getKey()), is(true));
             }

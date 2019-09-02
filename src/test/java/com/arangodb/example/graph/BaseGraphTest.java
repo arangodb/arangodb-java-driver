@@ -30,7 +30,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.VertexEntity;
 
 /**
@@ -38,12 +37,12 @@ import com.arangodb.entity.VertexEntity;
  */
 public abstract class BaseGraphTest {
 
-    protected static final String TEST_DB = "java_driver_graph_test_db";
-    protected static ArangoDB arangoDB;
-    protected static ArangoDatabase db;
-    protected static final String GRAPH_NAME = "traversalGraph";
-    protected static final String EDGE_COLLECTION_NAME = "edges";
-    protected static final String VERTEXT_COLLECTION_NAME = "circles";
+    private static final String TEST_DB = "java_driver_graph_test_db";
+    private static ArangoDB arangoDB;
+    static ArangoDatabase db;
+    private static final String GRAPH_NAME = "traversalGraph";
+    private static final String EDGE_COLLECTION_NAME = "edges";
+    private static final String VERTEXT_COLLECTION_NAME = "circles";
 
     @BeforeClass
     public static void init() {
@@ -55,7 +54,7 @@ public abstract class BaseGraphTest {
         arangoDB.createDatabase(TEST_DB);
         BaseGraphTest.db = arangoDB.db(TEST_DB);
 
-        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         final EdgeDefinition edgeDefinition = new EdgeDefinition().collection(EDGE_COLLECTION_NAME)
                 .from(VERTEXT_COLLECTION_NAME).to(VERTEXT_COLLECTION_NAME);
         edgeDefinitions.add(edgeDefinition);
@@ -101,8 +100,8 @@ public abstract class BaseGraphTest {
         saveEdge(new CircleEdge(vJ.getId(), vK.getId(), false, true, "right_zup"));
     }
 
-    private static EdgeEntity saveEdge(final CircleEdge edge) throws ArangoDBException {
-        return db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(edge);
+    private static void saveEdge(final CircleEdge edge) throws ArangoDBException {
+        db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(edge);
     }
 
     private static VertexEntity createVertex(final Circle vertex) throws ArangoDBException {

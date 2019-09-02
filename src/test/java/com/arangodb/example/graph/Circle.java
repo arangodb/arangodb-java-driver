@@ -27,7 +27,8 @@ import com.arangodb.entity.DocumentField.Type;
  * @author a-brandt
  *
  */
-public class Circle {
+@SuppressWarnings("unused")
+class Circle {
 
 	@DocumentField(Type.ID)
 	private String id;

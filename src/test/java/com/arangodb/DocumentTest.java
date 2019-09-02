@@ -49,7 +49,7 @@ public class DocumentTest extends BaseTest {
         setup();
     }
 
-    public void setup() {
+    private void setup() {
         db.createCollection(COLLECTION_NAME);
         collection = db.collection(COLLECTION_NAME);
     }

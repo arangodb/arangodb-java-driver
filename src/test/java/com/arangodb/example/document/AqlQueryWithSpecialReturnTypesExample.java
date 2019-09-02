@@ -36,7 +36,6 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 
 /**
  * @author Mark Vollmary

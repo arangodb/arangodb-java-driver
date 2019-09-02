@@ -20,13 +20,13 @@
 
 package com.arangodb;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author Mark Vollmary
@@ -43,12 +43,11 @@ public abstract class BaseTest {
         );
     }
 
-    protected static final String TEST_DB = "java_driver_test_db";
-    protected static final String TEST_DB_CUSTOM = "java_driver_test_db_custom";
-    protected static ArangoDB arangoDB;
-    protected static ArangoDatabase db;
+    static final String TEST_DB = "java_driver_test_db";
+    static ArangoDB arangoDB;
+    static ArangoDatabase db;
 
-    public BaseTest(final ArangoDB.Builder builder) {
+    BaseTest(final ArangoDB.Builder builder) {
         super();
         if (arangoDB != null) {
             shutdown();
@@ -66,16 +65,16 @@ public abstract class BaseTest {
         arangoDB = null;
     }
 
-    protected boolean requireVersion(final int major, final int minor) {
+    boolean requireVersion(final int major, final int minor) {
         final String[] split = arangoDB.getVersion().getVersion().split("\\.");
-        return Integer.valueOf(split[0]) >= major && Integer.valueOf(split[1]) >= minor;
+        return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
     }
 
-    protected boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
+    boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
         return name.equals(arangoDB.getEngine().getName());
     }
 
-    protected boolean requireSingleServer() {
+    boolean requireSingleServer() {
         return (arangoDB.getRole() == ServerRole.SINGLE);
     }
 

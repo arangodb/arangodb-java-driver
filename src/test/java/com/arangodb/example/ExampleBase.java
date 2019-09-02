@@ -25,7 +25,6 @@ import org.junit.BeforeClass;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 
 /**
@@ -33,10 +32,10 @@ import com.arangodb.ArangoDatabase;
  */
 public class ExampleBase {
 
-    protected static final String DB_NAME = "json_example_db";
+    private static final String DB_NAME = "json_example_db";
     protected static final String COLLECTION_NAME = "json_example_collection";
 
-    protected static ArangoDB arangoDB;
+    private static ArangoDB arangoDB;
     protected static ArangoDatabase db;
     protected static ArangoCollection collection;
 

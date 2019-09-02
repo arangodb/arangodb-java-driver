@@ -47,7 +47,7 @@ import static org.junit.Assert.assertThat;
  */
 public class CustomSerdeTest {
 
-    private static String COLLECTION_NAME = "collection";
+    private static final String COLLECTION_NAME = "collection";
 
     private ArangoDatabase db;
     private ArangoCollection collection;

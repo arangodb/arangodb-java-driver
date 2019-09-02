@@ -29,8 +29,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.AfterClass;
 import org.junit.Ignore;
@@ -52,6 +52,7 @@ import com.arangodb.util.MapBuilder;
 /**
  * @author Mark Vollmary
  */
+@SuppressWarnings("CatchMayIgnoreException")
 @RunWith(Parameterized.class)
 @Ignore
 public class UserAuthTest {
@@ -63,14 +64,14 @@ public class UserAuthTest {
     private static final String USER_NAME = "AuthUnitTestUser";
     private static final String USER_NAME_NEW = USER_NAME + "new";
 
-    public static class UserAuthParam {
-        Protocol protocol;
-        Permissions systemPermission;
-        Permissions dbPermission;
-        Permissions colPermission;
+    static class UserAuthParam {
+        final Protocol protocol;
+        final Permissions systemPermission;
+        final Permissions dbPermission;
+        final Permissions colPermission;
 
-        public UserAuthParam(final Protocol protocol, final Permissions systemPermission,
-                             final Permissions dbPermission, final Permissions colPermission) {
+        UserAuthParam(final Protocol protocol, final Permissions systemPermission,
+                      final Permissions dbPermission, final Permissions colPermission) {
             super();
             this.protocol = protocol;
             this.systemPermission = systemPermission;
@@ -82,7 +83,7 @@ public class UserAuthTest {
 
     @Parameters
     public static Collection<UserAuthParam> params() {
-        final Collection<UserAuthParam> params = new ArrayList<UserAuthParam>();
+        final Collection<UserAuthParam> params = new ArrayList<>();
         final Permissions[] permissions = new Permissions[]{Permissions.RW, Permissions.RO, Permissions.NONE};
         for (final Protocol protocol : new Protocol[]{Protocol.VST, Protocol.HTTP_JSON, Protocol.HTTP_VPACK}) {
             for (final Permissions systemPermission : permissions) {
@@ -115,8 +116,8 @@ public class UserAuthTest {
         arangoDBRoot.db().grantAccess(USER_NAME, param.systemPermission);
         arangoDBRoot.db(DB_NAME).grantAccess(USER_NAME, param.dbPermission);
         arangoDBRoot.db(DB_NAME).collection(COLLECTION_NAME).grantAccess(USER_NAME, param.colPermission);
-        details = new StringBuffer().append(param.protocol).append("_").append(param.systemPermission).append("_")
-                .append(param.dbPermission).append("_").append(param.colPermission).toString();
+        details = param.protocol + "_" + param.systemPermission + "_" +
+                param.dbPermission + "_" + param.colPermission;
     }
 
     @AfterClass
@@ -508,7 +509,7 @@ public class UserAuthTest {
             } catch (final ArangoDBException e) {
                 fail(details);
             }
-        } else if (Permissions.RW.equals(param.dbPermission) || Permissions.RO.equals(param.dbPermission)) {
+        } else if ((Permissions.RW.equals(param.dbPermission) || Permissions.RO.equals(param.dbPermission))) {
             final Collection<CollectionEntity> collections = arangoDB.db(DB_NAME).getCollections();
             boolean found = false;
             for (final CollectionEntity collection : collections) {
@@ -607,7 +608,7 @@ public class UserAuthTest {
             if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
                 try {
                     final IndexEntity createHashIndex = arangoDB.db(DB_NAME).collection(COLLECTION_NAME)
-                            .ensureHashIndex(Arrays.asList("a"), new HashIndexOptions());
+                            .ensureHashIndex(Collections.singletonList("a"), new HashIndexOptions());
                     assertThat(details, createHashIndex, is(notNullValue()));
                     id = createHashIndex.getId();
                 } catch (final ArangoDBException e) {
@@ -617,7 +618,7 @@ public class UserAuthTest {
             } else {
                 try {
                     final IndexEntity createHashIndex = arangoDB.db(DB_NAME).collection(COLLECTION_NAME)
-                            .ensureHashIndex(Arrays.asList("a"), new HashIndexOptions());
+                            .ensureHashIndex(Collections.singletonList("a"), new HashIndexOptions());
                     id = createHashIndex.getId();
                     fail(details);
                 } catch (final ArangoDBException e) {
@@ -634,7 +635,7 @@ public class UserAuthTest {
     @Test
     public void dropCollectionIndex() {
         final String id = arangoDBRoot.db(DB_NAME).collection(COLLECTION_NAME)
-                .ensureHashIndex(Arrays.asList("a"), new HashIndexOptions()).getId();
+                .ensureHashIndex(Collections.singletonList("a"), new HashIndexOptions()).getId();
         try {
             if (Permissions.RW.equals(param.dbPermission) && Permissions.RW.equals(param.colPermission)) {
                 try {

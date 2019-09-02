@@ -72,7 +72,7 @@ public class ArangoGraphTest extends BaseTest {
     public void setup() {
         if (db.graph(GRAPH_NAME).exists())
             db.graph(GRAPH_NAME).drop(true);
-        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
         edgeDefinitions
                 .add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
@@ -123,7 +123,7 @@ public class ArangoGraphTest extends BaseTest {
         }
 
         try {
-            final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+            final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
             final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2));
             assertThat(graph, is(notNullValue()));
             assertThat(graph.getName(), is(GRAPH_NAME + "_1"));
@@ -265,7 +265,7 @@ public class ArangoGraphTest extends BaseTest {
             if (db.graph(GRAPH_NAME).exists())
                 db.graph(GRAPH_NAME).drop();
 
-            final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<EdgeDefinition>();
+            final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
 
             edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
             edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));

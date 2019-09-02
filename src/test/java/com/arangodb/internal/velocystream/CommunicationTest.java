@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.junit.Test;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.ArangoDBVersion;
 
@@ -55,21 +54,15 @@ public class CommunicationTest {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
         arangoDB.getVersion();// authentication
 
-        final Collection<String> result = new ConcurrentLinkedQueue<String>();
-        final Thread fast = new Thread() {
-            @Override
-            public void run() {
-                arangoDB.db().query("return sleep(1)", null, null, null);
-                result.add(FAST);
-            }
-        };
-        final Thread slow = new Thread() {
-            @Override
-            public void run() {
-                arangoDB.db().query("return sleep(4)", null, null, null);
-                result.add(SLOW);
-            }
-        };
+        final Collection<String> result = new ConcurrentLinkedQueue<>();
+        final Thread fast = new Thread(() -> {
+            arangoDB.db().query("return sleep(1)", null, null, null);
+            result.add(FAST);
+        });
+        final Thread slow = new Thread(() -> {
+            arangoDB.db().query("return sleep(4)", null, null, null);
+            result.add(SLOW);
+        });
         slow.start();
         Thread.sleep(1000);
         fast.start();
@@ -90,21 +83,15 @@ public class CommunicationTest {
 
         final ArangoDatabase db = arangoDB.db();
 
-        final Collection<String> result = new ConcurrentLinkedQueue<String>();
-        final Thread t1 = new Thread() {
-            @Override
-            public void run() {
-                db.query("return sleep(1)", null, null, null);
-                result.add("1");
-            }
-        };
-        final Thread t2 = new Thread() {
-            @Override
-            public void run() {
-                db.query("return sleep(1)", null, null, null);
-                result.add("1");
-            }
-        };
+        final Collection<String> result = new ConcurrentLinkedQueue<>();
+        final Thread t1 = new Thread(() -> {
+            db.query("return sleep(1)", null, null, null);
+            result.add("1");
+        });
+        final Thread t2 = new Thread(() -> {
+            db.query("return sleep(1)", null, null, null);
+            result.add("1");
+        });
         t2.start();
         t1.start();
         t2.join();
@@ -123,21 +110,15 @@ public class CommunicationTest {
             final ArangoDatabase db1 = arangoDB.db("db1");
             final ArangoDatabase db2 = arangoDB.db("db2");
 
-            final Collection<String> result = new ConcurrentLinkedQueue<String>();
-            final Thread t1 = new Thread() {
-                @Override
-                public void run() {
-                        db1.query("return sleep(1)", null, null, null);
-                        result.add("1");
-                }
-            };
-            final Thread t2 = new Thread() {
-                @Override
-                public void run() {
-                        db2.query("return sleep(1)", null, null, null);
-                        result.add("1");
-                }
-            };
+            final Collection<String> result = new ConcurrentLinkedQueue<>();
+            final Thread t1 = new Thread(() -> {
+                    db1.query("return sleep(1)", null, null, null);
+                    result.add("1");
+            });
+            final Thread t2 = new Thread(() -> {
+                    db2.query("return sleep(1)", null, null, null);
+                    result.add("1");
+            });
             t2.start();
             t1.start();
             t2.join();
