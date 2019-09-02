@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
@@ -65,17 +66,25 @@ public abstract class BaseTest {
         arangoDB = null;
     }
 
-    boolean requireVersion(final int major, final int minor) {
+    boolean isAtLeastVersion(final int major, final int minor) {
         final String[] split = arangoDB.getVersion().getVersion().split("\\.");
         return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
     }
 
-    boolean requireStorageEngine(ArangoDBEngine.StorageEngineName name) {
+    boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
         return name.equals(arangoDB.getEngine().getName());
     }
 
-    boolean requireSingleServer() {
-        return (arangoDB.getRole() == ServerRole.SINGLE);
+    boolean isSingleServer() {
+        return arangoDB.getRole() == ServerRole.SINGLE;
+    }
+
+    boolean isCluster() {
+        return arangoDB.getRole() == ServerRole.COORDINATOR;
+    }
+
+    boolean isEnterprise() {
+        return arangoDB.getVersion().getLicense() == License.ENTERPRISE;
     }
 
 }

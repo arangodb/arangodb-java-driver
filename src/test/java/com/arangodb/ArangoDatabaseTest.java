@@ -37,8 +37,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -47,7 +45,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -55,8 +55,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(Parameterized.class)
 public class ArangoDatabaseTest extends BaseTest {
-
-    private final Logger LOG = LoggerFactory.getLogger(ArangoDatabaseTest.class);
 
     private static final String COLLECTION_NAME = "db_test";
     private static final String GRAPH_NAME = "graph_test";
@@ -130,9 +128,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithReplicationFactor() {
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isCluster());
         final CollectionEntity result = db
                 .createCollection(COLLECTION_NAME, new CollectionCreateOptions().replicationFactor(2));
         assertThat(result, is(notNullValue()));
@@ -144,17 +140,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithMinReplicationFactor() {
-
-        // if we do not have version at least 3.5+ => exit
-        if (!requireVersion(3, 5)) {
-            LOG.info("Skip Test 'createCollectionWithMinReplicationFactor' because feature not implemented yet.");
-            return;
-        }
-
-        // if we do not have a cluster => exit
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isCluster());
 
         final CollectionEntity result = db.createCollection(COLLECTION_NAME,
                 new CollectionCreateOptions().replicationFactor(2).minReplicationFactor(2));
@@ -168,18 +155,10 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createSatelliteCollection() {
-        if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
-            LOG.info("Skip Test 'createSatelliteCollection' on COMMUNITY VERSION");
-            return;
-        }
-
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            LOG.info("Skip Test 'createSatelliteCollection' on SINGLE SERVER");
-            return;
-        }
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
 
         try {
-
             final CollectionEntity result = db
                     .createCollection(COLLECTION_NAME, new CollectionCreateOptions().satellite(true));
 
@@ -187,7 +166,6 @@ public class ArangoDatabaseTest extends BaseTest {
             assertThat(result.getId(), is(notNullValue()));
             assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(nullValue()));
             assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(true));
-
         } finally {
             db.collection(COLLECTION_NAME).drop();
         }
@@ -195,19 +173,14 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithNumberOfShards() {
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            return;
-        }
-
+        assumeTrue(isCluster());
         try {
-
             final CollectionEntity result = db
                     .createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(2));
 
             assertThat(result, is(notNullValue()));
             assertThat(result.getId(), is(notNullValue()));
             assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
-
         } finally {
             db.collection(COLLECTION_NAME).drop();
         }
@@ -215,15 +188,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithShardingStrategys() {
-        if (!requireVersion(3, 4)) {
-            LOG.info("Skip Test 'createCollectionWithShardingStrategys' because feature not implemented yet.");
-            return;
-        }
-
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            LOG.info("Skip Test 'createCollectionWithShardingStrategys' on SINGLE SERVER");
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
+        assumeTrue(isCluster());
 
         final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions()
                 .shardingStrategy(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
@@ -237,20 +203,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithSmartJoinAttribute() {
-        if (!requireVersion(3, 5)) {
-            LOG.info("Skip Test 'createCollectionWithSmartJoinAttribute' because feature not implemented yet.");
-            return;
-        }
-
-        if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
-            LOG.info("Skip Test 'createCollectionWithSmartJoinAttribute' on COMMUNITY SERVER");
-            return;
-        }
-
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            LOG.info("Skip Test 'createCollectionWithSmartJoinAttribute' on SINGLE SERVER");
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
 
         final CollectionEntity result = db.createCollection(COLLECTION_NAME,
                 new CollectionCreateOptions().smartJoinAttribute("test123").shardKeys("_key:"));
@@ -262,20 +217,9 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithSmartJoinAttributeWrong() {
-        if (!requireVersion(3, 5)) {
-            LOG.info("Skip Test 'createCollectionWithSmartJoinAttributeWrong' because feature not implemented yet.");
-            return;
-        }
-
-        if (arangoDB.getVersion().getLicense() == License.COMMUNITY) {
-            LOG.info("Skip Test 'createCollectionWithSmartJoinAttributeWrong' on COMMUNITY SERVER");
-            return;
-        }
-
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            LOG.info("Skip Test 'createCollectionWithSmartJoinAttributeWrong' on SINGLE SERVER");
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
 
         try {
             db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123"));
@@ -290,10 +234,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithNumberOfShardsAndShardKey() {
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            LOG.info("Skip Test 'createCollectionWithNumberOfShardsAndShardKey' on SINGLE SERVER");
-            return;
-        }
+        assumeTrue(isCluster());
 
         try {
             final CollectionEntity result = db
@@ -310,11 +251,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithNumberOfShardsAndShardKeys() {
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            LOG.info("Skip Test 'createCollectionWithNumberOfShardsAndShardKeys' on SINGLE SERVER");
-            return;
-        }
-
+        assumeTrue(isCluster());
         try {
             final CollectionEntity result = db.createCollection(COLLECTION_NAME,
                     new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
@@ -330,19 +267,17 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollectionWithDistributeShardsLike() {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
 
-        if (arangoDB.getVersion().getLicense() == License.ENTERPRISE && arangoDB.getRole() != ServerRole.SINGLE) {
+        final Integer numberOfShards = 3;
 
-            final Integer numberOfShards = 3;
+        db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(numberOfShards));
+        db.createCollection(COLLECTION_NAME + "2",
+                new CollectionCreateOptions().distributeShardsLike(COLLECTION_NAME));
 
-            db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(numberOfShards));
-            db.createCollection(COLLECTION_NAME + "2",
-                    new CollectionCreateOptions().distributeShardsLike(COLLECTION_NAME));
-
-            assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(numberOfShards));
-            assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
-        }
-
+        assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(numberOfShards));
+        assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
     }
 
     @Test(expected = ArangoDBException.class)
@@ -354,11 +289,6 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void deleteSystemCollection() {
-
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
-
         final String name = "_system_test";
         db.createCollection(name, new CollectionCreateOptions().isSystem(true));
         db.collection(name).drop(true);
@@ -372,9 +302,6 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void deleteSystemCollectionFail() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
         final String name = "_system_test";
         ArangoCollection collection = db.collection(name);
         if (collection.exists())
@@ -755,9 +682,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void queryWithCache() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         try {
             db.createCollection(COLLECTION_NAME, null);
             for (int i = 0; i < 10; i++) {
@@ -914,7 +839,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void queryStream() {
-        if (requireVersion(3, 4)) {
+        if (isAtLeastVersion(3, 4)) {
             final ArangoCursor<VPackSlice> cursor = db
                     .query("FOR i IN 1..2 RETURN i", null, new AqlQueryOptions().stream(true).count(true),
                             VPackSlice.class);
@@ -1075,7 +1000,7 @@ public class ArangoDatabaseTest extends BaseTest {
         } finally {
             final Integer deleteCount = db.deleteAqlFunction("myfunctions::temperature::celsiustofahrenheit", null);
             // compatibility with ArangoDB < 3.4
-            if (requireVersion(3, 4)) {
+            if (isAtLeastVersion(3, 4)) {
                 assertThat(deleteCount, is(1));
             } else {
                 assertThat(deleteCount, is(nullValue()));
@@ -1099,7 +1024,7 @@ public class ArangoDatabaseTest extends BaseTest {
             final Integer deleteCount = db
                     .deleteAqlFunction("myfunctions::temperature", new AqlFunctionDeleteOptions().group(true));
             // compatibility with ArangoDB < 3.4
-            if (requireVersion(3, 4)) {
+            if (isAtLeastVersion(3, 4)) {
                 assertThat(deleteCount, is(2));
             } else {
                 assertThat(deleteCount, is(nullValue()));
@@ -1122,9 +1047,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createGraphReplicationFaktor() {
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isCluster());
         try {
             final String edgeCollection = COLLECTION_NAME + "edge";
             final String fromCollection = COLLECTION_NAME + "from";
@@ -1144,9 +1067,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createGraphNumberOfShards() {
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isCluster());
         try {
             final String edgeCollection = COLLECTION_NAME + "edge";
             final String fromCollection = COLLECTION_NAME + "from";
@@ -1268,9 +1189,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void transactionExclusiveWrite() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         try {
             db.createCollection(COLLECTION_NAME);
             final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"0\"}")
@@ -1408,15 +1327,15 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void shouldIncludeExceptionMessage() {
-        if (!requireVersion(3, 2)) {
-            final String exceptionMessage = "My error context";
-            final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
-            try {
-                db.transaction(action, VPackSlice.class, null);
-                fail();
-            } catch (final ArangoDBException e) {
-                assertTrue(e.getException().contains(exceptionMessage));
-            }
+        assumeTrue(isAtLeastVersion(3, 4));
+
+        final String exceptionMessage = "My error context";
+        final String action = "function (params) {" + "throw '" + exceptionMessage + "';" + "}";
+        try {
+            db.transaction(action, VPackSlice.class, null);
+            fail();
+        } catch (final ArangoDBException e) {
+            assertThat(e.getErrorMessage(), is(exceptionMessage));
         }
     }
 

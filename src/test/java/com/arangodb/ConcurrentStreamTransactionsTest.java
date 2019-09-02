@@ -59,9 +59,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void conflictOnInsertDocumentWithNotYetCommittedTx() {
-        assumeTrue(requireSingleServer());
-        assumeTrue(requireVersion(3, 5));
-        assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
@@ -91,9 +91,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void conflictOnInsertDocumentWithAlreadyCommittedTx() {
-        assumeTrue(requireSingleServer());
-        assumeTrue(requireVersion(3, 5));
-        assumeTrue(requireStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
                 new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));

@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.*;
 
@@ -115,9 +116,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocumentOverwriteReturnOld() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("value", "a");
         final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME).insertDocument(doc);
@@ -155,9 +154,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocumentSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument(), new DocumentCreateOptions().silent(true));
         assertThat(meta, is(notNullValue()));
@@ -168,9 +165,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocumentSilentDontTouchInstance() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final BaseDocument doc = new BaseDocument();
         final String key = "testkey";
         doc.setKey(key);
@@ -183,9 +178,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocumentsSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> info = db.collection(COLLECTION_NAME)
                 .insertDocuments(Arrays.asList(new BaseDocument(), new BaseDocument()),
                         new DocumentCreateOptions().silent(true));
@@ -647,9 +640,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void updateDocumentSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument());
         final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
@@ -662,9 +653,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void updateDocumentsSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info = db.collection(COLLECTION_NAME)
@@ -848,9 +837,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void replaceDocumentSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument());
         final DocumentUpdateEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
@@ -863,9 +850,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void replaceDocumentSilentDontTouchInstance() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final BaseDocument doc = new BaseDocument();
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc);
         final String revision = doc.getRevision();
@@ -878,9 +863,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void replaceDocumentsSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> info = db.collection(COLLECTION_NAME)
@@ -941,9 +924,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void deleteDocumentSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument());
         final DocumentDeleteEntity<BaseDocument> meta = db.collection(COLLECTION_NAME)
@@ -956,9 +937,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void deleteDocumentsSilent() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
                 .insertDocument(new BaseDocument());
         final MultiDocumentEntity<DocumentDeleteEntity<BaseDocument>> info = db.collection(COLLECTION_NAME)
@@ -1023,7 +1002,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
         assertThat(indexResult.getIsNewlyCreated(), is(true));
         assertThat(indexResult.getMinLength(), is(nullValue()));
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
+        if (isSingleServer()) {
             assertThat(indexResult.getSelectivityEstimate(), is(1.));
         }
         assertThat(indexResult.getSparse(), is(false));
@@ -1033,9 +1012,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createHashIndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         final HashIndexOptions options = new HashIndexOptions();
         options.name("myHashIndex");
@@ -1051,7 +1028,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
         assertThat(indexResult.getIsNewlyCreated(), is(true));
         assertThat(indexResult.getMinLength(), is(nullValue()));
-        if (arangoDB.getRole() == ServerRole.SINGLE) {
+        if (isSingleServer()) {
             assertThat(indexResult.getSelectivityEstimate(), is(1.));
         }
         assertThat(indexResult.getSparse(), is(false));
@@ -1072,7 +1049,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getMinLength(), is(nullValue()));
         assertThat(indexResult.getSparse(), is(true));
         assertThat(indexResult.getUnique(), is(false));
-        if (requireVersion(3, 4)) {
+        if (isAtLeastVersion(3, 4)) {
             assertThat(indexResult.getType(), is(IndexType.geo));
         } else {
             assertThat(indexResult.getType(), is(IndexType.geo1));
@@ -1081,9 +1058,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createGeoIndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name("myGeoIndex1");
@@ -1098,7 +1073,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getMinLength(), is(nullValue()));
         assertThat(indexResult.getSparse(), is(true));
         assertThat(indexResult.getUnique(), is(false));
-        if (requireVersion(3, 4)) {
+        if (isAtLeastVersion(3, 4)) {
             assertThat(indexResult.getType(), is(IndexType.geo));
         } else {
             assertThat(indexResult.getType(), is(IndexType.geo1));
@@ -1120,7 +1095,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getMinLength(), is(nullValue()));
         assertThat(indexResult.getSparse(), is(true));
         assertThat(indexResult.getUnique(), is(false));
-        if (requireVersion(3, 4)) {
+        if (isAtLeastVersion(3, 4)) {
             assertThat(indexResult.getType(), is(IndexType.geo));
         } else {
             assertThat(indexResult.getType(), is(IndexType.geo2));
@@ -1129,9 +1104,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createGeo2IndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         final GeoIndexOptions options = new GeoIndexOptions();
         options.name("myGeoIndex2");
@@ -1148,7 +1121,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getMinLength(), is(nullValue()));
         assertThat(indexResult.getSparse(), is(true));
         assertThat(indexResult.getUnique(), is(false));
-        if (requireVersion(3, 4)) {
+        if (isAtLeastVersion(3, 4)) {
             assertThat(indexResult.getType(), is(IndexType.geo));
         } else {
             assertThat(indexResult.getType(), is(IndexType.geo2));
@@ -1176,9 +1149,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createSkiplistIndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         final SkiplistIndexOptions options = new SkiplistIndexOptions();
         options.name("mySkiplistIndex");
@@ -1220,9 +1191,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createPersistentIndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         final PersistentIndexOptions options = new PersistentIndexOptions();
         options.name("myPersistentIndex");
@@ -1261,9 +1230,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createFulltextIndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         final FulltextIndexOptions options = new FulltextIndexOptions();
         options.name("myFulltextIndex");
@@ -1284,9 +1251,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createTtlIndexWithoutOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         try {
@@ -1301,9 +1266,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void createTtlIndexWithOptions() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
 
@@ -1446,9 +1409,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocumentsOverwrite() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         final BaseDocument doc1 = new BaseDocument();
         doc1.addAttribute("value", "a");
         final DocumentCreateEntity<BaseDocument> meta1 = db.collection(COLLECTION_NAME).insertDocument(doc1);
@@ -2258,9 +2219,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void rename() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
+        assumeTrue(isSingleServer());
         final CollectionEntity result = db.collection(COLLECTION_NAME).rename(COLLECTION_NAME + "1");
         assertThat(result, is(notNullValue()));
         assertThat(result.getName(), is(COLLECTION_NAME + "1"));
@@ -2277,12 +2236,8 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void responsibleShard() {
-        if (arangoDB.getRole() != ServerRole.COORDINATOR) {
-            return;
-        }
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isCluster());
+        assumeTrue(isAtLeastVersion(3, 5));
         ShardEntity shard = db.collection(COLLECTION_NAME).getResponsibleShard(new BaseDocument("testKey"));
         assertThat(shard, is(notNullValue()));
         assertThat(shard.getShardId(), is(notNullValue()));
@@ -2290,16 +2245,11 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void renameDontBreaksCollectionHandler() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
-        try {
-            final ArangoCollection collection = db.collection(COLLECTION_NAME);
-            collection.rename(COLLECTION_NAME + "1");
-            assertThat(collection.getInfo(), is(notNullValue()));
-        } finally {
-            db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
-        }
+        assumeTrue(isSingleServer());
+        final ArangoCollection collection = db.collection(COLLECTION_NAME);
+        collection.rename(COLLECTION_NAME + "1");
+        assertThat(collection.getInfo(), is(notNullValue()));
+        db.collection(COLLECTION_NAME + "1").rename(COLLECTION_NAME);
     }
 
     @Test

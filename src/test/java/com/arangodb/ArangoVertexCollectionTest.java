@@ -90,7 +90,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
     @Test
     public void insertVertexViolatingUniqueConstraint() {
         // FIXME: remove once fix is backported to 3.4
-        assumeTrue(requireVersion(3, 5));
+        assumeTrue(isAtLeastVersion(3, 5));
 
         db.collection(COLLECTION_NAME)
                 .ensureSkiplistIndex(Collections.singletonList("properties"), new SkiplistIndexOptions().unique(true));

@@ -20,20 +20,17 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
+import com.arangodb.ArangoDB.Builder;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -55,18 +52,14 @@ public class ArangoViewTest extends BaseTest {
 
     @Test
     public void exists() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
         assertThat(db.view(VIEW_NAME).exists(), is(true));
     }
 
     @Test
     public void getInfo() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
         final ViewEntity info = db.view(VIEW_NAME).getInfo();
         assertThat(info, is(not(nullValue())));
@@ -77,9 +70,7 @@ public class ArangoViewTest extends BaseTest {
 
     @Test
     public void drop() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
         final ArangoView view = db.view(VIEW_NAME);
         view.drop();
@@ -88,12 +79,8 @@ public class ArangoViewTest extends BaseTest {
 
     @Test
     public void rename() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_new";
         db.createView(name, ViewType.ARANGO_SEARCH);
         db.view(name).rename(VIEW_NAME);

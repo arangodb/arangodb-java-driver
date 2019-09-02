@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
@@ -38,6 +37,7 @@ import java.util.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -63,18 +63,14 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void exists() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
         assertThat(db.arangoSearch(VIEW_NAME).exists(), is(true));
     }
 
     @Test
     public void getInfo() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
         final ViewEntity info = db.arangoSearch(VIEW_NAME).getInfo();
         assertThat(info, is(not(nullValue())));
@@ -85,9 +81,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void drop() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions());
         final ArangoView view = db.arangoSearch(VIEW_NAME);
         view.drop();
@@ -96,12 +90,8 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void rename() {
-        if (arangoDB.getRole() != ServerRole.SINGLE) {
-            return;
-        }
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_new";
         db.createArangoSearch(name, new ArangoSearchCreateOptions());
         db.arangoSearch(name).rename(VIEW_NAME);
@@ -111,9 +101,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void create() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         final ViewEntity info = db.arangoSearch(VIEW_NAME).create();
         assertThat(info, is(not(nullValue())));
         assertThat(info.getId(), is(not(nullValue())));
@@ -124,9 +112,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void createWithOptions() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         final ViewEntity info = db.arangoSearch(VIEW_NAME).create(options);
         assertThat(info, is(not(nullValue())));
@@ -138,9 +124,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void createWithPrimarySort() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
 
         final PrimarySort primarySort = PrimarySort.on("myFieldName");
@@ -158,9 +142,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void createWithCommitIntervalMsec() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         options.commitIntervalMsec(666666L);
 
@@ -179,9 +161,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void getProperties() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         final ArangoSearch view = db.arangoSearch(VIEW_NAME);
         view.create(new ArangoSearchCreateOptions());
         final ArangoSearchPropertiesEntity properties = view.getProperties();
@@ -199,9 +179,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void updateProperties() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
         db.createCollection("view_update_prop_test_collection");
         final ArangoSearch view = db.arangoSearch(VIEW_NAME);
         view.create(new ArangoSearchCreateOptions());
@@ -233,9 +211,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void replaceProperties() {
-        if (!requireVersion(3, 4)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 4));
 
         db.createCollection("view_replace_prop_test_collection");
         final ArangoSearch view = db.arangoSearch(VIEW_NAME);
@@ -298,9 +274,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void identityAnalyzer() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + UUID.randomUUID().toString();
 
@@ -320,9 +294,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void delimiterAnalyzer() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + UUID.randomUUID().toString();
 
@@ -342,9 +314,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void stemAnalyzer() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + UUID.randomUUID().toString();
 
@@ -364,9 +334,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void normAnalyzer() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + UUID.randomUUID().toString();
 
@@ -391,9 +359,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void ngramAnalyzer() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + UUID.randomUUID().toString();
 
@@ -418,9 +384,7 @@ public class ArangoSearchTest extends BaseTest {
 
     @Test
     public void textAnalyzer() {
-        if (!requireVersion(3, 5)) {
-            return;
-        }
+        assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + UUID.randomUUID().toString();
 

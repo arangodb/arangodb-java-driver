@@ -52,7 +52,7 @@ import com.arangodb.util.MapBuilder;
 /**
  * @author Mark Vollmary
  */
-@SuppressWarnings("CatchMayIgnoreException")
+@SuppressWarnings("ALL")
 @RunWith(Parameterized.class)
 @Ignore
 public class UserAuthTest {
