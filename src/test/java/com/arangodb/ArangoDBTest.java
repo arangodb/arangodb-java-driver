@@ -185,7 +185,7 @@ public class ArangoDBTest {
 			assertThat(users, is(notNullValue()));
 			assertThat(users.size(), is(initialUsers.size() + 1));
 
-			final List<Matcher<? super String>> matchers = new ArrayList<Matcher<? super String>>(users.size());
+			final List<Matcher<? super String>> matchers = new ArrayList<>(users.size());
 			// Add initial users, including root:
 			for (final UserEntity userEntity : initialUsers) {
 				matchers.add(is(userEntity.getUser()));
@@ -214,7 +214,7 @@ public class ArangoDBTest {
 	@Test
 	public void updateUser() {
 		try {
-			final Map<String, Object> extra = new HashMap<String, Object>();
+			final Map<String, Object> extra = new HashMap<>();
 			extra.put("hund", false);
 			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
 			extra.put("hund", true);
@@ -236,7 +236,7 @@ public class ArangoDBTest {
 	@Test
 	public void replaceUser() {
 		try {
-			final Map<String, Object> extra = new HashMap<String, Object>();
+			final Map<String, Object> extra = new HashMap<>();
 			extra.put("hund", false);
 			arangoDB.createUser(USER, PW, new UserCreateOptions().extra(extra));
 			extra.remove("hund");
@@ -282,7 +282,7 @@ public class ArangoDBTest {
 			arangoDB.getVersion();
 			fail();
 		} catch (final ArangoDBException e) {
-
+			assertThat(e.getResponseCode(), is(401));
 		}
 	}
 
@@ -293,7 +293,7 @@ public class ArangoDBTest {
 			arangoDB.getVersion();
 			fail();
 		} catch (final ArangoDBException e) {
-
+			assertThat(e.getResponseCode(), is(401));
 		}
 	}
 
@@ -415,7 +415,6 @@ public class ArangoDBTest {
 		} catch (final ArangoDBException e) {
 			assertThat(e.getResponseCode(), is(404));
 			assertThat(e.getErrorNum(), is(1228));
-			assertThat(e.getErrorMessage(), is("database not found"));
 		}
 	}
 

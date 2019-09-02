@@ -37,100 +37,95 @@ import com.arangodb.entity.DocumentCreateEntity;
 
 /**
  * @author Mark Vollmary
- *
  */
 @RunWith(Parameterized.class)
 public class DocumentTest extends BaseTest {
 
-	private static final String COLLECTION_NAME = "collection_test";
-	private ArangoCollection collection;
+    private static final String COLLECTION_NAME = "collection_test";
+    private ArangoCollection collection;
 
-	public DocumentTest(final Builder builder) {
-		super(builder);
-		setup();
-	}
+    public DocumentTest(final Builder builder) {
+        super(builder);
+        setup();
+    }
 
-	public void setup() {
-		db.createCollection(COLLECTION_NAME);
-		collection = db.collection(COLLECTION_NAME);
-	}
+    private void setup() {
+        db.createCollection(COLLECTION_NAME);
+        collection = db.collection(COLLECTION_NAME);
+    }
 
-	@After
-	public void teardown() {
-		collection.truncate();
-		try {
-			db.collection(COLLECTION_NAME).drop();
-		} catch (final ArangoDBException e) {
-			
-		}
-	}
+    @After
+    public void teardown() {
+        if (db.collection(COLLECTION_NAME).exists())
+            db.collection(COLLECTION_NAME).drop();
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void insertAsJson() {
-		//@formatter:off
-		final String json = 
-				"{"
-				+ "\"article\": {"
-					+ "\"artist\": \"PREGARDIEN/RHEINISCHE KANTOREI/DAS\","
-					+ "\"releaseDate\": \"1970-01-01\","
-					+ "\"composer\": \"BACH\","
-					+ "\"format\": \"CD\","
-					+ "\"vat\": \"H\","
-					+ "\"carriers\": 1,"
-					+ "\"label\": \"CAPRICCIO\","
-					+ "\"title\": \"BACH ST MATTHEW PASSION BWV244\","
-					+ "\"barcode\": ["
-						+ "\"4006408600466\""
-					+ "],"
-					+ "\"conductor\": \"MAX, H.\""
-				+ "},"
-				+ "\"stock\": {"
-					+ "\"status\": \"RMV\","
-					+ "\"lastUpdate\": \"2016-11-01 00:00\""
-				+ "}"
-			+ "}";
-		//@formatter:on
-		final DocumentCreateEntity<String> createResult = collection.insertDocument(json);
-		final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
-		assertThat(doc, is(notNullValue()));
-		final Object article = doc.getAttribute("article");
-		assertThat(article, is(notNullValue()));
-		final Object artist = ((Map<String, Object>) article).get("artist");
-		assertThat(artist, is(notNullValue()));
-		assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
-	}
+    @SuppressWarnings("unchecked")
+    @Test
+    public void insertAsJson() {
+        //@formatter:off
+        final String json =
+                "{"
+                        + "\"article\": {"
+                        + "\"artist\": \"PREGARDIEN/RHEINISCHE KANTOREI/DAS\","
+                        + "\"releaseDate\": \"1970-01-01\","
+                        + "\"composer\": \"BACH\","
+                        + "\"format\": \"CD\","
+                        + "\"vat\": \"H\","
+                        + "\"carriers\": 1,"
+                        + "\"label\": \"CAPRICCIO\","
+                        + "\"title\": \"BACH ST MATTHEW PASSION BWV244\","
+                        + "\"barcode\": ["
+                        + "\"4006408600466\""
+                        + "],"
+                        + "\"conductor\": \"MAX, H.\""
+                        + "},"
+                        + "\"stock\": {"
+                        + "\"status\": \"RMV\","
+                        + "\"lastUpdate\": \"2016-11-01 00:00\""
+                        + "}"
+                        + "}";
+        //@formatter:on
+        final DocumentCreateEntity<String> createResult = collection.insertDocument(json);
+        final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
+        assertThat(doc, is(notNullValue()));
+        final Object article = doc.getAttribute("article");
+        assertThat(article, is(notNullValue()));
+        final Object artist = ((Map<String, Object>) article).get("artist");
+        assertThat(artist, is(notNullValue()));
+        assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void insertAsBaseDocument() {
-		final BaseDocument document = new BaseDocument();
-		{
-			final BaseDocument article = new BaseDocument();
-			document.addAttribute("article", article);
-			article.addAttribute("artist", "PREGARDIEN/RHEINISCHE KANTOREI/DAS");
-			article.addAttribute("releaseDate", "1970-01-01");
-			article.addAttribute("composer", "BACH");
-			article.addAttribute("format", "CD");
-			article.addAttribute("vat", "H");
-			article.addAttribute("carriers", 1);
-			article.addAttribute("label", "CAPRICCIO");
-			article.addAttribute("title", "BACH ST MATTHEW PASSION BWV244");
-			article.addAttribute("barcode", new String[] { "4006408600466" });
-			article.addAttribute("conductor", "MAX, H.");
-			final BaseDocument stock = new BaseDocument();
-			document.addAttribute("stock", stock);
-			stock.addAttribute("status", "RMV");
-			stock.addAttribute("lastUpdate", "2016-11-01 00:00");
-		}
-		final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
-		final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
-		assertThat(doc, is(notNullValue()));
-		final Object article = doc.getAttribute("article");
-		assertThat(article, is(notNullValue()));
-		final Object artist = ((Map<String, Object>) article).get("artist");
-		assertThat(artist, is(notNullValue()));
-		assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
-	}
+    @SuppressWarnings("unchecked")
+    @Test
+    public void insertAsBaseDocument() {
+        final BaseDocument document = new BaseDocument();
+        {
+            final BaseDocument article = new BaseDocument();
+            document.addAttribute("article", article);
+            article.addAttribute("artist", "PREGARDIEN/RHEINISCHE KANTOREI/DAS");
+            article.addAttribute("releaseDate", "1970-01-01");
+            article.addAttribute("composer", "BACH");
+            article.addAttribute("format", "CD");
+            article.addAttribute("vat", "H");
+            article.addAttribute("carriers", 1);
+            article.addAttribute("label", "CAPRICCIO");
+            article.addAttribute("title", "BACH ST MATTHEW PASSION BWV244");
+            article.addAttribute("barcode", new String[]{"4006408600466"});
+            article.addAttribute("conductor", "MAX, H.");
+            final BaseDocument stock = new BaseDocument();
+            document.addAttribute("stock", stock);
+            stock.addAttribute("status", "RMV");
+            stock.addAttribute("lastUpdate", "2016-11-01 00:00");
+        }
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
+        final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
+        assertThat(doc, is(notNullValue()));
+        final Object article = doc.getAttribute("article");
+        assertThat(article, is(notNullValue()));
+        final Object artist = ((Map<String, Object>) article).get("artist");
+        assertThat(artist, is(notNullValue()));
+        assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
+    }
 
 }
