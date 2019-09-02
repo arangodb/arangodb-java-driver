@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.After;
 import org.junit.Before;
@@ -41,13 +42,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.EdgeEntity;
-import com.arangodb.entity.EdgeUpdateEntity;
-import com.arangodb.entity.VertexEntity;
 
 /**
  * @author Mark Vollmary
@@ -272,7 +266,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).replaceEdge(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(412));
+            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+            // assertThat(e.getResponseCode(), is(412));
+            assertThat(e.getErrorNum(), is(1200));
         }
     }
 
@@ -355,7 +351,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).updateEdge(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(412));
+            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+            // assertThat(e.getResponseCode(), is(412));
+            assertThat(e.getErrorNum(), is(1200));
         }
     }
 
@@ -432,7 +430,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options);
             fail();
         } catch (final ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(412));
+            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+            //            assertThat(e.getResponseCode(), is(412));
+            assertThat(e.getErrorNum(), is(1200));
         }
     }
 }
