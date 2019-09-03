@@ -22,9 +22,7 @@ package com.arangodb;
 
 import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
-import com.arangodb.model.GraphDocumentReadOptions;
-import com.arangodb.model.StreamTransactionOptions;
-import com.arangodb.model.VertexCreateOptions;
+import com.arangodb.model.*;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -91,6 +89,28 @@ public class StreamTransactionGraphTest extends BaseTest {
     }
 
     @Test
+    public void getVertex() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // insert a vertex from outside the tx
+        VertexEntity createdVertex = vertexCollection1.insertVertex(new BaseDocument());
+
+        // assert that the vertex is not found from within the tx
+        assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())), is(nullValue()));
+
+        db.abortStreamTransaction(tx.getId());
+    }
+
+
+    @Test
     public void createVertex() {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
@@ -115,6 +135,109 @@ public class StreamTransactionGraphTest extends BaseTest {
 
         // assert that the vertex is found after commit
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null), is(notNullValue()));
+    }
+
+    @Test
+    public void replaceVertex() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("test", "foo");
+
+        VertexEntity createdVertex = vertexCollection1.insertVertex(doc, null);
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // replace vertex from within the tx
+        doc.getProperties().clear();
+        doc.addAttribute("test", "bar");
+        vertexCollection1.replaceVertex(createdVertex.getKey(), doc,
+                new VertexReplaceOptions().streamTransactionId(tx.getId()));
+
+        // assert that the vertex has not been replaced from outside the tx
+        assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null)
+                .getProperties().get("test"), is("foo"));
+
+        // assert that the vertex has been replaced from within the tx
+        assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())).getProperties().get("test"), is("bar"));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the vertex has been replaced after commit
+        assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null)
+                .getProperties().get("test"), is("bar"));
+    }
+
+    @Test
+    public void updateVertex() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("test", "foo");
+
+        VertexEntity createdDoc = vertexCollection1.insertVertex(doc, null);
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // update vertex from within the tx
+        doc.getProperties().clear();
+        doc.addAttribute("test", "bar");
+        vertexCollection1.updateVertex(createdDoc.getKey(), doc, new VertexUpdateOptions().streamTransactionId(tx.getId()));
+
+        // assert that the vertex has not been updated from outside the tx
+        assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null)
+                .getProperties().get("test"), is("foo"));
+
+        // assert that the vertex has been updated from within the tx
+        assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())).getProperties().get("test"), is("bar"));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the vertex has been updated after commit
+        assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null)
+                .getProperties().get("test"), is("bar"));
+    }
+
+    @Test
+    public void deleteVertex() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        VertexEntity createdDoc = vertexCollection1.insertVertex(new BaseDocument(), null);
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // delete vertex from within the tx
+        vertexCollection1.deleteVertex(createdDoc.getKey(), new VertexDeleteOptions().streamTransactionId(tx.getId()));
+
+        // assert that the vertex has not been deleted from outside the tx
+        assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null), is(notNullValue()));
+
+        // assert that the vertex has been deleted from within the tx
+        assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())), is(nullValue()));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the vertex has been deleted after commit
+        assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null),
+                is(nullValue()));
     }
 
 }

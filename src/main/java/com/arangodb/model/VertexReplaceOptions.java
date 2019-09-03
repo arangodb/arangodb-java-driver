@@ -29,6 +29,7 @@ public class VertexReplaceOptions {
 
 	private Boolean waitForSync;
 	private String ifMatch;
+    private String streamTransactionId;
 
 	public VertexReplaceOptions() {
 		super();
@@ -61,4 +62,19 @@ public class VertexReplaceOptions {
 		this.ifMatch = ifMatch;
 		return this;
 	}
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.1
+     */
+    public VertexReplaceOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
 }

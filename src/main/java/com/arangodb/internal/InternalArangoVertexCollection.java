@@ -123,6 +123,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), VERTEX,
 			DocumentUtil.createDocumentHandle(name, key));
 		final VertexReplaceOptions params = (options != null ? options : new VertexReplaceOptions());
+		request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		request.setBody(util(Serializer.CUSTOM).serialize(value));
@@ -148,6 +149,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), VERTEX,
 			DocumentUtil.createDocumentHandle(name, key));
 		final VertexUpdateOptions params = (options != null ? options : new VertexUpdateOptions());
+		request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
@@ -174,6 +176,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), VERTEX,
 			DocumentUtil.createDocumentHandle(name, key));
 		final VertexDeleteOptions params = (options != null ? options : new VertexDeleteOptions());
+		request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		return request;
