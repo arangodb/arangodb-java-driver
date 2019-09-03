@@ -28,6 +28,7 @@ package com.arangodb.model;
 public class VertexCreateOptions {
 
 	private Boolean waitForSync;
+    private String streamTransactionId;
 
 	public VertexCreateOptions() {
 		super();
@@ -46,5 +47,19 @@ public class VertexCreateOptions {
 		this.waitForSync = waitForSync;
 		return this;
 	}
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.1
+     */
+    public VertexCreateOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }
