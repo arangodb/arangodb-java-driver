@@ -30,6 +30,7 @@ public class EdgeUpdateOptions {
 	private Boolean keepNull;
 	private Boolean waitForSync;
 	private String ifMatch;
+    private String streamTransactionId;
 
 	public EdgeUpdateOptions() {
 		super();
@@ -79,4 +80,19 @@ public class EdgeUpdateOptions {
 		this.ifMatch = ifMatch;
 		return this;
 	}
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.1
+     */
+    public EdgeUpdateOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
 }

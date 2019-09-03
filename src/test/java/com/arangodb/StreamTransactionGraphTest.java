@@ -80,8 +80,8 @@ public class StreamTransactionGraphTest extends BaseTest {
     }
 
     private BaseEdgeDocument createEdgeValue(String streamTransactionId) {
-        final VertexEntity v1 = vertexCollection1.insertVertex(new BaseDocument(), null);
-        final VertexEntity v2 = vertexCollection2.insertVertex(new BaseDocument(), null);
+        final VertexEntity v1 = vertexCollection1.insertVertex(new BaseDocument(), new VertexCreateOptions().streamTransactionId(streamTransactionId));
+        final VertexEntity v2 = vertexCollection2.insertVertex(new BaseDocument(), new VertexCreateOptions().streamTransactionId(streamTransactionId));
         final BaseEdgeDocument value = new BaseEdgeDocument();
         value.setFrom(v1.getId());
         value.setTo(v2.getId());
@@ -237,6 +237,159 @@ public class StreamTransactionGraphTest extends BaseTest {
 
         // assert that the vertex has been deleted after commit
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null),
+                is(nullValue()));
+    }
+
+
+    @Test
+    public void getEdge() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // insert a edge from outside the tx
+        EdgeEntity createdEdge = edgeCollection.insertEdge(createEdgeValue(null));
+
+        // assert that the edge is not found from within the tx
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())), is(nullValue()));
+
+        db.abortStreamTransaction(tx.getId());
+    }
+
+
+    @Test
+    public void createEdge() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // insert a edge from within the tx
+        EdgeEntity createdEdge = edgeCollection.insertEdge(createEdgeValue(tx.getId()), new EdgeCreateOptions().streamTransactionId(tx.getId()));
+
+        // assert that the edge is not found from outside the tx
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null), is(nullValue()));
+
+        // assert that the edge is found from within the tx
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())), is(notNullValue()));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the edge is found after commit
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null), is(notNullValue()));
+    }
+
+    @Test
+    public void replaceEdge() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        BaseEdgeDocument doc = createEdgeValue(null);
+        doc.addAttribute("test", "foo");
+
+        EdgeEntity createdEdge = edgeCollection.insertEdge(doc, null);
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // replace edge from within the tx
+        doc.getProperties().clear();
+        doc.addAttribute("test", "bar");
+        edgeCollection.replaceEdge(createdEdge.getKey(), doc,
+                new EdgeReplaceOptions().streamTransactionId(tx.getId()));
+
+        // assert that the edge has not been replaced from outside the tx
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null)
+                .getProperties().get("test"), is("foo"));
+
+        // assert that the edge has been replaced from within the tx
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())).getProperties().get("test"), is("bar"));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the edge has been replaced after commit
+        assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null)
+                .getProperties().get("test"), is("bar"));
+    }
+
+    @Test
+    public void updateEdge() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        BaseEdgeDocument doc = createEdgeValue(null);
+        doc.addAttribute("test", "foo");
+
+        EdgeEntity createdDoc = edgeCollection.insertEdge(doc, null);
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // update edge from within the tx
+        doc.getProperties().clear();
+        doc.addAttribute("test", "bar");
+        edgeCollection.updateEdge(createdDoc.getKey(), doc, new EdgeUpdateOptions().streamTransactionId(tx.getId()));
+
+        // assert that the edge has not been updated from outside the tx
+        assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null)
+                .getProperties().get("test"), is("foo"));
+
+        // assert that the edge has been updated from within the tx
+        assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())).getProperties().get("test"), is("bar"));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the edge has been updated after commit
+        assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null)
+                .getProperties().get("test"), is("bar"));
+    }
+
+    @Test
+    public void deleteEdge() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        EdgeEntity createdDoc = edgeCollection.insertEdge(createEdgeValue(null), null);
+
+        StreamTransactionEntity tx = db.beginStreamTransaction(
+                new StreamTransactionOptions()
+                        .readCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)
+                        .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION));
+
+        // delete edge from within the tx
+        edgeCollection.deleteEdge(createdDoc.getKey(), new EdgeDeleteOptions().streamTransactionId(tx.getId()));
+
+        // assert that the edge has not been deleted from outside the tx
+        assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null), is(notNullValue()));
+
+        // assert that the edge has been deleted from within the tx
+        assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class,
+                new GraphDocumentReadOptions().streamTransactionId(tx.getId())), is(nullValue()));
+
+        db.commitStreamTransaction(tx.getId());
+
+        // assert that the edge has been deleted after commit
+        assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null),
                 is(nullValue()));
     }
 
