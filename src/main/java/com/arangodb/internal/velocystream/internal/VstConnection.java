@@ -20,6 +20,18 @@
 
 package com.arangodb.internal.velocystream.internal;
 
+import com.arangodb.ArangoDBException;
+import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.HostDescription;
+import com.arangodb.velocypack.VPackSlice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,20 +46,6 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.arangodb.ArangoDBException;
-import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.net.Connection;
-import com.arangodb.internal.net.HostDescription;
-import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -70,10 +68,10 @@ public abstract class VstConnection implements Connection {
 	private InputStream inputStream;
 
 	private final HostDescription host;
-	
-	private HashMap<Long, Long> sendTimestamps = new HashMap<Long, Long>();
-	
-	private String connectionName;
+
+	private final HashMap<Long, Long> sendTimestamps = new HashMap<>();
+
+	private final String connectionName;
 
 	protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
 		final SSLContext sslContext, final MessageStore messageStore) {
@@ -128,44 +126,41 @@ public abstract class VstConnection implements Connection {
 		sendProtocolHeader();
 		
 		executor = Executors.newSingleThreadExecutor();
-		executor.submit(new Callable<Void>() {
-			@Override
-			public Void call() throws Exception {
-				LOGGER.debug("Start Callable for " + connectionName);
-				
-				final long openTime = new Date().getTime();
-				final Long ttlTime = ttl != null ? openTime + ttl : null;
-				final ChunkStore chunkStore = new ChunkStore(messageStore);
-				while (true) {
-					if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {
-						close();
-						break;
-					}
-					if (!isOpen()) {
-						messageStore.clear(new IOException("The socket is closed."));
-						close();
-						break;
-					}
-					try {
-						final Chunk chunk = readChunk();
-						final ByteBuffer chunkBuffer = chunkStore.storeChunk(chunk);
-						if (chunkBuffer != null) {
-							final byte[] buf = new byte[chunk.getContentLength()];
-							readBytesIntoBuffer(buf, 0, buf.length);
-							chunkBuffer.put(buf);
-							chunkStore.checkCompleteness(chunk.getMessageId());
-						}
-					} catch (final Exception e) {
-						messageStore.clear(e);
-						close();
-						break;
-					}
+		executor.submit((Callable<Void>) () -> {
+			LOGGER.debug("Start Callable for " + connectionName);
+
+			final long openTime = new Date().getTime();
+			final Long ttlTime = ttl != null ? openTime + ttl : null;
+			final ChunkStore chunkStore = new ChunkStore(messageStore);
+			while (true) {
+				if (ttlTime != null && new Date().getTime() > ttlTime && messageStore.isEmpty()) {
+					close();
+					break;
 				}
-				
-				LOGGER.debug("Stop Callable for " + connectionName);
-				
-				return null;
+				if (!isOpen()) {
+					messageStore.clear(new IOException("The socket is closed."));
+					close();
+					break;
+				}
+				try {
+					final Chunk chunk = readChunk();
+					final ByteBuffer chunkBuffer = chunkStore.storeChunk(chunk);
+					if (chunkBuffer != null) {
+						final byte[] buf = new byte[chunk.getContentLength()];
+						readBytesIntoBuffer(buf, 0, buf.length);
+						chunkBuffer.put(buf);
+						chunkStore.checkCompleteness(chunk.getMessageId());
+					}
+				} catch (final Exception e) {
+					messageStore.clear(e);
+					close();
+					break;
+				}
 			}
+
+			LOGGER.debug("Stop Callable for " + connectionName);
+
+			return null;
 		});
 	}
 

@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.IndexType;
-
 /**
  * @author Heiko Kernbach
  *

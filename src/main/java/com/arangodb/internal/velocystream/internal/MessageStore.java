@@ -20,15 +20,14 @@
 
 package com.arangodb.internal.velocystream.internal;
 
+import com.arangodb.ArangoDBException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.arangodb.ArangoDBException;
 
 /**
  * @author Mark Vollmary
@@ -44,9 +43,9 @@ public class MessageStore {
 
 	public MessageStore() {
 		super();
-		task = new ConcurrentHashMap<Long, FutureTask<Message>>();
-		response = new ConcurrentHashMap<Long, Message>();
-		error = new ConcurrentHashMap<Long, Exception>();
+        task = new ConcurrentHashMap<>();
+        response = new ConcurrentHashMap<>();
+        error = new ConcurrentHashMap<>();
 	}
 
 	public void storeMessage(final long messageId, final FutureTask<Message> future) {

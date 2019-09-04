@@ -20,11 +20,11 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.entity.DocumentField.Type;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.arangodb.entity.DocumentField.Type;
 
 /**
  * @author Mark Vollmary
@@ -44,7 +44,7 @@ public class BaseDocument implements Serializable {
 
 	public BaseDocument() {
 		super();
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<>();
 	}
 
 	public BaseDocument(final String key) {
@@ -117,17 +117,15 @@ public class BaseDocument implements Serializable {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append("BaseDocument [documentRevision=");
-		sb.append(revision);
-		sb.append(", documentHandle=");
-		sb.append(id);
-		sb.append(", documentKey=");
-		sb.append(key);
-		sb.append(", properties=");
-		sb.append(properties);
-		sb.append("]");
-		return sb.toString();
+		return "BaseDocument [documentRevision=" +
+				revision +
+				", documentHandle=" +
+				id +
+				", documentKey=" +
+				key +
+				", properties=" +
+				properties +
+				"]";
 	}
 
 	@Override
@@ -175,13 +173,8 @@ public class BaseDocument implements Serializable {
 			return false;
 		}
 		if (revision == null) {
-			if (other.revision != null) {
-				return false;
-			}
-		} else if (!revision.equals(other.revision)) {
-			return false;
-		}
-		return true;
+			return other.revision == null;
+		} else return revision.equals(other.revision);
 	}
 
 }

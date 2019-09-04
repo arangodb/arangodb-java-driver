@@ -20,13 +20,13 @@
 
 package com.arangodb.model;
 
+import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.annotations.Expose;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark Vollmary
@@ -406,7 +406,7 @@ public class AqlQueryOptions implements Serializable {
 
 		protected Collection<String> getShardIds() {
 			if (shardIds == null) {
-				shardIds = new ArrayList<String>();
+                shardIds = new ArrayList<>();
 			}
 			return shardIds;
 		}

@@ -31,10 +31,10 @@ public enum ShardingStrategy {
 	ENTERPRISE_SMART_EDGE_COMPAT("enterprise-smart-edge-compat"), 
 	HASH("hash"), 
 	ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge");
-	
-	private String internalName;
-	
-	private ShardingStrategy(String internalName) {
+
+	private final String internalName;
+
+	ShardingStrategy(String internalName) {
 		this.internalName = internalName;
 	}
 	

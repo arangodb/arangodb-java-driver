@@ -30,6 +30,7 @@ import com.arangodb.model.*;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html">API Documentation</a>
  * @author Mark Vollmary
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 
 	/**

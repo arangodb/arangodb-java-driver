@@ -20,29 +20,22 @@
 
 package com.arangodb.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.OptionsBuilder;
-import com.arangodb.model.UserAccessOptions;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.model.*;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * @author Mark Vollmary
@@ -66,12 +59,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 	}
 
 	protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
-		return new ResponseDeserializer<ServerRole>() {
-			@Override
-			public ServerRole deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get("role"), ServerRole.class);
-			}
-		};
+		return response -> util().deserialize(response.getBody().get("role"), ServerRole.class);
 	}
 	
 	protected Request createDatabaseRequest(final String name) {
@@ -82,12 +70,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 	}
 
 	protected ResponseDeserializer<Boolean> createDatabaseResponseDeserializer() {
-		return new ResponseDeserializer<Boolean>() {
-			@Override
-			public Boolean deserialize(final Response response) throws VPackException {
-				return response.getBody().get(ArangoResponseField.RESULT).getAsBoolean();
-			}
-		};
+		return response -> response.getBody().get(ArangoResponseField.RESULT).getAsBoolean();
 	}
 
 	protected Request getDatabasesRequest(final String database) {
@@ -95,13 +78,10 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 	}
 
 	protected ResponseDeserializer<Collection<String>> getDatabaseResponseDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-				return util().deserialize(result, new Type<Collection<String>>() {
-				}.getType());
-			}
+		return response -> {
+			final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+			return util().deserialize(result, new Type<Collection<String>>() {
+			}.getType());
 		};
 	}
 
@@ -110,17 +90,14 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 	}
 
 	protected ResponseDeserializer<Collection<String>> getAccessibleDatabasesForResponseDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-				final Collection<String> dbs = new ArrayList<String>();
-				for (final Iterator<Entry<String, VPackSlice>> iterator = result.objectIterator(); iterator
-						.hasNext();) {
-					dbs.add(iterator.next().getKey());
-				}
-				return dbs;
+		return response -> {
+			final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+			final Collection<String> dbs = new ArrayList<>();
+			for (final Iterator<Entry<String, VPackSlice>> iterator = result.objectIterator(); iterator
+					.hasNext(); ) {
+				dbs.add(iterator.next().getKey());
 			}
+			return dbs;
 		};
 	}
 
@@ -149,13 +126,10 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 	}
 
 	protected ResponseDeserializer<Collection<UserEntity>> getUsersResponseDeserializer() {
-		return new ResponseDeserializer<Collection<UserEntity>>() {
-			@Override
-			public Collection<UserEntity> deserialize(final Response response) throws VPackException {
-				final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
-				return util().deserialize(result, new Type<Collection<UserEntity>>() {
-				}.getType());
-			}
+		return response -> {
+			final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+			return util().deserialize(result, new Type<Collection<UserEntity>>() {
+			}.getType());
 		};
 	}
 

@@ -20,9 +20,9 @@
 
 package com.arangodb.internal.util;
 
-import java.util.regex.Pattern;
-
 import com.arangodb.ArangoDBException;
+
+import java.util.regex.Pattern;
 
 /**
  * @author Mark Vollmary
@@ -52,7 +52,7 @@ public final class DocumentUtil {
 
 	public static String createDocumentHandle(final String collection, final String key) {
 		validateDocumentKey(key);
-		return new StringBuffer().append(collection).append(SLASH).append(key).toString();
+		return collection + SLASH + key;
 	}
 
 	private static void validateName(final String type, final String regex, final CharSequence name)

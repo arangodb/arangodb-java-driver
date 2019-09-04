@@ -20,12 +20,12 @@
 
 package com.arangodb.util;
 
+import com.arangodb.ArangoDBException;
+import com.arangodb.velocypack.VPackSlice;
+
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
-
-import com.arangodb.ArangoDBException;
-import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -43,7 +43,7 @@ public interface ArangoSerializer {
 			super();
 			serializeNullValues = false;
 			stringAsJson = false;
-			additionalFields = Collections.<String, Object> emptyMap();
+			additionalFields = Collections.emptyMap();
 		}
 
 		/**

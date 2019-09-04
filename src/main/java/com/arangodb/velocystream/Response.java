@@ -20,11 +20,11 @@
 
 package com.arangodb.velocystream;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -41,7 +41,7 @@ public class Response {
 
 	public Response() {
 		super();
-		meta = new HashMap<String, String>();
+        meta = new HashMap<>();
 	}
 
 	public int getVersion() {

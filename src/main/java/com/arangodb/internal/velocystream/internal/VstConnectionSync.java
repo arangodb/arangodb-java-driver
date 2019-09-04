@@ -20,15 +20,13 @@
 
 package com.arangodb.internal.velocystream.internal;
 
-import java.util.Collection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.HostDescription;
+
+import javax.net.ssl.SSLContext;
+import java.util.Collection;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Mark Vollmary
@@ -86,12 +84,7 @@ public class VstConnectionSync extends VstConnection {
 	}
 
 	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
-		final FutureTask<Message> task = new FutureTask<Message>(new Callable<Message>() {
-			@Override
-			public Message call() throws Exception {
-				return messageStore.get(message.getId());
-			}
-		});
+		final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
 		messageStore.storeMessage(message.getId(), task);
 		super.writeIntern(message, chunks);
 		try {

@@ -38,7 +38,7 @@ public class DocumentImportEntity implements Entity {
 
 	public DocumentImportEntity() {
 		super();
-		details = new ArrayList<String>();
+        details = new ArrayList<>();
 	}
 
 	/**

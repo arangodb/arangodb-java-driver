@@ -29,6 +29,7 @@ import com.arangodb.entity.ViewEntity;
  * @author Mark Vollmary
  * @since ArangoDB 3.4.0
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface ArangoView extends ArangoSerializationAccessor {
 
 	/**

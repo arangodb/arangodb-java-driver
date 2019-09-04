@@ -33,12 +33,12 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 public @interface DocumentField {
 
-	public static enum Type {
+	enum Type {
 		ID("_id"), KEY("_key"), REV("_rev"), FROM("_from"), TO("_to");
 
 		private final String serializeName;
 
-		private Type(final String serializeName) {
+		Type(final String serializeName) {
 			this.serializeName = serializeName;
 		}
 

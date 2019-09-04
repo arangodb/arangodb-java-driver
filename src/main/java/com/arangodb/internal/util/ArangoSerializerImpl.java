@@ -20,8 +20,6 @@
 
 package com.arangodb.internal.util;
 
-import java.util.Iterator;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
@@ -29,6 +27,8 @@ import com.arangodb.velocypack.VPack.SerializeOptions;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
+
+import java.util.Iterator;
 
 /**
  * @author Mark Vollmary
@@ -60,12 +60,12 @@ public class ArangoSerializerImpl implements ArangoSerializer {
 		}
 		try {
 			final VPackSlice vpack;
-			final Class<? extends Object> type = entity.getClass();
+            final Class<?> type = entity.getClass();
 			final boolean serializeNullValues = options.isSerializeNullValues();
 			if (String.class.isAssignableFrom(type)) {
 				vpack = vpackParser.fromJson((String) entity, serializeNullValues);
 			} else if (options.isStringAsJson() && Iterable.class.isAssignableFrom(type)) {
-				final Iterator<?> iterator = Iterable.class.cast(entity).iterator();
+                final Iterator<?> iterator = ((Iterable) entity).iterator();
 				if (iterator.hasNext() && String.class.isAssignableFrom(iterator.next().getClass())) {
 					vpack = vpackParser.fromJson((Iterable<String>) entity, serializeNullValues);
 				} else {

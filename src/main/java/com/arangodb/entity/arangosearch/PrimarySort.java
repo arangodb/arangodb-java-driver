@@ -43,11 +43,7 @@ public class PrimarySort {
 	 * @return primarySort
 	 */
 	public PrimarySort ascending(final Boolean ascending) {
-		if (ascending) {
-			this.ascending = true;
-		} else {
-			this.ascending = false;
-		}
+		this.ascending = ascending;
 		return this;
 	}
 

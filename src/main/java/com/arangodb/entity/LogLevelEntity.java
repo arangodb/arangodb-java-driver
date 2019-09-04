@@ -27,7 +27,7 @@ package com.arangodb.entity;
 public class LogLevelEntity implements Entity {
 
 	public enum LogLevel {
-		FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT;
+		FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT
 	}
 
 	private LogLevel agency;

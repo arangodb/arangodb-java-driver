@@ -27,23 +27,23 @@ package com.arangodb.model;
  */
 public class TraversalOptions {
 
-	public static enum Direction {
+	public enum Direction {
 		outbound, inbound, any
 	}
 
-	public static enum ItemOrder {
+	public enum ItemOrder {
 		forward, backward
 	}
 
-	public static enum Strategy {
+	public enum Strategy {
 		depthfirst, breadthfirst
 	}
 
-	public static enum UniquenessType {
+	public enum UniquenessType {
 		none, global, path
 	}
 
-	public static enum Order {
+	public enum Order {
 		preorder, postorder, preorder_expander
 	}
 

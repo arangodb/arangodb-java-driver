@@ -20,15 +20,14 @@
 
 package com.arangodb.internal.net;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.arangodb.internal.velocystream.internal.VstConnection;
+import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.internal.velocystream.internal.VstConnection;
-import com.arangodb.internal.velocystream.internal.VstConnectionSync;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -50,7 +49,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
 		this.host = host;
 		this.maxConnections = maxConnections;
 		this.factory = factory;
-		connections = new ArrayList<Connection>();
+        connections = new ArrayList<>();
 		current = 0;
 	}
 

@@ -20,36 +20,24 @@
 
 package com.arangodb.internal.http;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
-
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import com.arangodb.ArangoDBException;
+import com.arangodb.Protocol;
+import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.util.CURLLogger;
+import com.arangodb.internal.util.IOUtils;
+import com.arangodb.internal.util.ResponseUtils;
+import com.arangodb.util.ArangoSerialization;
+import com.arangodb.util.ArangoSerializer.Options;
+import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.Response;
+import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
@@ -67,23 +55,18 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.Protocol;
-import com.arangodb.internal.net.Connection;
-import com.arangodb.internal.net.HostDescription;
-import com.arangodb.internal.util.CURLLogger;
-import com.arangodb.internal.util.IOUtils;
-import com.arangodb.internal.util.ResponseUtils;
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer.Options;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.Response;
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Mark Vollmary
@@ -170,7 +153,7 @@ public class HttpConnection implements Connection {
 	private final ArangoSerialization util;
 	private final Boolean useSsl;
 	private final Protocol contentType;
-	private HostDescription host;
+	private final HostDescription host;
 
 	private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
 		final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
@@ -183,7 +166,7 @@ public class HttpConnection implements Connection {
 		this.util = util;
 		this.contentType = contentType;
 		final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
-				.<ConnectionSocketFactory> create();
+				.create();
 		if (Boolean.TRUE == useSsl) {
 			if (sslContext != null) {
 				registryBuilder.register("https", new SSLConnectionSocketFactory(sslContext));
@@ -206,13 +189,8 @@ public class HttpConnection implements Connection {
 		if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
             		requestConfig.setCookieSpec(httpCookieSpec);
         	}
-		
-		final ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
-			@Override
-			public long getKeepAliveDuration(final HttpResponse response, final HttpContext context) {
-				return HttpConnection.this.getKeepAliveDuration(response);
-			}
-		};
+
+		final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
 		final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
 				.setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
 				.setRetryHandler(new DefaultHttpRequestRetryHandler());
@@ -244,22 +222,23 @@ public class HttpConnection implements Connection {
 		client.close();
 	}
 
-	public Response execute(final Request request) throws ArangoDBException, IOException, SocketException {
-		final String url = buildUrl(buildBaseUrl(host), request);
-		final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
-		httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-		if (contentType == Protocol.HTTP_VPACK) {
-			httpRequest.setHeader("Accept", "application/x-velocypack");
+	private static String buildUrl(final String baseUrl, final Request request) {
+		final StringBuilder sb = new StringBuilder().append(baseUrl);
+		final String database = request.getDatabase();
+		if (database != null && !database.isEmpty()) {
+			sb.append("/_db/").append(database);
 		}
-		addHeader(request, httpRequest);
-		final Credentials credentials = addCredentials(httpRequest);
-		if (LOGGER.isDebugEnabled()) {
-			CURLLogger.log(url, request, credentials, util);
+		sb.append(request.getRequest());
+		if (!request.getQueryParam().isEmpty()) {
+			if (request.getRequest().contains("?")) {
+				sb.append("&");
+			} else {
+				sb.append("?");
+			}
+			final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
+			sb.append(paramString);
 		}
-		Response response;
-		response = buildResponse(client.execute(httpRequest));
-		checkError(response);
-		return response;
+		return sb.toString();
 	}
 
 	private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
@@ -306,33 +285,32 @@ public class HttpConnection implements Connection {
 		return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
 	}
 
-	private static String buildUrl(final String baseUrl, final Request request) throws UnsupportedEncodingException {
-		final StringBuilder sb = new StringBuilder().append(baseUrl);
-		final String database = request.getDatabase();
-		if (database != null && !database.isEmpty()) {
-			sb.append("/_db/").append(database);
-		}
-		sb.append(request.getRequest());
-		if (!request.getQueryParam().isEmpty()) {
-			if (request.getRequest().contains("?")) {
-				sb.append("&");
-			} else {
-				sb.append("?");
-			}
-			final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
-			sb.append(paramString);
-		}
-		return sb.toString();
-	}
-
 	private static List<NameValuePair> toList(final Map<String, String> parameters) {
-		final ArrayList<NameValuePair> paramList = new ArrayList<NameValuePair>(parameters.size());
+		final ArrayList<NameValuePair> paramList = new ArrayList<>(parameters.size());
 		for (final Entry<String, String> param : parameters.entrySet()) {
 			if (param.getValue() != null) {
-				paramList.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
+				paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
 			}
 		}
 		return paramList;
+	}
+
+	public Response execute(final Request request) throws ArangoDBException, IOException {
+		final String url = buildUrl(buildBaseUrl(host), request);
+		final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
+		httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+		if (contentType == Protocol.HTTP_VPACK) {
+			httpRequest.setHeader("Accept", "application/x-velocypack");
+		}
+		addHeader(request, httpRequest);
+		final Credentials credentials = addCredentials(httpRequest);
+		if (LOGGER.isDebugEnabled()) {
+			CURLLogger.log(url, request, credentials, util);
+		}
+		Response response;
+		response = buildResponse(client.execute(httpRequest));
+		checkError(response);
+		return response;
 	}
 
 	private static void addHeader(final Request request, final HttpRequestBase httpRequest) {
