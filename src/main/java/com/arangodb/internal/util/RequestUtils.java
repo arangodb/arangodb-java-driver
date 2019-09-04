@@ -22,6 +22,7 @@ package com.arangodb.internal.util;
 
 import com.arangodb.internal.net.AccessType;
 import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark Vollmary
@@ -43,12 +44,10 @@ public final class RequestUtils {
 		if (request.getHeaderParam().containsKey(HEADER_ALLOW_DIRTY_READ)) {
 			return AccessType.DIRTY_READ;
 		}
-		switch (request.getRequestType()) {
-		case GET:
+		if (request.getRequestType() == RequestType.GET) {
 			return AccessType.READ;
-		default:
-			return AccessType.WRITE;
 		}
+		return AccessType.WRITE;
 	}
 
 }

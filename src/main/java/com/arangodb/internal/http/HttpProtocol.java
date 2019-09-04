@@ -20,15 +20,13 @@
 
 package com.arangodb.internal.http;
 
-import java.io.IOException;
-
-import org.apache.http.client.ClientProtocolException;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+
+import java.io.IOException;
 
 /**
  * @author Mark Vollmary
@@ -47,8 +45,6 @@ public class HttpProtocol implements CommunicationProtocol {
 	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
 		try {
 			return httpCommunitaction.execute(request, hostHandle);
-		} catch (final ClientProtocolException e) {
-			throw new ArangoDBException(e);
 		} catch (final IOException e) {
 			throw new ArangoDBException(e);
 		}

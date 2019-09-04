@@ -20,28 +20,18 @@
 
 package com.arangodb.internal.net;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * @author Mark Vollmary
@@ -51,13 +41,13 @@ public class ExtendedHostResolver implements HostResolver {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
 
-	private HostSet hosts;
+	private final HostSet hosts;
 
 	private final Integer maxConnections;
 	private final ConnectionFactory connectionFactory;
 
 	private long lastUpdate;
-	private Integer acquireHostListInterval;
+	private final Integer acquireHostListInterval;
 
 	private ArangoExecutorSync executor;
 	private ArangoSerialization arangoSerialization;
@@ -103,12 +93,12 @@ public class ExtendedHostResolver implements HostResolver {
 
 					final String[] s = endpoint.replaceAll(".*://", "").split(":");
 					if (s.length == 2) {
-						final HostDescription description = new HostDescription(s[0], Integer.valueOf(s[1]));
+						final HostDescription description = new HostDescription(s[0], Integer.parseInt(s[1]));
 						hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
 					} else if (s.length == 4) {
 						// IPV6 Address - TODO: we need a proper function to resolve AND support IPV4 & IPV6 functions
 						// globally
-						final HostDescription description = new HostDescription("127.0.0.1", Integer.valueOf(s[3]));
+						final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
 						hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
 					} else {
 						LOGGER.warn("Skip Endpoint (Missing Port)" + endpoint);
@@ -118,13 +108,7 @@ public class ExtendedHostResolver implements HostResolver {
 					LOGGER.warn("Skip Endpoint (Format)" + endpoint);
 				}
 			}
-			
-			try {
-				hosts.clearAllMarkedForDeletion();
-			} catch (IOException e) {
-				LOGGER.error("Cant close all Hosts with MarkedForDeletion", e);
-			}
-			
+			hosts.clearAllMarkedForDeletion();
 		}
 
 		return hosts;
@@ -138,29 +122,24 @@ public class ExtendedHostResolver implements HostResolver {
 
 			response = executor.execute(
 				new Request(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
-				new ResponseDeserializer<Collection<String>>() {
-					@Override
-					public Collection<String> deserialize(final Response response) throws VPackException {
-						final VPackSlice field = response.getBody().get("endpoints");
+					response1 -> {
+						final VPackSlice field = response1.getBody().get("endpoints");
 						Collection<String> endpoints;
 						if (field.isNone()) {
-							endpoints = Collections.<String> emptyList();
+							endpoints = Collections.emptyList();
 						} else {
 							final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(field, Collection.class);
-							endpoints = new ArrayList<String>();
+							endpoints = new ArrayList<>();
 							for (final Map<String, String> map : tmp) {
-								for (final String value : map.values()) {
-									endpoints.add(value);
-								}
+								endpoints.addAll(map.values());
 							}
 						}
 						return endpoints;
-					}
-				}, null);
+					}, null);
 		} catch (final ArangoDBException e) {
 			final Integer responseCode = e.getResponseCode();
 			if (responseCode != null && responseCode == 403) {
-				response = Collections.<String> emptyList();
+				response = Collections.emptyList();
 			} else {
 				throw e;
 			}

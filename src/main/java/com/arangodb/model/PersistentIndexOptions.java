@@ -31,7 +31,7 @@ import com.arangodb.entity.IndexType;
 public class PersistentIndexOptions extends IndexOptions {
 
 	private Iterable<String> fields;
-	protected IndexType type = IndexType.persistent;
+	protected final IndexType type = IndexType.persistent;
 	private Boolean unique;
 	private Boolean sparse;
 

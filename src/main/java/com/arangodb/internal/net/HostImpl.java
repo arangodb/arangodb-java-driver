@@ -20,9 +20,9 @@
 
 package com.arangodb.internal.net;
 
-import java.io.IOException;
-
 import com.arangodb.ArangoDBException;
+
+import java.io.IOException;
 
 /**
  * @author Mark Vollmary
@@ -96,11 +96,8 @@ public class HostImpl implements Host {
 			return false;
 		HostImpl other = (HostImpl) obj;
 		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		return true;
+			return other.description == null;
+		} else return description.equals(other.description);
 	}
 	
 	

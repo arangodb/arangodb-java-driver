@@ -39,12 +39,10 @@ public class DirtyReadHostHandler implements HostHandler {
 	}
 
 	private HostHandler determineHostHandler() {
-		switch (currentAccessType) {
-		case DIRTY_READ:
+		if (currentAccessType == AccessType.DIRTY_READ) {
 			return follower;
-		default:
-			return master;
 		}
+		return master;
 	}
 
 	@Override

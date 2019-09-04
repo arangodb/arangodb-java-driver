@@ -20,8 +20,6 @@
 
 package com.arangodb.internal.net;
 
-import java.io.IOException;
-
 /**
  * @author Mark Vollmary
  *
@@ -91,7 +89,7 @@ public class RoundRobinHostHandler implements HostHandler {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		final HostSet hosts = resolver.resolve(false, false);
 		hosts.close();
 	}

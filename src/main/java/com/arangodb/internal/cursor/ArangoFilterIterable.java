@@ -42,7 +42,7 @@ public class ArangoFilterIterable<T> extends AbstractArangoIterable<T> implement
 
 	@Override
 	public ArangoIterator<T> iterator() {
-		return new ArangoFilterIterator<T>(iterable.iterator(), predicate);
+        return new ArangoFilterIterator<>(iterable.iterator(), predicate);
 	}
 
 	@Override

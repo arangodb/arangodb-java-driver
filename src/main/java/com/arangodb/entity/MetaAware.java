@@ -8,8 +8,8 @@ import java.util.Map;
  */
 public interface MetaAware {
 
-	public Map<String, String> getMeta();
+	Map<String, String> getMeta();
 
-	public void setMeta(final Map<String, String> meta);
+	void setMeta(final Map<String, String> meta);
 
 }

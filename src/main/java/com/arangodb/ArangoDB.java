@@ -20,13 +20,6 @@
 
 package com.arangodb;
 
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.Properties;
-
-import javax.net.ssl.SSLContext;
-
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDBImpl;
@@ -34,11 +27,7 @@ import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpConnectionFactory;
-import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.HostResolver;
+import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializerImpl;
@@ -52,20 +41,15 @@ import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackAnnotationFieldFilter;
-import com.arangodb.velocypack.VPackAnnotationFieldNaming;
-import com.arangodb.velocypack.VPackDeserializer;
-import com.arangodb.velocypack.VPackInstanceCreator;
-import com.arangodb.velocypack.VPackJsonDeserializer;
-import com.arangodb.velocypack.VPackJsonSerializer;
-import com.arangodb.velocypack.VPackModule;
-import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackParserModule;
-import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+
+import javax.net.ssl.SSLContext;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Properties;
 
 /**
  * Central access point for applications to communicate with an ArangoDB server.
@@ -82,6 +66,7 @@ import com.arangodb.velocystream.Response;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface ArangoDB extends ArangoSerializationAccessor {
 
 	/**
@@ -89,9 +74,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 *
 	 * @author Mark Vollmary
 	 */
-	public static class Builder extends InternalArangoDBBuilder {
+	class Builder extends InternalArangoDBBuilder {
 
-		private static String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
+		private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 
 		protected Protocol protocol;
 

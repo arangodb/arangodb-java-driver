@@ -20,12 +20,12 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark Vollmary
@@ -45,8 +45,8 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
 		super(db.executor, db.util, db.context);
 		this.db = db;
 		this.path = path;
-		this.queryParam = new HashMap<String, String>();
-		this.headerParam = new HashMap<String, String>();
+        this.queryParam = new HashMap<>();
+        this.headerParam = new HashMap<>();
 		this.headerParam.putAll(headerParam);
 	}
 

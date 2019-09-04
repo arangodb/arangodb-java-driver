@@ -20,21 +20,30 @@
 
 package com.arangodb.internal;
 
-import java.lang.reflect.Type;
-
 import com.arangodb.entity.Entity;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
 
+import java.lang.reflect.Type;
+
 /**
  * @author Mark Vollmary
  */
 public abstract class ArangoExecutor {
 
-    public static interface ResponseDeserializer<T> {
-        T deserialize(Response response) throws VPackException;
+    @SuppressWarnings("unchecked")
+    protected <T> T createResult(final Type type, final Response response) {
+        if (type != Void.class && response.getBody() != null) {
+            if (type instanceof Class && Entity.class.isAssignableFrom((Class) type)  ) {
+                return (T) util.get(Serializer.INTERNAL).deserialize(response.getBody(), type);
+            } else {
+                return (T) util.get(Serializer.CUSTOM).deserialize(response.getBody(), type);
+            }
+        } else {
+            return null;
+        }
     }
 
     private final DocumentCache documentCache;
@@ -50,17 +59,8 @@ public abstract class ArangoExecutor {
         return documentCache;
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T> T createResult(final Type type, final Response response) {
-        if (type != Void.class && response.getBody() != null) {
-            if (type instanceof Class && Entity.class.isAssignableFrom((Class) type)  ) {
-                return (T) util.get(Serializer.INTERNAL).deserialize(response.getBody(), type);
-            } else {
-                return (T) util.get(Serializer.CUSTOM).deserialize(response.getBody(), type);
-            }
-        } else {
-            return (T) null;
-        }
+    public interface ResponseDeserializer<T> {
+        T deserialize(Response response) throws VPackException;
     }
 
 }

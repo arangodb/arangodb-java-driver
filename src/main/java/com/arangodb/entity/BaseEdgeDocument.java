@@ -20,9 +20,9 @@
 
 package com.arangodb.entity;
 
-import java.util.Map;
-
 import com.arangodb.entity.DocumentField.Type;
+
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -83,21 +83,19 @@ public class BaseEdgeDocument extends BaseDocument {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append("BaseDocument [documentRevision=");
-		sb.append(revision);
-		sb.append(", documentHandle=");
-		sb.append(id);
-		sb.append(", documentKey=");
-		sb.append(key);
-		sb.append(", from=");
-		sb.append(from);
-		sb.append(", to=");
-		sb.append(to);
-		sb.append(", properties=");
-		sb.append(properties);
-		sb.append("]");
-		return sb.toString();
+		return "BaseDocument [documentRevision=" +
+				revision +
+				", documentHandle=" +
+				id +
+				", documentKey=" +
+				key +
+				", from=" +
+				from +
+				", to=" +
+				to +
+				", properties=" +
+				properties +
+				"]";
 	}
 
 	@Override
@@ -129,13 +127,8 @@ public class BaseEdgeDocument extends BaseDocument {
 			return false;
 		}
 		if (to == null) {
-			if (other.to != null) {
-				return false;
-			}
-		} else if (!to.equals(other.to)) {
-			return false;
-		}
-		return true;
+			return other.to == null;
+		} else return to.equals(other.to);
 	}
 
 }

@@ -20,18 +20,11 @@
 
 package com.arangodb.internal;
 
-import java.io.IOException;
-import java.util.Collection;
-
-import com.arangodb.entity.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.Protocol;
-import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
+import com.arangodb.entity.*;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.net.CommunicationProtocol;
@@ -46,9 +39,13 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
 
 /**
  * @author Mark Vollmary
@@ -61,7 +58,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBImpl.class);
 
 	private ArangoCursorInitializer cursorInitializer;
-	private CommunicationProtocol cp;
+	private final CommunicationProtocol cp;
 
 	public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
 		final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
@@ -219,22 +216,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
 	@Override
 	public Response execute(final Request request) throws ArangoDBException {
-		return executor.execute(request, new ResponseDeserializer<Response>() {
-			@Override
-			public Response deserialize(final Response response) throws VPackException {
-				return response;
-			}
-		});
+		return executor.execute(request, response -> response);
 	}
 
 	@Override
 	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
-		return executor.execute(request, new ResponseDeserializer<Response>() {
-			@Override
-			public Response deserialize(final Response response) throws VPackException {
-				return response;
-			}
-		}, hostHandle);
+		return executor.execute(request, response -> response, hostHandle);
 	}
 
 	@Override

@@ -20,14 +20,14 @@
 
 package com.arangodb;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.arangodb.entity.*;
-import com.arangodb.model.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Interface for operations on ArangoDB database level.
@@ -37,6 +37,7 @@ import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
  * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface ArangoDatabase extends ArangoSerializationAccessor {
 
 	/**

@@ -33,7 +33,7 @@ public class ArangoContext {
 
 	public ArangoContext() {
 		super();
-		headerParam = new HashMap<String, String>();
+        headerParam = new HashMap<>();
 	}
 
 	public Map<String, String> getHeaderParam() {

@@ -20,25 +20,19 @@
 
 package com.arangodb.internal.http;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.SocketException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.ArangoDBException;
-import com.arangodb.internal.net.AccessType;
-import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
-import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.SocketException;
 
 /**
  * @author Mark Vollmary
@@ -106,7 +100,7 @@ public class HttpCommunication implements Closeable {
 			}
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
-				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
+                final String location = ((ArangoDBRedirectException) e).getLocation();
 				final HostDescription redirectHost = HostUtils.createFromLocation(location);
 				hostHandler.closeCurrentOnError();
 				hostHandler.fail();

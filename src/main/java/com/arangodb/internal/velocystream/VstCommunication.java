@@ -20,25 +20,9 @@
 
 package com.arangodb.internal.velocystream;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.net.ssl.SSLContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.net.AccessType;
-import com.arangodb.internal.net.ArangoDBRedirectException;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
-import com.arangodb.internal.net.HostHandle;
-import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.*;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
@@ -50,6 +34,15 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLContext;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mark Vollmary
@@ -132,7 +125,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 			return execute(request, connection);
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
-				final String location = ArangoDBRedirectException.class.cast(e).getLocation();
+                final String location = ((ArangoDBRedirectException) e).getLocation();
 				final HostDescription redirectHost = HostUtils.createFromLocation(location);
 				hostHandler.closeCurrentOnError();
 				hostHandler.fail();
@@ -163,7 +156,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 	}
 
 	protected Collection<Chunk> buildChunks(final Message message) {
-		final Collection<Chunk> chunks = new ArrayList<Chunk>();
+        final Collection<Chunk> chunks = new ArrayList<>();
 		final VPackSlice head = message.getHead();
 		int size = head.getByteSize();
 		final VPackSlice body = message.getBody();

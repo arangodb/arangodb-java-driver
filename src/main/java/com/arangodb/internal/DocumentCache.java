@@ -20,18 +20,14 @@
 
 package com.arangodb.internal;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.DocumentField.Type;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author Mark Vollmary
@@ -43,7 +39,7 @@ public class DocumentCache {
 
 	public DocumentCache() {
 		super();
-		cache = new HashMap<Class<?>, Map<Type, Field>>();
+		cache = new HashMap<>();
 	}
 
 	public void setValues(final Object doc, final Map<DocumentField.Type, String> values) throws ArangoDBException {
@@ -55,15 +51,13 @@ public class DocumentCache {
 					field.set(doc, value.getValue());
 				}
 			}
-		} catch (final IllegalArgumentException e) {
-			throw new ArangoDBException(e);
-		} catch (final IllegalAccessException e) {
+		} catch (final IllegalArgumentException | IllegalAccessException e) {
 			throw new ArangoDBException(e);
 		}
 	}
 
 	private Map<DocumentField.Type, Field> getFields(final Class<?> clazz) {
-		Map<DocumentField.Type, Field> fields = new HashMap<DocumentField.Type, Field>();
+		Map<DocumentField.Type, Field> fields = new HashMap<>();
 		if (!isTypeRestricted(clazz)) {
 			fields = cache.get(clazz);
 			if (fields == null) {
@@ -79,9 +73,9 @@ public class DocumentCache {
 	}
 
 	private Map<DocumentField.Type, Field> createFields(final Class<?> clazz) {
-		final Map<DocumentField.Type, Field> fields = new HashMap<DocumentField.Type, Field>();
+		final Map<DocumentField.Type, Field> fields = new HashMap<>();
 		Class<?> tmp = clazz;
-		final Collection<DocumentField.Type> values = new ArrayList<DocumentField.Type>(
+		final Collection<DocumentField.Type> values = new ArrayList<>(
 				Arrays.asList(DocumentField.Type.values()));
 		while (tmp != null && tmp != Object.class && values.size() > 0) {
 			final Field[] declaredFields = tmp.getDeclaredFields();

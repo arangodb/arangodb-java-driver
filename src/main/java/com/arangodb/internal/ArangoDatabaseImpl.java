@@ -20,18 +20,7 @@
 
 package com.arangodb.internal;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoCursor;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.ArangoGraph;
-import com.arangodb.ArangoRoute;
-import com.arangodb.ArangoSearch;
-import com.arangodb.ArangoView;
+import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
@@ -43,6 +32,10 @@ import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.util.ArangoCursorInitializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocystream.Request;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -225,7 +218,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
 		return cursorInitializer != null ?
 				cursorInitializer.createInstance(this, execute, type, result) :
-				new ArangoCursorImpl<T>(this, execute, type, result);
+				new ArangoCursorImpl<>(this, execute, type, result);
 	}
 
 	@Override
@@ -401,7 +394,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
 	@Override
 	public ArangoRoute route(final String... path) {
-		return new ArangoRouteImpl(this, createPath(path), Collections.<String, String>emptyMap());
+		return new ArangoRouteImpl(this, createPath(path), Collections.emptyMap());
 	}
 
 	@Override

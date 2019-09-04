@@ -20,10 +20,6 @@
 
 package com.arangodb.internal.cursor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
 import com.arangodb.Consumer;
@@ -33,6 +29,10 @@ import com.arangodb.entity.CursorEntity.Stats;
 import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -59,7 +59,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 		final InternalArangoDatabase<?, ?> db,
 		final ArangoCursorExecute execute,
 		final CursorEntity result) {
-		return new ArangoCursorIterator<T>(cursor, execute, db, result);
+		return new ArangoCursorIterator<>(cursor, execute, db, result);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
 
 	@Override
 	public List<T> asListRemaining() {
-		final List<T> remaining = new ArrayList<T>();
+		final List<T> remaining = new ArrayList<>();
 		while (hasNext()) {
 			remaining.add(next());
 		}

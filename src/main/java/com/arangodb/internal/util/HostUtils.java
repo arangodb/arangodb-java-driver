@@ -20,11 +20,7 @@
 
 package com.arangodb.internal.util;
 
-import com.arangodb.internal.net.ConnectionFactory;
-import com.arangodb.internal.net.ConnectionPoolImpl;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
-import com.arangodb.internal.net.HostImpl;
+import com.arangodb.internal.net.*;
 
 /**
  * @author Mark Vollmary
@@ -40,7 +36,7 @@ public final class HostUtils {
 		final HostDescription host;
 		if (location != null) {
 			final String[] tmp = location.replaceAll(".*://", "").replaceAll("/.*", "").split(":");
-			host = tmp.length == 2 ? new HostDescription(tmp[0], Integer.valueOf(tmp[1])) : null;
+			host = tmp.length == 2 ? new HostDescription(tmp[0], Integer.parseInt(tmp[1])) : null;
 		} else {
 			host = null;
 		}
