@@ -28,7 +28,7 @@ import com.arangodb.entity.IndexType;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
  *      Documentation</a>
  */
-public class FulltextIndexOptions extends IndexOptions {
+public class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {
 
 	private Iterable<String> fields;
 	private final IndexType type = IndexType.fulltext;
@@ -37,6 +37,11 @@ public class FulltextIndexOptions extends IndexOptions {
 	public FulltextIndexOptions() {
 		super();
 	}
+
+    @Override
+    protected FulltextIndexOptions getThis() {
+        return null;
+    }
 
 	protected Iterable<String> getFields() {
 		return fields;
