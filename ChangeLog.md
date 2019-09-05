@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [6.1.1] - 2019-09-05
 
 - merged async driver
+- bugfix method chaining in IndexOptions
 
 ## [6.1.0] - 2019-08-29
 
