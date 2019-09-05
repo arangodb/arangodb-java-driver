@@ -26,6 +26,7 @@ import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
 
+import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -42,6 +43,6 @@ public class ArangoCursorAsyncImpl<T> extends ArangoCursorImpl<T> implements Ara
 
     @Override
     public Stream<T> streamRemaining() {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false);
     }
 }
