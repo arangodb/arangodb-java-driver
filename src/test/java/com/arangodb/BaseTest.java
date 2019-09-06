@@ -51,6 +51,17 @@ public abstract class BaseTest {
 
     BaseTest(final ArangoDB.Builder builder) {
         super();
+
+        java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
+        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login.conf");
+        System.setProperty("java.security.krb5.conf", "/etc/krb5.conf");
+//        System.setProperty("sun.security.krb5.debug", "true");
+//        System.setProperty("sun.security.jgss.debug", "true");
+        System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
+
+
         if (arangoDB != null) {
             shutdown();
         }
