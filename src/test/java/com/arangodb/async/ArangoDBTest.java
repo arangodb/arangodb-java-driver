@@ -29,7 +29,9 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +51,9 @@ public class ArangoDBTest {
     private static final String ROOT = "root";
     private static final String USER = "mit dem mund";
     private static final String PW = "machts der hund";
+
+    @ClassRule
+    public static TestRule acquireHostListRule = TestUtils.acquireHostListRule;
 
     @Test
     public void getVersion() throws InterruptedException, ExecutionException {

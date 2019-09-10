@@ -25,8 +25,11 @@ import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.rules.TestRule;
 
 import java.util.concurrent.ExecutionException;
+
 
 /**
  * @author Mark Vollmary
@@ -36,6 +39,9 @@ public abstract class BaseTest {
     static final String TEST_DB = "java_driver_test_db";
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
+
+    @ClassRule
+    public static TestRule acquireHostListRule = TestUtils.acquireHostListRule;
 
     @BeforeClass
     public static void init() throws InterruptedException, ExecutionException {
