@@ -53,6 +53,8 @@ public class ArangoSearchTest extends BaseTest {
 
     @After
     public void teardown() {
+        if (!isAtLeastVersion(3, 4))
+            return;
         if (db.collection("view_update_prop_test_collection").exists())
             db.collection("view_update_prop_test_collection").drop();
         if (db.collection("view_replace_prop_test_collection").exists())

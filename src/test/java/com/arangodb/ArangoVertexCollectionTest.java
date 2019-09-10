@@ -261,9 +261,14 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).replaceVertex(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
-            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-            // assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 4)) {
+                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+                // assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1200));
+            } else {
+                assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1903));
+            }
         }
     }
 
@@ -350,9 +355,14 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).updateVertex(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
-            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-            // assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 4)) {
+                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+                // assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1200));
+            } else {
+                assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1903));
+            }
         }
     }
 
@@ -434,9 +444,14 @@ public class ArangoVertexCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options);
             fail();
         } catch (final ArangoDBException e) {
-            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-            // assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 4)) {
+                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+                // assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1200));
+            } else {
+                assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1903));
+            }
         }
     }
 }
