@@ -411,5 +411,46 @@ public class ArangoSearchTest extends BaseTest {
         createGetAndDeleteAnalyzer(options);
     }
 
+    @Test
+    public void arangoSearchOptions() {
+        assumeTrue(isAtLeastVersion(3, 4));
+
+        ArangoCollection collection = db.collection("entities");
+        if (!collection.exists())
+            collection.create();
+
+        ArangoSearchCreateOptions options = new ArangoSearchCreateOptions()
+                .link(
+                        CollectionLink.on("entities")
+                                .analyzers("identity")
+                                .fields(
+                                        FieldLink.on("id")
+                                                .analyzers("identity")
+                                )
+                                .includeAllFields(true)
+                                .storeValues(StoreValuesType.ID)
+                                .trackListPositions(false)
+
+                );
+
+        final ArangoSearch view = db.arangoSearch("entities_view");
+        if (view.exists())
+            view.drop();
+
+        view.create(options);
+
+        final ArangoSearchPropertiesEntity properties = view.getProperties();
+        assertThat(properties, is(not(nullValue())));
+        assertThat(properties.getId(), is(not(nullValue())));
+        assertThat(properties.getName(), is("entities_view"));
+        assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
+
+        CollectionLink link = properties.getLinks().iterator().next();
+        assertThat(link.getAnalyzers(), contains("identity"));
+        assertThat(link.getName(), is("entities"));
+        assertThat(link.getIncludeAllFields(), is(true));
+        assertThat(link.getStoreValues(), is(StoreValuesType.ID));
+        assertThat(link.getTrackListPositions(), is(false));
+    }
 
 }
