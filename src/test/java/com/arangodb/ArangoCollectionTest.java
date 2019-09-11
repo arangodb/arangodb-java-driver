@@ -20,34 +20,26 @@
 
 package com.arangodb;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isOneOf;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
-
-import java.util.*;
-
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
+import com.arangodb.model.DocumentImportOptions.OnDuplicate;
+import com.arangodb.velocypack.VPackSlice;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.model.DocumentImportOptions.OnDuplicate;
-import com.arangodb.velocypack.VPackSlice;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -307,6 +299,32 @@ public class ArangoCollectionTest extends BaseTest {
             assertThat(document.getId(),
                     isOneOf(COLLECTION_NAME + "/" + "1", COLLECTION_NAME + "/" + "2", COLLECTION_NAME + "/" + "3"));
         }
+    }
+
+    @Test
+    @Ignore
+    public void getDocumentsWithCustomShardingKey() {
+        ArangoCollection collection = db.collection("customShardingKeyCollection");
+        if (collection.exists())
+            collection.drop();
+
+        collection.create(new CollectionCreateOptions()
+                .shardKeys("customField")
+                .numberOfShards(10)
+        );
+
+        List<BaseDocument> values = IntStream.range(0, 10)
+                .mapToObj(String::valueOf).map(key -> new BaseDocument())
+                .peek(it -> it.addAttribute("customField", UUID.randomUUID().toString()))
+                .collect(Collectors.toList());
+
+        MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> inserted = collection.insertDocuments(values);
+        List<String> insertedKeys = inserted.getDocuments().stream().map(DocumentEntity::getKey).collect(Collectors.toList());
+
+        final Collection<BaseDocument> documents = collection
+                .getDocuments(insertedKeys, BaseDocument.class).getDocuments();
+
+        assertThat(documents.size(), is(10));
     }
 
     @Test
