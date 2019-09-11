@@ -139,7 +139,7 @@ public class HttpConnection implements Connection {
 
         client = builder.build();
         try {
-            updateBearer();
+            updateBearerToken();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,29 +180,29 @@ public class HttpConnection implements Connection {
         }
     }
 
-    private void updateBearer() throws IOException {
+    private void updateBearerToken() throws IOException {
+        // TODO: expose as config params
         final boolean stripPort = true;
         final boolean useCanonicalHostname = false;
+
         final HttpClientBuilder builder = HttpClientBuilder.create();
         builder.setDefaultAuthSchemeRegistry((name) -> new SPNegoSchemeFactory(stripPort, useCanonicalHostname));
 
-        Credentials use_jaas_creds = new Credentials() {
-            public String getPassword() {
-                return null;
-            }
-
-            public Principal getUserPrincipal() {
-                return null;
-            }
-        };
 
         BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
         basicCredentialsProvider.setCredentials(
                 new AuthScope(null, -1, null),
-                use_jaas_creds);
+                new Credentials() {
+                    public String getPassword() {
+                        return null;
+                    }
+
+                    public Principal getUserPrincipal() {
+                        return null;
+                    }
+                });
         builder.setDefaultCredentialsProvider(basicCredentialsProvider);
         CloseableHttpClient authClient = builder.build();
-
 
         HttpUriRequest request = new HttpGet("http://bruecklinux.arangodb.biz:8899/_db/_system/_open/auth");
         HttpResponse response = authClient.execute(request);
@@ -320,7 +320,7 @@ public class HttpConnection implements Connection {
         Response response;
 
         httpRequest.addHeader("Authorization", "Bearer " + bearerToken);
-		response = buildResponse(client.execute(httpRequest));
+        response = buildResponse(client.execute(httpRequest));
         checkError(response);
         return response;
     }

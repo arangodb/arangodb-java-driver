@@ -46,6 +46,8 @@ public class ArangoViewTest extends BaseTest {
 
     @After
     public void teardown() {
+        if (!isAtLeastVersion(3, 4))
+            return;
         if (db.view(VIEW_NAME).exists())
             db.view(VIEW_NAME).drop();
     }

@@ -48,6 +48,8 @@ public class ArangoSearchTest extends BaseTest {
 
     @BeforeClass
     public static void setup() throws InterruptedException, ExecutionException {
+        if (!isAtLeastVersion(arangoDB, 3, 4))
+            return;
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions()).get();
     }
 

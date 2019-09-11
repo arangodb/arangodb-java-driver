@@ -25,8 +25,11 @@ import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.rules.TestRule;
 
 import java.util.concurrent.ExecutionException;
+
 
 /**
  * @author Mark Vollmary
@@ -36,6 +39,9 @@ public abstract class BaseTest {
     static final String TEST_DB = "java_driver_test_db";
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
+
+    @ClassRule
+    public static TestRule acquireHostListRule = TestUtils.acquireHostListRule;
 
     @BeforeClass
     public static void init() throws InterruptedException, ExecutionException {
@@ -58,13 +64,13 @@ public abstract class BaseTest {
         arangoDB = null;
     }
 
-    private static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
+    protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
             throws InterruptedException, ExecutionException {
         final String[] split = arangoDB.getVersion().get().getVersion().split("\\.");
         return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
     }
 
-    boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException, ExecutionException {
+    protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException, ExecutionException {
         return isAtLeastVersion(arangoDB, major, minor);
     }
 

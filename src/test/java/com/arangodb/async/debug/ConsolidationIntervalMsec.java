@@ -22,6 +22,7 @@ package com.arangodb.async.debug;
 
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.BaseTest;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
@@ -30,18 +31,23 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Michele Rastelli
  * <p>
  * https://github.com/arangodb/arangodb-java-driver-async/issues/15
  */
-public class ConsolidationIntervalMsec {
+public class ConsolidationIntervalMsec extends BaseTest {
 
     @Test
-    public void consolidationIntervalMsec() {
+    public void consolidationIntervalMsec() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 4));
+
         ArangoDBAsync arango = new ArangoDBAsync.Builder()
                 .user("root")
                 .password("test")
