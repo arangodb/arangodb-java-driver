@@ -301,6 +301,9 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
+    /**
+     * TODO: uncomment once the fix has been backported (3.4.9 and 3.5.1)
+     */
     @Test
     @Ignore
     public void getDocumentsWithCustomShardingKey() {
