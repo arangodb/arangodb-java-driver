@@ -92,7 +92,7 @@ public class HttpConnection implements Connection {
     private final Boolean useSsl;
     private final Protocol contentType;
     private final HostDescription host;
-    private String bearerToken;
+    private volatile String bearerToken;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
@@ -138,11 +138,23 @@ public class HttpConnection implements Connection {
         }
 
         client = builder.build();
+
         try {
             updateBearerToken();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    updateBearerToken();
+                    Thread.sleep(10000);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private static String buildUrl(final String baseUrl, final Request request) {
