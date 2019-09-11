@@ -19,12 +19,15 @@ package com.arangodb;/*
  */
 
 
+import org.apache.commons.codec.binary.Base64;
+import org.ietf.jgss.*;
+
 /**
  * @author Michele Rastelli
  */
 public class KerberosExpiration {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, GSSException {
         java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
@@ -36,6 +39,8 @@ public class KerberosExpiration {
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
         System.setProperty("sun.security.jgss.native", "true");
 
+        client();
+
         ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build();
 
         while (true) {
@@ -43,4 +48,36 @@ public class KerberosExpiration {
             Thread.sleep(60000);
         }
     }
+
+    static void client() throws GSSException {
+        Oid SPNEGO_OID = new Oid("1.3.6.1.5.5.2");
+        String challenge = "";
+        byte[] token = Base64.decodeBase64(challenge.getBytes());
+        String authServer = "bruecklinux.arangodb.biz";
+        byte[] t = generateGSSToken(token, SPNEGO_OID, authServer);
+        String tokenstr = new String(new Base64(0).encode(t));
+        System.out.println(tokenstr);
+    }
+
+    static protected byte[] generateGSSToken(final byte[] input, final Oid oid, final String authServer) throws GSSException {
+        final GSSManager manager = GSSManager.getInstance();
+        final GSSName serverName = manager.createName("HTTP@" + authServer, GSSName.NT_HOSTBASED_SERVICE);
+
+        final GSSContext gssContext = createGSSContext(manager, oid, serverName, null);
+        return input != null
+                ? gssContext.initSecContext(input, 0, input.length)
+                : gssContext.initSecContext(new byte[]{}, 0, 0);
+    }
+
+    static GSSContext createGSSContext(
+            final GSSManager manager,
+            final Oid oid,
+            final GSSName serverName,
+            final GSSCredential gssCredential) throws GSSException {
+        final GSSContext gssContext = manager.createContext(serverName.canonicalize(oid), oid, gssCredential,
+                GSSContext.DEFAULT_LIFETIME);
+        gssContext.requestMutualAuth(true);
+        return gssContext;
+    }
+
 }
