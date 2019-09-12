@@ -22,7 +22,7 @@ package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.GssAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.util.ArangoSerialization;
@@ -36,7 +36,6 @@ import javax.net.ssl.SSLContext;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class VstCommunicationSync extends VstCommunication<Response, VstConnectionSync> {
 
@@ -71,11 +70,9 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        String token = "Negotiate YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASF4bHwiBfl70XzaMPPeOQRzY63S5PLwslzzxZArabFKF8s67531vAGmyMcjTPNvClIwew63bCMN4xtjJx+7G2oo+AnlQ+rNMBO5eKHJDsVbFo44P3tiz4Z8lGvK/gJuwCaA/25BaNachJT6RlhkS+x/ZsglKU6y0Okbiz42viSyC3mFpJx5gmcK2xMS6CAp6498JXlevR9F3EqQ67xlWIjWKntqPWK+gj4jU85AXD9ylJpOUm9/Wu82sUIUgT3+kg1x26DvD/5SkzqHLRTJvTRMaSglpqoUMcvSKhK0LRBzcqIxneo1egbg74Jvq/Pu/yZJUfkfBrXHuqQTecT2b8kboSuOp+FYc1J0Uw3xRpZu5peLBSfvIvmkj29uNzlalJQ/pIHdMIHaoAMCARKigdIEgc9/TWh3OUUKFBaXABytmHD8rNvUyBbZRYf8UuXsdi1coZUJRGBT0D53hMLLb1XoveJbci9S5L1xzpWbK3YDmMwH0EMwxSgNGPdZfblEXY9/XeKMA54tNJLnZxyWO0hdwNdN839uJd7hISamV6JxBSZjuKYbxW5sahgeBdJZvFxWxp0PFnSAnfX5yQwFn8AGSB0jHRFkgwNwTwfpIoFNsInd3lZXzSABVHqdcpGXD4uixd6yErtNjFjdQvPpo9m0lzypkwDImxA2Dvd1Tb3OF7k=";
-//		Request request = new Request(null,null,null);
-//		request.putHeaderParam("Authorization", token);
-//		request.setType(1000);
-        AuthenticationRequest request = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
+        String token = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASF4bHwiBfl70XzaMPPeOQRzY63S5PLwslzzxZArabFKF8s67531vAGmyMcjTPNvClIwew63bCMN4xtjJx+7G2oo+AnlQ+rNMBO5eKHJDsVbFo44P3tiz4Z8lGvK/gJuwCaA/25BaNachJT6RlhkS+x/ZsglKU6y0Okbiz42viSyC3mFpJx5gmcK2xMS6CAp6498JXlevR9F3EqQ67xlWIjWKntqPWK+gj4jU85AXD9ylJpOUm9/Wu82sUIUgT3+kg1x26DvD/5SkzqHLRTJvTRMaSglpqoUMcvSKhK0LRBzcqIxneo1egbg74Jvq/Pu/yZJUfkfBrXHuqQTecT2b8kboSuOp+FYc1J0Uw3xRpZu5peLBSfvIvmkj29uNzlalJQ/pIHdMIHaoAMCARKigdIEgc87aa9g09YlnOr5fNth5MRxf7MIbPbxwlG3E1ag9y4cRN/C1DIZRG1kP0e8qRmPsBfr7ogLqD1mO5ByxD7Q3BaBMte7yuFG1sKO/wboG4S8R9kOT8bf+b+SO40v9k3Z7Iw1jCPUSaUPji1S2cHM1/6g9JTbaiaGCB3SSa1XUoFVf17/h40aXaejtzA+dQM8zJfphy0vMkU+WaOA+ZJeflDL96WUvZIR6qz3JFcK6Xi+kKTm45zXYXenyVyoc2A2brL5fOz4efksBdB96SEOvbw=";
+        GssAuthenticationRequest request = new GssAuthenticationRequest(token, ENCRYPTION_NEGOTIATE);
+//        AuthenticationRequest request = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
         final Response response = execute(request, connection);
         checkError(response);
     }

@@ -45,7 +45,7 @@ public class KerberosVST {
 
         while (true) {
             System.out.println(arangoDB.getVersion().getVersion());
-            Thread.sleep(60000);
+            Thread.sleep(5000);
         }
     }
 

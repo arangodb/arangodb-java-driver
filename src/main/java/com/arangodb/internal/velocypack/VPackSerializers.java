@@ -23,6 +23,7 @@ package com.arangodb.internal.velocypack;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.GssAuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
@@ -68,6 +69,15 @@ public class VPackSerializers {
         builder.add(value.getEncryption());
         builder.add(value.getUser());
         builder.add(value.getPassword());
+        builder.close();
+    };
+
+    public static final VPackSerializer<GssAuthenticationRequest> GSS_AUTH_REQUEST = (builder, attribute, value, context) -> {
+        builder.add(attribute, ValueType.ARRAY);
+        builder.add(value.getVersion());
+        builder.add(value.getType());
+        builder.add(value.getEncryption());
+        builder.add(value.getToken());
         builder.close();
     };
 

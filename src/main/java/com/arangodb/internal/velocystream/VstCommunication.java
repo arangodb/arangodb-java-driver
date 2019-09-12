@@ -51,6 +51,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class VstCommunication<R, C extends VstConnection> implements Closeable {
 
 	protected static final String ENCRYPTION_PLAIN = "plain";
+    protected static final String ENCRYPTION_NEGOTIATE = "negotiate";
 	private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
 	protected static final AtomicLong mId = new AtomicLong(0L);
