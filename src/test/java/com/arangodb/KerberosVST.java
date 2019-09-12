@@ -57,8 +57,8 @@ public class KerberosVST {
         String challenge = "";
         byte[] token = Base64.decodeBase64(challenge.getBytes());
         String authServer = "bruecklinux.arangodb.biz";
-        byte[] t = generateGSSToken(token, SPNEGO_OID, authServer);
-        String tokenstr = new String(new Base64(0).encode(t));
+        byte[] gssToken = generateGSSToken(token, SPNEGO_OID, authServer);
+        String tokenstr = new String(new Base64(0).encode(gssToken));
         System.out.println(tokenstr);
         return tokenstr;
     }
@@ -67,10 +67,9 @@ public class KerberosVST {
         final GSSManager manager = GSSManager.getInstance();
         final GSSName serverName = manager.createName("HTTP@" + authServer, GSSName.NT_HOSTBASED_SERVICE);
 
-        final GSSContext gssContext = createGSSContext(manager, oid, serverName, null);
-        return input != null
-                ? gssContext.initSecContext(input, 0, input.length)
-                : gssContext.initSecContext(new byte[]{}, 0, 0);
+        GSSContext gssContext = createGSSContext(manager, oid, serverName, null);
+//        System.out.println("gssContext.getLifetime(): " + gssContext.getLifetime());
+        return gssContext.initSecContext(input, 0, input.length);
     }
 
     static GSSContext createGSSContext(
@@ -78,8 +77,8 @@ public class KerberosVST {
             final Oid oid,
             final GSSName serverName,
             final GSSCredential gssCredential) throws GSSException {
-        final GSSContext gssContext = manager.createContext(serverName.canonicalize(oid), oid, gssCredential,
-                GSSContext.DEFAULT_LIFETIME);
+//        final GSSContext gssContext = manager.createContext(serverName.canonicalize(oid), oid, gssCredential, GSSContext.INDEFINITE_LIFETIME);
+        final GSSContext gssContext = manager.createContext(serverName.canonicalize(oid), oid, gssCredential, GSSContext.DEFAULT_LIFETIME);
         gssContext.requestMutualAuth(true);
         return gssContext;
     }
