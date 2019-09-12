@@ -31,8 +31,8 @@ public class KerberosExpiration {
         java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
-        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_keytab.conf");
-//        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_cache.conf");
+//        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_keytab.conf");
+        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_cache.conf");
         System.setProperty("java.security.krb5.conf", "/etc/krb5.conf");
         System.setProperty("sun.security.krb5.debug", "true");
         System.setProperty("sun.security.jgss.debug", "true");
@@ -50,6 +50,9 @@ public class KerberosExpiration {
     }
 
     static void client() throws GSSException {
+        // TODO: handle
+        //  - boolean stripPort
+        //  - boolean useCanonicalHostname
         Oid SPNEGO_OID = new Oid("1.3.6.1.5.5.2");
         String challenge = "";
         byte[] token = Base64.decodeBase64(challenge.getBytes());
