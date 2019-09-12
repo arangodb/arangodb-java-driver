@@ -28,6 +28,7 @@ import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +71,18 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        String token = "YIICxwYGKwYBBQUCoIICuzCCAregDTALBgkqhkiG9xIBAgKiggKkBIICoGCCApwGCSqGSIb3EgECAgEAboICizCCAoegAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASHwjqfcBfNyyEqkz7fpFBYoMHsRSvB4yZQg1seko80yq+5T6Ge7VsCCHXuWrKpJhvFH1IV+v/jOMTNos86g4gMhTh5k4OtHudClOGsV7Rigk3/WEh1WptwiutWXemeZ3WCWpGZvrhPak4uUcloOwtQHaqDq/WkwUJFK0zoyhI1V3SygnaAmVS3xcSzbb6Al4+AMG4sX40+21quW2tbfEbvalE96cYaq3D2o9u+EJ6w9cMjnFXKGeWSkckMOdA/OYL3OZFcAgDjIvSfeyVmNiAHdRzAEz8ajWBgbf3bCZrWbzxCjeNKa4jpPk0DHDS7gMIgp7nlH1+ktpnS/ugu02sy4SCewfJc+LcbLv/KGysflZX7r3nzvX5s0NROTJEZqh/F7pIHcMIHZoAMCARKigdEEgc5nTzqflbK7FTFN25m1AZ3okh9rRUlVTs/gmQf/KoEIhmpYZxAz8/w+Gdx6b+iiMdkPXWQHZloG8MEzT+Eib614tRyxUdLuwVZfRLea8eeP5smQ+kKl0H5XyXJwiwENaZnm5q/v0pJmh2I1FlX9BMA56qsvcI2ALHWSXi4sMm/TyLIhvLvL6/wRgw2O+eyPLeHks2RfJRzOWUPFBT/llTq/6QSwAGjbVbtJ4No7bq71/QaQkM5Fp9ddpZKaIcGt4RmChSasHCE7pl3ZVpNRJg==";
-        GssAuthenticationRequest request = new GssAuthenticationRequest(token, ENCRYPTION_NEGOTIATE);
-//        AuthenticationRequest request = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
-        final Response response = execute(request, connection);
-        checkError(response);
+        String token = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASGkuq+Q1k1Agx73Lhri/tJ83fbw658Bia6mzE5bMhYCwDvKNAe+bcRj7X+w+3aSsVO/+e8uzaHsck7WGI21Wo0ZjADK4n1vedhUCkSNO0WxjrbrwSVVePw0VHkvof4P175RMVK7JgCswQjyCYfp/VidgmJIOrK7dMIZ0VwcVjdntnDu+JmAuWhBb4hUvWtpjl88slm28V0VW6PJQl3mKwO+FqUFonK+PEzl8XbYPqI2JzdPkbSm8JmYgtGIqA+V95hKGuSeHZ/0wg2/kSmsSBrGwU3GQVCn7qKV1Rqqb64PhYdLKHdi5FnHS/ssYW640pmjrMbJfIqC4sgbvoK2DjocI/i5hRS33s06t0xCwJnRlyX6V5GA5cuDLAnuLS0w3E8TpIHdMIHaoAMCARKigdIEgc8MT70RSChXnss4pCEYCzzFOQZ53kUKTalyVwFN8JiwkaFD7w0GsZypUMrnwtGGTwmY5wN82Rynj00XmW68JBqKcT5almN2nVfp1h3/TTUS00knZpbaSQdsfBgeUDv+4Svk6pc+pijp8e/8bawrQmrfRG7SqXhjL4mrJrDkp8GlmQyECPGTIjLda/EtObzjGKNti9xceUvsVSQpQ9hUvnoNiYjyOyLfJJkVMdwP20uFLNV+BhF4+5YWJ2Xh4k4VMcfFOEXHLXb2Lc7dsWk1z6g=";
+        GssAuthenticationRequest gssRequest = new GssAuthenticationRequest(token, ENCRYPTION_NEGOTIATE);
+        final Response gssResponse = execute(gssRequest, connection);
+        checkError(gssResponse);
+
+        Request req = new Request(null, RequestType.GET, "/_open/auth");
+
+        final Response oauthResponse = execute(req, connection);
+        checkError(oauthResponse);
+
+        //        JwtAuthenticationRequest jwtRequest = new JwtAuthenticationRequest(token, ENCRYPTION_JWT);
+
     }
 
     public static class Builder {
