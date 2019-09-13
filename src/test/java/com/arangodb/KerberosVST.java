@@ -44,7 +44,8 @@ public class KerberosVST {
         ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(Protocol.VST).build();
 
         while (true) {
-            System.out.println(arangoDB.db().getCollections().size());
+//            System.out.println(arangoDB.db().getCollections().size());
+            System.out.println(arangoDB.db("java_driver_test_db").getVersion().getVersion());
             Thread.sleep(5000);
         }
     }

@@ -27,6 +27,7 @@ import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.GssAuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackModule;
@@ -56,6 +57,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
 		context.registerSerializer(Request.class, VPackSerializers.REQUEST);
 		context.registerSerializer(AuthenticationRequest.class, VPackSerializers.AUTH_REQUEST);
         context.registerSerializer(GssAuthenticationRequest.class, VPackSerializers.GSS_AUTH_REQUEST);
+        context.registerSerializer(JwtAuthenticationRequest.class, VPackSerializers.JWT_AUTH_REQUEST);
 		context.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
 		context.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
 		context.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);

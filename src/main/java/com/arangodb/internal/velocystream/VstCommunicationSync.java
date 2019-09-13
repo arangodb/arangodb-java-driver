@@ -23,6 +23,7 @@ package com.arangodb.internal.velocystream;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.velocystream.internal.GssAuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.util.ArangoSerialization;
@@ -71,18 +72,32 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        String token = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASGkuq+Q1k1Agx73Lhri/tJ83fbw658Bia6mzE5bMhYCwDvKNAe+bcRj7X+w+3aSsVO/+e8uzaHsck7WGI21Wo0ZjADK4n1vedhUCkSNO0WxjrbrwSVVePw0VHkvof4P175RMVK7JgCswQjyCYfp/VidgmJIOrK7dMIZ0VwcVjdntnDu+JmAuWhBb4hUvWtpjl88slm28V0VW6PJQl3mKwO+FqUFonK+PEzl8XbYPqI2JzdPkbSm8JmYgtGIqA+V95hKGuSeHZ/0wg2/kSmsSBrGwU3GQVCn7qKV1Rqqb64PhYdLKHdi5FnHS/ssYW640pmjrMbJfIqC4sgbvoK2DjocI/i5hRS33s06t0xCwJnRlyX6V5GA5cuDLAnuLS0w3E8TpIHdMIHaoAMCARKigdIEgc8MT70RSChXnss4pCEYCzzFOQZ53kUKTalyVwFN8JiwkaFD7w0GsZypUMrnwtGGTwmY5wN82Rynj00XmW68JBqKcT5almN2nVfp1h3/TTUS00knZpbaSQdsfBgeUDv+4Svk6pc+pijp8e/8bawrQmrfRG7SqXhjL4mrJrDkp8GlmQyECPGTIjLda/EtObzjGKNti9xceUvsVSQpQ9hUvnoNiYjyOyLfJJkVMdwP20uFLNV+BhF4+5YWJ2Xh4k4VMcfFOEXHLXb2Lc7dsWk1z6g=";
-        GssAuthenticationRequest gssRequest = new GssAuthenticationRequest(token, ENCRYPTION_NEGOTIATE);
-        final Response gssResponse = execute(gssRequest, connection);
-        checkError(gssResponse);
+        String gssToken = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASHJwXd5R/0sOvPkrwPhobkoMdl2w0cGg16zZ+K10AaXf4dLze6giJbcT/PIHyURvfg0E0bvrCFOjCg8+VNIXrvc1/+9Z/OjvGTlzUIYiwNO0TE6XzvCBZNYfSCg/6q4DZkzmowk5G8nlOuDYHtw9ZQm0nO97YQs2pHIXtaHxzRrtvXUMbmL1RwPK8Aj5rlk5TdnW5l1aX7dZ/VsiD8CR6UOxgUn/Xz2p8hihSs9cLBC74vNkFUMZfcNrJDS+mZXXPe/X6+a09SS1KQuG8U7v6oS2pYfCy7QBStOmsEeBynEzB7GACV/bYziFreWqAFrnK7LvxcA1lXZWfV+O8vDazUw0P9f/UjKADnuk4Ay96ekdjqGn5cm0pDas2gAJ7uSESMjpIHdMIHaoAMCARKigdIEgc8ddn1T7TDV8GflEIZ9YRg4MNPRNcovLhsjEFZHKjIuD/bupzQkK/t9mpP922RWEVpa/xLWyx+JRwboiBTp6YaxyNfXs9XaKb5Z5GDMsOI5iv0jy15fZqYfcZbdMTgA3mEZTiyHdfR7fquQivC4K84JXgVuq+Ds+aQDI/BgomJI+jkkrs3O1KUAsJf0PH44H2/gRnQUqg/wBhoR7L8k4wkHn0YFv0q7f7aETsPYolZwPW8gok9LR2d1lfw8FzNvCK5COg4C3BYlmPAK7k5CzLI=";
+        authenticateUsingGssToken(connection, gssToken);
 
-        Request req = new Request(null, RequestType.GET, "/_open/auth");
-
+        Request req = new Request("java_driver_test_db", RequestType.GET, "/_open/auth");
         final Response oauthResponse = execute(req, connection);
+        System.out.println(oauthResponse.getBody());
         checkError(oauthResponse);
 
-        //        JwtAuthenticationRequest jwtRequest = new JwtAuthenticationRequest(token, ENCRYPTION_JWT);
+        // OK, for kerberos jwt can be acquired via http
+//        String jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcmVmZXJyZWRfdXNlcm5hbWUiOiJtaWNoZWxlIiwiaXNzIjoiYXJhbmdvZGIiLCJleHAiOjE1NjgzOTAzNzYsImlhdCI6MTU2ODM2NDI0MH0=.d82RDmbHkY_NIuHo0FEBfYRmx2-YGgUTwiyWUBX9S6w=";
+//        authenticateUsingJwt(connection, jwt);
+    }
 
+    private void authenticateUsingGssToken(final VstConnectionSync connection, final String gssToken) {
+        GssAuthenticationRequest gssRequest = new GssAuthenticationRequest(gssToken, ENCRYPTION_NEGOTIATE);
+        final Response gssResponse = execute(gssRequest, connection);
+        checkError(gssResponse);
+    }
+
+    /**
+     * @param jwt: should be acquired via http, or provided by the user
+     */
+    private void authenticateUsingJwt(final VstConnectionSync connection, final String jwt) {
+        JwtAuthenticationRequest jwtRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
+        final Response jwtResponse = execute(jwtRequest, connection);
+        checkError(jwtResponse);
     }
 
     public static class Builder {
