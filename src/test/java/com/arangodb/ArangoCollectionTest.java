@@ -86,6 +86,41 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(doc.getId(), is(COLLECTION_NAME + "/" + doc.getKey()));
     }
 
+    // FIXME: v7
+    @Test
+    @Ignore
+    public void insertDocumentWithArrayWithNullValues() {
+        List<String> arr = Arrays.asList("a", null);
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("arr", arr);
+
+        final DocumentCreateEntity<BaseDocument> insertedDoc = db.collection(COLLECTION_NAME)
+                .insertDocument(doc, new DocumentCreateOptions().returnNew(true));
+        assertThat(insertedDoc, is(notNullValue()));
+        assertThat(insertedDoc.getId(), is(notNullValue()));
+        assertThat(insertedDoc.getKey(), is(notNullValue()));
+        assertThat(insertedDoc.getRev(), is(notNullValue()));
+        assertThat(insertedDoc.getId(), is(COLLECTION_NAME + "/" + insertedDoc.getKey()));
+        assertThat(((List<String>) insertedDoc.getNew().getAttribute("arr")), contains("a", null));
+    }
+
+    // FIXME: v7
+    @Test
+    @Ignore
+    public void insertDocumentWithNullValues() {
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("null", null);
+
+        final DocumentCreateEntity<BaseDocument> insertedDoc = db.collection(COLLECTION_NAME)
+                .insertDocument(doc, new DocumentCreateOptions().returnNew(true));
+        assertThat(insertedDoc, is(notNullValue()));
+        assertThat(insertedDoc.getId(), is(notNullValue()));
+        assertThat(insertedDoc.getKey(), is(notNullValue()));
+        assertThat(insertedDoc.getRev(), is(notNullValue()));
+        assertThat(insertedDoc.getId(), is(COLLECTION_NAME + "/" + insertedDoc.getKey()));
+        assertThat(insertedDoc.getNew().getProperties().containsKey("null"), is(true));
+    }
+
     @Test
     public void insertDocumentUpdateRev() {
         final BaseDocument doc = new BaseDocument();
