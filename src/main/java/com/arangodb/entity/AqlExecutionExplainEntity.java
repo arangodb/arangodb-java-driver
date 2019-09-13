@@ -82,7 +82,7 @@ public class AqlExecutionExplainEntity implements Entity {
 		private Boolean isConst;
 		private Boolean canThrow;
 		private String expressionType;
-		private IndexEntity indexes;
+        private Collection<IndexEntity> indexes;
 		private ExecutionExpression expression;
 		private ExecutionCollection condition;
 		private Boolean reverse;
@@ -163,7 +163,7 @@ public class AqlExecutionExplainEntity implements Entity {
 			return expressionType;
 		}
 
-		public IndexEntity getIndexes() {
+        public Collection<IndexEntity> getIndexes() {
 			return indexes;
 		}
 

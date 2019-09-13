@@ -914,6 +914,34 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
+    public void explainQueryWithIndexNode() {
+        ArangoCollection character = db.collection("got_characters");
+        ArangoCollection actor = db.collection("got_actors");
+
+        if (!character.exists())
+            character.create();
+
+        if (!actor.exists())
+            actor.create();
+
+        String query = "" +
+                "FOR `character` IN `got_characters` " +
+                "   FOR `actor` IN `got_actors` " +
+                "       FILTER `character`.`actor` == `actor`.`_id` " +
+                "       RETURN `character`";
+
+        final ExecutionPlan plan = db.explainQuery(query, null, null).getPlan();
+        plan.getNodes().stream()
+                .filter(it -> "IndexNode".equals(it.getType()))
+                .flatMap(it -> it.getIndexes().stream())
+                .forEach(it -> {
+                    assertThat(it.getType(), is(IndexType.primary));
+                    assertThat(it.getSelectivityEstimate(), is(1.0));
+                    assertThat(it.getFields(), contains("_key"));
+                });
+    }
+
+    @Test
     public void parseQuery() {
         final AqlParseEntity parse = arangoDB.db().parseQuery("for i in 1..1 return i");
         assertThat(parse, is(notNullValue()));
