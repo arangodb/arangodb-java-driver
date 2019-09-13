@@ -7,6 +7,8 @@
 # EXAMPLE:
 #   ./start_db_cluster.sh docker.io/arangodb:3.5.0
 
+docker pull "$1"
+
 LOCATION=$(pwd)/$(dirname "$0")
 
 docker network create arangodb --subnet 172.28.0.0/16

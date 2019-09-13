@@ -7,6 +7,8 @@
 # EXAMPLE:
 #   ./start_db_single.sh docker.io/arangodb:3.5.0
 
+docker pull "$1"
+
 docker run -d -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" -p 8529:8529 "$1"
 
 echo "waiting for arangodb ..."
