@@ -41,7 +41,7 @@ public class KerberosExpiration {
         ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build();
 
         while (true) {
-            System.out.println(arangoDB.getVersion().getVersion());
+            System.out.println(arangoDB.db("java_driver_test_db").getVersion().getVersion());
             Thread.sleep(60000);
         }
     }

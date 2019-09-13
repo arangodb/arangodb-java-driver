@@ -72,10 +72,10 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        String gssToken = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASHJwXd5R/0sOvPkrwPhobkoMdl2w0cGg16zZ+K10AaXf4dLze6giJbcT/PIHyURvfg0E0bvrCFOjCg8+VNIXrvc1/+9Z/OjvGTlzUIYiwNO0TE6XzvCBZNYfSCg/6q4DZkzmowk5G8nlOuDYHtw9ZQm0nO97YQs2pHIXtaHxzRrtvXUMbmL1RwPK8Aj5rlk5TdnW5l1aX7dZ/VsiD8CR6UOxgUn/Xz2p8hihSs9cLBC74vNkFUMZfcNrJDS+mZXXPe/X6+a09SS1KQuG8U7v6oS2pYfCy7QBStOmsEeBynEzB7GACV/bYziFreWqAFrnK7LvxcA1lXZWfV+O8vDazUw0P9f/UjKADnuk4Ay96ekdjqGn5cm0pDas2gAJ7uSESMjpIHdMIHaoAMCARKigdIEgc8ddn1T7TDV8GflEIZ9YRg4MNPRNcovLhsjEFZHKjIuD/bupzQkK/t9mpP922RWEVpa/xLWyx+JRwboiBTp6YaxyNfXs9XaKb5Z5GDMsOI5iv0jy15fZqYfcZbdMTgA3mEZTiyHdfR7fquQivC4K84JXgVuq+Ds+aQDI/BgomJI+jkkrs3O1KUAsJf0PH44H2/gRnQUqg/wBhoR7L8k4wkHn0YFv0q7f7aETsPYolZwPW8gok9LR2d1lfw8FzNvCK5COg4C3BYlmPAK7k5CzLI=";
+        String gssToken = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASHJwXd5R/0sOvPkrwPhobkoMdl2w0cGg16zZ+K10AaXf4dLze6giJbcT/PIHyURvfg0E0bvrCFOjCg8+VNIXrvc1/+9Z/OjvGTlzUIYiwNO0TE6XzvCBZNYfSCg/6q4DZkzmowk5G8nlOuDYHtw9ZQm0nO97YQs2pHIXtaHxzRrtvXUMbmL1RwPK8Aj5rlk5TdnW5l1aX7dZ/VsiD8CR6UOxgUn/Xz2p8hihSs9cLBC74vNkFUMZfcNrJDS+mZXXPe/X6+a09SS1KQuG8U7v6oS2pYfCy7QBStOmsEeBynEzB7GACV/bYziFreWqAFrnK7LvxcA1lXZWfV+O8vDazUw0P9f/UjKADnuk4Ay96ekdjqGn5cm0pDas2gAJ7uSESMjpIHdMIHaoAMCARKigdIEgc/Ocqjyhy5eyDQmB/VsNuF9+OQZLIPq/aQxgIGNEs4yweLqHGr34sDECK3m+n7ubYI1e3hU3vtm5bPO5QtmdslWVT+yPwA5L/5/avWTeZtE2SH91use+FBmRD5Oz9+OANSvZoGlccE5LY2q4H6b+dIaGQYvZYBOkUPrDFoZuKi5Mp0DKZxxkiDl528nlbSPCIt1R/xRSj7wAxg7ARdL3KRJKuJAg7mtfr1QI5xzuXSamENGt7Fif5FQR5snKBa5iBFrQN/X54/l0lkosz0KJVc=";
         authenticateUsingGssToken(connection, gssToken);
 
-        Request req = new Request("java_driver_test_db", RequestType.GET, "/_open/auth");
+        Request req = new Request("_system", RequestType.GET, "/_open/auth");
         final Response oauthResponse = execute(req, connection);
         System.out.println(oauthResponse.getBody());
         checkError(oauthResponse);
