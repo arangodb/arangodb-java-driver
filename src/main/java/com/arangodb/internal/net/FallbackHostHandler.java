@@ -21,71 +21,77 @@
 package com.arangodb.internal.net;
 
 import java.io.IOException;
+import com.arangodb.ArangoDBException;
+
 import java.util.List;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class FallbackHostHandler implements HostHandler {
 
-	private Host current;
-	private Host lastSuccess;
-	private int iterations;
-	private final HostResolver resolver;
-	private boolean firstOpened;
+    private final HostResolver resolver;
+    private Host current;
+    private Host lastSuccess;
+    private int iterations;
+    private boolean firstOpened;
 
-	public FallbackHostHandler(final HostResolver resolver) {
-		this.resolver = resolver;
-		iterations = 0;
-		current = lastSuccess = resolver.resolve(true, false).getHostsList().get(0);
-		firstOpened = true;
-	}
+    public FallbackHostHandler(final HostResolver resolver) {
+        this.resolver = resolver;
+        iterations = 0;
+        current = lastSuccess = resolver.resolve(true, false).getHostsList().get(0);
+        firstOpened = true;
+    }
 
-	@Override
-	public Host get(final HostHandle hostHandle, AccessType accessType) {
-		return current != lastSuccess || iterations < 3 ? current : null;
-	}
+    @Override
+    public Host get(final HostHandle hostHandle, AccessType accessType) {
+        if (current != lastSuccess || iterations < 3) {
+            return current;
+        } else {
+            reset();
+            throw new ArangoDBException("Cannot contact any host!");
+        }
+    }
 
-	@Override
-	public void success() {
-		lastSuccess = current;
-	}
+    @Override
+    public void success() {
+        lastSuccess = current;
+    }
 
-	@Override
-	public void fail() {
-		final List<Host> hosts = resolver.resolve(false, false).getHostsList();
-		final int index = hosts.indexOf(current) + 1;
-		final boolean inBound = index < hosts.size();
-		current = hosts.get(inBound ? index : 0);
-		if (!inBound) {
-			iterations++;
-		}
-	}
+    @Override
+    public void fail() {
+        final List<Host> hosts = resolver.resolve(false, false).getHostsList();
+        final int index = hosts.indexOf(current) + 1;
+        final boolean inBound = index < hosts.size();
+        current = hosts.get(inBound ? index : 0);
+        if (!inBound) {
+            iterations++;
+        }
+    }
 
-	@Override
-	public void reset() {
-		iterations = 0;
-	}
+    @Override
+    public void reset() {
+        iterations = 0;
+    }
 
-	@Override
-	public void confirm() {
-		if (firstOpened) {
-			// after first successful established connection, update host list
-			resolver.resolve(false, false);
-			firstOpened = false;
-		}
-	}
+    @Override
+    public void confirm() {
+        if (firstOpened) {
+            // after first successful established connection, update host list
+            resolver.resolve(false, false);
+            firstOpened = false;
+        }
+    }
 
-	@Override
+    @Override
 	public void close() throws IOException {
-		final HostSet hosts = resolver.resolve(false, false);
-		hosts.close();
-	}
+        final HostSet hosts = resolver.resolve(false, false);
+        hosts.close();
+    }
 
-	@Override
-	public void closeCurrentOnError() {
-		current.closeOnError();
-	}
+    @Override
+    public void closeCurrentOnError() {
+        current.closeOnError();
+    }
 
 }

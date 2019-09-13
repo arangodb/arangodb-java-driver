@@ -23,9 +23,9 @@ package com.arangodb.internal;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import com.arangodb.ArangoDBException;
 import org.junit.Test;
 
 import com.arangodb.internal.net.FallbackHostHandler;
@@ -38,6 +38,8 @@ import com.arangodb.internal.net.HostSet;
 import com.arangodb.internal.net.RandomHostHandler;
 import com.arangodb.internal.net.RoundRobinHostHandler;
 import com.arangodb.util.ArangoSerialization;
+
+import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
@@ -107,7 +109,11 @@ public class HostHandlerTest {
 				assertThat(handler.get(null, null), is(HOST_0));
 			} else {
 				handler.fail();
-				assertThat(handler.get(null, null), is(nullValue()));
+                try {
+                    handler.get(null, null);
+                    fail();
+                } catch (ArangoDBException ignored) {
+                }
 			}
 		}
 	}
