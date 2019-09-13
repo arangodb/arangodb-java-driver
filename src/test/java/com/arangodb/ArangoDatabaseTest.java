@@ -936,7 +936,6 @@ public class ArangoDatabaseTest extends BaseTest {
                 .flatMap(it -> it.getIndexes().stream())
                 .forEach(it -> {
                     assertThat(it.getType(), is(IndexType.primary));
-                    assertThat(it.getSelectivityEstimate(), is(1.0));
                     assertThat(it.getFields(), contains("_key"));
                 });
     }
