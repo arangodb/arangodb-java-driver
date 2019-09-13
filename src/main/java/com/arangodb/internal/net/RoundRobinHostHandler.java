@@ -20,6 +20,8 @@
 
 package com.arangodb.internal.net;
 
+import com.arangodb.ArangoDBException;
+
 /**
  * @author Mark Vollmary
  *
@@ -47,7 +49,8 @@ public class RoundRobinHostHandler implements HostHandler {
 		final int size = hosts.getHostsList().size();
 
 		if (fails > size) {
-			return null;
+			reset();
+			throw new ArangoDBException("Cannot contact any host!");
 		}
 
 		final int index = (current++) % size;

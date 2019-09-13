@@ -375,11 +375,11 @@ public class ArangoDatabaseTest extends BaseTest {
         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
         final Collection<CollectionEntity> nonSystemCollections = db.getCollections(options);
 
-        assertThat(nonSystemCollections.size(), is(0));
+        int initialSize = nonSystemCollections.size();
         db.createCollection(COLLECTION_NAME + "1", null);
         db.createCollection(COLLECTION_NAME + "2", null);
         final Collection<CollectionEntity> newCollections = db.getCollections(options);
-        assertThat(newCollections.size(), is(2));
+        assertThat(newCollections.size(), is(initialSize + 2));
         assertThat(newCollections, is(notNullValue()));
 
         db.collection(COLLECTION_NAME + "1").drop();
