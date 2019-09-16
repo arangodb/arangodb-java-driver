@@ -280,6 +280,43 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
     }
 
+    private void createCollectionWithKeyType(KeyType keyType) {
+        try {
+            final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().keyOptions(
+                    false,
+                    keyType,
+                    null,
+                    null
+            ));
+            assertThat(db.collection(COLLECTION_NAME).getProperties().getKeyOptions().getType(), is(keyType));
+        } finally {
+            db.collection(COLLECTION_NAME).drop();
+        }
+    }
+
+    @Test
+    public void createCollectionWithKeyTypeAutoincrement() {
+        assumeTrue(isSingleServer());
+        createCollectionWithKeyType(KeyType.autoincrement);
+    }
+
+    @Test
+    public void createCollectionWithKeyTypePadded() {
+        assumeTrue(isAtLeastVersion(3, 4));
+        createCollectionWithKeyType(KeyType.padded);
+    }
+
+    @Test
+    public void createCollectionWithKeyTypeTraditional() {
+        createCollectionWithKeyType(KeyType.traditional);
+    }
+
+    @Test
+    public void createCollectionWithKeyTypeUuid() {
+        assumeTrue(isAtLeastVersion(3, 4));
+        createCollectionWithKeyType(KeyType.uuid);
+    }
+
     @Test(expected = ArangoDBException.class)
     public void deleteCollection() {
         db.createCollection(COLLECTION_NAME, null);

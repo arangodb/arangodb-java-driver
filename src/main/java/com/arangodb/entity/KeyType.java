@@ -22,8 +22,7 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum KeyType {
-	traditional, autoincrement
+    traditional, autoincrement, uuid, padded
 }

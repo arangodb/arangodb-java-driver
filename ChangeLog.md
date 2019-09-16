@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Added
+
+- support for keyType uuid & padded
+
+### Fixed
+
 - bugfix AqlExecutionExplainEntity indexes
 - bugfix reconnection after more than 3 failures
 
