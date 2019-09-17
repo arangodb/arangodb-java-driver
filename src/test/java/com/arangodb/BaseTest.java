@@ -21,13 +21,16 @@
 package com.arangodb;
 
 import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
+import com.arangodb.model.CollectionCreateOptions;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Mark Vollmary
@@ -35,35 +38,61 @@ import java.util.Collection;
  */
 public abstract class BaseTest {
 
-    @Parameters
-    public static Collection<ArangoDB.Builder> builders() {
-        return Arrays.asList(//
-                new ArangoDB.Builder().useProtocol(Protocol.VST), //
-                new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON), //
-                new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK) //
-        );
+    private static final String TEST_DB = "java_driver_test_db";
+    private static final List<ArangoDB> arangos = Arrays.asList(
+            new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build()
+    );
+
+    protected final ArangoDB arangoDB;
+    protected final ArangoDatabase db;
+
+    private static ArangoDatabase initDB() {
+        ArangoDatabase database = arangos.get(0).db(TEST_DB);
+        if (!database.exists())
+            database.create();
+        return database;
     }
 
-    static final String TEST_DB = "java_driver_test_db";
-    static ArangoDB arangoDB;
-    static ArangoDatabase db;
-
-    BaseTest(final ArangoDB.Builder builder) {
-        super();
-        if (arangoDB != null) {
-            shutdown();
+    public static void initCollections(String... collections) {
+        ArangoDatabase db = initDB();
+        for (String collection : collections) {
+            if (db.collection(collection).exists())
+                db.collection(collection).drop();
+            db.createCollection(collection, null);
         }
-        arangoDB = builder.build();
-        db = arangoDB.db(TEST_DB);
+    }
 
-        if (!db.exists())
-            db.create();
+    public static void initEdgeCollections(String... collections) {
+        ArangoDatabase db = initDB();
+        for (String collection : collections) {
+            if (db.collection(collection).exists())
+                db.collection(collection).drop();
+            db.createCollection(collection, new CollectionCreateOptions().type(CollectionType.EDGES));
+        }
+    }
+
+    @Parameters
+    public static List<ArangoDB> builders() {
+        return arangos;
+    }
+
+    BaseTest(final ArangoDB arangoDB) {
+        this.arangoDB = arangoDB;
+        db = arangoDB.db(TEST_DB);
     }
 
     @AfterClass
     public static void shutdown() {
-        arangoDB.shutdown();
-        arangoDB = null;
+        ArangoDatabase database = arangos.get(0).db(TEST_DB);
+        if (database.exists())
+            database.drop();
+        arangos.forEach(ArangoDB::shutdown);
+    }
+
+    static String rnd() {
+        return UUID.randomUUID().toString();
     }
 
     boolean isAtLeastVersion(final int major, final int minor) {
