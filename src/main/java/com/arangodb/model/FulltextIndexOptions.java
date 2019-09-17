@@ -40,7 +40,7 @@ public class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {
 
     @Override
     protected FulltextIndexOptions getThis() {
-        return null;
+        return this;
     }
 
 	protected Iterable<String> getFields() {

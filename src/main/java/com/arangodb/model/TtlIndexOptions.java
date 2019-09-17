@@ -38,7 +38,7 @@ public class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
 
     @Override
     protected TtlIndexOptions getThis() {
-        return null;
+        return this;
     }
 
     protected Iterable<String> getFields() {

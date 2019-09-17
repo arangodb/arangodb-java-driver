@@ -39,7 +39,7 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
 
     @Override
     protected GeoIndexOptions getThis() {
-        return null;
+        return this;
     }
 
 	protected Iterable<String> getFields() {
