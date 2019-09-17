@@ -91,6 +91,16 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 					hostHandler.success();
 					if (user != null) {
 						authenticate(connection);
+						new Thread(() -> {
+							while (true) {
+								try {
+									authenticate(connection);
+									Thread.sleep(10000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}).start();
 					}
 					hostHandler.confirm();
 					return connection;

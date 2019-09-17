@@ -216,7 +216,7 @@ public class HttpConnection implements Connection {
         builder.setDefaultCredentialsProvider(basicCredentialsProvider);
         CloseableHttpClient authClient = builder.build();
 
-        HttpUriRequest request = new HttpGet("http://bruecklinux.arangodb.biz:8899/_db/_system/_open/auth");
+        HttpUriRequest request = new HttpGet(buildBaseUrl(host) +"/_db/_system/_open/auth");
         HttpResponse response = authClient.execute(request);
         HttpEntity entity = response.getEntity();
         System.out.println("----------------------------------------");

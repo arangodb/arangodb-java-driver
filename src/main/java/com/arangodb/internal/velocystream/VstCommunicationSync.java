@@ -31,6 +31,8 @@ import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
+import org.apache.commons.codec.binary.Base64;
+import org.ietf.jgss.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,13 +72,42 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         return connection.write(message, buildChunks(message));
     }
 
+    private String createGssToken() throws GSSException {
+        // TODO: handle
+        //  - boolean stripPort
+        //  - boolean useCanonicalHostname
+
+        // FIXME: static final
+        Oid SPNEGO_OID = new Oid("1.3.6.1.5.5.2");
+        String challenge = "";
+        byte[] token = Base64.decodeBase64(challenge.getBytes());
+        String authServer = "bruecklinux.arangodb.biz"; // FIXME: get from config param arangodb.hosts
+
+        final GSSManager manager = GSSManager.getInstance();
+        final GSSName serverName = manager.createName("HTTP@" + authServer, GSSName.NT_HOSTBASED_SERVICE);
+
+        final GSSContext gssContext = manager.createContext(serverName.canonicalize(SPNEGO_OID), SPNEGO_OID, null, GSSContext.DEFAULT_LIFETIME);
+        gssContext.requestMutualAuth(true);
+        byte[] gssToken = gssContext.initSecContext(token, 0, token.length);
+
+        return new String(new Base64(0).encode(gssToken));
+    }
+
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        String gssToken = "YIICyAYGKwYBBQUCoIICvDCCArigDTALBgkqhkiG9xIBAgKiggKlBIICoWCCAp0GCSqGSIb3EgECAgEAboICjDCCAoigAwIBBaEDAgEOogcDBQAgAAAAo4IBkWGCAY0wggGJoAMCAQWhGhsYQlJVRUNLTElOVVguQVJBTkdPREIuQklaoiswKaADAgEBoSIwIBsESFRUUBsYYnJ1ZWNrbGludXguYXJhbmdvZGIuYml6o4IBNzCCATOgAwIBEqEDAgEBooIBJQSCASHJwXd5R/0sOvPkrwPhobkoMdl2w0cGg16zZ+K10AaXf4dLze6giJbcT/PIHyURvfg0E0bvrCFOjCg8+VNIXrvc1/+9Z/OjvGTlzUIYiwNO0TE6XzvCBZNYfSCg/6q4DZkzmowk5G8nlOuDYHtw9ZQm0nO97YQs2pHIXtaHxzRrtvXUMbmL1RwPK8Aj5rlk5TdnW5l1aX7dZ/VsiD8CR6UOxgUn/Xz2p8hihSs9cLBC74vNkFUMZfcNrJDS+mZXXPe/X6+a09SS1KQuG8U7v6oS2pYfCy7QBStOmsEeBynEzB7GACV/bYziFreWqAFrnK7LvxcA1lXZWfV+O8vDazUw0P9f/UjKADnuk4Ay96ekdjqGn5cm0pDas2gAJ7uSESMjpIHdMIHaoAMCARKigdIEgc/Ocqjyhy5eyDQmB/VsNuF9+OQZLIPq/aQxgIGNEs4yweLqHGr34sDECK3m+n7ubYI1e3hU3vtm5bPO5QtmdslWVT+yPwA5L/5/avWTeZtE2SH91use+FBmRD5Oz9+OANSvZoGlccE5LY2q4H6b+dIaGQYvZYBOkUPrDFoZuKi5Mp0DKZxxkiDl528nlbSPCIt1R/xRSj7wAxg7ARdL3KRJKuJAg7mtfr1QI5xzuXSamENGt7Fif5FQR5snKBa5iBFrQN/X54/l0lkosz0KJVc=";
+        String gssToken;
+        try {
+            gssToken = createGssToken();
+        } catch (GSSException e) {
+            throw new ArangoDBException(e);
+        }
+
         authenticateUsingGssToken(connection, gssToken);
 
         Request req = new Request("_system", RequestType.GET, "/_open/auth");
         final Response oauthResponse = execute(req, connection);
+
+        // TODO: decode jwt and schedule authentication renewal before jwt expiration
         System.out.println(oauthResponse.getBody());
         checkError(oauthResponse);
 

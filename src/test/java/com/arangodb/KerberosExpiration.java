@@ -19,20 +19,17 @@ package com.arangodb;/*
  */
 
 
-import org.ietf.jgss.GSSException;
-
 /**
  * @author Michele Rastelli
  */
 public class KerberosExpiration {
 
-    public static void main(String[] args) throws InterruptedException, GSSException {
+    public static void main(String[] args) throws InterruptedException {
         java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
         System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
 //        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_keytab.conf");
-        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_cache.conf");
-        System.setProperty("java.security.krb5.conf", "/etc/krb5.conf");
+//        System.setProperty("java.security.auth.login.config", "/home/michele/arango/arangodb-java-driver/src/test/resources/login_cache.conf");
         System.setProperty("sun.security.krb5.debug", "true");
         System.setProperty("sun.security.jgss.debug", "true");
         System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
@@ -42,7 +39,7 @@ public class KerberosExpiration {
 
         while (true) {
             System.out.println(arangoDB.db("java_driver_test_db").getVersion().getVersion());
-            Thread.sleep(60000);
+            Thread.sleep(5000);
         }
     }
 
