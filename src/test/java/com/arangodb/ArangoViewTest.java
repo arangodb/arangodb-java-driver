@@ -20,10 +20,9 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
-import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -38,56 +37,56 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(Parameterized.class)
 public class ArangoViewTest extends BaseTest {
 
-    private static final String VIEW_NAME = "view_test";
-
-    public ArangoViewTest(final Builder builder) {
-        super(builder);
+    @BeforeClass
+    public static void init() {
+        BaseTest.initDB();
     }
 
-    @After
-    public void teardown() {
-        if (!isAtLeastVersion(3, 4))
-            return;
-        if (db.view(VIEW_NAME).exists())
-            db.view(VIEW_NAME).drop();
+    public ArangoViewTest(final ArangoDB arangoDB) {
+        super(arangoDB);
     }
 
     @Test
     public void exists() {
+        String name = "view-" + rnd();
         assumeTrue(isAtLeastVersion(3, 4));
-        db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
-        assertThat(db.view(VIEW_NAME).exists(), is(true));
+        db.createView(name, ViewType.ARANGO_SEARCH);
+        assertThat(db.view(name).exists(), is(true));
     }
 
     @Test
     public void getInfo() {
+        String name = "view-" + rnd();
         assumeTrue(isAtLeastVersion(3, 4));
-        db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
-        final ViewEntity info = db.view(VIEW_NAME).getInfo();
+        db.createView(name, ViewType.ARANGO_SEARCH);
+        final ViewEntity info = db.view(name).getInfo();
         assertThat(info, is(not(nullValue())));
         assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(VIEW_NAME));
+        assertThat(info.getName(), is(name));
         assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
     }
 
     @Test
     public void drop() {
+        String name = "view-" + rnd();
         assumeTrue(isAtLeastVersion(3, 4));
-        db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH);
-        final ArangoView view = db.view(VIEW_NAME);
+        db.createView(name, ViewType.ARANGO_SEARCH);
+        final ArangoView view = db.view(name);
         view.drop();
         assertThat(view.exists(), is(false));
     }
 
     @Test
     public void rename() {
+        String oldName = "view-" + rnd();
+        String newName = "view-" + rnd();
+
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 4));
-        final String name = VIEW_NAME + "_new";
-        db.createView(name, ViewType.ARANGO_SEARCH);
-        db.view(name).rename(VIEW_NAME);
-        assertThat(db.view(name).exists(), is(false));
-        assertThat(db.view(VIEW_NAME).exists(), is(true));
+        db.createView(oldName, ViewType.ARANGO_SEARCH);
+        db.view(oldName).rename(newName);
+        assertThat(db.view(oldName).exists(), is(false));
+        assertThat(db.view(newName).exists(), is(true));
     }
 
 }
