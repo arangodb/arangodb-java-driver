@@ -20,10 +20,12 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
+import com.arangodb.model.AqlQueryOptions;
+import com.arangodb.velocypack.VPackSlice;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,13 +33,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.model.AqlQueryOptions;
-import com.arangodb.velocypack.VPackSlice;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
@@ -46,8 +43,13 @@ import com.arangodb.velocypack.VPackSlice;
 @RunWith(Parameterized.class)
 public class ArangoCursorTest extends BaseTest {
 
-	public ArangoCursorTest(final Builder builder) {
-		super(builder);
+	@BeforeClass
+	public static void init() {
+		BaseTest.initDB();
+	}
+
+	public ArangoCursorTest(final ArangoDB arangoDB) {
+		super(arangoDB);
 	}
 
 	@Test
