@@ -20,7 +20,6 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.CursorEntity.Warning;
@@ -32,7 +31,7 @@ import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,34 +55,24 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(Parameterized.class)
 public class ArangoDatabaseTest extends BaseTest {
 
-    private static final String COLLECTION_NAME = "db_test";
-    private static final String GRAPH_NAME = "graph_test";
+    private static final String CNAME1 = "ArangoDatabaseTest_collection_1";
+    private static final String CNAME2 = "ArangoDatabaseTest_collection_2";
+    private static final String ENAMES = "ArangoDatabaseTest_edge_collection";
 
-    public ArangoDatabaseTest(final Builder builder) {
-        super(builder);
+    private final ArangoCollection collection1;
+    private final ArangoCollection edges;
+
+    @BeforeClass
+    public static void init() {
+        BaseTest.initDB();
+        BaseTest.initCollections(CNAME1, CNAME2);
+        BaseTest.initEdgeCollections(ENAMES);
     }
 
-    @Before
-    public void setUp() {
-        if (db.collection(COLLECTION_NAME + "2").exists())
-            db.collection(COLLECTION_NAME + "2").drop();
-        if (db.collection(COLLECTION_NAME + "1").exists())
-            db.collection(COLLECTION_NAME + "1").drop();
-        if (db.collection(COLLECTION_NAME).exists())
-            db.collection(COLLECTION_NAME).drop();
-        if (db.collection(COLLECTION_NAME + "edge").exists())
-            db.collection(COLLECTION_NAME + "edge").drop();
-        if (db.collection(COLLECTION_NAME + "from").exists())
-            db.collection(COLLECTION_NAME + "from").drop();
-        if (db.collection(COLLECTION_NAME + "to").exists())
-            db.collection(COLLECTION_NAME + "to").drop();
-    }
-
-    @Test
-    public void create() {
-        final Boolean result = arangoDB.db(BaseTest.TEST_DB + "_1").create();
-        assertThat(result, is(true));
-        arangoDB.db(BaseTest.TEST_DB + "_1").drop();
+    public ArangoDatabaseTest(final ArangoDB arangoDB) {
+        super(arangoDB);
+        collection1 = db.collection(CNAME1);
+        edges = db.collection(ENAMES);
     }
 
     @Test
@@ -117,25 +106,23 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createCollection() {
-        try {
-            final CollectionEntity result = db.createCollection(COLLECTION_NAME, null);
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getId(), is(notNullValue()));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db.createCollection(name, null);
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getId(), is(notNullValue()));
     }
 
     @Test
     public void createCollectionWithReplicationFactor() {
         assumeTrue(isCluster());
+        String name = "collection-" + rnd();
         final CollectionEntity result = db
-                .createCollection(COLLECTION_NAME, new CollectionCreateOptions().replicationFactor(2));
+                .createCollection(name, new CollectionCreateOptions().replicationFactor(2));
         assertThat(result, is(notNullValue()));
         assertThat(result.getId(), is(notNullValue()));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(nullValue()));
-        db.collection(COLLECTION_NAME).drop();
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getReplicationFactor(), is(2));
+        assertThat(props.getSatellite(), is(nullValue()));
     }
 
     @Test
@@ -143,14 +130,15 @@ public class ArangoDatabaseTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
-        final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db.createCollection(name,
                 new CollectionCreateOptions().replicationFactor(2).minReplicationFactor(2));
         assertThat(result, is(notNullValue()));
         assertThat(result.getId(), is(notNullValue()));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(2));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getMinReplicationFactor(), is(2));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(nullValue()));
-        db.collection(COLLECTION_NAME).drop();
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getReplicationFactor(), is(2));
+        assertThat(props.getMinReplicationFactor(), is(2));
+        assertThat(props.getSatellite(), is(nullValue()));
     }
 
     @Test
@@ -158,32 +146,28 @@ public class ArangoDatabaseTest extends BaseTest {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
-        try {
-            final CollectionEntity result = db
-                    .createCollection(COLLECTION_NAME, new CollectionCreateOptions().satellite(true));
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db
+                .createCollection(name, new CollectionCreateOptions().satellite(true));
 
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getId(), is(notNullValue()));
-            assertThat(db.collection(COLLECTION_NAME).getProperties().getReplicationFactor(), is(nullValue()));
-            assertThat(db.collection(COLLECTION_NAME).getProperties().getSatellite(), is(true));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getId(), is(notNullValue()));
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getReplicationFactor(), is(nullValue()));
+        assertThat(props.getSatellite(), is(true));
     }
 
     @Test
     public void createCollectionWithNumberOfShards() {
         assumeTrue(isCluster());
-        try {
-            final CollectionEntity result = db
-                    .createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(2));
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db
+                .createCollection(name, new CollectionCreateOptions().numberOfShards(2));
 
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getId(), is(notNullValue()));
-            assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(2));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getId(), is(notNullValue()));
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getNumberOfShards(), is(2));
     }
 
     @Test
@@ -191,14 +175,14 @@ public class ArangoDatabaseTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 4));
         assumeTrue(isCluster());
 
-        final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions()
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db.createCollection(name, new CollectionCreateOptions()
                 .shardingStrategy(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
 
         assertThat(result, is(notNullValue()));
         assertThat(result.getId(), is(notNullValue()));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getShardingStrategy(),
-                is(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
-        db.collection(COLLECTION_NAME).drop();
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getShardingStrategy(), is(ShardingStrategy.COMMUNITY_COMPAT.getInternalName()));
     }
 
     @Test
@@ -207,12 +191,12 @@ public class ArangoDatabaseTest extends BaseTest {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
-        final CollectionEntity result = db.createCollection(COLLECTION_NAME,
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db.createCollection(name,
                 new CollectionCreateOptions().smartJoinAttribute("test123").shardKeys("_key:"));
         assertThat(result, is(notNullValue()));
         assertThat(result.getId(), is(notNullValue()));
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getSmartJoinAttribute(), is("test123"));
-        db.collection(COLLECTION_NAME).drop();
+        assertThat(db.collection(name).getProperties().getSmartJoinAttribute(), is("test123"));
     }
 
     @Test
@@ -221,8 +205,10 @@ public class ArangoDatabaseTest extends BaseTest {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
+        String name = "collection-" + rnd();
+
         try {
-            db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().smartJoinAttribute("test123"));
+            db.createCollection(name, new CollectionCreateOptions().smartJoinAttribute("test123"));
         } catch (ArangoDBException e) {
             assertThat(e.getErrorNum(), is(4006));
             // TODO:
@@ -236,33 +222,27 @@ public class ArangoDatabaseTest extends BaseTest {
     public void createCollectionWithNumberOfShardsAndShardKey() {
         assumeTrue(isCluster());
 
-        try {
-            final CollectionEntity result = db
-                    .createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(2).shardKeys("a"));
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getId(), is(notNullValue()));
-            final CollectionPropertiesEntity properties = db.collection(COLLECTION_NAME).getProperties();
-            assertThat(properties.getNumberOfShards(), is(2));
-            assertThat(properties.getShardKeys().size(), is(1));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db
+                .createCollection(name, new CollectionCreateOptions().numberOfShards(2).shardKeys("a"));
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getId(), is(notNullValue()));
+        final CollectionPropertiesEntity properties = db.collection(name).getProperties();
+        assertThat(properties.getNumberOfShards(), is(2));
+        assertThat(properties.getShardKeys().size(), is(1));
     }
 
     @Test
     public void createCollectionWithNumberOfShardsAndShardKeys() {
         assumeTrue(isCluster());
-        try {
-            final CollectionEntity result = db.createCollection(COLLECTION_NAME,
-                    new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getId(), is(notNullValue()));
-            final CollectionPropertiesEntity properties = db.collection(COLLECTION_NAME).getProperties();
-            assertThat(properties.getNumberOfShards(), is(2));
-            assertThat(properties.getShardKeys().size(), is(2));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String name = "collection-" + rnd();
+        final CollectionEntity result = db.createCollection(name,
+                new CollectionCreateOptions().numberOfShards(2).shardKeys("a", "b"));
+        assertThat(result, is(notNullValue()));
+        assertThat(result.getId(), is(notNullValue()));
+        final CollectionPropertiesEntity properties = db.collection(name).getProperties();
+        assertThat(properties.getNumberOfShards(), is(2));
+        assertThat(properties.getShardKeys().size(), is(2));
     }
 
     @Test
@@ -272,26 +252,24 @@ public class ArangoDatabaseTest extends BaseTest {
 
         final Integer numberOfShards = 3;
 
-        db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().numberOfShards(numberOfShards));
-        db.createCollection(COLLECTION_NAME + "2",
-                new CollectionCreateOptions().distributeShardsLike(COLLECTION_NAME));
+        String name1 = "collection-" + rnd();
+        String name2 = "collection-" + rnd();
+        db.createCollection(name1, new CollectionCreateOptions().numberOfShards(numberOfShards));
+        db.createCollection(name2, new CollectionCreateOptions().distributeShardsLike(name1));
 
-        assertThat(db.collection(COLLECTION_NAME).getProperties().getNumberOfShards(), is(numberOfShards));
-        assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
+        assertThat(db.collection(name1).getProperties().getNumberOfShards(), is(numberOfShards));
+        assertThat(db.collection(name2).getProperties().getNumberOfShards(), is(numberOfShards));
     }
 
     private void createCollectionWithKeyType(KeyType keyType) {
-        try {
-            final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().keyOptions(
-                    false,
-                    keyType,
-                    null,
-                    null
-            ));
-            assertThat(db.collection(COLLECTION_NAME).getProperties().getKeyOptions().getType(), is(keyType));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String name = "collection-" + rnd();
+        db.createCollection(name, new CollectionCreateOptions().keyOptions(
+                false,
+                keyType,
+                null,
+                null
+        ));
+        assertThat(db.collection(name).getProperties().getKeyOptions().getType(), is(keyType));
     }
 
     @Test
@@ -319,9 +297,10 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test(expected = ArangoDBException.class)
     public void deleteCollection() {
-        db.createCollection(COLLECTION_NAME, null);
-        db.collection(COLLECTION_NAME).drop();
-        db.collection(COLLECTION_NAME).getInfo();
+        String name = "collection-" + rnd();
+        db.createCollection(name, null);
+        db.collection(name).drop();
+        db.collection(name).getInfo();
     }
 
     @Test
@@ -362,25 +341,17 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void getIndex() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            final Collection<String> fields = new ArrayList<>();
-            fields.add("a");
-            final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
-            final IndexEntity readResult = db.getIndex(createResult.getId());
-            assertThat(readResult.getId(), is(createResult.getId()));
-            assertThat(readResult.getType(), is(createResult.getType()));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        final Collection<String> fields = Collections.singletonList("field-" + rnd());
+        final IndexEntity createResult = collection1.ensureHashIndex(fields, null);
+        final IndexEntity readResult = db.getIndex(createResult.getId());
+        assertThat(readResult.getId(), is(createResult.getId()));
+        assertThat(readResult.getType(), is(createResult.getType()));
     }
 
     @Test
     public void deleteIndex() {
-        db.createCollection(COLLECTION_NAME, null);
-        final Collection<String> fields = new ArrayList<>();
-        fields.add("a");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null);
+        final Collection<String> fields = Collections.singletonList("field-" + rnd());
+        final IndexEntity createResult = collection1.ensureHashIndex(fields, null);
         final String id = db.deleteIndex(createResult.getId());
         assertThat(id, is(createResult.getId()));
         try {
@@ -389,123 +360,88 @@ public class ArangoDatabaseTest extends BaseTest {
         } catch (final ArangoDBException e) {
             assertThat(e.getResponseCode(), is(404));
         }
-        db.collection(COLLECTION_NAME).drop();
     }
 
     @Test
     public void getCollections() {
-        try {
-            final Collection<CollectionEntity> systemCollections = db.getCollections(null);
-            db.createCollection(COLLECTION_NAME + "1", null);
-            db.createCollection(COLLECTION_NAME + "2", null);
-            final Collection<CollectionEntity> collections = db.getCollections(null);
-            assertThat(collections.size(), is(2 + systemCollections.size()));
-            assertThat(collections, is(notNullValue()));
-        } finally {
-            db.collection(COLLECTION_NAME + "1").drop();
-            db.collection(COLLECTION_NAME + "2").drop();
-        }
+        final Collection<CollectionEntity> collections = db.getCollections(null);
+        long count = collections.stream().map(CollectionEntity::getName).filter(it -> it.equals(CNAME1)).count();
+        assertThat(count, is(1L));
     }
 
     @Test
     public void getCollectionsExcludeSystem() {
         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
         final Collection<CollectionEntity> nonSystemCollections = db.getCollections(options);
-
-        int initialSize = nonSystemCollections.size();
-        db.createCollection(COLLECTION_NAME + "1", null);
-        db.createCollection(COLLECTION_NAME + "2", null);
-        final Collection<CollectionEntity> newCollections = db.getCollections(options);
-        assertThat(newCollections.size(), is(initialSize + 2));
-        assertThat(newCollections, is(notNullValue()));
-
-        db.collection(COLLECTION_NAME + "1").drop();
-        db.collection(COLLECTION_NAME + "2").drop();
+        final Collection<CollectionEntity> allCollections = db.getCollections(null);
+        assertThat(allCollections.size(), is(greaterThan(nonSystemCollections.size())));
     }
 
     @Test
     public void grantAccess() {
-        try {
-            arangoDB.createUser("user1", "1234", null);
-            db.grantAccess("user1");
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234", null);
+        db.grantAccess(user);
     }
 
     @Test
     public void grantAccessRW() {
-        try {
-            arangoDB.createUser("user1", "1234", null);
-            db.grantAccess("user1", Permissions.RW);
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234", null);
+        db.grantAccess(user, Permissions.RW);
     }
 
     @Test
     public void grantAccessRO() {
-        try {
-            arangoDB.createUser("user1", "1234", null);
-            db.grantAccess("user1", Permissions.RO);
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234", null);
+        db.grantAccess(user, Permissions.RO);
     }
 
     @Test
     public void grantAccessNONE() {
-        try {
-            arangoDB.createUser("user1", "1234", null);
-            db.grantAccess("user1", Permissions.NONE);
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234", null);
+        db.grantAccess(user, Permissions.NONE);
     }
 
     @Test(expected = ArangoDBException.class)
     public void grantAccessUserNotFound() {
-        db.grantAccess("user1", Permissions.RW);
+        String user = "user-" + rnd();
+        db.grantAccess(user, Permissions.RW);
     }
 
     @Test
     public void revokeAccess() {
-        try {
-            arangoDB.createUser("user1", "1234", null);
-            db.revokeAccess("user1");
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234", null);
+        db.revokeAccess(user);
     }
 
     @Test(expected = ArangoDBException.class)
     public void revokeAccessUserNotFound() {
-        db.revokeAccess("user1");
+        String user = "user-" + rnd();
+        db.revokeAccess(user);
     }
 
     @Test
     public void resetAccess() {
-        try {
-            arangoDB.createUser("user1", "1234", null);
-            db.resetAccess("user1");
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234", null);
+        db.resetAccess(user);
     }
 
     @Test(expected = ArangoDBException.class)
     public void resetAccessUserNotFound() {
-        db.resetAccess("user1");
+        String user = "user-" + rnd();
+        db.resetAccess(user);
     }
 
     @Test
     public void grantDefaultCollectionAccess() {
-        try {
-            arangoDB.createUser("user1", "1234");
-            db.grantDefaultCollectionAccess("user1", Permissions.RW);
-        } finally {
-            arangoDB.deleteUser("user1");
-        }
+        String user = "user-" + rnd();
+        arangoDB.createUser(user, "1234");
+        db.grantDefaultCollectionAccess(user, Permissions.RW);
     }
 
     @Test
@@ -515,185 +451,134 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void query() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-            final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
-            assertThat(cursor, is(notNullValue()));
-            for (int i = 0; i < 10; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-            }
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
+        }
+        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null, null, String.class);
+        assertThat(cursor, is(notNullValue()));
+        for (int i = 0; i < 10; i++, cursor.next()) {
+            assertThat(cursor.hasNext(), is(true));
         }
     }
 
     @Test
     public void queryForEach() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-            final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
-            assertThat(cursor, is(notNullValue()));
-            final AtomicInteger i = new AtomicInteger(0);
-            for (; cursor.hasNext(); cursor.next()) {
-                i.incrementAndGet();
-            }
-            assertThat(i.get(), is(10));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
         }
-    }
+        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null, null, String.class);
+        assertThat(cursor, is(notNullValue()));
 
-    @Test
-    public void queryIterate() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-            final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null, null, String.class);
-            assertThat(cursor, is(notNullValue()));
-            final AtomicInteger i = new AtomicInteger(0);
-            for (; cursor.hasNext(); cursor.next()) {
-                i.incrementAndGet();
-            }
-            assertThat(i.get(), is(10));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        int i = 0;
+        while (cursor.hasNext()) {
+            cursor.next();
+            i++;
         }
+        assertThat(i, is(greaterThanOrEqualTo(10)));
     }
 
     @Test
     public void queryWithCount() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-
-            final ArangoCursor<String> cursor = db
-                    .query("for i in db_test Limit 6 return i._id", null, new AqlQueryOptions().count(true),
-                            String.class);
-            assertThat(cursor, is(notNullValue()));
-            for (int i = 0; i < 6; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-            }
-            assertThat(cursor.getCount(), is(6));
-
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
         }
+
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " Limit 6 return i._id", null, new AqlQueryOptions().count(true),
+                        String.class);
+        assertThat(cursor, is(notNullValue()));
+        for (int i = 1; i <= 6; i++, cursor.next()) {
+            assertThat(cursor.hasNext(), is(true));
+        }
+        assertThat(cursor.getCount(), is(6));
     }
 
     @Test
     public void queryWithLimitAndFullCount() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-
-            final ArangoCursor<String> cursor = db
-                    .query("for i in db_test Limit 5 return i._id", null, new AqlQueryOptions().fullCount(true),
-                            String.class);
-            assertThat(cursor, is(notNullValue()));
-            for (int i = 0; i < 5; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-            }
-            assertThat(cursor.getStats(), is(notNullValue()));
-            assertThat(cursor.getStats().getFullCount(), is(10L));
-
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
         }
+
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " Limit 5 return i._id", null, new AqlQueryOptions().fullCount(true),
+                        String.class);
+        assertThat(cursor, is(notNullValue()));
+        for (int i = 0; i < 5; i++, cursor.next()) {
+            assertThat(cursor.hasNext(), is(true));
+        }
+        assertThat(cursor.getStats(), is(notNullValue()));
+        assertThat(cursor.getStats().getFullCount(), is(greaterThanOrEqualTo(10L)));
     }
 
     @Test
     public void queryWithBatchSize() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
+        }
 
-            final ArangoCursor<String> cursor = db
-                    .query("for i in db_test return i._id", null, new AqlQueryOptions().batchSize(5).count(true),
-                            String.class);
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " return i._id", null, new AqlQueryOptions().batchSize(5).count(true),
+                        String.class);
 
-            assertThat(cursor, is(notNullValue()));
-            for (int i = 0; i < 10; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-            }
-        } catch (final ArangoDBException e) {
-            System.out.println(e.getErrorMessage());
-            System.out.println(e.getErrorNum());
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        assertThat(cursor, is(notNullValue()));
+        for (int i = 0; i < 10; i++, cursor.next()) {
+            assertThat(cursor.hasNext(), is(true));
         }
     }
 
     @Test
     public void queryIterateWithBatchSize() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-
-            final ArangoCursor<String> cursor = db
-                    .query("for i in db_test return i._id", null, new AqlQueryOptions().batchSize(5).count(true),
-                            String.class);
-
-            assertThat(cursor, is(notNullValue()));
-            final AtomicInteger i = new AtomicInteger(0);
-            for (; cursor.hasNext(); cursor.next()) {
-                i.incrementAndGet();
-            }
-            assertThat(i.get(), is(10));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
         }
+
+        final ArangoCursor<String> cursor = db
+                .query("for i in " + CNAME1 + " return i._id", null, new AqlQueryOptions().batchSize(5).count(true),
+                        String.class);
+
+        assertThat(cursor, is(notNullValue()));
+        final AtomicInteger i = new AtomicInteger(0);
+        for (; cursor.hasNext(); cursor.next()) {
+            i.incrementAndGet();
+        }
+        assertThat(i.get(), is(greaterThanOrEqualTo(10)));
     }
 
-    /**
-     * ignored. takes to long
-     */
-    @Test
-    @Ignore
-    public void queryWithTTL() throws InterruptedException {
-        // set TTL to 1 seconds and get the second batch after 2 seconds!
-        final int ttl = 1;
-        final int wait = 2;
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-
-            final ArangoCursor<String> cursor = db
-                    .query("for i in db_test return i._id", null, new AqlQueryOptions().batchSize(5).ttl(ttl),
-                            String.class);
-
-            assertThat(cursor, is(notNullValue()));
-
-            for (int i = 0; i < 10; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-                if (i == 1) {
-                    Thread.sleep(wait * 1000);
-                }
-            }
-            fail("this should fail");
-        } catch (final ArangoDBException ex) {
-            assertThat(ex.getMessage(), is("Response: 404, Error: 1600 - cursor not found"));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
-    }
+// FIXME
+//    /**
+//     * ignored. takes to long
+//     */
+//    @Test
+//    @Ignore
+//    public void queryWithTTL() throws InterruptedException {
+//        // set TTL to 1 seconds and get the second batch after 2 seconds!
+//        final int ttl = 1;
+//        final int wait = 2;
+//        try {
+//            db.createCollection(COLLECTION_NAME, null);
+//            for (int i = 0; i < 10; i++) {
+//                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
+//            }
+//
+//            final ArangoCursor<String> cursor = db
+//                    .query("for i in db_test return i._id", null, new AqlQueryOptions().batchSize(5).ttl(ttl),
+//                            String.class);
+//
+//            assertThat(cursor, is(notNullValue()));
+//
+//            for (int i = 0; i < 10; i++, cursor.next()) {
+//                assertThat(cursor.hasNext(), is(true));
+//                if (i == 1) {
+//                    Thread.sleep(wait * 1000);
+//                }
+//            }
+//            fail("this should fail");
+//        } catch (final ArangoDBException ex) {
+//            assertThat(ex.getMessage(), is("Response: 404, Error: 1600 - cursor not found"));
+//        } finally {
+//            db.collection(COLLECTION_NAME).drop();
+//        }
+//    }
 
     @Test
     public void changeQueryCache() {
@@ -720,36 +605,31 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void queryWithCache() {
         assumeTrue(isSingleServer());
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
-
-            final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
-            properties.setMode(CacheMode.on);
-            db.setQueryCacheProperties(properties);
-
-            final ArangoCursor<String> cursor = db
-                    .query("FOR t IN db_test FILTER t.age >= 10 SORT t.age RETURN t._id", null,
-                            new AqlQueryOptions().cache(true), String.class);
-
-            assertThat(cursor, is(notNullValue()));
-            assertThat(cursor.isCached(), is(false));
-
-            final ArangoCursor<String> cachedCursor = db
-                    .query("FOR t IN db_test FILTER t.age >= 10 SORT t.age RETURN t._id", null,
-                            new AqlQueryOptions().cache(true), String.class);
-
-            assertThat(cachedCursor, is(notNullValue()));
-            assertThat(cachedCursor.isCached(), is(true));
-
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-            final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
-            properties.setMode(CacheMode.off);
-            db.setQueryCacheProperties(properties);
+        for (int i = 0; i < 10; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
         }
+
+        final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
+        properties.setMode(CacheMode.on);
+        db.setQueryCacheProperties(properties);
+
+        final ArangoCursor<String> cursor = db
+                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", null,
+                        new AqlQueryOptions().cache(true), String.class);
+
+        assertThat(cursor, is(notNullValue()));
+        assertThat(cursor.isCached(), is(false));
+
+        final ArangoCursor<String> cachedCursor = db
+                .query("FOR t IN " + CNAME1 + " FILTER t.age >= 10 SORT t.age RETURN t._id", null,
+                        new AqlQueryOptions().cache(true), String.class);
+
+        assertThat(cachedCursor, is(notNullValue()));
+        assertThat(cachedCursor.isCached(), is(true));
+
+        final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
+        properties2.setMode(CacheMode.on);
+        db.setQueryCacheProperties(properties2);
     }
 
     @Test
@@ -789,29 +669,24 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void queryCursor() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            final int numbDocs = 10;
-            for (int i = 0; i < numbDocs; i++) {
-                db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(), null);
-            }
+        final int numbDocs = 10;
+        for (int i = 0; i < numbDocs; i++) {
+            collection1.insertDocument(new BaseDocument(), null);
+        }
 
-            final int batchSize = 5;
-            final ArangoCursor<String> cursor = db.query("for i in db_test return i._id", null,
-                    new AqlQueryOptions().batchSize(batchSize).count(true), String.class);
-            assertThat(cursor, is(notNullValue()));
-            assertThat(cursor.getCount(), is(numbDocs));
+        final int batchSize = 5;
+        final ArangoCursor<String> cursor = db.query("for i in " + CNAME1 + " return i._id", null,
+                new AqlQueryOptions().batchSize(batchSize).count(true), String.class);
+        assertThat(cursor, is(notNullValue()));
+        assertThat(cursor.getCount(), is(greaterThanOrEqualTo(numbDocs)));
 
-            final ArangoCursor<String> cursor2 = db.cursor(cursor.getId(), String.class);
-            assertThat(cursor2, is(notNullValue()));
-            assertThat(cursor2.getCount(), is(numbDocs));
-            assertThat(cursor2.hasNext(), is(true));
+        final ArangoCursor<String> cursor2 = db.cursor(cursor.getId(), String.class);
+        assertThat(cursor2, is(notNullValue()));
+        assertThat(cursor2.getCount(), is(greaterThanOrEqualTo(numbDocs)));
+        assertThat(cursor2.hasNext(), is(true));
 
-            for (int i = 0; i < batchSize; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-            }
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < batchSize; i++, cursor.next()) {
+            assertThat(cursor.hasNext(), is(true));
         }
     }
 
@@ -840,29 +715,23 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void queryWithBindVars() {
-        try {
-            db.createCollection(COLLECTION_NAME, null);
-            for (int i = 0; i < 10; i++) {
-                final BaseDocument baseDocument = new BaseDocument();
-                baseDocument.addAttribute("age", 20 + i);
-                db.collection(COLLECTION_NAME).insertDocument(baseDocument, null);
-            }
-            final Map<String, Object> bindVars = new HashMap<>();
-            bindVars.put("@coll", COLLECTION_NAME);
-            bindVars.put("age", 25);
+        for (int i = 0; i < 10; i++) {
+            final BaseDocument baseDocument = new BaseDocument();
+            baseDocument.addAttribute("age", 20 + i);
+            collection1.insertDocument(baseDocument, null);
+        }
+        final Map<String, Object> bindVars = new HashMap<>();
+        bindVars.put("@coll", CNAME1);
+        bindVars.put("age", 25);
 
-            final ArangoCursor<String> cursor = db
-                    .query("FOR t IN @@coll FILTER t.age >= @age SORT t.age RETURN t._id", bindVars, null,
-                            String.class);
+        final ArangoCursor<String> cursor = db
+                .query("FOR t IN @@coll FILTER t.age >= @age SORT t.age RETURN t._id", bindVars, null,
+                        String.class);
 
-            assertThat(cursor, is(notNullValue()));
+        assertThat(cursor, is(notNullValue()));
 
-            for (int i = 0; i < 5; i++, cursor.next()) {
-                assertThat(cursor.hasNext(), is(true));
-            }
-
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
+        for (int i = 0; i < 5; i++, cursor.next()) {
+            assertThat(cursor.hasNext(), is(true));
         }
     }
 
@@ -892,7 +761,9 @@ public class ArangoDatabaseTest extends BaseTest {
         cursor.close();
         int count = 0;
         try {
-            for (; cursor.hasNext(); cursor.next(), count++) {
+            while (cursor.hasNext()) {
+                cursor.next();
+                count++;
             }
             fail();
         } catch (final ArangoDBException e) {
@@ -903,37 +774,25 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void queryNoResults() throws IOException {
-        try {
-            db.createCollection(COLLECTION_NAME);
-            final ArangoCursor<BaseDocument> cursor = db
-                    .query("FOR i IN @@col RETURN i", new MapBuilder().put("@col", COLLECTION_NAME).get(), null,
-                            BaseDocument.class);
-            cursor.close();
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        final ArangoCursor<BaseDocument> cursor = db
+                .query("FOR i IN @@col RETURN i", new MapBuilder().put("@col", CNAME1).get(), null,
+                        BaseDocument.class);
+        cursor.close();
     }
 
     @Test
     public void queryWithNullBindParam() throws IOException {
-        try {
-            db.createCollection(COLLECTION_NAME);
-            final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
-                    new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(), null, BaseDocument.class);
-            cursor.close();
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
+                new MapBuilder().put("@col", CNAME1).put("test", null).get(), null, BaseDocument.class);
+        cursor.close();
     }
 
     @Test
     public void queryAllowDirtyRead() throws IOException {
-        db.createCollection(COLLECTION_NAME);
         final ArangoCursor<BaseDocument> cursor = db.query("FOR i IN @@col FILTER i.test == @test RETURN i",
-                new MapBuilder().put("@col", COLLECTION_NAME).put("test", null).get(),
+                new MapBuilder().put("@col", CNAME1).put("test", null).get(),
                 new AqlQueryOptions().allowDirtyRead(true), BaseDocument.class);
         cursor.close();
-        db.collection(COLLECTION_NAME).drop();
     }
 
     @Test
@@ -1100,66 +959,53 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void createGraph() {
-        try {
-            final GraphEntity result = db.createGraph(GRAPH_NAME, null, null);
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getName(), is(GRAPH_NAME));
-        } finally {
-            db.graph(GRAPH_NAME).drop();
-        }
+        String name = "graph-" + rnd();
+        final GraphEntity result = db.createGraph(name, null, null);
+        assertThat(result.getName(), is(name));
     }
 
     @Test
     public void createGraphReplicationFaktor() {
         assumeTrue(isCluster());
-        try {
-            final String edgeCollection = COLLECTION_NAME + "edge";
-            final String fromCollection = COLLECTION_NAME + "from";
-            final String toCollection = COLLECTION_NAME + "to";
-            final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
-            final GraphEntity result = db
-                    .createGraph(GRAPH_NAME, edgeDefinitions, new GraphCreateOptions().replicationFactor(2));
-            assertThat(result, is(notNullValue()));
-            for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
-                final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
-                assertThat(properties.getReplicationFactor(), is(2));
-            }
-        } finally {
-            db.graph(GRAPH_NAME).drop();
+        String name = "graph-" + rnd();
+        final String edgeCollection = "edge-" + rnd();
+        final String fromCollection = "from-" + rnd();
+        final String toCollection = "to-" + rnd();
+        final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+        final GraphEntity result = db.createGraph(name, edgeDefinitions, new GraphCreateOptions().replicationFactor(2));
+        assertThat(result, is(notNullValue()));
+        for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
+            final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+            assertThat(properties.getReplicationFactor(), is(2));
         }
     }
 
     @Test
     public void createGraphNumberOfShards() {
         assumeTrue(isCluster());
-        try {
-            final String edgeCollection = COLLECTION_NAME + "edge";
-            final String fromCollection = COLLECTION_NAME + "from";
-            final String toCollection = COLLECTION_NAME + "to";
-            final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
-            final GraphEntity result = db
-                    .createGraph(GRAPH_NAME, edgeDefinitions, new GraphCreateOptions().numberOfShards(2));
-            assertThat(result, is(notNullValue()));
-            for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
-                final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
-                assertThat(properties.getNumberOfShards(), is(2));
-            }
-        } finally {
-            db.graph(GRAPH_NAME).drop();
+        String name = "graph-" + rnd();
+        final String edgeCollection = "edge-" + rnd();
+        final String fromCollection = "from-" + rnd();
+        final String toCollection = "to-" + rnd();
+        final Collection<EdgeDefinition> edgeDefinitions = Collections.singletonList(new EdgeDefinition().collection(edgeCollection).from(fromCollection).to(toCollection));
+        final GraphEntity result = db
+                .createGraph(name, edgeDefinitions, new GraphCreateOptions().numberOfShards(2));
+        assertThat(result, is(notNullValue()));
+        for (final String collection : Arrays.asList(edgeCollection, fromCollection, toCollection)) {
+            final CollectionPropertiesEntity properties = db.collection(collection).getProperties();
+            assertThat(properties.getNumberOfShards(), is(2));
         }
     }
 
     @Test
     public void getGraphs() {
-        try {
-            db.createGraph(GRAPH_NAME, null, null);
-            final Collection<GraphEntity> graphs = db.getGraphs();
-            assertThat(graphs, is(notNullValue()));
-            assertThat(graphs.size(), is(1));
-            assertThat(graphs.iterator().next().getName(), is(GRAPH_NAME));
-        } finally {
-            db.graph(GRAPH_NAME).drop();
-        }
+        String name = "graph-" + rnd();
+        db.createGraph(name, null, null);
+        final Collection<GraphEntity> graphs = db.getGraphs();
+        assertThat(graphs, is(notNullValue()));
+        assertThat(graphs.size(), is(greaterThanOrEqualTo(1)));
+        long count = graphs.stream().map(GraphEntity::getName).filter(name::equals).count();
+        assertThat(count, is(1L));
     }
 
     @Test
@@ -1234,41 +1080,27 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void transactionInsertJson() {
-        try {
-            db.createCollection(COLLECTION_NAME);
-            final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"0\"}")
-                    .writeCollections(COLLECTION_NAME);
-            //@formatter:off
-            db.transaction("function (params) { "
-                    + "var db = require('internal').db;"
-                    + "db." + COLLECTION_NAME + ".save(JSON.parse(params));"
-                    + "}", Void.class, options);
-            //@formatter:on
-            assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(1L));
-            assertThat(db.collection(COLLECTION_NAME).getDocument("0", String.class), is(notNullValue()));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String key = "key-" + rnd();
+        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
+                .writeCollections(CNAME1);
+        db.transaction("function (params) { "
+                + "var db = require('internal').db;"
+                + "db." + CNAME1 + ".save(JSON.parse(params));"
+                + "}", Void.class, options);
+        assertThat(db.collection(CNAME1).getDocument(key, String.class), is(notNullValue()));
     }
 
     @Test
     public void transactionExclusiveWrite() {
         assumeTrue(isAtLeastVersion(3, 4));
-        try {
-            db.createCollection(COLLECTION_NAME);
-            final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"0\"}")
-                    .exclusiveCollections(COLLECTION_NAME);
-            //@formatter:off
-            db.transaction("function (params) { "
-                    + "var db = require('internal').db;"
-                    + "db." + COLLECTION_NAME + ".save(JSON.parse(params));"
-                    + "}", Void.class, options);
-            //@formatter:on
-            assertThat(db.collection(COLLECTION_NAME).count().getCount(), is(1L));
-            assertThat(db.collection(COLLECTION_NAME).getDocument("0", String.class), is(notNullValue()));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String key = "key-" + rnd();
+        final TransactionOptions options = new TransactionOptions().params("{\"_key\":\"" + key + "\"}")
+                .exclusiveCollections(CNAME1);
+        db.transaction("function (params) { "
+                + "var db = require('internal').db;"
+                + "db." + CNAME1 + ".save(JSON.parse(params));"
+                + "}", Void.class, options);
+        assertThat(db.collection(CNAME1).getDocument(key, String.class), is(notNullValue()));
     }
 
     @Test
@@ -1278,12 +1110,10 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void transactionallowImplicit() {
-        db.createCollection("someCollection", null);
-        db.createCollection("someOtherCollection", null);
         final String action = "function (params) {" + "var db = require('internal').db;"
-                + "return {'a':db.someCollection.all().toArray()[0], 'b':db.someOtherCollection.all().toArray()[0]};"
+                + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
                 + "}";
-        final TransactionOptions options = new TransactionOptions().readCollections("someCollection");
+        final TransactionOptions options = new TransactionOptions().readCollections(CNAME1);
         db.transaction(action, VPackSlice.class, options);
         try {
             options.allowImplicit(false);
@@ -1292,11 +1122,8 @@ public class ArangoDatabaseTest extends BaseTest {
         } catch (final ArangoDBException e) {
             assertThat(e.getResponseCode(), is(400));
         }
-        db.collection("someCollection").drop();
-        db.collection("someOtherCollection").drop();
     }
 
-    @SuppressWarnings({"WeakerAccess", "unused"})
     protected static class TransactionTestEntity {
         private String value;
 
@@ -1318,75 +1145,68 @@ public class ArangoDatabaseTest extends BaseTest {
         final DatabaseEntity info = db.getInfo();
         assertThat(info, is(notNullValue()));
         assertThat(info.getId(), is(notNullValue()));
-        assertThat(info.getName(), is(TEST_DB));
+        assertThat(info.getName(), is(BaseTest.TEST_DB));
         assertThat(info.getPath(), is(notNullValue()));
         assertThat(info.getIsSystem(), is(false));
     }
 
     @Test
     public void executeTraversal() {
-        try {
-            db.createCollection("person", null);
-            db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES));
-            for (final String e : new String[]{"Alice", "Bob", "Charlie", "Dave", "Eve"}) {
-                final BaseDocument doc = new BaseDocument();
-                doc.setKey(e);
-                db.collection("person").insertDocument(doc, null);
-            }
-            for (final String[] e : new String[][]{new String[]{"Alice", "Bob"}, new String[]{"Bob", "Charlie"},
-                    new String[]{"Bob", "Dave"}, new String[]{"Eve", "Alice"}, new String[]{"Eve", "Bob"}}) {
-                final BaseEdgeDocument edge = new BaseEdgeDocument();
-                edge.setKey(e[0] + "_knows_" + e[1]);
-                edge.setFrom("person/" + e[0]);
-                edge.setTo("person/" + e[1]);
-                db.collection("knows").insertDocument(edge, null);
-            }
-            final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
-                    .direction(Direction.outbound);
-            final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db
-                    .executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options);
+        String k1 = "key-" + rnd();
+        String k2 = "key-" + rnd();
+        String k3 = "key-" + rnd();
+        String k4 = "key-" + rnd();
+        String k5 = "key-" + rnd();
 
-            assertThat(traversal, is(notNullValue()));
-
-            final Collection<BaseDocument> vertices = traversal.getVertices();
-            assertThat(vertices, is(notNullValue()));
-            assertThat(vertices.size(), is(4));
-
-            final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-            final Collection<String> v = Arrays.asList("Alice", "Bob", "Charlie", "Dave");
-            for (; verticesIterator.hasNext(); ) {
-                assertThat(v.contains(verticesIterator.next().getKey()), is(true));
-            }
-
-            final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
-            assertThat(paths, is(notNullValue()));
-            assertThat(paths.size(), is(4));
-
-            assertThat(paths.iterator().hasNext(), is(true));
-            final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.iterator().next();
-            assertThat(first, is(notNullValue()));
-            assertThat(first.getEdges().size(), is(0));
-            assertThat(first.getVertices().size(), is(1));
-            assertThat(first.getVertices().iterator().next().getKey(), is("Alice"));
-        } finally {
-            db.collection("person").drop();
-            db.collection("knows").drop();
+        for (final String e : new String[]{
+                k1, k2, k3, k4, k5
+        }) {
+            collection1.insertDocument(new BaseDocument(e), null);
         }
+        for (final String[] e : new String[][]{
+                new String[]{k1, k2}, new String[]{k2, k3},
+                new String[]{k2, k4}, new String[]{k5, k1}, new String[]{k5, k2}
+        }) {
+            final BaseEdgeDocument edge = new BaseEdgeDocument();
+            edge.setKey(e[0] + "_knows_" + e[1]);
+            edge.setFrom(CNAME1 + "/" + e[0]);
+            edge.setTo(CNAME1 + "/" + e[1]);
+            edges.insertDocument(edge, null);
+        }
+
+        final TraversalOptions options = new TraversalOptions().edgeCollection(ENAMES).startVertex(CNAME1 + "/" + k1).direction(Direction.outbound);
+        final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options);
+        assertThat(traversal, is(notNullValue()));
+
+        final Collection<BaseDocument> vertices = traversal.getVertices();
+        assertThat(vertices, is(notNullValue()));
+        assertThat(vertices.size(), is(4));
+
+        final Iterator<BaseDocument> verticesIterator = vertices.iterator();
+        final Collection<String> v = Arrays.asList(k1, k2, k3, k4);
+        while (verticesIterator.hasNext()) {
+            assertThat(v.contains(verticesIterator.next().getKey()), is(true));
+        }
+
+        final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
+        assertThat(paths, is(notNullValue()));
+        assertThat(paths.size(), is(4));
+        assertThat(paths.iterator().hasNext(), is(true));
+        final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.iterator().next();
+        assertThat(first, is(notNullValue()));
+        assertThat(first.getEdges().size(), is(0));
+        assertThat(first.getVertices().size(), is(1));
+        assertThat(first.getVertices().iterator().next().getKey(), is(k1));
     }
 
     @Test
     public void getDocument() {
-        try {
-            db.createCollection(COLLECTION_NAME);
-            final BaseDocument value = new BaseDocument();
-            value.setKey("123");
-            db.collection(COLLECTION_NAME).insertDocument(value);
-            final BaseDocument document = db.getDocument(COLLECTION_NAME + "/123", BaseDocument.class);
-            assertThat(document, is(notNullValue()));
-            assertThat(document.getKey(), is("123"));
-        } finally {
-            db.collection(COLLECTION_NAME).drop();
-        }
+        String key = "key-" + rnd();
+        final BaseDocument value = new BaseDocument(key);
+        collection1.insertDocument(value);
+        final BaseDocument document = db.getDocument(CNAME1 + "/" + key, BaseDocument.class);
+        assertThat(document, is(notNullValue()));
+        assertThat(document.getKey(), is(key));
     }
 
     @Test

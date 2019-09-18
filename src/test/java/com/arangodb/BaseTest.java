@@ -37,7 +37,7 @@ import java.util.UUID;
  */
 public abstract class BaseTest {
 
-    private static final String TEST_DB = "java_driver_test_db";
+    static final String TEST_DB = "java_driver_test_db";
 
     // TODO: make configurable
     private static final List<ArangoDB> arangos = Arrays.asList(
