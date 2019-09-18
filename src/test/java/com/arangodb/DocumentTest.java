@@ -20,20 +20,18 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.Map;
-
-import org.junit.After;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.DocumentCreateEntity;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentCreateEntity;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
@@ -41,23 +39,17 @@ import com.arangodb.entity.DocumentCreateEntity;
 @RunWith(Parameterized.class)
 public class DocumentTest extends BaseTest {
 
-    private static final String COLLECTION_NAME = "collection_test";
-    private ArangoCollection collection;
+    private static final String COLLECTION_NAME = "DocumentTest_collection";
+    private final ArangoCollection collection;
 
-    public DocumentTest(final Builder builder) {
-        super(builder);
-        setup();
+    @BeforeClass
+    public static void init() {
+        BaseTest.initCollections(COLLECTION_NAME);
     }
 
-    private void setup() {
-        db.createCollection(COLLECTION_NAME);
+    public DocumentTest(final ArangoDB arangoDB) {
+        super(arangoDB);
         collection = db.collection(COLLECTION_NAME);
-    }
-
-    @After
-    public void teardown() {
-        if (db.collection(COLLECTION_NAME).exists())
-            db.collection(COLLECTION_NAME).drop();
     }
 
     @SuppressWarnings("unchecked")
