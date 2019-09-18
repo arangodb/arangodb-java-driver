@@ -49,24 +49,24 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(Parameterized.class)
 public class ArangoCollectionTest extends BaseTest {
 
-    private static final String COLLECTION_NAME = "db_collection_test";
-    private static final String EDGE_COLLECTION_NAME_1 = "db_edge_collection_test_1";
+    private static final String COLLECTION_NAME = "ArangoCollectionTest_collection";
+    private static final String EDGE_COLLECTION_NAME = "ArangoCollectionTest_edge_collection";
 
     private final ArangoCollection collection;
-    private final ArangoCollection edgeCollection1;
+    private final ArangoCollection edgeCollection;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeClass
     public static void init() {
         BaseTest.initCollections(COLLECTION_NAME);
-        BaseTest.initEdgeCollections(EDGE_COLLECTION_NAME_1);
+        BaseTest.initEdgeCollections(EDGE_COLLECTION_NAME);
     }
 
     public ArangoCollectionTest(final ArangoDB arangoDB) {
         super(arangoDB);
         collection = db.collection(COLLECTION_NAME);
-        edgeCollection1 = db.collection(EDGE_COLLECTION_NAME_1);
+        edgeCollection = db.collection(EDGE_COLLECTION_NAME);
     }
 
     @Test
@@ -274,10 +274,11 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentAsJson() {
-        collection.insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null);
-        final String readResult = collection.getDocument("docRaw", String.class, null);
-        assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
-        assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
+        String key = rnd();
+        collection.insertDocument("{\"_key\":\"" + key + "\",\"a\":\"test\"}", null);
+        final String readResult = collection.getDocument(key, String.class, null);
+        assertThat(readResult.contains("\"_key\":\"" + key + "\""), is(true));
+        assertThat(readResult.contains("\"_id\":\"" + COLLECTION_NAME + "\\/" + key + "\""), is(true));
     }
 
     @Test
@@ -1370,7 +1371,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getEdgeIndex() {
-        Collection<IndexEntity> indexes = db.collection(EDGE_COLLECTION_NAME_1).getIndexes();
+        Collection<IndexEntity> indexes = edgeCollection.getIndexes();
         long primaryIndexes = indexes.stream().filter(i -> i.getType() == IndexType.primary).count();
         long edgeIndexes = indexes.stream().filter(i -> i.getType() == IndexType.primary).count();
         assertThat(primaryIndexes, is(1L));
@@ -1808,12 +1809,12 @@ public class ArangoCollectionTest extends BaseTest {
         }
         assertThat(values.size(), is(keys.length));
 
-        final DocumentImportEntity importResult = edgeCollection1
+        final DocumentImportEntity importResult = edgeCollection
                 .importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
         assertThat(importResult, is(notNullValue()));
         assertThat(importResult.getCreated(), is(values.size()));
         for (String key : keys) {
-            final BaseEdgeDocument doc = edgeCollection1.getDocument(key, BaseEdgeDocument.class);
+            final BaseEdgeDocument doc = edgeCollection.getDocument(key, BaseEdgeDocument.class);
             assertThat(doc, is(notNullValue()));
             assertThat(doc.getFrom(), is("foo/from"));
             assertThat(doc.getTo(), is("bar/to"));
@@ -2024,12 +2025,12 @@ public class ArangoCollectionTest extends BaseTest {
                         .get()
         ));
 
-        final DocumentImportEntity importResult = edgeCollection1
+        final DocumentImportEntity importResult = edgeCollection
                 .importDocuments(values, new DocumentImportOptions().fromPrefix("foo").toPrefix("bar"));
         assertThat(importResult, is(notNullValue()));
         assertThat(importResult.getCreated(), is(2));
         for (String key : keys) {
-            final BaseEdgeDocument doc = edgeCollection1.getDocument(key, BaseEdgeDocument.class);
+            final BaseEdgeDocument doc = edgeCollection.getDocument(key, BaseEdgeDocument.class);
             assertThat(doc, is(notNullValue()));
             assertThat(doc.getFrom(), is("foo/from"));
             assertThat(doc.getTo(), is("bar/to"));
