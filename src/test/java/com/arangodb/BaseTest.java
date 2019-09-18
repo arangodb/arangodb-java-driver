@@ -20,15 +20,13 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.ArangoDBEngine;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.License;
-import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.*;
 import com.arangodb.model.CollectionCreateOptions;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,23 +37,43 @@ import java.util.UUID;
 public abstract class BaseTest {
 
     private static final String TEST_DB = "java_driver_test_db";
+
+    // TODO: make configurable
     private static final List<ArangoDB> arangos = Arrays.asList(
             new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build()
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.VST).acquireHostList(true).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).acquireHostList(true).build(),
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).acquireHostList(true).build()
     );
+
+    @Parameters
+    public static List<ArangoDB> builders() {
+        return arangos;
+    }
 
     protected final ArangoDB arangoDB;
     protected final ArangoDatabase db;
 
-    private static ArangoDatabase initDB() {
+    BaseTest(final ArangoDB arangoDB) {
+        this.arangoDB = arangoDB;
+        db = arangoDB.db(TEST_DB);
+    }
+
+    static ArangoDatabase initDB() {
         ArangoDatabase database = arangos.get(0).db(TEST_DB);
         if (!database.exists())
             database.create();
         return database;
     }
 
-    public static void initCollections(String... collections) {
+    static void initGraph(String name, Collection<EdgeDefinition> edgeDefinitions) {
+        ArangoDatabase db = initDB();
+        db.createGraph(name, edgeDefinitions, null);
+    }
+
+    static void initCollections(String... collections) {
         ArangoDatabase db = initDB();
         for (String collection : collections) {
             if (db.collection(collection).exists())
@@ -64,23 +82,13 @@ public abstract class BaseTest {
         }
     }
 
-    public static void initEdgeCollections(String... collections) {
+    static void initEdgeCollections(String... collections) {
         ArangoDatabase db = initDB();
         for (String collection : collections) {
             if (db.collection(collection).exists())
                 db.collection(collection).drop();
             db.createCollection(collection, new CollectionCreateOptions().type(CollectionType.EDGES));
         }
-    }
-
-    @Parameters
-    public static List<ArangoDB> builders() {
-        return arangos;
-    }
-
-    BaseTest(final ArangoDB arangoDB) {
-        this.arangoDB = arangoDB;
-        db = arangoDB.db(TEST_DB);
     }
 
     @AfterClass
