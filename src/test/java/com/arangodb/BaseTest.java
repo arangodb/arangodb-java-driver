@@ -40,7 +40,7 @@ public abstract class BaseTest {
     static final String TEST_DB = "java_driver_test_db";
 
     // TODO: make configurable
-    private static final List<ArangoDB> arangos = Arrays.asList(
+    static final List<ArangoDB> arangos = Arrays.asList(
             new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
