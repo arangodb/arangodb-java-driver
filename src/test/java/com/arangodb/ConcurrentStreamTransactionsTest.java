@@ -26,12 +26,14 @@ import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.UUID;
 
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -52,6 +54,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void conflictOnInsertDocumentWithNotYetCommittedTx() {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
@@ -74,7 +77,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
                     new DocumentCreateOptions().streamTransactionId(tx2.getId()));
 
-            throw new RuntimeException("This should never be thrown");
+            fail();
         } catch (ArangoDBException e) {
             e.printStackTrace();
         }
@@ -109,7 +112,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
                     new DocumentCreateOptions().streamTransactionId(tx2.getId()));
 
-            throw new RuntimeException("This should never be thrown");
+            fail();
         } catch (ArangoDBException e) {
             e.printStackTrace();
         }

@@ -582,24 +582,22 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void changeQueryCache() {
-        try {
-            QueryCachePropertiesEntity properties = db.getQueryCacheProperties();
-            assertThat(properties, is(notNullValue()));
-            assertThat(properties.getMode(), is(CacheMode.off));
-            assertThat(properties.getMaxResults(), greaterThan(0L));
+        QueryCachePropertiesEntity properties = db.getQueryCacheProperties();
+        assertThat(properties, is(notNullValue()));
+        assertThat(properties.getMode(), is(CacheMode.off));
+        assertThat(properties.getMaxResults(), greaterThan(0L));
 
-            properties.setMode(CacheMode.on);
-            properties = db.setQueryCacheProperties(properties);
-            assertThat(properties, is(notNullValue()));
-            assertThat(properties.getMode(), is(CacheMode.on));
+        properties.setMode(CacheMode.on);
+        properties = db.setQueryCacheProperties(properties);
+        assertThat(properties, is(notNullValue()));
+        assertThat(properties.getMode(), is(CacheMode.on));
 
-            properties = db.getQueryCacheProperties();
-            assertThat(properties.getMode(), is(CacheMode.on));
-        } finally {
-            final QueryCachePropertiesEntity properties = new QueryCachePropertiesEntity();
-            properties.setMode(CacheMode.off);
-            db.setQueryCacheProperties(properties);
-        }
+        properties = db.getQueryCacheProperties();
+        assertThat(properties.getMode(), is(CacheMode.on));
+
+        final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
+        properties2.setMode(CacheMode.off);
+        db.setQueryCacheProperties(properties2);
     }
 
     @Test
@@ -628,7 +626,7 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(cachedCursor.isCached(), is(true));
 
         final QueryCachePropertiesEntity properties2 = new QueryCachePropertiesEntity();
-        properties2.setMode(CacheMode.on);
+        properties2.setMode(CacheMode.off);
         db.setQueryCacheProperties(properties2);
     }
 
@@ -1109,7 +1107,7 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    public void transactionallowImplicit() {
+    public void transactionAllowImplicit() {
         final String action = "function (params) {" + "var db = require('internal').db;"
                 + "return {'a':db." + CNAME1 + ".all().toArray()[0], 'b':db." + CNAME2 + ".all().toArray()[0]};"
                 + "}";

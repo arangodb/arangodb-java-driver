@@ -24,6 +24,7 @@ import com.arangodb.entity.*;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
@@ -90,6 +91,13 @@ public abstract class BaseTest {
                 db.collection(collection).drop();
             db.createCollection(collection, new CollectionCreateOptions().type(CollectionType.EDGES));
         }
+    }
+
+    @BeforeClass
+    public static void init() {
+        ArangoDatabase database = arangos.get(0).db(TEST_DB);
+        if (database.exists())
+            database.drop();
     }
 
     @AfterClass

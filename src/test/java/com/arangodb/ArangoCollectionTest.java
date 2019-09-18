@@ -1060,7 +1060,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getIsNewlyCreated(), is(true));
         assertThat(indexResult.getMinLength(), is(nullValue()));
         if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate(), is(1.));
+            assertThat(indexResult.getSelectivityEstimate(), is(greaterThan(0.0)));
         }
         assertThat(indexResult.getSparse(), is(false));
         assertThat(indexResult.getType(), is(IndexType.hash));
@@ -1088,7 +1088,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getIsNewlyCreated(), is(true));
         assertThat(indexResult.getMinLength(), is(nullValue()));
         if (isSingleServer()) {
-            assertThat(indexResult.getSelectivityEstimate(), is(1.));
+            assertThat(indexResult.getSelectivityEstimate(), is(greaterThan(0.0)));
         }
         assertThat(indexResult.getSparse(), is(false));
         assertThat(indexResult.getType(), is(IndexType.hash));
@@ -2384,7 +2384,7 @@ public class ArangoCollectionTest extends BaseTest {
         final CollectionEntity info = db.collection(COLLECTION_NAME + "1").getInfo();
         assertThat(info.getName(), is(COLLECTION_NAME + "1"));
         try {
-            collection.getInfo();
+            db.collection(COLLECTION_NAME).getInfo();
             fail();
         } catch (final ArangoDBException e) {
             assertThat(e.getResponseCode(), is(404));

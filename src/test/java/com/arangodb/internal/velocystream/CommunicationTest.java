@@ -20,19 +20,18 @@
 
 package com.arangodb.internal.velocystream;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDatabase;
+import com.arangodb.entity.ArangoDBVersion;
+import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.Test;
-
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.entity.ArangoDBVersion;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
@@ -56,15 +55,14 @@ public class CommunicationTest {
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
         final Thread fast = new Thread(() -> {
-            arangoDB.db().query("return sleep(1)", null, null, null);
+            arangoDB.db().query("return sleep(.01)", null, null, null);
             result.add(FAST);
         });
         final Thread slow = new Thread(() -> {
-            arangoDB.db().query("return sleep(4)", null, null, null);
+            arangoDB.db().query("return sleep(.05)", null, null, null);
             result.add(SLOW);
         });
         slow.start();
-        Thread.sleep(1000);
         fast.start();
 
         slow.join();
@@ -85,11 +83,11 @@ public class CommunicationTest {
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
         final Thread t1 = new Thread(() -> {
-            db.query("return sleep(1)", null, null, null);
+            db.query("return sleep(.01)", null, null, null);
             result.add("1");
         });
         final Thread t2 = new Thread(() -> {
-            db.query("return sleep(1)", null, null, null);
+            db.query("return sleep(.01)", null, null, null);
             result.add("1");
         });
         t2.start();
@@ -97,37 +95,6 @@ public class CommunicationTest {
         t2.join();
         t1.join();
         assertThat(result.size(), is(2));
-    }
-
-    @Test
-    public void multiThreadMultiDatabases() throws Exception {
-        final ArangoDB arangoDB = new ArangoDB.Builder().build();
-        arangoDB.getVersion();// authentication
-
-        try {
-            arangoDB.createDatabase("db1");
-            arangoDB.createDatabase("db2");
-            final ArangoDatabase db1 = arangoDB.db("db1");
-            final ArangoDatabase db2 = arangoDB.db("db2");
-
-            final Collection<String> result = new ConcurrentLinkedQueue<>();
-            final Thread t1 = new Thread(() -> {
-                    db1.query("return sleep(1)", null, null, null);
-                    result.add("1");
-            });
-            final Thread t2 = new Thread(() -> {
-                    db2.query("return sleep(1)", null, null, null);
-                    result.add("1");
-            });
-            t2.start();
-            t1.start();
-            t2.join();
-            t1.join();
-            assertThat(result.size(), is(2));
-        } finally {
-            arangoDB.db("db1").drop();
-            arangoDB.db("db2").drop();
-        }
     }
 
     @Test
