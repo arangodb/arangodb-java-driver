@@ -56,15 +56,20 @@ public class ArangoEdgeCollectionTest extends BaseTest {
     public static void init() {
         BaseTest.initCollections(VERTEX_COLLECTION_NAME);
         BaseTest.initEdgeCollections(EDGE_COLLECTION_NAME);
-        BaseTest.initGraph(GRAPH_NAME, Collections.singletonList(new EdgeDefinition()
-                .collection(EDGE_COLLECTION_NAME)
-                .from(VERTEX_COLLECTION_NAME)
-                .to(VERTEX_COLLECTION_NAME)));
+        BaseTest.initGraph(
+                GRAPH_NAME,
+                Collections.singletonList(new EdgeDefinition()
+                        .collection(EDGE_COLLECTION_NAME)
+                        .from(VERTEX_COLLECTION_NAME)
+                        .to(VERTEX_COLLECTION_NAME)
+                ),
+                null
+        );
     }
 
     public ArangoEdgeCollectionTest(final ArangoDB arangoDB) {
         super(arangoDB);
-        
+
         vertexCollection = db.collection(VERTEX_COLLECTION_NAME);
         edgeCollection = db.collection(EDGE_COLLECTION_NAME);
 

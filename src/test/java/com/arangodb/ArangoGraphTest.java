@@ -20,22 +20,15 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.*;
@@ -48,62 +41,82 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(Parameterized.class)
 public class ArangoGraphTest extends BaseTest {
 
-    private static final String GRAPH_NAME = "db_collection_test";
-    private static final String EDGE_COL_1 = "db_edge1_collection_test";
-    private static final String EDGE_COL_2 = "db_edge2_collection_test";
-    private static final String EDGE_COL_3 = "db_edge3_collection_test";
-    private static final String VERTEX_COL_1 = "db_vertex1_collection_test";
-    private static final String VERTEX_COL_2 = "db_vertex2_collection_test";
-    private static final String VERTEX_COL_3 = "db_vertex3_collection_test";
-    private static final String VERTEX_COL_4 = "db_vertex4_collection_test";
+    private static final String GRAPH_NAME = "ArangoGraphTest_graph";
+
+    private static final String VERTEX_COL_1 = "ArangoGraphTest_vertex_collection_1";
+    private static final String VERTEX_COL_2 = "ArangoGraphTest_vertex_collection_2";
+    private static final String VERTEX_COL_3 = "ArangoGraphTest_vertex_collection_3";
+    private static final String VERTEX_COL_4 = "ArangoGraphTest_vertex_collection_4";
+
+    private static final String EDGE_COL_1 = "ArangoGraphTest_edge_collection_1";
+    private static final String EDGE_COL_2 = "ArangoGraphTest_edge_collection_2";
+    private static final String EDGE_COL_3 = "ArangoGraphTest_edge_collection_3";
+
     private static final Integer REPLICATION_FACTOR = 2;
     private static final Integer NUMBER_OF_SHARDS = 2;
 
-    public ArangoGraphTest(final Builder builder) {
-        super(builder);
+    private static final EdgeDefinition ed1 = new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2);
+    private static final EdgeDefinition ed2 = new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3);
+
+    private final ArangoCollection vertexCollection1;
+    private final ArangoCollection vertexCollection2;
+    private final ArangoCollection vertexCollection3;
+    private final ArangoCollection vertexCollection4;
+
+    private final ArangoCollection edgeCollection1;
+    private final ArangoCollection edgeCollection2;
+    private final ArangoCollection edgeCollection3;
+
+    private final ArangoGraph graph;
+
+    private final ArangoVertexCollection vertices1;
+    private final ArangoVertexCollection vertices2;
+    private final ArangoVertexCollection vertices3;
+    private final ArangoVertexCollection vertices4;
+
+    private final ArangoEdgeCollection edges1;
+    private final ArangoEdgeCollection edges2;
+    private final ArangoEdgeCollection edges3;
+
+    @BeforeClass
+    public static void init() {
+        final Collection<EdgeDefinition> edgeDefinitions = Arrays.asList(ed1, ed2);
+
+        final GraphCreateOptions options = new GraphCreateOptions()
+                .replicationFactor(REPLICATION_FACTOR)
+                .numberOfShards(NUMBER_OF_SHARDS);
+
+        BaseTest.initGraph(GRAPH_NAME, edgeDefinitions, options);
     }
 
-    @Before
-    public void setup() {
-        if (db.graph(GRAPH_NAME).exists())
-            db.graph(GRAPH_NAME).drop(true);
-        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
-        edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
-        edgeDefinitions
-                .add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
-        final GraphCreateOptions options = new GraphCreateOptions();
-        if (isCluster()) {
-            options.replicationFactor(REPLICATION_FACTOR).numberOfShards(NUMBER_OF_SHARDS);
-        }
-        db.createGraph(GRAPH_NAME, edgeDefinitions, options);
-    }
+    public ArangoGraphTest(final ArangoDB arangoDB) {
+        super(arangoDB);
 
-    @After
-    public void teardown() {
-        for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3,
-                VERTEX_COL_4}) {
-            final ArangoCollection c = db.collection(collection);
-            if (c.exists()) {
-                c.truncate();
-            }
-        }
+        vertexCollection1 = db.collection(VERTEX_COL_1);
+        vertexCollection2 = db.collection(VERTEX_COL_2);
+        vertexCollection3 = db.collection(VERTEX_COL_3);
+        vertexCollection4 = db.collection(VERTEX_COL_4);
+
+        edgeCollection1 = db.collection(EDGE_COL_1);
+        edgeCollection2 = db.collection(EDGE_COL_2);
+        edgeCollection3 = db.collection(EDGE_COL_3);
+
+        graph = db.graph(GRAPH_NAME);
+
+        vertices1 = graph.vertexCollection(VERTEX_COL_1);
+        vertices2 = graph.vertexCollection(VERTEX_COL_2);
+        vertices3 = graph.vertexCollection(VERTEX_COL_3);
+        vertices4 = graph.vertexCollection(VERTEX_COL_4);
+
+        edges1 = graph.edgeCollection(EDGE_COL_1);
+        edges2 = graph.edgeCollection(EDGE_COL_2);
+        edges3 = graph.edgeCollection(EDGE_COL_3);
     }
 
     @Test
     public void exists() {
-        assertThat(db.graph(GRAPH_NAME).exists(), is(true));
+        assertThat(graph.exists(), is(true));
         assertThat(db.graph(GRAPH_NAME + "no").exists(), is(false));
-    }
-
-    @Test
-    public void create() {
-        try {
-            final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(null);
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getName(), is(GRAPH_NAME + "_1"));
-        } finally {
-            db.graph(GRAPH_NAME + "_1").drop();
-        }
     }
 
     @Test
@@ -111,29 +124,24 @@ public class ArangoGraphTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
-        try {
-            final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
-            final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2));
-            assertThat(graph, is(notNullValue()));
-            assertThat(graph.getName(), is(GRAPH_NAME + "_1"));
-            assertThat(graph.getMinReplicationFactor(), is(2));
-            assertThat(graph.getReplicationFactor(), is(2));
-        } finally {
-            db.graph(GRAPH_NAME + "_1").drop();
-        }
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2));
+        assertThat(graph, is(notNullValue()));
+        assertThat(graph.getName(), is(GRAPH_NAME + "_1"));
+        assertThat(graph.getMinReplicationFactor(), is(2));
+        assertThat(graph.getReplicationFactor(), is(2));
+        db.graph(GRAPH_NAME + "_1").drop();
     }
 
     @Test
     public void getGraphs() {
         final Collection<GraphEntity> graphs = db.getGraphs();
-        assertThat(graphs, is(notNullValue()));
-        assertThat(graphs.size(), is(1));
-        assertThat(graphs.iterator().next().getName(), is(GRAPH_NAME));
+        assertThat(graphs.stream().anyMatch(it -> it.getName().equals(GRAPH_NAME)), is(true));
     }
 
     @Test
     public void getInfo() {
-        final GraphEntity info = db.graph(GRAPH_NAME).getInfo();
+        final GraphEntity info = graph.getInfo();
         assertThat(info, is(notNullValue()));
         assertThat(info.getName(), is(GRAPH_NAME));
         assertThat(info.getEdgeDefinitions().size(), is(2));
@@ -159,7 +167,7 @@ public class ArangoGraphTest extends BaseTest {
 
     @Test
     public void getVertexCollections() {
-        final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections();
+        final Collection<String> vertexCollections = graph.getVertexCollections();
         assertThat(vertexCollections, is(notNullValue()));
         assertThat(vertexCollections.size(), is(3));
         assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3));
@@ -167,16 +175,18 @@ public class ArangoGraphTest extends BaseTest {
 
     @Test
     public void addVertexCollection() {
-        final GraphEntity graph = db.graph(GRAPH_NAME).addVertexCollection(VERTEX_COL_4);
-        assertThat(graph, is(notNullValue()));
-        final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections();
+        final GraphEntity g = graph.addVertexCollection(VERTEX_COL_4);
+        assertThat(g, is(notNullValue()));
+        final Collection<String> vertexCollections = graph.getVertexCollections();
         assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4));
-        setup();
+
+        // revert
+        graph.vertexCollection(VERTEX_COL_4).drop();
     }
 
     @Test
     public void getEdgeCollections() {
-        final Collection<String> edgeCollections = db.graph(GRAPH_NAME).getEdgeDefinitions();
+        final Collection<String> edgeCollections = graph.getEdgeDefinitions();
         assertThat(edgeCollections, is(notNullValue()));
         assertThat(edgeCollections.size(), is(2));
         assertThat(edgeCollections, hasItems(EDGE_COL_1, EDGE_COL_2));
@@ -184,10 +194,10 @@ public class ArangoGraphTest extends BaseTest {
 
     @Test
     public void addEdgeDefinition() {
-        final GraphEntity graph = db.graph(GRAPH_NAME)
-                .addEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2));
-        assertThat(graph, is(notNullValue()));
-        final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
+        EdgeDefinition ed = new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2);
+        final GraphEntity g = graph.addEdgeDefinition(ed);
+        assertThat(g, is(notNullValue()));
+        final Collection<EdgeDefinition> edgeDefinitions = g.getEdgeDefinitions();
         assertThat(edgeDefinitions.size(), is(3));
         int count = 0;
         for (final EdgeDefinition e : edgeDefinitions) {
@@ -207,14 +217,16 @@ public class ArangoGraphTest extends BaseTest {
             assertThat(properties.getReplicationFactor(), is(REPLICATION_FACTOR));
             assertThat(properties.getNumberOfShards(), is(NUMBER_OF_SHARDS));
         }
-        setup();
+
+        // revert
+        graph.removeEdgeDefinition(EDGE_COL_3);
     }
 
     @Test
     public void replaceEdgeDefinition() {
-        final GraphEntity graph = db.graph(GRAPH_NAME)
+        final GraphEntity g = graph
                 .replaceEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_3).to(VERTEX_COL_4));
-        final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
+        final Collection<EdgeDefinition> edgeDefinitions = g.getEdgeDefinitions();
         assertThat(edgeDefinitions.size(), is(2));
         int count = 0;
         for (final EdgeDefinition e : edgeDefinitions) {
@@ -229,16 +241,22 @@ public class ArangoGraphTest extends BaseTest {
                 assertThat(e.getTo(), hasItem(VERTEX_COL_4));
             }
         }
-        setup();
+
+        // revert
+        graph.removeEdgeDefinition(EDGE_COL_1);
+        graph.vertexCollection(VERTEX_COL_4).drop();
+        graph.addEdgeDefinition(ed1);
     }
 
     @Test
     public void removeEdgeDefinition() {
-        final GraphEntity graph = db.graph(GRAPH_NAME).removeEdgeDefinition(EDGE_COL_1);
-        final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
+        final GraphEntity g = graph.removeEdgeDefinition(EDGE_COL_1);
+        final Collection<EdgeDefinition> edgeDefinitions = g.getEdgeDefinitions();
         assertThat(edgeDefinitions.size(), is(1));
         assertThat(edgeDefinitions.iterator().next().getCollection(), is(EDGE_COL_2));
-        setup();
+
+        //revert
+        graph.addEdgeDefinition(ed1);
     }
 
     @Test
@@ -246,55 +264,42 @@ public class ArangoGraphTest extends BaseTest {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
 
-        for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4}) {
-            if (db.collection(collection).exists())
-                db.collection(collection).drop();
-        }
-
-        if (db.graph(GRAPH_NAME).exists())
-            db.graph(GRAPH_NAME).drop();
-
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        edgeDefinitions.add(new EdgeDefinition().collection("smartGraph-edge-" + rnd()).from("smartGraph-vertex-" + rnd()).to("smartGraph-vertex-" + rnd()));
 
-        edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_1).to(VERTEX_COL_2));
-        edgeDefinitions.add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").numberOfShards(2));
 
-        final GraphEntity graph = db.createGraph(GRAPH_NAME, edgeDefinitions, new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").numberOfShards(2));
-
-        assertThat(graph, is(notNullValue()));
-        assertThat(graph.getIsSmart(), is(true));
-        assertThat(graph.getSmartGraphAttribute(), is("test"));
-        assertThat(graph.getNumberOfShards(), is(2));
+        assertThat(g, is(notNullValue()));
+        assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getSmartGraphAttribute(), is("test"));
+        assertThat(g.getNumberOfShards(), is(2));
     }
 
     @Test
     public void drop() {
-        final String edgeCollection = "edge_drop";
-        final String vertexCollection = "vertex_drop";
-        final String graph = GRAPH_NAME + "_drop";
-        final GraphEntity result = db.graph(graph).create(Collections
+        final String edgeCollection = "edge_" + rnd();
+        final String vertexCollection = "vertex_" + rnd();
+        final String graphId = GRAPH_NAME + rnd();
+        final GraphEntity result = db.graph(graphId).create(Collections
                 .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)));
         assertThat(result, is(notNullValue()));
-        db.graph(graph).drop();
+        db.graph(graphId).drop();
         assertThat(db.collection(edgeCollection).exists(), is(true));
         assertThat(db.collection(vertexCollection).exists(), is(true));
     }
 
     @Test
     public void dropPlusDropCollections() {
-        final String edgeCollection = "edge_dropC";
-        final String vertexCollection = "vertex_dropC";
-        final String graph = GRAPH_NAME + "_dropC";
-        final GraphEntity result = db.graph(graph).create(Collections
+        final String edgeCollection = "edge_dropC" + rnd();
+        final String vertexCollection = "vertex_dropC" + rnd();
+        final String graphId = GRAPH_NAME + "_dropC" + rnd();
+        final GraphEntity result = db.graph(graphId).create(Collections
                 .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)));
         assertThat(result, is(notNullValue()));
-        db.graph(graph).drop(true);
+        db.graph(graphId).drop(true);
         assertThat(db.collection(edgeCollection).exists(), is(false));
         assertThat(db.collection(vertexCollection).exists(), is(false));
     }
 
-    @AfterClass
-    public static void shutdown() {
-        db.drop();
-    }
 }

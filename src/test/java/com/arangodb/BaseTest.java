@@ -22,6 +22,7 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.GraphCreateOptions;
 import org.junit.AfterClass;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -68,9 +69,9 @@ public abstract class BaseTest {
         return database;
     }
 
-    static void initGraph(String name, Collection<EdgeDefinition> edgeDefinitions) {
+    static void initGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) {
         ArangoDatabase db = initDB();
-        db.createGraph(name, edgeDefinitions, null);
+        db.createGraph(name, edgeDefinitions, options);
     }
 
     static void initCollections(String... collections) {
