@@ -41,7 +41,7 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
 
 	@Override
 	protected SkiplistIndexOptions getThis() {
-		return null;
+		return this;
 	}
 
 	protected Iterable<String> getFields() {

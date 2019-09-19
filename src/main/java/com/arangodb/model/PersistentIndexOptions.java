@@ -41,7 +41,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
 
     @Override
     protected PersistentIndexOptions getThis() {
-        return null;
+        return this;
     }
 
 	protected Iterable<String> getFields() {
