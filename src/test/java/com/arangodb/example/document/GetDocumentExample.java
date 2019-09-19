@@ -20,9 +20,10 @@
 
 package com.arangodb.example.document;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+
 
 import java.util.Map;
 
