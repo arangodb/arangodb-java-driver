@@ -162,8 +162,7 @@ public class HttpConnection implements Connection {
         this.useSsl = useSsl;
         this.util = util;
         this.contentType = contentType;
-        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
-                .create();
+        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
         if (Boolean.TRUE == useSsl) {
             if (sslContext != null) {
                 registryBuilder.register("https", new SSLConnectionSocketFactory(sslContext));
@@ -227,11 +226,7 @@ public class HttpConnection implements Connection {
         }
         sb.append(request.getRequest());
         if (!request.getQueryParam().isEmpty()) {
-            if (request.getRequest().contains("?")) {
-                sb.append("&");
-            } else {
-                sb.append("?");
-            }
+            sb.append("?");
             final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
             sb.append(paramString);
         }
@@ -300,7 +295,15 @@ public class HttpConnection implements Connection {
             httpRequest.setHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
-        final Optional<Credentials> credentials = Optional.ofNullable(addCredentials(httpRequest));
+        final Optional<Credentials> credentials = Optional.ofNullable(getCredentials());
+        credentials.ifPresent(c -> {
+            try {
+                httpRequest.addHeader(new BasicScheme().authenticate(credentials.get(), httpRequest, null));
+            } catch (final AuthenticationException e) {
+                throw new ArangoDBException(e);
+            }
+        });
+
         if (LOGGER.isDebugEnabled()) {
             CURLLogger.log(
                     url,
@@ -322,20 +325,15 @@ public class HttpConnection implements Connection {
         }
     }
 
-    public Credentials addCredentials(final HttpRequestBase httpRequest) {
+    private Credentials getCredentials() {
         Credentials credentials = null;
         if (user != null) {
             credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
-            try {
-                httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
-            } catch (final AuthenticationException e) {
-                throw new ArangoDBException(e);
-            }
         }
         return credentials;
     }
 
-    public Response buildResponse(final CloseableHttpResponse httpResponse)
+    private Response buildResponse(final CloseableHttpResponse httpResponse)
             throws UnsupportedOperationException, IOException {
         final Response response = new Response();
         response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
