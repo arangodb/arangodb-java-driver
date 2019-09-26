@@ -30,6 +30,10 @@ Retrieves the vertex document with the given `key` from the collection.
 
     Whether or not catch possible thrown exceptions
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 ## ArangoVertexCollection.insertVertex
 
 `ArangoVertexCollection.insertVertex(T value, VertexCreateOptions options) : VertexEntity`
@@ -47,6 +51,14 @@ Creates a new vertex in the collection.
   - **waitForSync**: `Boolean`
 
     Wait until document has been synced to disk.
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
@@ -87,6 +99,10 @@ a vertex and no precondition is violated.
   - **ifMatch**: `String`
 
     Replace a document based on target revision
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
@@ -135,6 +151,10 @@ a vertex and no precondition is violated.
     from the existing document that are contained in the patch document with
     an attribute value of null.
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -168,6 +188,10 @@ Deletes the vertex with the given _key_ from the collection.
   - **ifMatch**: `String`
 
     Remove a document based on target revision
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
