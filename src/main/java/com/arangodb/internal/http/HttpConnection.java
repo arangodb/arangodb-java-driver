@@ -324,16 +324,13 @@ public class HttpConnection implements Connection {
     }
 
     private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
-        final Response response = new Response();
-        response.setResponseCode(resp.status().code());
-
-        final Map<String, String> meta = response.getMeta();
-        resp.responseHeaders().forEach(it -> meta.put(it.getKey(), it.getValue()));
-
         final Mono<VPackSlice> vPackSliceMono;
-        if (contentType == Protocol.HTTP_VPACK) {
+
+        if (resp.method() == HttpMethod.HEAD || "0".equals(resp.responseHeaders().get(CONTENT_LENGTH))) {
+            vPackSliceMono = Mono.just(new VPackSlice(null));
+        } else if (contentType == Protocol.HTTP_VPACK) {
             vPackSliceMono = bytes.asByteArray().map(VPackSlice::new);
-        } else {
+        } else if (contentType == Protocol.HTTP_JSON) {
             vPackSliceMono = bytes.asInputStream()
                     .map(input -> {
                         try {
@@ -343,9 +340,16 @@ public class HttpConnection implements Connection {
                             throw new ArangoDBException(e);
                         }
                     });
+        } else {
+            throw new IllegalArgumentException();
         }
         return vPackSliceMono.map(body -> {
-            response.setBody(body);
+            final Response response = new Response();
+            response.setResponseCode(resp.status().code());
+            resp.responseHeaders().forEach(it -> response.getMeta().put(it.getKey(), it.getValue()));
+            if (body.getBuffer() != null) {
+                response.setBody(body);
+            }
             return response;
         });
     }
