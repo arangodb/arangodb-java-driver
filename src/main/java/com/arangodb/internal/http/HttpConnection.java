@@ -28,53 +28,44 @@ import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer.Options;
+import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
-import org.apache.http.*;
-import org.apache.http.auth.AuthenticationException;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
+import reactor.netty.ByteBufMono;
+import reactor.netty.http.HttpProtocol;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.http.client.HttpClientResponse;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.util.CharsetUtil.UTF_8;
 
 /**
  * @author Mark Vollmary
  */
 public class HttpConnection implements Connection {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpCommunication.class);
-    private static final ContentType CONTENT_TYPE_APPLICATION_JSON_UTF8 = ContentType.create("application/json",
-            "utf-8");
-    private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnection.class);
+    private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json; charset=UTF-8";
+    private static final String CONTENT_TYPE_VPACK = "application/x-velocypack";
 
     public static class Builder {
         private String user;
@@ -143,138 +134,144 @@ public class HttpConnection implements Connection {
         }
     }
 
-    private final PoolingHttpClientConnectionManager cm;
-    private final CloseableHttpClient client;
     private final String user;
     private final String password;
     private final ArangoSerialization util;
     private final Boolean useSsl;
+    private final SSLContext sslContext;
     private final Protocol contentType;
     private final HostDescription host;
+    private final Integer timeout;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
+                           // FIXME: setup ttl and httpCookieSpec
                            final Long ttl, final String httpCookieSpec) {
         super();
         this.host = host;
         this.user = user;
         this.password = password;
         this.useSsl = useSsl;
+        this.sslContext = sslContext;
         this.util = util;
         this.contentType = contentType;
-        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
-        if (Boolean.TRUE == useSsl) {
-            if (sslContext != null) {
-                registryBuilder.register("https", new SSLConnectionSocketFactory(sslContext));
-            } else {
-                registryBuilder.register("https", new SSLConnectionSocketFactory(SSLContexts.createSystemDefault()));
-            }
-        } else {
-            registryBuilder.register("http", new PlainConnectionSocketFactory());
-        }
-        cm = new PoolingHttpClientConnectionManager(registryBuilder.build());
-        cm.setDefaultMaxPerRoute(1);
-        cm.setMaxTotal(1);
-        final RequestConfig.Builder requestConfig = RequestConfig.custom();
-        if (timeout != null && timeout >= 0) {
-            requestConfig.setConnectTimeout(timeout);
-            requestConfig.setConnectionRequestTimeout(timeout);
-            requestConfig.setSocketTimeout(timeout);
-        }
+        this.timeout = timeout;
 
-        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
-            requestConfig.setCookieSpec(httpCookieSpec);
-        }
-
-        final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
-        final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
-                .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-                .setRetryHandler(new DefaultHttpRequestRetryHandler());
-        if (ttl != null) {
-            builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
-        }
-        client = builder.build();
+        // FIXME
+//        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
+//            requestConfig.setCookieSpec(httpCookieSpec);
+//        }
     }
 
-    private long getKeepAliveDuration(final HttpResponse response) {
-        final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-        while (it.hasNext()) {
-            final HeaderElement he = it.nextElement();
-            final String param = he.getName();
-            final String value = he.getValue();
-            if (value != null && "timeout".equalsIgnoreCase(param)) {
-                try {
-                    return Long.parseLong(value) * 1000L;
-                } catch (final NumberFormatException ignore) {
-                }
-            }
+    private HttpClient getClient() {
+        // TODO: build client using reactor.netty.resources.ConnectionProvider
+        return HttpClient.create()
+                .protocol(HttpProtocol.HTTP11)
+                .wiretap(true)
+                .baseUrl(buildBaseUrl())
+                .tcpConfiguration(tcpClient ->
+                        timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
+                // FIXME
+//                .tcpConfiguration(tcpClient ->
+//                        Boolean.TRUE == useSsl && sslContext != null ? tcpClient.secure(buildSslContext()) : tcpClient)
+                .keepAlive(true)
+                .headers(headers -> {
+                    headers.set(CONTENT_TYPE, getContentType());
+                    if (user != null)
+                        headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
+                });
+    }
+
+    private String buildBaseUrl() {
+        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+    }
+
+    private SslContext buildSslContext() {
+        try {
+            return SslContextBuilder.forClient().sslContextProvider(sslContext.getProvider()).build();
+        } catch (SSLException e) {
+            e.printStackTrace();
+            throw new ArangoDBException(e);
         }
-        return 30L * 1000L;
+    }
+
+    static String buildBasicAuthentication(final String principal, final String password) {
+        final String tmp = principal + ":" + (password == null ? "" : password);
+        String encoded = Base64.getEncoder().encodeToString(tmp.getBytes());
+        return "Basic " + encoded;
     }
 
     @Override
     public void close() throws IOException {
-        cm.shutdown();
-        client.close();
+        // TODO
     }
 
-    private static String buildUrl(final String baseUrl, final Request request) {
-        final StringBuilder sb = new StringBuilder().append(baseUrl);
+    private static String buildUrl(final Request request) {
+        final StringBuilder sb = new StringBuilder();
         final String database = request.getDatabase();
         if (database != null && !database.isEmpty()) {
             sb.append("/_db/").append(database);
         }
         sb.append(request.getRequest());
+
         if (!request.getQueryParam().isEmpty()) {
             sb.append("?");
-            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
+            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), UTF_8);
             sb.append(paramString);
         }
         return sb.toString();
     }
 
-    private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
-        final HttpRequestBase httpRequest;
-        switch (request.getRequestType()) {
+    private HttpMethod requestTypeToHttpMethod(final RequestType requestType) {
+        switch (requestType) {
             case POST:
-                httpRequest = requestWithBody(new HttpPost(url), request);
-                break;
+                return HttpMethod.POST;
             case PUT:
-                httpRequest = requestWithBody(new HttpPut(url), request);
-                break;
+                return HttpMethod.PUT;
             case PATCH:
-                httpRequest = requestWithBody(new HttpPatch(url), request);
-                break;
+                return HttpMethod.PATCH;
             case DELETE:
-                httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
-                break;
+                return HttpMethod.DELETE;
             case HEAD:
-                httpRequest = new HttpHead(url);
-                break;
+                return HttpMethod.HEAD;
             case GET:
+                return HttpMethod.GET;
             default:
-                httpRequest = new HttpGet(url);
-                break;
+                throw new IllegalArgumentException();
         }
-        return httpRequest;
     }
 
-    private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
+    private HttpClient.RequestSender buildMethod(final HttpClient client, final Request request) {
+        return client.request(requestTypeToHttpMethod(request.getRequestType()));
+    }
+
+    private HttpClient.RequestSender buildUri(final HttpClient.RequestSender sender, final String url) {
+        return sender.uri(url);
+    }
+
+    private String getContentType() {
+        if (contentType == Protocol.HTTP_VPACK) {
+            return CONTENT_TYPE_VPACK;
+        } else if (contentType == Protocol.HTTP_JSON) {
+            return CONTENT_TYPE_APPLICATION_JSON;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private byte[] getBody(final Request request) {
         final VPackSlice body = request.getBody();
         if (body != null) {
             if (contentType == Protocol.HTTP_VPACK) {
-                httpRequest.setEntity(new ByteArrayEntity(
-                        Arrays.copyOfRange(body.getBuffer(), body.getStart(), body.getStart() + body.getByteSize()),
-                        CONTENT_TYPE_VPACK));
+                return Arrays.copyOfRange(body.getBuffer(), body.getStart(), body.getStart() + body.getByteSize());
+            } else if (contentType == Protocol.HTTP_JSON) {
+                return body.toString().getBytes();
             } else {
-                httpRequest.setEntity(new StringEntity(body.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8));
+                throw new IllegalArgumentException();
             }
+        } else {
+            return new byte[0];
         }
-        return httpRequest;
-    }
-
-    private String buildBaseUrl(final HostDescription host) {
-        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
     }
 
     private static List<NameValuePair> toList(final Map<String, String> parameters) {
@@ -288,79 +285,72 @@ public class HttpConnection implements Connection {
     }
 
     public Response execute(final Request request) throws ArangoDBException, IOException {
-        final String url = buildUrl(buildBaseUrl(host), request);
-        final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
-        httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-        if (contentType == Protocol.HTTP_VPACK) {
-            httpRequest.setHeader("Accept", "application/x-velocypack");
-        }
-        addHeader(request, httpRequest);
-        final Optional<Credentials> credentials = Optional.ofNullable(getCredentials());
-        credentials.ifPresent(c -> {
-            try {
-                httpRequest.addHeader(new BasicScheme().authenticate(credentials.get(), httpRequest, null));
-            } catch (final AuthenticationException e) {
-                throw new ArangoDBException(e);
-            }
-        });
+        final String url = buildUrl(request);
+        byte[] body = getBody(request);
 
         if (LOGGER.isDebugEnabled()) {
             CURLLogger.log(
                     url,
                     request,
-                    credentials.map(Credentials::getUserPrincipal).map(Principal::getName),
-                    credentials.map(Credentials::getPassword),
+                    Optional.ofNullable(user),
+                    Optional.ofNullable(password),
                     util
             );
         }
-        Response response;
-        response = buildResponse(client.execute(httpRequest));
-        checkError(response);
-        return response;
+
+        HttpClient c = getClient()
+                .headers(headers -> {
+                    headers.set(CONTENT_LENGTH, body.length);
+                    headers.set(USER_AGENT, "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+                    if (contentType == Protocol.HTTP_VPACK) {
+                        headers.set(ACCEPT, "application/x-velocypack");
+                    }
+                    addHeader(request, headers);
+                });
+
+        HttpClient.RequestSender sender = buildUri(buildMethod(c, request), url);
+        HttpClient.ResponseReceiver<?> receiver = sender.send(Mono.just(Unpooled.wrappedBuffer(body)));
+
+        return receiver
+                .responseSingle(this::buildResponse)
+                .doOnNext(this::checkError)
+                .block();
     }
 
-    private static void addHeader(final Request request, final HttpRequestBase httpRequest) {
+    private static void addHeader(final Request request, final HttpHeaders headers) {
         for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
-            httpRequest.addHeader(header.getKey(), header.getValue());
+            headers.add(header.getKey(), header.getValue());
         }
     }
 
-    private Credentials getCredentials() {
-        Credentials credentials = null;
-        if (user != null) {
-            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
-        }
-        return credentials;
-    }
-
-    private Response buildResponse(final CloseableHttpResponse httpResponse)
-            throws UnsupportedOperationException, IOException {
+    private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
         final Response response = new Response();
-        response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
-        final HttpEntity entity = httpResponse.getEntity();
-        if (entity != null && entity.getContent() != null) {
-            if (contentType == Protocol.HTTP_VPACK) {
-                final byte[] content = IOUtils.toByteArray(entity.getContent());
-                if (content.length > 0) {
-                    response.setBody(new VPackSlice(content));
-                }
-            } else {
-                final String content = IOUtils.toString(entity.getContent());
-                if (!content.isEmpty()) {
-                    response.setBody(
-                            util.serialize(content, new Options().stringAsJson(true).serializeNullValues(true)));
-                }
-            }
-        }
-        final Header[] headers = httpResponse.getAllHeaders();
+        response.setResponseCode(resp.status().code());
+
         final Map<String, String> meta = response.getMeta();
-        for (final Header header : headers) {
-            meta.put(header.getName(), header.getValue());
+        resp.responseHeaders().forEach(it -> meta.put(it.getKey(), it.getValue()));
+
+        final Mono<VPackSlice> vPackSliceMono;
+        if (contentType == Protocol.HTTP_VPACK) {
+            vPackSliceMono = bytes.asByteArray().map(VPackSlice::new);
+        } else {
+            vPackSliceMono = bytes.asInputStream()
+                    .map(input -> {
+                        try {
+                            String content = IOUtils.toString(input);
+                            return util.serialize(content, new ArangoSerializer.Options().stringAsJson(true).serializeNullValues(true));
+                        } catch (IOException e) {
+                            throw new ArangoDBException(e);
+                        }
+                    });
         }
-        return response;
+        return vPackSliceMono.map(body -> {
+            response.setBody(body);
+            return response;
+        });
     }
 
-    protected void checkError(final Response response) throws ArangoDBException {
+    private void checkError(final Response response) throws ArangoDBException {
         ResponseUtils.checkError(util, response);
     }
 

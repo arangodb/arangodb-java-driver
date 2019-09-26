@@ -63,7 +63,7 @@ public class TcpClientApplication {
         authStream.write(auth.getBuffer());
 
         Connection connection = TcpClient.create()
-                .wiretap()
+//                .wiretap(true)
                 .host("127.0.0.1")
                 .port(8529)
                 .handle((in, out) ->
