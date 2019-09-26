@@ -52,12 +52,14 @@ public class ArangoEdgeCollectionAsyncImpl extends
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type) {
-        return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()), getEdgeResponseDeserializer(type));
+        return getEdge(key, type, null);
     }
 
     @Override
     public <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options) {
-        return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+        boolean isCatchException = options != null ? options.isCatchException() : new GraphDocumentReadOptions().isCatchException();
+        return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type))
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
     }
 
     @Override

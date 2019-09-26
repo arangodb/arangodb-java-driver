@@ -57,7 +57,7 @@ public class ArangoVertexCollectionAsyncImpl extends
 
     @Override
     public <T> CompletableFuture<T> getVertex(final String key, final Class<T> type) {
-        return executor.execute(getVertexRequest(key, new GraphDocumentReadOptions()), getVertexResponseDeserializer(type));
+        return getVertex(key, type, null);
     }
 
     @Override
@@ -65,7 +65,9 @@ public class ArangoVertexCollectionAsyncImpl extends
             final String key,
             final Class<T> type,
             final GraphDocumentReadOptions options) {
-        return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type));
+        boolean isCatchException = options != null ? options.isCatchException() : new GraphDocumentReadOptions().isCatchException();
+        return executor.execute(getVertexRequest(key, options), getVertexResponseDeserializer(type))
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
     }
 
     @Override

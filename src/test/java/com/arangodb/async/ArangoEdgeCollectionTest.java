@@ -113,7 +113,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
     public void getEdgeIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no").catchException(false);
         try {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                     .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
@@ -138,7 +138,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
     public void getEdgeIfNoneMatchFail() throws InterruptedException, ExecutionException {
         final BaseEdgeDocument value = createEdgeValue();
         final EdgeEntity edge = db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).insertEdge(value, null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev());
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev()).catchException(false);
         try {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
                     .getEdge(edge.getKey(), BaseEdgeDocument.class, options).get();
@@ -345,7 +345,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), null).get();
         try {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
-                    .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
+                    .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -361,7 +361,7 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options).get();
         try {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
-                    .getEdge(createResult.getKey(), BaseEdgeDocument.class, null).get();
+                    .getEdge(createResult.getKey(), BaseEdgeDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
