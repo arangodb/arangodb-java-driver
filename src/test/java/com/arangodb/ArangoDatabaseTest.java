@@ -65,18 +65,16 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Before
     public void setUp() {
-        if (db.collection(COLLECTION_NAME + "2").exists())
-            db.collection(COLLECTION_NAME + "2").drop();
-        if (db.collection(COLLECTION_NAME + "1").exists())
-            db.collection(COLLECTION_NAME + "1").drop();
-        if (db.collection(COLLECTION_NAME).exists())
-            db.collection(COLLECTION_NAME).drop();
-        if (db.collection(COLLECTION_NAME + "edge").exists())
-            db.collection(COLLECTION_NAME + "edge").drop();
-        if (db.collection(COLLECTION_NAME + "from").exists())
-            db.collection(COLLECTION_NAME + "from").drop();
-        if (db.collection(COLLECTION_NAME + "to").exists())
-            db.collection(COLLECTION_NAME + "to").drop();
+        db.getCollections().stream()
+                .filter(it -> !it.getIsSystem())
+                .map(CollectionEntity::getName)
+                .map(db::collection)
+                .forEach(ArangoCollection::drop);
+
+        db.getGraphs().stream()
+                .map(GraphEntity::getName)
+                .map(db::graph)
+                .forEach(ArangoGraph::drop);
     }
 
     @Test
