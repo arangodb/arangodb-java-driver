@@ -20,14 +20,12 @@
 
 package com.arangodb.internal;
 
-import java.util.Map;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoRoute;
-import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
+
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -64,12 +62,7 @@ public class ArangoRouteImpl extends InternalArangoRoute<ArangoDBImpl, ArangoDat
 	}
 
 	private Response request(final RequestType requestType) {
-		return executor.execute(createRequest(requestType), new ResponseDeserializer<Response>() {
-			@Override
-			public Response deserialize(final Response response) throws VPackException {
-				return response;
-			}
-		});
+        return executor.execute(createRequest(requestType), response -> response);
 	}
 
 	@Override

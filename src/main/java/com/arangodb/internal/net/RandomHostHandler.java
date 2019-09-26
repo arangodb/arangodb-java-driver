@@ -20,10 +20,8 @@
 
 package com.arangodb.internal.net;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -63,8 +61,8 @@ public class RandomHostHandler implements HostHandler {
 	}
 
 	private Host getRandomHost(final boolean initial, final boolean closeConnections) {
-		
-		final ArrayList<Host> hosts = new ArrayList<Host>(resolver.resolve(initial, closeConnections).getHostsList());
+
+		final ArrayList<Host> hosts = new ArrayList<>(resolver.resolve(initial, closeConnections).getHostsList());
 		Collections.shuffle(hosts);
 		return hosts.get(0);
 	}
@@ -79,7 +77,7 @@ public class RandomHostHandler implements HostHandler {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		final HostSet hosts = resolver.resolve(false, false);
 		hosts.close();
 	}

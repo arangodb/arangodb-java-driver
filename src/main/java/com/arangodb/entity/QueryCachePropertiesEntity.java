@@ -30,7 +30,7 @@ package com.arangodb.entity;
 public class QueryCachePropertiesEntity implements Entity {
 
 	public enum CacheMode {
-		off, on, demand;
+		off, on, demand
 	}
 
 	private CacheMode mode;

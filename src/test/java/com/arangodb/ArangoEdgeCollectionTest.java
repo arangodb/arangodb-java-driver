@@ -20,19 +20,7 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.After;
@@ -41,7 +29,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.ArangoDB.Builder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -266,9 +261,14 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).replaceEdge(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
-            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-            // assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 4)) {
+                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+                // assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1200));
+            } else {
+                assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1903));
+            }
         }
     }
 
@@ -351,9 +351,14 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).updateEdge(createResult.getKey(), doc, options);
             fail();
         } catch (final ArangoDBException e) {
-            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-            // assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 4)) {
+                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+                // assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1200));
+            } else {
+                assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1903));
+            }
         }
     }
 
@@ -430,9 +435,14 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME).deleteEdge(createResult.getKey(), options);
             fail();
         } catch (final ArangoDBException e) {
-            // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-            //            assertThat(e.getResponseCode(), is(412));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 4)) {
+                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+                //            assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1200));
+            } else {
+                assertThat(e.getResponseCode(), is(412));
+                assertThat(e.getErrorNum(), is(1903));
+            }
         }
     }
 }

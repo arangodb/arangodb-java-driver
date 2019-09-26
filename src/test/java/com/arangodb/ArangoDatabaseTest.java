@@ -280,6 +280,43 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(db.collection(COLLECTION_NAME + "2").getProperties().getNumberOfShards(), is(numberOfShards));
     }
 
+    private void createCollectionWithKeyType(KeyType keyType) {
+        try {
+            final CollectionEntity result = db.createCollection(COLLECTION_NAME, new CollectionCreateOptions().keyOptions(
+                    false,
+                    keyType,
+                    null,
+                    null
+            ));
+            assertThat(db.collection(COLLECTION_NAME).getProperties().getKeyOptions().getType(), is(keyType));
+        } finally {
+            db.collection(COLLECTION_NAME).drop();
+        }
+    }
+
+    @Test
+    public void createCollectionWithKeyTypeAutoincrement() {
+        assumeTrue(isSingleServer());
+        createCollectionWithKeyType(KeyType.autoincrement);
+    }
+
+    @Test
+    public void createCollectionWithKeyTypePadded() {
+        assumeTrue(isAtLeastVersion(3, 4));
+        createCollectionWithKeyType(KeyType.padded);
+    }
+
+    @Test
+    public void createCollectionWithKeyTypeTraditional() {
+        createCollectionWithKeyType(KeyType.traditional);
+    }
+
+    @Test
+    public void createCollectionWithKeyTypeUuid() {
+        assumeTrue(isAtLeastVersion(3, 4));
+        createCollectionWithKeyType(KeyType.uuid);
+    }
+
     @Test(expected = ArangoDBException.class)
     public void deleteCollection() {
         db.createCollection(COLLECTION_NAME, null);
@@ -375,11 +412,11 @@ public class ArangoDatabaseTest extends BaseTest {
         final CollectionsReadOptions options = new CollectionsReadOptions().excludeSystem(true);
         final Collection<CollectionEntity> nonSystemCollections = db.getCollections(options);
 
-        assertThat(nonSystemCollections.size(), is(0));
+        int initialSize = nonSystemCollections.size();
         db.createCollection(COLLECTION_NAME + "1", null);
         db.createCollection(COLLECTION_NAME + "2", null);
         final Collection<CollectionEntity> newCollections = db.getCollections(options);
-        assertThat(newCollections.size(), is(2));
+        assertThat(newCollections.size(), is(initialSize + 2));
         assertThat(newCollections, is(notNullValue()));
 
         db.collection(COLLECTION_NAME + "1").drop();
@@ -911,6 +948,33 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(plan.getEstimatedNrItems(), greaterThan(0));
         assertThat(plan.getVariables().size(), is(2));
         assertThat(plan.getNodes().size(), is(greaterThan(0)));
+    }
+
+    @Test
+    public void explainQueryWithIndexNode() {
+        ArangoCollection character = db.collection("got_characters");
+        ArangoCollection actor = db.collection("got_actors");
+
+        if (!character.exists())
+            character.create();
+
+        if (!actor.exists())
+            actor.create();
+
+        String query = "" +
+                "FOR `character` IN `got_characters` " +
+                "   FOR `actor` IN `got_actors` " +
+                "       FILTER `character`.`actor` == `actor`.`_id` " +
+                "       RETURN `character`";
+
+        final ExecutionPlan plan = db.explainQuery(query, null, null).getPlan();
+        plan.getNodes().stream()
+                .filter(it -> "IndexNode".equals(it.getType()))
+                .flatMap(it -> it.getIndexes().stream())
+                .forEach(it -> {
+                    assertThat(it.getType(), is(IndexType.primary));
+                    assertThat(it.getFields(), contains("_key"));
+                });
     }
 
     @Test

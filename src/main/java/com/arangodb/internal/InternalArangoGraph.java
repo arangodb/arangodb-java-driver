@@ -20,18 +20,16 @@
 
 package com.arangodb.internal;
 
-import java.util.Collection;
-
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.model.OptionsBuilder;
 import com.arangodb.model.VertexCollectionCreateOptions;
 import com.arangodb.velocypack.Type;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
+
+import java.util.Collection;
 
 /**
  * @author Mark Vollmary
@@ -87,13 +85,8 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
-				}.getType());
-			}
-		};
+		return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+		}.getType());
 	}
 
 	protected Request addVertexCollectionRequest(final String name) {
@@ -111,13 +104,8 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-		return new ResponseDeserializer<Collection<String>>() {
-			@Override
-			public Collection<String> deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
-				}.getType());
-			}
-		};
+		return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+		}.getType());
 	}
 
 	protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
@@ -127,12 +115,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
-			}
-		};
+		return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
 	}
 
 	protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
@@ -143,12 +126,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
-			}
-		};
+		return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
 	}
 
 	protected Request removeEdgeDefinitionRequest(final String definitionName) {
@@ -156,12 +134,7 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
 	}
 
 	protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-		return new ResponseDeserializer<GraphEntity>() {
-			@Override
-			public GraphEntity deserialize(final Response response) throws VPackException {
-				return util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
-			}
-		};
+		return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
 	}
 
 }

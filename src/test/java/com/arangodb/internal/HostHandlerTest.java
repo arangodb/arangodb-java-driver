@@ -20,138 +20,131 @@
 
 package com.arangodb.internal;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-
+import com.arangodb.ArangoDBException;
+import com.arangodb.internal.net.*;
+import com.arangodb.util.ArangoSerialization;
 import org.junit.Test;
 
-import com.arangodb.internal.net.FallbackHostHandler;
-import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
-import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.net.HostImpl;
-import com.arangodb.internal.net.HostResolver;
-import com.arangodb.internal.net.HostSet;
-import com.arangodb.internal.net.RandomHostHandler;
-import com.arangodb.internal.net.RoundRobinHostHandler;
-import com.arangodb.util.ArangoSerialization;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class HostHandlerTest {
 
-	private static final Host HOST_0 = new HostImpl(null, new HostDescription("127.0.0.1", 8529));
-	private static final Host HOST_1 = new HostImpl(null, new HostDescription("127.0.0.2", 8529));
-	private static final Host HOST_2 = new HostImpl(null, new HostDescription("127.0.0.3", 8529));
+    private static final Host HOST_0 = new HostImpl(null, new HostDescription("127.0.0.1", 8529));
+    private static final Host HOST_1 = new HostImpl(null, new HostDescription("127.0.0.2", 8529));
+    private static final Host HOST_2 = new HostImpl(null, new HostDescription("127.0.0.3", 8529));
 
-	private static final HostResolver SINGLE_HOST = new HostResolver() {
-		
-		@Override
-		public HostSet resolve(final boolean initial, final boolean closeConnections) {
-		
-			HostSet set = new HostSet();
-			set.addHost(HOST_0);
-			return set;
-		}
+    private static final HostResolver SINGLE_HOST = new HostResolver() {
 
-		@Override
-		public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
-			
-		}
-		
-	};
-	
-	private static final HostResolver MULTIPLE_HOSTS = new HostResolver() {
-		
-		@Override
-		public HostSet resolve(final boolean initial, final boolean closeConnections) {
-			
-			HostSet set = new HostSet();
-			set.addHost(HOST_0);
-			set.addHost(HOST_1);
-			set.addHost(HOST_2);
-			return set;
-		}
+        @Override
+        public HostSet resolve(final boolean initial, final boolean closeConnections) {
 
-		@Override
-		public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
-			
-		}
-		
-	};
+            HostSet set = new HostSet();
+            set.addHost(HOST_0);
+            return set;
+        }
 
-	@Test
-	public void fallbachHostHandlerSingleHost() {
-		final HostHandler handler = new FallbackHostHandler(SINGLE_HOST);
-		assertThat(handler.get(null, null), is(HOST_0));
-		handler.fail();
-		assertThat(handler.get(null, null), is(HOST_0));
-	}
+        @Override
+        public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
 
-	@Test
-	public void fallbackHostHandlerMultipleHosts() {
-		final HostHandler handler = new FallbackHostHandler(MULTIPLE_HOSTS);
-		for (int i = 0; i < 3; i++) {
-			assertThat(handler.get(null, null), is(HOST_0));
-			handler.fail();
-			assertThat(handler.get(null, null), is(HOST_1));
-			handler.fail();
-			assertThat(handler.get(null, null), is(HOST_2));
-			if (i < 2) {
-				handler.fail();
-				assertThat(handler.get(null, null), is(HOST_0));
-			} else {
-				handler.fail();
-				assertThat(handler.get(null, null), is(nullValue()));
-			}
-		}
-	}
+        }
 
-	@Test
-	public void randomHostHandlerSingleHost() {
-		final HostHandler handler = new RandomHostHandler(SINGLE_HOST, new FallbackHostHandler(SINGLE_HOST));
-		assertThat(handler.get(null, null), is(HOST_0));
-		handler.fail();
-		assertThat(handler.get(null, null), is(HOST_0));
-	}
+    };
 
-	@Test
-	public void randomHostHandlerMultipeHosts() {
-		final HostHandler handler = new RandomHostHandler(MULTIPLE_HOSTS, new FallbackHostHandler(MULTIPLE_HOSTS));
-		final Host pick0 = handler.get(null, null);
-		assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-		handler.fail();
-		assertThat(handler.get(null, null), anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-		handler.success();
-		assertThat(handler.get(null, null), is(pick0));
-	}
+    private static final HostResolver MULTIPLE_HOSTS = new HostResolver() {
 
-	@Test
-	public void roundRobinHostHandlerSingleHost() {
-		final HostHandler handler = new RoundRobinHostHandler(SINGLE_HOST);
-		assertThat(handler.get(null, null), is(HOST_0));
-		handler.fail();
-		assertThat(handler.get(null, null), is(HOST_0));
-	}
+        @Override
+        public HostSet resolve(final boolean initial, final boolean closeConnections) {
 
-	@Test
-	public void roundRobinHostHandlerMultipleHosts() {
-		final HostHandler handler = new RoundRobinHostHandler(MULTIPLE_HOSTS);
-		final Host pick0 = handler.get(null, null);
-		assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-		final Host pick1 = handler.get(null, null);
-		assertThat(pick1, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-		assertThat(pick1, is(not(pick0)));
-		final Host pick2 = handler.get(null, null);
-		assertThat(pick2, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-		assertThat(pick2, not(anyOf(is(pick0), is(pick1))));
-		final Host pick4 = handler.get(null, null);
-		assertThat(pick4, is(pick0));
-	}
+            HostSet set = new HostSet();
+            set.addHost(HOST_0);
+            set.addHost(HOST_1);
+            set.addHost(HOST_2);
+            return set;
+        }
+
+        @Override
+        public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
+
+        }
+
+    };
+
+    @Test
+    public void fallbachHostHandlerSingleHost() {
+        final HostHandler handler = new FallbackHostHandler(SINGLE_HOST);
+        assertThat(handler.get(null, null), is(HOST_0));
+        handler.fail();
+        assertThat(handler.get(null, null), is(HOST_0));
+    }
+
+    @Test
+    public void fallbackHostHandlerMultipleHosts() {
+        final HostHandler handler = new FallbackHostHandler(MULTIPLE_HOSTS);
+        for (int i = 0; i < 3; i++) {
+            assertThat(handler.get(null, null), is(HOST_0));
+            handler.fail();
+            assertThat(handler.get(null, null), is(HOST_1));
+            handler.fail();
+            assertThat(handler.get(null, null), is(HOST_2));
+            if (i < 2) {
+                handler.fail();
+                assertThat(handler.get(null, null), is(HOST_0));
+            } else {
+                handler.fail();
+                try {
+                    handler.get(null, null);
+                    fail();
+                } catch (ArangoDBException ignored) {
+                }
+            }
+        }
+    }
+
+    @Test
+    public void randomHostHandlerSingleHost() {
+        final HostHandler handler = new RandomHostHandler(SINGLE_HOST, new FallbackHostHandler(SINGLE_HOST));
+        assertThat(handler.get(null, null), is(HOST_0));
+        handler.fail();
+        assertThat(handler.get(null, null), is(HOST_0));
+    }
+
+    @Test
+    public void randomHostHandlerMultipeHosts() {
+        final HostHandler handler = new RandomHostHandler(MULTIPLE_HOSTS, new FallbackHostHandler(MULTIPLE_HOSTS));
+        final Host pick0 = handler.get(null, null);
+        assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+        handler.fail();
+        assertThat(handler.get(null, null), anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+        handler.success();
+        assertThat(handler.get(null, null), is(pick0));
+    }
+
+    @Test
+    public void roundRobinHostHandlerSingleHost() {
+        final HostHandler handler = new RoundRobinHostHandler(SINGLE_HOST);
+        assertThat(handler.get(null, null), is(HOST_0));
+        handler.fail();
+        assertThat(handler.get(null, null), is(HOST_0));
+    }
+
+    @Test
+    public void roundRobinHostHandlerMultipleHosts() {
+        final HostHandler handler = new RoundRobinHostHandler(MULTIPLE_HOSTS);
+        final Host pick0 = handler.get(null, null);
+        assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+        final Host pick1 = handler.get(null, null);
+        assertThat(pick1, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+        assertThat(pick1, is(not(pick0)));
+        final Host pick2 = handler.get(null, null);
+        assertThat(pick2, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+        assertThat(pick2, not(anyOf(is(pick0), is(pick1))));
+        final Host pick4 = handler.get(null, null);
+        assertThat(pick4, is(pick0));
+    }
 
 }

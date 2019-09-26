@@ -20,12 +20,6 @@
 
 package com.arangodb.internal;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.MetaAware;
 import com.arangodb.internal.net.CommunicationProtocol;
@@ -34,6 +28,11 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 
 /**
  * @author Mark Vollmary
@@ -56,13 +55,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
 	}
 
 	public <T> T execute(final Request request, final Type type, final HostHandle hostHandle) throws ArangoDBException {
-		return execute(request, new ResponseDeserializer<T>() {
-			@Override
-			public T deserialize(final Response response) throws VPackException {
-				T result = createResult(type, response);
-				return result;
-			}
-		}, hostHandle);
+		return execute(request, response -> createResult(type, response), hostHandle);
 	}
 
 	public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer) throws ArangoDBException {

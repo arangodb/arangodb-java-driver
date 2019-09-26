@@ -30,10 +30,11 @@ import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,18 +83,15 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 	}
 
 	protected <T> ResponseDeserializer<VertexEntity> insertVertexResponseDeserializer(final T value) {
-		return new ResponseDeserializer<VertexEntity>() {
-			@Override
-			public VertexEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(VERTEX);
-				final VertexEntity doc = util().deserialize(body, VertexEntity.class);
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.ID, doc.getId());
-				values.put(DocumentField.Type.KEY, doc.getKey());
-				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache().setValues(value, values);
-				return doc;
-			}
+		return response -> {
+			final VPackSlice body = response.getBody().get(VERTEX);
+			final VertexEntity doc = util().deserialize(body, VertexEntity.class);
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.ID, doc.getId());
+			values.put(DocumentField.Type.KEY, doc.getKey());
+			values.put(DocumentField.Type.REV, doc.getRev());
+			executor.documentCache().setValues(value, values);
+			return doc;
 		};
 	}
 
@@ -111,12 +109,7 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 	}
 
 	protected <T> ResponseDeserializer<T> getVertexResponseDeserializer(final Class<T> type) {
-		return new ResponseDeserializer<T>() {
-			@Override
-			public T deserialize(final Response response) throws VPackException {
-				return util(Serializer.CUSTOM).deserialize(response.getBody().get(VERTEX), type);
-			}
-		};
+		return response -> util(Serializer.CUSTOM).deserialize(response.getBody().get(VERTEX), type);
 	}
 
 	protected <T> Request replaceVertexRequest(final String key, final T value, final VertexReplaceOptions options) {
@@ -131,16 +124,13 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 	}
 
 	protected <T> ResponseDeserializer<VertexUpdateEntity> replaceVertexResponseDeserializer(final T value) {
-		return new ResponseDeserializer<VertexUpdateEntity>() {
-			@Override
-			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(VERTEX);
-				final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache().setValues(value, values);
-				return doc;
-			}
+		return response -> {
+			final VPackSlice body = response.getBody().get(VERTEX);
+			final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.REV, doc.getRev());
+			executor.documentCache().setValues(value, values);
+			return doc;
 		};
 	}
 
@@ -159,16 +149,13 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
 	}
 
 	protected <T> ResponseDeserializer<VertexUpdateEntity> updateVertexResponseDeserializer(final T value) {
-		return new ResponseDeserializer<VertexUpdateEntity>() {
-			@Override
-			public VertexUpdateEntity deserialize(final Response response) throws VPackException {
-				final VPackSlice body = response.getBody().get(VERTEX);
-				final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
-				final Map<DocumentField.Type, String> values = new HashMap<DocumentField.Type, String>();
-				values.put(DocumentField.Type.REV, doc.getRev());
-				executor.documentCache().setValues(value, values);
-				return doc;
-			}
+		return response -> {
+			final VPackSlice body = response.getBody().get(VERTEX);
+			final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
+			final Map<DocumentField.Type, String> values = new HashMap<>();
+			values.put(DocumentField.Type.REV, doc.getRev());
+			executor.documentCache().setValues(value, values);
+			return doc;
 		};
 	}
 

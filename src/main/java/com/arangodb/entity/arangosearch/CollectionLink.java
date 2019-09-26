@@ -40,8 +40,8 @@ public class CollectionLink {
 	private CollectionLink(final String name) {
 		super();
 		this.name = name;
-		fields = new ArrayList<FieldLink>();
-		analyzers = new ArrayList<String>();
+        fields = new ArrayList<>();
+        analyzers = new ArrayList<>();
 	}
 
 	/**

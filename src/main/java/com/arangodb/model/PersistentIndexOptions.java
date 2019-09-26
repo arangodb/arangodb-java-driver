@@ -28,16 +28,21 @@ import com.arangodb.entity.IndexType;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
  *      Documentation</a>
  */
-public class PersistentIndexOptions extends IndexOptions {
+public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {
 
 	private Iterable<String> fields;
-	protected IndexType type = IndexType.persistent;
+	protected final IndexType type = IndexType.persistent;
 	private Boolean unique;
 	private Boolean sparse;
 
 	public PersistentIndexOptions() {
 		super();
 	}
+
+    @Override
+    protected PersistentIndexOptions getThis() {
+        return this;
+    }
 
 	protected Iterable<String> getFields() {
 		return fields;

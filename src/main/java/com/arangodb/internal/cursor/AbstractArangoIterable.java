@@ -20,13 +20,13 @@
 
 package com.arangodb.internal.cursor;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import com.arangodb.ArangoIterable;
 import com.arangodb.ArangoIterator;
 import com.arangodb.Function;
 import com.arangodb.Predicate;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author Mark Vollmary
@@ -36,12 +36,12 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
 
 	@Override
 	public <R> ArangoIterable<R> map(final Function<? super T, ? extends R> mapper) {
-		return new ArangoMappingIterable<T, R>(this, mapper);
+		return new ArangoMappingIterable<>(this, mapper);
 	}
 
 	@Override
 	public ArangoIterable<T> filter(final Predicate<? super T> predicate) {
-		return new ArangoFilterIterable<T>(this, predicate);
+		return new ArangoFilterIterable<>(this, predicate);
 	}
 
 	@Override

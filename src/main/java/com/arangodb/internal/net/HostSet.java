@@ -1,17 +1,17 @@
 package com.arangodb.internal.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class HostSet {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HostSet.class);
 
-	private ArrayList<Host> hosts = new ArrayList<Host>();
+	private final ArrayList<Host> hosts = new ArrayList<>();
 
 	public HostSet() {
 		super();
@@ -70,8 +70,8 @@ public class HostSet {
 		}
 		
 	}
-	
-	public void clearAllMarkedForDeletion() throws IOException {
+
+	public void clearAllMarkedForDeletion() {
 		
 		LOGGER.debug("Clear all Hosts in Set with markForDeletion");
 		

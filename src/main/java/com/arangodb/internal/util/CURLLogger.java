@@ -20,15 +20,14 @@
 
 package com.arangodb.internal.util;
 
-import java.util.Map.Entry;
-
+import com.arangodb.util.ArangoSerialization;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
 import org.apache.http.auth.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
+import java.util.Map.Entry;
 
 /**
  * @author Mark Vollmary
@@ -36,7 +35,7 @@ import com.arangodb.velocystream.RequestType;
  */
 public final class CURLLogger {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(CURLLogger.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CURLLogger.class);
 
 	private CURLLogger() {
 	}

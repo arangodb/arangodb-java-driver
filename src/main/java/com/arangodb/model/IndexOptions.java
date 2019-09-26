@@ -20,48 +20,46 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.IndexType;
-
 /**
  * @author Heiko Kernbach
- *
+ * <p>
  * This class is used for all index similarities
  */
-public class IndexOptions {
+public abstract class IndexOptions<T extends IndexOptions> {
 
-	private Boolean inBackground;
-	private String name;
+    private Boolean inBackground;
+    private String name;
 
-	public IndexOptions() {
+    public IndexOptions() {
 		super();
-	}
+    }
 
-	/**
-	 * @param inBackground
-	 *            create the the index in the background
-	 *            this is a RocksDB only flag.
-	 * @return options
-	 */
-	public IndexOptions inBackground(final Boolean inBackground) {
-		this.inBackground = inBackground;
-		return this;
-	}
+    protected abstract T getThis();
 
-	public Boolean getInBackground() {
-		return inBackground;
-	}
+    /**
+     * @param inBackground create the the index in the background
+     *                     this is a RocksDB only flag.
+     * @return options
+     */
+    public T inBackground(final Boolean inBackground) {
+        this.inBackground = inBackground;
+        return getThis();
+    }
 
-	/**
-	 * @param name
-	 *            the name of the index
-	 * @return options
-	 */
-	public IndexOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
+    public Boolean getInBackground() {
+        return inBackground;
+    }
 
-	protected String getName() {
-		return name;
-	}
+    /**
+     * @param name the name of the index
+     * @return options
+     */
+    public T name(final String name) {
+        this.name = name;
+        return getThis();
+    }
+
+    protected String getName() {
+        return name;
+    }
 }

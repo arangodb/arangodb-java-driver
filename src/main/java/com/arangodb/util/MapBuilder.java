@@ -33,7 +33,7 @@ public class MapBuilder {
 
 	public MapBuilder() {
 		super();
-		map = new LinkedHashMap<String, Object>();
+        map = new LinkedHashMap<>();
 	}
 
 	public MapBuilder put(final String key, final Object value) {

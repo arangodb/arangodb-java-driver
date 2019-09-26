@@ -20,11 +20,11 @@
 
 package com.arangodb.velocystream;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -48,8 +48,8 @@ public class Request {
 		this.requestType = requestType;
 		this.request = path;
 		body = null;
-		queryParam = new HashMap<String, String>();
-		headerParam = new HashMap<String, String>();
+        queryParam = new HashMap<>();
+        headerParam = new HashMap<>();
 	}
 
 	public int getVersion() {

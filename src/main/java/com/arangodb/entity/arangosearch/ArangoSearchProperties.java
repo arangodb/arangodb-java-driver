@@ -40,8 +40,8 @@ public class ArangoSearchProperties {
 
 	public ArangoSearchProperties() {
 		super();
-		links = new ArrayList<CollectionLink>();
-		primarySorts = new ArrayList<PrimarySort>();
+		links = new ArrayList<>();
+		primarySorts = new ArrayList<>();
 	}
 
 	public Long getCommitIntervalMsec() {

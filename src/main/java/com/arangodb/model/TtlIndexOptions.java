@@ -26,7 +26,7 @@ import com.arangodb.entity.IndexType;
  * @author Heiko Kernbach
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-ttl.html">API Documentation</a>
  */
-public class TtlIndexOptions extends IndexOptions {
+public class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
 
     private Iterable<String> fields;
     private final IndexType type = IndexType.ttl;
@@ -34,6 +34,11 @@ public class TtlIndexOptions extends IndexOptions {
 
     public TtlIndexOptions() {
         super();
+    }
+
+    @Override
+    protected TtlIndexOptions getThis() {
+        return this;
     }
 
     protected Iterable<String> getFields() {

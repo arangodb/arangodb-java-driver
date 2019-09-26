@@ -40,7 +40,7 @@ public enum RequestType {
 
 	private final int type;
 
-	private RequestType(final int type) {
+	RequestType(final int type) {
 		this.type = type;
 	}
 

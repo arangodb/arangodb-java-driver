@@ -20,10 +20,10 @@
 
 package com.arangodb;
 
-import java.util.Collection;
-
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
+
+import java.util.Collection;
 
 /**
  * Interface for operations on ArangoDB collection level.
@@ -34,6 +34,7 @@ import com.arangodb.model.*;
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Collection API Documentation</a>
  * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface ArangoCollection extends ArangoSerializationAccessor {
 
 	/**
@@ -41,14 +42,14 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *
 	 * @return database handler
 	 */
-	public ArangoDatabase db();
+	ArangoDatabase db();
 
 	/**
 	 * The name of the collection
 	 *
 	 * @return collection name
 	 */
-	public String name();
+	String name();
 
 	/**
 	 * Creates a new document from the given document, unless there is already a document with the _key given. If no
