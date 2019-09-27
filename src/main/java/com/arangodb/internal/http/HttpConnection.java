@@ -49,15 +49,18 @@ import reactor.netty.ByteBufMono;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.client.HttpClientResponse;
+import reactor.netty.resources.ConnectionProvider;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 import java.util.Map.Entry;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.util.CharsetUtil.UTF_8;
+import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
 /**
  * @author Mark Vollmary
@@ -141,12 +144,14 @@ public class HttpConnection implements Connection {
     private final SSLContext sslContext;
     private final Protocol contentType;
     private final HostDescription host;
-    private final Integer timeout;
+    private final ConnectionProvider provider;
+    private final HttpClient client;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
-                           // FIXME: setup ttl and httpCookieSpec
-                           final Long ttl, final String httpCookieSpec) {
+                           final Long ttl,
+                           // FIXME: setup httpCookieSpec
+                           final String httpCookieSpec) {
         super();
         this.host = host;
         this.user = user;
@@ -155,30 +160,32 @@ public class HttpConnection implements Connection {
         this.sslContext = sslContext;
         this.util = util;
         this.contentType = contentType;
-        this.timeout = timeout;
+
+        provider = ConnectionProvider.fixed(
+                "http",
+                1,  // FIXME: connection pooling should happen here, inside HttpConnection
+                DEFAULT_POOL_ACQUIRE_TIMEOUT,
+                ttl != null ? Duration.ofMillis(ttl) : null);
+
+        client = HttpClient.create(provider)
+                .tcpConfiguration(tcpClient ->
+                        timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
+                .wiretap(true)
+                .protocol(HttpProtocol.HTTP11)
+                .keepAlive(true)
+                .baseUrl(buildBaseUrl())
+                // FIXME
+//                .tcpConfiguration(tcpClient ->
+//                        Boolean.TRUE == useSsl && sslContext != null ? tcpClient.secure(buildSslContext()) : tcpClient)
+                .headers(headers -> {
+                    if (user != null)
+                        headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
+                });
 
         // FIXME
 //        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
 //            requestConfig.setCookieSpec(httpCookieSpec);
 //        }
-    }
-
-    private HttpClient getClient() {
-        // TODO: build client using reactor.netty.resources.ConnectionProvider
-        return HttpClient.create()
-                .protocol(HttpProtocol.HTTP11)
-                .wiretap(true)
-                .baseUrl(buildBaseUrl())
-                .tcpConfiguration(tcpClient ->
-                        timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
-                // FIXME
-//                .tcpConfiguration(tcpClient ->
-//                        Boolean.TRUE == useSsl && sslContext != null ? tcpClient.secure(buildSslContext()) : tcpClient)
-                .keepAlive(true)
-                .headers(headers -> {
-                    if (user != null)
-                        headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
-                });
     }
 
     private String buildBaseUrl() {
@@ -194,15 +201,15 @@ public class HttpConnection implements Connection {
         }
     }
 
-    static String buildBasicAuthentication(final String principal, final String password) {
+    private static String buildBasicAuthentication(final String principal, final String password) {
         final String tmp = principal + ":" + (password == null ? "" : password);
         String encoded = Base64.getEncoder().encodeToString(tmp.getBytes());
         return "Basic " + encoded;
     }
 
     @Override
-    public void close() throws IOException {
-        // TODO
+    public void close() {
+        provider.disposeLater().block();
     }
 
     private static String buildUrl(final Request request) {
@@ -297,7 +304,7 @@ public class HttpConnection implements Connection {
             );
         }
 
-        HttpClient c = getClient()
+        HttpClient c = client
                 .headers(headers -> {
                     headers.set(CONTENT_LENGTH, body.length);
                     headers.set(USER_AGENT, "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
