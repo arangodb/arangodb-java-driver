@@ -176,7 +176,6 @@ public class HttpConnection implements Connection {
 //                        Boolean.TRUE == useSsl && sslContext != null ? tcpClient.secure(buildSslContext()) : tcpClient)
                 .keepAlive(true)
                 .headers(headers -> {
-                    headers.set(CONTENT_TYPE, getContentType());
                     if (user != null)
                         headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
                 });
@@ -306,6 +305,9 @@ public class HttpConnection implements Connection {
                         headers.set(ACCEPT, "application/x-velocypack");
                     }
                     addHeader(request, headers);
+                    if (body.length > 0) {
+                        headers.set(CONTENT_TYPE, getContentType());
+                    }
                 });
 
         HttpClient.RequestSender sender = buildUri(buildMethod(c, request), url);
@@ -326,7 +328,8 @@ public class HttpConnection implements Connection {
     private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
         final Mono<VPackSlice> vPackSliceMono;
 
-        if (resp.method() == HttpMethod.HEAD || "0".equals(resp.responseHeaders().get(CONTENT_LENGTH))) {
+        if (resp.method() == HttpMethod.HEAD || "0".equals(resp.responseHeaders().get(CONTENT_LENGTH))
+        ) {
             vPackSliceMono = Mono.just(new VPackSlice(null));
         } else if (contentType == Protocol.HTTP_VPACK) {
             vPackSliceMono = bytes.asByteArray().map(VPackSlice::new);
@@ -347,7 +350,7 @@ public class HttpConnection implements Connection {
             final Response response = new Response();
             response.setResponseCode(resp.status().code());
             resp.responseHeaders().forEach(it -> response.getMeta().put(it.getKey(), it.getValue()));
-            if (body.getBuffer() != null) {
+            if (body.getBuffer() != null && body.getBuffer().length > 0) {
                 response.setBody(body);
             }
             return response;
