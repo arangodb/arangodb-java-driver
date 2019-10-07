@@ -9,12 +9,12 @@
 
 docker pull "$1"
 
-docker run -d --network arangodb --ip 172.28.4.1 -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" -v $(pwd)/server.pem:/server.pem "$1" arangod --ssl.keyfile /server.pem --server.endpoint ssl://172.28.4.1:8529
+docker run -d -p 8529:8529 -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" -v $(pwd)/server.pem:/server.pem "$1" arangod --ssl.keyfile /server.pem --server.endpoint ssl://0.0.0.0:8529
 
 echo "waiting for arangodb ..."
 
 # shellcheck disable=SC2091
-until $(curl --output /dev/null --silent --head --fail -i --insecure -u root:test 'https://172.28.4.1:8529/_api/version'); do
+until $(curl --output /dev/null --silent --head --fail -i --insecure -u root:test 'https://127.0.0.1:8529/_api/version'); do
     printf '.'
     sleep 1
 done

@@ -21,6 +21,7 @@
 package com.arangodb.example.ssl;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -68,10 +69,11 @@ public class SslExample {
 
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .host("172.28.4.1", 8529)
+                .host("127.0.0.1", 8529)
                 .password("test")
                 .useSsl(true)
 				.sslContext(sc)
+                .useProtocol(Protocol.HTTP_JSON)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version, is(notNullValue()));
