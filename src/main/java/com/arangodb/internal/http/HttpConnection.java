@@ -37,8 +37,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.*;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -52,7 +51,6 @@ import reactor.netty.http.client.HttpClientResponse;
 import reactor.netty.resources.ConnectionProvider;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
@@ -144,6 +142,7 @@ public class HttpConnection implements Connection {
     private final SSLContext sslContext;
     private final Protocol contentType;
     private final HostDescription host;
+    private final Integer timeout;
     private final ConnectionProvider provider;
     private final HttpClient client;
 
@@ -154,6 +153,7 @@ public class HttpConnection implements Connection {
                            final String httpCookieSpec) {
         super();
         this.host = host;
+        this.timeout = timeout;
         this.user = user;
         this.password = password;
         this.useSsl = useSsl;
@@ -167,20 +167,7 @@ public class HttpConnection implements Connection {
                 DEFAULT_POOL_ACQUIRE_TIMEOUT,
                 ttl != null ? Duration.ofMillis(ttl) : null);
 
-        client = HttpClient.create(provider)
-                .tcpConfiguration(tcpClient ->
-                        timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
-                .wiretap(true)
-                .protocol(HttpProtocol.HTTP11)
-                .keepAlive(true)
-                .baseUrl(buildBaseUrl())
-                // FIXME
-//                .tcpConfiguration(tcpClient ->
-//                        Boolean.TRUE == useSsl && sslContext != null ? tcpClient.secure(buildSslContext()) : tcpClient)
-                .headers(headers -> {
-                    if (user != null)
-                        headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
-                });
+        this.client = createClient();
 
         // FIXME
 //        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
@@ -188,17 +175,30 @@ public class HttpConnection implements Connection {
 //        }
     }
 
-    private String buildBaseUrl() {
-        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+    private HttpClient createClient() {
+        HttpClient c = HttpClient.create(provider)
+                .tcpConfiguration(tcpClient ->
+                        timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
+                .wiretap(true)
+                .protocol(HttpProtocol.HTTP11)
+                .keepAlive(true)
+                .baseUrl(buildBaseUrl())
+                .headers(headers -> {
+                    if (user != null)
+                        headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
+                });
+
+        if (Boolean.TRUE == useSsl && sslContext != null) {
+            c = c.secure(spec -> {
+                spec.sslContext(new JdkSslContext(sslContext, true, ClientAuth.NONE));
+            });
+        }
+
+        return c;
     }
 
-    private SslContext buildSslContext() {
-        try {
-            return SslContextBuilder.forClient().sslContextProvider(sslContext.getProvider()).build();
-        } catch (SSLException e) {
-            e.printStackTrace();
-            throw new ArangoDBException(e);
-        }
+    private String buildBaseUrl() {
+        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
     }
 
     private static String buildBasicAuthentication(final String principal, final String password) {
@@ -335,8 +335,7 @@ public class HttpConnection implements Connection {
     private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
         final Mono<VPackSlice> vPackSliceMono;
 
-        if (resp.method() == HttpMethod.HEAD || "0".equals(resp.responseHeaders().get(CONTENT_LENGTH))
-        ) {
+        if (resp.method() == HttpMethod.HEAD || "0".equals(resp.responseHeaders().get(CONTENT_LENGTH))) {
             vPackSliceMono = Mono.just(new VPackSlice(null));
         } else if (contentType == Protocol.HTTP_VPACK) {
             vPackSliceMono = bytes.asByteArray().map(VPackSlice::new);
