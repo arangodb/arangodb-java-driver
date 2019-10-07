@@ -38,9 +38,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.ssl.*;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -55,9 +52,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
-import static io.netty.util.CharsetUtil.UTF_8;
 import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
 /**
@@ -222,7 +219,9 @@ public class HttpConnection implements Connection {
 
         if (!request.getQueryParam().isEmpty()) {
             sb.append("?");
-            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), UTF_8);
+            final String paramString = request.getQueryParam().entrySet().stream()
+                    .map(it -> it.getKey() + "=" + it.getValue())
+                    .collect(Collectors.joining("&"));
             sb.append(paramString);
         }
         return sb.toString();
@@ -278,16 +277,6 @@ public class HttpConnection implements Connection {
         } else {
             return new byte[0];
         }
-    }
-
-    private static List<NameValuePair> toList(final Map<String, String> parameters) {
-        final ArrayList<NameValuePair> paramList = new ArrayList<>(parameters.size());
-        for (final Entry<String, String> param : parameters.entrySet()) {
-            if (param.getValue() != null) {
-                paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
-            }
-        }
-        return paramList;
     }
 
     public Response execute(final Request request) throws ArangoDBException, IOException {
