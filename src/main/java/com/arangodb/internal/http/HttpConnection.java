@@ -37,6 +37,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.ssl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,6 +143,8 @@ public class HttpConnection implements Connection {
     private final Integer timeout;
     private final ConnectionProvider provider;
     private final HttpClient client;
+
+    private Set<Cookie> cookies = new HashSet<>();
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
@@ -293,18 +296,23 @@ public class HttpConnection implements Connection {
             );
         }
 
-        HttpClient c = client
-                .headers(headers -> {
-                    headers.set(CONTENT_LENGTH, body.length);
-                    headers.set(USER_AGENT, "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-                    if (contentType == Protocol.HTTP_VPACK) {
-                        headers.set(ACCEPT, "application/x-velocypack");
-                    }
-                    addHeader(request, headers);
-                    if (body.length > 0) {
-                        headers.set(CONTENT_TYPE, getContentType());
-                    }
-                });
+        HttpClient c = client;
+
+        for (Cookie cookie : cookies) {
+            c = c.cookie(cookie);
+        }
+
+        c = c.headers(headers -> {
+            headers.set(CONTENT_LENGTH, body.length);
+            headers.set(USER_AGENT, "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+            if (contentType == Protocol.HTTP_VPACK) {
+                headers.set(ACCEPT, "application/x-velocypack");
+            }
+            addHeader(request, headers);
+            if (body.length > 0) {
+                headers.set(CONTENT_TYPE, getContentType());
+            }
+        });
 
         HttpClient.RequestSender sender = buildUri(buildMethod(c, request), url);
         HttpClient.ResponseReceiver<?> receiver = sender.send(Mono.just(Unpooled.wrappedBuffer(body)));
@@ -322,6 +330,13 @@ public class HttpConnection implements Connection {
     }
 
     private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
+
+        // FIXME: saved cookies never expire, save with received time and honor cookie maxAge
+        // FIXME: not thread safe: either make HttpConnection single thread or use synchronized here
+        // TODO: make configurable depending on httpCookieSpec config
+        // save received cookies
+        resp.cookies().values().forEach(cookies::addAll);
+
         final Mono<VPackSlice> vPackSliceMono;
 
         if (resp.method() == HttpMethod.HEAD || "0".equals(resp.responseHeaders().get(CONTENT_LENGTH))) {
