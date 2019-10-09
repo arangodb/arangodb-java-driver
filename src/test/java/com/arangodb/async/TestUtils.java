@@ -30,8 +30,8 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Michele Rastelli
  */
-public class TestUtils {
-    public static TestRule acquireHostListRule = (base, description) -> {
+class TestUtils {
+    static final TestRule acquireHostListRule = (base, description) -> {
         assumeTrue(!TestUtils.isAcquireHostList());
         return base;
     };

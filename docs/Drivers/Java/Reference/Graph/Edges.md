@@ -30,6 +30,10 @@ Retrieves the edge document with the given `key` from the collection.
 
     Whether or not catch possible thrown exceptions
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 ## ArangoEdgeCollection.insertEdge
 
 `ArangoEdgeCollection.insertEdge(T value, EdgeCreateOptions options) : EdgeEntity`
@@ -88,6 +92,10 @@ a edge and no precondition is violated.
 
     Replace a document based on target revision
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -135,6 +143,10 @@ edge and no precondition is violated.
     from the existing document that are contained in the patch document with an
     attribute value of null.
 
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
+
 **Examples**
 
 ```Java
@@ -168,6 +180,10 @@ Deletes the edge with the given _key_ from the collection.
   - **ifMatch**: `String`
 
     Remove a document based on target revision
+
+  - **streamTransactionId**: `String`
+
+    If set, the operation will be executed within the transaction
 
 **Examples**
 
