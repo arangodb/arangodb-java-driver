@@ -42,6 +42,8 @@ import io.netty.handler.ssl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 import reactor.netty.ByteBufMono;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.client.HttpClient;
@@ -143,6 +145,8 @@ public class HttpConnection implements Connection {
     private final Integer timeout;
     private final ConnectionProvider provider;
     private final HttpClient client;
+
+    private final Scheduler scheduler = Schedulers.single();
 
     private Set<Cookie> cookies = new HashSet<>();
 
@@ -282,44 +286,44 @@ public class HttpConnection implements Connection {
         }
     }
 
+    private HttpClient createHttpClient(final Request request, final int bodyLength) {
+        return addCookies(client)
+                .headers(headers -> {
+                    headers.set(CONTENT_LENGTH, bodyLength);
+                    headers.set(USER_AGENT, "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
+                    if (contentType == Protocol.HTTP_VPACK) {
+                        headers.set(ACCEPT, "application/x-velocypack");
+                    }
+                    addHeader(request, headers);
+                    if (bodyLength > 0) {
+                        headers.set(CONTENT_TYPE, getContentType());
+                    }
+                });
+    }
+
     public Response execute(final Request request) throws ArangoDBException, IOException {
-        final String url = buildUrl(request);
         byte[] body = getBody(request);
+        return Mono
+                .defer(() -> {
+                    final String url = buildUrl(request);
 
-        if (LOGGER.isDebugEnabled()) {
-            CURLLogger.log(
-                    url,
-                    request,
-                    Optional.ofNullable(user),
-                    Optional.ofNullable(password),
-                    util
-            );
-        }
+                    if (LOGGER.isDebugEnabled()) {
+                        CURLLogger.log(
+                                url,
+                                request,
+                                Optional.ofNullable(user),
+                                Optional.ofNullable(password),
+                                util
+                        );
+                    }
 
-        HttpClient c = client;
-
-        for (Cookie cookie : cookies) {
-            c = c.cookie(cookie);
-        }
-
-        c = c.headers(headers -> {
-            headers.set(CONTENT_LENGTH, body.length);
-            headers.set(USER_AGENT, "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
-            if (contentType == Protocol.HTTP_VPACK) {
-                headers.set(ACCEPT, "application/x-velocypack");
-            }
-            addHeader(request, headers);
-            if (body.length > 0) {
-                headers.set(CONTENT_TYPE, getContentType());
-            }
-        });
-
-        HttpClient.RequestSender sender = buildUri(buildMethod(c, request), url);
-        HttpClient.ResponseReceiver<?> receiver = sender.send(Mono.just(Unpooled.wrappedBuffer(body)));
-
-        return receiver
-                .responseSingle(this::buildResponse)
+                    HttpClient c = createHttpClient(request, body.length);
+                    HttpClient.RequestSender sender = buildUri(buildMethod(c, request), url);
+                    HttpClient.ResponseReceiver<?> receiver = sender.send(Mono.just(Unpooled.wrappedBuffer(body)));
+                    return receiver.responseSingle(this::buildResponse);
+                })
                 .doOnNext(this::checkError)
+                .subscribeOn(scheduler)
                 .block();
     }
 
@@ -329,13 +333,24 @@ public class HttpConnection implements Connection {
         }
     }
 
-    private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
+    private HttpClient addCookies(final HttpClient httpClient) {
+        LOGGER.debug("reading cookies");
+        HttpClient c = httpClient;
+        for (Cookie cookie : cookies) {
+            c = c.cookie(cookie);
+        }
+        return c;
+    }
 
+    private void saveCookies(HttpClientResponse resp) {
         // FIXME: saved cookies never expire, save with received time and honor cookie maxAge
-        // FIXME: not thread safe: either make HttpConnection single thread or use synchronized here
         // TODO: make configurable depending on httpCookieSpec config
         // save received cookies
+        LOGGER.debug("saving cookies");
         resp.cookies().values().forEach(cookies::addAll);
+    }
+
+    private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
 
         final Mono<VPackSlice> vPackSliceMono;
 
@@ -356,15 +371,19 @@ public class HttpConnection implements Connection {
         } else {
             throw new IllegalArgumentException();
         }
-        return vPackSliceMono.map(body -> {
-            final Response response = new Response();
-            response.setResponseCode(resp.status().code());
-            resp.responseHeaders().forEach(it -> response.getMeta().put(it.getKey(), it.getValue()));
-            if (body.getBuffer() != null && body.getBuffer().length > 0) {
-                response.setBody(body);
-            }
-            return response;
-        });
+
+        return vPackSliceMono
+                .map(body -> {
+                    final Response response = new Response();
+                    response.setResponseCode(resp.status().code());
+                    resp.responseHeaders().forEach(it -> response.getMeta().put(it.getKey(), it.getValue()));
+                    if (body.getBuffer() != null && body.getBuffer().length > 0) {
+                        response.setBody(body);
+                    }
+                    return response;
+                })
+                .publishOn(scheduler)
+                .doOnNext(it -> saveCookies(resp));
     }
 
     private void checkError(final Response response) throws ArangoDBException {
