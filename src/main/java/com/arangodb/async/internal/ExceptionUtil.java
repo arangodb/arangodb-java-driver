@@ -27,7 +27,7 @@ import java.util.function.Function;
 /**
  * @author Michele Rastelli
  */
-public class ExceptionUtil {
+class ExceptionUtil {
     static <T> Function<Throwable, T> catchGetDocumentExceptions(Boolean isCatchException) {
         return throwable -> {
             if (throwable instanceof CompletionException) {

@@ -101,6 +101,7 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(insertedDoc.getKey(), is(notNullValue()));
         assertThat(insertedDoc.getRev(), is(notNullValue()));
         assertThat(insertedDoc.getId(), is(COLLECTION_NAME + "/" + insertedDoc.getKey()));
+        //noinspection unchecked
         assertThat(((List<String>) insertedDoc.getNew().getAttribute("arr")), contains("a", null));
     }
 

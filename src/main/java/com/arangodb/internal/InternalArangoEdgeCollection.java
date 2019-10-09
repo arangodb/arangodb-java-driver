@@ -36,9 +36,6 @@ import com.arangodb.velocystream.RequestType;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Mark Vollmary
  *

@@ -45,7 +45,7 @@ public class StreamTransactionGraphTest extends BaseTest {
     private static final String VERTEX_COLLECTION_1 = "vertex_collection_1_stream_transaction_graph_test";
     private static final String VERTEX_COLLECTION_2 = "vertex_collection_2_stream_transaction_graph_test";
 
-    private ArangoGraphAsync graph;
+    private final ArangoGraphAsync graph;
     private ArangoVertexCollectionAsync vertexCollection1;
     private ArangoVertexCollectionAsync vertexCollection2;
     private ArangoEdgeCollectionAsync edgeCollection;
