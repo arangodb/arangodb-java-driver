@@ -143,12 +143,12 @@ public class HttpConnection implements Connection {
     private final Protocol contentType;
     private final HostDescription host;
     private final Integer timeout;
-    private final ConnectionProvider provider;
+    private final ConnectionProvider connectionProvider;
     private final HttpClient client;
+    private final Long ttl;
 
-    private final Scheduler scheduler = Schedulers.single();
-
-    private Set<Cookie> cookies = new HashSet<>();
+    private final Scheduler scheduler;
+    private final Set<Cookie> cookies;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
@@ -164,56 +164,54 @@ public class HttpConnection implements Connection {
         this.sslContext = sslContext;
         this.util = util;
         this.contentType = contentType;
+        this.ttl = ttl;
 
-        provider = ConnectionProvider.fixed(
+        this.scheduler = Schedulers.single();
+        this.cookies = new HashSet<>();
+
+        this.connectionProvider = initConnectionProvider();
+        this.client = initClient();
+    }
+
+    private ConnectionProvider initConnectionProvider() {
+        return ConnectionProvider.fixed(
                 "http",
                 1,  // FIXME: connection pooling should happen here, inside HttpConnection
                 DEFAULT_POOL_ACQUIRE_TIMEOUT,
                 ttl != null ? Duration.ofMillis(ttl) : null);
-
-        this.client = createClient();
-
-        // FIXME
-//        if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
-//            requestConfig.setCookieSpec(httpCookieSpec);
-//        }
     }
 
-    private HttpClient createClient() {
-        HttpClient c = HttpClient.create(provider)
+    private HttpClient initClient() {
+        HttpClient c = HttpClient
+                .create(connectionProvider)
                 .tcpConfiguration(tcpClient ->
                         timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
                 .wiretap(true)
                 .protocol(HttpProtocol.HTTP11)
                 .keepAlive(true)
-                .baseUrl(buildBaseUrl())
+                .baseUrl((Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort())
                 .headers(headers -> {
                     if (user != null)
                         headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
                 });
 
         if (Boolean.TRUE == useSsl && sslContext != null) {
-            c = c.secure(spec -> {
-                spec.sslContext(new JdkSslContext(sslContext, true, ClientAuth.NONE));
-            });
+            //noinspection deprecation
+            c = c.secure(spec -> spec.sslContext(new JdkSslContext(sslContext, true, ClientAuth.NONE)));
         }
 
         return c;
     }
 
-    private String buildBaseUrl() {
-        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
-    }
-
     private static String buildBasicAuthentication(final String principal, final String password) {
-        final String tmp = principal + ":" + (password == null ? "" : password);
-        String encoded = Base64.getEncoder().encodeToString(tmp.getBytes());
-        return "Basic " + encoded;
+        final String plainAuth = principal + ":" + (password == null ? "" : password);
+        String encodedAuth = Base64.getEncoder().encodeToString(plainAuth.getBytes());
+        return "Basic " + encodedAuth;
     }
 
     @Override
     public void close() {
-        provider.disposeLater().block();
+        connectionProvider.disposeLater().block();
     }
 
     private static String buildUrl(final Request request) {
@@ -253,14 +251,6 @@ public class HttpConnection implements Connection {
         }
     }
 
-    private HttpClient.RequestSender buildMethod(final HttpClient client, final Request request) {
-        return client.request(requestTypeToHttpMethod(request.getRequestType()));
-    }
-
-    private HttpClient.RequestSender buildUri(final HttpClient.RequestSender sender, final String url) {
-        return sender.uri(url);
-    }
-
     private String getContentType() {
         if (contentType == Protocol.HTTP_VPACK) {
             return CONTENT_TYPE_VPACK;
@@ -294,14 +284,14 @@ public class HttpConnection implements Connection {
                     if (contentType == Protocol.HTTP_VPACK) {
                         headers.set(ACCEPT, "application/x-velocypack");
                     }
-                    addHeader(request, headers);
+                    addHeaders(request, headers);
                     if (bodyLength > 0) {
                         headers.set(CONTENT_TYPE, getContentType());
                     }
                 });
     }
 
-    public Response execute(final Request request) throws ArangoDBException, IOException {
+    public Response execute(final Request request) throws ArangoDBException {
         byte[] body = getBody(request);
         return Mono
                 .defer(() -> {
@@ -317,17 +307,17 @@ public class HttpConnection implements Connection {
                         );
                     }
 
-                    HttpClient c = createHttpClient(request, body.length);
-                    HttpClient.RequestSender sender = buildUri(buildMethod(c, request), url);
-                    HttpClient.ResponseReceiver<?> receiver = sender.send(Mono.just(Unpooled.wrappedBuffer(body)));
-                    return receiver.responseSingle(this::buildResponse);
+                    return createHttpClient(request, body.length)
+                            .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
+                            .send(Mono.just(Unpooled.wrappedBuffer(body)))
+                            .responseSingle(this::buildResponse);
                 })
-                .doOnNext(this::checkError)
+                .doOnNext(response -> ResponseUtils.checkError(util, response))
                 .subscribeOn(scheduler)
                 .block();
     }
 
-    private static void addHeader(final Request request, final HttpHeaders headers) {
+    private static void addHeaders(final Request request, final HttpHeaders headers) {
         for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
             headers.add(header.getKey(), header.getValue());
         }
@@ -384,10 +374,6 @@ public class HttpConnection implements Connection {
                 })
                 .publishOn(scheduler)
                 .doOnNext(it -> saveCookies(resp));
-    }
-
-    private void checkError(final Response response) throws ArangoDBException {
-        ResponseUtils.checkError(util, response);
     }
 
 }
