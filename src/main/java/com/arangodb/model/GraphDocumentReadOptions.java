@@ -32,6 +32,7 @@ public class GraphDocumentReadOptions {
 	private boolean catchException;
 	@Expose(serialize = false)
 	private Boolean allowDirtyRead;
+    private String streamTransactionId;
 
 	public GraphDocumentReadOptions() {
 		super();
@@ -92,5 +93,19 @@ public class GraphDocumentReadOptions {
 	public Boolean getAllowDirtyRead() {
 		return allowDirtyRead;
 	}
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.1
+     */
+    public GraphDocumentReadOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

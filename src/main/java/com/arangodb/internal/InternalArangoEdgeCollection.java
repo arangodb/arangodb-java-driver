@@ -46,6 +46,8 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 	private static final String PATH_API_GHARIAL = "/_api/gharial";
 	private static final String EDGE = "edge";
 
+    private static final String TRANSACTION_ID = "x-arango-trx-id";
+
 	private final G graph;
 	private final String name;
 
@@ -67,6 +69,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE,
 			name);
 		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
+        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.setBody(util(Serializer.CUSTOM).serialize(value));
 		return request;
@@ -89,6 +92,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE,
 			DocumentUtil.createDocumentHandle(name, key));
 		final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
+        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		if (params.getAllowDirtyRead() == Boolean.TRUE) {
@@ -105,6 +109,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE,
 			DocumentUtil.createDocumentHandle(name, key));
 		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
+        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		request.setBody(util(Serializer.CUSTOM).serialize(value));
@@ -127,6 +132,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE,
 			DocumentUtil.createDocumentHandle(name, key));
 		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
+        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
@@ -150,6 +156,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE,
 			DocumentUtil.createDocumentHandle(name, key));
 		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
+        request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
 		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
 		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
 		return request;

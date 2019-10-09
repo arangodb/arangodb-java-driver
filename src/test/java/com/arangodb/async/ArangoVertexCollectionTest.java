@@ -101,7 +101,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
     public void getVertexIfMatchFail() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no").catchException(false);
         try {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                     .getVertex(vertex.getKey(), BaseDocument.class, options).get();
@@ -126,7 +126,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
     public void getVertexIfNoneMatchFail() throws InterruptedException, ExecutionException {
         final VertexEntity vertex = db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                 .insertVertex(new BaseDocument(), null).get();
-        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev());
+        final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(vertex.getRev()).catchException(false);
         try {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
                     .getVertex(vertex.getKey(), BaseDocument.class, options).get();
@@ -333,7 +333,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), null).get();
         try {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
-                    .getVertex(createResult.getKey(), BaseDocument.class, null).get();
+                    .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -349,7 +349,7 @@ public class ArangoVertexCollectionTest extends BaseTest {
         db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME).deleteVertex(createResult.getKey(), options).get();
         try {
             db.graph(GRAPH_NAME).vertexCollection(COLLECTION_NAME)
-                    .getVertex(createResult.getKey(), BaseDocument.class, null).get();
+                    .getVertex(createResult.getKey(), BaseDocument.class, new GraphDocumentReadOptions().catchException(false)).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));

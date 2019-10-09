@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Added
+
+- Stream Transactions support for graph APIs
+
+### Fixed
+
+- `catchExceptions` option in async `getEdge` and `getVertex`
+
 ## [6.3.0] - 2019-09-16
 
 ### Added
