@@ -25,6 +25,7 @@ import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.velocypack.VPackSlice;
+import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -32,6 +33,7 @@ import reactor.netty.NettyOutbound;
 import reactor.netty.tcp.TcpClient;
 
 import javax.net.ssl.SSLContext;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,7 +102,6 @@ public abstract class VstConnection implements Connection {
 
     @Override
     public synchronized void close() {
-        messageStore.clear();
         arangoTcpClient.disconnect();
     }
 
@@ -128,7 +129,7 @@ public abstract class VstConnection implements Connection {
                     final VPackSlice body = message.getBody();
                     outputStream.write(body.getBuffer(), contentOffset + written - headLength, contentLength - written);
                 }
-                arangoTcpClient.send(outputStream.toByteArray());
+                arangoTcpClient.send();
             } catch (final IOException e) {
                 LOGGER.error("Error on Connection " + connectionName);
                 throw new ArangoDBException(e);
@@ -177,18 +178,14 @@ public abstract class VstConnection implements Connection {
 
     private ByteBuffer readBytes(final int len) throws IOException {
         final byte[] buf = new byte[len];
-        readBytesIntoBuffer(buf, 0, len);
+        readBytesIntoBuffer(buf, len);
         return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
     }
 
-    protected void readBytesIntoBuffer(final byte[] buf, final int off, final int len) throws IOException {
-        for (int readed = 0; readed < len; ) {
-            final int read = inputStream.read(buf, off + readed, len - readed);
-            if (read == -1) {
-                throw new IOException("Reached the end of the stream.");
-            } else {
-                readed += read;
-            }
+    protected void readBytesIntoBuffer(final byte[] buf, final int len) throws IOException {
+        final int read = inputStream.read(buf, 0, len);
+        if (read == -1) {
+            throw new IOException("Reached the end of the stream.");
         }
     }
 
@@ -196,7 +193,7 @@ public abstract class VstConnection implements Connection {
         return this.connectionName;
     }
 
-    class ArangoTcpClient {
+    private class ArangoTcpClient {
         private volatile NettyOutbound outbound;
         private reactor.netty.Connection connection;
         private TcpClient tcpClient;
@@ -205,48 +202,69 @@ public abstract class VstConnection implements Connection {
             this.connection = connection;
         }
 
-        void send(byte[] bytes) {
-            outputStream = new ByteArrayOutputStream();
+        void send() {
             outbound
-                    .sendByteArray(Mono.just(bytes))
+                    .sendByteArray(Mono.just(outputStream.toByteArray()))
                     .then()
                     .subscribe();
+            outputStream = new ByteArrayOutputStream();
         }
+
+        private volatile Chunk chunk;
+        private volatile ByteArrayOutputStream chunkContentBuffer = new ByteArrayOutputStream();
 
         ArangoTcpClient() {
             tcpClient = TcpClient.create()
                     .host("127.0.0.1")
                     .port(8529)
-                    .doOnDisconnected(c -> {
-                        System.out.println("messageStore.isEmpty(): " + messageStore.isEmpty());
-                    })
+                    .doOnDisconnected(c -> messageStore.clear(new IOException("Connection closed!")))
                     .handle((i, o) -> {
                         outbound = o;
+
                         i.receive()
-                                .asInputStream()
-                                .doOnNext(is -> {
-                                    inputStream = is;
-                                    Chunk chunk = null;
+                                .doOnNext(x -> {
                                     try {
-                                        chunk = readChunk();
+                                        handleByteBuf(x);
                                     } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    System.out.println("rcv: " + chunk.getMessageId());
-                                    try {
-                                        chunkStore.storeChunk(chunk, is);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                        messageStore.clear(e);
+                                        close();
                                     }
                                 })
                                 .doOnError(it -> LOGGER.error(it.getMessage(), it))
                                 .subscribe();
                         return Mono.never();
                     })
-                    .doOnConnected(connection1 -> {
-                        send(PROTOCOL_HEADER);
-                        setConnection(connection1);
+                    .doOnConnected(c -> {
+                        try {
+                            outputStream.write(PROTOCOL_HEADER);
+                        } catch (IOException e) {
+                            messageStore.clear(e);
+                            close();
+                        }
+                        send();
+                        setConnection(c);
                     });
+        }
+
+        private void handleByteBuf(ByteBuf bb) throws IOException {
+            // new chunk
+            if (chunk == null) {
+                final byte[] chunkHeaderBuffer = new byte[ArangoDefaults.CHUNK_MIN_HEADER_SIZE];
+                bb.readBytes(chunkHeaderBuffer);
+                inputStream = new ByteArrayInputStream(chunkHeaderBuffer);
+                chunk = readChunk();
+            }
+
+            // read the data and append it to chunkContentBuffer
+            bb.readBytes(chunkContentBuffer, bb.readableBytes());
+
+            // chunkContent completely received
+            if (chunkContentBuffer.size() == chunk.getContentLength()) {
+                inputStream = new ByteArrayInputStream(chunkContentBuffer.toByteArray());
+                chunkStore.storeChunk(chunk, inputStream);
+                chunk = null;
+                chunkContentBuffer = new ByteArrayOutputStream();
+            }
         }
 
         void connect() {

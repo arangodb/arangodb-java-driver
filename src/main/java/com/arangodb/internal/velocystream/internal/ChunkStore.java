@@ -60,25 +60,17 @@ public class ChunkStore {
             data.put(messageId, chunkBuffer);
         }
 
-        final byte[] buf = new byte[chunk.getContentLength()];
-        readBytesIntoBuffer(inputStream, buf, 0, buf.length);
+        final byte[] buf = new byte[inputStream.available()];
+        readBytesIntoBuffer(inputStream, buf);
         chunkBuffer.put(buf);
-        checkCompleteness(chunk.getMessageId());
-    }
-
-    private void readBytesIntoBuffer(final InputStream inputStream, final byte[] buf, final int off, final int len) throws IOException {
-        for (int readed = 0; readed < len; ) {
-            final int read = inputStream.read(buf, off + readed, len - readed);
-            if (read == -1) {
-                throw new IOException("Reached the end of the stream.");
-            } else {
-                readed += read;
-            }
-        }
-    }
-
-    private void checkCompleteness(final long messageId) {
         checkCompleteness(messageId, data.get(messageId));
+    }
+
+    private void readBytesIntoBuffer(final InputStream inputStream, final byte[] buf) throws IOException {
+        final int read = inputStream.read(buf, 0, buf.length);
+        if (read == -1) {
+            throw new IOException("Reached the end of the stream.");
+        }
     }
 
     private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
