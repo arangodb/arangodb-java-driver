@@ -20,6 +20,9 @@
 
 package com.arangodb.internal.velocystream.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.BufferUnderflowException;
@@ -31,6 +34,8 @@ import java.util.Map;
  * @author Mark Vollmary
  */
 public class ChunkStore {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChunkStore.class);
 
     private final MessageStore messageStore;
     private final Map<Long, ByteBuffer> data;
@@ -79,7 +84,9 @@ public class ChunkStore {
     private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
             throws BufferUnderflowException, IndexOutOfBoundsException {
         if (chunkBuffer.position() == chunkBuffer.limit()) {
-            messageStore.consume(new Message(messageId, chunkBuffer.array()));
+            Message message = new Message(messageId, chunkBuffer.array());
+            LOGGER.info("consuming message:\n\t{}\n\t{}\n\t{}", message.getId(), message.getHead(), message.getBody());
+            messageStore.consume(message);
             data.remove(messageId);
         }
     }
