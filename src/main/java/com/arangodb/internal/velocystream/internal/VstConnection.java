@@ -41,6 +41,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Mark Vollmary
@@ -66,6 +67,7 @@ public abstract class VstConnection implements Connection {
     private final ArangoTcpClient arangoTcpClient;
 
     private volatile ChunkStore chunkStore;
+    private volatile CompletableFuture<Void> connected = new CompletableFuture<>();
 
     protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
                             final SSLContext sslContext, final MessageStore messageStore) {
@@ -93,11 +95,8 @@ public abstract class VstConnection implements Connection {
             return;
         }
         new Thread(arangoTcpClient::connect).start();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // wait for connection
+        connected.join();
     }
 
     @Override
@@ -197,6 +196,8 @@ public abstract class VstConnection implements Connection {
         private volatile NettyOutbound outbound;
         private reactor.netty.Connection connection;
         private TcpClient tcpClient;
+        private volatile Chunk chunk;
+        private volatile ByteArrayOutputStream chunkContentBuffer = new ByteArrayOutputStream();
 
         void setConnection(reactor.netty.Connection connection) {
             this.connection = connection;
@@ -209,9 +210,6 @@ public abstract class VstConnection implements Connection {
                     .subscribe();
             outputStream = new ByteArrayOutputStream();
         }
-
-        private volatile Chunk chunk;
-        private volatile ByteArrayOutputStream chunkContentBuffer = new ByteArrayOutputStream();
 
         ArangoTcpClient() {
             tcpClient = TcpClient.create()
@@ -243,6 +241,7 @@ public abstract class VstConnection implements Connection {
                         }
                         send();
                         setConnection(c);
+                        connected.complete(null);
                     });
         }
 

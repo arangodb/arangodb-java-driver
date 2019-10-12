@@ -77,7 +77,7 @@ public class ChunkStore {
             throws BufferUnderflowException, IndexOutOfBoundsException {
         if (chunkBuffer.position() == chunkBuffer.limit()) {
             Message message = new Message(messageId, chunkBuffer.array());
-            LOGGER.info("consuming message:\n\t{}\n\t{}\n\t{}", message.getId(), message.getHead(), message.getBody());
+            LOGGER.debug("consuming message:\n\t{}\n\t{}\n\t{}", message.getId(), message.getHead(), message.getBody());
             messageStore.consume(message);
             data.remove(messageId);
         }
