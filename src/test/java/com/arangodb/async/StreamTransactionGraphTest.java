@@ -103,7 +103,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get(), is(nullValue()));
 
-        db.abortStreamTransaction(tx.getId());
+        db.abortStreamTransaction(tx.getId()).get();
     }
 
 
@@ -128,7 +128,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get(), is(notNullValue()));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the vertex is found after commit
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null).get(), is(notNullValue()));
@@ -164,7 +164,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get().getProperties().get("test"), is("bar"));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the vertex has been replaced after commit
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null).get()
@@ -200,7 +200,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get().getProperties().get("test"), is("bar"));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the vertex has been updated after commit
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null).get()
@@ -230,7 +230,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get(), is(nullValue()));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the vertex has been deleted after commit
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null).get(),
@@ -256,7 +256,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get(), is(nullValue()));
 
-        db.abortStreamTransaction(tx.getId());
+        db.abortStreamTransaction(tx.getId()).get();
     }
 
 
@@ -281,7 +281,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get(), is(notNullValue()));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the edge is found after commit
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null).get(), is(notNullValue()));
@@ -317,7 +317,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get().getProperties().get("test"), is("bar"));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the edge has been replaced after commit
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null).get()
@@ -353,7 +353,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get().getProperties().get("test"), is("bar"));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the edge has been updated after commit
         assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null).get()
@@ -383,7 +383,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class,
                 new GraphDocumentReadOptions().streamTransactionId(tx.getId())).get(), is(nullValue()));
 
-        db.commitStreamTransaction(tx.getId());
+        db.commitStreamTransaction(tx.getId()).get();
 
         // assert that the edge has been deleted after commit
         assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null).get(),
