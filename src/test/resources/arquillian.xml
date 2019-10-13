@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian
+  http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <extension qualifier="docker">
+        <property name="serverVersion">1.12</property>
+        <property name="serverUri">unix:///var/run/docker.sock</property>
+        <property name="definitionFormat">CUBE</property>
+        <property name="dockerContainers">
+            arangodb:
+              image: docker.io/arangodb/arangodb:3.5.1
+              exposedPorts: [8529/tcp]
+              portBindings: [8529/tcp]
+              env:
+                - ARANGO_ROOT_PASSWORD=test
+              await:
+                strategy: log
+                match: 'ready for business'
+                stdOut: true
+                timeout: 60
+                occurrences: 1
+        </property>
+    </extension>
+</arquillian>
