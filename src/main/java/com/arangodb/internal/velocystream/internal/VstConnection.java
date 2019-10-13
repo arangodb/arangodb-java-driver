@@ -194,9 +194,10 @@ public abstract class VstConnection implements Connection {
 
     private class ArangoTcpClient {
         private volatile NettyOutbound outbound;
-        private reactor.netty.Connection connection;
+        private volatile reactor.netty.Connection connection;
         private TcpClient tcpClient;
         private volatile Chunk chunk;
+        private volatile ByteArrayOutputStream chunkHeaderBuffer = new ByteArrayOutputStream();
         private volatile ByteArrayOutputStream chunkContentBuffer = new ByteArrayOutputStream();
 
         void setConnection(reactor.netty.Connection connection) {
@@ -222,7 +223,9 @@ public abstract class VstConnection implements Connection {
                         i.receive()
                                 .doOnNext(x -> {
                                     try {
-                                        handleByteBuf(x);
+                                        while (x.readableBytes() > 0) {
+                                            handleByteBuf(x);
+                                        }
                                     } catch (IOException e) {
                                         messageStore.clear(e);
                                         close();
@@ -248,21 +251,35 @@ public abstract class VstConnection implements Connection {
         private void handleByteBuf(ByteBuf bb) throws IOException {
             // new chunk
             if (chunk == null) {
-                final byte[] chunkHeaderBuffer = new byte[ArangoDefaults.CHUNK_MIN_HEADER_SIZE];
-                bb.readBytes(chunkHeaderBuffer);
-                inputStream = new ByteArrayInputStream(chunkHeaderBuffer);
-                chunk = readChunk();
+                int missingHeaderBytes = ArangoDefaults.CHUNK_MIN_HEADER_SIZE - chunkHeaderBuffer.size();
+                int headerBytesToRead = Integer.min(missingHeaderBytes, bb.readableBytes());
+
+                if (headerBytesToRead > 0) {
+                    bb.readBytes(chunkHeaderBuffer, headerBytesToRead);
+                }
+
+                if (chunkHeaderBuffer.size() == ArangoDefaults.CHUNK_MIN_HEADER_SIZE) {
+                    inputStream = new ByteArrayInputStream(chunkHeaderBuffer.toByteArray());
+                    chunk = readChunk();
+                }
             }
 
-            // read the data and append it to chunkContentBuffer
-            bb.readBytes(chunkContentBuffer, bb.readableBytes());
+            if (chunk != null) {
+                int missingContentBytes = chunk.getContentLength() - chunkContentBuffer.size();
+                int contentBytesToRead = Integer.min(missingContentBytes, bb.readableBytes());
 
-            // chunkContent completely received
-            if (chunkContentBuffer.size() == chunk.getContentLength()) {
-                inputStream = new ByteArrayInputStream(chunkContentBuffer.toByteArray());
-                chunkStore.storeChunk(chunk, inputStream);
-                chunk = null;
-                chunkContentBuffer = new ByteArrayOutputStream();
+                if (contentBytesToRead > 0) {
+                    bb.readBytes(chunkContentBuffer, contentBytesToRead);
+                }
+
+                // chunkContent completely received
+                if (chunkContentBuffer.size() == chunk.getContentLength()) {
+                    inputStream = new ByteArrayInputStream(chunkContentBuffer.toByteArray());
+                    chunkStore.storeChunk(chunk, inputStream);
+                    chunk = null;
+                    chunkContentBuffer = new ByteArrayOutputStream();
+                    chunkHeaderBuffer = new ByteArrayOutputStream();
+                }
             }
         }
 
