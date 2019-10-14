@@ -30,21 +30,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyOutbound;
+import reactor.netty.resources.ConnectionProvider;
 import reactor.netty.tcp.TcpClient;
 
 import javax.net.ssl.SSLContext;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
+import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
+
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public abstract class VstConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
@@ -57,17 +62,17 @@ public abstract class VstConnection implements Connection {
     private final Boolean useSsl;
     private final SSLContext sslContext;
 
-    private volatile ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private volatile InputStream inputStream;
     private final HostDescription host;
 
     private final HashMap<Long, Long> sendTimestamps = new HashMap<>();
 
+    private final ConnectionProvider connectionProvider;
+
     private final String connectionName;
     private final ArangoTcpClient arangoTcpClient;
 
     private volatile ChunkStore chunkStore;
-    private volatile CompletableFuture<Void> connected = new CompletableFuture<>();
 
     protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
                             final SSLContext sslContext, final MessageStore messageStore) {
@@ -79,11 +84,21 @@ public abstract class VstConnection implements Connection {
         this.sslContext = sslContext;
         this.messageStore = messageStore;
 
+        this.connectionProvider = initConnectionProvider();
+
         connectionName = "conenction_" + System.currentTimeMillis() + "_" + Math.random();
         LOGGER.debug("Connection " + connectionName + " created");
 
         arangoTcpClient = new ArangoTcpClient();
         chunkStore = new ChunkStore(messageStore);
+    }
+
+    private ConnectionProvider initConnectionProvider() {
+        return ConnectionProvider.fixed(
+                "tcp",
+                1,
+                DEFAULT_POOL_ACQUIRE_TIMEOUT,
+                ttl != null ? Duration.ofMillis(ttl) : null);
     }
 
     public boolean isOpen() {
@@ -96,7 +111,7 @@ public abstract class VstConnection implements Connection {
         }
         new Thread(arangoTcpClient::connect).start();
         // wait for connection
-        connected.join();
+        arangoTcpClient.getConnectedFuture().join();
     }
 
     @Override
@@ -106,37 +121,31 @@ public abstract class VstConnection implements Connection {
 
     protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
         for (final Chunk chunk : chunks) {
-            try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
-                            chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
-                    sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
-                }
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
+                        chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+                sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
+            }
 
-                writeChunkHead(chunk);
+            writeChunkHead(chunk);
 
-                final int contentOffset = chunk.getContentOffset();
-                final int contentLength = chunk.getContentLength();
-                final VPackSlice head = message.getHead();
-                final int headLength = head.getByteSize();
-                int written = 0;
-                if (contentOffset < headLength) {
-                    written = Math.min(contentLength, headLength - contentOffset);
-                    outputStream.write(head.getBuffer(), contentOffset, written);
-                }
-                if (written < contentLength) {
-                    final VPackSlice body = message.getBody();
-                    outputStream.write(body.getBuffer(), contentOffset + written - headLength, contentLength - written);
-                }
-                arangoTcpClient.send();
-            } catch (final IOException e) {
-                LOGGER.error("Error on Connection " + connectionName);
-                throw new ArangoDBException(e);
+            final int contentOffset = chunk.getContentOffset();
+            final int contentLength = chunk.getContentLength();
+            final VPackSlice head = message.getHead();
+            final int headLength = head.getByteSize();
+            int written = 0;
+            if (contentOffset < headLength) {
+                written = Math.min(contentLength, headLength - contentOffset);
+                arangoTcpClient.send(Arrays.copyOfRange(head.getBuffer(), contentOffset, contentOffset + written));
+            }
+            if (written < contentLength) {
+                final VPackSlice body = message.getBody();
+                arangoTcpClient.send(Arrays.copyOfRange(body.getBuffer(), contentOffset + written - headLength, contentOffset + contentLength - headLength));
             }
         }
     }
 
-    private synchronized void writeChunkHead(final Chunk chunk) throws IOException {
+    private synchronized void writeChunkHead(final Chunk chunk) {
         final long messageLength = chunk.getMessageLength();
         final int headLength = messageLength > -1L ? ArangoDefaults.CHUNK_MAX_HEADER_SIZE
                 : ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
@@ -148,11 +157,10 @@ public abstract class VstConnection implements Connection {
         if (messageLength > -1L) {
             buffer.putLong(messageLength);
         }
-        outputStream.write(buffer.array());
+        arangoTcpClient.send(buffer.array());
     }
 
-    protected Chunk readChunk() throws IOException {
-        final ByteBuffer chunkHeadBuffer = readBytes(ArangoDefaults.CHUNK_MIN_HEADER_SIZE);
+    protected Chunk readChunk(final ByteBuffer chunkHeadBuffer) throws IOException {
         final int length = chunkHeadBuffer.getInt();
         final int chunkX = chunkHeadBuffer.getInt();
         final long messageId = chunkHeadBuffer.getLong();
@@ -177,15 +185,8 @@ public abstract class VstConnection implements Connection {
 
     private ByteBuffer readBytes(final int len) throws IOException {
         final byte[] buf = new byte[len];
-        readBytesIntoBuffer(buf, len);
+        inputStream.read(buf, 0, len);
         return ByteBuffer.wrap(buf).order(ByteOrder.LITTLE_ENDIAN);
-    }
-
-    protected void readBytesIntoBuffer(final byte[] buf, final int len) throws IOException {
-        final int read = inputStream.read(buf, 0, len);
-        if (read == -1) {
-            throw new IOException("Reached the end of the stream.");
-        }
     }
 
     public String getConnectionName() {
@@ -199,27 +200,27 @@ public abstract class VstConnection implements Connection {
         private volatile Chunk chunk;
         private volatile ByteArrayOutputStream chunkHeaderBuffer = new ByteArrayOutputStream();
         private volatile ByteArrayOutputStream chunkContentBuffer = new ByteArrayOutputStream();
+        private volatile CompletableFuture<Void> connectedFuture = new CompletableFuture<>();
 
-        void setConnection(reactor.netty.Connection connection) {
+        private void setConnection(reactor.netty.Connection connection) {
             this.connection = connection;
         }
 
-        void send() {
+        void send(byte[] bytes) {
             outbound
-                    .sendByteArray(Mono.just(outputStream.toByteArray()))
+                    .sendByteArray(Mono.just(bytes))
                     .then()
+                    // FIXME: catch errors
                     .subscribe();
-            outputStream = new ByteArrayOutputStream();
         }
 
         ArangoTcpClient() {
-            tcpClient = TcpClient.create()
+            tcpClient = TcpClient.create(connectionProvider)
                     .host("127.0.0.1")
                     .port(8529)
                     .doOnDisconnected(c -> messageStore.clear(new IOException("Connection closed!")))
                     .handle((i, o) -> {
                         outbound = o;
-
                         i.receive()
                                 .doOnNext(x -> {
                                     try {
@@ -231,22 +232,16 @@ public abstract class VstConnection implements Connection {
                                         close();
                                     }
                                 })
-                                .doOnError(it -> LOGGER.error(it.getMessage(), it))
                                 .subscribe();
                         return Mono.never();
                     })
                     .doOnConnected(c -> {
-                        try {
-                            outputStream.write(PROTOCOL_HEADER);
-                        } catch (IOException e) {
-                            messageStore.clear(e);
-                            close();
-                        }
-                        send();
                         setConnection(c);
-                        connected.complete(null);
+                        connectedFuture.complete(null);
+                        send(PROTOCOL_HEADER);
                     });
         }
+
 
         private void handleByteBuf(ByteBuf bb) throws IOException {
             // new chunk
@@ -259,8 +254,7 @@ public abstract class VstConnection implements Connection {
                 }
 
                 if (chunkHeaderBuffer.size() == ArangoDefaults.CHUNK_MIN_HEADER_SIZE) {
-                    inputStream = new ByteArrayInputStream(chunkHeaderBuffer.toByteArray());
-                    chunk = readChunk();
+                    chunk = readChunk(ByteBuffer.wrap(chunkHeaderBuffer.toByteArray()).order(ByteOrder.LITTLE_ENDIAN));
                 }
             }
 
@@ -274,8 +268,7 @@ public abstract class VstConnection implements Connection {
 
                 // chunkContent completely received
                 if (chunkContentBuffer.size() == chunk.getContentLength()) {
-                    inputStream = new ByteArrayInputStream(chunkContentBuffer.toByteArray());
-                    chunkStore.storeChunk(chunk, inputStream);
+                    chunkStore.storeChunk(chunk, chunkContentBuffer.toByteArray());
                     chunk = null;
                     chunkContentBuffer = new ByteArrayOutputStream();
                     chunkHeaderBuffer = new ByteArrayOutputStream();
@@ -296,6 +289,10 @@ public abstract class VstConnection implements Connection {
 
         boolean isActive() {
             return connection != null && connection.channel().isActive();
+        }
+
+        CompletableFuture<Void> getConnectedFuture() {
+            return connectedFuture;
         }
     }
 }

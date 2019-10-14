@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public class ChunkStore {
 
@@ -46,7 +46,7 @@ public class ChunkStore {
         data = new HashMap<>();
     }
 
-    public void storeChunk(final Chunk chunk, final InputStream inputStream) throws BufferUnderflowException, IndexOutOfBoundsException, IOException {
+    public void storeChunk(final Chunk chunk, final byte[] buf) throws BufferUnderflowException, IndexOutOfBoundsException, IOException {
         final long messageId = chunk.getMessageId();
         ByteBuffer chunkBuffer = data.get(messageId);
         if (chunkBuffer == null) {
@@ -60,17 +60,8 @@ public class ChunkStore {
             data.put(messageId, chunkBuffer);
         }
 
-        final byte[] buf = new byte[inputStream.available()];
-        readBytesIntoBuffer(inputStream, buf);
         chunkBuffer.put(buf);
         checkCompleteness(messageId, data.get(messageId));
-    }
-
-    private void readBytesIntoBuffer(final InputStream inputStream, final byte[] buf) throws IOException {
-        final int read = inputStream.read(buf, 0, buf.length);
-        if (read == -1) {
-            throw new IOException("Reached the end of the stream.");
-        }
     }
 
     private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
