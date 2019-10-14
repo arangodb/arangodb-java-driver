@@ -1,3 +1,5 @@
+package cube;
+
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;

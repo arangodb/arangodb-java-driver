@@ -7,14 +7,10 @@
     <extension qualifier="docker">
         <property name="serverVersion">1.12</property>
         <property name="serverUri">unix:///var/run/docker.sock</property>
-        <property name="definitionFormat">CUBE</property>
-        <property name="dockerContainers">
+        <property name="definitionFormat">COMPOSE</property>
+        <property name="dockerContainersFile">src/test/resources/docker-compose.yml</property>
+        <property name="cubeSpecificProperties">
             arangodb:
-              image: docker.io/arangodb/arangodb:3.5.1
-              exposedPorts: [8529/tcp]
-              portBindings: [8529/tcp]
-              env:
-                - ARANGO_ROOT_PASSWORD=test
               await:
                 strategy: log
                 match: 'ready for business'

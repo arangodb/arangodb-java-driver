@@ -1,0 +1,12 @@
+version: '2.1'
+services:
+  arangodb:
+    image: docker.io/arangodb/arangodb:3.5.1
+    environment:
+      - ARANGO_ROOT_PASSWORD=test
+    ports: ['8529:8529']
+    healthcheck:
+      test: arangosh --server.username root --server.password test --javascript.execute-string 'db._version()'
+      interval: 1s
+      timeout: 1s
+      retries: 60
