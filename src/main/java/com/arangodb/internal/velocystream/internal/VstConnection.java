@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
+import static com.arangodb.internal.ArangoDefaults.LONG_BYTES;
 import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
 /**
@@ -160,29 +161,6 @@ public abstract class VstConnection implements Connection {
         arangoTcpClient.send(buffer.array());
     }
 
-    protected Chunk readChunk(final ByteBuffer chunkHeadBuffer) throws IOException {
-        final int length = chunkHeadBuffer.getInt();
-        final int chunkX = chunkHeadBuffer.getInt();
-        final long messageId = chunkHeadBuffer.getLong();
-        final long messageLength;
-        final int contentLength;
-        if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-            messageLength = readBytes(ArangoDefaults.LONG_BYTES).getLong();
-            contentLength = length - ArangoDefaults.CHUNK_MAX_HEADER_SIZE;
-        } else {
-            messageLength = -1L;
-            contentLength = length - ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
-        }
-        final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
-            LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (sendTimestamps.get(chunk.getMessageId()) - System.currentTimeMillis()));
-        }
-
-        return chunk;
-    }
-
     private ByteBuffer readBytes(final int len) throws IOException {
         final byte[] buf = new byte[len];
         inputStream.read(buf, 0, len);
@@ -198,6 +176,7 @@ public abstract class VstConnection implements Connection {
         private volatile reactor.netty.Connection connection;
         private TcpClient tcpClient;
         private volatile Chunk chunk;
+        // FIXME: replace with faster data structures
         private volatile ByteArrayOutputStream chunkHeaderBuffer = new ByteArrayOutputStream();
         private volatile ByteArrayOutputStream chunkContentBuffer = new ByteArrayOutputStream();
         private volatile CompletableFuture<Void> connectedFuture = new CompletableFuture<>();
@@ -242,28 +221,59 @@ public abstract class VstConnection implements Connection {
                     });
         }
 
+        private void fillBytes(ByteBuf bbIn, ByteArrayOutputStream out, int len) {
+            int missingBytes = len - out.size();
+            int bytesToRead = Integer.min(missingBytes, bbIn.readableBytes());
 
-        private void handleByteBuf(ByteBuf bb) throws IOException {
+            if (bytesToRead > 0) {
+                try {
+                    bbIn.readBytes(out, bytesToRead);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        private void handleByteBuf(ByteBuf bbIn) throws IOException {
             // new chunk
             if (chunk == null) {
-                int missingHeaderBytes = ArangoDefaults.CHUNK_MIN_HEADER_SIZE - chunkHeaderBuffer.size();
-                int headerBytesToRead = Integer.min(missingHeaderBytes, bb.readableBytes());
-
-                if (headerBytesToRead > 0) {
-                    bb.readBytes(chunkHeaderBuffer, headerBytesToRead);
-                }
-
+                fillBytes(bbIn, chunkHeaderBuffer, ArangoDefaults.CHUNK_MIN_HEADER_SIZE);
                 if (chunkHeaderBuffer.size() == ArangoDefaults.CHUNK_MIN_HEADER_SIZE) {
-                    chunk = readChunk(ByteBuffer.wrap(chunkHeaderBuffer.toByteArray()).order(ByteOrder.LITTLE_ENDIAN));
+                    ByteBuffer bbHeader = ByteBuffer.wrap(chunkHeaderBuffer.toByteArray()).order(ByteOrder.LITTLE_ENDIAN);
+
+                    final int chunkLength = bbHeader.getInt();
+                    final int chunkX = bbHeader.getInt();
+                    final long messageId = bbHeader.getLong();
+                    final long messageLength;
+                    final int contentLength;
+                    if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
+                        ByteArrayOutputStream lengthBuffer = new ByteArrayOutputStream();
+                        fillBytes(bbIn, lengthBuffer, LONG_BYTES);
+                        if (lengthBuffer.size() < ArangoDefaults.LONG_BYTES)
+                            return;
+                        messageLength = ByteBuffer.wrap(lengthBuffer.toByteArray()).order(ByteOrder.LITTLE_ENDIAN).getLong();
+                        contentLength = chunkLength - ArangoDefaults.CHUNK_MAX_HEADER_SIZE;
+                    } else {
+                        messageLength = -1L;
+                        contentLength = chunkLength - ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
+                    }
+                    chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
+
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+                        LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (sendTimestamps.get(chunk.getMessageId()) - System.currentTimeMillis()));
+                    }
+
                 }
             }
 
             if (chunk != null) {
                 int missingContentBytes = chunk.getContentLength() - chunkContentBuffer.size();
-                int contentBytesToRead = Integer.min(missingContentBytes, bb.readableBytes());
+                int contentBytesToRead = Integer.min(missingContentBytes, bbIn.readableBytes());
 
                 if (contentBytesToRead > 0) {
-                    bb.readBytes(chunkContentBuffer, contentBytesToRead);
+                    bbIn.readBytes(chunkContentBuffer, contentBytesToRead);
                 }
 
                 // chunkContent completely received
