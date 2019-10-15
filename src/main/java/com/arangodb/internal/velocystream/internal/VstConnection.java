@@ -34,17 +34,14 @@ import reactor.netty.tcp.TcpClient;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 import static com.arangodb.internal.ArangoDefaults.*;
-import static io.netty.buffer.Unpooled.buffer;
+import static io.netty.buffer.Unpooled.directBuffer;
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
 /**
@@ -62,7 +59,6 @@ public abstract class VstConnection implements Connection {
     private final Boolean useSsl;
     private final SSLContext sslContext;
 
-    private volatile InputStream inputStream;
     private final HostDescription host;
 
     private final HashMap<Long, Long> sendTimestamps = new HashMap<>();
@@ -134,14 +130,16 @@ public abstract class VstConnection implements Connection {
             final VPackSlice head = message.getHead();
             final int headLength = head.getByteSize();
             int written = 0;
+            ByteBuf out = directBuffer();
             if (contentOffset < headLength) {
                 written = Math.min(contentLength, headLength - contentOffset);
-                arangoTcpClient.send(Arrays.copyOfRange(head.getBuffer(), contentOffset, contentOffset + written));
+                out.writeBytes(head.getBuffer(), contentOffset, written);
             }
             if (written < contentLength) {
                 final VPackSlice body = message.getBody();
-                arangoTcpClient.send(Arrays.copyOfRange(body.getBuffer(), contentOffset + written - headLength, contentOffset + contentLength - headLength));
+                out.writeBytes(body.getBuffer(), contentOffset + written - headLength, contentLength - written);
             }
+            arangoTcpClient.send(out);
         }
     }
 
@@ -150,14 +148,15 @@ public abstract class VstConnection implements Connection {
         final int headLength = messageLength > -1L ? CHUNK_MAX_HEADER_SIZE
                 : CHUNK_MIN_HEADER_SIZE;
         final int length = chunk.getContentLength() + headLength;
-        final ByteBuffer buffer = ByteBuffer.allocate(headLength).order(ByteOrder.LITTLE_ENDIAN);
-        buffer.putInt(length);
-        buffer.putInt(chunk.getChunkX());
-        buffer.putLong(chunk.getMessageId());
+        final ByteBuf buffer = directBuffer(headLength);
+
+        buffer.writeIntLE(length);
+        buffer.writeIntLE(chunk.getChunkX());
+        buffer.writeLongLE(chunk.getMessageId());
         if (messageLength > -1L) {
-            buffer.putLong(messageLength);
+            buffer.writeLongLE(messageLength);
         }
-        arangoTcpClient.send(buffer.array());
+        arangoTcpClient.send(buffer);
     }
 
     public String getConnectionName() {
@@ -169,21 +168,19 @@ public abstract class VstConnection implements Connection {
         private volatile reactor.netty.Connection connection;
         private TcpClient tcpClient;
         private volatile Chunk chunk;
-        private volatile ByteBuf chunkHeaderBuffer = buffer();
-        private volatile ByteBuf chunkContentBuffer = buffer();
+        private volatile ByteBuf chunkHeaderBuffer = directBuffer();
+        private volatile ByteBuf chunkContentBuffer = directBuffer();
         private volatile CompletableFuture<Void> connectedFuture = new CompletableFuture<>();
 
         private void setConnection(reactor.netty.Connection connection) {
             this.connection = connection;
         }
 
-        void send(byte[] bytes) {
-
+        void send(ByteBuf buf) {
             outbound
-                    .sendByteArray(Mono.just(bytes))
-                    .then()
+                    .send(Mono.just(buf))
                     // FIXME: catch errors
-                    .subscribe();
+                    .then().subscribe();
         }
 
         ArangoTcpClient() {
@@ -210,7 +207,7 @@ public abstract class VstConnection implements Connection {
                     .doOnConnected(c -> {
                         setConnection(c);
                         connectedFuture.complete(null);
-                        send(PROTOCOL_HEADER);
+                        send(wrappedBuffer(PROTOCOL_HEADER));
                     });
         }
 
@@ -261,12 +258,12 @@ public abstract class VstConnection implements Connection {
                     chunkContentBuffer.readBytes(buf);
                     chunkStore.storeChunk(chunk, buf);
 
-                    chunkHeaderBuffer.clear();
-                    chunkContentBuffer.clear();
+                    chunkHeaderBuffer.release();
+                    chunkContentBuffer.release();
 
                     chunk = null;
-                    chunkHeaderBuffer = buffer();
-                    chunkContentBuffer = buffer();
+                    chunkHeaderBuffer = directBuffer();
+                    chunkContentBuffer = directBuffer();
                 }
             }
         }
