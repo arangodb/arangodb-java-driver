@@ -44,9 +44,9 @@ public class SimpleSyncPerfTest {
     @Parameterized.Parameters
     public static Collection<Protocol> protocols() {
         return Arrays.asList(
+                Protocol.VST,
                 Protocol.HTTP_VPACK,
-                Protocol.HTTP_JSON,
-                Protocol.VST
+                Protocol.HTTP_JSON
         );
     }
 
@@ -68,10 +68,11 @@ public class SimpleSyncPerfTest {
     }
 
     @Test
-    public void getVersion() {
+    public void getVersion() throws InterruptedException {
         long start = new Date().getTime();
         doGetVersion();
         long end = new Date().getTime();
         System.out.println("elapsed ms: " + (end - start));
+        Thread.sleep(5000);
     }
 }
