@@ -30,6 +30,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * @author Michele Rastelli
@@ -41,27 +42,36 @@ public class SimpleSyncPerfTest {
     private final ArangoDB arangoDB;
 
     @Parameterized.Parameters
-    public static Collection<ArangoDB> builders() {
+    public static Collection<Protocol> protocols() {
         return Arrays.asList(
-                new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
-                new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
-                new ArangoDB.Builder().useProtocol(Protocol.VST).build()
+                Protocol.HTTP_VPACK,
+                Protocol.HTTP_JSON,
+                Protocol.VST
         );
     }
 
-    public SimpleSyncPerfTest(final ArangoDB arangoDB) {
-        this.arangoDB = arangoDB;
+    public SimpleSyncPerfTest(final Protocol protocol) {
+        System.out.println("---");
+        System.out.println(protocol);
+        this.arangoDB = new ArangoDB.Builder().useProtocol(protocol).build();
     }
 
     @Before
     public void warmup() {
-        getVersion();
+        doGetVersion();
+    }
+
+    private void doGetVersion() {
+        for (int i = 0; i < REPETITIONS; i++) {
+            arangoDB.getVersion();
+        }
     }
 
     @Test
     public void getVersion() {
-        for (int i = 0; i < REPETITIONS; i++) {
-            arangoDB.getVersion();
-        }
+        long start = new Date().getTime();
+        doGetVersion();
+        long end = new Date().getTime();
+        System.out.println("elapsed ms: " + (end - start));
     }
 }
