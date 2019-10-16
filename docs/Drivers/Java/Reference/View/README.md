@@ -9,7 +9,7 @@ These functions implement the
 
 `ArangoView.exists() : boolean`
 
-Checks whether the view exists
+Checks whether the View exists
 
 **Examples**
 
@@ -25,7 +25,7 @@ boolean exists = view.exists();
 
 `ArangoView.getInfo() : ViewEntity`
 
-Returns information about the view.
+Returns information about the View.
 
 **Examples**
 
