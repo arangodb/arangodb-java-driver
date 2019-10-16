@@ -25,7 +25,6 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.velocypack.VPackSlice;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -40,8 +39,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
-import static com.arangodb.internal.ArangoDefaults.*;
-import static io.netty.buffer.Unpooled.*;
+import static com.arangodb.internal.ArangoDefaults.HEADER_SIZE;
+import static io.netty.buffer.Unpooled.wrappedBuffer;
 import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
 /**
@@ -51,7 +50,6 @@ import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TI
 public abstract class VstConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
     private static final byte[] PROTOCOL_HEADER = "VST/1.1\r\n\r\n".getBytes();
-    private static final int DEFAULT_INITIAL_CAPACITY = 256;
 
     protected final MessageStore messageStore;
 
@@ -90,14 +88,6 @@ public abstract class VstConnection implements Connection {
         chunkStore = new ChunkStore(messageStore);
     }
 
-    private ByteBuf createBuffer() {
-        return createBuffer(DEFAULT_INITIAL_CAPACITY);
-    }
-
-    private ByteBuf createBuffer(int initialCapacity) {
-        return PooledByteBufAllocator.DEFAULT.directBuffer(initialCapacity);
-    }
-
     private ConnectionProvider initConnectionProvider() {
         return ConnectionProvider.fixed(
                 "tcp",
@@ -134,7 +124,7 @@ public abstract class VstConnection implements Connection {
 
             final long messageLength = chunk.getMessageLength();
             final int length = chunk.getContentLength() + HEADER_SIZE;
-            final ByteBuf out = createBuffer(length);
+            final ByteBuf out = IOUtils.createBuffer(length);
 
             out.writeIntLE(length);
             out.writeIntLE(chunk.getChunkX());
@@ -166,8 +156,8 @@ public abstract class VstConnection implements Connection {
         private volatile reactor.netty.Connection connection;
         private TcpClient tcpClient;
         private volatile Chunk chunk;
-        private volatile ByteBuf chunkHeaderBuffer = createBuffer();
-        private volatile ByteBuf chunkContentBuffer = createBuffer();
+        private volatile ByteBuf chunkHeaderBuffer = IOUtils.createBuffer();
+        private volatile ByteBuf chunkContentBuffer = IOUtils.createBuffer();
         private volatile CompletableFuture<Void> connectedFuture = new CompletableFuture<>();
 
         private void setConnection(reactor.netty.Connection connection) {
@@ -190,13 +180,8 @@ public abstract class VstConnection implements Connection {
                         outbound = o;
                         i.receive()
                                 .doOnNext(x -> {
-                                    try {
-                                        while (x.readableBytes() > 0) {
-                                            handleByteBuf(x);
-                                        }
-                                    } catch (IOException e) {
-                                        messageStore.clear(e);
-                                        close();
+                                    while (x.readableBytes() > 0) {
+                                        handleByteBuf(x);
                                     }
                                 })
                                 .subscribe();
@@ -215,7 +200,7 @@ public abstract class VstConnection implements Connection {
             bbIn.readBytes(out, bytesToRead);
         }
 
-        private void handleByteBuf(ByteBuf bbIn) throws IOException {
+        private void handleByteBuf(ByteBuf bbIn) {
             // new chunk
             if (chunk == null) {
                 int missingBytes = HEADER_SIZE - chunkHeaderBuffer.readableBytes();
@@ -252,14 +237,10 @@ public abstract class VstConnection implements Connection {
             }
         }
 
-        private void readContent() throws IOException {
-            byte[] buf = new byte[chunkContentBuffer.readableBytes()];
-            chunkContentBuffer.readBytes(buf);
-            chunkStore.storeChunk(chunk, buf);
-
+        private void readContent() {
+            chunkStore.storeChunk(chunk, chunkContentBuffer);
             chunkHeaderBuffer.clear();
             chunkContentBuffer.clear();
-
             chunk = null;
         }
 

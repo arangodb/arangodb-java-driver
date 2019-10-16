@@ -20,12 +20,11 @@
 
 package com.arangodb.internal.velocystream.internal;
 
+import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public class ChunkStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChunkStore.class);
 
     private final MessageStore messageStore;
-    private final Map<Long, ByteBuffer> data;
+    private final Map<Long, ByteBuf> data;
 
     public ChunkStore(final MessageStore messageStore) {
         super();
@@ -46,27 +45,29 @@ public class ChunkStore {
         data = new HashMap<>();
     }
 
-    public void storeChunk(final Chunk chunk, final byte[] buf) throws BufferUnderflowException, IndexOutOfBoundsException, IOException {
+    public void storeChunk(final Chunk chunk, final ByteBuf inBuf) throws BufferUnderflowException, IndexOutOfBoundsException {
         final long messageId = chunk.getMessageId();
-        ByteBuffer chunkBuffer = data.get(messageId);
+        ByteBuf chunkBuffer = data.get(messageId);
         if (chunkBuffer == null) {
             if (!chunk.isFirstChunk()) {
                 messageStore.cancel(messageId);
                 return;
             }
             final int length = chunk.getChunk() > 1 ? (int) chunk.getMessageLength() : chunk.getContentLength();
-            chunkBuffer = ByteBuffer.allocate(length);
+            chunkBuffer = IOUtils.createBuffer(length, length);
             data.put(messageId, chunkBuffer);
         }
 
-        chunkBuffer.put(buf);
-        checkCompleteness(messageId, data.get(messageId));
+        chunkBuffer.writeBytes(inBuf);
+        checkCompleteness(messageId, chunkBuffer);
     }
 
-    private void checkCompleteness(final long messageId, final ByteBuffer chunkBuffer)
+    private void checkCompleteness(final long messageId, final ByteBuf chunkBuffer)
             throws BufferUnderflowException, IndexOutOfBoundsException {
-        if (chunkBuffer.position() == chunkBuffer.limit()) {
-            Message message = new Message(messageId, chunkBuffer.array());
+        if (chunkBuffer.readableBytes() == chunkBuffer.capacity()) {
+            byte[] bytes = new byte[chunkBuffer.readableBytes()];
+            chunkBuffer.readBytes(bytes);
+            Message message = new Message(messageId, bytes);
             LOGGER.debug("consuming message:\n\t{}\n\t{}\n\t{}", message.getId(), message.getHead(), message.getBody());
             messageStore.consume(message);
             data.remove(messageId);
