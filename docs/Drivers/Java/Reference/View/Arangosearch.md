@@ -7,28 +7,28 @@ These functions implement the
 
 `ArangoDatabase.createArangoSearch(String name, ArangoSearchCreateOptions options) : ViewEntity`
 
-Creates a ArangoSearch view with the given _options_, then returns
-view information from the server.
+Creates a ArangoSearch View with the given _options_, then returns
+View information from the server.
 
 **Arguments**
 
 - **name**: `String`
 
-  The name of the view
+  The name of the View
 
 - **options**: `ArangoSearchCreateOptions`
 
   - **commitIntervalMsec**: `Long`
 
-    Wait at least this many milliseconds between committing view data store changes
+    Wait at least this many milliseconds between committing View data store changes
     and making documents visible to queries (default: 1000, to disable use: 0). For
     the case where there are a lot of inserts/updates, a lower value, until commit,
     will cause the index not to account for them and memory usage would continue to
     grow. For the case where there are a few inserts/updates, a higher value will
     impact performance and waste disk space for each commit call without any added
-    benefits. Background: For data retrieval ArangoSearch views follow the concept
+    benefits. Background: For data retrieval ArangoSearch Views follow the concept
     of "eventually-consistent", i.e. eventually all the data in ArangoDB will be
-    matched by corresponding query expressions. The concept of ArangoSearch view
+    matched by corresponding query expressions. The concept of ArangoSearch View
     "commit" operation is introduced to control the upper-bound on the time until
     document addition/removals are actually reflected by corresponding query
     expressions. Once a "commit" operation is complete all documents added/removed
@@ -87,14 +87,14 @@ view information from the server.
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 db.createArangoSearch("potatoes", new ArangoSearchPropertiesOptions());
-// the ArangoSearch view "potatoes" now exists
+// the ArangoSearch View "potatoes" now exists
 ```
 
 ## ArangoSearch.create
 
 `ArangoSearch.create(ArangoSearchCreateOptions options) : ViewEntity`
 
-Creates a ArangoSearch view with the given _options_, then returns view information from the server.
+Creates a ArangoSearch View with the given _options_, then returns View information from the server.
 
 Alternative for `ArangoDatabase.createArangoSearch`.
 
@@ -157,7 +157,7 @@ view.create(new ArangoSearchPropertiesOptions());
 
 `ArangoSearch.getProperties() : ArangoSearchPropertiesEntity`
 
-Reads the properties of the specified view.
+Reads the properties of the specified View.
 
 **Examples**
 
@@ -173,7 +173,7 @@ ArangoSearchPropertiesEntity properties = view.getProperties();
 
 `ArangoSearch.updateProperties(ArangoSearchPropertiesOptions options) : ArangoSearchPropertiesEntity`
 
-Partially changes properties of the view.
+Partially changes properties of the View.
 
 **Arguments**
 
@@ -236,7 +236,7 @@ view.updateProperties(
 
 `ArangoSearch.replaceProperties(ArangoSearchPropertiesOptions options) : ArangoSearchPropertiesEntity`
 
-Changes properties of the view.
+Changes properties of the View.
 
 **Arguments**
 
