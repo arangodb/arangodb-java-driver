@@ -1,7 +1,7 @@
 # Transactions
 
 This function implements the
-[HTTP API for transactions](https://docs.arangodb.com/latest/HTTP/Transaction/index.html).
+[HTTP API for transactions](https://www.arangodb.com/docs/devel/http/transaction.html).
 
 ## ArangoDatabase.transaction
 
