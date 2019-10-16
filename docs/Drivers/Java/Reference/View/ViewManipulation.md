@@ -1,7 +1,7 @@
-# Manipulating the view
+# Manipulating the View
 
-These functions implement
-[the HTTP API for modifying views](https://docs.arangodb.com/latest/HTTP/Views/Modifying.html).
+These functions implement the
+[HTTP API for modifying Views](https://www.arangodb.com/docs/devel/http/views.html).
 
 ## ArangoDatabase.createView
 
