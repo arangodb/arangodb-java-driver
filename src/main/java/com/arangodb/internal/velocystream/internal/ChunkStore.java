@@ -67,6 +67,7 @@ public class ChunkStore {
         if (chunkBuffer.readableBytes() == chunkBuffer.capacity()) {
             byte[] bytes = new byte[chunkBuffer.readableBytes()];
             chunkBuffer.readBytes(bytes);
+            chunkBuffer.release();
             Message message = new Message(messageId, bytes);
             LOGGER.debug("consuming message:\n\t{}\n\t{}\n\t{}", message.getId(), message.getHead(), message.getBody());
             messageStore.consume(message);
