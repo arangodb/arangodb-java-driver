@@ -1,7 +1,7 @@
-# Accessing views
+# Accessing Views
 
 These functions implement the
-[HTTP API for accessing view](https://docs.arangodb.com/latest/HTTP/Views/Getting.html).
+[HTTP API for accessing View](https://docs.arangodb.com/latest/HTTP/Views/index.html).
 
 ## ArangoDatabase.view
 
