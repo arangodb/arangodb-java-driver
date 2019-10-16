@@ -7,17 +7,17 @@ These functions implement the
 
 `ArangoDatabase.createView(String name, ViewType type) : ViewEntity`
 
-Creates a view of the given _type_, then returns view information from the server.
+Creates a View of the given _type_, then returns View information from the server.
 
 **Arguments**
 
 - **name**: `String`
 
-  The name of the view
+  The name of the View
 
 - **type**: `ViewType`
 
-  The type of the view
+  The type of the View
 
 **Examples**
 
@@ -32,7 +32,7 @@ db.createView("myView", ViewType.ARANGO_SEARCH);
 
 `ArangoView.rename(String newName) : ViewEntity`
 
-Renames the view.
+Renames the View.
 
 **Arguments**
 
@@ -49,14 +49,14 @@ ArangoView view = db.view("some-view");
 
 ViewEntity result = view.rename("new-view-name")
 assertThat(result.getName(), is("new-view-name");
-// result contains additional information about the view
+// result contains additional information about the View
 ```
 
 ## ArangoView.drop
 
 `ArangoView.drop() : void`
 
-Deletes the view from the database.
+Deletes the View from the database.
 
 **Examples**
 
@@ -66,5 +66,5 @@ ArangoDatabase db = arango.db("myDB");
 ArangoView view = db.view("some-view");
 
 view.drop();
-// the view "some-view" no longer exists
+// the View "some-view" no longer exists
 ```
