@@ -50,7 +50,7 @@ import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TI
  */
 public abstract class VstConnection implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
-    private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
+    private static final byte[] PROTOCOL_HEADER = "VST/1.1\r\n\r\n".getBytes();
     private static final int DEFAULT_INITIAL_CAPACITY = 256;
 
     protected final MessageStore messageStore;
@@ -132,7 +132,14 @@ public abstract class VstConnection implements Connection {
                 sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
             }
 
-            ByteBuf out = writeChunkHead(chunk);
+            final long messageLength = chunk.getMessageLength();
+            final int length = chunk.getContentLength() + HEADER_SIZE;
+            final ByteBuf out = createBuffer(length);
+
+            out.writeIntLE(length);
+            out.writeIntLE(chunk.getChunkX());
+            out.writeLongLE(chunk.getMessageId());
+            out.writeLongLE(messageLength);
 
             final int contentOffset = chunk.getContentOffset();
             final int contentLength = chunk.getContentLength();
@@ -148,22 +155,6 @@ public abstract class VstConnection implements Connection {
             }
             arangoTcpClient.send(out);
         }
-    }
-
-    private synchronized ByteBuf writeChunkHead(final Chunk chunk) {
-        final long messageLength = chunk.getMessageLength();
-        final int headLength = messageLength > -1L ? CHUNK_MAX_HEADER_SIZE
-                : CHUNK_MIN_HEADER_SIZE;
-        final int length = chunk.getContentLength() + headLength;
-        final ByteBuf buffer = createBuffer(headLength);
-
-        buffer.writeIntLE(length);
-        buffer.writeIntLE(chunk.getChunkX());
-        buffer.writeLongLE(chunk.getMessageId());
-        if (messageLength > -1L) {
-            buffer.writeLongLE(messageLength);
-        }
-        return buffer;
     }
 
     public String getConnectionName() {
@@ -227,10 +218,10 @@ public abstract class VstConnection implements Connection {
         private void handleByteBuf(ByteBuf bbIn) throws IOException {
             // new chunk
             if (chunk == null) {
-                int missingBytes = CHUNK_MIN_HEADER_SIZE - chunkHeaderBuffer.readableBytes();
+                int missingBytes = HEADER_SIZE - chunkHeaderBuffer.readableBytes();
                 readBytes(bbIn, chunkHeaderBuffer, missingBytes);
-                if (chunkHeaderBuffer.readableBytes() >= CHUNK_MIN_HEADER_SIZE) {
-                    readHeader(bbIn);
+                if (chunkHeaderBuffer.readableBytes() == HEADER_SIZE) {
+                    readHeader();
                 }
             }
 
@@ -245,22 +236,14 @@ public abstract class VstConnection implements Connection {
             }
         }
 
-        private void readHeader(ByteBuf bbIn) {
-            final int chunkLength = chunkHeaderBuffer.getIntLE(0);
-            final int chunkX = chunkHeaderBuffer.getIntLE(INTEGER_BYTES);
-            final long messageId = chunkHeaderBuffer.getLongLE(2 * INTEGER_BYTES);
-            final long messageLength;
-            final int contentLength;
-            if ((1 == (chunkX & 0x1)) && ((chunkX >> 1) > 1)) {
-                readBytes(bbIn, chunkHeaderBuffer, LONG_BYTES);
-                if (chunkHeaderBuffer.readableBytes() < CHUNK_MAX_HEADER_SIZE)
-                    return;
-                messageLength = chunkHeaderBuffer.getLongLE(CHUNK_MIN_HEADER_SIZE);
-                contentLength = chunkLength - CHUNK_MAX_HEADER_SIZE;
-            } else {
-                messageLength = -1L;
-                contentLength = chunkLength - CHUNK_MIN_HEADER_SIZE;
-            }
+        private void readHeader() {
+            final int chunkLength = chunkHeaderBuffer.readIntLE();
+            final int chunkX = chunkHeaderBuffer.readIntLE();
+
+            final long messageId = chunkHeaderBuffer.readLongLE();
+            final long messageLength = chunkHeaderBuffer.readLongLE();
+            final int contentLength = chunkLength - HEADER_SIZE;
+
             chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 
             if (LOGGER.isDebugEnabled()) {

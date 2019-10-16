@@ -54,8 +54,7 @@ public class ChunkStore {
                 messageStore.cancel(messageId);
                 return;
             }
-            final int length = (int) (chunk.getMessageLength() > 0 ? chunk.getMessageLength()
-                    : chunk.getContentLength());
+            final int length = chunk.getChunk() > 1 ? (int) chunk.getMessageLength() : chunk.getContentLength();
             chunkBuffer = ByteBuffer.allocate(length);
             data.put(messageId, chunkBuffer);
         }
