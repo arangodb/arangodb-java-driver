@@ -1,7 +1,7 @@
 # Manipulating the collection
 
 These functions implement
-[the HTTP API for modifying collections](https://docs.arangodb.com/latest/HTTP/Collection/Modifying.html).
+[the HTTP API for modifying collections](https://www.arangodb.com/docs/devel/http/collection-modifying.html).
 
 ## ArangoDatabase.createCollection
 
