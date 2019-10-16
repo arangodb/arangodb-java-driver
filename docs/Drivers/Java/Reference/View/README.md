@@ -3,7 +3,7 @@
 These functions implement the
 [HTTP API for Views](https://www.arangodb.com/docs/devel/http/views.html).
 
-## Getting information about the view
+## Getting information about the View
 
 ## ArangoView.exists
 
