@@ -1,7 +1,7 @@
 # Collection API
 
 These functions implement the
-[HTTP API for collections](https://docs.arangodb.com/latest/HTTP/Collection/index.html).
+[HTTP API for collections](https://www.arangodb.com/docs/devel/http/collection.html).
 
 The _ArangoCollection_ API is used for all collections, regardless of
 their specific type (document/edge collection).
@@ -9,7 +9,7 @@ their specific type (document/edge collection).
 ## Getting information about the collection
 
 See
-[the HTTP API documentation](https://docs.arangodb.com/latest/HTTP/Collection/Getting.html)
+[the HTTP API documentation](https://www.arangodb.com/docs/devel/http/collection-getting.html)
 for details.
 
 ## ArangoCollection.exists
