@@ -1,13 +1,9 @@
 # View API
 
 These functions implement the
-[HTTP API for views](https://docs.arangodb.com/latest/HTTP/Views/index.html).
+[HTTP API for Views](https://www.arangodb.com/docs/devel/http/views.html).
 
 ## Getting information about the view
-
-See
-[the HTTP API documentation](https://docs.arangodb.com/latest/HTTP/Views/Getting.html)
-for details.
 
 ## ArangoView.exists
 
