@@ -115,6 +115,15 @@ public abstract class VstConnection implements Connection {
     }
 
     protected synchronized void writeIntern(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+        final ByteBuf messageBuffer = IOUtils.createBuffer();
+        messageBuffer.writeBytes(message.getHead().getBuffer(), 0, message.getHead().getByteSize());
+        final VPackSlice body = message.getBody();
+        if (body != null) {
+            messageBuffer.writeBytes(body.getBuffer(), 0, message.getBody().getByteSize());
+        }
+
+        final ByteBuf out = IOUtils.createBuffer();
+
         for (final Chunk chunk : chunks) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
@@ -122,29 +131,21 @@ public abstract class VstConnection implements Connection {
                 sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
             }
 
-            final long messageLength = chunk.getMessageLength();
             final int length = chunk.getContentLength() + HEADER_SIZE;
-            final ByteBuf out = IOUtils.createBuffer(length);
 
             out.writeIntLE(length);
             out.writeIntLE(chunk.getChunkX());
             out.writeLongLE(chunk.getMessageId());
-            out.writeLongLE(messageLength);
+            out.writeLongLE(chunk.getMessageLength());
 
             final int contentOffset = chunk.getContentOffset();
             final int contentLength = chunk.getContentLength();
-            final VPackSlice head = message.getHead();
-            final int headLength = head.getByteSize();
-            int headBytes = Math.min(contentLength, headLength - contentOffset);
-            if (contentOffset < headLength) {
-                out.writeBytes(head.getBuffer(), contentOffset, headBytes);
-            }
-            final VPackSlice body = message.getBody();
-            if (body != null) {
-                out.writeBytes(body.getBuffer(), contentOffset + headBytes - headLength, contentLength - headBytes);
-            }
-            arangoTcpClient.send(out);
+
+            out.writeBytes(messageBuffer, contentOffset, contentLength);
         }
+
+        messageBuffer.release();
+        arangoTcpClient.send(out);
     }
 
     public String getConnectionName() {

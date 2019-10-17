@@ -21,8 +21,6 @@
 package com.arangodb.internal.velocystream.internal;
 
 import io.netty.buffer.ByteBuf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.BufferUnderflowException;
 import java.util.HashMap;
@@ -33,8 +31,6 @@ import java.util.Map;
  * @author Michele Rastelli
  */
 public class ChunkStore {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChunkStore.class);
 
     private final MessageStore messageStore;
     private final Map<Long, ByteBuf> data;
@@ -69,7 +65,6 @@ public class ChunkStore {
             chunkBuffer.readBytes(bytes);
             chunkBuffer.release();
             Message message = new Message(messageId, bytes);
-            LOGGER.debug("consuming message:\n\t{}\n\t{}\n\t{}", message.getId(), message.getHead(), message.getBody());
             messageStore.consume(message);
             data.remove(messageId);
         }
