@@ -28,7 +28,6 @@ import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import reactor.netty.NettyOutbound;
 import reactor.netty.resources.ConnectionProvider;
 import reactor.netty.tcp.TcpClient;
 
@@ -153,7 +152,6 @@ public abstract class VstConnection implements Connection {
     }
 
     private class ArangoTcpClient {
-        private volatile NettyOutbound outbound;
         private volatile reactor.netty.Connection connection;
         private TcpClient tcpClient;
         private volatile Chunk chunk;
@@ -166,19 +164,19 @@ public abstract class VstConnection implements Connection {
         }
 
         void send(ByteBuf buf) {
-            outbound
+            connection.outbound()
                     .send(Mono.just(buf))
-                    // FIXME: catch errors
-                    .then().subscribe();
+                    .then()
+                    .doOnError(this::handleError)
+                    .subscribe();
         }
 
         ArangoTcpClient() {
             tcpClient = TcpClient.create(connectionProvider)
                     .host("127.0.0.1")
                     .port(8529)
-                    .doOnDisconnected(c -> messageStore.clear(new IOException("Connection closed!")))
+                    .doOnDisconnected(c -> finalize(new IOException("Connection closed!")))
                     .handle((i, o) -> {
-                        outbound = o;
                         i.receive()
                                 .doOnNext(x -> {
                                     while (x.readableBytes() > 0) {
@@ -193,6 +191,20 @@ public abstract class VstConnection implements Connection {
                         connectedFuture.complete(null);
                         send(wrappedBuffer(PROTOCOL_HEADER));
                     });
+        }
+
+        private void handleError(final Throwable t) {
+            t.printStackTrace();
+            finalize(t);
+            disconnect();
+        }
+
+        private void finalize(final Throwable t) {
+            if (!connectedFuture.isDone()) {
+                connectedFuture.completeExceptionally(t);
+            }
+            connectedFuture = new CompletableFuture<>();
+            messageStore.clear(t);
         }
 
         private void readBytes(ByteBuf bbIn, ByteBuf out, int len) {
@@ -247,9 +259,9 @@ public abstract class VstConnection implements Connection {
 
         void connect() {
             tcpClient
-                    .connectNow()
-                    .onDispose()
-                    .block();
+                    .connect()
+                    .doOnError(this::handleError)
+                    .subscribe();
         }
 
         void disconnect() {

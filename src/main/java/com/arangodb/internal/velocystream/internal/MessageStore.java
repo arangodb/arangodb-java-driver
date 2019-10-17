@@ -39,7 +39,7 @@ public class MessageStore {
 
 	private final Map<Long, FutureTask<Message>> task;
 	private final Map<Long, Message> response;
-	private final Map<Long, Exception> error;
+	private final Map<Long, Throwable> error;
 
 	public MessageStore() {
 		super();
@@ -67,9 +67,9 @@ public class MessageStore {
 	public Message get(final long messageId) throws ArangoDBException {
 		final Message result = response.remove(messageId);
 		if (result == null) {
-			final Exception e = error.remove(messageId);
-			if (e != null) {
-				throw new ArangoDBException(e);
+			final Throwable t = error.remove(messageId);
+			if (t != null) {
+				throw new ArangoDBException(t);
 			}
 		}
 		return result;
@@ -83,15 +83,15 @@ public class MessageStore {
 		}
 	}
 
-	public void clear(final Exception e) {
+	public void clear(final Throwable t) {
 		if (!task.isEmpty()) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.error(t.getMessage(), t);
 		}
 		for (final Entry<Long, FutureTask<Message>> entry : task.entrySet()) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug(String.format("Exceptionally complete Message (id=%s).", entry.getKey()));
 			}
-			error.put(entry.getKey(), e);
+			error.put(entry.getKey(), t);
 			entry.getValue().run();
 		}
 		task.clear();
