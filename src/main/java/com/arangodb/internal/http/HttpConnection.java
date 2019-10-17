@@ -293,27 +293,25 @@ public class HttpConnection implements Connection {
 
     public Response execute(final Request request) throws ArangoDBException {
         byte[] body = getBody(request);
-        return Mono
-                .defer(() -> {
-                    final String url = buildUrl(request);
+        final String url = buildUrl(request);
 
-                    if (LOGGER.isDebugEnabled()) {
-                        CURLLogger.log(
-                                url,
-                                request,
-                                Optional.ofNullable(user),
-                                Optional.ofNullable(password),
-                                util
-                        );
-                    }
+        if (LOGGER.isDebugEnabled()) {
+            CURLLogger.log(
+                    url,
+                    request,
+                    Optional.ofNullable(user),
+                    Optional.ofNullable(password),
+                    util
+            );
+        }
 
-                    return createHttpClient(request, body.length)
-                            .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
-                            .send(Mono.just(Unpooled.wrappedBuffer(body)))
-                            .responseSingle(this::buildResponse);
-                })
+        return createHttpClient(request, body.length)
+                .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
+                .send(Mono.just(Unpooled.wrappedBuffer(body)))
+                .responseSingle(this::buildResponse)
                 .doOnNext(response -> ResponseUtils.checkError(util, response))
                 .subscribeOn(scheduler)
+                .doOnError(e -> close())
                 .block();
     }
 
