@@ -38,10 +38,10 @@ public class HttpConnectionFactory implements ConnectionFactory {
 
 	public HttpConnectionFactory(final Integer timeout, final String user, final String password, final Boolean useSsl,
 		final SSLContext sslContext, final ArangoSerialization util, final Protocol protocol,
-		final Long connectionTtl, String httpCookieSpec) {
+		final Long connectionTtl, Boolean resendCookies) {
 		super();
 		builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
-				.sslContext(sslContext).serializationUtil(util).contentType(protocol).ttl(connectionTtl).httpCookieSpec(httpCookieSpec);
+				.sslContext(sslContext).serializationUtil(util).contentType(protocol).ttl(connectionTtl).httpResendCookies(resendCookies);
 
 	}
 

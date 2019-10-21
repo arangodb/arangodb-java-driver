@@ -56,7 +56,7 @@ public abstract class InternalArangoDBBuilder {
 	private static final String PROPERTY_KEY_USER = "arangodb.user";
 	private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
 	private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
-	private static final String PROPERTY_KEY_COOKIE_SPEC = "arangodb.httpCookieSpec";
+	private static final String PROPERTY_KEY_HTTP_RESEND_COOKIES = "arangodb.http.resendCookies";
 	private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
 	private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
 	private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
@@ -71,7 +71,7 @@ public abstract class InternalArangoDBBuilder {
 	protected String user;
 	protected String password;
 	protected Boolean useSsl;
-	protected String httpCookieSpec;
+	protected Boolean resendCookies;
 	protected SSLContext sslContext;
 	protected Integer chunksize;
 	protected Integer maxConnections;
@@ -124,7 +124,7 @@ public abstract class InternalArangoDBBuilder {
 		user = loadUser(properties, user);
 		password = loadPassword(properties, password);
 		useSsl = loadUseSsl(properties, useSsl);
-		httpCookieSpec = loadhttpCookieSpec(properties, httpCookieSpec);
+		resendCookies = loadHttpResendCookies(properties, resendCookies);
 		chunksize = loadChunkSize(properties, chunksize);
 		maxConnections = loadMaxConnections(properties, maxConnections);
 		connectionTtl = loadConnectionTtl(properties, connectionTtl);
@@ -266,8 +266,9 @@ public abstract class InternalArangoDBBuilder {
 			getProperty(properties, PROPERTY_KEY_USE_SSL, currentValue, ArangoDefaults.DEFAULT_USE_SSL));
 	}
 	
-	private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
-        	return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
+	private static Boolean loadHttpResendCookies(final Properties properties, final Boolean currentValue) {
+        	return Boolean.parseBoolean(
+        			getProperty(properties, PROPERTY_KEY_HTTP_RESEND_COOKIES, currentValue, ArangoDefaults.DEFAULT_HTTP_RESEND_COOKIES));
     	}
 
 	private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {

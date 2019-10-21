@@ -603,7 +603,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
 					? new VstConnectionFactorySync(timeout, connectionTtl, useSsl, sslContext)
 					: new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
-							connectionTtl, httpCookieSpec);
+							connectionTtl, resendCookies);
 
 			final Collection<Host> hostList = createHostList(max, connectionFactory);
 			final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);

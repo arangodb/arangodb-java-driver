@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-- removed `host` from configuration properties
+
+- added `arangodb.http.resendCookies` configuration property (default `true`)
+- removed `host` and `httpCookieSpec` configuration properties
 
 ## [6.4.0] - 2019-10-09
 

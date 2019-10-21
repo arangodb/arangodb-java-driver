@@ -73,7 +73,7 @@ public class HttpConnection implements Connection {
         private String password;
         private ArangoSerialization util;
         private Boolean useSsl;
-        private String httpCookieSpec;
+        private Boolean resendCookies;
         private Protocol contentType;
         private HostDescription host;
         private Long ttl;
@@ -100,8 +100,8 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder httpCookieSpec(String httpCookieSpec) {
-            this.httpCookieSpec = httpCookieSpec;
+        public Builder httpResendCookies(Boolean resendCookies) {
+            this.resendCookies = resendCookies;
             return this;
         }
 
@@ -131,7 +131,7 @@ public class HttpConnection implements Connection {
         }
 
         public HttpConnection build() {
-            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl, httpCookieSpec);
+            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl, resendCookies);
         }
     }
 
@@ -146,15 +146,14 @@ public class HttpConnection implements Connection {
     private final ConnectionProvider connectionProvider;
     private final HttpClient client;
     private final Long ttl;
+    private final Boolean resendCookies;
 
     private final Scheduler scheduler;
-    private final Set<Cookie> cookies;
+    private final Map<Cookie, Long> cookies;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
-                           final Long ttl,
-                           // FIXME: setup httpCookieSpec
-                           final String httpCookieSpec) {
+                           final Long ttl, final Boolean resendCookies) {
         super();
         this.host = host;
         this.timeout = timeout;
@@ -165,9 +164,10 @@ public class HttpConnection implements Connection {
         this.util = util;
         this.contentType = contentType;
         this.ttl = ttl;
+        this.resendCookies = resendCookies;
 
         this.scheduler = Schedulers.single();
-        this.cookies = new HashSet<>();
+        this.cookies = new HashMap<>();
 
         this.connectionProvider = initConnectionProvider();
         this.client = initClient();
@@ -314,10 +314,13 @@ public class HttpConnection implements Connection {
         }
 
         return applyTimeout(
-                createHttpClient(request, body.length)
-                        .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
-                        .send(Mono.just(Unpooled.wrappedBuffer(body)))
-                        .responseSingle(this::buildResponse)
+                Mono.defer(() ->
+                        // this block runs on the single scheduler executor, so that cookies reads and writes are
+                        // always performed by the same thread, thus w/o need for concurrency management
+                        createHttpClient(request, body.length)
+                                .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
+                                .send(Mono.just(Unpooled.wrappedBuffer(body)))
+                                .responseSingle(this::buildResponse))
                         .doOnNext(response -> ResponseUtils.checkError(util, response))
                         .subscribeOn(scheduler)
                         .doOnError(e -> !(e instanceof ArangoDBException), e -> connectionProvider.dispose())
@@ -338,21 +341,32 @@ public class HttpConnection implements Connection {
         }
     }
 
+    private void removeExpiredCookies() {
+        long now = new Date().getTime();
+        boolean removed = cookies.entrySet().removeIf(entry -> entry.getKey().maxAge() >= 0 && entry.getValue() + entry.getKey().maxAge() * 1000 < now);
+        if (removed) {
+            LOGGER.debug("removed cookies");
+        }
+    }
+
     private HttpClient addCookies(final HttpClient httpClient) {
-        LOGGER.debug("reading cookies");
+        removeExpiredCookies();
         HttpClient c = httpClient;
-        for (Cookie cookie : cookies) {
+        for (Cookie cookie : cookies.keySet()) {
+            LOGGER.debug("sending cookie: {}", cookie);
             c = c.cookie(cookie);
         }
         return c;
     }
 
     private void saveCookies(HttpClientResponse resp) {
-        // FIXME: saved cookies never expire, save with received time and honor cookie maxAge
-        // TODO: make configurable depending on httpCookieSpec config
-        // save received cookies
-        LOGGER.debug("saving cookies");
-        resp.cookies().values().forEach(cookies::addAll);
+        if (resendCookies != null && resendCookies) {
+            resp.cookies().values().stream().flatMap(Collection::stream)
+                    .forEach(cookie -> {
+                        LOGGER.debug("saving cookie: {}", cookie);
+                        cookies.put(cookie, new Date().getTime());
+                    });
+        }
     }
 
     private Mono<Response> buildResponse(HttpClientResponse resp, ByteBufMono bytes) {
