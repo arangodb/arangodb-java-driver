@@ -1,6 +1,6 @@
 # Analyzers
 
-[HTTP Interface for Analyzers](https://www.arangodb.com/docs/devel/http/analyzers.html).
+[HTTP Interface for Analyzers](https://www.arangodb.com/docs/stable/http/analyzers.html).
 
 
 ## Types

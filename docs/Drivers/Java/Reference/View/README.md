@@ -1,7 +1,7 @@
 # View API
 
 These functions implement the
-[HTTP API for Views](https://www.arangodb.com/docs/devel/http/views.html).
+[HTTP API for Views](https://www.arangodb.com/docs/stable/http/views.html).
 
 ## Getting information about the View
 

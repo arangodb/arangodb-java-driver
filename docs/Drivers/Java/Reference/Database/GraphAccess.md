@@ -1,7 +1,7 @@
 # Accessing graphs
 
 These functions implement the
-[HTTP API for accessing general graphs](https://www.arangodb.com/docs/devel/http/gharial.html).
+[HTTP API for accessing general graphs](https://www.arangodb.com/docs/stable/http/gharial.html).
 
 ## ArangoDatabase.graph
 

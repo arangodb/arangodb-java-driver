@@ -1,7 +1,7 @@
 # Accessing collections
 
 These functions implement the
-[HTTP API for accessing collections](https://www.arangodb.com/docs/devel/http/collection-getting.html).
+[HTTP API for accessing collections](https://www.arangodb.com/docs/stable/http/collection-getting.html).
 
 ## ArangoDatabase.collection
 

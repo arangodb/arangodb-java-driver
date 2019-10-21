@@ -1,7 +1,7 @@
 # Bulk importing documents
 
 This function implements the
-[HTTP API for bulk imports](https://www.arangodb.com/docs/devel/http/bulk-imports.html).
+[HTTP API for bulk imports](https://www.arangodb.com/docs/stable/http/bulk-imports.html).
 
 ## ArangoCollection.importDocuments
 

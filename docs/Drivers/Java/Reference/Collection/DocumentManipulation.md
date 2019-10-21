@@ -1,7 +1,7 @@
 # Manipulating documents
 
 These functions implement the
-[HTTP API for manipulating documents](https://www.arangodb.com/docs/devel/http/document.html).
+[HTTP API for manipulating documents](https://www.arangodb.com/docs/stable/http/document.html).
 
 ## ArangoCollection.documentExists
 

@@ -1,7 +1,7 @@
 # Queries
 
 This function implements the
-[HTTP API for single roundtrip AQL queries](https://www.arangodb.com/docs/devel/http/aql-query-cursor-query-results.html).
+[HTTP API for single roundtrip AQL queries](https://www.arangodb.com/docs/stable/http/aql-query-cursor-query-results.html).
 
 ## ArangoDatabase.query
 

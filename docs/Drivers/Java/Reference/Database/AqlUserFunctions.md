@@ -1,7 +1,7 @@
 # Managing AQL user functions
 
 These functions implement the
-[HTTP API for managing AQL user functions](https://www.arangodb.com/docs/devel/http/aql-user-functions.html).
+[HTTP API for managing AQL user functions](https://www.arangodb.com/docs/stable/http/aql-user-functions.html).
 
 ## ArangoDatabase.getAqlFunctions
 

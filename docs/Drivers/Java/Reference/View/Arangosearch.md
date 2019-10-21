@@ -1,7 +1,7 @@
 # ArangoSearch API
 
 These functions implement the
-[HTTP API for ArangoSearch Views](https://www.arangodb.com/docs/devel/http/views-arangosearch.html).
+[HTTP API for ArangoSearch Views](https://www.arangodb.com/docs/stable/http/views-arangosearch.html).
 
 ## ArangoDatabase.createArangoSearch
 
