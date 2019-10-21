@@ -19,6 +19,8 @@ package com.arangodb;/*
  */
 
 
+import com.arangodb.entity.ArangoDBVersion;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeoutException;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -61,5 +64,22 @@ public class ConnectionTest {
             assertThat(e.getCause(), instanceOf(TimeoutException.class));
         }
     }
+
+    /**
+     * FIXME: hosts are merged to the ones coming from arangodb.properties
+     */
+    @Test
+    @Ignore
+    public void notConnectedTest() {
+        ArangoDB arangoDB = builder.host("nonExistingHost", 9999).build();
+        try {
+            ArangoDBVersion version = arangoDB.getVersion();
+            System.out.println(version.getVersion());
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getMessage(), is("Cannot contact any host!"));
+        }
+    }
+
 
 }

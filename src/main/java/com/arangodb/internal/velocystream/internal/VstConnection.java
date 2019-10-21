@@ -39,6 +39,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static com.arangodb.internal.ArangoDefaults.HEADER_SIZE;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
@@ -112,7 +113,13 @@ public abstract class VstConnection implements Connection {
         }
         new Thread(arangoTcpClient::connect).start();
         // wait for connection
-        arangoTcpClient.getConnectedFuture().join();
+        try {
+            arangoTcpClient.getConnectedFuture().get();
+        } catch (InterruptedException e) {
+            close();
+        } catch (ExecutionException e) {
+            throw new IOException(e.getCause());
+        }
     }
 
     @Override

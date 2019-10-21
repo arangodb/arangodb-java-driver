@@ -716,9 +716,6 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          * @return {@link ArangoDBAsync}
          */
         public synchronized ArangoDBAsync build() {
-            if (hosts.isEmpty()) {
-                hosts.add(host);
-            }
             final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
             final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
             final VPackParser vpackParser = vpackParserBuilder.build();
@@ -733,7 +730,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-            final ConnectionFactory connectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
+            final ConnectionFactory connectionFactory = new VstConnectionFactoryAsync(timeout, connectionTtl,
                     useSsl, sslContext);
             final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
                     connectionFactory);

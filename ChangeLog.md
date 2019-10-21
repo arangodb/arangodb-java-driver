@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- removed fallback connection to `ArangoDefaults.DEFAULT_HOST`
+- removed `host` from configuration properties
+
 ## [6.4.0] - 2019-10-09
 
 ### Added
