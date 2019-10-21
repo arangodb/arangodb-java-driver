@@ -316,7 +316,7 @@ public class HttpConnection implements Connection {
                         .responseSingle(this::buildResponse)
                         .doOnNext(response -> ResponseUtils.checkError(util, response))
                         .subscribeOn(scheduler)
-                        .doOnError(e -> !(e instanceof ArangoDBException), e -> close())
+                        .doOnError(e -> !(e instanceof ArangoDBException), e -> connectionProvider.dispose())
         ).block();
     }
 
