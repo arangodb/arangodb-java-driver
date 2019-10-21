@@ -25,11 +25,15 @@ import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -38,6 +42,7 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Mark Vollmary
  */
+@RunWith(Parameterized.class)
 public class SslExample {
 
     /*-
@@ -51,6 +56,19 @@ public class SslExample {
      */
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
+    private final ArangoDB.Builder builder;
+
+    @Parameterized.Parameters
+    public static Collection<ArangoDB.Builder> builders() {
+        return Arrays.asList(
+                new ArangoDB.Builder().useProtocol(Protocol.VST),
+                new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON)
+        );
+    }
+
+    public SslExample(final ArangoDB.Builder builder) {
+        this.builder = builder;
+    }
 
     @Test
 	@Ignore
@@ -67,13 +85,9 @@ public class SslExample {
         final SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-
-        final ArangoDB arangoDB = new ArangoDB.Builder()
-                .host("127.0.0.1", 8529)
-                .password("test")
+        final ArangoDB arangoDB = builder
                 .useSsl(true)
-				.sslContext(sc)
-                .useProtocol(Protocol.HTTP_JSON)
+                .sslContext(sc)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version, is(notNullValue()));

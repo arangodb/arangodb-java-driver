@@ -25,6 +25,8 @@ import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.velocypack.VPackSlice;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -180,8 +182,17 @@ public abstract class VstConnection implements Connection {
             return timeout != null && timeout >= 0 ? tcpClient.option(CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient;
         }
 
+        private TcpClient applySslContext(TcpClient httpClient) {
+            if (Boolean.TRUE == useSsl && sslContext != null) {
+                //noinspection deprecation
+                return httpClient.secure(spec -> spec.sslContext(new JdkSslContext(sslContext, true, ClientAuth.NONE)));
+            } else {
+                return httpClient;
+            }
+        }
+
         ArangoTcpClient() {
-            tcpClient = applyConnectionTimeout(TcpClient.create(connectionProvider))
+            tcpClient = applySslContext(applyConnectionTimeout(TcpClient.create(connectionProvider)))
                     .host(host.getHost())
                     .port(host.getPort())
                     .doOnDisconnected(c -> finalize(new IOException("Connection closed!")))
@@ -223,8 +234,8 @@ public abstract class VstConnection implements Connection {
         private void handleByteBuf(ByteBuf bbIn) {
             // new chunk
             if (chunk == null) {
-                int missingBytes = HEADER_SIZE - chunkHeaderBuffer.readableBytes();
-                readBytes(bbIn, chunkHeaderBuffer, missingBytes);
+                int missingHeaderBytes = HEADER_SIZE - chunkHeaderBuffer.readableBytes();
+                readBytes(bbIn, chunkHeaderBuffer, missingHeaderBytes);
                 if (chunkHeaderBuffer.readableBytes() == HEADER_SIZE) {
                     readHeader();
                 }

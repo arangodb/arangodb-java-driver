@@ -186,25 +186,29 @@ public class HttpConnection implements Connection {
     }
 
     private HttpClient initClient() {
-        HttpClient c = HttpClient
-                .create(connectionProvider)
-                .tcpConfiguration(tcpClient ->
-                        timeout != null && timeout >= 0 ? tcpClient.option(CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
-                .wiretap(true)
-                .protocol(HttpProtocol.HTTP11)
-                .keepAlive(true)
-                .baseUrl((Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort())
-                .headers(headers -> {
-                    if (user != null)
-                        headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
-                });
+        return applySslContext(
+                HttpClient
+                        .create(connectionProvider)
+                        .tcpConfiguration(tcpClient ->
+                                timeout != null && timeout >= 0 ? tcpClient.option(CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
+                        .wiretap(true)
+                        .protocol(HttpProtocol.HTTP11)
+                        .keepAlive(true)
+                        .baseUrl((Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort())
+                        .headers(headers -> {
+                            if (user != null)
+                                headers.set(AUTHORIZATION, buildBasicAuthentication(user, password));
+                        })
+        );
+    }
 
+    private HttpClient applySslContext(HttpClient httpClient) {
         if (Boolean.TRUE == useSsl && sslContext != null) {
             //noinspection deprecation
-            c = c.secure(spec -> spec.sslContext(new JdkSslContext(sslContext, true, ClientAuth.NONE)));
+            return httpClient.secure(spec -> spec.sslContext(new JdkSslContext(sslContext, true, ClientAuth.NONE)));
+        } else {
+            return httpClient;
         }
-
-        return c;
     }
 
     private static String buildBasicAuthentication(final String principal, final String password) {
