@@ -66,6 +66,7 @@ public abstract class InternalArangoDBBuilder {
 	private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
 	protected final List<HostDescription> hosts;
+	protected HostDescription host;
 	protected Integer timeout;
 	protected String user;
 	protected String password;
@@ -92,6 +93,7 @@ public abstract class InternalArangoDBBuilder {
 		vpackParserBuilder = new VPackParser.Builder();
 		vpackBuilder.registerModule(new VPackDriverModule());
 		vpackParserBuilder.registerModule(new VPackDriverModule());
+		host = new HostDescription(ArangoDefaults.DEFAULT_HOST, ArangoDefaults.DEFAULT_PORT);
 		hosts = new ArrayList<>();
 		user = ArangoDefaults.DEFAULT_USER;
 		loadProperties(ArangoDB.class.getResourceAsStream(DEFAULT_PROPERTY_FILE));

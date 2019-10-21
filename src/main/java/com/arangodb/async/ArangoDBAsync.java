@@ -716,6 +716,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          * @return {@link ArangoDBAsync}
          */
         public synchronized ArangoDBAsync build() {
+            if (hosts.isEmpty()) {
+                hosts.add(host);
+            }
             final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
             final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
             final VPackParser vpackParser = vpackParserBuilder.build();

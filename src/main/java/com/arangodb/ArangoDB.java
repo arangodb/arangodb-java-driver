@@ -580,6 +580,9 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 		 * @return {@link ArangoDB}
 		 */
 		public synchronized ArangoDB build() {
+			if (hosts.isEmpty()) {
+				hosts.add(host);
+			}
 			final VPack vpacker = vpackBuilder.serializeNullValues(false).build();
 			final VPack vpackerNull = vpackBuilder.serializeNullValues(true).build();
 			final VPackParser vpackParser = vpackParserBuilder.build();
