@@ -33,6 +33,7 @@ import reactor.core.Exceptions;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Mark Vollmary
@@ -97,6 +98,8 @@ public class HttpCommunication implements Closeable {
                         } else {
                             throw (IOException) unwrapped;
                         }
+                    } else if (unwrapped instanceof TimeoutException) {
+                        throw new ArangoDBException(unwrapped);
                     } else {
                         throw e;
                     }

@@ -34,7 +34,6 @@ import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -57,6 +56,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import static io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
@@ -177,15 +177,19 @@ public class HttpConnection implements Connection {
         return ConnectionProvider.fixed(
                 "http",
                 1,  // FIXME: connection pooling should happen here, inside HttpConnection
-                DEFAULT_POOL_ACQUIRE_TIMEOUT,
+                getAcquireTimeout(),
                 ttl != null ? Duration.ofMillis(ttl) : null);
+    }
+
+    private long getAcquireTimeout() {
+        return timeout != null && timeout >= 0 ? timeout : DEFAULT_POOL_ACQUIRE_TIMEOUT;
     }
 
     private HttpClient initClient() {
         HttpClient c = HttpClient
                 .create(connectionProvider)
                 .tcpConfiguration(tcpClient ->
-                        timeout != null && timeout >= 0 ? tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
+                        timeout != null && timeout >= 0 ? tcpClient.option(CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient)
                 .wiretap(true)
                 .protocol(HttpProtocol.HTTP11)
                 .keepAlive(true)
@@ -305,14 +309,23 @@ public class HttpConnection implements Connection {
             );
         }
 
-        return createHttpClient(request, body.length)
-                .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
-                .send(Mono.just(Unpooled.wrappedBuffer(body)))
-                .responseSingle(this::buildResponse)
-                .doOnNext(response -> ResponseUtils.checkError(util, response))
-                .subscribeOn(scheduler)
-                .doOnError(e -> close())
-                .block();
+        return applyTimeout(
+                createHttpClient(request, body.length)
+                        .request(requestTypeToHttpMethod(request.getRequestType())).uri(url)
+                        .send(Mono.just(Unpooled.wrappedBuffer(body)))
+                        .responseSingle(this::buildResponse)
+                        .doOnNext(response -> ResponseUtils.checkError(util, response))
+                        .subscribeOn(scheduler)
+                        .doOnError(e -> !(e instanceof ArangoDBException), e -> close())
+        ).block();
+    }
+
+    private Mono<Response> applyTimeout(Mono<Response> client) {
+        if (timeout != null && timeout > 0) {
+            return client.timeout(Duration.ofMillis(timeout));
+        } else {
+            return client;
+        }
     }
 
     private static void addHeaders(final Request request, final HttpHeaders headers) {

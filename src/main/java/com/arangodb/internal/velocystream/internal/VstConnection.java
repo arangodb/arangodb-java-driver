@@ -40,6 +40,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.arangodb.internal.ArangoDefaults.HEADER_SIZE;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
+import static io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS;
 import static reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT;
 
 /**
@@ -80,7 +81,7 @@ public abstract class VstConnection implements Connection {
 
         this.connectionProvider = initConnectionProvider();
 
-        connectionName = "conenction_" + System.currentTimeMillis() + "_" + Math.random();
+        connectionName = "connection_" + System.currentTimeMillis() + "_" + Math.random();
         LOGGER.debug("Connection " + connectionName + " created");
 
         arangoTcpClient = new ArangoTcpClient();
@@ -91,8 +92,12 @@ public abstract class VstConnection implements Connection {
         return ConnectionProvider.fixed(
                 "tcp",
                 1,
-                DEFAULT_POOL_ACQUIRE_TIMEOUT,
+                getAcquireTimeout(),
                 ttl != null ? Duration.ofMillis(ttl) : null);
+    }
+
+    private long getAcquireTimeout() {
+        return timeout != null && timeout >= 0 ? timeout : DEFAULT_POOL_ACQUIRE_TIMEOUT;
     }
 
     public boolean isOpen() {
@@ -171,8 +176,12 @@ public abstract class VstConnection implements Connection {
                     .subscribe();
         }
 
+        private TcpClient applyConnectionTimeout(TcpClient tcpClient) {
+            return timeout != null && timeout >= 0 ? tcpClient.option(CONNECT_TIMEOUT_MILLIS, timeout) : tcpClient;
+        }
+
         ArangoTcpClient() {
-            tcpClient = TcpClient.create(connectionProvider)
+            tcpClient = applyConnectionTimeout(TcpClient.create(connectionProvider))
                     .host("127.0.0.1")
                     .port(8529)
                     .doOnDisconnected(c -> finalize(new IOException("Connection closed!")))
