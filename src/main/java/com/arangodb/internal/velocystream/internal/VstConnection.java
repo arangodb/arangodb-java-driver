@@ -182,8 +182,8 @@ public abstract class VstConnection implements Connection {
 
         ArangoTcpClient() {
             tcpClient = applyConnectionTimeout(TcpClient.create(connectionProvider))
-                    .host("127.0.0.1")
-                    .port(8529)
+                    .host(host.getHost())
+                    .port(host.getPort())
                     .doOnDisconnected(c -> finalize(new IOException("Connection closed!")))
                     .handle((i, o) -> {
                         i.receive()
@@ -209,9 +209,7 @@ public abstract class VstConnection implements Connection {
         }
 
         private void finalize(final Throwable t) {
-            if (!connectedFuture.isDone()) {
-                connectedFuture.completeExceptionally(t);
-            }
+            connectedFuture.completeExceptionally(t);
             connectedFuture = new CompletableFuture<>();
             messageStore.clear(t);
         }
