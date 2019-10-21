@@ -21,6 +21,7 @@
 package com.arangodb.internal.velocystream.internal;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCounted;
 
 import java.nio.BufferUnderflowException;
 import java.util.HashMap;
@@ -68,6 +69,11 @@ public class ChunkStore {
             messageStore.consume(message);
             data.remove(messageId);
         }
+    }
+
+    public void clear() {
+        data.values().forEach(ReferenceCounted::release);
+        data.clear();
     }
 
 }

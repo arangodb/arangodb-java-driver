@@ -70,8 +70,6 @@ public abstract class VstConnection implements Connection {
     private final String connectionName;
     private final ArangoTcpClient arangoTcpClient;
 
-    private volatile ChunkStore chunkStore;
-
     protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
                             final SSLContext sslContext, final MessageStore messageStore) {
         super();
@@ -88,7 +86,6 @@ public abstract class VstConnection implements Connection {
         LOGGER.debug("Connection " + connectionName + " created");
 
         arangoTcpClient = new ArangoTcpClient();
-        chunkStore = new ChunkStore(messageStore);
     }
 
     private ConnectionProvider initConnectionProvider() {
@@ -167,15 +164,12 @@ public abstract class VstConnection implements Connection {
 
     private class ArangoTcpClient {
         private volatile reactor.netty.Connection connection;
-        private TcpClient tcpClient;
-        private volatile Chunk chunk;
-        private volatile ByteBuf chunkHeaderBuffer = IOUtils.createBuffer();
-        private volatile ByteBuf chunkContentBuffer = IOUtils.createBuffer();
         private volatile CompletableFuture<Void> connectedFuture = new CompletableFuture<>();
-
-        private void setConnection(reactor.netty.Connection connection) {
-            this.connection = connection;
-        }
+        private TcpClient tcpClient;
+        private Chunk chunk;
+        private ByteBuf chunkHeaderBuffer = IOUtils.createBuffer();
+        private ByteBuf chunkContentBuffer = IOUtils.createBuffer();
+        private final ChunkStore chunkStore;
 
         void send(ByteBuf buf) {
             connection.outbound()
@@ -199,6 +193,8 @@ public abstract class VstConnection implements Connection {
         }
 
         ArangoTcpClient() {
+            chunkStore = new ChunkStore(messageStore);
+
             tcpClient = applySslContext(applyConnectionTimeout(TcpClient.create(connectionProvider)))
                     .host(host.getHost())
                     .port(host.getPort())
@@ -214,7 +210,7 @@ public abstract class VstConnection implements Connection {
                         return Mono.never();
                     })
                     .doOnConnected(c -> {
-                        setConnection(c);
+                        connection = c;
                         connectedFuture.complete(null);
                         send(wrappedBuffer(PROTOCOL_HEADER));
                     });
@@ -229,6 +225,7 @@ public abstract class VstConnection implements Connection {
         private void finalize(final Throwable t) {
             connectedFuture.completeExceptionally(t);
             connectedFuture = new CompletableFuture<>();
+            chunkStore.clear();
             messageStore.clear(t);
         }
 
