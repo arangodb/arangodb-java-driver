@@ -28,7 +28,7 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @author Michele Rastelli
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API Documentation</a>
  */
 public class AqlQueryExplainOptions {
 

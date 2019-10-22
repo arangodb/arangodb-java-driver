@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
  * Documentation</a>
  */
 public class DocumentCreateOptions {

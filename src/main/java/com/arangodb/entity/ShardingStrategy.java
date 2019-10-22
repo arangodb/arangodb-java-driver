@@ -22,7 +22,7 @@ package com.arangodb.entity;
 
 /**
  * @author Axel Becker
- * https://www.arangodb.com/docs/3.4/http/collection-creating.html
+ * https://www.arangodb.com/docs/stable/http/collection-creating.html
  */
 public enum ShardingStrategy {
 	

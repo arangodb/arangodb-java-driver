@@ -36,7 +36,7 @@ import com.arangodb.ArangoDBException;
 /**
  * Shortest Path in AQL
  * 
- * @see <a href="https://docs.arangodb.com/current/AQL/Graphs/ShortestPath.html">Shortest Path in AQL</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-shortest-path.html">Shortest Path in AQL</a>
  * 
  * @author a-brandt
  *

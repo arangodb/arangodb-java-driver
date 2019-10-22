@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
  * Documentation</a>
  */
 public class TransactionOptions {

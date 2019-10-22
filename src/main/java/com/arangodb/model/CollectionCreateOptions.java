@@ -29,7 +29,7 @@ import com.arangodb.entity.MinReplicationFactor;
 /**
  * @author Mark Vollmary
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
  *      Documentation</a>
  */
 public class CollectionCreateOptions {

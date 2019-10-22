@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB view level for ArangoSearch views.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Views/">View API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
 public interface ArangoSearchAsync extends ArangoViewAsync {
@@ -40,7 +40,7 @@ public interface ArangoSearchAsync extends ArangoViewAsync {
      * Creates a view, then returns view information from the server.
      *
      * @return information about the view @
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      */
     CompletableFuture<ViewEntity> create();
@@ -50,7 +50,7 @@ public interface ArangoSearchAsync extends ArangoViewAsync {
      *
      * @param options Additional options, can be null
      * @return information about the view @
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      */
     CompletableFuture<ViewEntity> create(ArangoSearchCreateOptions options);
@@ -59,7 +59,7 @@ public interface ArangoSearchAsync extends ArangoViewAsync {
      * Reads the properties of the specified view.
      *
      * @return properties of the view @
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#read-properties-of-a-view">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#read-properties-of-a-view">API
      * Documentation</a>
      */
     CompletableFuture<ArangoSearchPropertiesEntity> getProperties();
@@ -70,7 +70,7 @@ public interface ArangoSearchAsync extends ArangoViewAsync {
      * @param options properties to change
      * @return properties of the view @
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#partially-changes-properties-of-an-arangosearch-view">API
+     * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#partially-changes-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
     CompletableFuture<ArangoSearchPropertiesEntity> updateProperties(ArangoSearchPropertiesOptions options);
@@ -81,7 +81,7 @@ public interface ArangoSearchAsync extends ArangoViewAsync {
      * @param options properties to change
      * @return properties of the view @
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#change-properties-of-an-arangosearch-view">API
+     * "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#change-properties-of-an-arangosearch-view">API
      * Documentation</a>
      */
     CompletableFuture<ArangoSearchPropertiesEntity> replaceProperties(ArangoSearchPropertiesOptions options);

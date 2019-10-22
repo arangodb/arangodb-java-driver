@@ -25,7 +25,7 @@ import com.arangodb.velocypack.annotations.SerializedName;
 /**
  * @author Mark Vollmary
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
  */
 public class EdgeUpdateEntity extends DocumentEntity {
 

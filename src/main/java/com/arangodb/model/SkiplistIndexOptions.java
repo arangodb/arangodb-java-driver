@@ -25,7 +25,7 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark Vollmary
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API Documentation</a>
  */
 public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
 

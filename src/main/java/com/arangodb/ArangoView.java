@@ -25,7 +25,7 @@ import com.arangodb.entity.ViewEntity;
 /**
  * Interface for operations on ArangoDB view level.
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Views/">View API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @author Mark Vollmary
  * @since ArangoDB 3.4.0
  */
@@ -57,7 +57,7 @@ public interface ArangoView extends ArangoSerializationAccessor {
 	/**
 	 * Deletes the view from the database.
 	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Views/Creating.html#drops-a-view">API Documentation</a>
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#drops-a-view">API Documentation</a>
 	 * @throws ArangoDBException
 	 */
 	void drop() throws ArangoDBException;
@@ -65,7 +65,7 @@ public interface ArangoView extends ArangoSerializationAccessor {
 	/**
 	 * Renames the view.
 	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Views/Modifying.html#rename-view">API Documentation</a>
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#rename-a-view">API Documentation</a>
 	 * @param newName
 	 *            The new name
 	 * @return information about the view
@@ -76,7 +76,7 @@ public interface ArangoView extends ArangoSerializationAccessor {
 	/**
 	 * Returns information about the view.
 	 * 
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Views/Getting.html#return-information-about-a-view">API
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#return-information-about-a-view">API
 	 *      Documentation</a>
 	 * @return information about the view
 	 * @throws ArangoDBException

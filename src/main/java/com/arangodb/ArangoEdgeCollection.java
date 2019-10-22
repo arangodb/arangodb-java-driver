@@ -27,7 +27,7 @@ import com.arangodb.model.*;
 /**
  * Interface for operations on ArangoDB edge collection level.
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  * @author Mark Vollmary
  */
 @SuppressWarnings("UnusedReturnValue")
@@ -50,7 +50,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new edge in the collection
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
 	 * @param value
 	 *            A representation of a single edge (POJO, VPackSlice or String for JSON)
 	 * @return information about the edge
@@ -61,7 +61,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new edge in the collection
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
 	 * @param value
 	 *            A representation of a single edge (POJO, VPackSlice or String for JSON)
 	 * @param options
@@ -74,7 +74,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	/**
 	 * Fetches an existing edge
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param type
@@ -87,7 +87,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	/**
 	 * Fetches an existing edge
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param type
@@ -103,7 +103,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
 	 * violated
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param <T>
@@ -117,7 +117,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
 	 * violated
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param <T>
@@ -134,7 +134,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
 	 * do not yet exist, and overwritten in the existing document if they do exist there.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param <T>
@@ -149,7 +149,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
 	 * do not yet exist, and overwritten in the existing document if they do exist there.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param <T>
@@ -164,7 +164,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	/**
 	 * Removes a edge
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @throws ArangoDBException
@@ -174,7 +174,7 @@ public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 	/**
 	 * Removes a edge
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
 	 * @param key
 	 *            The key of the edge
 	 * @param options

@@ -644,7 +644,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new database with the given name.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
 	 *      Documentation</a>
 	 * @param name
 	 *            Name of the database to create
@@ -656,7 +656,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Retrieves a list of all existing databases
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-databases">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-databases">API
 	 *      Documentation</a>
 	 * @return a list of all existing databases
 	 * @throws ArangoDBException
@@ -667,7 +667,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Retrieves a list of all databases the current user can access
 	 *
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+	 *      "https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-accessible-databases">API
 	 *      Documentation</a>
 	 * @return a list of all databases the current user can access
 	 * @throws ArangoDBException
@@ -678,7 +678,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * List available database to the specified user
 	 *
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-the-databases-available-to-a-user">API
+	 *      "https://www.arangodb.com/docs/stable/http/user-management.html#list-the-accessible-databases-for-a-user">API
 	 *      Documentation</a>
 	 * @param user
 	 *            The name of the user for which you want to query the databases
@@ -690,7 +690,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Returns the server name and version number.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
 	 *      Documentation</a>
 	 * @return the server version, number
 	 * @throws ArangoDBException
@@ -700,7 +700,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Returns the server storage engine.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-database-engine-type">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
 	 *      Documentation</a>
 	 * @return the storage engine name
 	 * @throws ArangoDBException
@@ -719,7 +719,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
 	 * order to execute this call.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @param passwd
@@ -733,7 +733,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
 	 * order to execute this call.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @param passwd
@@ -748,7 +748,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Removes an existing user, identified by user. You need access to the _system database.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#remove-user">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#remove-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @throws ArangoDBException
@@ -759,7 +759,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Fetches data about the specified user. You can fetch information about yourself or you need permission to the
 	 * _system database in order to execute this call.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#fetch-user">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#fetch-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @return information about the user
@@ -770,7 +770,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	/**
 	 * Fetches data about all users. You can only execute this call if you have access to the _system database.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-available-users">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#list-available-users">API
 	 *      Documentation</a>
 	 * @return informations about all users
 	 * @throws ArangoDBException
@@ -781,7 +781,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Partially updates the data of an existing user. The name of an existing user must be specified in user. You can
 	 * only change the password of your self. You need access to the _system database to change the active flag.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#update-user">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#modify-user">API Documentation</a>
 	 * @param user
 	 *            The name of the user
 	 * @param options
@@ -795,7 +795,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Replaces the data of an existing user. The name of an existing user must be specified in user. You can only
 	 * change the password of your self. You need access to the _system database to change the active flag.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#replace-user">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#replace-user">API
 	 *      Documentation</a>
 	 * @param user
 	 *            The name of the user
@@ -858,7 +858,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * Returns fatal, error, warning or info log messages from the server's global log.
 	 *
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
+	 *      "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
 	 *      Documentation</a>
 	 * @param options
 	 *            Additional options, can be null

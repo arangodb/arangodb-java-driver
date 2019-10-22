@@ -34,7 +34,7 @@ import com.arangodb.ArangoDBException;
 /**
  * Graph traversals in AQL
  * 
- * @see <a href="https://docs.arangodb.com/current/AQL/Graphs/Traversals.html">Graph traversals in AQL</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-traversals.html">Graph traversals in AQL</a>
  * 
  * @author a-brandt
  *

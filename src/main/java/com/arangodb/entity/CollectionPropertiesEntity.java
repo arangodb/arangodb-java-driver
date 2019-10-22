@@ -25,7 +25,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  *
- * @see <a href= "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
+ * @see <a href= "https://www.arangodb.com/docs/stable/http/collection-getting.html#read-properties-of-a-collection">API
  *      Documentation</a>
  */
 public class CollectionPropertiesEntity extends CollectionEntity {

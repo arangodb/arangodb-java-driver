@@ -24,7 +24,7 @@ package com.arangodb.entity;
  * @author Mark Vollmary
  * 
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+ *      "https://www.arangodb.com/docs/stable/http/database-database-management.html#information-of-the-database">API
  *      Documentation</a>
  */
 public class DatabaseEntity implements Entity {

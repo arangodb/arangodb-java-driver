@@ -28,7 +28,7 @@ import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 /**
  * Interface for operations on ArangoDB view level for ArangoSearch views.
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Views/">View API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @author Mark Vollmary
  * @since ArangoDB 3.4.0
  */
@@ -37,7 +37,7 @@ public interface ArangoSearch extends ArangoView {
 	/**
 	 * Creates a view, then returns view information from the server.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
 	 *      Documentation</a>
 	 * @return information about the view
 	 * @throws ArangoDBException
@@ -47,7 +47,7 @@ public interface ArangoSearch extends ArangoView {
 	/**
 	 * Creates a view with the given {@code options}, then returns view information from the server.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
 	 *      Documentation</a>
 	 * @param options
 	 *            Additional options, can be null
@@ -59,7 +59,7 @@ public interface ArangoSearch extends ArangoView {
 	/**
 	 * Reads the properties of the specified view.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#read-properties-of-a-view">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#read-properties-of-a-view">API
 	 *      Documentation</a>
 	 * @return properties of the view
 	 * @throws ArangoDBException
@@ -70,7 +70,7 @@ public interface ArangoSearch extends ArangoView {
 	 * Partially changes properties of the view.
 	 * 
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#partially-changes-properties-of-an-arangosearch-view">API
+	 *      "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#partially-changes-properties-of-an-arangosearch-view">API
 	 *      Documentation</a>
 	 * @param options
 	 *            properties to change
@@ -83,7 +83,7 @@ public interface ArangoSearch extends ArangoView {
 	 * Changes properties of the view.
 	 * 
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#change-properties-of-an-arangosearch-view">API
+	 *      "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#change-properties-of-an-arangosearch-view">API
 	 *      Documentation</a>
 	 * @param options
 	 *            properties to change
