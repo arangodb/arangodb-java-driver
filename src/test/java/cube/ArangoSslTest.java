@@ -32,7 +32,6 @@ import org.junit.runners.Parameterized;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
 import java.util.Arrays;
@@ -99,18 +98,15 @@ public class ArangoSslTest {
         assertThat(version, is(notNullValue()));
     }
 
-    @Test
+    @Test(expected = ArangoDBException.class)
     public void connectWithoutValidSslContext() {
-        try {
-            final ArangoDB arangoDB = new ArangoDB.Builder()
-                    .useProtocol(protocol)
-                    .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
-                    .useSsl(true).build();
-            arangoDB.getVersion();
-            fail("this should fail");
-        } catch (final ArangoDBException ex) {
-            assertThat(ex.getCause() instanceof SSLHandshakeException, is(true));
-        }
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .useProtocol(protocol)
+                .maxConnections(1)
+                .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
+                .useSsl(true).build();
+        arangoDB.getVersion();
+        fail();
     }
 
 }
