@@ -23,11 +23,9 @@ package cube;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ArangoDBVersion;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.Container;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.DockerContainer;
-import org.jboss.arquillian.junit.Arquillian;
+import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -43,11 +41,10 @@ import static org.junit.Assert.fail;
 /**
  * @author Mark Vollmary
  */
-@RunWith(Arquillian.class)
 public class ArangoSslTest {
 
-    @DockerContainer
-    Container server = CubeUtils.arangodbSsl();
+    @ClassRule
+    public static ContainerDslRule server = CubeUtils.arangodbSsl();
 
     /*-
      * a SSL trust store

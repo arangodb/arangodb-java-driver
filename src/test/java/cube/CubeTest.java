@@ -2,11 +2,9 @@ package cube;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.ArangoDBVersion;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.Container;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.DockerContainer;
-import org.jboss.arquillian.junit.Arquillian;
+import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -16,11 +14,10 @@ import static org.junit.Assert.assertThat;
  * @author Michele Rastelli
  */
 
-@RunWith(Arquillian.class)
 public class CubeTest {
 
-    @DockerContainer
-    Container server = CubeUtils.arangodb();
+    @Rule
+    public ContainerDslRule server = CubeUtils.arangodb();
 
     @Test
     public void getVersion() {

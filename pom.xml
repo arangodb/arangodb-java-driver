@@ -218,6 +218,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.arquillian.cube</groupId>
+            <artifactId>arquillian-cube-docker-junit-rule</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-standalone</artifactId>
             <version>1.4.1.Final</version>
