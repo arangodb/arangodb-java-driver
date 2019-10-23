@@ -44,14 +44,14 @@ class CubeUtils {
     }
 
     static ContainerDslRule arangodb() {
-        return new ContainerDslRule(DOCKER_IMAGE)
+        return new ContainerDslRule(DOCKER_IMAGE, "arangodb*")
                 .withPortBinding(PORT)
                 .withAwaitStrategy(CubeUtils.arangoAwaitStrategy())
                 .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD);
     }
 
     static ContainerDslRule arangodbWithChunkSize(int chunkSize) {
-        return new ContainerDslRule(DOCKER_IMAGE)
+        return new ContainerDslRule(DOCKER_IMAGE, "arangodbWithChunkSize*")
                 .withPortBinding(PORT)
                 .withAwaitStrategy(CubeUtils.arangoAwaitStrategy())
                 .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD)
@@ -59,7 +59,7 @@ class CubeUtils {
     }
 
     static ContainerDslRule arangodbSsl() {
-        return new ContainerDslRule(DOCKER_IMAGE)
+        return new ContainerDslRule(DOCKER_IMAGE, "arangodbSsl*")
                 .withPortBinding(PORT)
                 .withAwaitStrategy(arangoAwaitStrategy())
                 .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD)
