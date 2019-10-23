@@ -20,32 +20,25 @@
 
 package cube;
 
-import static cube.CubeUtils.arangoAwaitStrategy;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.KeyStore;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDBException;
+import com.arangodb.entity.ArangoDBVersion;
+import org.arquillian.cube.docker.impl.client.containerobject.dsl.Container;
+import org.arquillian.cube.docker.impl.client.containerobject.dsl.DockerContainer;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import org.arquillian.cube.containerobject.ConnectionMode;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.BindMode;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.Container;
-import org.arquillian.cube.docker.impl.client.containerobject.dsl.DockerContainer;
-import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Test;
-
-import com.arangodb.entity.ArangoDBVersion;
-import org.junit.runner.RunWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
@@ -53,18 +46,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ArangoSslTest {
 
-    private Path sslCertPath = Paths.get("docker/server.pem").toAbsolutePath();
-
     @DockerContainer
-    Container server = Container.withContainerName("arangodbssl")
-            .fromImage("docker.io/arangodb/arangodb:3.5.1")
-            .withPortBinding(8529)
-            .withAwaitStrategy(arangoAwaitStrategy())
-            .withEnvironment("ARANGO_ROOT_PASSWORD", "test")
-            .withConnectionMode(ConnectionMode.START_AND_STOP_AROUND_CLASS)
-            .withVolume(sslCertPath.toString(), "/server.pem", BindMode.READ_ONLY)
-            .withCommand("arangod --ssl.keyfile /server.pem --server.endpoint ssl://0.0.0.0:8529")
-            .build();
+    Container server = CubeUtils.arangodbSsl();
 
     /*-
      * a SSL trust store
@@ -93,7 +76,7 @@ public class ArangoSslTest {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
-                .host(server.getIpAddress(), server.getBindPort(8529))
+                .host(server.getIpAddress(), CubeUtils.PORT)
                 .useSsl(true).sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version, is(notNullValue()));
@@ -103,7 +86,7 @@ public class ArangoSslTest {
     public void connectWithoutValidSslContext() {
         try {
             final ArangoDB arangoDB = new ArangoDB.Builder()
-                    .host(server.getIpAddress(), server.getBindPort(8529))
+                    .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
                     .useSsl(true).build();
             arangoDB.getVersion();
             fail("this should fail");

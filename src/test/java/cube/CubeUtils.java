@@ -1,4 +1,4 @@
-package cube;/*
+/*
  * DISCLAIMER
  *
  * Copyright 2016 ArangoDB GmbH, Cologne, Germany
@@ -18,19 +18,53 @@ package cube;/*
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
+package cube;
 
+
+import org.arquillian.cube.containerobject.ConnectionMode;
 import org.arquillian.cube.docker.impl.client.config.Await;
+import org.arquillian.cube.docker.impl.client.containerobject.dsl.BindMode;
+import org.arquillian.cube.docker.impl.client.containerobject.dsl.Container;
+
+import java.nio.file.Paths;
 
 /**
  * @author Michele Rastelli
  */
-public class CubeUtils {
+class CubeUtils {
 
-    static public Await arangoAwaitStrategy() {
+    static int PORT = 8529;
+    private static String DOCKER_IMAGE = "docker.io/arangodb/arangodb:3.5.1";
+    private static String SSL_CERT_PATH = Paths.get("docker/server.pem").toAbsolutePath().toString();
+    private static String PASSWORD = "test";
+
+    static private Await arangoAwaitStrategy() {
         Await await = new Await();
         await.setStrategy("log");
         await.setMatch("ready for business");
         return await;
+    }
+
+    static Container arangodb() {
+        return Container.withContainerName("arangodb")
+                .fromImage(DOCKER_IMAGE)
+                .withPortBinding(PORT)
+                .withAwaitStrategy(arangoAwaitStrategy())
+                .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD)
+                .withConnectionMode(ConnectionMode.START_AND_STOP_AROUND_CLASS)
+                .build();
+    }
+
+    static Container arangodbSsl() {
+        return Container.withContainerName("arangodbSsl")
+                .fromImage(DOCKER_IMAGE)
+                .withPortBinding(PORT)
+                .withAwaitStrategy(arangoAwaitStrategy())
+                .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD)
+                .withConnectionMode(ConnectionMode.START_AND_STOP_AROUND_CLASS)
+                .withVolume(SSL_CERT_PATH, "/server.pem", BindMode.READ_ONLY)
+                .withCommand("arangod --ssl.keyfile /server.pem --server.endpoint ssl://0.0.0.0:8529")
+                .build();
     }
 
 }
