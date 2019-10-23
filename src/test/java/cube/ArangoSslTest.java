@@ -22,16 +22,21 @@ package cube;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
+import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
 import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -41,10 +46,8 @@ import static org.junit.Assert.fail;
 /**
  * @author Mark Vollmary
  */
+@RunWith(Parameterized.class)
 public class ArangoSslTest {
-
-    @ClassRule
-    public static ContainerDslRule server = CubeUtils.arangodbSsl();
 
     /*-
      * a SSL trust store
@@ -57,6 +60,22 @@ public class ArangoSslTest {
      */
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
+    private final Protocol protocol;
+
+    @Parameterized.Parameters
+    public static List<Protocol> builders() {
+        return Arrays.asList(
+                Protocol.VST,
+                Protocol.HTTP_VPACK
+        );
+    }
+
+    @ClassRule
+    public static ContainerDslRule server = CubeUtils.arangodbSsl();
+
+    public ArangoSslTest(final Protocol protocol) {
+        this.protocol = protocol;
+    }
 
     @Test
     public void connect() throws Exception {
@@ -73,6 +92,7 @@ public class ArangoSslTest {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDB arangoDB = new ArangoDB.Builder()
+                .useProtocol(protocol)
                 .host(server.getIpAddress(), CubeUtils.PORT)
                 .useSsl(true).sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
@@ -83,6 +103,7 @@ public class ArangoSslTest {
     public void connectWithoutValidSslContext() {
         try {
             final ArangoDB arangoDB = new ArangoDB.Builder()
+                    .useProtocol(protocol)
                     .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
                     .useSsl(true).build();
             arangoDB.getVersion();
