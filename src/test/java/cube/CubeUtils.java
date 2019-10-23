@@ -50,6 +50,14 @@ class CubeUtils {
                 .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD);
     }
 
+    static ContainerDslRule arangodbWithChunkSize(int chunkSize) {
+        return new ContainerDslRule(DOCKER_IMAGE)
+                .withPortBinding(PORT)
+                .withAwaitStrategy(CubeUtils.arangoAwaitStrategy())
+                .withEnvironment("ARANGO_ROOT_PASSWORD", PASSWORD)
+                .withCommand("arangod --log.level communication=trace --log.level requests=trace --log.foreground-tty --vst.maxsize " + chunkSize);
+    }
+
     static ContainerDslRule arangodbSsl() {
         return new ContainerDslRule(DOCKER_IMAGE)
                 .withPortBinding(PORT)
