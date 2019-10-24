@@ -227,6 +227,8 @@ public abstract class VstConnection implements Connection {
             connectedFuture = new CompletableFuture<>();
             chunkStore.clear();
             messageStore.clear(t);
+            chunkHeaderBuffer.release();
+            chunkContentBuffer.release();
         }
 
         private void readBytes(ByteBuf bbIn, ByteBuf out, int len) {
