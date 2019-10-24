@@ -25,7 +25,7 @@ Creates a View of the given _type_, then returns View information from the serve
 ArangoDB arango = new ArangoDB.Builder().build();
 ArangoDatabase db = arango.db("myDB");
 db.createView("myView", ViewType.ARANGO_SEARCH);
-// the view "potatoes" now exists
+// the View "potatoes" now exists
 ```
 
 ## ArangoView.rename

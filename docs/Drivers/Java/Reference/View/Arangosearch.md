@@ -150,7 +150,7 @@ ArangoDatabase db = arango.db("myDB");
 ArangoSearch view = db.arangoSearch("potatoes");
 
 view.create(new ArangoSearchPropertiesOptions());
-// the ArangoSearch view "potatoes" now exists
+// the ArangoSearch View "potatoes" now exists
 ```
 
 ## ArangoSearch.getProperties
