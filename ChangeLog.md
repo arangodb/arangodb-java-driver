@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - added `arangodb.http.resendCookies` configuration property (default `true`)
 - removed `host` and `httpCookieSpec` configuration properties
 
+## [6.4.1] - 2019-10-23
+
+- jackson v2.9.10
+
 ## [6.4.0] - 2019-10-09
 
 ### Added
