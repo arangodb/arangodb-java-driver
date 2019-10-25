@@ -1,10 +1,9 @@
-package cube;
+package containers;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.ArangoDBVersion;
-import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
+import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -16,16 +15,17 @@ import static org.junit.Assert.assertThat;
  */
 
 @Ignore
-public class CubeTest {
+public class ContainersTest {
 
-    @Rule
-    public ContainerDslRule server = CubeUtils.arangodb();
+    private ArangoDB arangoDB;
+
+    @Before
+    public void setUp() {
+        arangoDB = SingleServerContainer.INSTANCE.get().build();
+    }
 
     @Test
     public void getVersion() {
-        ArangoDB arangoDB = new ArangoDB.Builder()
-                .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
-                .build();
         ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version.getVersion(), is(notNullValue()));
     }

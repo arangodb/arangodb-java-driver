@@ -1,31 +1,10 @@
-/*
- * DISCLAIMER
- *
- * Copyright 2016 ArangoDB GmbH, Cologne, Germany
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Copyright holder is ArangoDB GmbH, Cologne, Germany
- */
+package containers;
 
-package cube;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
-import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
-import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +41,8 @@ public class ArangoSslTest {
      */
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
-    private final Protocol protocol;
+
+    private final ArangoDB.Builder builder;
 
     @Parameterized.Parameters
     public static List<Protocol> builders() {
@@ -72,11 +52,8 @@ public class ArangoSslTest {
         );
     }
 
-    @ClassRule
-    public static ContainerDslRule server = CubeUtils.arangodbSsl();
-
     public ArangoSslTest(final Protocol protocol) {
-        this.protocol = protocol;
+        builder = SingleServerSslContainer.INSTANCE.get().useProtocol(protocol);
     }
 
     @Test
@@ -93,21 +70,14 @@ public class ArangoSslTest {
         final SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        final ArangoDB arangoDB = new ArangoDB.Builder()
-                .useProtocol(protocol)
-                .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
-                .useSsl(true).sslContext(sc).build();
+        final ArangoDB arangoDB = builder.useSsl(true).sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version, is(notNullValue()));
     }
 
     @Test(expected = ArangoDBException.class)
     public void connectWithoutValidSslContext() {
-        final ArangoDB arangoDB = new ArangoDB.Builder()
-                .useProtocol(protocol)
-                .maxConnections(1)
-                .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
-                .useSsl(true).build();
+        final ArangoDB arangoDB = builder.useSsl(true).build();
         arangoDB.getVersion();
         fail();
     }

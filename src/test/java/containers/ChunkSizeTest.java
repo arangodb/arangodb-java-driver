@@ -1,4 +1,4 @@
-package cube;
+package containers;
 
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
@@ -6,12 +6,8 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.model.DocumentCreateOptions;
-import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -21,19 +17,15 @@ import static org.junit.Assert.assertThat;
  */
 public class ChunkSizeTest {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ChunkSizeTest.class);
     private static final int CHUNK_SIZE = 16;
 
+    private ArangoDB arangoDB;
     private ArangoDatabase db;
     private ArangoCollection collection;
 
-    @Rule
-    public ContainerDslRule server = CubeUtils.arangodbWithChunkSize(CHUNK_SIZE);
-
     @Before
-    public void setup() {
-        ArangoDB arangoDB = new ArangoDB.Builder()
-                .host(server.getIpAddress(), server.getBindPort(CubeUtils.PORT))
+    public void setUp() {
+        arangoDB = SingleServerWithChunkSizeContainer.INSTANCE.get()
                 .chunksize(CHUNK_SIZE)
                 .build();
 
@@ -47,13 +39,7 @@ public class ChunkSizeTest {
         if (!collection.exists()) {
             collection.create();
         }
-    }
 
-    @After
-    public void cleanup() {
-        if (db.exists()) {
-            db.drop();
-        }
     }
 
     @Test
@@ -62,8 +48,6 @@ public class ChunkSizeTest {
         doc.addAttribute("blablabla", "blablabla");
         DocumentCreateEntity<BaseDocument> createdDoc = collection.insertDocument(doc, new DocumentCreateOptions().returnNew(true));
         assertThat(createdDoc.getNew().getProperties().get("blablabla"), is("blablabla"));
-
-        log.info("DB logs: \n{}", server.getLog());
     }
 
 }
