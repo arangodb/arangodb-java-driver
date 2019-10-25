@@ -29,7 +29,7 @@ import com.arangodb.model.GraphCreateOptions;
 /**
  * Interface for operations on ArangoDB graph level.
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
  * @author Mark Vollmary
  */
 public interface ArangoGraph extends ArangoSerializationAccessor {
@@ -59,7 +59,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 * Creates the graph in the graph module. The creation of a graph requires the name of the graph and a definition of
 	 * its edges.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
 	 *      Documentation</a>
 	 * @param edgeDefinitions
 	 *            An array of definitions for the edge
@@ -72,7 +72,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 * Creates the graph in the graph module. The creation of a graph requires the name of the graph and a definition of
 	 * its edges.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
 	 *      Documentation</a>
 	 * @param edgeDefinitions
 	 *            An array of definitions for the edge
@@ -86,7 +86,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	/**
 	 * Deletes the graph from the database.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
 	 * @throws ArangoDBException
 	 */
 	void drop() throws ArangoDBException;
@@ -95,7 +95,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 * Deletes the graph from the database.
 	 *
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API
+	 *      "https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API
 	 *      Documentation</a>
 	 * @param dropCollections
 	 *          Drop collections of this graph as well. Collections will only be
@@ -107,7 +107,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	/**
 	 * Retrieves general information about the graph.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#get-a-graph">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
 	 * @return the definition content of this graph
 	 * @throws ArangoDBException
 	 */
@@ -116,7 +116,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	/**
 	 * Fetches all vertex collections from the graph and returns a list of collection names.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-vertex-collections">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-vertex-collections">API
 	 *      Documentation</a>
 	 * @return all vertex collections within this graph
 	 * @throws ArangoDBException
@@ -127,7 +127,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 * Adds a vertex collection to the set of collections of the graph. If the collection does not exist, it will be
 	 * created.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-vertex-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API
 	 *      Documentation</a>
 	 * @param name
 	 *            Name of the vertex collection
@@ -157,7 +157,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	/**
 	 * Fetches all edge collections from the graph and returns a list of collection names.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-edge-definitions">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-edge-definitions">API
 	 *      Documentation</a>
 	 * @return all edge collections within this graph
 	 * @throws ArangoDBException
@@ -167,7 +167,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	/**
 	 * Adds the given edge definition to the graph.
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-edge-definition">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-edge-definition">API
 	 *      Documentation</a>
 	 * @param definition
 	 *            The edge definition
@@ -180,7 +180,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 * Change one specific edge definition. This will modify all occurrences of this definition in all graphs known to
 	 * your database
 	 *
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#replace-an-edge-definition">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#replace-an-edge-definition">API
 	 *      Documentation</a>
 	 * @param definition
 	 *            The edge definition
@@ -194,7 +194,7 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
 	 * remain untouched and can still be used in your queries
 	 *
 	 * @see <a href=
-	 *      "https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-an-edge-definition-from-the-graph">API
+	 *      "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
 	 *      Documentation</a>
 	 * @param definitionName
 	 *            The name of the edge collection used in the definition

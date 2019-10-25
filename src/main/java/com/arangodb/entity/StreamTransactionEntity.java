@@ -23,7 +23,7 @@ package com.arangodb.entity;
 /**
  * @author Michele Rastelli
  * @see <a href=
- * "https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html">API Documentation</a>
+ * "https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html">API Documentation</a>
  * @since ArangoDB 3.5.0
  */
 public class StreamTransactionEntity implements Entity {

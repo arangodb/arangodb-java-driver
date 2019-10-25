@@ -23,7 +23,7 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
  *      Documentation</a>
  */
 public class CollectionsReadOptions {

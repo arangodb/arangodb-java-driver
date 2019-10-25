@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB vertex collection level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
 public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor {
@@ -55,7 +55,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * graph
      *
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-vertex-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
      * Documentation</a>
      */
     CompletableFuture<Void> drop();
@@ -65,7 +65,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      *
      * @param value A representation of a single vertex (POJO, VPackSlice or String for Json)
      * @return information about the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
     <T> CompletableFuture<VertexEntity> insertVertex(final T value);
 
@@ -75,7 +75,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * @param value   A representation of a single vertex (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
      */
     <T> CompletableFuture<VertexEntity> insertVertex(final T value, final VertexCreateOptions options);
 
@@ -85,7 +85,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * @param key  The key of the vertex
      * @param type The type of the vertex-document (POJO class, VPackSlice or String for Json)
      * @return the vertex identified by the key
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
      */
     <T> CompletableFuture<T> getVertex(final String key, final Class<T> type);
 
@@ -96,7 +96,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * @param type    The type of the vertex-document (POJO class, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return the vertex identified by the key
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
      */
     <T> CompletableFuture<T> getVertex(final String key, final Class<T> type, final GraphDocumentReadOptions options);
 
@@ -106,7 +106,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      *
      * @param key The key of the vertex
      * @return information about the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
      */
     <T> CompletableFuture<VertexUpdateEntity> replaceVertex(final String key, final T value);
@@ -118,7 +118,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * @param key     The key of the vertex
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
      * Documentation</a>
      */
     <T> CompletableFuture<VertexUpdateEntity> replaceVertex(
@@ -133,7 +133,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      *
      * @param key The key of the vertex
      * @return information about the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
     <T> CompletableFuture<VertexUpdateEntity> updateVertex(final String key, final T value);
 
@@ -145,7 +145,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * @param key     The key of the vertex
      * @param options Additional options, can be null
      * @return information about the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
      */
     <T> CompletableFuture<VertexUpdateEntity> updateVertex(
             final String key,
@@ -156,7 +156,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      * Removes a vertex
      *
      * @param key The key of the vertex
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
      */
     CompletableFuture<Void> deleteVertex(final String key);
 
@@ -165,7 +165,7 @@ public interface ArangoVertexCollectionAsync extends ArangoSerializationAccessor
      *
      * @param key     The key of the vertex
      * @param options Additional options, can be null
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
      */
     CompletableFuture<Void> deleteVertex(final String key, final VertexDeleteOptions options);
 

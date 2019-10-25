@@ -31,7 +31,7 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  * Documentation</a>
  */
 public class AqlQueryOptions implements Serializable {
@@ -420,7 +420,7 @@ public class AqlQueryOptions implements Serializable {
 	/**
 	 * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
 	 * @return options
-	 * @see <a href="https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
 	 * Documentation</a>
 	 * @since ArangoDB 3.4.0
 	 */

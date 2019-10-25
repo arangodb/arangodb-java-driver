@@ -1,7 +1,7 @@
 # Manipulating the collection
 
 These functions implement
-[the HTTP API for modifying collections](https://docs.arangodb.com/latest/HTTP/Collection/Modifying.html).
+[the HTTP API for modifying collections](https://www.arangodb.com/docs/stable/http/collection-modifying.html).
 
 ## ArangoDatabase.createCollection
 
@@ -290,7 +290,7 @@ Changes the properties of the collection.
 - **options**: `CollectionPropertiesEntity`
 
   For information on the _properties_ argument see
-  [the HTTP API for modifying collections](https://docs.arangodb.com/latest/HTTP/Collection/Modifying.html).
+  [the HTTP API for modifying collections](https://www.arangodb.com/docs/stable/http/collection-modifying.html).
 
 **Examples**
 

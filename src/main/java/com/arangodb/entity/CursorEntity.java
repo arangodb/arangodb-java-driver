@@ -30,7 +30,7 @@ import com.arangodb.velocypack.VPackSlice;
 /**
  * @author Mark Vollmary
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
  *      Documentation</a>
  */
 public class CursorEntity implements Entity, MetaAware {

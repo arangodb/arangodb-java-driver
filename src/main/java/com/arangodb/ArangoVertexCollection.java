@@ -27,7 +27,7 @@ import com.arangodb.model.*;
 /**
  * Interface for operations on ArangoDB vertex collection level.
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html">API Documentation</a>
  * @author Mark Vollmary
  */
 public interface ArangoVertexCollection extends ArangoSerializationAccessor {
@@ -50,7 +50,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * Removes a vertex collection from the graph and optionally deletes the collection, if it is not used in any other
 	 * graph
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-vertex-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-vertex-collection">API
 	 *      Documentation</a>
 	 * @throws ArangoDBException
 	 */
@@ -59,7 +59,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new vertex in the collection
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
 	 * @param value
 	 *            A representation of a single vertex (POJO, VPackSlice or String for JSON)
 	 * @return information about the vertex
@@ -70,7 +70,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	/**
 	 * Creates a new vertex in the collection
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#create-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
 	 * @param value
 	 *            A representation of a single vertex (POJO, VPackSlice or String for JSON)
 	 * @param options
@@ -83,7 +83,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	/**
 	 * Retrieves the vertex document with the given {@code key} from the collection.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
 	 * @param type
@@ -96,7 +96,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	/**
 	 * Retrieves the vertex document with the given {@code key} from the collection.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#get-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#get-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
 	 * @param type
@@ -112,7 +112,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
 	 * violated
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
 	 *      Documentation</a>
 	 * @param key
 	 *            The key of the vertex
@@ -127,7 +127,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * Replaces the vertex with key with the one in the body, provided there is such a vertex and no precondition is
 	 * violated
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#replace-a-vertex">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#replace-a-vertex">API
 	 *      Documentation</a>
 	 * @param key
 	 *            The key of the vertex
@@ -145,7 +145,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
 	 * do not yet exist, and overwritten in the existing document if they do exist there.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
 	 * @param <T>
@@ -160,7 +160,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
 	 * do not yet exist, and overwritten in the existing document if they do exist there.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#modify-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#modify-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
 	 * @param <T>
@@ -175,7 +175,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	/**
 	 * Deletes the vertex with the given {@code key} from the collection.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
 	 * @throws ArangoDBException
@@ -185,7 +185,7 @@ public interface ArangoVertexCollection extends ArangoSerializationAccessor {
 	/**
 	 * Deletes the vertex with the given {@code key} from the collection.
 	 * 
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Vertices.html#remove-a-vertex">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
 	 * @param key
 	 *            The key of the vertex
 	 * @param options

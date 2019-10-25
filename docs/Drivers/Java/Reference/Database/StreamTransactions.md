@@ -1,6 +1,6 @@
 # Transactions
 
-See [HTTP Interface for Stream Transactions](https://docs.arangodb.com/latest/HTTP/transaction-stream-transaction.html).
+See [HTTP Interface for Stream Transactions](https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html).
 
 
 ## ArangoDatabase.beginStreamTransaction

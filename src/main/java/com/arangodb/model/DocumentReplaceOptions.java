@@ -24,7 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @author Michele Rastelli
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
  *      Documentation</a>
  */
 public class DocumentReplaceOptions {

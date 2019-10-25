@@ -34,7 +34,7 @@ import static org.junit.Assert.assertThat;
  * Graph traversals in AQL
  *
  * @author a-brandt
- * @see <a href="https://docs.arangodb.com/current/AQL/Graphs/Traversals.html">Graph traversals in AQL</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-traversals.html">Graph traversals in AQL</a>
  */
 public class GraphTraversalsInAQLExample extends BaseGraphTest {
 

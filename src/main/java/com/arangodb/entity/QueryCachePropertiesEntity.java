@@ -24,7 +24,7 @@ package com.arangodb.entity;
  * @author Mark Vollmary
  * 
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#http-interface-for-the-aql-query-cache">API
+ *      "https://www.arangodb.com/docs/stable/http/aql-query-cache.html">API
  *      Documentation</a>
  */
 public class QueryCachePropertiesEntity implements Entity {

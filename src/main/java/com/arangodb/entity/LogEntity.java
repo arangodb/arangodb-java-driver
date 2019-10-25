@@ -26,7 +26,7 @@ import java.util.List;
  * @author Mark Vollmary
  *
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
+ *      "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
  *      Documentation</a>
  */
 public class LogEntity implements Entity {

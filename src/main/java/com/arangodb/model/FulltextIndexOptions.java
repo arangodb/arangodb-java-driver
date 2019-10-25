@@ -25,7 +25,7 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark Vollmary
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
  *      Documentation</a>
  */
 public class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {

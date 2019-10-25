@@ -1,7 +1,7 @@
 # Graph API
 
 These functions implement the
-[HTTP API for manipulating graphs](https://docs.arangodb.com/latest/HTTP/Gharial/index.html).
+[HTTP API for manipulating graphs](https://www.arangodb.com/docs/stable/http/gharial.html).
 
 ## ArangoDatabase.createGraph
 

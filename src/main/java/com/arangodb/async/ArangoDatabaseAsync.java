@@ -36,8 +36,8 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB database level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/database.html">Databases API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html">Query API Documentation</a>
  */
 @SuppressWarnings("unused")
 public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
@@ -60,7 +60,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Returns the server name and version number.
      *
      * @return the server version, number
-     * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
      * Documentation</a>
      */
     CompletableFuture<ArangoDBVersion> getVersion();
@@ -69,7 +69,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Returns the name of the used storage engine.
      *
      * @return the storage engine name
-     * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-database-engine-type">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
      * Documentation</a>
      */
     CompletableFuture<ArangoDBEngine> getEngine();
@@ -86,7 +86,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return a list of all databases the current user can access
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+     * "https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-accessible-databases">API
      * Documentation</a>
      */
     CompletableFuture<Collection<String>> getAccessibleDatabases();
@@ -104,7 +104,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param name The name of the collection
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> createCollection(final String name);
@@ -115,7 +115,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param name    The name of the collection
      * @param options Additional options, can be null
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> createCollection(final String name, final CollectionCreateOptions options);
@@ -124,7 +124,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Returns all collections
      *
      * @return list of information about all collections
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
      * Documentation</a>
      */
     CompletableFuture<Collection<CollectionEntity>> getCollections();
@@ -134,7 +134,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param options Additional options, can be null
      * @return list of information about all collections
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
      * Documentation</a>
      */
     CompletableFuture<Collection<CollectionEntity>> getCollections(final CollectionsReadOptions options);
@@ -144,7 +144,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
     CompletableFuture<IndexEntity> getIndex(final String id);
 
@@ -153,7 +153,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param id The index handle
      * @return the id of the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
      */
     CompletableFuture<String> deleteIndex(final String id);
 
@@ -161,7 +161,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Creates the database
      *
      * @return true if the database was created successfully.
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
      */
     CompletableFuture<Boolean> create();
@@ -170,7 +170,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Drop an existing database
      *
      * @return true if the database was dropped successfully
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#drop-database">API
      * Documentation</a>
      */
     CompletableFuture<Boolean> drop();
@@ -182,7 +182,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param user        The name of the user
      * @param permissions The permissions the user grant
      * @return void
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      */
     CompletableFuture<Void> grantAccess(final String user, final Permissions permissions);
@@ -193,7 +193,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return void
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      */
     CompletableFuture<Void> grantAccess(final String user);
@@ -204,7 +204,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return void
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      */
     CompletableFuture<Void> revokeAccess(final String user);
@@ -214,7 +214,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return void
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -235,7 +235,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return permissions of the user
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-database-access-level"> API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#get-the-database-access-level"> API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -250,7 +250,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param options  Additional options, can be null
      * @param type     The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(
@@ -267,7 +267,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @param type    The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(
@@ -283,7 +283,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param bindVars key/value pairs representing the bind parameters
      * @param type     The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(
@@ -298,7 +298,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param query contains the query string to be executed
      * @param type  The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
      * @return cursor of the results
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> query(final String query, final Class<T> type);
@@ -310,7 +310,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param type     The type of the result (POJO class, VPackSlice, String for Json, or Collection/List/Map)
      * @return cursor of the results
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#read-next-batch-from-cursor">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#read-next-batch-from-cursor">API
      * Documentation</a>
      */
     <T> CompletableFuture<ArangoCursorAsync<T>> cursor(final String cursorId, final Class<T> type);
@@ -322,7 +322,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param bindVars key/value pairs representing the bind parameters
      * @param options  Additional options, can be null
      * @return information about the query
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API
      * Documentation</a>
      */
     CompletableFuture<AqlExecutionExplainEntity> explainQuery(
@@ -336,7 +336,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param query the query which you want parse
      * @return imformation about the query
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API
      * Documentation</a>
      */
     CompletableFuture<AqlParseEntity> parseQuery(final String query);
@@ -346,7 +346,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return void
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#clears-any-results-in-the-aql-query-results-cache">API
      * Documentation</a>
      */
     CompletableFuture<Void> clearQueryCache();
@@ -356,7 +356,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return configuration for the AQL query cache
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#returns-the-global-properties-for-the-aql-query-results-cache">API
      * Documentation</a>
      */
     CompletableFuture<QueryCachePropertiesEntity> getQueryCacheProperties();
@@ -368,7 +368,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param properties properties to be set
      * @return current set of properties
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#globally-adjusts-the-aql-query-results-cache-properties">API
      * Documentation</a>
      */
     CompletableFuture<QueryCachePropertiesEntity> setQueryCacheProperties(final QueryCachePropertiesEntity properties);
@@ -378,7 +378,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return configuration for the AQL query tracking
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-properties-for-the-aql-query-tracking">API
      * Documentation</a>
      */
     CompletableFuture<QueryTrackingPropertiesEntity> getQueryTrackingProperties();
@@ -389,7 +389,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param properties properties to be set
      * @return current set of properties
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query.html#changes-the-properties-for-the-aql-query-tracking">API
      * Documentation</a>
      */
     CompletableFuture<QueryTrackingPropertiesEntity> setQueryTrackingProperties(
@@ -400,7 +400,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return a list of currently running AQL queries
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-currently-running-aql-queries">API
      * Documentation</a>
      */
     CompletableFuture<Collection<QueryEntity>> getCurrentlyRunningQueries();
@@ -410,7 +410,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return a list of slow running AQL queries
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-list-of-slow-aql-queries">API
      * Documentation</a>
      */
     CompletableFuture<Collection<QueryEntity>> getSlowQueries();
@@ -420,7 +420,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return void
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
+     * "https://www.arangodb.com/docs/stable/http/aql-query.html#clears-the-list-of-slow-aql-queries">API
      * Documentation</a>
      */
     CompletableFuture<Void> clearSlowQueries();
@@ -430,7 +430,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param id The id of the query
      * @return void
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/aql-query.html#kills-a-running-aql-query">API
      * Documentation</a>
      */
     CompletableFuture<Void> killQuery(final String id);
@@ -442,7 +442,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param code    a string representation of the function body
      * @param options Additional options, can be null
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/aql-user-functions.html#create-aql-user-function">API
      * Documentation</a>
      */
     CompletableFuture<Void> createAqlFunction(
@@ -457,7 +457,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return number of deleted functions (since ArangoDB 3.4.0)
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
+     * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#remove-existing-aql-user-function">API
      * Documentation</a>
      */
     CompletableFuture<Integer> deleteAqlFunction(final String name, final AqlFunctionDeleteOptions options);
@@ -468,7 +468,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return all reqistered AQL user functions
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+     * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
      * Documentation</a>
      */
     CompletableFuture<Collection<AqlFunctionEntity>> getAqlFunctions(final AqlFunctionGetOptions options);
@@ -488,7 +488,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param name            Name of the graph
      * @param edgeDefinitions An array of definitions for the edge
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> createGraph(final String name, final Collection<EdgeDefinition> edgeDefinitions);
@@ -501,7 +501,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param edgeDefinitions An array of definitions for the edge
      * @param options         Additional options, can be null
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> createGraph(
@@ -513,7 +513,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Lists all graphs known to the graph module
      *
      * @return graphs stored in this database
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-all-graphs">API
      * Documentation</a>
      */
     CompletableFuture<Collection<GraphEntity>> getGraphs();
@@ -525,7 +525,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param type    The type of the result (POJO class, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return the result of the transaction if it succeeded
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
      * Documentation</a>
      */
     <T> CompletableFuture<T> transaction(final String action, final Class<T> type, final TransactionOptions options);
@@ -535,7 +535,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param options Additional options, can be null
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#begin-a-transaction">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#begin-a-transaction">API
      * Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -545,7 +545,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Aborts a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#abort-transaction">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#abort-transaction">API
      * Documentation</a>
      */
     CompletableFuture<StreamTransactionEntity> abortStreamTransaction(String id);
@@ -554,7 +554,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Gets information about a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#get-transaction-status">
+     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#get-transaction-status">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -564,7 +564,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Gets all the currently running Stream Transactions.
      *
      * @return all the currently running Stream Transactions
-     * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#list-currently-ongoing-transactions">
+     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#list-currently-ongoing-transactions">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -574,7 +574,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Commits a Stream Transaction.
      *
      * @return information about the transaction
-     * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#commit-or-abort-a-transaction">
+     * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#commit-or-abort-a-transaction">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -585,7 +585,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return information about the current database
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+     * "https://www.arangodb.com/docs/stable/http/database-database-management.html#information-of-the-database">API
      * Documentation</a>
      */
     CompletableFuture<DatabaseEntity> getInfo();
@@ -597,7 +597,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param edgeClass   The type of the edge documents (POJO class, VPackSlice or String for Json)
      * @param options     Additional options
      * @return Result of the executed traversal
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
      * Documentation</a>
      */
     <V, E> CompletableFuture<TraversalEntity<V, E>> executeTraversal(
@@ -611,7 +611,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param id   The id of the document
      * @param type The type of the document (POJO class, VPackSlice or String for Json)
      * @return the document identified by the id
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<T> getDocument(final String id, final Class<T> type) throws ArangoDBException;
@@ -623,7 +623,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param type    The type of the document (POJO class, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return the document identified by the id
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<T> getDocument(final String id, final Class<T> type, final DocumentReadOptions options)
@@ -634,7 +634,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @return void
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
+     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#reloads-the-routing-information">API
      * Documentation</a>
      */
     CompletableFuture<Void> reloadRouting();
@@ -652,7 +652,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Fetches all views from the database and returns an list of view descriptions.
      *
      * @return list of information about all views
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#reads-all-views">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#list-all-views">API Documentation</a>
      * @since ArangoDB 3.4.0
      */
     CompletableFuture<Collection<ViewEntity>> getViews();
@@ -691,7 +691,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param name    The name of the view
      * @param options Additional options, can be null
      * @return information about the view
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
      * Documentation</a>
      * @since ArangoDB 3.4.0
      */
@@ -702,7 +702,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param options AnalyzerEntity
      * @return the created Analyzer
-     * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     CompletableFuture<AnalyzerEntity> createAnalyzer(AnalyzerEntity options);
@@ -712,7 +712,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param name of the Analyzer without database prefix
      * @return information about an Analyzer
-     * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     CompletableFuture<AnalyzerEntity> getAnalyzer(String name);
@@ -721,7 +721,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Retrieves all analyzers definitions.
      *
      * @return collection of all analyzers definitions
-     * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     CompletableFuture<Collection<AnalyzerEntity>> getAnalyzers();
@@ -730,7 +730,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Deletes an Analyzer
      *
      * @param name of the Analyzer without database prefix
-     * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     CompletableFuture<Void> deleteAnalyzer(String name);
@@ -740,7 +740,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      *
      * @param name    of the Analyzer without database prefix
      * @param options AnalyzerDeleteOptions
-     * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
      */
     CompletableFuture<Void> deleteAnalyzer(String name, AnalyzerDeleteOptions options);

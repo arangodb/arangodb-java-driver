@@ -1,6 +1,6 @@
 # Analyzers
 
-[HTTP Interface for Analyzers](https://www.arangodb.com/docs/devel/http/analyzers.html).
+[HTTP Interface for Analyzers](https://www.arangodb.com/docs/stable/http/analyzers.html).
 
 
 ## Types
@@ -9,11 +9,11 @@
 
   - **name**: `String`
 
-    The analyzer name.
+    The Analyzer name.
 
   - **type**: `AnalyzerType`
 
-    The analyzer type. Can be one of: `identity`, `delimiter`, `stem`, `norm`, `ngram`, `text`
+    The Analyzer type. Can be one of: `identity`, `delimiter`, `stem`, `norm`, `ngram`, `text`
 
   - **properties**: `Map<String, Object>`
 
@@ -21,7 +21,7 @@
 
   - **features**: `Set<AnalyzerFeature>`
 
-    The set of features to set on the analyzer generated fields. The default value is an empty array.
+    The set of features to set on the Analyzer generated fields. The default value is an empty array.
     Values can be: `frequency`, `norm`, `position`
 
 
@@ -42,14 +42,14 @@ Gets information about an Analyzer
 
 - **name**: `String`
 
-  The name of the analyzer
+  The name of the Analyzer
 
 
 ## ArangoDatabase.getAnalyzers
 
 `ArangoDatabase.getAnalyzers() : Collection<AnalyzerEntity>`
 
-Retrieves all analyzers definitions.
+Retrieves all Analyzers definitions.
 
 
 ## ArangoDatabase.deleteAnalyzer
@@ -62,7 +62,7 @@ Deletes an Analyzer.
 
 - **name**: `String`
 
-  The name of the analyzer
+  The name of the Analyzer
 
 
 ## ArangoDatabase.deleteAnalyzer
@@ -75,10 +75,10 @@ Deletes an Analyzer.
 
 - **name**: `String`
 
-  The name of the analyzer
+  The name of the Analyzer
 
 - **options**: `AnalyzerDeleteOptions`
 
   - **force**: `Boolean`
 
-    The analyzer configuration should be removed even if it is in-use. The default value is false.
+    The Analyzer configuration should be removed even if it is in-use. The default value is false.

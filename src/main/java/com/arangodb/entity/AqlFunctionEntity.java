@@ -24,7 +24,7 @@ package com.arangodb.entity;
  * @author Mark Vollmary
  * 
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+ *      "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
  *      Documentation</a>
  */
 public class AqlFunctionEntity implements Entity {

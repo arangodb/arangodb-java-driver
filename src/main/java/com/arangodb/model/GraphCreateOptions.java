@@ -28,7 +28,7 @@ import com.arangodb.entity.EdgeDefinition;
 /**
  * @author Mark Vollmary
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API Documentation</a>
  */
 public class GraphCreateOptions {
 

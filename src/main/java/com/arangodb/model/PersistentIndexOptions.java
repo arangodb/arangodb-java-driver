@@ -25,7 +25,7 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark Vollmary
  * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
  *      Documentation</a>
  */
 public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {

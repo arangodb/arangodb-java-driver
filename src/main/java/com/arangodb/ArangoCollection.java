@@ -31,8 +31,8 @@ import java.util.Collection;
  * @author Mark Vollmary
  * @author Heiko Kernbach
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Collection API Documentation</a>
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Collection API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
 @SuppressWarnings("UnusedReturnValue")
 public interface ArangoCollection extends ArangoSerializationAccessor {
@@ -58,7 +58,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param value A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentCreateEntity<T> insertDocument(T value) throws ArangoDBException;
@@ -71,7 +71,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) throws ArangoDBException;
@@ -83,7 +83,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param values A List of documents (POJO, VPackSlice or String for JSON)
 	 * @return information about the documents
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values) throws ArangoDBException;
@@ -96,7 +96,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the documents
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
@@ -147,7 +147,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param type The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
 	 * Documentation</a>
 	 */
 	<T> T getDocument(String key, Class<T> type) throws ArangoDBException;
@@ -160,7 +160,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return the document identified by the key
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
 	 * Documentation</a>
 	 */
 	<T> T getDocument(String key, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
@@ -195,7 +195,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param value A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentUpdateEntity<T> replaceDocument(String key, T value) throws ArangoDBException;
@@ -209,7 +209,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentUpdateEntity<T> replaceDocument(String key, T value, DocumentReplaceOptions options)
@@ -222,7 +222,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param values A List of documents (POJO, VPackSlice or String for JSON)
 	 * @return information about the documents
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values) throws ArangoDBException;
@@ -235,7 +235,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the documents
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
@@ -250,7 +250,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param value A representation of a single document (POJO, VPackSlice or String for JSON)
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentUpdateEntity<T> updateDocument(String key, T value) throws ArangoDBException;
@@ -265,7 +265,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentUpdateEntity<T> updateDocument(String key, T value, DocumentUpdateOptions options)
@@ -280,7 +280,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param values A list of documents (POJO, VPackSlice or String for JSON)
 	 * @return information about the documents
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(Collection<T> values) throws ArangoDBException;
@@ -295,7 +295,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the documents
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
@@ -307,7 +307,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key The key of the document
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
 	 * Documentation</a>
 	 */
 	DocumentDeleteEntity<Void> deleteDocument(String key) throws ArangoDBException;
@@ -321,7 +321,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the document
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
 	 * Documentation</a>
 	 */
 	<T> DocumentDeleteEntity<T> deleteDocument(String key, Class<T> type, DocumentDeleteOptions options)
@@ -334,7 +334,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
+	 * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
 	 * Documentation</a>
 	 */
 	MultiDocumentEntity<DocumentDeleteEntity<Void>> deleteDocuments(Collection<?> values) throws ArangoDBException;
@@ -349,7 +349,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return information about the documents
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
+	 * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
 	 * Documentation</a>
 	 */
 	<T> MultiDocumentEntity<DocumentDeleteEntity<T>> deleteDocuments(
@@ -361,7 +361,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param key The key of the document
 	 * @return true if the document was found, otherwise false
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
+	 * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
 	 * Documentation</a>
 	 */
 	Boolean documentExists(String key);
@@ -374,7 +374,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return true if the document was found, otherwise false
 	 * @throws ArangoDBException only thrown when {@link DocumentExistsOptions#isCatchException()} == false
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
+	 * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
 	 * Documentation</a>
 	 */
 	Boolean documentExists(String key, DocumentExistsOptions options) throws ArangoDBException;
@@ -385,7 +385,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param id The index-handle
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
 	 */
 	IndexEntity getIndex(String id) throws ArangoDBException;
 
@@ -395,7 +395,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param id The index-handle
 	 * @return the id of the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
 	 */
 	String deleteIndex(String id) throws ArangoDBException;
 
@@ -406,7 +406,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
 	 */
 	IndexEntity ensureHashIndex(Iterable<String> fields, HashIndexOptions options) throws ArangoDBException;
 
@@ -417,7 +417,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API
 	 * Documentation</a>
 	 */
 	IndexEntity ensureSkiplistIndex(Iterable<String> fields, SkiplistIndexOptions options) throws ArangoDBException;
@@ -429,7 +429,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
 	 * Documentation</a>
 	 */
 	IndexEntity ensurePersistentIndex(Iterable<String> fields, PersistentIndexOptions options) throws ArangoDBException;
@@ -441,7 +441,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API
 	 * Documentation</a>
 	 */
 	IndexEntity ensureGeoIndex(Iterable<String> fields, GeoIndexOptions options) throws ArangoDBException;
@@ -453,7 +453,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
 	 * Documentation</a>
 	 */
 	IndexEntity ensureFulltextIndex(Iterable<String> fields, FulltextIndexOptions options) throws ArangoDBException;
@@ -476,7 +476,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return information about the indexes
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-all-indexes-of-a-collection">API
+	 * "https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-all-indexes-of-a-collection">API
 	 * Documentation</a>
 	 */
 	Collection<IndexEntity> getIndexes() throws ArangoDBException;
@@ -493,7 +493,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#truncate-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity truncate() throws ArangoDBException;
@@ -504,7 +504,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#truncate-collection">API
 	 * Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -516,7 +516,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return information about the collection, including the number of documents
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+	 * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-number-of-documents-in-a-collection">API
 	 * Documentation</a>
 	 */
 	CollectionPropertiesEntity count() throws ArangoDBException;
@@ -528,7 +528,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return information about the collection, including the number of documents
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+	 * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-number-of-documents-in-a-collection">API
 	 * Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -539,7 +539,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity create() throws ArangoDBException;
@@ -551,7 +551,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity create(CollectionCreateOptions options) throws ArangoDBException;
@@ -560,7 +560,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * Deletes the collection from the database.
 	 *
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#drops-collection">API
 	 * Documentation</a>
 	 */
 	void drop() throws ArangoDBException;
@@ -571,7 +571,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param isSystem Whether or not the collection to drop is a system collection. This parameter must be set to true in
 	 *                 order to drop a system collection.
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#drops-collection">API
 	 * Documentation</a>
 	 * @since ArangoDB 3.1.0
 	 */
@@ -582,7 +582,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#load-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#load-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity load() throws ArangoDBException;
@@ -593,7 +593,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#unload-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#unload-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity unload() throws ArangoDBException;
@@ -604,7 +604,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return information about the collection
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-information-about-a-collection">API
+	 * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-information-about-a-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity getInfo() throws ArangoDBException;
@@ -615,7 +615,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
+	 * "https://www.arangodb.com/docs/stable/http/collection-getting.html#read-properties-of-a-collection">API
 	 * Documentation</a>
 	 */
 	CollectionPropertiesEntity getProperties() throws ArangoDBException;
@@ -627,7 +627,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @return properties of the collection
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#change-properties-of-a-collection">API
+	 * "https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
 	 * Documentation</a>
 	 */
 	CollectionPropertiesEntity changeProperties(CollectionPropertiesOptions options) throws ArangoDBException;
@@ -638,7 +638,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param newName The new name
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#rename-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#rename-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity rename(String newName) throws ArangoDBException;
@@ -651,7 +651,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *              which the responsible shard should be determined
 	 * @return information about the responsible shard
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/collection-getting.html#return-responsible-shard-for-a-document">
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-responsible-shard-for-a-document">
 	 * API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -662,7 +662,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the collection, including the collections revision
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-collection-revision-id">API
 	 * Documentation</a>
 	 */
 	CollectionRevisionEntity getRevision() throws ArangoDBException;
@@ -675,7 +675,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param permissions The permissions the user grant
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+	 * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
 	 * Documentation</a>
 	 */
 	void grantAccess(String user, Permissions permissions) throws ArangoDBException;
@@ -687,7 +687,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param user The name of the user
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+	 * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
 	 * Documentation</a>
 	 */
 	void revokeAccess(String user) throws ArangoDBException;
@@ -698,7 +698,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param user The name of the user
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+	 * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
 	 * Documentation</a>
 	 * @since ArangoDB 3.2.0
 	 */
@@ -710,7 +710,7 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 	 * @param user The name of the user
 	 * @return permissions of the user
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-specific-collection-access-level">
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#get-the-specific-collection-access-level">
 	 * API Documentation</a>
 	 * @since ArangoDB 3.2.0
 	 */

@@ -18,7 +18,7 @@
   - [Bulk Import](Collection/BulkImport.md)
 - [View](View/README.md)
   - [View Manipulation](View/ViewManipulation.md)
-  - [ArangoSearch Views](View/ArangoSearch.md)
+  - [ArangoSearch Views](View/Arangosearch.md)
   - [Analyzers](View/Analyzers.md)
 - [Cursor](Cursor.md)
 - [Graph](Graph/README.md)

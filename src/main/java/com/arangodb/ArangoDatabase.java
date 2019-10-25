@@ -34,8 +34,8 @@ import java.util.Map;
  *
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/Database/">Databases API Documentation</a>
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/">Query API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/database.html">Databases API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html">Query API Documentation</a>
  */
 @SuppressWarnings("UnusedReturnValue")
 public interface ArangoDatabase extends ArangoSerializationAccessor {
@@ -59,7 +59,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return the server version, number
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
 	 * Documentation</a>
 	 */
 	ArangoDBVersion getVersion() throws ArangoDBException;
@@ -69,7 +69,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return the storage engine name
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-database-engine-type">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
 	 * Documentation</a>
 	 */
 	ArangoDBEngine getEngine() throws ArangoDBException;
@@ -87,7 +87,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return a list of all databases the current user can access
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+	 * "https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-accessible-databases">API
 	 * Documentation</a>
 	 */
 	Collection<String> getAccessibleDatabases() throws ArangoDBException;
@@ -106,7 +106,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param name The name of the collection
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity createCollection(String name) throws ArangoDBException;
@@ -119,7 +119,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the collection
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
 	 * Documentation</a>
 	 */
 	CollectionEntity createCollection(String name, CollectionCreateOptions options) throws ArangoDBException;
@@ -129,7 +129,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
 	 * Documentation</a>
 	 */
 	Collection<CollectionEntity> getCollections() throws ArangoDBException;
@@ -140,7 +140,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return list of information about all collections
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#reads-all-collections">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#reads-all-collections">API
 	 * Documentation</a>
 	 */
 	Collection<CollectionEntity> getCollections(CollectionsReadOptions options) throws ArangoDBException;
@@ -151,7 +151,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param id The index-handle
 	 * @return information about the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
 	 */
 	IndexEntity getIndex(String id) throws ArangoDBException;
 
@@ -161,7 +161,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param id The index-handle
 	 * @return the id of the index
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
 	 */
 	String deleteIndex(String id) throws ArangoDBException;
 
@@ -170,7 +170,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return true if the database was created successfully.
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
 	 * Documentation</a>
 	 */
 	Boolean create() throws ArangoDBException;
@@ -180,7 +180,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return true if the database was dropped successfully
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#drop-database">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#drop-database">API
 	 * Documentation</a>
 	 */
 	Boolean drop() throws ArangoDBException;
@@ -192,7 +192,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param user        The name of the user
 	 * @param permissions The permissions the user grant
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
 	 * API Documentation</a>
 	 */
 	void grantAccess(String user, Permissions permissions) throws ArangoDBException;
@@ -203,7 +203,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @param user The name of the user
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
 	 * API Documentation</a>
 	 */
 	void grantAccess(String user) throws ArangoDBException;
@@ -214,7 +214,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @param user The name of the user
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
 	 * API Documentation</a>
 	 */
 	void revokeAccess(String user) throws ArangoDBException;
@@ -224,7 +224,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @param user The name of the user
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-database-access">
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-database-access-level">
 	 * API Documentation</a>
 	 * @since ArangoDB 3.2.0
 	 */
@@ -247,7 +247,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param user The name of the user
 	 * @return permissions of the user
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-database-access-level"> API
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#get-the-database-access-level"> API
 	 * Documentation</a>
 	 * @since ArangoDB 3.2.0
 	 */
@@ -263,7 +263,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
 	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, AqlQueryOptions options, Class<T> type)
@@ -278,7 +278,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param type    The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
 	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, AqlQueryOptions options, Class<T> type) throws ArangoDBException;
@@ -292,7 +292,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param type     The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
 	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, Map<String, Object> bindVars, Class<T> type) throws ArangoDBException;
@@ -305,7 +305,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param type  The type of the result (POJO class, VPackSlice, String for JSON, or Collection/List/Map)
 	 * @return cursor of the results
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#create-cursor">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#create-cursor">API
 	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> query(String query, Class<T> type) throws ArangoDBException;
@@ -318,7 +318,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return cursor of the results
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCursor/AccessingCursors.html#read-next-batch-from-cursor">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#read-next-batch-from-cursor">API
 	 * Documentation</a>
 	 */
 	<T> ArangoCursor<T> cursor(String cursorId, Class<T> type) throws ArangoDBException;
@@ -331,7 +331,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options  Additional options, can be null
 	 * @return information about the query
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API
 	 * Documentation</a>
 	 */
 	AqlExecutionExplainEntity explainQuery(String query, Map<String, Object> bindVars, AqlQueryExplainOptions options)
@@ -344,7 +344,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param query the query which you want parse
 	 * @return imformation about the query
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API
 	 * Documentation</a>
 	 */
 	AqlParseEntity parseQuery(String query) throws ArangoDBException;
@@ -354,7 +354,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#clears-any-results-in-the-aql-query-cache">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#clears-any-results-in-the-aql-query-results-cache">API
 	 * Documentation</a>
 	 */
 	void clearQueryCache() throws ArangoDBException;
@@ -365,7 +365,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return configuration for the AQL query cache
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#returns-the-global-properties-for-the-aql-query-cache">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#returns-the-global-properties-for-the-aql-query-results-cache">API
 	 * Documentation</a>
 	 */
 	QueryCachePropertiesEntity getQueryCacheProperties() throws ArangoDBException;
@@ -378,7 +378,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return current set of properties
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#globally-adjusts-the-aql-query-result-cache-properties">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html#globally-adjusts-the-aql-query-results-cache-properties">API
 	 * Documentation</a>
 	 */
 	QueryCachePropertiesEntity setQueryCacheProperties(QueryCachePropertiesEntity properties) throws ArangoDBException;
@@ -389,7 +389,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return configuration for the AQL query tracking
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-properties-for-the-aql-query-tracking">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-properties-for-the-aql-query-tracking">API
 	 * Documentation</a>
 	 */
 	QueryTrackingPropertiesEntity getQueryTrackingProperties() throws ArangoDBException;
@@ -401,7 +401,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return current set of properties
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#changes-the-properties-for-the-aql-query-tracking">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query.html#changes-the-properties-for-the-aql-query-tracking">API
 	 * Documentation</a>
 	 */
 	QueryTrackingPropertiesEntity setQueryTrackingProperties(QueryTrackingPropertiesEntity properties)
@@ -413,7 +413,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return a list of currently running AQL queries
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-currently-running-aql-queries">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-currently-running-aql-queries">API
 	 * Documentation</a>
 	 */
 	Collection<QueryEntity> getCurrentlyRunningQueries() throws ArangoDBException;
@@ -424,7 +424,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return a list of slow running AQL queries
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#returns-the-list-of-slow-aql-queries">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query.html#returns-the-list-of-slow-aql-queries">API
 	 * Documentation</a>
 	 */
 	Collection<QueryEntity> getSlowQueries() throws ArangoDBException;
@@ -434,7 +434,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#clears-the-list-of-slow-aql-queries">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-query.html#clears-the-list-of-slow-aql-queries">API
 	 * Documentation</a>
 	 */
 	void clearSlowQueries() throws ArangoDBException;
@@ -444,7 +444,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @param id The id of the query
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#kills-a-running-aql-query">API
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/aql-query.html#kills-a-running-aql-query">API
 	 * Documentation</a>
 	 */
 	void killQuery(String id) throws ArangoDBException;
@@ -456,7 +456,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param code    A String evaluating to a JavaScript function
 	 * @param options Additional options, can be null
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/aql-user-functions.html#create-aql-user-function">API
 	 * Documentation</a>
 	 */
 	void createAqlFunction(String name, String code, AqlFunctionCreateOptions options) throws ArangoDBException;
@@ -469,7 +469,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return number of deleted functions (since ArangoDB 3.4.0)
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#remove-existing-aql-user-function">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#remove-existing-aql-user-function">API
 	 * Documentation</a>
 	 */
 	Integer deleteAqlFunction(String name, AqlFunctionDeleteOptions options) throws ArangoDBException;
@@ -481,7 +481,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return all reqistered AQL user functions
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
+	 * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
 	 * Documentation</a>
 	 */
 	Collection<AqlFunctionEntity> getAqlFunctions(AqlFunctionGetOptions options) throws ArangoDBException;
@@ -502,7 +502,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param edgeDefinitions An array of definitions for the edge
 	 * @return information about the graph
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
 	 * Documentation</a>
 	 */
 	GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException;
@@ -516,7 +516,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options         Additional options, can be null
 	 * @return information about the graph
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
 	 * Documentation</a>
 	 */
 	GraphEntity createGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options)
@@ -527,7 +527,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return graphs stored in this database
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-all-graphs">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-all-graphs">API
 	 * Documentation</a>
 	 */
 	Collection<GraphEntity> getGraphs() throws ArangoDBException;
@@ -540,7 +540,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return the result of the transaction if it succeeded
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Transaction/index.html#execute-transaction">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-js-transaction.html#execute-transaction">API
 	 * Documentation</a>
 	 */
 	<T> T transaction(String action, Class<T> type, TransactionOptions options) throws ArangoDBException;
@@ -551,7 +551,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the transaction
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#begin-a-transaction">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#begin-a-transaction">API
 	 * Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -562,7 +562,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the transaction
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#abort-transaction">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#abort-transaction">API
 	 * Documentation</a>
 	 */
 	StreamTransactionEntity abortStreamTransaction(String id) throws ArangoDBException;
@@ -572,7 +572,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the transaction
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#get-transaction-status">
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#get-transaction-status">
 	 * API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -583,7 +583,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return all the currently running Stream Transactions
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#list-currently-ongoing-transactions">
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#list-currently-ongoing-transactions">
 	 * API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -594,7 +594,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return information about the transaction
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/transaction-stream-transaction.html#commit-or-abort-a-transaction">
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/transaction-stream-transaction.html#commit-or-abort-a-transaction">
 	 * API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
@@ -606,7 +606,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @return information about the current database
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#information-of-the-database">API
+	 * "https://www.arangodb.com/docs/stable/http/database-database-management.html#information-of-the-database">API
 	 * Documentation</a>
 	 */
 	DatabaseEntity getInfo() throws ArangoDBException;
@@ -619,7 +619,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options     Additional options
 	 * @return Result of the executed traversal
 	 * @throws ArangoDBException
-	 * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
+	 * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
 	 * Documentation</a>
 	 */
 	<V, E> TraversalEntity<V, E> executeTraversal(Class<V> vertexClass, Class<E> edgeClass, TraversalOptions options)
@@ -632,7 +632,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param type The type of the document (POJO class, VPackSlice or String for JSON)
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
 	 * Documentation</a>
 	 */
 	<T> T getDocument(String id, Class<T> type) throws ArangoDBException;
@@ -645,7 +645,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return the document identified by the id
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
 	 * Documentation</a>
 	 */
 	<T> T getDocument(String id, Class<T> type, DocumentReadOptions options) throws ArangoDBException;
@@ -655,7 +655,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @throws ArangoDBException
 	 * @see <a href=
-	 * "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#reloads-the-routing-information">API
+	 * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#reloads-the-routing-information">API
 	 * Documentation</a>
 	 */
 	void reloadRouting() throws ArangoDBException;
@@ -674,7 +674,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return list of information about all views
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/Getting.html#reads-all-views">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#list-all-views">API Documentation</a>
 	 * @since ArangoDB 3.4.0
 	 */
 	Collection<ViewEntity> getViews() throws ArangoDBException;
@@ -715,7 +715,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options Additional options, can be null
 	 * @return information about the view
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/Views/ArangoSearch.html#create-arangosearch-view">API
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html#create-an-arangosearch-view">API
 	 * Documentation</a>
 	 * @since ArangoDB 3.4.0
 	 */
@@ -727,7 +727,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param options AnalyzerEntity
 	 * @return the created Analyzer
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
 	AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException;
@@ -738,7 +738,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param name of the Analyzer without database prefix
 	 * @return information about an Analyzer
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
 	AnalyzerEntity getAnalyzer(String name) throws ArangoDBException;
@@ -748,7 +748,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @return collection of all analyzers definitions
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
 	Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException;
@@ -758,7 +758,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 *
 	 * @param name    of the Analyzer without database prefix
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
 	void deleteAnalyzer(String name) throws ArangoDBException;
@@ -769,7 +769,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
 	 * @param name    of the Analyzer without database prefix
 	 * @param options AnalyzerDeleteOptions
 	 * @throws ArangoDBException
-	 * @see <a href="https://docs.arangodb.com/current/HTTP/analyzers.html">API Documentation</a>
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
 	 * @since ArangoDB 3.5.0
 	 */
 	void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException;

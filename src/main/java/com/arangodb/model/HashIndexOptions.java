@@ -25,7 +25,7 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark Vollmary
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
  */
 public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
 

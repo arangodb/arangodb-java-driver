@@ -290,7 +290,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
         return response -> {
             // compatibility with ArangoDB < 3.4
-            // https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+            // https://www.arangodb.com/docs/stable/release-notes-upgrading-changes34.html
             Integer count = null;
             final VPackSlice body = response.getBody();
             if (body.isObject()) {
@@ -314,7 +314,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return response -> {
             final VPackSlice body = response.getBody();
             // compatibility with ArangoDB < 3.4
-            // https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+            // https://www.arangodb.com/docs/stable/release-notes-upgrading-changes34.html
             final VPackSlice result = body.isArray() ? body : body.get(ArangoResponseField.RESULT);
             return util().deserialize(result, new Type<Collection<AqlFunctionEntity>>() {
             }.getType());

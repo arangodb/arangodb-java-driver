@@ -39,7 +39,7 @@ import com.arangodb.model.CollectionCreateOptions;
 
 /**
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html">AQL Example Queries on an
+ * @see <a href="https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html">AQL Example Queries on an
  * Actors and Movies Database</a>
  */
 public class AQLActorsAndMoviesExample {
@@ -66,7 +66,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-movie1-or-movie2">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#all-actors-who-acted-in-movie1-or-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -80,7 +80,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-movie1-or-movie2">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#all-actors-who-acted-in-movie1-or-movie2">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -94,7 +94,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-both-movie1-and-movie2-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#all-actors-who-acted-in-both-movie1-and-movie2-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -107,7 +107,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-common-movies-between-actor1-and-actor2-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#all-common-movies-between-actor1-and-actor2-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -121,7 +121,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-actors-who-acted-in-3-or-more-movies-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#all-actors-who-acted-in-3-or-more-movies-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -137,7 +137,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#all-movies-where-exactly-6-actors-acted-in-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#all-movies-where-exactly-6-actors-acted-in-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -151,7 +151,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#the-number-of-actors-by-movie-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#the-number-of-actors-by-movie-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -172,7 +172,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#the-number-of-movies-by-actor-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#the-number-of-movies-by-actor-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test
@@ -204,7 +204,7 @@ public class AQLActorsAndMoviesExample {
 
     /**
      * @see <a href=
-     * "https://docs.arangodb.com/current/cookbook/Graph/ExampleActorsAndMovies.html#the-number-of-movies-acted-in-between-2005-and-2010-by-actor-">AQL
+     * "https://www.arangodb.com/docs/stable/cookbook/graph-example-actors-and-movies.html#the-number-of-movies-acted-in-between-2005-and-2010-by-actor-">AQL
      * Example Queries on an Actors and Movies Database</a>
      */
     @Test

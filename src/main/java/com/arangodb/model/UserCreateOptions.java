@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * @author Mark Vollmary
  *
- * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
  */
 public class UserCreateOptions {
 

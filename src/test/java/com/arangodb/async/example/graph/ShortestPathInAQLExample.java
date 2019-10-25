@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
  * Shortest Path in AQL
  *
  * @author a-brandt
- * @see <a href="https://docs.arangodb.com/current/AQL/Graphs/ShortestPath.html">Shortest Path in AQL</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-shortest-path.html">Shortest Path in AQL</a>
  */
 public class ShortestPathInAQLExample extends BaseGraphTest {
 
