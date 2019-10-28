@@ -9,6 +9,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -67,6 +68,15 @@ enum ClusterContainer implements Supplier<ArangoDB.Builder> {
                     .withCommand("arangodb --cluster.start-dbserver false --cluster.start-coordinator true --starter.join agent1")
                     .waitingFor(Wait.forHttp("/_api/version").forStatusCode(200));
 
+    private final GenericContainer coordinator2 =
+            new GenericContainer(DOCKER_IMAGE)
+                    .withExposedPorts(8529)
+                    .withNetwork(network)
+                    .withNetworkAliases("coordinator2")
+                    .withLogConsumer(new Slf4jLogConsumer(log).withPrefix("[COORDINATOR_2]"))
+                    .withCommand("arangodb --cluster.start-dbserver false --cluster.start-coordinator true --starter.join agent1")
+                    .waitingFor(Wait.forHttp("/_api/version").forStatusCode(200));
+
     {
         // start agents
         Arrays.asList(
@@ -78,9 +88,14 @@ enum ClusterContainer implements Supplier<ArangoDB.Builder> {
         // start dbservers and coordinators
         Arrays.asList(
                 CompletableFuture.runAsync(dbserver1::start).thenAccept((v) -> log.info("READY: dbserver1")),
-                CompletableFuture.runAsync(coordinator1::start).thenAccept((v) -> log.info("READY: coordinator1"))
+                CompletableFuture.runAsync(coordinator1::start).thenAccept((v) -> log.info("READY: coordinator1")),
+                CompletableFuture.runAsync(coordinator2::start).thenAccept((v) -> log.info("READY: coordinator2"))
         ).forEach(CompletableFuture::join);
 
+    }
+
+    public List<GenericContainer> getCoordinators() {
+        return Arrays.asList(coordinator1, coordinator2);
     }
 
     @Override
