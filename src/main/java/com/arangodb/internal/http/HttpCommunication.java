@@ -79,7 +79,7 @@ public class HttpCommunication implements Closeable {
             while (true) {
                 try {
                     final HttpConnection connection = (HttpConnection) host.connection();
-                    final Response response = connection.execute(request);
+                    final Response response = connection.execute(request).block();
                     hostHandler.success();
                     hostHandler.confirm();
                     return response;

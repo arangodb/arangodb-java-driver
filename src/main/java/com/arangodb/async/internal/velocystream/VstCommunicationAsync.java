@@ -28,11 +28,11 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import javax.net.ssl.SSLContext;
 import java.util.concurrent.CompletableFuture;
@@ -56,9 +56,8 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         final CompletableFuture<Response> rfuture = new CompletableFuture<>();
         try {
             final Message message = createMessage(request);
-            send(message, connection).whenComplete((m, ex) -> {
-                if (m != null) {
-                    try {
+            send(message, connection)
+                    .doOnNext(m -> {
                         final Response response = createResponse(m);
                         if (response.getResponseCode() >= 300) {
                             if (response.getBody() != null) {
@@ -71,17 +70,9 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
                         } else {
                             rfuture.complete(response);
                         }
-                    } catch (final VPackParserException e) {
-                        LOGGER.error(e.getMessage(), e);
-                        rfuture.completeExceptionally(e);
-                    }
-                } else if (ex != null) {
-                    LOGGER.error(ex.getMessage(), ex);
-                    rfuture.completeExceptionally(ex);
-                } else {
-                    rfuture.cancel(true);
-                }
-            });
+                    })
+                    .doOnError(rfuture::completeExceptionally)
+                    .subscribe();
         } catch (final VPackException e) {
             LOGGER.error(e.getMessage(), e);
             rfuture.completeExceptionally(e);
@@ -89,7 +80,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         return rfuture;
     }
 
-    private CompletableFuture<Message> send(final Message message, final VstConnectionAsync connection) {
+    private Mono<Message> send(final Message message, final VstConnectionAsync connection) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("Send Message (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
                     message.getBody() != null ? message.getBody() : "{}"));

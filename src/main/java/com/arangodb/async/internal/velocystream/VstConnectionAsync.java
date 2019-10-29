@@ -25,6 +25,7 @@ import com.arangodb.internal.velocystream.internal.Chunk;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.MessageStore;
 import com.arangodb.internal.velocystream.internal.VstConnection;
+import reactor.core.publisher.Mono;
 
 import javax.net.ssl.SSLContext;
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class VstConnectionAsync extends VstConnection {
         super(host, timeout, ttl, useSsl, sslContext, messageStore);
     }
 
-    public synchronized CompletableFuture<Message> write(final Message message, final Collection<Chunk> chunks) {
+    public synchronized Mono<Message> write(final Message message, final Collection<Chunk> chunks) {
         final CompletableFuture<Message> future = new CompletableFuture<>();
         final FutureTask<Message> task = new FutureTask<>(() -> {
             try {
@@ -53,7 +54,7 @@ public class VstConnectionAsync extends VstConnection {
         });
         messageStore.storeMessage(message.getId(), task);
         super.writeIntern(message, chunks);
-        return future;
+        return Mono.fromFuture(future);
     }
 
     public static class Builder {

@@ -299,7 +299,7 @@ public class HttpConnection implements Connection {
                 });
     }
 
-    public Response execute(final Request request) throws ArangoDBException {
+    public Mono<Response> execute(final Request request) throws ArangoDBException {
         byte[] body = getBody(request);
         final String url = buildUrl(request);
 
@@ -324,7 +324,7 @@ public class HttpConnection implements Connection {
                         .doOnNext(response -> ResponseUtils.checkError(util, response))
                         .subscribeOn(scheduler)
                         .doOnError(e -> !(e instanceof ArangoDBException), e -> connectionProvider.dispose())
-        ).block();
+        );
     }
 
     private Mono<Response> applyTimeout(Mono<Response> client) {
