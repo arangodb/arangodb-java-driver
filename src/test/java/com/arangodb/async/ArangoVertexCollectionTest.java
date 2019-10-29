@@ -26,8 +26,11 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.model.*;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
@@ -39,13 +42,14 @@ import static org.junit.Assert.fail;
 /**
  * @author Mark Vollmary
  */
+@RunWith(Parameterized.class)
 public class ArangoVertexCollectionTest extends BaseTest {
 
     private static final String GRAPH_NAME = "db_collection_test";
     private static final String COLLECTION_NAME = "db_vertex_collection_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @Before
+    public void setup() throws InterruptedException, ExecutionException {
         if (!db.collection(COLLECTION_NAME).exists().get()) {
             db.createCollection(COLLECTION_NAME, null).get();
         }
@@ -56,6 +60,10 @@ public class ArangoVertexCollectionTest extends BaseTest {
     @After
     public void teardown() throws InterruptedException, ExecutionException {
         db.collection(COLLECTION_NAME).truncate().get();
+    }
+
+    public ArangoVertexCollectionTest(ArangoDBAsync.Builder builder) {
+        super(builder);
     }
 
     @Test

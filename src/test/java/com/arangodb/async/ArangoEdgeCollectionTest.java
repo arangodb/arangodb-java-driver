@@ -24,8 +24,11 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,14 +41,15 @@ import static org.junit.Assert.fail;
 /**
  * @author Mark Vollmary
  */
+@RunWith(Parameterized.class)
 public class ArangoEdgeCollectionTest extends BaseTest {
 
     private static final String GRAPH_NAME = "db_collection_test";
     private static final String EDGE_COLLECTION_NAME = "db_edge_collection_test";
     private static final String VERTEX_COLLECTION_NAME = "db_vertex_collection_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @Before
+    public void setup() throws InterruptedException, ExecutionException {
         if (!db.collection(VERTEX_COLLECTION_NAME).exists().get()) {
             db.createCollection(VERTEX_COLLECTION_NAME, null).get();
         }
@@ -63,6 +67,10 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         for (final String collection : new String[]{VERTEX_COLLECTION_NAME, EDGE_COLLECTION_NAME}) {
             db.collection(collection).truncate().get();
         }
+    }
+
+    public ArangoEdgeCollectionTest(final ArangoDBAsync.Builder builder) {
+        super(builder);
     }
 
     private BaseEdgeDocument createEdgeValue() throws InterruptedException, ExecutionException {

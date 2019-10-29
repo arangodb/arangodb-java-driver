@@ -27,8 +27,11 @@ import com.arangodb.entity.arangosearch.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -41,13 +44,17 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Mark Vollmary
  */
-
+@RunWith(Parameterized.class)
 public class ArangoSearchTest extends BaseTest {
 
     private static final String VIEW_NAME = "view_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    public ArangoSearchTest(final ArangoDBAsync.Builder builder) {
+        super(builder);
+    }
+
+    @Before
+    public void setup() throws InterruptedException, ExecutionException {
         if (!isAtLeastVersion(arangoDB, 3, 4))
             return;
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions()).get();

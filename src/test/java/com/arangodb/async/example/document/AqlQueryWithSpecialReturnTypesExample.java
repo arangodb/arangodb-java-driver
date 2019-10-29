@@ -24,6 +24,7 @@ import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -39,8 +40,8 @@ import static org.junit.Assert.assertThat;
  */
 public class AqlQueryWithSpecialReturnTypesExample extends ExampleBase {
 
-    @BeforeClass
-    public static void before() throws InterruptedException, ExecutionException {
+    @Before
+    public void before() throws InterruptedException, ExecutionException {
         createExamples();
     }
 

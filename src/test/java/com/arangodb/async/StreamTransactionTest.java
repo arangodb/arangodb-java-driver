@@ -27,6 +27,8 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,11 +45,14 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Michele Rastelli
  */
+@RunWith(Parameterized.class)
 public class StreamTransactionTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_stream_transaction_test";
 
-    public StreamTransactionTest() throws ExecutionException, InterruptedException {
+    public StreamTransactionTest(ArangoDBAsync.Builder builder) throws ExecutionException, InterruptedException {
+        super(builder);
+
         if (db.collection(COLLECTION_NAME).exists().get())
             db.collection(COLLECTION_NAME).drop().get();
 

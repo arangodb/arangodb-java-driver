@@ -24,6 +24,7 @@ import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.velocypack.VPackSlice;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -40,8 +41,8 @@ public class GetDocumentExample extends ExampleBase {
 
     private static String key = null;
 
-    @BeforeClass
-    public static void before() throws InterruptedException, ExecutionException {
+    @Before
+    public void before() throws InterruptedException, ExecutionException {
         final BaseDocument value = new BaseDocument();
         value.addAttribute("foo", "bar");
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value).get();

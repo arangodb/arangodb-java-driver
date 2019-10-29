@@ -30,6 +30,8 @@ import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.concurrent.ExecutionException;
 
@@ -42,7 +44,12 @@ import static org.junit.Assume.assumeTrue;
  * <p>
  * https://github.com/arangodb/arangodb-java-driver-async/issues/15
  */
+@RunWith(Parameterized.class)
 public class ConsolidationIntervalMsec extends BaseTest {
+
+    public ConsolidationIntervalMsec(final ArangoDBAsync.Builder builder) {
+        super(builder);
+    }
 
     @Test
     public void consolidationIntervalMsec() throws ExecutionException, InterruptedException {

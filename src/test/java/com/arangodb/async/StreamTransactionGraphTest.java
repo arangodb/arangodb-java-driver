@@ -25,6 +25,8 @@ import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +40,7 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Michele Rastelli
  */
+@RunWith(Parameterized.class)
 public class StreamTransactionGraphTest extends BaseTest {
 
     private static final String GRAPH_NAME = "graph_stream_transaction_graph_test";
@@ -50,7 +53,8 @@ public class StreamTransactionGraphTest extends BaseTest {
     private ArangoVertexCollectionAsync vertexCollection2;
     private ArangoEdgeCollectionAsync edgeCollection;
 
-    public StreamTransactionGraphTest() throws ExecutionException, InterruptedException {
+    public StreamTransactionGraphTest(ArangoDBAsync.Builder builder) throws ExecutionException, InterruptedException {
+        super(builder);
 
         graph = db.graph(GRAPH_NAME);
 

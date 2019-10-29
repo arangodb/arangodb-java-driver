@@ -20,6 +20,7 @@
 
 package com.arangodb.async;
 
+import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
@@ -27,7 +28,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.rules.TestRule;
+import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 
@@ -36,9 +40,30 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class BaseTest {
 
+    @Parameterized.Parameters
+    public static Collection<ArangoDBAsync.Builder> builders() {
+        return Arrays.asList(//
+                new ArangoDBAsync.Builder().useProtocol(Protocol.VST), //
+                new ArangoDBAsync.Builder().useProtocol(Protocol.HTTP_JSON), //
+                new ArangoDBAsync.Builder().useProtocol(Protocol.HTTP_VPACK) //
+        );
+    }
+
     static final String TEST_DB = "java_driver_test_db";
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
+
+    protected BaseTest(final ArangoDBAsync.Builder builder) {
+        super();
+        if (arangoDB != null) {
+            shutdown();
+        }
+        arangoDB = builder.build();
+        db = arangoDB.db(TEST_DB);
+
+        if (!db.exists().join())
+            db.create().join();
+    }
 
     @ClassRule
     public static TestRule acquireHostListRule = TestUtils.acquireHostListRule;
@@ -54,12 +79,12 @@ public abstract class BaseTest {
         }
 
         arangoDB.createDatabase(TEST_DB).get();
-        BaseTest.db = arangoDB.db(TEST_DB);
+        db = arangoDB.db(TEST_DB);
     }
 
     @AfterClass
-    public static void shutdown() throws InterruptedException, ExecutionException {
-        arangoDB.db(TEST_DB).drop().get();
+    public static void shutdown() {
+        arangoDB.db(TEST_DB).drop().join();
         arangoDB.shutdown();
         arangoDB = null;
     }

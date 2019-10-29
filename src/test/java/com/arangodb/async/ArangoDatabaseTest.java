@@ -20,6 +20,7 @@
 
 package com.arangodb.async;
 
+import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.*;
@@ -32,6 +33,8 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.util.*;
@@ -50,10 +53,15 @@ import static org.junit.Assume.assumeTrue;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@RunWith(Parameterized.class)
 public class ArangoDatabaseTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_test";
     private static final String GRAPH_NAME = "graph_test";
+
+    public ArangoDatabaseTest(final ArangoDBAsync.Builder builder) {
+        super(builder);
+    }
 
     @Test
     public void create() throws InterruptedException, ExecutionException {

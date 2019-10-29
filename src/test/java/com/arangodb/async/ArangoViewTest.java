@@ -22,8 +22,11 @@ package com.arangodb.async;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.concurrent.ExecutionException;
 
@@ -34,13 +37,17 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Mark Vollmary
  */
-
+@RunWith(Parameterized.class)
 public class ArangoViewTest extends BaseTest {
 
     private static final String VIEW_NAME = "view_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    public ArangoViewTest(final ArangoDBAsync.Builder builder) {
+        super(builder);
+    }
+
+    @Before
+    public void setup() throws InterruptedException, ExecutionException {
         if (!isAtLeastVersion(arangoDB, 3, 4))
             return;
         db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH).get();

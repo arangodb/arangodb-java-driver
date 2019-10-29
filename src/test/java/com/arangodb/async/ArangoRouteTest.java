@@ -24,6 +24,8 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.concurrent.ExecutionException;
 
@@ -34,7 +36,12 @@ import static org.junit.Assert.fail;
 /**
  * @author Mark Vollmary
  */
+@RunWith(Parameterized.class)
 public class ArangoRouteTest extends BaseTest {
+
+    public ArangoRouteTest(final ArangoDBAsync.Builder builder) {
+        super(builder);
+    }
 
   /*
 	@Test

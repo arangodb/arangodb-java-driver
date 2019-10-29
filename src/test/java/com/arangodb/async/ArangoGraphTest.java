@@ -26,8 +26,11 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.model.GraphCreateOptions;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +46,7 @@ import static org.junit.Assume.assumeTrue;
 /**
  * @author Mark Vollmary
  */
+@RunWith(Parameterized.class)
 public class ArangoGraphTest extends BaseTest {
 
     private static final String GRAPH_NAME = "db_collection_test";
@@ -56,8 +60,8 @@ public class ArangoGraphTest extends BaseTest {
     private static final Integer REPLICATION_FACTOR = 2;
     private static final Integer NUMBER_OF_SHARDS = 2;
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @Before
+    public void setup() throws InterruptedException, ExecutionException {
         if (db.graph(GRAPH_NAME).exists().get()) {
             db.graph(GRAPH_NAME).drop().get();
         }
@@ -81,6 +85,10 @@ public class ArangoGraphTest extends BaseTest {
                 c.truncate().get();
             }
         }
+    }
+
+    public ArangoGraphTest(ArangoDBAsync.Builder builder) {
+        super(builder);
     }
 
     @Test

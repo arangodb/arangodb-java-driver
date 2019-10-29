@@ -25,8 +25,10 @@ import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
 import org.junit.After;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -42,25 +44,30 @@ import static org.junit.Assume.assumeTrue;
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
+@RunWith(Parameterized.class)
 public class ArangoCollectionTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_collection_test";
 
-    public ArangoCollectionTest() throws ExecutionException, InterruptedException {
-        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+    private final ArangoCollectionAsync collection;
+
+    public ArangoCollectionTest(ArangoDBAsync.Builder builder) throws ExecutionException, InterruptedException {
+        super(builder);
+        collection = db.collection(COLLECTION_NAME);
+    }
+
+    @Before
+    public void setup() throws InterruptedException, ExecutionException {
         if (!collection.exists().get()) {
             collection.create().get();
         }
     }
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
-        db.createCollection(COLLECTION_NAME, null).get();
-    }
-
     @After
     public void teardown() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).drop().get();
+        if (collection.exists().get()) {
+            collection.drop().get();
+        }
     }
 
     @Test
@@ -73,7 +80,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocument() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME)
+        collection
                 .insertDocument(new BaseDocument(), null)
                 .whenComplete((doc, ex) -> {
                     assertThat(ex, is(nullValue()));
@@ -89,7 +96,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void insertDocumentReturnNew() throws InterruptedException, ExecutionException {
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
-        db.collection(COLLECTION_NAME)
+        collection
                 .insertDocument(new BaseDocument(), options)
                 .whenComplete((doc, ex) -> {
                     assertThat(doc, is(notNullValue()));
@@ -104,7 +111,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void insertDocumentWaitForSync() throws InterruptedException, ExecutionException {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
-        db.collection(COLLECTION_NAME)
+        collection
                 .insertDocument(new BaseDocument(), options)
                 .whenComplete((doc, ex) -> {
                     assertThat(doc, is(notNullValue()));
@@ -118,7 +125,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void insertDocumentAsJson() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME)
+        collection
                 .insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null)
                 .whenComplete((doc, ex) -> {
                     assertThat(doc, is(notNullValue()));
@@ -131,10 +138,10 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocument() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null).get();
         assertThat(createResult.getKey(), is(notNullValue()));
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null)
+        collection.getDocument(createResult.getKey(), BaseDocument.class, null)
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getKey(), is(createResult.getKey()));
                     assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
@@ -144,11 +151,11 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentIfMatch() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null).get();
         assertThat(createResult.getKey(), is(notNullValue()));
         final DocumentReadOptions options = new DocumentReadOptions().ifMatch(createResult.getRev());
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, options)
+        collection.getDocument(createResult.getKey(), BaseDocument.class, options)
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getKey(), is(createResult.getKey()));
                     assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
@@ -158,22 +165,22 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentIfMatchFail() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null).get();
         assertThat(createResult.getKey(), is(notNullValue()));
         final DocumentReadOptions options = new DocumentReadOptions().ifMatch("no");
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, options)
+        collection.getDocument(createResult.getKey(), BaseDocument.class, options)
                 .whenComplete((doc, ex) -> assertThat(doc, is(nullValue())))
                 .get();
     }
 
     @Test
     public void getDocumentIfNoneMatch() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null).get();
         assertThat(createResult.getKey(), is(notNullValue()));
         final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch("no");
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, options)
+        collection.getDocument(createResult.getKey(), BaseDocument.class, options)
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getKey(), is(createResult.getKey()));
                     assertThat(readResult.getId(), is(COLLECTION_NAME + "/" + createResult.getKey()));
@@ -183,19 +190,19 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentIfNoneMatchFail() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<BaseDocument> createResult = collection
                 .insertDocument(new BaseDocument(), null).get();
         assertThat(createResult.getKey(), is(notNullValue()));
         final DocumentReadOptions options = new DocumentReadOptions().ifNoneMatch(createResult.getRev());
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, options)
+        collection.getDocument(createResult.getKey(), BaseDocument.class, options)
                 .whenComplete((doc, ex) -> assertThat(doc, is(nullValue())))
                 .get();
     }
 
     @Test
     public void getDocumentAsJson() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null).get();
-        db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null)
+        collection.insertDocument("{\"_key\":\"docRaw\",\"a\":\"test\"}", null).get();
+        collection.getDocument("docRaw", String.class, null)
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
                     assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
@@ -205,14 +212,14 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentNotFound() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).getDocument("no", BaseDocument.class)
+        collection.getDocument("no", BaseDocument.class)
                 .whenComplete((doc, ex) -> assertThat(doc, is(nullValue())))
                 .get();
     }
 
     @Test(expected = ArangoDBException.class)
     public void getDocumentWrongKey() {
-        db.collection(COLLECTION_NAME).getDocument("no/no", BaseDocument.class);
+        collection.getDocument("no/no", BaseDocument.class);
     }
 
     @Test
@@ -221,8 +228,8 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("3"));
-        db.collection(COLLECTION_NAME).insertDocuments(values).get();
-        final MultiDocumentEntity<BaseDocument> documents = db.collection(COLLECTION_NAME)
+        collection.insertDocuments(values).get();
+        final MultiDocumentEntity<BaseDocument> documents = collection
                 .getDocuments(Arrays.asList("1", "2", "3"), BaseDocument.class).get();
         assertThat(documents, is(notNullValue()));
         assertThat(documents.getDocuments().size(), is(3));
@@ -234,7 +241,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentsNotFound() throws InterruptedException, ExecutionException {
-        final MultiDocumentEntity<BaseDocument> readResult = db.collection(COLLECTION_NAME)
+        final MultiDocumentEntity<BaseDocument> readResult = collection
                 .getDocuments(Collections.singleton("no"), BaseDocument.class).get();
         assertThat(readResult, is(notNullValue()));
         assertThat(readResult.getDocuments().size(), is(0));
@@ -243,7 +250,7 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getDocumentsWrongKey() throws InterruptedException, ExecutionException {
-        final MultiDocumentEntity<BaseDocument> readResult = db.collection(COLLECTION_NAME)
+        final MultiDocumentEntity<BaseDocument> readResult = collection
                 .getDocuments(Collections.singleton("no/no"), BaseDocument.class).get();
         assertThat(readResult, is(notNullValue()));
         assertThat(readResult.getDocuments().size(), is(0));
@@ -255,13 +262,13 @@ public class ArangoCollectionTest extends BaseTest {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
 
-        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = db.collection(COLLECTION_NAME)
+        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = collection
                 .updateDocument(createResult.getKey(), doc, null);
         f.whenComplete((updateResult, ex) -> {
             assertThat(updateResult, is(notNullValue()));
@@ -273,7 +280,7 @@ public class ArangoCollectionTest extends BaseTest {
         }).get();
         final DocumentUpdateEntity<BaseDocument> updateResult = f.get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         assertThat(readResult.getAttribute("a"), is(notNullValue()));
@@ -289,13 +296,13 @@ public class ArangoCollectionTest extends BaseTest {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
         final DocumentUpdateOptions options = new DocumentUpdateOptions().ifMatch(createResult.getRev());
-        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = db.collection(COLLECTION_NAME)
+        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = collection
                 .updateDocument(createResult.getKey(), doc, options);
         assertThat(f, is(notNullValue()));
         f.whenComplete((updateResult, ex) -> {
@@ -306,7 +313,7 @@ public class ArangoCollectionTest extends BaseTest {
         }).get();
         final DocumentUpdateEntity<BaseDocument> updateResult = f.get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         assertThat(readResult.getAttribute("a"), is(notNullValue()));
@@ -322,14 +329,14 @@ public class ArangoCollectionTest extends BaseTest {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
         try {
             final DocumentUpdateOptions options = new DocumentUpdateOptions().ifMatch("no");
-            db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options).get();
+            collection.updateDocument(createResult.getKey(), doc, options).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -340,12 +347,12 @@ public class ArangoCollectionTest extends BaseTest {
     public void updateDocumentReturnNew() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         final DocumentUpdateOptions options = new DocumentUpdateOptions().returnNew(true);
-        db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options)
+        collection.updateDocument(createResult.getKey(), doc, options)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult, is(notNullValue()));
                     assertThat(updateResult.getId(), is(createResult.getId()));
@@ -365,12 +372,12 @@ public class ArangoCollectionTest extends BaseTest {
     public void updateDocumentReturnOld() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         final DocumentUpdateOptions options = new DocumentUpdateOptions().returnOld(true);
-        db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options)
+        collection.updateDocument(createResult.getKey(), doc, options)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult, is(notNullValue()));
                     assertThat(updateResult.getId(), is(createResult.getId()));
@@ -389,11 +396,11 @@ public class ArangoCollectionTest extends BaseTest {
     public void updateDocumentKeepNullTrue() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", null);
         final DocumentUpdateOptions options = new DocumentUpdateOptions().keepNull(true);
-        db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options)
+        collection.updateDocument(createResult.getKey(), doc, options)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult, is(notNullValue()));
                     assertThat(updateResult.getId(), is(createResult.getId()));
@@ -402,7 +409,7 @@ public class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         assertThat(readResult.getProperties().keySet(), hasItem("a"));
@@ -412,11 +419,11 @@ public class ArangoCollectionTest extends BaseTest {
     public void updateDocumentKeepNullFalse() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", null);
         final DocumentUpdateOptions options = new DocumentUpdateOptions().keepNull(false);
-        db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options)
+        collection.updateDocument(createResult.getKey(), doc, options)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult, is(notNullValue()));
                     assertThat(updateResult.getId(), is(createResult.getId()));
@@ -425,7 +432,7 @@ public class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         assertThat(readResult.getId(), is(createResult.getId()));
@@ -440,13 +447,13 @@ public class ArangoCollectionTest extends BaseTest {
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
         doc.addAttribute("a", a);
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         a.clear();
         a.put("b", "test");
         doc.updateAttribute("a", a);
         final DocumentUpdateOptions options = new DocumentUpdateOptions().mergeObjects(true);
-        db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options)
+        collection.updateDocument(createResult.getKey(), doc, options)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult, is(notNullValue()));
                     assertThat(updateResult.getId(), is(createResult.getId()));
@@ -455,7 +462,7 @@ public class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         final Object aResult = readResult.getAttribute("a");
@@ -472,13 +479,13 @@ public class ArangoCollectionTest extends BaseTest {
         final Map<String, String> a = new HashMap<>();
         a.put("a", "test");
         doc.addAttribute("a", a);
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         a.clear();
         a.put("b", "test");
         doc.updateAttribute("a", a);
         final DocumentUpdateOptions options = new DocumentUpdateOptions().mergeObjects(false);
-        db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options)
+        collection.updateDocument(createResult.getKey(), doc, options)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult, is(notNullValue()));
                     assertThat(updateResult.getId(), is(createResult.getId()));
@@ -487,7 +494,7 @@ public class ArangoCollectionTest extends BaseTest {
                 })
                 .get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         final Object aResult = readResult.getAttribute("a");
@@ -501,13 +508,13 @@ public class ArangoCollectionTest extends BaseTest {
     public void updateDocumentIgnoreRevsFalse() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.updateAttribute("a", "test1");
         doc.setRevision("no");
         try {
             final DocumentUpdateOptions options = new DocumentUpdateOptions().ignoreRevs(false);
-            db.collection(COLLECTION_NAME).updateDocument(createResult.getKey(), doc, options).get();
+            collection.updateDocument(createResult.getKey(), doc, options).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -518,11 +525,11 @@ public class ArangoCollectionTest extends BaseTest {
     public void replaceDocument() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
-        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = db.collection(COLLECTION_NAME)
+        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = collection
                 .replaceDocument(createResult.getKey(), doc, null);
         f.whenComplete((replaceResult, ex) -> {
             assertThat(replaceResult, is(notNullValue()));
@@ -534,7 +541,7 @@ public class ArangoCollectionTest extends BaseTest {
         }).get();
         final DocumentUpdateEntity<BaseDocument> replaceResult = f.get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         assertThat(readResult.getRevision(), is(replaceResult.getRev()));
@@ -547,12 +554,12 @@ public class ArangoCollectionTest extends BaseTest {
     public void replaceDocumentIfMatch() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch(createResult.getRev());
-        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = db.collection(COLLECTION_NAME)
+        final CompletableFuture<DocumentUpdateEntity<BaseDocument>> f = collection
                 .replaceDocument(createResult.getKey(), doc, options);
         f.whenComplete((replaceResult, ex) -> {
             assertThat(replaceResult, is(notNullValue()));
@@ -562,7 +569,7 @@ public class ArangoCollectionTest extends BaseTest {
         }).get();
         final DocumentUpdateEntity<BaseDocument> replaceResult = f.get();
 
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        final BaseDocument readResult = collection
                 .getDocument(createResult.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(createResult.getKey()));
         assertThat(readResult.getRevision(), is(replaceResult.getRev()));
@@ -575,13 +582,13 @@ public class ArangoCollectionTest extends BaseTest {
     public void replaceDocumentIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         try {
             final DocumentReplaceOptions options = new DocumentReplaceOptions().ifMatch("no");
-            db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options).get();
+            collection.replaceDocument(createResult.getKey(), doc, options).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -592,14 +599,14 @@ public class ArangoCollectionTest extends BaseTest {
     public void replaceDocumentIgnoreRevsFalse() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         doc.setRevision("no");
         try {
             final DocumentReplaceOptions options = new DocumentReplaceOptions().ignoreRevs(false);
-            db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options).get();
+            collection.replaceDocument(createResult.getKey(), doc, options).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -610,12 +617,12 @@ public class ArangoCollectionTest extends BaseTest {
     public void replaceDocumentReturnNew() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnNew(true);
-        db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options)
+        collection.replaceDocument(createResult.getKey(), doc, options)
                 .whenComplete((replaceResult, ex) -> {
                     assertThat(replaceResult, is(notNullValue()));
                     assertThat(replaceResult.getId(), is(createResult.getId()));
@@ -634,12 +641,12 @@ public class ArangoCollectionTest extends BaseTest {
     public void replaceDocumentReturnOld() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         final DocumentReplaceOptions options = new DocumentReplaceOptions().returnOld(true);
-        db.collection(COLLECTION_NAME).replaceDocument(createResult.getKey(), doc, options)
+        collection.replaceDocument(createResult.getKey(), doc, options)
                 .whenComplete((replaceResult, ex) -> {
                     assertThat(replaceResult, is(notNullValue()));
                     assertThat(replaceResult.getId(), is(createResult.getId()));
@@ -657,10 +664,10 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void deleteDocument() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
-        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, null).get();
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null)
+        collection.deleteDocument(createResult.getKey(), null, null).get();
+        collection.getDocument(createResult.getKey(), BaseDocument.class, null)
                 .whenComplete((document, ex) -> assertThat(document, is(nullValue())))
                 .get();
     }
@@ -669,10 +676,10 @@ public class ArangoCollectionTest extends BaseTest {
     public void deleteDocumentReturnOld() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().returnOld(true);
-        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), BaseDocument.class, options)
+        collection.deleteDocument(createResult.getKey(), BaseDocument.class, options)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult.getOld(), is(notNullValue()));
                     assertThat(deleteResult.getOld(), instanceOf(BaseDocument.class));
@@ -685,11 +692,11 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void deleteDocumentIfMatch() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch(createResult.getRev());
-        db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options).get();
-        db.collection(COLLECTION_NAME).getDocument(createResult.getKey(), BaseDocument.class, null)
+        collection.deleteDocument(createResult.getKey(), null, options).get();
+        collection.getDocument(createResult.getKey(), BaseDocument.class, null)
                 .whenComplete((document, ex) -> assertThat(document, is(nullValue())))
                 .get();
     }
@@ -697,11 +704,11 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void deleteDocumentIfMatchFail() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
-        final DocumentCreateEntity<BaseDocument> createResult = db.collection(COLLECTION_NAME).insertDocument(doc, null)
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(doc, null)
                 .get();
         final DocumentDeleteOptions options = new DocumentDeleteOptions().ifMatch("no");
         try {
-            db.collection(COLLECTION_NAME).deleteDocument(createResult.getKey(), null, options).get();
+            collection.deleteDocument(createResult.getKey(), null, options).get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -712,8 +719,8 @@ public class ArangoCollectionTest extends BaseTest {
     public void getIndex() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
-        db.collection(COLLECTION_NAME).getIndex(createResult.getId())
+        final IndexEntity createResult = collection.ensureHashIndex(fields, null).get();
+        collection.getIndex(createResult.getId())
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getId(), is(createResult.getId()));
                     assertThat(readResult.getType(), is(createResult.getType()));
@@ -725,8 +732,8 @@ public class ArangoCollectionTest extends BaseTest {
     public void getIndexByKey() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
-        db.collection(COLLECTION_NAME).getIndex(createResult.getId().split("/")[1])
+        final IndexEntity createResult = collection.ensureHashIndex(fields, null).get();
+        collection.getIndex(createResult.getId().split("/")[1])
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.getId(), is(createResult.getId()));
                     assertThat(readResult.getType(), is(createResult.getType()));
@@ -738,9 +745,9 @@ public class ArangoCollectionTest extends BaseTest {
     public void deleteIndex() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("deleteIndexField");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = collection.ensureHashIndex(fields, null).get();
         db.getIndex(createResult.getId()).get();
-        db.collection(COLLECTION_NAME).deleteIndex(createResult.getId())
+        collection.deleteIndex(createResult.getId())
                 .whenComplete((id, ex) -> {
                     assertThat(id, is(createResult.getId()));
                     try {
@@ -760,9 +767,9 @@ public class ArangoCollectionTest extends BaseTest {
     public void deleteIndexByKey() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("deleteIndexByKeyField");
-        final IndexEntity createResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
+        final IndexEntity createResult = collection.ensureHashIndex(fields, null).get();
         db.getIndex(createResult.getId()).get();
-        db.collection(COLLECTION_NAME).deleteIndex(createResult.getId().split("/")[1])
+        collection.deleteIndex(createResult.getId().split("/")[1])
                 .whenComplete((id, ex) -> {
                     assertThat(id, is(createResult.getId()));
                     try {
@@ -784,7 +791,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        db.collection(COLLECTION_NAME).ensureHashIndex(fields, null)
+        collection.ensureHashIndex(fields, null)
                 .whenComplete((indexResult, ex) -> {
                     assertThat(indexResult, is(notNullValue()));
                     assertThat(indexResult.getConstraint(), is(nullValue()));
@@ -813,7 +820,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureHashIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensureHashIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getConstraint(), is(nullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
@@ -834,7 +841,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void createGeoIndex() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null)
+        collection.ensureGeoIndex(fields, null)
                 .whenComplete((indexResult, ex) -> {
                     assertThat(indexResult, is(notNullValue()));
                     assertThat(indexResult.getFields(), hasItem("a"));
@@ -858,7 +865,7 @@ public class ArangoCollectionTest extends BaseTest {
 
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensureGeoIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
         assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
@@ -879,7 +886,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        db.collection(COLLECTION_NAME).ensureGeoIndex(fields, null).whenComplete((indexResult, ex) -> {
+        collection.ensureGeoIndex(fields, null).whenComplete((indexResult, ex) -> {
             assertThat(indexResult, is(notNullValue()));
             assertThat(indexResult.getFields(), hasItem("a"));
             assertThat(indexResult.getFields(), hasItem("b"));
@@ -909,7 +916,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureGeoIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensureGeoIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
         assertThat(indexResult.getFields(), hasItem("b"));
@@ -931,7 +938,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        db.collection(COLLECTION_NAME).ensureSkiplistIndex(fields, null)
+        collection.ensureSkiplistIndex(fields, null)
                 .whenComplete((indexResult, ex) -> {
                     assertThat(indexResult, is(notNullValue()));
                     assertThat(indexResult.getConstraint(), is(nullValue()));
@@ -957,7 +964,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureSkiplistIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensureSkiplistIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getConstraint(), is(nullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
@@ -976,7 +983,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, null)
+        collection.ensurePersistentIndex(fields, null)
                 .whenComplete((indexResult, ex) -> {
                     assertThat(indexResult, is(notNullValue()));
                     assertThat(indexResult.getConstraint(), is(nullValue()));
@@ -1002,7 +1009,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         fields.add("b");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getConstraint(), is(nullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
@@ -1020,7 +1027,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void createFulltextIndex() throws InterruptedException, ExecutionException {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, null)
+        collection.ensureFulltextIndex(fields, null)
                 .whenComplete((indexResult, ex) -> {
                     assertThat(indexResult, is(notNullValue()));
                     assertThat(indexResult.getConstraint(), is(nullValue()));
@@ -1044,7 +1051,7 @@ public class ArangoCollectionTest extends BaseTest {
 
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureFulltextIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensureFulltextIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getConstraint(), is(nullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
@@ -1062,7 +1069,7 @@ public class ArangoCollectionTest extends BaseTest {
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
         try {
-            db.collection(COLLECTION_NAME).ensureTtlIndex(fields, null).get();
+            collection.ensureTtlIndex(fields, null).get();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -1082,7 +1089,7 @@ public class ArangoCollectionTest extends BaseTest {
         options.name("myTtlIndex");
         options.expireAfter(3600);
 
-        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureTtlIndex(fields, options).get();
+        final IndexEntity indexResult = collection.ensureTtlIndex(fields, options).get();
         assertThat(indexResult, is(notNullValue()));
         assertThat(indexResult.getFields(), hasItem("a"));
         assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
@@ -1094,11 +1101,11 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void getIndexes() throws InterruptedException, ExecutionException {
-        final int initialIndexCount = db.collection(COLLECTION_NAME).getIndexes().get().size();
+        final int initialIndexCount = collection.getIndexes().get().size();
         final Collection<String> fields = new ArrayList<>();
         fields.add("a");
-        db.collection(COLLECTION_NAME).ensureHashIndex(fields, null).get();
-        db.collection(COLLECTION_NAME).getIndexes()
+        collection.ensureHashIndex(fields, null).get();
+        collection.getIndexes()
                 .whenComplete((indexes, ex) -> {
                     assertThat(indexes, is(notNullValue()));
                     assertThat(indexes.size(), is(initialIndexCount + 1));
@@ -1114,91 +1121,91 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void exists() throws InterruptedException, ExecutionException {
-        assertThat(db.collection(COLLECTION_NAME).exists().get(), is(true));
+        assertThat(collection.exists().get(), is(true));
         assertThat(db.collection(COLLECTION_NAME + "no").exists().get(), is(false));
     }
 
     @Test
     public void truncate() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
-        db.collection(COLLECTION_NAME).insertDocument(doc, null).get();
-        final BaseDocument readResult = db.collection(COLLECTION_NAME)
+        collection.insertDocument(doc, null).get();
+        final BaseDocument readResult = collection
                 .getDocument(doc.getKey(), BaseDocument.class, null).get();
         assertThat(readResult.getKey(), is(doc.getKey()));
-        db.collection(COLLECTION_NAME).truncate()
+        collection.truncate()
                 .whenComplete((truncateResult, ex) -> {
                     assertThat(truncateResult, is(notNullValue()));
                     assertThat(truncateResult.getId(), is(notNullValue()));
                 })
                 .get();
-        final BaseDocument document = db.collection(COLLECTION_NAME).getDocument(doc.getKey(), BaseDocument.class, null)
+        final BaseDocument document = collection.getDocument(doc.getKey(), BaseDocument.class, null)
                 .get();
         assertThat(document, is(nullValue()));
     }
 
     @Test
     public void getCount() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).count()
+        collection.count()
                 .whenComplete((countEmpty, ex) -> {
                     assertThat(countEmpty, is(notNullValue()));
                     assertThat(countEmpty.getCount(), is(0L));
                 })
                 .get();
 
-        db.collection(COLLECTION_NAME).insertDocument("{}", null).get();
+        collection.insertDocument("{}", null).get();
 
-        db.collection(COLLECTION_NAME).count()
+        collection.count()
                 .whenComplete((count, ex) -> assertThat(count.getCount(), is(1L)))
                 .get();
     }
 
     @Test
     public void documentExists() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).documentExists("no", null)
+        collection.documentExists("no", null)
                 .whenComplete((existsNot, ex) -> assertThat(existsNot, is(false)))
                 .get();
 
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null).get();
+        collection.insertDocument("{\"_key\":\"abc\"}", null).get();
 
-        db.collection(COLLECTION_NAME).documentExists("abc", null)
+        collection.documentExists("abc", null)
                 .whenComplete((exists, ex) -> assertThat(exists, is(true)))
                 .get();
     }
 
     @Test
     public void documentExistsIfMatch() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<String> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<String> createResult = collection
                 .insertDocument("{\"_key\":\"abc\"}", null).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch(createResult.getRev());
-        db.collection(COLLECTION_NAME).documentExists("abc", options)
+        collection.documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists, is(true)))
                 .get();
     }
 
     @Test
     public void documentExistsIfMatchFail() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null).get();
+        collection.insertDocument("{\"_key\":\"abc\"}", null).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifMatch("no");
-        db.collection(COLLECTION_NAME).documentExists("abc", options)
+        collection.documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists, is(false)))
                 .get();
     }
 
     @Test
     public void documentExistsIfNoneMatch() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).insertDocument("{\"_key\":\"abc\"}", null).get();
+        collection.insertDocument("{\"_key\":\"abc\"}", null).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch("no");
-        db.collection(COLLECTION_NAME).documentExists("abc", options)
+        collection.documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists, is(true)))
                 .get();
     }
 
     @Test
     public void documentExistsIfNoneMatchFail() throws InterruptedException, ExecutionException {
-        final DocumentCreateEntity<String> createResult = db.collection(COLLECTION_NAME)
+        final DocumentCreateEntity<String> createResult = collection
                 .insertDocument("{\"_key\":\"abc\"}", null).get();
         final DocumentExistsOptions options = new DocumentExistsOptions().ifNoneMatch(createResult.getRev());
-        db.collection(COLLECTION_NAME).documentExists("abc", options)
+        collection.documentExists("abc", options)
                 .whenComplete((exists, ex) -> assertThat(exists, is(false)))
                 .get();
     }
@@ -1209,7 +1216,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument());
         values.add(new BaseDocument());
         values.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).insertDocuments(values, null)
+        collection.insertDocuments(values, null)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getDocuments(), is(notNullValue()));
@@ -1224,7 +1231,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void insertDocumentsOne() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
         values.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).insertDocuments(values, null)
+        collection.insertDocuments(values, null)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getDocuments(), is(notNullValue()));
@@ -1238,7 +1245,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void insertDocumentsEmpty() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).insertDocuments(values, null)
+        collection.insertDocuments(values, null)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getDocuments(), is(notNullValue()));
@@ -1256,7 +1263,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument());
         values.add(new BaseDocument());
         final DocumentCreateOptions options = new DocumentCreateOptions().returnNew(true);
-        db.collection(COLLECTION_NAME).insertDocuments(values, options)
+        collection.insertDocuments(values, options)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getDocuments(), is(notNullValue()));
@@ -1278,7 +1285,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).insertDocuments(values)
+        collection.insertDocuments(values)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getDocuments(), is(notNullValue()));
@@ -1296,7 +1303,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument());
         values.add(new BaseDocument());
         values.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        collection.importDocuments(values)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(values.size()));
@@ -1315,7 +1322,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        collection.importDocuments(values)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1334,7 +1341,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1353,7 +1360,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1372,7 +1379,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1391,7 +1398,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1411,7 +1418,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
         try {
-            db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().complete(true)).get();
+            collection.importDocuments(values, new DocumentImportOptions().complete(true)).get();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -1425,7 +1432,7 @@ public class ArangoCollectionTest extends BaseTest {
         values.add(new BaseDocument("1"));
         values.add(new BaseDocument("2"));
         values.add(new BaseDocument("2"));
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().details(true))
+        collection.importDocuments(values, new DocumentImportOptions().details(true))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1441,7 +1448,6 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void importDocumentsOverwriteFalse() throws InterruptedException, ExecutionException {
-        final ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         collection.insertDocument(new BaseDocument()).get();
         assertThat(collection.count().get().getCount(), is(1L));
 
@@ -1454,7 +1460,6 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void importDocumentsOverwriteTrue() throws InterruptedException, ExecutionException {
-        final ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         collection.insertDocument(new BaseDocument()).get();
         assertThat(collection.count().get().getCount(), is(1L));
 
@@ -1496,7 +1501,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJson() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        collection.importDocuments(values)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1512,7 +1517,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJsonDuplicateDefaultError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values)
+        collection.importDocuments(values)
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1528,7 +1533,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJsonDuplicateError() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.error))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1544,7 +1549,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJsonDuplicateIgnore() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.ignore))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1560,7 +1565,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJsonDuplicateReplace() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.replace))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1576,7 +1581,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJsonDuplicateUpdate() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
+        collection.importDocuments(values, new DocumentImportOptions().onDuplicate(OnDuplicate.update))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1593,7 +1598,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void importDocumentsJsonCompleteFail() throws InterruptedException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
         try {
-            db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().complete(true)).get();
+            collection.importDocuments(values, new DocumentImportOptions().complete(true)).get();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -1604,7 +1609,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void importDocumentsJsonDetails() throws InterruptedException, ExecutionException {
         final String values = "[{\"_key\":\"1\"},{\"_key\":\"2\"},{\"_key\":\"2\"}]";
-        db.collection(COLLECTION_NAME).importDocuments(values, new DocumentImportOptions().details(true))
+        collection.importDocuments(values, new DocumentImportOptions().details(true))
                 .whenComplete((docs, ex) -> {
                     assertThat(docs, is(notNullValue()));
                     assertThat(docs.getCreated(), is(2));
@@ -1620,7 +1625,6 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void importDocumentsJsonOverwriteFalse() throws InterruptedException, ExecutionException {
-        final ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         collection.insertDocument(new BaseDocument()).get();
         assertThat(collection.count().get().getCount(), is(1L));
 
@@ -1631,7 +1635,6 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void importDocumentsJsonOverwriteTrue() throws InterruptedException, ExecutionException {
-        final ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
         collection.insertDocument(new BaseDocument()).get();
         assertThat(collection.count().get().getCount(), is(1L));
 
@@ -1677,11 +1680,11 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("2");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         keys.add("2");
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        collection.deleteDocuments(keys, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(2));
@@ -1706,8 +1709,8 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("2");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
-        db.collection(COLLECTION_NAME).deleteDocuments(values, null, null)
+        collection.insertDocuments(values, null).get();
+        collection.deleteDocuments(values, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(2));
@@ -1727,10 +1730,10 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("1");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        collection.deleteDocuments(keys, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(1));
@@ -1750,8 +1753,8 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("1");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
-        db.collection(COLLECTION_NAME).deleteDocuments(values, null, null)
+        collection.insertDocuments(values, null).get();
+        collection.deleteDocuments(values, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(1));
@@ -1766,9 +1769,9 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void deleteDocumentsEmpty() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<String> keys = new ArrayList<>();
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        collection.deleteDocuments(keys, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(0));
@@ -1780,11 +1783,11 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void deleteDocumentsByKeyNotExisting() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<String> keys = new ArrayList<>();
         keys.add("1");
         keys.add("2");
-        db.collection(COLLECTION_NAME).deleteDocuments(keys, null, null)
+        collection.deleteDocuments(keys, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(0));
@@ -1806,7 +1809,7 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("2");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).deleteDocuments(values, null, null)
+        collection.deleteDocuments(values, null, null)
                 .whenComplete((deleteResult, ex) -> {
                     assertThat(deleteResult, is(notNullValue()));
                     assertThat(deleteResult.getDocuments().size(), is(0));
@@ -1828,13 +1831,13 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("2");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
             updatedValues.add(i);
         }
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        collection.updateDocuments(updatedValues, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(2));
                     assertThat(updateResult.getErrors().size(), is(0));
@@ -1850,12 +1853,12 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("1");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
         updatedValues.add(first);
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        collection.updateDocuments(updatedValues, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(1));
                     assertThat(updateResult.getErrors().size(), is(0));
@@ -1866,7 +1869,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void updateDocumentsEmpty() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).updateDocuments(values, null)
+        collection.updateDocuments(values, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(0));
                     assertThat(updateResult.getErrors().size(), is(0));
@@ -1880,14 +1883,14 @@ public class ArangoCollectionTest extends BaseTest {
         {
             values.add(new BaseDocument("1"));
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
             updatedValues.add(i);
         }
         updatedValues.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        collection.updateDocuments(updatedValues, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(1));
                     assertThat(updateResult.getErrors().size(), is(1));
@@ -1902,13 +1905,13 @@ public class ArangoCollectionTest extends BaseTest {
             values.add(new BaseDocument("1"));
             values.add(new BaseDocument("2"));
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
             updatedValues.add(i);
         }
-        db.collection(COLLECTION_NAME).replaceDocuments(updatedValues, null)
+        collection.replaceDocuments(updatedValues, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(2));
                     assertThat(updateResult.getErrors().size(), is(0));
@@ -1924,12 +1927,12 @@ public class ArangoCollectionTest extends BaseTest {
             e.setKey("1");
             values.add(e);
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         final BaseDocument first = values.iterator().next();
         first.addAttribute("a", "test");
         updatedValues.add(first);
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        collection.updateDocuments(updatedValues, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(1));
                     assertThat(updateResult.getErrors().size(), is(0));
@@ -1940,7 +1943,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void replaceDocumentsEmpty() throws InterruptedException, ExecutionException {
         final Collection<BaseDocument> values = new ArrayList<>();
-        db.collection(COLLECTION_NAME).updateDocuments(values, null)
+        collection.updateDocuments(values, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(0));
                     assertThat(updateResult.getErrors().size(), is(0));
@@ -1954,14 +1957,14 @@ public class ArangoCollectionTest extends BaseTest {
         {
             values.add(new BaseDocument("1"));
         }
-        db.collection(COLLECTION_NAME).insertDocuments(values, null).get();
+        collection.insertDocuments(values, null).get();
         final Collection<BaseDocument> updatedValues = new ArrayList<>();
         for (final BaseDocument i : values) {
             i.addAttribute("a", "test");
             updatedValues.add(i);
         }
         updatedValues.add(new BaseDocument());
-        db.collection(COLLECTION_NAME).updateDocuments(updatedValues, null)
+        collection.updateDocuments(updatedValues, null)
                 .whenComplete((updateResult, ex) -> {
                     assertThat(updateResult.getDocuments().size(), is(1));
                     assertThat(updateResult.getErrors().size(), is(1));
@@ -1971,28 +1974,28 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test
     public void load() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).load()
+        collection.load()
                 .whenComplete((result, ex) -> assertThat(result.getName(), is(COLLECTION_NAME)))
                 .get();
     }
 
     @Test
     public void unload() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).unload()
+        collection.unload()
                 .whenComplete((result, ex) -> assertThat(result.getName(), is(COLLECTION_NAME)))
                 .get();
     }
 
     @Test
     public void getInfo() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).getInfo()
+        collection.getInfo()
                 .whenComplete((result, ex) -> assertThat(result.getName(), is(COLLECTION_NAME)))
                 .get();
     }
 
     @Test
     public void getPropeties() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).getProperties()
+        collection.getProperties()
                 .whenComplete((result, ex) -> {
                     assertThat(result.getName(), is(COLLECTION_NAME));
                     assertThat(result.getCount(), is(nullValue()));
@@ -2024,7 +2027,7 @@ public class ArangoCollectionTest extends BaseTest {
     @Test
     public void rename() throws InterruptedException, ExecutionException {
         assumeTrue(isSingleServer());
-        db.collection(COLLECTION_NAME).rename(COLLECTION_NAME + "1")
+        collection.rename(COLLECTION_NAME + "1")
                 .whenComplete((result, ex) -> {
                     assertThat(result, is(notNullValue()));
                     assertThat(result.getName(), is(COLLECTION_NAME + "1"));
@@ -2033,7 +2036,7 @@ public class ArangoCollectionTest extends BaseTest {
         final CollectionEntity info = db.collection(COLLECTION_NAME + "1").getInfo().get();
         assertThat(info.getName(), is(COLLECTION_NAME + "1"));
         try {
-            db.collection(COLLECTION_NAME).getInfo().get();
+            collection.getInfo().get();
             fail();
         } catch (final ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
@@ -2045,14 +2048,14 @@ public class ArangoCollectionTest extends BaseTest {
     public void responsibleShard() throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 5));
-        ShardEntity shard = db.collection(COLLECTION_NAME).getResponsibleShard(new BaseDocument("testKey")).get();
+        ShardEntity shard = collection.getResponsibleShard(new BaseDocument("testKey")).get();
         assertThat(shard, is(notNullValue()));
         assertThat(shard.getShardId(), is(notNullValue()));
     }
 
     @Test
     public void getRevision() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).getRevision()
+        collection.getRevision()
                 .whenComplete((result, ex) -> {
                     assertThat(result, is(notNullValue()));
                     assertThat(result.getName(), is(COLLECTION_NAME));
@@ -2065,7 +2068,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void grantAccessRW() throws InterruptedException, ExecutionException {
         try {
             arangoDB.createUser("user1", "1234", null).get();
-            db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RW).get();
+            collection.grantAccess("user1", Permissions.RW).get();
         } finally {
             arangoDB.deleteUser("user1").get();
         }
@@ -2075,7 +2078,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void grantAccessRO() throws InterruptedException, ExecutionException {
         try {
             arangoDB.createUser("user1", "1234", null).get();
-            db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RO).get();
+            collection.grantAccess("user1", Permissions.RO).get();
         } finally {
             arangoDB.deleteUser("user1").get();
         }
@@ -2085,7 +2088,7 @@ public class ArangoCollectionTest extends BaseTest {
     public void grantAccessNONE() throws InterruptedException, ExecutionException {
         try {
             arangoDB.createUser("user1", "1234", null).get();
-            db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE).get();
+            collection.grantAccess("user1", Permissions.NONE).get();
         } finally {
             arangoDB.deleteUser("user1").get();
         }
@@ -2093,14 +2096,14 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test(expected = ExecutionException.class)
     public void grantAccessUserNotFound() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.RW).get();
+        collection.grantAccess("user1", Permissions.RW).get();
     }
 
     @Test
     public void revokeAccess() throws InterruptedException, ExecutionException {
         try {
             arangoDB.createUser("user1", "1234", null).get();
-            db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE).get();
+            collection.grantAccess("user1", Permissions.NONE).get();
         } finally {
             arangoDB.deleteUser("user1").get();
         }
@@ -2108,14 +2111,14 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test(expected = ExecutionException.class)
     public void revokeAccessUserNotFound() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).grantAccess("user1", Permissions.NONE).get();
+        collection.grantAccess("user1", Permissions.NONE).get();
     }
 
     @Test
     public void resetAccess() throws InterruptedException, ExecutionException {
         try {
             arangoDB.createUser("user1", "1234", null).get();
-            db.collection(COLLECTION_NAME).resetAccess("user1").get();
+            collection.resetAccess("user1").get();
         } finally {
             arangoDB.deleteUser("user1").get();
         }
@@ -2123,11 +2126,11 @@ public class ArangoCollectionTest extends BaseTest {
 
     @Test(expected = ExecutionException.class)
     public void resetAccessUserNotFound() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).resetAccess("user1").get();
+        collection.resetAccess("user1").get();
     }
 
     @Test
     public void getPermissions() throws InterruptedException, ExecutionException {
-        assertThat(Permissions.RW, is(db.collection(COLLECTION_NAME).getPermissions("root").get()));
+        assertThat(Permissions.RW, is(collection.getPermissions("root").get()));
     }
 }
