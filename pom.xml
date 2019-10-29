@@ -215,7 +215,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.12.1</version>
+            <version>1.12.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -225,7 +225,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Dysprosium-RELEASE</version>
+                <version>Dysprosium-SR1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
