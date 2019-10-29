@@ -20,7 +20,6 @@
 
 package com.arangodb.async.internal;
 
-import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.DocumentCache;
 import com.arangodb.internal.net.HostHandle;
@@ -39,10 +38,10 @@ import java.util.concurrent.Executors;
  */
 public class ArangoExecutorAsync extends ArangoExecutor {
 
-    private final VstCommunicationAsync communication;
+    private final CommunicationProtocolAsync communication;
     private final ExecutorService outgoingExecutor = Executors.newSingleThreadExecutor();
 
-    public ArangoExecutorAsync(final VstCommunicationAsync communication, final ArangoSerializationFactory util,
+    public ArangoExecutorAsync(final CommunicationProtocolAsync communication, final ArangoSerializationFactory util,
                                final DocumentCache documentCache) {
         super(util, documentCache);
         this.communication = communication;

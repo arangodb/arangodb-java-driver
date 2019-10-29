@@ -21,6 +21,7 @@
 package com.arangodb.async.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.async.internal.CommunicationAsync;
 import com.arangodb.entity.ErrorEntity;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.velocystream.VstCommunication;
@@ -41,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Mark Vollmary
  */
-public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Response>, VstConnectionAsync> {
+public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Response>, VstConnectionAsync> implements CommunicationAsync {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
@@ -115,6 +116,12 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         public Builder(final HostHandler hostHandler) {
             super();
             this.hostHandler = hostHandler;
+        }
+
+        public Builder(final Builder builder) {
+            this(builder.hostHandler);
+            timeout(builder.timeout).user(builder.user).password(builder.password).useSsl(builder.useSsl)
+                    .sslContext(builder.sslContext).chunksize(builder.chunksize).maxConnections(builder.maxConnections);
         }
 
         public Builder timeout(final Integer timeout) {

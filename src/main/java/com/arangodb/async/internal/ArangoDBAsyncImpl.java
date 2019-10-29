@@ -21,22 +21,25 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.Protocol;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.internal.http.HttpCommunicationAsync;
+import com.arangodb.async.internal.http.HttpProtocolAsync;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
+import com.arangodb.async.internal.velocystream.VstProtocolAsync;
 import com.arangodb.entity.*;
-import com.arangodb.internal.*;
-import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.ArangoContext;
+import com.arangodb.internal.ArangoRequestParam;
+import com.arangodb.internal.DocumentCache;
+import com.arangodb.internal.InternalArangoDB;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
-import com.arangodb.internal.velocystream.VstCommunication;
-import com.arangodb.internal.velocystream.VstCommunicationSync;
-import com.arangodb.internal.velocystream.VstProtocol;
-import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -49,20 +52,50 @@ import java.util.concurrent.CompletableFuture;
  */
 public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> implements ArangoDBAsync {
 
-    private final CommunicationProtocol cp;
+    private final CommunicationProtocolAsync cp;
 
-    public ArangoDBAsyncImpl(final VstCommunicationAsync.Builder commBuilder, final ArangoSerializationFactory util,
-                             final VstCommunicationSync.Builder syncbuilder, final HostResolver hostResolver, final ArangoContext context) {
+    public ArangoDBAsyncImpl(
+            final VstCommunicationAsync.Builder vstBuilder, final HttpCommunicationAsync.Builder httpBuilder,
+            final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
+            final ArangoContext context) {
 
-        super(new ArangoExecutorAsync(commBuilder.build(util.get(Serializer.INTERNAL)), util, new DocumentCache()), util, context);
+        super(new ArangoExecutorAsync(
+                        createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
+                        util,
+                        new DocumentCache()),
+                util,
+                context);
 
-        final VstCommunication<Response, VstConnectionSync> cacheCom = syncbuilder.build(util.get(Serializer.INTERNAL));
+        cp = createProtocol(
+                new VstCommunicationAsync.Builder(vstBuilder).maxConnections(1),
+                new HttpCommunicationAsync.Builder(httpBuilder),
+                util.get(Serializer.INTERNAL),
+                protocol);
 
-        cp = new VstProtocol(cacheCom);
+        // FIXME
+//        hostResolver.init(this.executor(), util());
+    }
 
-        ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache());
-        hostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
+    private static CommunicationProtocolAsync createProtocol(
+            final VstCommunicationAsync.Builder vstBuilder,
+            final HttpCommunicationAsync.Builder httpBuilder,
+            final ArangoSerialization util,
+            final Protocol protocol) {
 
+        return (protocol == null || Protocol.VST == protocol) ? createVST(vstBuilder, util)
+                : createHTTP(httpBuilder, util);
+    }
+
+    private static CommunicationProtocolAsync createVST(
+            final VstCommunicationAsync.Builder builder,
+            final ArangoSerialization util) {
+        return new VstProtocolAsync(builder.build(util));
+    }
+
+    private static CommunicationProtocolAsync createHTTP(
+            final HttpCommunicationAsync.Builder builder,
+            final ArangoSerialization util) {
+        return new HttpProtocolAsync(builder.build(util));
     }
 
     @Override

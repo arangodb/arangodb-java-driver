@@ -24,13 +24,16 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
+import com.arangodb.async.internal.http.HttpCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
+import com.arangodb.internal.http.HttpConnectionFactory;
 import com.arangodb.internal.net.ConnectionFactory;
+import com.arangodb.internal.net.Host;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoDeserializerImpl;
@@ -52,6 +55,7 @@ import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -281,6 +285,10 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     @SuppressWarnings("unused")
     class Builder extends InternalArangoDBBuilder {
 
+        private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
+
+        protected Protocol protocol;
+
         public Builder() {
             super();
         }
@@ -288,6 +296,17 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         @Override
         public Builder loadProperties(final InputStream in) throws ArangoDBException {
             super.loadProperties(in);
+            return this;
+        }
+
+        private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
+            return Protocol.valueOf(
+                    getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
+                            .toUpperCase());
+        }
+
+        public Builder useProtocol(final Protocol protocol) {
+            this.protocol = protocol;
             return this;
         }
 
@@ -731,15 +750,25 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
             final ArangoSerialization custom = customSerializer != null ? customSerializer : internal;
             final ArangoSerializationFactory util = new ArangoSerializationFactory(internal, custom);
 
-            final int max = maxConnections != null ? Math.max(1, maxConnections)
-                    : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-            final ConnectionFactory connectionFactory = new VstConnectionFactoryAsync(timeout, connectionTtl,
-                    useSsl, sslContext);
-            final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
-                    connectionFactory);
+            int protocolMaxConnections = protocol == Protocol.VST ?
+                    ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT :
+                    ArangoDefaults.MAX_CONNECTIONS_HTTP_DEFAULT;
+            final int max = maxConnections != null ? Math.max(1, maxConnections) : protocolMaxConnections;
+
+            final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
+                    ? new VstConnectionFactoryAsync(timeout, connectionTtl, useSsl, sslContext)
+                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
+                    connectionTtl, resendCookies);
+
+            final Collection<Host> hostList = createHostList(max, connectionFactory);
+            final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
             final HostHandler hostHandler = createHostHandler(hostResolver);
-            return new ArangoDBAsyncImpl(asyncBuilder(hostHandler), util, syncBuilder(hostHandler), hostResolver,
-                    new ArangoContext());
+
+            return new ArangoDBAsyncImpl(
+                    new VstCommunicationAsync.Builder(hostHandler).timeout(timeout).user(user).password(password)
+                            .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                            .connectionTtl(connectionTtl),
+                    new HttpCommunicationAsync.Builder(hostHandler), util, protocol, hostResolver, new ArangoContext());
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
