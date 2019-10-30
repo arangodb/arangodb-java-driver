@@ -4,6 +4,7 @@ package containers;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
+import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.ArangoDBVersion;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,6 +25,7 @@ import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  * FIXME: hosts are merged to the ones coming from arangodb.properties
  */
 @Ignore
@@ -42,7 +44,7 @@ public class ArangoSslTest {
     private static final String SSL_TRUSTSTORE = "/example.truststore";
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
-    private final ArangoDB.Builder builder;
+    private final Protocol protocol;
 
     @Parameterized.Parameters
     public static List<Protocol> builders() {
@@ -53,11 +55,10 @@ public class ArangoSslTest {
     }
 
     public ArangoSslTest(final Protocol protocol) {
-        builder = SingleServerSslContainer.INSTANCE.get().useProtocol(protocol);
+        this.protocol = protocol;
     }
 
-    @Test
-    public void connect() throws Exception {
+    private SSLContext getSslContext() throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
@@ -70,16 +71,48 @@ public class ArangoSslTest {
         final SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        final ArangoDB arangoDB = builder.useSsl(true).sslContext(sc).build();
+        return sc;
+    }
+
+    @Test
+    public void connectSync() throws Exception {
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .host(
+                        SingleServerSslContainer.INSTANCE.container.getContainerIpAddress(),
+                        SingleServerSslContainer.INSTANCE.container.getFirstMappedPort())
+                .useProtocol(protocol)
+                .useSsl(true)
+                .sslContext(getSslContext())
+                .build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version, is(notNullValue()));
     }
 
     @Test(expected = ArangoDBException.class)
-    public void connectWithoutValidSslContext() {
-        final ArangoDB arangoDB = builder.useSsl(true).build();
+    public void connectWithoutValidSslContextSync() {
+        final ArangoDB arangoDB = new ArangoDB.Builder()
+                .host(
+                        SingleServerSslContainer.INSTANCE.container.getContainerIpAddress(),
+                        SingleServerSslContainer.INSTANCE.container.getFirstMappedPort())
+                .useProtocol(protocol)
+                .useSsl(true)
+                .build();
         arangoDB.getVersion();
         fail();
+    }
+
+    @Test
+    public void connectAsync() throws Exception {
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+                .host(
+                        SingleServerSslContainer.INSTANCE.container.getContainerIpAddress(),
+                        SingleServerSslContainer.INSTANCE.container.getFirstMappedPort())
+                .useProtocol(protocol)
+                .useSsl(true)
+                .sslContext(getSslContext())
+                .build();
+        final ArangoDBVersion version = arangoDB.getVersion().join();
+        assertThat(version, is(notNullValue()));
     }
 
 }

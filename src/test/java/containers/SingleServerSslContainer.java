@@ -18,7 +18,7 @@ enum SingleServerSslContainer implements Supplier<ArangoDB.Builder> {
     private final String PASSWORD = "test";
     private String SSL_CERT_PATH = Paths.get("docker/server.pem").toAbsolutePath().toString();
 
-    private final GenericContainer container =
+    public final GenericContainer container =
             new GenericContainer(DOCKER_IMAGE)
                     .withExposedPorts(PORT)
                     .withEnv("ARANGO_ROOT_PASSWORD", PASSWORD)
