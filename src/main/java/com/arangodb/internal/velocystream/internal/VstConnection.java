@@ -83,7 +83,7 @@ public abstract class VstConnection implements Connection {
 		this.sslContext = sslContext;
 		this.messageStore = messageStore;
 		
-		connectionName = "conenction_" + System.currentTimeMillis() + "_" + Math.random();
+		connectionName = "connection_" + System.currentTimeMillis() + "_" + Math.random();
 		LOGGER.debug("Connection " + connectionName + " created");
 	}
 
