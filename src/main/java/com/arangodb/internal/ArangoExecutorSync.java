@@ -73,7 +73,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
 			T deserialize = responseDeserializer.deserialize(response);
 			
 			if(deserialize instanceof MetaAware) {
-				LOG.debug("Respone is MetaAware " + deserialize.getClass().getName());
+				LOG.debug("Response is MetaAware " + deserialize.getClass().getName());
 				((MetaAware) deserialize).setMeta(response.getMeta());
 			}
 			

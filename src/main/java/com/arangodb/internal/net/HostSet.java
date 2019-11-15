@@ -33,7 +33,7 @@ public class HostSet {
 	public void addHost(Host newHost) {
 		
 		if(hosts.contains(newHost)) {
-			LOGGER.debug("Host" + newHost + " allready in Set");
+			LOGGER.debug("Host" + newHost + " already in Set");
 			
 			for (Host host : hosts) {
 				if(host.equals(newHost)) {
