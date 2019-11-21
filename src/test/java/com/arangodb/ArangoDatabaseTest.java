@@ -1321,6 +1321,12 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(info.getName(), is(TEST_DB));
         assertThat(info.getPath(), is(notNullValue()));
         assertThat(info.getIsSystem(), is(false));
+
+        if (isAtLeastVersion(3, 6)) {
+            assertThat(info.getSharding(), notNullValue());
+            assertThat(info.getMinReplicationFactor(), notNullValue());
+            assertThat(info.getReplicationFactor(), notNullValue());
+        }
     }
 
     @Test

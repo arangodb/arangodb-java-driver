@@ -66,6 +66,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     private static final String PATH_API_TRAVERSAL = "/_api/traversal";
     private static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
     private static final String PATH_API_USER = "/_api/user";
+    private static final String PATH_API_DATABASE_PROPERTIES = "/_api/database/current";
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
@@ -494,6 +495,10 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         Request request = request(name(), RequestType.DELETE, InternalArangoView.PATH_API_ANALYZER, name);
         request.putQueryParam("force", options != null ? options.getForce() : null);
         return request;
+    }
+
+    protected Request getDatabasePropertiesRequest() {
+        return request(name(), RequestType.GET, PATH_API_DATABASE_PROPERTIES);
     }
 
 }
