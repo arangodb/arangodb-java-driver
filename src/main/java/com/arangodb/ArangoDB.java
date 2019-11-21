@@ -34,6 +34,7 @@ import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstConnectionFactorySync;
+import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -243,12 +244,12 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			setAcquireHostList(acquireHostList);
 			return this;
 		}
-		
+
 		/**
 		 * Setting the Interval for acquireHostList
 		 *
 		 * @param acquireHostListInterval Interval in Seconds
-		 * 
+		 *
 		 * @return {@link ArangoDB.Builder}
 		 */
 		public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
@@ -608,7 +609,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 			final Collection<Host> hostList = createHostList(max, connectionFactory);
 			final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
 			final HostHandler hostHandler = createHostHandler(hostResolver);
-			
+
 			return new ArangoDBImpl(
 					new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
 							.useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
@@ -652,6 +653,18 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	Boolean createDatabase(String name) throws ArangoDBException;
+
+	/**
+	 * Creates a new database with the given name.
+	 *
+	 * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+	 *      Documentation</a>
+	 * @param options Creation options
+	 * @return true if the database was created successfully.
+	 * @since ArangoDB 3.6.0
+	 * @throws ArangoDBException
+	 */
+	Boolean createDatabase(DBCreateOptions options) throws ArangoDBException;
 
 	/**
 	 * Retrieves a list of all existing databases
@@ -714,7 +727,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	ServerRole getRole() throws ArangoDBException;
-	
+
 	/**
 	 * Create a new user. This user will not have access to any database. You need permission to the _system database in
 	 * order to execute this call.

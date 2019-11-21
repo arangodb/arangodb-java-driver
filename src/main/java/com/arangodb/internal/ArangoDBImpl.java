@@ -34,6 +34,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
+import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -132,7 +133,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
 	@Override
 	public Boolean createDatabase(final String name) throws ArangoDBException {
-		return executor.execute(createDatabaseRequest(name), createDatabaseResponseDeserializer());
+		return createDatabase(new DBCreateOptions().name(name));
+	}
+
+	@Override
+	public Boolean createDatabase(DBCreateOptions options) throws ArangoDBException {
+		return executor.execute(createDatabaseRequest(options), createDatabaseResponseDeserializer());
 	}
 
 	@Override
