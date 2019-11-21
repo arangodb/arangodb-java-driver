@@ -174,6 +174,15 @@ public class AqlQueryOptions implements Serializable {
 		return this;
 	}
 
+    /**
+     * @param timeout TODO: write doc
+     * @return options
+     */
+    public AqlQueryOptions timeout(final Double timeout) {
+        getOptions().timeout = timeout;
+        return this;
+    }
+
 	/**
 	 * @return If set to true, then the additional query profiling information will be returned in the sub-attribute
 	 * profile of the extra return attribute if the query result is not served from the query cache.
@@ -396,6 +405,7 @@ public class AqlQueryOptions implements Serializable {
 		private Integer maxPlans;
 		private Boolean stream;
 		private Collection<String> shardIds;
+		private Double timeout;
 
 		protected Optimizer getOptimizer() {
 			if (optimizer == null) {

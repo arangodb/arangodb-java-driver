@@ -775,6 +775,17 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
+    public void queryWithTimeout() {
+        assumeTrue(isAtLeastVersion(3, 6));
+        try {
+            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().timeout(0.1), String.class).next();
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(410));
+        }
+    }
+
+    @Test
     public void queryWithMaxWarningCount() {
         final ArangoCursor<String> cursorWithWarnings = db
                 .query("RETURN 1 / 0", null, new AqlQueryOptions(), String.class);
