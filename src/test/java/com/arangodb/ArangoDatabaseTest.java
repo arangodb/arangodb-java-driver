@@ -1322,7 +1322,7 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(info.getPath(), is(notNullValue()));
         assertThat(info.getIsSystem(), is(false));
 
-        if (isAtLeastVersion(3, 6)) {
+        if (isAtLeastVersion(3, 6) && isCluster()) {
             assertThat(info.getSharding(), notNullValue());
             assertThat(info.getMinReplicationFactor(), notNullValue());
             assertThat(info.getReplicationFactor(), notNullValue());
