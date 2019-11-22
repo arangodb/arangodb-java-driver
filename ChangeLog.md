@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- createDatabase with options (replicationFactor, minReplicationFactor, sharding)
 - extended DatabaseEntity with replicationFactor, minReplicationFactor, sharding
  
 ## [6.4.1] - 2019-10-23

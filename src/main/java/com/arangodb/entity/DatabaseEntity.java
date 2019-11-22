@@ -33,9 +33,15 @@ public class DatabaseEntity implements Entity {
 	private String name;
 	private String path;
 	private Boolean isSystem;
-	private Integer replicationFactor;
-	private Integer minReplicationFactor;
+	private final ReplicationFactor replicationFactor;
+	private final MinReplicationFactor minReplicationFactor;
 	private String sharding;
+
+	public DatabaseEntity() {
+		super();
+		replicationFactor = new ReplicationFactor();
+		minReplicationFactor = new MinReplicationFactor();
+	}
 
 	/**
 	 * @return the id of the database
@@ -70,7 +76,7 @@ public class DatabaseEntity implements Entity {
 	 * @since ArangoDB 3.6.0
 	 */
 	public Integer getReplicationFactor() {
-		return replicationFactor;
+		return replicationFactor.getReplicationFactor();
 	}
 
 	/**
@@ -78,7 +84,15 @@ public class DatabaseEntity implements Entity {
 	 * @since ArangoDB 3.6.0
 	 */
 	public Integer getMinReplicationFactor() {
-		return minReplicationFactor;
+		return minReplicationFactor.getMinReplicationFactor();
+	}
+
+	/**
+	 * @return TODO
+	 * @since ArangoDB 3.6.0
+	 */
+	public Boolean getSatellite() {
+		return this.replicationFactor.getSatellite();
 	}
 
 	/**

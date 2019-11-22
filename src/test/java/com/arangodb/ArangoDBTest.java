@@ -20,15 +20,7 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
@@ -36,7 +28,7 @@ import static org.junit.Assume.assumeTrue;
 import java.util.*;
 
 import com.arangodb.entity.*;
-import com.arangodb.model.DBCreateOptions;
+import com.arangodb.model.*;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,10 +36,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.arangodb.ArangoDB.Builder;
-import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -79,6 +68,10 @@ public class ArangoDBTest {
         arangoDB = builder.build();
     }
 
+    private boolean isEnterprise() {
+        return arangoDB.getVersion().getLicense() == License.ENTERPRISE;
+    }
+
     private boolean isCluster() {
         return arangoDB.getRole() == ServerRole.COORDINATOR;
     }
@@ -105,24 +98,53 @@ public class ArangoDBTest {
         assertThat(resultDelete, is(true));
     }
 
-    // FIXME
     @Test
-    public void createDatabaseWithProperties() {
+    public void createDatabaseWithOptions() {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 6));
         final String dbName = "testDB-" + UUID.randomUUID().toString();
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
-                .minReplicationFactor(2)
-                .replicationFactor(2)
-                // TODO: .sharding()
+                .options(new DatabaseOptions()
+                        .minReplicationFactor(2)
+                        .replicationFactor(2)
+                        .sharding("")
+                )
         );
         assertThat(resultCreate, is(true));
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
         assertThat(info.getReplicationFactor(), is(2));
         assertThat(info.getMinReplicationFactor(), is(2));
-        assertThat(info.getSharding(), is("sharding"));
+        assertThat(info.getSharding(), is(""));
+        assertThat(info.getSatellite(), nullValue());
+
+        final Boolean resultDelete = arangoDB.db(dbName).drop();
+        assertThat(resultDelete, is(true));
+    }
+
+    @Test
+    public void createDatabaseWithOptionsSatellite() {
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
+                .name(dbName)
+                .options(new DatabaseOptions()
+                        .minReplicationFactor(2)
+                        .satellite(true)
+                        .sharding("")
+                )
+        );
+        assertThat(resultCreate, is(true));
+
+        DatabaseEntity info = arangoDB.db(dbName).getInfo();
+        assertThat(info.getReplicationFactor(), nullValue());
+        assertThat(info.getSatellite(), is(true));
+        assertThat(info.getMinReplicationFactor(), is(2));
+        assertThat(info.getSharding(), is(""));
 
         final Boolean resultDelete = arangoDB.db(dbName).drop();
         assertThat(resultDelete, is(true));

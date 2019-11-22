@@ -20,85 +20,38 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.ReplicationFactor;
-
 /**
  * @author Mark Vollmary
- *
  */
 public class DBCreateOptions {
 
-	private String name;
+    private String name;
+    private DatabaseOptions options;
 
-	private final ReplicationFactor replicationFactor;
-	private final MinReplicationFactor minReplicationFactor;
-	private String sharding;
+    public DBCreateOptions() {
+        super();
+    }
 
-	public DBCreateOptions() {
-		super();
-		replicationFactor = new ReplicationFactor();
-		minReplicationFactor = new MinReplicationFactor();
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * @param name Has to contain a valid database name
+     * @return options
+     */
+    public DBCreateOptions name(final String name) {
+        this.name = name;
+        return this;
+    }
 
-	public Integer getReplicationFactor() {
-		return replicationFactor.getReplicationFactor();
-	}
+    public DatabaseOptions getOptions() {
+        return options;
+    }
 
-	public Integer getMinReplicationFactor() {
-		return minReplicationFactor.getMinReplicationFactor();
-	}
-
-	/**
-	 * @return whether the collection is a satellite collection. Only in an enterprise cluster setup (else returning null).
-	 */
-	public Boolean getSatellite() {
-		return this.replicationFactor.getSatellite();
-	}
-
-	public String getSharding() {
-		return sharding;
-	}
-
-	/**
-	 * @param name
-	 *            Has to contain a valid database name
-	 * @return options
-	 */
-	public DBCreateOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
-
-	public DBCreateOptions replicationFactor(final Integer replicationFactor) {
-		this.replicationFactor.setReplicationFactor(replicationFactor);
-		return this;
-	}
-
-	public DBCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
-		this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
-		return this;
-	}
-
-	public DBCreateOptions satellite(final Boolean satellite) {
-		this.replicationFactor.setSatellite(satellite);
-		return this;
-	}
-
-	/**
-	 * TODO
-	 *
-	 * @param sharding
-	 * @return TODO
-	 * @since ArangoDB 3.6.0
-	 */
-	public DBCreateOptions sharding(String sharding) {
-		this.sharding = sharding;
-		return this;
-	}
+    public DBCreateOptions options(DatabaseOptions options) {
+        this.options = options;
+        return this;
+    }
 
 }
