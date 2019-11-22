@@ -25,64 +25,83 @@ import com.arangodb.entity.ReplicationFactor;
 
 /**
  * @author Michele Rastelli
- *
+ * @since ArangoDB 3.6.0
  */
 public class DatabaseOptions {
 
-	private final ReplicationFactor replicationFactor;
-	private final MinReplicationFactor minReplicationFactor;
-	private String sharding;
+    private final ReplicationFactor replicationFactor;
+    private final MinReplicationFactor minReplicationFactor;
+    private String sharding;
 
-	public DatabaseOptions() {
-		super();
-		replicationFactor = new ReplicationFactor();
-		minReplicationFactor = new MinReplicationFactor();
-	}
+    public DatabaseOptions() {
+        super();
+        replicationFactor = new ReplicationFactor();
+        minReplicationFactor = new MinReplicationFactor();
+    }
 
-	public Integer getReplicationFactor() {
-		return replicationFactor.getReplicationFactor();
-	}
+    public Integer getReplicationFactor() {
+        return replicationFactor.getReplicationFactor();
+    }
 
-	public Integer getMinReplicationFactor() {
-		return minReplicationFactor.getMinReplicationFactor();
-	}
+    public Integer getMinReplicationFactor() {
+        return minReplicationFactor.getMinReplicationFactor();
+    }
 
-	/**
-	 * @return whether the collection is a satellite collection. Only in an enterprise cluster setup (else returning null).
-	 */
-	public Boolean getSatellite() {
-		return this.replicationFactor.getSatellite();
-	}
+    public Boolean getSatellite() {
+        return this.replicationFactor.getSatellite();
+    }
 
-	public String getSharding() {
-		return sharding;
-	}
+    public String getSharding() {
+        return sharding;
+    }
 
-	public DatabaseOptions replicationFactor(final Integer replicationFactor) {
-		this.replicationFactor.setReplicationFactor(replicationFactor);
-		return this;
-	}
+    /**
+     * @param replicationFactor the default replication factor for collections in this database
+     * @return options
+     * @since ArangoDB 3.6.0
+     */
+    public DatabaseOptions replicationFactor(final Integer replicationFactor) {
+        this.replicationFactor.setReplicationFactor(replicationFactor);
+        return this;
+    }
 
-	public DatabaseOptions minReplicationFactor(final Integer minReplicationFactor) {
-		this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
-		return this;
-	}
+    /**
+     * @param minReplicationFactor (optional, default is 1): in a cluster, this attribute determines how many desired copies of each
+     *                             shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
+     *                             replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
+     *                             a shard of a collection has less than minReplicationFactor many insync followers it will go into
+     *                             "read-only" mode and will reject writes until enough followers are insync again. In more detail:
+     *                             Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
+     *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
+     *                             to allow writes.
+     * @return options
+     * @since ArangoDB 3.6.0
+     */
+    public DatabaseOptions minReplicationFactor(final Integer minReplicationFactor) {
+        this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
+        return this;
+    }
 
-	public DatabaseOptions satellite(final Boolean satellite) {
-		this.replicationFactor.setSatellite(satellite);
-		return this;
-	}
+    /**
+     * @param satellite whether the collection is a satellite collection. Only in an enterprise cluster setup (else
+     *                  returning null).
+     * @return options
+     * @since ArangoDB 3.6.0
+     */
+    public DatabaseOptions satellite(final Boolean satellite) {
+        this.replicationFactor.setSatellite(satellite);
+        return this;
+    }
 
-	/**
-	 * TODO
-	 *
-	 * @param sharding
-	 * @return TODO
-	 * @since ArangoDB 3.6.0
-	 */
-	public DatabaseOptions sharding(String sharding) {
-		this.sharding = sharding;
-		return this;
-	}
+    /**
+     * @param sharding The sharding method to use for new collections in this database.
+     *                 Valid values are: “”, “flexible”, or “single”. The first two are equivalent.
+     * @return options
+     * @since ArangoDB 3.6.0
+     */
+    public DatabaseOptions sharding(String sharding) {
+        this.sharding = sharding;
+        return this;
+    }
 
 }
