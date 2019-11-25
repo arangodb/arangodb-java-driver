@@ -366,7 +366,6 @@ public class ArangoSearchTest extends BaseTest {
     @Test
     public void ngramAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(!isAtLeastVersion(3, 6));
 
         String name = "test-" + UUID.randomUUID().toString();
 
@@ -392,7 +391,6 @@ public class ArangoSearchTest extends BaseTest {
     @Test
     public void textAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
-        assumeTrue(!isAtLeastVersion(3, 6));
 
         String name = "test-" + UUID.randomUUID().toString();
 
