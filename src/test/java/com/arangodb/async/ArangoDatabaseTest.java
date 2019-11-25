@@ -448,6 +448,19 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
+    public void queryWithTimeout() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        try {
+            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().timeout(0.1), String.class).get().next();
+            fail();
+        } catch (ExecutionException e) {
+            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(410));
+        }
+    }
+
+    @Test
     public void queryWithCount() throws InterruptedException, ExecutionException {
         try {
             db.createCollection(COLLECTION_NAME, null).get();
