@@ -240,14 +240,14 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
         assertThat(createdAnalyzer.getType(), is(options.getType()));
         assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
-        assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
+        compareProperties(createdAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzer
         AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
         assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
         assertThat(gotAnalyzer.getType(), is(options.getType()));
         assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
-        assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
+        compareProperties(gotAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzers
         @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -257,7 +257,7 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
         assertThat(foundAnalyzer.getType(), is(options.getType()));
         assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
-        assertThat(foundAnalyzer.getProperties(), is(options.getProperties()));
+        compareProperties(foundAnalyzer.getProperties(), options.getProperties());
 
         AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
         deleteOptions.setForce(true);
@@ -272,6 +272,19 @@ public class ArangoSearchTest extends BaseTest {
             // ok
         }
 
+    }
+
+    private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
+        expectedProperties.forEach((key, value) -> {
+            Object expectedValue = actualProperties.get(key);
+            if (value instanceof Map) {
+                assertThat(expectedValue, notNullValue());
+                assertThat(expectedValue, instanceOf(Map.class));
+                compareProperties((Map) value, (Map) expectedValue);
+            } else {
+                assertThat(value, is(expectedValue));
+            }
+        });
     }
 
     @Test
