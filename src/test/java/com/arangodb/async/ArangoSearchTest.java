@@ -269,6 +269,19 @@ public class ArangoSearchTest extends BaseTest {
         }
     }
 
+    private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
+        expectedProperties.forEach((key, value) -> {
+            Object expectedValue = actualProperties.get(key);
+            if (value instanceof Map) {
+                assertThat(expectedValue, notNullValue());
+                assertThat(expectedValue, instanceOf(Map.class));
+                compareProperties((Map) value, (Map) expectedValue);
+            } else {
+                assertThat(value, is(expectedValue));
+            }
+        });
+    }
+
     @Test
     public void identityAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
@@ -402,27 +415,6 @@ public class ArangoSearchTest extends BaseTest {
         options.setProperties(properties);
 
         createGetAndDeleteAnalyzer(options);
-    }
-
-    private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
-        assertThat(actualProperties, notNullValue());
-        assertThat(expectedProperties, notNullValue());
-
-        doCompareProperties(actualProperties, expectedProperties);
-        doCompareProperties(expectedProperties, actualProperties);
-    }
-
-    private void doCompareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
-        actualProperties.forEach((key, value) -> {
-            Object expectedValue = expectedProperties.get(key);
-            if (value instanceof Map) {
-                assertThat(expectedValue, notNullValue());
-                assertThat(expectedValue, instanceOf(Map.class));
-                compareProperties((Map) value, (Map) expectedValue);
-            } else {
-                assertThat(value, is(expectedValue));
-            }
-        });
     }
 
 }
