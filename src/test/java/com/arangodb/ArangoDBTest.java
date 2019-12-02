@@ -106,7 +106,7 @@ public class ArangoDBTest {
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
-                        .minReplicationFactor(2)
+                        .writeConcern(2)
                         .replicationFactor(2)
                         .sharding("")
                 )
@@ -115,7 +115,7 @@ public class ArangoDBTest {
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
         assertThat(info.getReplicationFactor(), is(2));
-        assertThat(info.getMinReplicationFactor(), is(2));
+        assertThat(info.getWriteConcern(), is(2));
         assertThat(info.getSharding(), is(""));
         assertThat(info.getSatellite(), nullValue());
 
@@ -133,7 +133,7 @@ public class ArangoDBTest {
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
-                        .minReplicationFactor(2)
+                        .writeConcern(2)
                         .satellite(true)
                         .sharding("")
                 )
@@ -143,7 +143,7 @@ public class ArangoDBTest {
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
         assertThat(info.getReplicationFactor(), nullValue());
         assertThat(info.getSatellite(), is(true));
-        assertThat(info.getMinReplicationFactor(), is(2));
+        assertThat(info.getWriteConcern(), is(2));
         assertThat(info.getSharding(), is(""));
 
         final Boolean resultDelete = arangoDB.db(dbName).drop();

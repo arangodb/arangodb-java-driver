@@ -33,13 +33,12 @@ public class DatabaseEntity implements Entity {
     private String path;
     private Boolean isSystem;
     private final ReplicationFactor replicationFactor;
-    private final MinReplicationFactor minReplicationFactor;
+    private Integer writeConcern;
     private String sharding;
 
     public DatabaseEntity() {
         super();
         replicationFactor = new ReplicationFactor();
-        minReplicationFactor = new MinReplicationFactor();
     }
 
     /**
@@ -79,18 +78,12 @@ public class DatabaseEntity implements Entity {
     }
 
     /**
-     * @return in a cluster, this attribute determines how many desired copies of each
-     * shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
-     * replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
-     * a shard of a collection has less than minReplicationFactor many insync followers it will go into
-     * "read-only" mode and will reject writes until enough followers are insync again. In more detail:
-     * Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
-     * are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
-     * to allow writes.
+     * TODO: write doc
+     *
      * @since ArangoDB 3.6.0
      */
-    public Integer getMinReplicationFactor() {
-        return minReplicationFactor.getMinReplicationFactor();
+    public Integer getWriteConcern() {
+        return writeConcern;
     }
 
     /**

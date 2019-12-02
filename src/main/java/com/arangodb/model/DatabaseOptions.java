@@ -20,7 +20,6 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.MinReplicationFactor;
 import com.arangodb.entity.ReplicationFactor;
 
 /**
@@ -30,21 +29,20 @@ import com.arangodb.entity.ReplicationFactor;
 public class DatabaseOptions {
 
     private final ReplicationFactor replicationFactor;
-    private final MinReplicationFactor minReplicationFactor;
+    private Integer writeConcern;
     private String sharding;
 
     public DatabaseOptions() {
         super();
         replicationFactor = new ReplicationFactor();
-        minReplicationFactor = new MinReplicationFactor();
     }
 
     public Integer getReplicationFactor() {
         return replicationFactor.getReplicationFactor();
     }
 
-    public Integer getMinReplicationFactor() {
-        return minReplicationFactor.getMinReplicationFactor();
+    public Integer getWriteConcern() {
+        return writeConcern;
     }
 
     public Boolean getSatellite() {
@@ -66,19 +64,13 @@ public class DatabaseOptions {
     }
 
     /**
-     * @param minReplicationFactor (optional, default is 1): in a cluster, this attribute determines how many desired copies of each
-     *                             shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
-     *                             replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
-     *                             a shard of a collection has less than minReplicationFactor many insync followers it will go into
-     *                             "read-only" mode and will reject writes until enough followers are insync again. In more detail:
-     *                             Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
-     *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
-     *                             to allow writes.
+     * TODO: write doc
+     *
      * @return options
      * @since ArangoDB 3.6.0
      */
-    public DatabaseOptions minReplicationFactor(final Integer minReplicationFactor) {
-        this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
+    public DatabaseOptions writeConcern(final Integer writeConcern) {
+        this.writeConcern = writeConcern;
         return this;
     }
 

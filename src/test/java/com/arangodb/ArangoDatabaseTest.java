@@ -1324,7 +1324,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
         if (isAtLeastVersion(3, 6) && isCluster()) {
             assertThat(info.getSharding(), notNullValue());
-            assertThat(info.getMinReplicationFactor(), notNullValue());
+            assertThat(info.getWriteConcern(), notNullValue());
             assertThat(info.getReplicationFactor(), notNullValue());
         }
     }

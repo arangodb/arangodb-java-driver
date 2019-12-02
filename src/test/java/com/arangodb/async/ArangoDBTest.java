@@ -146,7 +146,7 @@ public class ArangoDBTest {
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
-                        .minReplicationFactor(2)
+                        .writeConcern(2)
                         .replicationFactor(2)
                         .sharding("")
                 )
@@ -155,7 +155,7 @@ public class ArangoDBTest {
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo().get();
         assertThat(info.getReplicationFactor(), is(2));
-        assertThat(info.getMinReplicationFactor(), is(2));
+        assertThat(info.getWriteConcern(), is(2));
         assertThat(info.getSharding(), is(""));
         assertThat(info.getSatellite(), nullValue());
 
@@ -174,7 +174,7 @@ public class ArangoDBTest {
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
-                        .minReplicationFactor(2)
+                        .writeConcern(2)
                         .satellite(true)
                         .sharding("")
                 )
@@ -184,7 +184,7 @@ public class ArangoDBTest {
         DatabaseEntity info = arangoDB.db(dbName).getInfo().get();
         assertThat(info.getReplicationFactor(), nullValue());
         assertThat(info.getSatellite(), is(true));
-        assertThat(info.getMinReplicationFactor(), is(2));
+        assertThat(info.getWriteConcern(), is(2));
         assertThat(info.getSharding(), is(""));
 
         final Boolean resultDelete = arangoDB.db(dbName).drop().get();
@@ -204,20 +204,17 @@ public class ArangoDBTest {
     @Test
     public void getDatabases() throws InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-        try {
-            Collection<String> dbs = arangoDB.getDatabases().get();
-            assertThat(dbs, is(notNullValue()));
-            assertThat(dbs.size(), is(greaterThan(0)));
-            final int dbCount = dbs.size();
-            assertThat(dbs.iterator().next(), is("_system"));
-            arangoDB.createDatabase(BaseTest.TEST_DB).get();
-            dbs = arangoDB.getDatabases().get();
-            assertThat(dbs.size(), is(greaterThan(dbCount)));
-            assertThat(dbs, hasItem("_system"));
-            assertThat(dbs, hasItem(BaseTest.TEST_DB));
-        } finally {
-            arangoDB.db(BaseTest.TEST_DB).drop().get();
-        }
+        Collection<String> dbs = arangoDB.getDatabases().get();
+        assertThat(dbs, is(notNullValue()));
+        assertThat(dbs.size(), is(greaterThan(0)));
+        final int dbCount = dbs.size();
+        assertThat(dbs, hasItem("_system"));
+        arangoDB.createDatabase(BaseTest.TEST_DB).get();
+        dbs = arangoDB.getDatabases().get();
+        assertThat(dbs.size(), is(greaterThan(dbCount)));
+        assertThat(dbs, hasItem("_system"));
+        assertThat(dbs, hasItem(BaseTest.TEST_DB));
+        arangoDB.db(BaseTest.TEST_DB).drop().get();
     }
 
     @Test
