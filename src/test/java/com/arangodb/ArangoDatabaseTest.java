@@ -778,7 +778,7 @@ public class ArangoDatabaseTest extends BaseTest {
     public void queryWithTimeout() {
         assumeTrue(isAtLeastVersion(3, 6));
         try {
-            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().timeout(0.1), String.class).next();
+            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().maxRuntime(0.1), String.class).next();
             fail();
         } catch (ArangoDBException e) {
             assertThat(e.getResponseCode(), is(410));

@@ -178,8 +178,8 @@ public class AqlQueryOptions implements Serializable {
      * @param timeout TODO: write doc
      * @return options
      */
-    public AqlQueryOptions timeout(final Double timeout) {
-        getOptions().timeout = timeout;
+    public AqlQueryOptions maxRuntime(final Double timeout) {
+        getOptions().maxRuntime = timeout;
         return this;
     }
 
@@ -405,7 +405,7 @@ public class AqlQueryOptions implements Serializable {
 		private Integer maxPlans;
 		private Boolean stream;
 		private Collection<String> shardIds;
-		private Double timeout;
+		private Double maxRuntime;
 
 		protected Optimizer getOptimizer() {
 			if (optimizer == null) {

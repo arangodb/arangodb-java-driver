@@ -452,7 +452,7 @@ public class ArangoDatabaseTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 6));
 
         try {
-            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().timeout(0.1), String.class).get().next();
+            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().maxRuntime(0.1), String.class).get().next();
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
