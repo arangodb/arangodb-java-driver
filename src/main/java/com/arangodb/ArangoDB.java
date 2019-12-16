@@ -49,6 +49,7 @@ import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -886,6 +887,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 	 * @throws ArangoDBException
 	 */
 	LogLevelEntity setLogLevel(LogLevelEntity entity) throws ArangoDBException;
+
+	BackupEntity createBackup(Map<String, Object> entity) throws ArangoDBException;
+
+	BackupEntity restoreBackup(Map<String, Object> entity) throws ArangoDBException;
 
 	/**
 	 * <strong>Attention:</strong> Please do not use!

@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -237,6 +238,16 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 	@Override
 	public LogLevelEntity setLogLevel(final LogLevelEntity entity) throws ArangoDBException {
 		return executor.execute(setLogLevelRequest(entity), LogLevelEntity.class);
+	}
+
+	@Override
+	public BackupEntity createBackup(Map<String, Object> entity) throws ArangoDBException {
+		return executor.execute(createBackupRequest(entity), BackupEntity.class);
+	}
+
+	@Override
+	public BackupEntity restoreBackup(Map<String, Object> entity) throws ArangoDBException {
+		return executor.execute(restoreBackupRequest(entity), BackupEntity.class);
 	}
 
 	@Override
