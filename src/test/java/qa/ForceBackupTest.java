@@ -30,8 +30,9 @@ import com.arangodb.entity.BackupEntity;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.entity.StreamTransactionStatus;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.StreamTransactionOptions;
+import com.arangodb.model.*;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,52 +48,127 @@ import static org.hamcrest.Matchers.is;
  */
 public class ForceBackupTest {
 
-    private static ArangoDB arango;
-    private static ArangoDatabase db;
-    private static ArangoCollection collection;
+    private static ArangoDB arango1;
+    private static ArangoDB arango2;
+    private static ArangoDatabase db1;
+    private static ArangoDatabase db2;
+    private static ArangoCollection collection1;
 
     @BeforeClass
-    public static void setup() {
-        arango = new ArangoDB.Builder()
+    public static void setupClass() {
+        arango1 = new ArangoDB.Builder()
+                .host("172.28.3.1", 8529)
                 .useProtocol(Protocol.HTTP_JSON)
                 .build();
-        db = arango.db("ForceBackupTest");
-        if (db.exists())
-            db.drop();
-        db.create();
-        db.createCollection("ForceBackupTest", new CollectionCreateOptions()
+        db1 = arango1.db("ForceBackupTest");
+        if (db1.exists())
+            db1.drop();
+        db1.create();
+        db1.createCollection("ForceBackupTest", new CollectionCreateOptions()
                 .replicationFactor(2)
                 .minReplicationFactor(2));
-        collection = db.collection("ForceBackupTest");
+        collection1 = db1.collection("ForceBackupTest");
+
+        arango2 = new ArangoDB.Builder()
+                .host("172.28.3.2", 8529)
+                .useProtocol(Protocol.HTTP_JSON)
+                .build();
+        db2 = arango2.db("ForceBackupTest");
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        if (db1.exists())
+            db1.drop();
+        arango1.shutdown();
+    }
+
+    @Before
+    public void setup() {
+        collection1.truncate();
     }
 
     @Test
     public void createAndRestoreBackup() {
         String key = "test-" + UUID.randomUUID().toString();
         BaseDocument initialDocument = new BaseDocument(key);
-        collection.insertDocument(initialDocument);
+        collection1.insertDocument(initialDocument);
 
-        BackupEntity createdBackup = arango.createBackup(Collections.emptyMap());
+        BackupEntity createdBackup = arango1.createBackup(Collections.emptyMap());
         assertThat(createdBackup.getCode(), is(201));
 
-        db.drop();
-        arango.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
+        db1.drop();
+        arango1.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
 
-        BaseDocument gotDocument = collection.getDocument(key, BaseDocument.class);
+        BaseDocument gotDocument = collection1.getDocument(key, BaseDocument.class);
         assertThat(gotDocument, equalTo(initialDocument));
     }
 
     @Test
-    public void forceBackupWhileStreamTransaction() {
-        StreamTransactionEntity createdTx = db.beginStreamTransaction(new StreamTransactionOptions()
-                .readCollections(collection.name())
-                .writeCollections(collection.name()));
+    public void writeStreamTransactionShouldBeAborted() {
+        StreamTransactionEntity createdTx = db1.beginStreamTransaction(new StreamTransactionOptions()
 
-        BackupEntity createdBackup = arango.createBackup(Collections.singletonMap("force", true));
+                .writeCollections(collection1.name()));
+
+        String key = "test-" + UUID.randomUUID().toString();
+        BaseDocument initialDocument = new BaseDocument(key);
+        collection1.insertDocument(initialDocument, new DocumentCreateOptions().streamTransactionId(createdTx.getId()));
+
+        BackupEntity createdBackup = arango1.createBackup(Collections.singletonMap("force", true));
         assertThat(createdBackup.getCode(), is(201));
 
-        StreamTransactionEntity gotTx = db.getStreamTransaction(createdTx.getId());
+        StreamTransactionEntity gotTx = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTx.getStatus(), is(StreamTransactionStatus.aborted));
+
+        StreamTransactionEntity gotTxDb2 = db2.getStreamTransaction(createdTx.getId());
+        assertThat(gotTxDb2.getStatus(), is(StreamTransactionStatus.aborted));
+
+        db1.drop();
+        arango1.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
+
+        assertThat(collection1.documentExists(key), is(false));
+
+        StreamTransactionEntity gotTxAfterBkp = db1.getStreamTransaction(createdTx.getId());
+        assertThat(gotTxAfterBkp.getStatus(), is(StreamTransactionStatus.aborted));
+
+        StreamTransactionEntity gotTxAfterBkpDb2 = db2.getStreamTransaction(createdTx.getId());
+        assertThat(gotTxAfterBkpDb2.getStatus(), is(StreamTransactionStatus.aborted));
+
+    }
+
+    @Test
+    public void readAndWriteStreamTransactionShouldBeAborted() {
+        StreamTransactionEntity createdTx = db1.beginStreamTransaction(new StreamTransactionOptions()
+                .readCollections(collection1.name())
+                .writeCollections(collection1.name()));
+
+        String key = "test-" + UUID.randomUUID().toString();
+        BaseDocument initialDocument = new BaseDocument(key);
+        collection1.insertDocument(initialDocument, new DocumentCreateOptions().streamTransactionId(createdTx.getId()));
+        assertThat(collection1.documentExists(key, new DocumentExistsOptions().streamTransactionId(createdTx.getId())), is(true));
+
+        BackupEntity createdBackup = arango1.createBackup(Collections.singletonMap("force", true));
+        assertThat(createdBackup.getCode(), is(201));
+
+        StreamTransactionEntity gotTx = db1.getStreamTransaction(createdTx.getId());
+        assertThat(gotTx.getStatus(), is(StreamTransactionStatus.aborted));
+
+        StreamTransactionEntity gotTxDb2 = db2.getStreamTransaction(createdTx.getId());
+        assertThat(gotTxDb2.getStatus(), is(StreamTransactionStatus.aborted));
+
+        assertThat(collection1.documentExists(key), is(false));
+
+        db1.drop();
+        arango1.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
+
+        assertThat(collection1.documentExists(key), is(false));
+
+        StreamTransactionEntity gotTxAfterBkp = db1.getStreamTransaction(createdTx.getId());
+        assertThat(gotTxAfterBkp.getStatus(), is(StreamTransactionStatus.aborted));
+
+        StreamTransactionEntity gotTxAfterBkpDb2 = db2.getStreamTransaction(createdTx.getId());
+        assertThat(gotTxAfterBkpDb2.getStatus(), is(StreamTransactionStatus.aborted));
+
     }
 
 }
