@@ -30,21 +30,13 @@ import com.arangodb.entity.BackupEntity;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.entity.StreamTransactionStatus;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.model.DocumentExistsOptions;
-import com.arangodb.model.StreamTransactionOptions;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.arangodb.model.*;
+import org.junit.*;
 
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Michele Rastelli
@@ -73,7 +65,7 @@ public class ForceBackupTest {
         collection1 = db1.collection("ForceBackupTest");
 
         arango2 = new ArangoDB.Builder()
-                .host("172.28.3.2", 8529)
+                .host("172.28.3.1", 8529)
                 .useProtocol(Protocol.HTTP_JSON)
                 .build();
         db2 = arango2.db("ForceBackupTest");
@@ -110,7 +102,6 @@ public class ForceBackupTest {
     @Test
     public void writeStreamTransactionShouldBeAborted() {
         StreamTransactionEntity createdTx = db1.beginStreamTransaction(new StreamTransactionOptions()
-
                 .writeCollections(collection1.name()));
 
         String key = "test-" + UUID.randomUUID().toString();
@@ -123,9 +114,6 @@ public class ForceBackupTest {
         StreamTransactionEntity gotTx = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTx.getStatus(), is(StreamTransactionStatus.aborted));
 
-        StreamTransactionEntity gotTxDb2 = db2.getStreamTransaction(createdTx.getId());
-        assertThat(gotTxDb2.getStatus(), is(StreamTransactionStatus.aborted));
-
         db1.drop();
         arango1.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
 
@@ -133,9 +121,6 @@ public class ForceBackupTest {
 
         StreamTransactionEntity gotTxAfterBkp = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTxAfterBkp.getStatus(), is(StreamTransactionStatus.aborted));
-
-        StreamTransactionEntity gotTxAfterBkpDb2 = db2.getStreamTransaction(createdTx.getId());
-        assertThat(gotTxAfterBkpDb2.getStatus(), is(StreamTransactionStatus.aborted));
 
     }
 
@@ -156,9 +141,6 @@ public class ForceBackupTest {
         StreamTransactionEntity gotTx = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTx.getStatus(), is(StreamTransactionStatus.aborted));
 
-        StreamTransactionEntity gotTxDb2 = db2.getStreamTransaction(createdTx.getId());
-        assertThat(gotTxDb2.getStatus(), is(StreamTransactionStatus.aborted));
-
         assertThat(collection1.documentExists(key), is(false));
 
         db1.drop();
@@ -168,9 +150,6 @@ public class ForceBackupTest {
 
         StreamTransactionEntity gotTxAfterBkp = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTxAfterBkp.getStatus(), is(StreamTransactionStatus.aborted));
-
-        StreamTransactionEntity gotTxAfterBkpDb2 = db2.getStreamTransaction(createdTx.getId());
-        assertThat(gotTxAfterBkpDb2.getStatus(), is(StreamTransactionStatus.aborted));
 
     }
 
@@ -202,9 +181,6 @@ public class ForceBackupTest {
         StreamTransactionEntity gotTx = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTx.getStatus(), is(StreamTransactionStatus.aborted));
 
-        StreamTransactionEntity gotTxDb2 = db2.getStreamTransaction(createdTx.getId());
-        assertThat(gotTxDb2.getStatus(), is(StreamTransactionStatus.aborted));
-
         db1.drop();
         arango1.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
 
@@ -213,9 +189,63 @@ public class ForceBackupTest {
         StreamTransactionEntity gotTxAfterBkp = db1.getStreamTransaction(createdTx.getId());
         assertThat(gotTxAfterBkp.getStatus(), is(StreamTransactionStatus.aborted));
 
-        StreamTransactionEntity gotTxAfterBkpDb2 = db2.getStreamTransaction(createdTx.getId());
-        assertThat(gotTxAfterBkpDb2.getStatus(), is(StreamTransactionStatus.aborted));
+    }
 
+    private List<String> performLongRunningJsTransaction(double duration, TransactionOptions options) {
+        String key1 = "test-" + UUID.randomUUID().toString();
+        String key2 = "test-" + UUID.randomUUID().toString();
+        new Thread(() -> {
+            String jsTx = "function (params) { "
+                    + "var db = require('internal').db;"
+                    + "db." + collection1.name() + ".save({\"_key\": \"" + key1 + "\"});"
+                    + "require('internal').sleep(" + duration + ");"
+                    + "db." + collection1.name() + ".save({\"_key\": \"" + key2 + "\"});"
+                    + "}";
+            db2.transaction(jsTx, Void.class, options);
+        }).start();
+        return Arrays.asList(key1, key2);
+    }
+
+    @Test
+    public void jsTransaction() throws InterruptedException {
+        List<String> jsTxKeys = performLongRunningJsTransaction(1, new TransactionOptions()
+                .writeCollections(collection1.name()));
+        Thread.sleep(1500);
+        assertThat(collection1.documentExists(jsTxKeys.get(0)), equalTo(true));
+        assertThat(collection1.documentExists(jsTxKeys.get(1)), equalTo(true));
+    }
+
+    private void waitUntil(long until) throws InterruptedException {
+        long msToWait = until - new Date().getTime();
+        if (msToWait > 0) {
+            Thread.sleep(msToWait);
+        }
+    }
+
+    @Test
+    @Ignore
+    public void writeJsTransaction() throws InterruptedException {
+        List<String> jsTxKeys = performLongRunningJsTransaction(130, new TransactionOptions()
+                .writeCollections(collection1.name()));
+        Thread.sleep(1000);
+
+        long b4Backup = new Date().getTime();
+        long waitUntil = b4Backup + 130_000;
+
+        BackupEntity createdBackup = arango1.createBackup(Collections.singletonMap("force", true));
+        long afterBackup = new Date().getTime();
+        assertThat(afterBackup - b4Backup, is(lessThan(125_000L)));
+        assertThat(createdBackup.getCode(), is(201));
+
+        waitUntil(waitUntil);
+        assertThat(collection1.documentExists(jsTxKeys.get(0)), equalTo(false));
+        assertThat(collection1.documentExists(jsTxKeys.get(1)), equalTo(false));
+
+        db1.drop();
+        arango1.restoreBackup(Collections.singletonMap("id", createdBackup.getResult().get("id")));
+
+        assertThat(collection1.documentExists(jsTxKeys.get(0)), equalTo(false));
+        assertThat(collection1.documentExists(jsTxKeys.get(1)), equalTo(false));
     }
 
 }
