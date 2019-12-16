@@ -78,9 +78,6 @@ wait_server 172.28.2.3:8530
 wait_server 172.28.3.1:8529
 wait_server 172.28.3.2:8529
 
-# wait for port mappings
-wait_server 127.0.0.1:8529
-
 docker exec coordinator1 arangosh --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
 
 rm "$LOCATION"/jwtHeader "$LOCATION"/jwtSecret
