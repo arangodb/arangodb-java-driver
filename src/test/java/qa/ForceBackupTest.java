@@ -52,7 +52,6 @@ public class ForceBackupTest {
     @BeforeClass
     public static void setupClass() {
         arango1 = new ArangoDB.Builder()
-                .host("172.28.3.1", 8529)
                 .useProtocol(Protocol.HTTP_JSON)
                 .build();
         db1 = arango1.db("ForceBackupTest");
@@ -65,7 +64,6 @@ public class ForceBackupTest {
         collection1 = db1.collection("ForceBackupTest");
 
         arango2 = new ArangoDB.Builder()
-                .host("172.28.3.1", 8529)
                 .useProtocol(Protocol.HTTP_JSON)
                 .build();
         db2 = arango2.db("ForceBackupTest");
