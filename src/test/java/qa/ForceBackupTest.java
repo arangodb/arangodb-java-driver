@@ -71,8 +71,6 @@ public class ForceBackupTest {
 
     @AfterClass
     public static void shutdown() {
-        if (db1.exists())
-            db1.drop();
         arango1.shutdown();
     }
 
@@ -244,6 +242,16 @@ public class ForceBackupTest {
 
         assertThat(collection1.documentExists(jsTxKeys.get(0)), equalTo(false));
         assertThat(collection1.documentExists(jsTxKeys.get(1)), equalTo(false));
+    }
+
+    /**
+     * trigger manually after all tests and db restart
+     */
+    @Test
+    @Ignore
+    public void checkStateAfterRestart() {
+        assertThat(db1.getStreamTransactions().size(), is(0));
+        assertThat(collection1.count().getCount(), is(0));
     }
 
 }
