@@ -16,8 +16,8 @@ public class FieldLink {
 	private FieldLink(final String name) {
 		super();
 		this.name = name;
-        fields = new ArrayList<>();
-        analyzers = new ArrayList<>();
+		fields = new ArrayList<>();
+		analyzers = new ArrayList<>();
 	}
 
 	/**

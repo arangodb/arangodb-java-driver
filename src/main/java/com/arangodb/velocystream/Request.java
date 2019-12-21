@@ -48,8 +48,8 @@ public class Request {
 		this.requestType = requestType;
 		this.request = path;
 		body = null;
-        queryParam = new HashMap<>();
-        headerParam = new HashMap<>();
+		queryParam = new HashMap<>();
+		headerParam = new HashMap<>();
 	}
 
 	public int getVersion() {

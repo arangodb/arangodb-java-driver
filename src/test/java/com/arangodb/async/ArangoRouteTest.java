@@ -36,14 +36,15 @@ import static org.junit.Assert.fail;
  */
 public class ArangoRouteTest extends BaseTest {
 
-  /*
+	/*
 	@Test
 	public void get() throws InterruptedException, ExecutionException {
 		final Response res = db.route("/_api/version").get().get();
 		assertThat(res.getBody().get("version").isString(), is(true));
-	}*/
+	}
+	*/
 
-  /*
+	/*
 	@Test
 	public void withHeader() throws InterruptedException, ExecutionException {
 		final ArangoCollectionAsync collection = db.collection("route-test-col");
@@ -60,22 +61,22 @@ public class ArangoRouteTest extends BaseTest {
 			collection.drop();
 		}
 	}
-  */
+	*/
 
-    @Test
-    public void withParentHeader() throws InterruptedException, ExecutionException {
-        final ArangoCollectionAsync collection = db.collection("route-test-col");
-        try {
-            collection.create().get();
-            final BaseDocument doc = new BaseDocument();
-            collection.insertDocument(doc).get();
-            db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
-                    .route(doc.getId()).get().get();
-            fail();
-        } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
-        }
-        collection.drop().get();
-    }
+	@Test
+	public void withParentHeader() throws InterruptedException, ExecutionException {
+		final ArangoCollectionAsync collection = db.collection("route-test-col");
+		try {
+			collection.create().get();
+			final BaseDocument doc = new BaseDocument();
+			collection.insertDocument(doc).get();
+			db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
+					.route(doc.getId()).get().get();
+			fail();
+		} catch (final ExecutionException e) {
+			assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+		}
+		collection.drop().get();
+	}
 
 }

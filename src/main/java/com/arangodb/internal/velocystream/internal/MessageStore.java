@@ -43,9 +43,9 @@ public class MessageStore {
 
 	public MessageStore() {
 		super();
-        task = new ConcurrentHashMap<>();
-        response = new ConcurrentHashMap<>();
-        error = new ConcurrentHashMap<>();
+		task = new ConcurrentHashMap<>();
+		response = new ConcurrentHashMap<>();
+		error = new ConcurrentHashMap<>();
 	}
 
 	public void storeMessage(final long messageId, final FutureTask<Message> future) {

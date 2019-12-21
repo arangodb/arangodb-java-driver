@@ -41,7 +41,7 @@ public class Response {
 
 	public Response() {
 		super();
-        meta = new HashMap<>();
+		meta = new HashMap<>();
 	}
 
 	public int getVersion() {

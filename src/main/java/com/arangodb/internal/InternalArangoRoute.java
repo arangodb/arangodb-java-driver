@@ -45,8 +45,8 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
 		super(db.executor, db.util, db.context);
 		this.db = db;
 		this.path = path;
-        this.queryParam = new HashMap<>();
-        this.headerParam = new HashMap<>();
+		this.queryParam = new HashMap<>();
+		this.headerParam = new HashMap<>();
 		this.headerParam.putAll(headerParam);
 	}
 

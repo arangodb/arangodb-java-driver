@@ -29,7 +29,7 @@ public class VertexDeleteOptions {
 
 	private Boolean waitForSync;
 	private String ifMatch;
-    private String streamTransactionId;
+	private String streamTransactionId;
 
 	public VertexDeleteOptions() {
 		super();
@@ -63,18 +63,18 @@ public class VertexDeleteOptions {
 		return this;
 	}
 
-    public String getStreamTransactionId() {
-        return streamTransactionId;
-    }
+	public String getStreamTransactionId() {
+		return streamTransactionId;
+	}
 
-    /**
-     * @param streamTransactionId If set, the operation will be executed within the transaction.
-     * @return options
-     * @since ArangoDB 3.5.1
-     */
-    public VertexDeleteOptions streamTransactionId(final String streamTransactionId) {
-        this.streamTransactionId = streamTransactionId;
-        return this;
-    }
+	/**
+	* @param streamTransactionId If set, the operation will be executed within the transaction.
+	* @return options
+	* @since ArangoDB 3.5.1
+	*/
+	public VertexDeleteOptions streamTransactionId(final String streamTransactionId) {
+		this.streamTransactionId = streamTransactionId;
+		return this;
+	}
 
 }

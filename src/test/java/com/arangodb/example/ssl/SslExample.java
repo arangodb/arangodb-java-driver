@@ -53,7 +53,7 @@ public class SslExample {
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
     @Test
-	@Ignore
+    @Ignore
     public void connect() throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
@@ -72,7 +72,7 @@ public class SslExample {
                 .host("127.0.0.1", 8529)
                 .password("test")
                 .useSsl(true)
-				.sslContext(sc)
+                .sslContext(sc)
                 .useProtocol(Protocol.HTTP_JSON)
                 .build();
         final ArangoDBVersion version = arangoDB.getVersion();

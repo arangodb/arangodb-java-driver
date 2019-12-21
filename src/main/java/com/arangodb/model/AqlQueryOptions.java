@@ -406,7 +406,7 @@ public class AqlQueryOptions implements Serializable {
 
 		protected Collection<String> getShardIds() {
 			if (shardIds == null) {
-                shardIds = new ArrayList<>();
+				shardIds = new ArrayList<>();
 			}
 			return shardIds;
 		}

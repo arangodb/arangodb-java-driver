@@ -114,7 +114,7 @@ public class HttpConnection implements Connection {
 		public Builder httpCookieSpec(String httpCookieSpec) {
 			this.httpCookieSpec = httpCookieSpec;
 			return this;
-        	}
+		}
 
 		public Builder contentType(final Protocol contentType) {
 			this.contentType = contentType;
@@ -187,8 +187,8 @@ public class HttpConnection implements Connection {
 		}
 		
 		if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
-            		requestConfig.setCookieSpec(httpCookieSpec);
-        	}
+			requestConfig.setCookieSpec(httpCookieSpec);
+		}
 
 		final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
 		final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())

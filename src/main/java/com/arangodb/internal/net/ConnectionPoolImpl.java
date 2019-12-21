@@ -49,7 +49,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
         this.maxConnections = maxConnections;
         this.factory = factory;
         connections = new ArrayList<>();
-		current = 0;
+        current = 0;
     }
 
     @Override

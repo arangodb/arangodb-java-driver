@@ -454,12 +454,12 @@ public class ArangoDBTest {
 		}
 	}
 
-  /*
+	/*
 	@Test
 	public void acquireHostList() {
 		final ArangoDB arango = new ArangoDB.Builder().acquireHostList(true).build();
 		final ArangoDBVersion version = arango.getVersion();
 		assertThat(version, is(notNullValue()));
 	}
-  */
+	*/
 }

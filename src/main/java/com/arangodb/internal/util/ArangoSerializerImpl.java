@@ -60,12 +60,12 @@ public class ArangoSerializerImpl implements ArangoSerializer {
 		}
 		try {
 			final VPackSlice vpack;
-            final Class<?> type = entity.getClass();
+			final Class<?> type = entity.getClass();
 			final boolean serializeNullValues = options.isSerializeNullValues();
 			if (String.class.isAssignableFrom(type)) {
 				vpack = vpackParser.fromJson((String) entity, serializeNullValues);
 			} else if (options.isStringAsJson() && Iterable.class.isAssignableFrom(type)) {
-                final Iterator<?> iterator = ((Iterable) entity).iterator();
+				final Iterator<?> iterator = ((Iterable) entity).iterator();
 				if (iterator.hasNext() && String.class.isAssignableFrom(iterator.next().getClass())) {
 					vpack = vpackParser.fromJson((Iterable<String>) entity, serializeNullValues);
 				} else {

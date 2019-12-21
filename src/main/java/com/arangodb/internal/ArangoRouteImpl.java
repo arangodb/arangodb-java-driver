@@ -62,7 +62,7 @@ public class ArangoRouteImpl extends InternalArangoRoute<ArangoDBImpl, ArangoDat
 	}
 
 	private Response request(final RequestType requestType) {
-        return executor.execute(createRequest(requestType), response -> response);
+		return executor.execute(createRequest(requestType), response -> response);
 	}
 
 	@Override

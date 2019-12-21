@@ -125,7 +125,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 			return execute(request, connection);
 		} catch (final ArangoDBException e) {
 			if (e instanceof ArangoDBRedirectException) {
-                final String location = ((ArangoDBRedirectException) e).getLocation();
+				final String location = ((ArangoDBRedirectException) e).getLocation();
 				final HostDescription redirectHost = HostUtils.createFromLocation(location);
 				hostHandler.closeCurrentOnError();
 				hostHandler.fail();
@@ -156,7 +156,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 	}
 
 	protected Collection<Chunk> buildChunks(final Message message) {
-        final Collection<Chunk> chunks = new ArrayList<>();
+		final Collection<Chunk> chunks = new ArrayList<>();
 		final VPackSlice head = message.getHead();
 		int size = head.getByteSize();
 		final VPackSlice body = message.getBody();

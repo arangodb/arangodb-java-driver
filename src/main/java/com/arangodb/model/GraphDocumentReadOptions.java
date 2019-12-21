@@ -32,7 +32,7 @@ public class GraphDocumentReadOptions {
 	private boolean catchException;
 	@Expose(serialize = false)
 	private Boolean allowDirtyRead;
-    private String streamTransactionId;
+	private String streamTransactionId;
 
 	public GraphDocumentReadOptions() {
 		super();

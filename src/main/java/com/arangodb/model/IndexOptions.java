@@ -31,7 +31,7 @@ public abstract class IndexOptions<T extends IndexOptions> {
     private String name;
 
     public IndexOptions() {
-		super();
+        super();
     }
 
     protected abstract T getThis();

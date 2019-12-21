@@ -30,7 +30,7 @@ public class EdgeUpdateOptions {
 	private Boolean keepNull;
 	private Boolean waitForSync;
 	private String ifMatch;
-    private String streamTransactionId;
+	private String streamTransactionId;
 
 	public EdgeUpdateOptions() {
 		super();

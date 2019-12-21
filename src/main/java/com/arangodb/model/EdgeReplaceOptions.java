@@ -29,7 +29,7 @@ public class EdgeReplaceOptions {
 
 	private Boolean waitForSync;
 	private String ifMatch;
-    private String streamTransactionId;
+	private String streamTransactionId;
 
 	public EdgeReplaceOptions() {
 		super();

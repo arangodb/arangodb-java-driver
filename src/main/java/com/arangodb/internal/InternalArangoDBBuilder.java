@@ -286,8 +286,8 @@ public abstract class InternalArangoDBBuilder {
 	}
 	
 	private static String loadhttpCookieSpec(final Properties properties, final String currentValue) {
-        	return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
-    	}
+		return getProperty(properties, PROPERTY_KEY_COOKIE_SPEC, currentValue, "");
+	}
 
 	private static Integer loadChunkSize(final Properties properties, final Integer currentValue) {
 		return Integer.parseInt(getProperty(properties, PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE, currentValue,
