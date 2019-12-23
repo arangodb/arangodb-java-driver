@@ -4,6 +4,7 @@
 
 # JavaDoc
 
+- [JavaDoc 6.5](http://arangodb.github.io/arangodb-java-driver/javadoc-6_5)
 - [JavaDoc 6.4](http://arangodb.github.io/arangodb-java-driver/javadoc-6_4)
 - [JavaDoc 6.3](http://arangodb.github.io/arangodb-java-driver/javadoc-6_3)
 - [JavaDoc 6.2](http://arangodb.github.io/arangodb-java-driver/javadoc-6_2)
