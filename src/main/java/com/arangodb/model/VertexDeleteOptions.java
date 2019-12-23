@@ -22,46 +22,43 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#remove-a-vertex">API Documentation</a>
  */
 public class VertexDeleteOptions {
 
-	private Boolean waitForSync;
-	private String ifMatch;
+    private Boolean waitForSync;
+    private String ifMatch;
     private String streamTransactionId;
 
-	public VertexDeleteOptions() {
-		super();
-	}
+    public VertexDeleteOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync
-	 *            Wait until deletion operation has been synced to disk.
-	 * @return options
-	 */
-	public VertexDeleteOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until deletion operation has been synced to disk.
+     * @return options
+     */
+    public VertexDeleteOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
 
-	public String getIfMatch() {
-		return ifMatch;
-	}
+    public String getIfMatch() {
+        return ifMatch;
+    }
 
-	/**
-	 * @param ifMatch
-	 *            remove a document based on a target revision
-	 * @return options
-	 */
-	public VertexDeleteOptions ifMatch(final String ifMatch) {
-		this.ifMatch = ifMatch;
-		return this;
-	}
+    /**
+     * @param ifMatch remove a document based on a target revision
+     * @return options
+     */
+    public VertexDeleteOptions ifMatch(final String ifMatch) {
+        this.ifMatch = ifMatch;
+        return this;
+    }
 
     public String getStreamTransactionId() {
         return streamTransactionId;

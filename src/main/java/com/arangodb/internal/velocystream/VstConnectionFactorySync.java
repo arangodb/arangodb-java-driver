@@ -20,32 +20,31 @@
 
 package com.arangodb.internal.velocystream;
 
-import javax.net.ssl.SSLContext;
-
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.velocystream.internal.MessageStore;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * @author Mark Vollmary
- *
  */
 public class VstConnectionFactorySync implements ConnectionFactory {
 
-	private final VstConnectionSync.Builder builder;
+    private final VstConnectionSync.Builder builder;
 
-	public VstConnectionFactorySync(final HostDescription host, final Integer timeout, final Long connectionTtl,
-		final Boolean useSsl, final SSLContext sslContext) {
-		super();
-		builder = new VstConnectionSync.Builder().timeout(timeout).ttl(connectionTtl).useSsl(useSsl)
-				.sslContext(sslContext);
-	}
+    public VstConnectionFactorySync(final HostDescription host, final Integer timeout, final Long connectionTtl,
+                                    final Boolean useSsl, final SSLContext sslContext) {
+        super();
+        builder = new VstConnectionSync.Builder().timeout(timeout).ttl(connectionTtl).useSsl(useSsl)
+                .sslContext(sslContext);
+    }
 
-	@Override
-	public Connection create(final HostDescription host) {
-		return builder.messageStore(new MessageStore()).host(host).build();
-	}
+    @Override
+    public Connection create(final HostDescription host) {
+        return builder.messageStore(new MessageStore()).host(host).build();
+    }
 
 }

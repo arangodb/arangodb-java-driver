@@ -20,12 +20,11 @@
 
 package com.arangodb.example;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 /**
  * @author Mark Vollmary

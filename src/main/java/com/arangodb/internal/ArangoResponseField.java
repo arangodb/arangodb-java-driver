@@ -22,15 +22,14 @@ package com.arangodb.internal;
 
 /**
  * @author Mark Vollmary
- *
  */
 public final class ArangoResponseField {
 
-	private ArangoResponseField() {
-		super();
-	}
+    private ArangoResponseField() {
+        super();
+    }
 
-	public static final String ERROR = "error";
-	public static final String RESULT = "result";
+    public static final String ERROR = "error";
+    public static final String RESULT = "result";
 
 }

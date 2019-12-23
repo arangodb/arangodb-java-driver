@@ -20,55 +20,54 @@
 
 package com.arangodb;
 
+import com.arangodb.entity.CursorEntity.Stats;
+import com.arangodb.entity.CursorEntity.Warning;
+
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.List;
 
-import com.arangodb.entity.CursorEntity.Stats;
-import com.arangodb.entity.CursorEntity.Warning;
-
 /**
  * @author Mark Vollmary
- *
  */
 public interface ArangoCursor<T> extends ArangoIterable<T>, ArangoIterator<T>, Closeable {
 
-	/**
-	 * @return id of temporary cursor created on the server
-	 */
-	String getId();
+    /**
+     * @return id of temporary cursor created on the server
+     */
+    String getId();
 
-	/**
-	 * @return the type of the result elements
-	 */
-	Class<T> getType();
+    /**
+     * @return the type of the result elements
+     */
+    Class<T> getType();
 
-	/**
-	 * @return the total number of result documents available (only available if the query was executed with the count
-	 *         attribute set)
-	 */
-	Integer getCount();
+    /**
+     * @return the total number of result documents available (only available if the query was executed with the count
+     * attribute set)
+     */
+    Integer getCount();
 
-	/**
-	 * @return extra information about the query result. For data-modification queries, the stats will contain the
-	 *         number of modified documents and the number of documents that could not be modified due to an error (if
-	 *         ignoreErrors query option is specified)
-	 */
-	Stats getStats();
+    /**
+     * @return extra information about the query result. For data-modification queries, the stats will contain the
+     * number of modified documents and the number of documents that could not be modified due to an error (if
+     * ignoreErrors query option is specified)
+     */
+    Stats getStats();
 
-	/**
-	 * @return warnings which the query could have been produced
-	 */
-	Collection<Warning> getWarnings();
+    /**
+     * @return warnings which the query could have been produced
+     */
+    Collection<Warning> getWarnings();
 
-	/**
-	 * @return indicating whether the query result was served from the query cache or not
-	 */
-	boolean isCached();
+    /**
+     * @return indicating whether the query result was served from the query cache or not
+     */
+    boolean isCached();
 
-	/**
-	 * @return the remaining results as a {@code List}
-	 */
-	List<T> asListRemaining();
+    /**
+     * @return the remaining results as a {@code List}
+     */
+    List<T> asListRemaining();
 
 }

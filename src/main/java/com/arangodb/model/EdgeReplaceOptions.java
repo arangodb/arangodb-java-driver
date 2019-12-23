@@ -22,46 +22,43 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
  */
 public class EdgeReplaceOptions {
 
-	private Boolean waitForSync;
-	private String ifMatch;
+    private Boolean waitForSync;
+    private String ifMatch;
     private String streamTransactionId;
 
-	public EdgeReplaceOptions() {
-		super();
-	}
+    public EdgeReplaceOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync
-	 *            Wait until document has been synced to disk.
-	 * @return options
-	 */
-	public EdgeReplaceOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until document has been synced to disk.
+     * @return options
+     */
+    public EdgeReplaceOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
 
-	public String getIfMatch() {
-		return ifMatch;
-	}
+    public String getIfMatch() {
+        return ifMatch;
+    }
 
-	/**
-	 * @param ifMatch
-	 *            replace a document based on target revision
-	 * @return options
-	 */
-	public EdgeReplaceOptions ifMatch(final String ifMatch) {
-		this.ifMatch = ifMatch;
-		return this;
-	}
+    /**
+     * @param ifMatch replace a document based on target revision
+     * @return options
+     */
+    public EdgeReplaceOptions ifMatch(final String ifMatch) {
+        this.ifMatch = ifMatch;
+        return this;
+    }
 
     public String getStreamTransactionId() {
         return streamTransactionId;

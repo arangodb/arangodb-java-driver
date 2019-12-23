@@ -20,19 +20,18 @@
 
 package com.arangodb.internal;
 
-import java.util.Map;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.CursorEntity;
 
+import java.util.Map;
+
 /**
  * @author Mark Vollmary
- *
  */
 public interface ArangoCursorExecute {
 
-	CursorEntity next(String id, Map<String, String> meta) throws ArangoDBException;
+    CursorEntity next(String id, Map<String, String> meta) throws ArangoDBException;
 
-	void close(String id, Map<String, String> meta) throws ArangoDBException;
+    void close(String id, Map<String, String> meta) throws ArangoDBException;
 
 }

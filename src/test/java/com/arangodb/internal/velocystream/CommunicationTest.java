@@ -20,19 +20,18 @@
 
 package com.arangodb.internal.velocystream;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDatabase;
+import com.arangodb.entity.ArangoDBVersion;
+import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.Test;
-
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.entity.ArangoDBVersion;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
@@ -112,12 +111,12 @@ public class CommunicationTest {
 
             final Collection<String> result = new ConcurrentLinkedQueue<>();
             final Thread t1 = new Thread(() -> {
-                    db1.query("return sleep(1)", null, null, null);
-                    result.add("1");
+                db1.query("return sleep(1)", null, null, null);
+                result.add("1");
             });
             final Thread t2 = new Thread(() -> {
-                    db2.query("return sleep(1)", null, null, null);
-                    result.add("1");
+                db2.query("return sleep(1)", null, null, null);
+                result.add("1");
             });
             t2.start();
             t1.start();

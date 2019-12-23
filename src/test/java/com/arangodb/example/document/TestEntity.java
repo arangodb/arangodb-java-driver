@@ -22,28 +22,27 @@ package com.arangodb.example.document;
 
 /**
  * @author Mark Vollmary
- *
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class TestEntity {
 
-	private String foo;
+    private String foo;
 
-	public TestEntity() {
-		super();
-	}
+    public TestEntity() {
+        super();
+    }
 
-	public TestEntity(final String foo) {
-		super();
-		this.foo = foo;
-	}
+    public TestEntity(final String foo) {
+        super();
+        this.foo = foo;
+    }
 
-	public String getFoo() {
-		return foo;
-	}
+    public String getFoo() {
+        return foo;
+    }
 
-	public void setFoo(final String foo) {
-		this.foo = foo;
-	}
+    public void setFoo(final String foo) {
+        this.foo = foo;
+    }
 
 }

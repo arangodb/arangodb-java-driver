@@ -26,43 +26,42 @@ import com.arangodb.entity.ViewEntity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoViewImpl extends InternalArangoView<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
-		implements ArangoView {
+        implements ArangoView {
 
-	protected ArangoViewImpl(final ArangoDatabaseImpl db, final String name) {
-		super(db, name);
-	}
+    protected ArangoViewImpl(final ArangoDatabaseImpl db, final String name) {
+        super(db, name);
+    }
 
-	@Override
-	public boolean exists() throws ArangoDBException {
-		try {
-			getInfo();
-			return true;
-		} catch (final ArangoDBException e) {
-			if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
-				return false;
-			}
-			throw e;
-		}
-	}
+    @Override
+    public boolean exists() throws ArangoDBException {
+        try {
+            getInfo();
+            return true;
+        } catch (final ArangoDBException e) {
+            if (ArangoErrors.ERROR_ARANGO_DATA_SOURCE_NOT_FOUND.equals(e.getErrorNum())) {
+                return false;
+            }
+            throw e;
+        }
+    }
 
-	@Override
-	public void drop() throws ArangoDBException {
-		executor.execute(dropRequest(), Void.class);
-	}
+    @Override
+    public void drop() throws ArangoDBException {
+        executor.execute(dropRequest(), Void.class);
+    }
 
-	@Override
-	public synchronized ViewEntity rename(final String newName) throws ArangoDBException {
-		final ViewEntity result = executor.execute(renameRequest(newName), ViewEntity.class);
-		name = result.getName();
-		return result;
-	}
+    @Override
+    public synchronized ViewEntity rename(final String newName) throws ArangoDBException {
+        final ViewEntity result = executor.execute(renameRequest(newName), ViewEntity.class);
+        name = result.getName();
+        return result;
+    }
 
-	@Override
-	public ViewEntity getInfo() throws ArangoDBException {
-		return executor.execute(getInfoRequest(), ViewEntity.class);
-	}
+    @Override
+    public ViewEntity getInfo() throws ArangoDBException {
+        return executor.execute(getInfoRequest(), ViewEntity.class);
+    }
 
 }

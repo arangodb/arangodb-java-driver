@@ -22,22 +22,21 @@ package com.arangodb.entity;
 
 /**
  * @author Heiko Kernbach
- *
  */
 public class MinReplicationFactor {
 
-	private Integer minReplicationFactor;
+    private Integer minReplicationFactor;
 
-	public MinReplicationFactor() {
-		super();
-	}
+    public MinReplicationFactor() {
+        super();
+    }
 
-	public Integer getMinReplicationFactor() {
-		return minReplicationFactor;
-	}
+    public Integer getMinReplicationFactor() {
+        return minReplicationFactor;
+    }
 
-	public void setMinReplicationFactor(final Integer minReplicationFactor) {
-		this.minReplicationFactor = minReplicationFactor;
-	}
+    public void setMinReplicationFactor(final Integer minReplicationFactor) {
+        this.minReplicationFactor = minReplicationFactor;
+    }
 
 }

@@ -22,7 +22,6 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface Entity {
 

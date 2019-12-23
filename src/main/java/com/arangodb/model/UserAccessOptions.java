@@ -24,23 +24,22 @@ import com.arangodb.entity.Permissions;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class UserAccessOptions {
 
-	private Permissions grant;
+    private Permissions grant;
 
-	public UserAccessOptions() {
-		super();
-	}
+    public UserAccessOptions() {
+        super();
+    }
 
-	protected Permissions getGrant() {
-		return grant;
-	}
+    protected Permissions getGrant() {
+        return grant;
+    }
 
-	protected UserAccessOptions grant(final Permissions grant) {
-		this.grant = grant;
-		return this;
-	}
+    protected UserAccessOptions grant(final Permissions grant) {
+        this.grant = grant;
+        return this;
+    }
 
 }

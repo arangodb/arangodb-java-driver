@@ -26,161 +26,140 @@ import com.arangodb.model.*;
 
 /**
  * Interface for operations on ArangoDB edge collection level.
- * 
- * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
+ *
  * @author Mark Vollmary
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
 @SuppressWarnings("UnusedReturnValue")
 public interface ArangoEdgeCollection extends ArangoSerializationAccessor {
 
-	/**
-	 * The the handler of the named graph the edge collection is within
-	 * 
-	 * @return graph handler
-	 */
-	ArangoGraph graph();
+    /**
+     * The the handler of the named graph the edge collection is within
+     *
+     * @return graph handler
+     */
+    ArangoGraph graph();
 
-	/**
-	 * The name of the edge collection
-	 * 
-	 * @return collection name
-	 */
-	String name();
+    /**
+     * The name of the edge collection
+     *
+     * @return collection name
+     */
+    String name();
 
-	/**
-	 * Creates a new edge in the collection
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
-	 * @param value
-	 *            A representation of a single edge (POJO, VPackSlice or String for JSON)
-	 * @return information about the edge
-	 * @throws ArangoDBException
-	 */
-	<T> EdgeEntity insertEdge(T value) throws ArangoDBException;
+    /**
+     * Creates a new edge in the collection
+     *
+     * @param value A representation of a single edge (POJO, VPackSlice or String for JSON)
+     * @return information about the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
+     */
+    <T> EdgeEntity insertEdge(T value) throws ArangoDBException;
 
-	/**
-	 * Creates a new edge in the collection
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
-	 * @param value
-	 *            A representation of a single edge (POJO, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the edge
-	 * @throws ArangoDBException
-	 */
-	<T> EdgeEntity insertEdge(T value, EdgeCreateOptions options) throws ArangoDBException;
+    /**
+     * Creates a new edge in the collection
+     *
+     * @param value   A representation of a single edge (POJO, VPackSlice or String for JSON)
+     * @param options Additional options, can be null
+     * @return information about the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
+     */
+    <T> EdgeEntity insertEdge(T value, EdgeCreateOptions options) throws ArangoDBException;
 
-	/**
-	 * Fetches an existing edge
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
-	 * @return the edge identified by the key
-	 * @throws ArangoDBException
-	 */
-	<T> T getEdge(String key, Class<T> type) throws ArangoDBException;
+    /**
+     * Fetches an existing edge
+     *
+     * @param key  The key of the edge
+     * @param type The type of the edge-document (POJO class, VPackSlice or String for JSON)
+     * @return the edge identified by the key
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
+     */
+    <T> T getEdge(String key, Class<T> type) throws ArangoDBException;
 
-	/**
-	 * Fetches an existing edge
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param type
-	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return the edge identified by the key
-	 * @throws ArangoDBException
-	 */
-	<T> T getEdge(String key, Class<T> type, GraphDocumentReadOptions options) throws ArangoDBException;
+    /**
+     * Fetches an existing edge
+     *
+     * @param key     The key of the edge
+     * @param type    The type of the edge-document (POJO class, VPackSlice or String for JSON)
+     * @param options Additional options, can be null
+     * @return the edge identified by the key
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
+     */
+    <T> T getEdge(String key, Class<T> type, GraphDocumentReadOptions options) throws ArangoDBException;
 
-	/**
-	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
-	 * violated
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param <T>
-	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
-	 * @return information about the edge
-	 * @throws ArangoDBException
-	 */
-	<T> EdgeUpdateEntity replaceEdge(String key, T value) throws ArangoDBException;
+    /**
+     * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
+     * violated
+     *
+     * @param key The key of the edge
+     * @param <T> The type of the edge-document (POJO class, VPackSlice or String for JSON)
+     * @return information about the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
+     */
+    <T> EdgeUpdateEntity replaceEdge(String key, T value) throws ArangoDBException;
 
-	/**
-	 * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
-	 * violated
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param <T>
-	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the edge
-	 * @throws ArangoDBException
-	 */
-	<T> EdgeUpdateEntity replaceEdge(String key, T value, EdgeReplaceOptions options) throws ArangoDBException;
+    /**
+     * Replaces the edge with key with the one in the body, provided there is such a edge and no precondition is
+     * violated
+     *
+     * @param key     The key of the edge
+     * @param <T>     The type of the edge-document (POJO class, VPackSlice or String for JSON)
+     * @param options Additional options, can be null
+     * @return information about the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
+     */
+    <T> EdgeUpdateEntity replaceEdge(String key, T value, EdgeReplaceOptions options) throws ArangoDBException;
 
-	/**
-	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
-	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
-	 * do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param <T>
-	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
-	 * @return information about the edge
-	 * @throws ArangoDBException
-	 */
-	<T> EdgeUpdateEntity updateEdge(String key, T value) throws ArangoDBException;
+    /**
+     * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
+     * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+     * do not yet exist, and overwritten in the existing document if they do exist there.
+     *
+     * @param key The key of the edge
+     * @param <T> The type of the edge-document (POJO class, VPackSlice or String for JSON)
+     * @return information about the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
+     */
+    <T> EdgeUpdateEntity updateEdge(String key, T value) throws ArangoDBException;
 
-	/**
-	 * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
-	 * patch (the patch document). All attributes from the patch document will be added to the existing document if they
-	 * do not yet exist, and overwritten in the existing document if they do exist there.
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param <T>
-	 *            The type of the edge-document (POJO class, VPackSlice or String for JSON)
-	 * @param options
-	 *            Additional options, can be null
-	 * @return information about the edge
-	 * @throws ArangoDBException
-	 */
-	<T> EdgeUpdateEntity updateEdge(String key, T value, EdgeUpdateOptions options) throws ArangoDBException;
+    /**
+     * Partially updates the edge identified by document-key. The value must contain a document with the attributes to
+     * patch (the patch document). All attributes from the patch document will be added to the existing document if they
+     * do not yet exist, and overwritten in the existing document if they do exist there.
+     *
+     * @param key     The key of the edge
+     * @param <T>     The type of the edge-document (POJO class, VPackSlice or String for JSON)
+     * @param options Additional options, can be null
+     * @return information about the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
+     */
+    <T> EdgeUpdateEntity updateEdge(String key, T value, EdgeUpdateOptions options) throws ArangoDBException;
 
-	/**
-	 * Removes a edge
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @throws ArangoDBException
-	 */
-	void deleteEdge(String key) throws ArangoDBException;
+    /**
+     * Removes a edge
+     *
+     * @param key The key of the edge
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
+     */
+    void deleteEdge(String key) throws ArangoDBException;
 
-	/**
-	 * Removes a edge
-	 * 
-	 * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
-	 * @param key
-	 *            The key of the edge
-	 * @param options
-	 *            Additional options, can be null
-	 * @throws ArangoDBException
-	 */
-	void deleteEdge(String key, EdgeDeleteOptions options) throws ArangoDBException;
+    /**
+     * Removes a edge
+     *
+     * @param key     The key of the edge
+     * @param options Additional options, can be null
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
+     */
+    void deleteEdge(String key, EdgeDeleteOptions options) throws ArangoDBException;
 
 }

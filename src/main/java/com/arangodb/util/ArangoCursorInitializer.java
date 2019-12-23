@@ -27,14 +27,13 @@ import com.arangodb.internal.InternalArangoDatabase;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface ArangoCursorInitializer {
 
-	<T> ArangoCursor<T> createInstance(
-		final InternalArangoDatabase<?, ?> db,
-		final ArangoCursorExecute execute,
-		final Class<T> type,
-		final CursorEntity result);
+    <T> ArangoCursor<T> createInstance(
+            final InternalArangoDatabase<?, ?> db,
+            final ArangoCursorExecute execute,
+            final Class<T> type,
+            final CursorEntity result);
 
 }

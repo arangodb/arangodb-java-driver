@@ -24,82 +24,81 @@ import com.arangodb.ArangoDBException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class RoundRobinHostHandler implements HostHandler {
 
-	private final HostResolver resolver;
+    private final HostResolver resolver;
 
-	private int current;
-	private int fails;
-	private Host currentHost;
+    private int current;
+    private int fails;
+    private Host currentHost;
 
-	public RoundRobinHostHandler(final HostResolver resolver) {
-		super();
-		this.resolver = resolver;
-		resolver.resolve(true, false);
-		current = 0;
-		fails = 0;
-	}
+    public RoundRobinHostHandler(final HostResolver resolver) {
+        super();
+        this.resolver = resolver;
+        resolver.resolve(true, false);
+        current = 0;
+        fails = 0;
+    }
 
-	@Override
-	public Host get(final HostHandle hostHandle, AccessType accessType) {
+    @Override
+    public Host get(final HostHandle hostHandle, AccessType accessType) {
 
-		final HostSet hosts = resolver.resolve(false, false);
-		final int size = hosts.getHostsList().size();
+        final HostSet hosts = resolver.resolve(false, false);
+        final int size = hosts.getHostsList().size();
 
-		if (fails > size) {
-			reset();
-			throw new ArangoDBException("Cannot contact any host!");
-		}
+        if (fails > size) {
+            reset();
+            throw new ArangoDBException("Cannot contact any host!");
+        }
 
-		final int index = (current++) % size;
-		Host host = hosts.getHostsList().get(index);
-		if (hostHandle != null) {
-			final HostDescription hostDescription = hostHandle.getHost();
-			if (hostDescription != null) {
-				for (int i = index; i < index + size; i++) {
-					host = hosts.getHostsList().get(i % size);
-					if (hostDescription.equals(host.getDescription())) {
-						break;
-					}
-				}
-			} else {
-				hostHandle.setHost(host.getDescription());
-			}
-		}
-		currentHost = host;
-		return host;
-	}
+        final int index = (current++) % size;
+        Host host = hosts.getHostsList().get(index);
+        if (hostHandle != null) {
+            final HostDescription hostDescription = hostHandle.getHost();
+            if (hostDescription != null) {
+                for (int i = index; i < index + size; i++) {
+                    host = hosts.getHostsList().get(i % size);
+                    if (hostDescription.equals(host.getDescription())) {
+                        break;
+                    }
+                }
+            } else {
+                hostHandle.setHost(host.getDescription());
+            }
+        }
+        currentHost = host;
+        return host;
+    }
 
-	@Override
-	public void success() {
-		fails = 0;
-	}
+    @Override
+    public void success() {
+        fails = 0;
+    }
 
-	@Override
-	public void fail() {
-		fails++;
-	}
+    @Override
+    public void fail() {
+        fails++;
+    }
 
-	@Override
-	public void reset() {
-		fails = 0;
-	}
+    @Override
+    public void reset() {
+        fails = 0;
+    }
 
-	@Override
-	public void confirm() {
-	}
+    @Override
+    public void confirm() {
+    }
 
-	@Override
-	public void close() {
-		final HostSet hosts = resolver.resolve(false, false);
-		hosts.close();
-	}
+    @Override
+    public void close() {
+        final HostSet hosts = resolver.resolve(false, false);
+        hosts.close();
+    }
 
-	@Override
-	public void closeCurrentOnError() {
-		currentHost.closeOnError();
-	}
+    @Override
+    public void closeCurrentOnError() {
+        currentHost.closeOnError();
+    }
 
 }

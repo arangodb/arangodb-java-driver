@@ -24,7 +24,6 @@ import java.util.Iterator;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface ArangoIterator<T> extends Iterator<T> {
 

@@ -24,83 +24,78 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Mark Vollmary
- *
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
  */
 public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
 
-	private Iterable<String> fields;
-	private final IndexType type = IndexType.hash;
-	private Boolean unique;
-	private Boolean sparse;
-	private Boolean deduplicate;
+    private Iterable<String> fields;
+    private final IndexType type = IndexType.hash;
+    private Boolean unique;
+    private Boolean sparse;
+    private Boolean deduplicate;
 
-	public HashIndexOptions() {
-		super();
-	}
+    public HashIndexOptions() {
+        super();
+    }
 
     @Override
     protected HashIndexOptions getThis() {
         return this;
     }
 
-	protected Iterable<String> getFields() {
-		return fields;
-	}
+    protected Iterable<String> getFields() {
+        return fields;
+    }
 
-	/**
-	 * @param fields
-	 *            A list of attribute paths
-	 * @return options
-	 */
-	protected HashIndexOptions fields(final Iterable<String> fields) {
-		this.fields = fields;
-		return this;
-	}
+    /**
+     * @param fields A list of attribute paths
+     * @return options
+     */
+    protected HashIndexOptions fields(final Iterable<String> fields) {
+        this.fields = fields;
+        return this;
+    }
 
-	protected IndexType getType() {
-		return type;
-	}
+    protected IndexType getType() {
+        return type;
+    }
 
-	public Boolean getUnique() {
-		return unique;
-	}
+    public Boolean getUnique() {
+        return unique;
+    }
 
-	/**
-	 * @param unique
-	 *            if true, then create a unique index
-	 * @return options
-	 */
-	public HashIndexOptions unique(final Boolean unique) {
-		this.unique = unique;
-		return this;
-	}
+    /**
+     * @param unique if true, then create a unique index
+     * @return options
+     */
+    public HashIndexOptions unique(final Boolean unique) {
+        this.unique = unique;
+        return this;
+    }
 
-	public Boolean getSparse() {
-		return sparse;
-	}
+    public Boolean getSparse() {
+        return sparse;
+    }
 
-	/**
-	 * @param sparse
-	 *            if true, then create a sparse index
-	 * @return options
-	 */
-	public HashIndexOptions sparse(final Boolean sparse) {
-		this.sparse = sparse;
-		return this;
-	}
+    /**
+     * @param sparse if true, then create a sparse index
+     * @return options
+     */
+    public HashIndexOptions sparse(final Boolean sparse) {
+        this.sparse = sparse;
+        return this;
+    }
 
-	public Boolean getDeduplicate() {
-		return deduplicate;
-	}
+    public Boolean getDeduplicate() {
+        return deduplicate;
+    }
 
-	/**
-	 * @param deduplicate
-	 *            if false, the deduplication of array values is turned off.
-	 * @return options
-	 */
-	public HashIndexOptions deduplicate(final Boolean deduplicate) {
-		this.deduplicate = deduplicate;
-		return this;
-	}
+    /**
+     * @param deduplicate if false, the deduplication of array values is turned off.
+     * @return options
+     */
+    public HashIndexOptions deduplicate(final Boolean deduplicate) {
+        this.deduplicate = deduplicate;
+        return this;
+    }
 }

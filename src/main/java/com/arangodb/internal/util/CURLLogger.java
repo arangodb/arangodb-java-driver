@@ -31,49 +31,48 @@ import java.util.Map.Entry;
 
 /**
  * @author Mark Vollmary
- *
  */
 public final class CURLLogger {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CURLLogger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CURLLogger.class);
 
-	private CURLLogger() {
-	}
+    private CURLLogger() {
+    }
 
-	public static void log(
-		final String url,
-		final Request request,
-		final Credentials credencials,
-		final ArangoSerialization util) {
-		final RequestType requestType = request.getRequestType();
-		final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
-				|| requestType == RequestType.PATCH || requestType == RequestType.DELETE) && request.getBody() != null;
-		final StringBuilder buffer = new StringBuilder();
-		if (includeBody) {
-			buffer.append("\n");
-			buffer.append("cat <<-___EOB___ | ");
-		}
-		buffer.append("curl -X ").append(requestType);
-		buffer.append(" --dump -");
-		if (request.getHeaderParam().size() > 0) {
-			for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
-				buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
-			}
-		}
-		if (credencials != null) {
-			buffer.append(" -u ").append(credencials.getUserPrincipal().getName()).append(":")
-					.append(credencials.getPassword());
-		}
-		if (includeBody) {
-			buffer.append(" -d @-");
-		}
-		buffer.append(" '").append(url).append("'");
-		if (includeBody) {
-			buffer.append("\n");
-			buffer.append((String) util.deserialize(request.getBody(), String.class));
-			buffer.append("\n");
-			buffer.append("___EOB___");
-		}
-		LOGGER.debug("[CURL] {}", buffer);
-	}
+    public static void log(
+            final String url,
+            final Request request,
+            final Credentials credencials,
+            final ArangoSerialization util) {
+        final RequestType requestType = request.getRequestType();
+        final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
+                || requestType == RequestType.PATCH || requestType == RequestType.DELETE) && request.getBody() != null;
+        final StringBuilder buffer = new StringBuilder();
+        if (includeBody) {
+            buffer.append("\n");
+            buffer.append("cat <<-___EOB___ | ");
+        }
+        buffer.append("curl -X ").append(requestType);
+        buffer.append(" --dump -");
+        if (request.getHeaderParam().size() > 0) {
+            for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
+                buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
+            }
+        }
+        if (credencials != null) {
+            buffer.append(" -u ").append(credencials.getUserPrincipal().getName()).append(":")
+                    .append(credencials.getPassword());
+        }
+        if (includeBody) {
+            buffer.append(" -d @-");
+        }
+        buffer.append(" '").append(url).append("'");
+        if (includeBody) {
+            buffer.append("\n");
+            buffer.append((String) util.deserialize(request.getBody(), String.class));
+            buffer.append("\n");
+            buffer.append("___EOB___");
+        }
+        LOGGER.debug("[CURL] {}", buffer);
+    }
 }

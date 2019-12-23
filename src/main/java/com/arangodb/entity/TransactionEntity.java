@@ -28,15 +28,15 @@ package com.arangodb.entity;
  */
 public class TransactionEntity implements Entity {
 
-	private String id;
-	private StreamTransactionStatus state;
+    private String id;
+    private StreamTransactionStatus state;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public StreamTransactionStatus getStatus() {
-		return state;
-	}
+    public StreamTransactionStatus getStatus() {
+        return state;
+    }
 
 }

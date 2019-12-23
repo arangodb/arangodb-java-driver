@@ -25,64 +25,62 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class QueryEntity implements Entity {
 
-	public static final String PROPERTY_STARTED = "started";
+    public static final String PROPERTY_STARTED = "started";
 
-	private String id;
-	private String query;
-	private Date started;
-	private Double runTime;
-	private Map<String, Object> bindVars;
-	private QueryExecutionState state;
+    private String id;
+    private String query;
+    private Date started;
+    private Double runTime;
+    private Map<String, Object> bindVars;
+    private QueryExecutionState state;
 
-	public QueryEntity() {
-		super();
-	}
+    public QueryEntity() {
+        super();
+    }
 
-	/**
-	 * @return the query's id
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * @return the query's id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the query string (potentially truncated)
-	 */
-	public String getQuery() {
-		return query;
-	}
+    /**
+     * @return the query string (potentially truncated)
+     */
+    public String getQuery() {
+        return query;
+    }
 
-	/**
-	 * @return the date and time when the query was started
-	 */
-	public Date getStarted() {
-		return started;
-	}
+    /**
+     * @return the date and time when the query was started
+     */
+    public Date getStarted() {
+        return started;
+    }
 
-	/**
-	 * 
-	 * @return the query's run time up to the point the list of queries was queried
-	 */
-	public Double getRunTime() {
-		return runTime;
-	}
+    /**
+     * @return the query's run time up to the point the list of queries was queried
+     */
+    public Double getRunTime() {
+        return runTime;
+    }
 
-	/**
-	 * @return the bind parameter values used by the query
-	 */
-	public Map<String, Object> getBindVars() {
-		return bindVars;
-	}
+    /**
+     * @return the bind parameter values used by the query
+     */
+    public Map<String, Object> getBindVars() {
+        return bindVars;
+    }
 
-	/**
-	 * @return the query's current execution state
-	 */
-	public QueryExecutionState getState() {
-		return state;
-	}
+    /**
+     * @return the query's current execution state
+     */
+    public QueryExecutionState getState() {
+        return state;
+    }
 
 }

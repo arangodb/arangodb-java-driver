@@ -27,31 +27,30 @@ import com.arangodb.Predicate;
 
 /**
  * @author Mark Vollmary
- * 
  */
 public class ArangoFilterIterable<T> extends AbstractArangoIterable<T> implements ArangoIterable<T> {
 
-	private final ArangoIterable<T> iterable;
-	private final Predicate<? super T> predicate;
+    private final ArangoIterable<T> iterable;
+    private final Predicate<? super T> predicate;
 
-	protected ArangoFilterIterable(final ArangoIterable<T> iterable, final Predicate<? super T> predicate) {
-		super();
-		this.iterable = iterable;
-		this.predicate = predicate;
-	}
+    protected ArangoFilterIterable(final ArangoIterable<T> iterable, final Predicate<? super T> predicate) {
+        super();
+        this.iterable = iterable;
+        this.predicate = predicate;
+    }
 
-	@Override
-	public ArangoIterator<T> iterator() {
+    @Override
+    public ArangoIterator<T> iterator() {
         return new ArangoFilterIterator<>(iterable.iterator(), predicate);
-	}
+    }
 
-	@Override
-	public void foreach(final Consumer<? super T> action) {
-		for (final T t : iterable) {
-			if (predicate.test(t)) {
-				action.accept(t);
-			}
-		}
-	}
+    @Override
+    public void foreach(final Consumer<? super T> action) {
+        for (final T t : iterable) {
+            if (predicate.test(t)) {
+                action.accept(t);
+            }
+        }
+    }
 
 }

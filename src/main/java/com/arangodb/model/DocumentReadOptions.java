@@ -25,95 +25,90 @@ import com.arangodb.velocypack.annotations.Expose;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- *
  * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class DocumentReadOptions {
 
-	private String ifNoneMatch;
-	private String ifMatch;
-	private boolean catchException;
-	@Expose(serialize = false)
-	private Boolean allowDirtyRead;
-	private String streamTransactionId;
+    private String ifNoneMatch;
+    private String ifMatch;
+    private boolean catchException;
+    @Expose(serialize = false)
+    private Boolean allowDirtyRead;
+    private String streamTransactionId;
 
-	public DocumentReadOptions() {
-		super();
-		catchException = true;
-	}
+    public DocumentReadOptions() {
+        super();
+        catchException = true;
+    }
 
-	public String getIfNoneMatch() {
-		return ifNoneMatch;
-	}
+    public String getIfNoneMatch() {
+        return ifNoneMatch;
+    }
 
-	/**
-	 * @param ifNoneMatch
-	 *            document revision must not contain If-None-Match
-	 * @return options
-	 */
-	public DocumentReadOptions ifNoneMatch(final String ifNoneMatch) {
-		this.ifNoneMatch = ifNoneMatch;
-		return this;
-	}
+    /**
+     * @param ifNoneMatch document revision must not contain If-None-Match
+     * @return options
+     */
+    public DocumentReadOptions ifNoneMatch(final String ifNoneMatch) {
+        this.ifNoneMatch = ifNoneMatch;
+        return this;
+    }
 
-	public String getIfMatch() {
-		return ifMatch;
-	}
+    public String getIfMatch() {
+        return ifMatch;
+    }
 
-	/**
-	 * @param ifMatch
-	 *            document revision must contain If-Match
-	 * @return options
-	 */
-	public DocumentReadOptions ifMatch(final String ifMatch) {
-		this.ifMatch = ifMatch;
-		return this;
-	}
+    /**
+     * @param ifMatch document revision must contain If-Match
+     * @return options
+     */
+    public DocumentReadOptions ifMatch(final String ifMatch) {
+        this.ifMatch = ifMatch;
+        return this;
+    }
 
-	public boolean isCatchException() {
-		return catchException;
-	}
+    public boolean isCatchException() {
+        return catchException;
+    }
 
-	/**
-	 * @param catchException
-	 *            whether or not catch possible thrown exceptions
-	 * @return options
-	 */
-	public DocumentReadOptions catchException(final boolean catchException) {
-		this.catchException = catchException;
-		return this;
-	}
+    /**
+     * @param catchException whether or not catch possible thrown exceptions
+     * @return options
+     */
+    public DocumentReadOptions catchException(final boolean catchException) {
+        this.catchException = catchException;
+        return this;
+    }
 
-	/**
-	 * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
-	 *      Documentation</a>
-	 * @param allowDirtyRead
-	 *            Set to {@code true} allows reading from followers in an active-failover setup.
-	 * @since ArangoDB 3.4.0
-	 * @return options
-	 */
-	public DocumentReadOptions allowDirtyRead(final Boolean allowDirtyRead) {
-		this.allowDirtyRead = allowDirtyRead;
-		return this;
-	}
+    /**
+     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
+     * @return options
+     * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
+     * Documentation</a>
+     * @since ArangoDB 3.4.0
+     */
+    public DocumentReadOptions allowDirtyRead(final Boolean allowDirtyRead) {
+        this.allowDirtyRead = allowDirtyRead;
+        return this;
+    }
 
-	public Boolean getAllowDirtyRead() {
-		return allowDirtyRead;
-	}
+    public Boolean getAllowDirtyRead() {
+        return allowDirtyRead;
+    }
 
-	public String getStreamTransactionId() {
-		return streamTransactionId;
-	}
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
 
-	/**
-	 * @param streamTransactionId If set, the operation will be executed within the transaction.
-	 * @return options
-	 * @since ArangoDB 3.5.0
-	 */
-	public DocumentReadOptions streamTransactionId(final String streamTransactionId) {
-		this.streamTransactionId = streamTransactionId;
-		return this;
-	}
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.0
+     */
+    public DocumentReadOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

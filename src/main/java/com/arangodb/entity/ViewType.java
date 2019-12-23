@@ -22,10 +22,9 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum ViewType {
 
-	ARANGO_SEARCH
+    ARANGO_SEARCH
 
 }

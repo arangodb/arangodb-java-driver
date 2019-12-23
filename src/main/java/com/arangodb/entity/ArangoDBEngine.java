@@ -27,21 +27,21 @@ package com.arangodb.entity;
  */
 public class ArangoDBEngine implements Entity {
 
-	public enum StorageEngineName {
-		mmfiles, rocksdb
-	}
+    public enum StorageEngineName {
+        mmfiles, rocksdb
+    }
 
-	private StorageEngineName name;
+    private StorageEngineName name;
 
-	public ArangoDBEngine() {
-		super();
-	}
+    public ArangoDBEngine() {
+        super();
+    }
 
-	/**
-	 * @return the storage engine name
-	 */
-	public StorageEngineName getName() {
-		return name;
-	}
+    /**
+     * @return the storage engine name
+     */
+    public StorageEngineName getName() {
+        return name;
+    }
 
 }

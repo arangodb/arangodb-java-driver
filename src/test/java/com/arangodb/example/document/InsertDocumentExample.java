@@ -20,51 +20,49 @@
 
 package com.arangodb.example.document;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
-
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class InsertDocumentExample extends ExampleBase {
 
-	@Test
-	public void insertBean() {
-		final DocumentCreateEntity<TestEntity> doc = collection.insertDocument(new TestEntity("bar"));
-		assertThat(doc.getKey(), is(notNullValue()));
-	}
+    @Test
+    public void insertBean() {
+        final DocumentCreateEntity<TestEntity> doc = collection.insertDocument(new TestEntity("bar"));
+        assertThat(doc.getKey(), is(notNullValue()));
+    }
 
-	@Test
-	public void insertBaseDocument() {
-		final BaseDocument value = new BaseDocument();
-		value.addAttribute("foo", "bar");
-		final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value);
-		assertThat(doc.getKey(), is(notNullValue()));
-	}
+    @Test
+    public void insertBaseDocument() {
+        final BaseDocument value = new BaseDocument();
+        value.addAttribute("foo", "bar");
+        final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value);
+        assertThat(doc.getKey(), is(notNullValue()));
+    }
 
-	@Test
-	public void insertVPack() {
-		final VPackBuilder builder = new VPackBuilder();
-		builder.add(ValueType.OBJECT).add("foo", "bar").close();
-		final DocumentCreateEntity<VPackSlice> doc = collection.insertDocument(builder.slice());
-		assertThat(doc.getKey(), is(notNullValue()));
-	}
+    @Test
+    public void insertVPack() {
+        final VPackBuilder builder = new VPackBuilder();
+        builder.add(ValueType.OBJECT).add("foo", "bar").close();
+        final DocumentCreateEntity<VPackSlice> doc = collection.insertDocument(builder.slice());
+        assertThat(doc.getKey(), is(notNullValue()));
+    }
 
-	@Test
-	public void insertJson() {
-		final DocumentCreateEntity<String> doc = collection.insertDocument("{\"foo\":\"bar\"}");
-		assertThat(doc.getKey(), is(notNullValue()));
-	}
+    @Test
+    public void insertJson() {
+        final DocumentCreateEntity<String> doc = collection.insertDocument("{\"foo\":\"bar\"}");
+        assertThat(doc.getKey(), is(notNullValue()));
+    }
 
 }

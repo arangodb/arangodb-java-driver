@@ -20,27 +20,26 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
-
-import java.util.*;
-
+import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
+import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
+import java.util.*;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary

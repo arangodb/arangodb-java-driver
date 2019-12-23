@@ -24,5 +24,5 @@ package com.arangodb.entity;
  * @author Michele Rastelli
  */
 public enum StreamTransactionStatus {
-	running, committed, aborted
+    running, committed, aborted
 }

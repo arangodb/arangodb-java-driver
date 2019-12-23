@@ -22,40 +22,39 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class ArangoDBVersion implements Entity {
 
-	private String server;
-	private String version;
-	private License license;
+    private String server;
+    private String version;
+    private License license;
 
-	public ArangoDBVersion() {
-		super();
-	}
+    public ArangoDBVersion() {
+        super();
+    }
 
-	/**
-	 * @return will always contain arango
-	 */
-	public String getServer() {
-		return server;
-	}
+    /**
+     * @return will always contain arango
+     */
+    public String getServer() {
+        return server;
+    }
 
-	/**
-	 * @return the server version string. The string has the format "major.minor.sub". major and minor will be numeric,
-	 *         and sub may contain a number or a textual version.
-	 */
-	public String getVersion() {
-		return version;
-	}
+    /**
+     * @return the server version string. The string has the format "major.minor.sub". major and minor will be numeric,
+     * and sub may contain a number or a textual version.
+     */
+    public String getVersion() {
+        return version;
+    }
 
-	/**
-	 * @return the license
-	 */
-	public License getLicense() {
-		return license;
-	}
+    /**
+     * @return the license
+     */
+    public License getLicense() {
+        return license;
+    }
 
 }

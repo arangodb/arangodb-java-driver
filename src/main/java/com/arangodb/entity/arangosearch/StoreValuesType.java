@@ -22,18 +22,17 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum StoreValuesType {
 
-	/**
-	 * Do not track values by the view
-	 */
-	NONE,
+    /**
+     * Do not track values by the view
+     */
+    NONE,
 
-	/**
-	 * Track only value presence, to allow use of the EXISTS() function.
-	 */
-	ID
+    /**
+     * Track only value presence, to allow use of the EXISTS() function.
+     */
+    ID
 
 }

@@ -20,13 +20,6 @@
 
 package com.arangodb.example.graph;
 
-import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertThat;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
@@ -36,6 +29,12 @@ import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.model.CollectionCreateOptions;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary

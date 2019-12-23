@@ -20,49 +20,48 @@
 
 package com.arangodb.internal.velocystream.internal;
 
-import java.nio.BufferUnderflowException;
-
 import com.arangodb.velocypack.VPackSlice;
+
+import java.nio.BufferUnderflowException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class Message {
 
-	private final long id;
-	private final VPackSlice head;
-	private final VPackSlice body;
+    private final long id;
+    private final VPackSlice head;
+    private final VPackSlice body;
 
-	public Message(final long id, final byte[] chunkBuffer) throws BufferUnderflowException, IndexOutOfBoundsException {
-		super();
-		this.id = id;
-		head = new VPackSlice(chunkBuffer);
-		final int headSize = head.getByteSize();
-		if (chunkBuffer.length > headSize) {
-			body = new VPackSlice(chunkBuffer, headSize);
-		} else {
-			body = null;
-		}
-	}
+    public Message(final long id, final byte[] chunkBuffer) throws BufferUnderflowException, IndexOutOfBoundsException {
+        super();
+        this.id = id;
+        head = new VPackSlice(chunkBuffer);
+        final int headSize = head.getByteSize();
+        if (chunkBuffer.length > headSize) {
+            body = new VPackSlice(chunkBuffer, headSize);
+        } else {
+            body = null;
+        }
+    }
 
-	public Message(final long id, final VPackSlice head, final VPackSlice body) {
-		super();
-		this.id = id;
-		this.head = head;
-		this.body = body;
-	}
+    public Message(final long id, final VPackSlice head, final VPackSlice body) {
+        super();
+        this.id = id;
+        this.head = head;
+        this.body = body;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public VPackSlice getHead() {
-		return head;
-	}
+    public VPackSlice getHead() {
+        return head;
+    }
 
-	public VPackSlice getBody() {
-		return body;
-	}
+    public VPackSlice getBody() {
+        return body;
+    }
 
 }

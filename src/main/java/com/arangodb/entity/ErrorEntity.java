@@ -24,47 +24,46 @@ import java.io.Serializable;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ErrorEntity implements Serializable, Entity {
 
-	private static final long serialVersionUID = -5918898261563691261L;
+    private static final long serialVersionUID = -5918898261563691261L;
 
-	private String errorMessage;
-	private String exception;
-	private int code;
-	private int errorNum;
+    private String errorMessage;
+    private String exception;
+    private int code;
+    private int errorNum;
 
-	public ErrorEntity() {
-		super();
-	}
+    public ErrorEntity() {
+        super();
+    }
 
-	/**
-	 * @return a descriptive error message
-	 */
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    /**
+     * @return a descriptive error message
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
-	/**
-	 * @return the exception message, passed when transaction fails
-	 */
-	public String getException() {
-		return exception;
-	}
+    /**
+     * @return the exception message, passed when transaction fails
+     */
+    public String getException() {
+        return exception;
+    }
 
-	/**
-	 * @return the status code
-	 */
-	public int getCode() {
-		return code;
-	}
+    /**
+     * @return the status code
+     */
+    public int getCode() {
+        return code;
+    }
 
-	/**
-	 * @return the server error number
-	 */
-	public int getErrorNum() {
-		return errorNum;
-	}
+    /**
+     * @return the server error number
+     */
+    public int getErrorNum() {
+        return errorNum;
+    }
 
 }

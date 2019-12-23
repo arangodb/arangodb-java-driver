@@ -15,7 +15,7 @@ echo "waiting for arangodb ..."
 
 # shellcheck disable=SC2091
 until $(curl --output /dev/null --silent --head --fail -i -u root:test 'http://localhost:8529/_api/version'); do
-    printf '.'
-    sleep 1
+  printf '.'
+  sleep 1
 done
 echo "READY!"

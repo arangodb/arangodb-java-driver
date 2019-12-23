@@ -25,26 +25,25 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoContext {
 
-	private final Map<String, String> headerParam;
+    private final Map<String, String> headerParam;
 
-	public ArangoContext() {
-		super();
+    public ArangoContext() {
+        super();
         headerParam = new HashMap<>();
-	}
+    }
 
-	public Map<String, String> getHeaderParam() {
-		return headerParam;
-	}
+    public Map<String, String> getHeaderParam() {
+        return headerParam;
+    }
 
-	public ArangoContext putHeaderParam(final String key, final Object value) {
-		if (value != null) {
-			headerParam.put(key, value.toString());
-		}
-		return this;
-	}
+    public ArangoContext putHeaderParam(final String key, final Object value) {
+        if (value != null) {
+            headerParam.put(key, value.toString());
+        }
+        return this;
+    }
 
 }

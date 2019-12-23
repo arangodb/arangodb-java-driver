@@ -13,15 +13,14 @@ LOCATION=$(pwd)/$(dirname "$0")
 
 docker network create arangodb --subnet 172.28.0.0/16
 
-echo "Averysecretword" > "$LOCATION"/jwtSecret
-docker run --rm -v "$LOCATION"/jwtSecret:/jwtSecret "$1" arangodb auth header --auth.jwt-secret /jwtSecret > "$LOCATION"/jwtHeader
+echo "Averysecretword" >"$LOCATION"/jwtSecret
+docker run --rm -v "$LOCATION"/jwtSecret:/jwtSecret "$1" arangodb auth header --auth.jwt-secret /jwtSecret >"$LOCATION"/jwtHeader
 AUTHORIZATION_HEADER=$(cat "$LOCATION"/jwtHeader)
 
 debug_container() {
   running=$(docker inspect -f '{{.State.Running}}' "$1")
 
-  if [ "$running" = false ]
-  then
+  if [ "$running" = false ]; then
     echo "$1 is not running!"
     echo "---"
     docker logs "$1"
@@ -32,26 +31,25 @@ debug_container() {
 
 debug() {
   for c in agent1 \
-           agent2 \
-           agent3 \
-           dbserver1 \
-           dbserver2 \
-           dbserver3 \
-           coordinator1 \
-           coordinator2 ; do
-      debug_container $c
+    agent2 \
+    agent3 \
+    dbserver1 \
+    dbserver2 \
+    dbserver3 \
+    coordinator1 \
+    coordinator2; do
+    debug_container $c
   done
 }
 
 wait_server() {
-    # shellcheck disable=SC2091
-    until $(curl --output /dev/null --silent --head --fail -i -H "$AUTHORIZATION_HEADER" "http://$1/_api/version"); do
-        printf '.'
-        debug
-        sleep 1
-    done
+  # shellcheck disable=SC2091
+  until $(curl --output /dev/null --silent --head --fail -i -H "$AUTHORIZATION_HEADER" "http://$1/_api/version"); do
+    printf '.'
+    debug
+    sleep 1
+  done
 }
-
 
 echo "Starting containers..."
 

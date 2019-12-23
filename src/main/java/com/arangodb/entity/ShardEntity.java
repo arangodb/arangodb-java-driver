@@ -25,14 +25,14 @@ package com.arangodb.entity;
  */
 public class ShardEntity implements Entity {
 
-	private String shardId;
+    private String shardId;
 
-	public ShardEntity() {
-		super();
-	}
+    public ShardEntity() {
+        super();
+    }
 
-	public String getShardId() {
-		return shardId;
-	}
+    public String getShardId() {
+        return shardId;
+    }
 
 }

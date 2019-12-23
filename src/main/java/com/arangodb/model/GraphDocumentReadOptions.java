@@ -27,72 +27,72 @@ import com.arangodb.velocypack.annotations.Expose;
  */
 public class GraphDocumentReadOptions {
 
-	private String ifNoneMatch;
-	private String ifMatch;
-	private boolean catchException;
-	@Expose(serialize = false)
-	private Boolean allowDirtyRead;
+    private String ifNoneMatch;
+    private String ifMatch;
+    private boolean catchException;
+    @Expose(serialize = false)
+    private Boolean allowDirtyRead;
     private String streamTransactionId;
 
-	public GraphDocumentReadOptions() {
-		super();
-		catchException = true;
-	}
+    public GraphDocumentReadOptions() {
+        super();
+        catchException = true;
+    }
 
-	public String getIfNoneMatch() {
-		return ifNoneMatch;
-	}
+    public String getIfNoneMatch() {
+        return ifNoneMatch;
+    }
 
-	/**
-	 * @param ifNoneMatch document revision must not contain If-None-Match
-	 * @return options
-	 */
-	public GraphDocumentReadOptions ifNoneMatch(final String ifNoneMatch) {
-		this.ifNoneMatch = ifNoneMatch;
-		return this;
-	}
+    /**
+     * @param ifNoneMatch document revision must not contain If-None-Match
+     * @return options
+     */
+    public GraphDocumentReadOptions ifNoneMatch(final String ifNoneMatch) {
+        this.ifNoneMatch = ifNoneMatch;
+        return this;
+    }
 
-	public String getIfMatch() {
-		return ifMatch;
-	}
+    public String getIfMatch() {
+        return ifMatch;
+    }
 
-	/**
-	 * @param ifMatch document revision must contain If-Match
-	 * @return options
-	 */
-	public GraphDocumentReadOptions ifMatch(final String ifMatch) {
-		this.ifMatch = ifMatch;
-		return this;
-	}
+    /**
+     * @param ifMatch document revision must contain If-Match
+     * @return options
+     */
+    public GraphDocumentReadOptions ifMatch(final String ifMatch) {
+        this.ifMatch = ifMatch;
+        return this;
+    }
 
-	public boolean isCatchException() {
-		return catchException;
-	}
+    public boolean isCatchException() {
+        return catchException;
+    }
 
-	/**
-	 * @param catchException whether or not catch possible thrown exceptions
-	 * @return options
-	 */
-	public GraphDocumentReadOptions catchException(final boolean catchException) {
-		this.catchException = catchException;
-		return this;
-	}
+    /**
+     * @param catchException whether or not catch possible thrown exceptions
+     * @return options
+     */
+    public GraphDocumentReadOptions catchException(final boolean catchException) {
+        this.catchException = catchException;
+        return this;
+    }
 
-	/**
-	 * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
-	 * @return options
-	 * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
-	 * Documentation</a>
-	 * @since ArangoDB 3.4.0
-	 */
-	public GraphDocumentReadOptions allowDirtyRead(final Boolean allowDirtyRead) {
-		this.allowDirtyRead = allowDirtyRead;
-		return this;
-	}
+    /**
+     * @param allowDirtyRead Set to {@code true} allows reading from followers in an active-failover setup.
+     * @return options
+     * @see <a href="https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower">API
+     * Documentation</a>
+     * @since ArangoDB 3.4.0
+     */
+    public GraphDocumentReadOptions allowDirtyRead(final Boolean allowDirtyRead) {
+        this.allowDirtyRead = allowDirtyRead;
+        return this;
+    }
 
-	public Boolean getAllowDirtyRead() {
-		return allowDirtyRead;
-	}
+    public Boolean getAllowDirtyRead() {
+        return allowDirtyRead;
+    }
 
     public String getStreamTransactionId() {
         return streamTransactionId;

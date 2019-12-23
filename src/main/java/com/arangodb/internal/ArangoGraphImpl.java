@@ -20,8 +20,6 @@
 
 package com.arangodb.internal;
 
-import java.util.Collection;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.ArangoGraph;
@@ -30,95 +28,96 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
 
+import java.util.Collection;
+
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDatabaseImpl, ArangoExecutorSync>
-		implements ArangoGraph {
+        implements ArangoGraph {
 
-	protected ArangoGraphImpl(final ArangoDatabaseImpl db, final String name) {
-		super(db, name);
-	}
+    protected ArangoGraphImpl(final ArangoDatabaseImpl db, final String name) {
+        super(db, name);
+    }
 
-	@Override
-	public boolean exists() throws ArangoDBException {
-		try {
-			getInfo();
-			return true;
-		} catch (final ArangoDBException e) {
-			if (ArangoErrors.ERROR_GRAPH_NOT_FOUND.equals(e.getErrorNum())) {
-				return false;
-			}
-			throw e;
-		}
-	}
+    @Override
+    public boolean exists() throws ArangoDBException {
+        try {
+            getInfo();
+            return true;
+        } catch (final ArangoDBException e) {
+            if (ArangoErrors.ERROR_GRAPH_NOT_FOUND.equals(e.getErrorNum())) {
+                return false;
+            }
+            throw e;
+        }
+    }
 
-	@Override
-	public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException {
-		return db().createGraph(name(), edgeDefinitions);
-	}
+    @Override
+    public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions) throws ArangoDBException {
+        return db().createGraph(name(), edgeDefinitions);
+    }
 
-	@Override
-	public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options)
-			throws ArangoDBException {
-		return db().createGraph(name(), edgeDefinitions, options);
-	}
+    @Override
+    public GraphEntity create(final Collection<EdgeDefinition> edgeDefinitions, final GraphCreateOptions options)
+            throws ArangoDBException {
+        return db().createGraph(name(), edgeDefinitions, options);
+    }
 
-	@Override
-	public void drop() throws ArangoDBException {
-		executor.execute(dropRequest(), Void.class);
-	}
+    @Override
+    public void drop() throws ArangoDBException {
+        executor.execute(dropRequest(), Void.class);
+    }
 
-	@Override
-	public void drop(final boolean dropCollections) throws ArangoDBException {
-		executor.execute(dropRequest(dropCollections), Void.class);
-	}
+    @Override
+    public void drop(final boolean dropCollections) throws ArangoDBException {
+        executor.execute(dropRequest(dropCollections), Void.class);
+    }
 
-	@Override
-	public GraphEntity getInfo() throws ArangoDBException {
-		return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
-	}
+    @Override
+    public GraphEntity getInfo() throws ArangoDBException {
+        return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
+    }
 
-	@Override
-	public Collection<String> getVertexCollections() throws ArangoDBException {
-		return executor.execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
-	}
+    @Override
+    public Collection<String> getVertexCollections() throws ArangoDBException {
+        return executor.execute(getVertexCollectionsRequest(), getVertexCollectionsResponseDeserializer());
+    }
 
-	@Override
-	public GraphEntity addVertexCollection(final String name) throws ArangoDBException {
-		return executor.execute(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
-	}
+    @Override
+    public GraphEntity addVertexCollection(final String name) throws ArangoDBException {
+        return executor.execute(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
+    }
 
-	@Override
-	public ArangoVertexCollection vertexCollection(final String name) {
-		return new ArangoVertexCollectionImpl(this, name);
-	}
+    @Override
+    public ArangoVertexCollection vertexCollection(final String name) {
+        return new ArangoVertexCollectionImpl(this, name);
+    }
 
-	@Override
-	public ArangoEdgeCollection edgeCollection(final String name) {
-		return new ArangoEdgeCollectionImpl(this, name);
-	}
+    @Override
+    public ArangoEdgeCollection edgeCollection(final String name) {
+        return new ArangoEdgeCollectionImpl(this, name);
+    }
 
-	@Override
-	public Collection<String> getEdgeDefinitions() throws ArangoDBException {
-		return executor.execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
-	}
+    @Override
+    public Collection<String> getEdgeDefinitions() throws ArangoDBException {
+        return executor.execute(getEdgeDefinitionsRequest(), getEdgeDefinitionsDeserializer());
+    }
 
-	@Override
-	public GraphEntity addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
-		return executor.execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
-	}
+    @Override
+    public GraphEntity addEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+        return executor.execute(addEdgeDefinitionRequest(definition), addEdgeDefinitionResponseDeserializer());
+    }
 
-	@Override
-	public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
-		return executor.execute(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
-	}
+    @Override
+    public GraphEntity replaceEdgeDefinition(final EdgeDefinition definition) throws ArangoDBException {
+        return executor.execute(replaceEdgeDefinitionRequest(definition), replaceEdgeDefinitionResponseDeserializer());
+    }
 
-	@Override
-	public GraphEntity removeEdgeDefinition(final String definitionName) throws ArangoDBException {
-		return executor.execute(removeEdgeDefinitionRequest(definitionName),
-			removeEdgeDefinitionResponseDeserializer());
-	}
+    @Override
+    public GraphEntity removeEdgeDefinition(final String definitionName) throws ArangoDBException {
+        return executor.execute(removeEdgeDefinitionRequest(definitionName),
+                removeEdgeDefinitionResponseDeserializer());
+    }
 
 }

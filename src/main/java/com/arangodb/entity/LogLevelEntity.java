@@ -22,179 +22,178 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class LogLevelEntity implements Entity {
 
-	public enum LogLevel {
-		FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT
-	}
+    public enum LogLevel {
+        FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT
+    }
 
-	private LogLevel agency;
-	private LogLevel agencycomm;
-	private LogLevel cluster;
-	private LogLevel collector;
-	private LogLevel communication;
-	private LogLevel compactor;
-	private LogLevel config;
-	private LogLevel datafiles;
-	private LogLevel graphs;
-	private LogLevel heartbeat;
-	private LogLevel mmap;
-	private LogLevel performance;
-	private LogLevel queries;
-	private LogLevel replication;
-	private LogLevel requests;
-	private LogLevel startup;
-	private LogLevel threads;
-	private LogLevel v8;
+    private LogLevel agency;
+    private LogLevel agencycomm;
+    private LogLevel cluster;
+    private LogLevel collector;
+    private LogLevel communication;
+    private LogLevel compactor;
+    private LogLevel config;
+    private LogLevel datafiles;
+    private LogLevel graphs;
+    private LogLevel heartbeat;
+    private LogLevel mmap;
+    private LogLevel performance;
+    private LogLevel queries;
+    private LogLevel replication;
+    private LogLevel requests;
+    private LogLevel startup;
+    private LogLevel threads;
+    private LogLevel v8;
 
-	public LogLevelEntity() {
-		super();
-	}
+    public LogLevelEntity() {
+        super();
+    }
 
-	public LogLevel getAgency() {
-		return agency;
-	}
+    public LogLevel getAgency() {
+        return agency;
+    }
 
-	public void setAgency(final LogLevel agency) {
-		this.agency = agency;
-	}
+    public void setAgency(final LogLevel agency) {
+        this.agency = agency;
+    }
 
-	public LogLevel getAgencycomm() {
-		return agencycomm;
-	}
+    public LogLevel getAgencycomm() {
+        return agencycomm;
+    }
 
-	public void setAgencycomm(final LogLevel agencycomm) {
-		this.agencycomm = agencycomm;
-	}
+    public void setAgencycomm(final LogLevel agencycomm) {
+        this.agencycomm = agencycomm;
+    }
 
-	public LogLevel getCluster() {
-		return cluster;
-	}
+    public LogLevel getCluster() {
+        return cluster;
+    }
 
-	public void setCluster(final LogLevel cluster) {
-		this.cluster = cluster;
-	}
+    public void setCluster(final LogLevel cluster) {
+        this.cluster = cluster;
+    }
 
-	public LogLevel getCollector() {
-		return collector;
-	}
+    public LogLevel getCollector() {
+        return collector;
+    }
 
-	public void setCollector(final LogLevel collector) {
-		this.collector = collector;
-	}
+    public void setCollector(final LogLevel collector) {
+        this.collector = collector;
+    }
 
-	public LogLevel getCommunication() {
-		return communication;
-	}
+    public LogLevel getCommunication() {
+        return communication;
+    }
 
-	public void setCommunication(final LogLevel communication) {
-		this.communication = communication;
-	}
+    public void setCommunication(final LogLevel communication) {
+        this.communication = communication;
+    }
 
-	public LogLevel getCompactor() {
-		return compactor;
-	}
+    public LogLevel getCompactor() {
+        return compactor;
+    }
 
-	public void setCompactor(final LogLevel compactor) {
-		this.compactor = compactor;
-	}
+    public void setCompactor(final LogLevel compactor) {
+        this.compactor = compactor;
+    }
 
-	public LogLevel getConfig() {
-		return config;
-	}
+    public LogLevel getConfig() {
+        return config;
+    }
 
-	public void setConfig(final LogLevel config) {
-		this.config = config;
-	}
+    public void setConfig(final LogLevel config) {
+        this.config = config;
+    }
 
-	public LogLevel getDatafiles() {
-		return datafiles;
-	}
+    public LogLevel getDatafiles() {
+        return datafiles;
+    }
 
-	public void setDatafiles(final LogLevel datafiles) {
-		this.datafiles = datafiles;
-	}
+    public void setDatafiles(final LogLevel datafiles) {
+        this.datafiles = datafiles;
+    }
 
-	public LogLevel getGraphs() {
-		return graphs;
-	}
+    public LogLevel getGraphs() {
+        return graphs;
+    }
 
-	public void setGraphs(final LogLevel graphs) {
-		this.graphs = graphs;
-	}
+    public void setGraphs(final LogLevel graphs) {
+        this.graphs = graphs;
+    }
 
-	public LogLevel getHeartbeat() {
-		return heartbeat;
-	}
+    public LogLevel getHeartbeat() {
+        return heartbeat;
+    }
 
-	public void setHeartbeat(final LogLevel heartbeat) {
-		this.heartbeat = heartbeat;
-	}
+    public void setHeartbeat(final LogLevel heartbeat) {
+        this.heartbeat = heartbeat;
+    }
 
-	public LogLevel getMmap() {
-		return mmap;
-	}
+    public LogLevel getMmap() {
+        return mmap;
+    }
 
-	public void setMmap(final LogLevel mmap) {
-		this.mmap = mmap;
-	}
+    public void setMmap(final LogLevel mmap) {
+        this.mmap = mmap;
+    }
 
-	public LogLevel getPerformance() {
-		return performance;
-	}
+    public LogLevel getPerformance() {
+        return performance;
+    }
 
-	public void setPerformance(final LogLevel performance) {
-		this.performance = performance;
-	}
+    public void setPerformance(final LogLevel performance) {
+        this.performance = performance;
+    }
 
-	public LogLevel getQueries() {
-		return queries;
-	}
+    public LogLevel getQueries() {
+        return queries;
+    }
 
-	public void setQueries(final LogLevel queries) {
-		this.queries = queries;
-	}
+    public void setQueries(final LogLevel queries) {
+        this.queries = queries;
+    }
 
-	public LogLevel getReplication() {
-		return replication;
-	}
+    public LogLevel getReplication() {
+        return replication;
+    }
 
-	public void setReplication(final LogLevel replication) {
-		this.replication = replication;
-	}
+    public void setReplication(final LogLevel replication) {
+        this.replication = replication;
+    }
 
-	public LogLevel getRequests() {
-		return requests;
-	}
+    public LogLevel getRequests() {
+        return requests;
+    }
 
-	public void setRequests(final LogLevel requests) {
-		this.requests = requests;
-	}
+    public void setRequests(final LogLevel requests) {
+        this.requests = requests;
+    }
 
-	public LogLevel getStartup() {
-		return startup;
-	}
+    public LogLevel getStartup() {
+        return startup;
+    }
 
-	public void setStartup(final LogLevel startup) {
-		this.startup = startup;
-	}
+    public void setStartup(final LogLevel startup) {
+        this.startup = startup;
+    }
 
-	public LogLevel getThreads() {
-		return threads;
-	}
+    public LogLevel getThreads() {
+        return threads;
+    }
 
-	public void setThreads(final LogLevel threads) {
-		this.threads = threads;
-	}
+    public void setThreads(final LogLevel threads) {
+        this.threads = threads;
+    }
 
-	public LogLevel getV8() {
-		return v8;
-	}
+    public LogLevel getV8() {
+        return v8;
+    }
 
-	public void setV8(final LogLevel v8) {
-		this.v8 = v8;
-	}
+    public void setV8(final LogLevel v8) {
+        this.v8 = v8;
+    }
 
 }

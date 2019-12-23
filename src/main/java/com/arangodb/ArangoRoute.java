@@ -25,103 +25,97 @@ import com.arangodb.velocystream.Response;
 
 /**
  * Interface for a specific path to be used to perform arbitrary requests.
- * 
+ *
  * @author Mark Vollmary
  */
 public interface ArangoRoute extends ArangoSerializationAccessor {
 
-	/**
-	 * Returns a new {@link ArangoRoute} instance for the given path (relative to the current route) that can be used to
-	 * perform arbitrary requests.
-	 * 
-	 * @param path
-	 *            The relative URL of the route
-	 * @return {@link ArangoRoute}
-	 */
-	ArangoRoute route(String... path);
+    /**
+     * Returns a new {@link ArangoRoute} instance for the given path (relative to the current route) that can be used to
+     * perform arbitrary requests.
+     *
+     * @param path The relative URL of the route
+     * @return {@link ArangoRoute}
+     */
+    ArangoRoute route(String... path);
 
-	/**
-	 * Header that should be sent with each request to the route.
-	 * 
-	 * @param key
-	 *            Header key
-	 * @param value
-	 *            Header value (the {@code toString()} method will be called for the value}
-	 * @return {@link ArangoRoute}
-	 */
-	ArangoRoute withHeader(String key, Object value);
+    /**
+     * Header that should be sent with each request to the route.
+     *
+     * @param key   Header key
+     * @param value Header value (the {@code toString()} method will be called for the value}
+     * @return {@link ArangoRoute}
+     */
+    ArangoRoute withHeader(String key, Object value);
 
-	/**
-	 * Query parameter that should be sent with each request to the route.
-	 * 
-	 * @param key
-	 *            Query parameter key
-	 * @param value
-	 *            Query parameter value (the {@code toString()} method will be called for the value}
-	 * @return {@link ArangoRoute}
-	 */
-	ArangoRoute withQueryParam(String key, Object value);
+    /**
+     * Query parameter that should be sent with each request to the route.
+     *
+     * @param key   Query parameter key
+     * @param value Query parameter value (the {@code toString()} method will be called for the value}
+     * @return {@link ArangoRoute}
+     */
+    ArangoRoute withQueryParam(String key, Object value);
 
-	/**
-	 * The response body. The body will be serialized to {@link VPackSlice}.
-	 * 
-	 * @param body
-	 *            The request body
-	 * @return {@link ArangoRoute}
-	 */
-	ArangoRoute withBody(Object body);
+    /**
+     * The response body. The body will be serialized to {@link VPackSlice}.
+     *
+     * @param body The request body
+     * @return {@link ArangoRoute}
+     */
+    ArangoRoute withBody(Object body);
 
-	/**
-	 * Performs a DELETE request to the given URL and returns the server response.
-	 * 
-	 * @return server response
-	 * @throws ArangoDBException
-	 */
-	Response delete() throws ArangoDBException;
+    /**
+     * Performs a DELETE request to the given URL and returns the server response.
+     *
+     * @return server response
+     * @throws ArangoDBException
+     */
+    Response delete() throws ArangoDBException;
 
-	/**
-	 * Performs a GET request to the given URL and returns the server response.
-	 * 
-	 * @return server response
-	 * @throws ArangoDBException
-	 */
+    /**
+     * Performs a GET request to the given URL and returns the server response.
+     *
+     * @return server response
+     * @throws ArangoDBException
+     */
 
-	Response get() throws ArangoDBException;
+    Response get() throws ArangoDBException;
 
-	/**
-	 * Performs a HEAD request to the given URL and returns the server response.
-	 * 
-	 * @return server response
-	 * @throws ArangoDBException
-	 */
+    /**
+     * Performs a HEAD request to the given URL and returns the server response.
+     *
+     * @return server response
+     * @throws ArangoDBException
+     */
 
-	Response head() throws ArangoDBException;
+    Response head() throws ArangoDBException;
 
-	/**
-	 * Performs a PATCH request to the given URL and returns the server response.
-	 * 
-	 * @return server response
-	 * @throws ArangoDBException
-	 */
+    /**
+     * Performs a PATCH request to the given URL and returns the server response.
+     *
+     * @return server response
+     * @throws ArangoDBException
+     */
 
-	Response patch() throws ArangoDBException;
+    Response patch() throws ArangoDBException;
 
-	/**
-	 * Performs a POST request to the given URL and returns the server response.
-	 * 
-	 * @return server response
-	 * @throws ArangoDBException
-	 */
+    /**
+     * Performs a POST request to the given URL and returns the server response.
+     *
+     * @return server response
+     * @throws ArangoDBException
+     */
 
-	Response post() throws ArangoDBException;
+    Response post() throws ArangoDBException;
 
-	/**
-	 * Performs a PUT request to the given URL and returns the server response.
-	 * 
-	 * @return server response
-	 * @throws ArangoDBException
-	 */
+    /**
+     * Performs a PUT request to the given URL and returns the server response.
+     *
+     * @return server response
+     * @throws ArangoDBException
+     */
 
-	Response put() throws ArangoDBException;
+    Response put() throws ArangoDBException;
 
 }

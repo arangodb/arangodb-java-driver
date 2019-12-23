@@ -24,83 +24,82 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class IndexEntity implements Entity {
 
-	private String id;
-	private String name;
-	private IndexType type;
-	private Collection<String> fields;
-	private Double selectivityEstimate;
-	private Boolean unique;
-	private Boolean sparse;
-	private Integer minLength;
-	private Boolean isNewlyCreated;
-	private Boolean geoJson;
-	private Boolean constraint;
-	private Boolean deduplicate;
-	private Integer expireAfter;
-	private Boolean inBackground;
+    private String id;
+    private String name;
+    private IndexType type;
+    private Collection<String> fields;
+    private Double selectivityEstimate;
+    private Boolean unique;
+    private Boolean sparse;
+    private Integer minLength;
+    private Boolean isNewlyCreated;
+    private Boolean geoJson;
+    private Boolean constraint;
+    private Boolean deduplicate;
+    private Integer expireAfter;
+    private Boolean inBackground;
 
-	public IndexEntity() {
-		super();
-	}
+    public IndexEntity() {
+        super();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public Boolean getInBackground() {
-		return inBackground;
-	}
+    public Boolean getInBackground() {
+        return inBackground;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public IndexType getType() {
-		return type;
-	}
+    public IndexType getType() {
+        return type;
+    }
 
-	public Collection<String> getFields() {
-		return fields;
-	}
+    public Collection<String> getFields() {
+        return fields;
+    }
 
-	public Double getSelectivityEstimate() {
-		return selectivityEstimate;
-	}
+    public Double getSelectivityEstimate() {
+        return selectivityEstimate;
+    }
 
-	public Boolean getUnique() {
-		return unique;
-	}
+    public Boolean getUnique() {
+        return unique;
+    }
 
-	public Boolean getSparse() {
-		return sparse;
-	}
+    public Boolean getSparse() {
+        return sparse;
+    }
 
-	public Integer getMinLength() {
-		return minLength;
-	}
+    public Integer getMinLength() {
+        return minLength;
+    }
 
-	public Boolean getIsNewlyCreated() {
-		return isNewlyCreated;
-	}
+    public Boolean getIsNewlyCreated() {
+        return isNewlyCreated;
+    }
 
-	public Boolean getGeoJson() {
-		return geoJson;
-	}
+    public Boolean getGeoJson() {
+        return geoJson;
+    }
 
-	public Integer getExpireAfter() {
-		return expireAfter;
-	}
+    public Integer getExpireAfter() {
+        return expireAfter;
+    }
 
-	public Boolean getConstraint() {
-		return constraint;
-	}
+    public Boolean getConstraint() {
+        return constraint;
+    }
 
-	public Boolean getDeduplicate() {
-		return deduplicate;
-	}
+    public Boolean getDeduplicate() {
+        return deduplicate;
+    }
 
 }

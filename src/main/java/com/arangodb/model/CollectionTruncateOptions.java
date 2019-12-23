@@ -25,24 +25,24 @@ package com.arangodb.model;
  */
 public class CollectionTruncateOptions {
 
-	private String streamTransactionId;
+    private String streamTransactionId;
 
-	public CollectionTruncateOptions() {
-		super();
-	}
+    public CollectionTruncateOptions() {
+        super();
+    }
 
-	public String getStreamTransactionId() {
-		return streamTransactionId;
-	}
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
 
-	/**
-	 * @param streamTransactionId If set, the operation will be executed within the transaction.
-	 * @return options
-	 * @since ArangoDB 3.5.0
-	 */
-	public CollectionTruncateOptions streamTransactionId(final String streamTransactionId) {
-		this.streamTransactionId = streamTransactionId;
-		return this;
-	}
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.0
+     */
+    public CollectionTruncateOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

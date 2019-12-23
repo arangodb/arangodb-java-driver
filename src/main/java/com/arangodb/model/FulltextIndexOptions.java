@@ -24,56 +24,53 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Mark Vollmary
- *
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class FulltextIndexOptions extends IndexOptions<FulltextIndexOptions> {
 
-	private Iterable<String> fields;
-	private final IndexType type = IndexType.fulltext;
-	private Integer minLength;
+    private Iterable<String> fields;
+    private final IndexType type = IndexType.fulltext;
+    private Integer minLength;
 
-	public FulltextIndexOptions() {
-		super();
-	}
+    public FulltextIndexOptions() {
+        super();
+    }
 
     @Override
     protected FulltextIndexOptions getThis() {
         return this;
     }
 
-	protected Iterable<String> getFields() {
-		return fields;
-	}
+    protected Iterable<String> getFields() {
+        return fields;
+    }
 
-	/**
-	 * @param fields
-	 *            A list of attribute paths
-	 * @return options
-	 */
-	protected FulltextIndexOptions fields(final Iterable<String> fields) {
-		this.fields = fields;
-		return this;
-	}
+    /**
+     * @param fields A list of attribute paths
+     * @return options
+     */
+    protected FulltextIndexOptions fields(final Iterable<String> fields) {
+        this.fields = fields;
+        return this;
+    }
 
-	protected IndexType getType() {
-		return type;
-	}
+    protected IndexType getType() {
+        return type;
+    }
 
-	public Integer getMinLength() {
-		return minLength;
-	}
+    public Integer getMinLength() {
+        return minLength;
+    }
 
-	/**
-	 * @param minLength
-	 *            Minimum character length of words to index. Will default to a server-defined value if unspecified. It
-	 *            is thus recommended to set this value explicitly when creating the index.
-	 * @return options
-	 */
-	public FulltextIndexOptions minLength(final Integer minLength) {
-		this.minLength = minLength;
-		return this;
-	}
+    /**
+     * @param minLength Minimum character length of words to index. Will default to a server-defined value if unspecified. It
+     *                  is thus recommended to set this value explicitly when creating the index.
+     * @return options
+     */
+    public FulltextIndexOptions minLength(final Integer minLength) {
+        this.minLength = minLength;
+        return this;
+    }
 
 }

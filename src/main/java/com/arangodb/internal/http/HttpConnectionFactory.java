@@ -20,34 +20,33 @@
 
 package com.arangodb.internal.http;
 
-import javax.net.ssl.SSLContext;
-
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.ConnectionFactory;
 import com.arangodb.internal.net.HostDescription;
 import com.arangodb.util.ArangoSerialization;
 
+import javax.net.ssl.SSLContext;
+
 /**
  * @author Mark Vollmary
- *
  */
 public class HttpConnectionFactory implements ConnectionFactory {
 
-	private final HttpConnection.Builder builder;
+    private final HttpConnection.Builder builder;
 
-	public HttpConnectionFactory(final Integer timeout, final String user, final String password, final Boolean useSsl,
-		final SSLContext sslContext, final ArangoSerialization util, final Protocol protocol,
-		final Long connectionTtl, String httpCookieSpec) {
-		super();
-		builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
-				.sslContext(sslContext).serializationUtil(util).contentType(protocol).ttl(connectionTtl).httpCookieSpec(httpCookieSpec);
+    public HttpConnectionFactory(final Integer timeout, final String user, final String password, final Boolean useSsl,
+                                 final SSLContext sslContext, final ArangoSerialization util, final Protocol protocol,
+                                 final Long connectionTtl, String httpCookieSpec) {
+        super();
+        builder = new HttpConnection.Builder().timeout(timeout).user(user).password(password).useSsl(useSsl)
+                .sslContext(sslContext).serializationUtil(util).contentType(protocol).ttl(connectionTtl).httpCookieSpec(httpCookieSpec);
 
-	}
+    }
 
-	@Override
-	public Connection create(final HostDescription host) {
-		return builder.host(host).build();
-	}
+    @Override
+    public Connection create(final HostDescription host) {
+        return builder.host(host).build();
+    }
 
 }

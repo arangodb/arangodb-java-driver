@@ -22,31 +22,30 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ReplicationFactor {
 
-	private Integer replicationFactor;
-	private Boolean satellite;
+    private Integer replicationFactor;
+    private Boolean satellite;
 
-	public ReplicationFactor() {
-		super();
-	}
+    public ReplicationFactor() {
+        super();
+    }
 
-	public Integer getReplicationFactor() {
-		return replicationFactor;
-	}
+    public Integer getReplicationFactor() {
+        return replicationFactor;
+    }
 
-	public void setReplicationFactor(final Integer replicationFactor) {
-		this.replicationFactor = replicationFactor;
-	}
+    public void setReplicationFactor(final Integer replicationFactor) {
+        this.replicationFactor = replicationFactor;
+    }
 
-	public Boolean getSatellite() {
-		return satellite;
-	}
+    public Boolean getSatellite() {
+        return satellite;
+    }
 
-	public void setSatellite(final Boolean satellite) {
-		this.satellite = satellite;
-	}
+    public void setSatellite(final Boolean satellite) {
+        this.satellite = satellite;
+    }
 
 }

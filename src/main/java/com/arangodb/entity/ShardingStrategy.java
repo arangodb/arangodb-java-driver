@@ -25,21 +25,21 @@ package com.arangodb.entity;
  * https://www.arangodb.com/docs/stable/http/collection-creating.html
  */
 public enum ShardingStrategy {
-	
-	COMMUNITY_COMPAT("community-compat"), 
-	ENTERPRISE_COMPAT("enterprise-compat"), 
-	ENTERPRISE_SMART_EDGE_COMPAT("enterprise-smart-edge-compat"), 
-	HASH("hash"), 
-	ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge");
 
-	private final String internalName;
+    COMMUNITY_COMPAT("community-compat"),
+    ENTERPRISE_COMPAT("enterprise-compat"),
+    ENTERPRISE_SMART_EDGE_COMPAT("enterprise-smart-edge-compat"),
+    HASH("hash"),
+    ENTERPRISE_HASH_SMART_EDGE("enterprise-hash-smart-edge");
 
-	ShardingStrategy(String internalName) {
-		this.internalName = internalName;
-	}
-	
-	public String getInternalName() {
-		return this.internalName;
-	}
+    private final String internalName;
+
+    ShardingStrategy(String internalName) {
+        this.internalName = internalName;
+    }
+
+    public String getInternalName() {
+        return this.internalName;
+    }
 
 }

@@ -22,31 +22,29 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-vertices.html#create-a-vertex">API Documentation</a>
  */
 public class VertexCreateOptions {
 
-	private Boolean waitForSync;
+    private Boolean waitForSync;
     private String streamTransactionId;
 
-	public VertexCreateOptions() {
-		super();
-	}
+    public VertexCreateOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync
-	 *            Wait until document has been synced to disk.
-	 * @return options
-	 */
-	public VertexCreateOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until document has been synced to disk.
+     * @return options
+     */
+    public VertexCreateOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
 
     public String getStreamTransactionId() {
         return streamTransactionId;

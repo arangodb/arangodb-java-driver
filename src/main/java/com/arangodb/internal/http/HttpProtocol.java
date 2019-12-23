@@ -30,29 +30,28 @@ import java.io.IOException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class HttpProtocol implements CommunicationProtocol {
 
-	private final HttpCommunication httpCommunitaction;
+    private final HttpCommunication httpCommunitaction;
 
-	public HttpProtocol(final HttpCommunication httpCommunitaction) {
-		super();
-		this.httpCommunitaction = httpCommunitaction;
-	}
+    public HttpProtocol(final HttpCommunication httpCommunitaction) {
+        super();
+        this.httpCommunitaction = httpCommunitaction;
+    }
 
-	@Override
-	public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
-		try {
-			return httpCommunitaction.execute(request, hostHandle);
-		} catch (final IOException e) {
-			throw new ArangoDBException(e);
-		}
-	}
+    @Override
+    public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
+        try {
+            return httpCommunitaction.execute(request, hostHandle);
+        } catch (final IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
 
-	@Override
-	public void close() throws IOException {
-		httpCommunitaction.close();
-	}
+    @Override
+    public void close() throws IOException {
+        httpCommunitaction.close();
+    }
 
 }

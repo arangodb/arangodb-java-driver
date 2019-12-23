@@ -20,20 +20,19 @@
 
 package com.arangodb;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.Map;
-
+import com.arangodb.ArangoDB.Builder;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.DocumentCreateEntity;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.ArangoDB.Builder;
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentCreateEntity;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary

@@ -27,77 +27,71 @@ import com.arangodb.entity.arangosearch.PrimarySort;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoSearchPropertiesOptions {
 
-	private final ArangoSearchProperties properties;
+    private final ArangoSearchProperties properties;
 
-	public ArangoSearchPropertiesOptions() {
-		super();
-		properties = new ArangoSearchProperties();
-	}
+    public ArangoSearchPropertiesOptions() {
+        super();
+        properties = new ArangoSearchProperties();
+    }
 
-	public ArangoSearchProperties getProperties() {
-		return properties;
-	}
+    public ArangoSearchProperties getProperties() {
+        return properties;
+    }
 
-	/**
-	 * @param consolidationIntervalMsec
-	 *            Wait at least this many milliseconds between committing index data changes and making them visible to
-	 *            queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
-	 *            lower value, until commit, will cause the index not to account for them and memory usage would
-	 *            continue to grow. For the case where there are a few inserts/updates, a higher value will impact
-	 *            performance and waste disk space for each commit call without any added benefits.
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
-		properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
-		return this;
-	}
+    /**
+     * @param consolidationIntervalMsec Wait at least this many milliseconds between committing index data changes and making them visible to
+     *                                  queries (default: 60000, to disable use: 0). For the case where there are a lot of inserts/updates, a
+     *                                  lower value, until commit, will cause the index not to account for them and memory usage would
+     *                                  continue to grow. For the case where there are a few inserts/updates, a higher value will impact
+     *                                  performance and waste disk space for each commit call without any added benefits.
+     * @return options
+     */
+    public ArangoSearchPropertiesOptions consolidationIntervalMsec(final Long consolidationIntervalMsec) {
+        properties.setConsolidationIntervalMsec(consolidationIntervalMsec);
+        return this;
+    }
 
-	/**
-	 * @param cleanupIntervalStep
-	 *            Wait at least this many commits between removing unused files in data directory (default: 10, to
-	 *            disable use: 0). For the case where the consolidation policies merge segments often (i.e. a lot of
-	 *            commit+consolidate), a lower value will cause a lot of disk space to be wasted. For the case where the
-	 *            consolidation policies rarely merge segments (i.e. few inserts/deletes), a higher value will impact
-	 *            performance without any added benefits.
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
-		properties.setCleanupIntervalStep(cleanupIntervalStep);
-		return this;
-	}
+    /**
+     * @param cleanupIntervalStep Wait at least this many commits between removing unused files in data directory (default: 10, to
+     *                            disable use: 0). For the case where the consolidation policies merge segments often (i.e. a lot of
+     *                            commit+consolidate), a lower value will cause a lot of disk space to be wasted. For the case where the
+     *                            consolidation policies rarely merge segments (i.e. few inserts/deletes), a higher value will impact
+     *                            performance without any added benefits.
+     * @return options
+     */
+    public ArangoSearchPropertiesOptions cleanupIntervalStep(final Long cleanupIntervalStep) {
+        properties.setCleanupIntervalStep(cleanupIntervalStep);
+        return this;
+    }
 
-	/**
-	 * @param consolidationPolicy
-	 * 
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
-		properties.setConsolidationPolicy(consolidationPolicy);
-		return this;
-	}
+    /**
+     * @param consolidationPolicy
+     * @return options
+     */
+    public ArangoSearchPropertiesOptions consolidationPolicy(final ConsolidationPolicy consolidationPolicy) {
+        properties.setConsolidationPolicy(consolidationPolicy);
+        return this;
+    }
 
-	/**
-	 * @param links
-	 *            A list of linked collections
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions link(final CollectionLink... links) {
-		properties.addLink(links);
-		return this;
-	}
+    /**
+     * @param links A list of linked collections
+     * @return options
+     */
+    public ArangoSearchPropertiesOptions link(final CollectionLink... links) {
+        properties.addLink(links);
+        return this;
+    }
 
-	/**
-	 * @param primarySorts
-	 *            A list of primarySort objects
-	 * @return options
-	 */
-	public ArangoSearchPropertiesOptions primarySort(final PrimarySort... primarySorts) {
-		properties.addPrimarySort(primarySorts);
-		return this;
-	}
+    /**
+     * @param primarySorts A list of primarySort objects
+     * @return options
+     */
+    public ArangoSearchPropertiesOptions primarySort(final PrimarySort... primarySorts) {
+        properties.addPrimarySort(primarySorts);
+        return this;
+    }
 
 }

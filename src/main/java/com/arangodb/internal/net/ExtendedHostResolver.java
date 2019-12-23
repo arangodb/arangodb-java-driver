@@ -35,121 +35,120 @@ import java.util.*;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ExtendedHostResolver implements HostResolver {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedHostResolver.class);
 
-	private final HostSet hosts;
+    private final HostSet hosts;
 
-	private final Integer maxConnections;
-	private final ConnectionFactory connectionFactory;
+    private final Integer maxConnections;
+    private final ConnectionFactory connectionFactory;
 
-	private long lastUpdate;
-	private final Integer acquireHostListInterval;
+    private long lastUpdate;
+    private final Integer acquireHostListInterval;
 
-	private ArangoExecutorSync executor;
-	private ArangoSerialization arangoSerialization;
+    private ArangoExecutorSync executor;
+    private ArangoSerialization arangoSerialization;
 
 
-	public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
-		final ConnectionFactory connectionFactory, Integer acquireHostListInterval) {
-		
-		this.acquireHostListInterval = acquireHostListInterval;
-		this.hosts = new HostSet(hosts);
-		this.maxConnections = maxConnections;
-		this.connectionFactory = connectionFactory;
-		
-		lastUpdate = 0;
-	}
+    public ExtendedHostResolver(final List<Host> hosts, final Integer maxConnections,
+                                final ConnectionFactory connectionFactory, Integer acquireHostListInterval) {
 
-	@Override
-	public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
-		this.executor = executor;
-		this.arangoSerialization = arangoSerialization;
-	}
+        this.acquireHostListInterval = acquireHostListInterval;
+        this.hosts = new HostSet(hosts);
+        this.maxConnections = maxConnections;
+        this.connectionFactory = connectionFactory;
 
-	@Override
+        lastUpdate = 0;
+    }
 
-	public HostSet resolve(boolean initial, boolean closeConnections) {
-		
-		if (!initial && isExpired()) {
+    @Override
+    public void init(ArangoExecutorSync executor, ArangoSerialization arangoSerialization) {
+        this.executor = executor;
+        this.arangoSerialization = arangoSerialization;
+    }
 
-			lastUpdate = System.currentTimeMillis();
+    @Override
 
-			final Collection<String> endpoints = resolveFromServer();
-			LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
-			LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
+    public HostSet resolve(boolean initial, boolean closeConnections) {
 
-			if (!endpoints.isEmpty()) {
-				hosts.markAllForDeletion();
-			}
+        if (!initial && isExpired()) {
 
-			for (final String endpoint : endpoints) {
-				LOGGER.debug("Create HOST from " + endpoint);
+            lastUpdate = System.currentTimeMillis();
 
-				if (endpoint.matches(".*://.+:[0-9]+")) {
+            final Collection<String> endpoints = resolveFromServer();
+            LOGGER.debug("Resolve " + endpoints.size() + " Endpoints");
+            LOGGER.debug("Endpoints " + Arrays.deepToString(endpoints.toArray()));
 
-					final String[] s = endpoint.replaceAll(".*://", "").split(":");
-					if (s.length == 2) {
-						final HostDescription description = new HostDescription(s[0], Integer.parseInt(s[1]));
-						hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
-					} else if (s.length == 4) {
-						// IPV6 Address - TODO: we need a proper function to resolve AND support IPV4 & IPV6 functions
-						// globally
-						final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
-						hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
-					} else {
-						LOGGER.warn("Skip Endpoint (Missing Port)" + endpoint);
-					}
+            if (!endpoints.isEmpty()) {
+                hosts.markAllForDeletion();
+            }
 
-				} else {
-					LOGGER.warn("Skip Endpoint (Format)" + endpoint);
-				}
-			}
-			hosts.clearAllMarkedForDeletion();
-		}
+            for (final String endpoint : endpoints) {
+                LOGGER.debug("Create HOST from " + endpoint);
 
-		return hosts;
-	}
+                if (endpoint.matches(".*://.+:[0-9]+")) {
 
-	private Collection<String> resolveFromServer() throws ArangoDBException {
+                    final String[] s = endpoint.replaceAll(".*://", "").split(":");
+                    if (s.length == 2) {
+                        final HostDescription description = new HostDescription(s[0], Integer.parseInt(s[1]));
+                        hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
+                    } else if (s.length == 4) {
+                        // IPV6 Address - TODO: we need a proper function to resolve AND support IPV4 & IPV6 functions
+                        // globally
+                        final HostDescription description = new HostDescription("127.0.0.1", Integer.parseInt(s[3]));
+                        hosts.addHost(HostUtils.createHost(description, maxConnections, connectionFactory));
+                    } else {
+                        LOGGER.warn("Skip Endpoint (Missing Port)" + endpoint);
+                    }
 
-		Collection<String> response;
+                } else {
+                    LOGGER.warn("Skip Endpoint (Format)" + endpoint);
+                }
+            }
+            hosts.clearAllMarkedForDeletion();
+        }
 
-		try {
+        return hosts;
+    }
 
-			response = executor.execute(
-				new Request(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
-					response1 -> {
-						final VPackSlice field = response1.getBody().get("endpoints");
-						Collection<String> endpoints;
-						if (field.isNone()) {
-							endpoints = Collections.emptyList();
-						} else {
-							final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(field, Collection.class);
-							endpoints = new ArrayList<>();
-							for (final Map<String, String> map : tmp) {
-								endpoints.addAll(map.values());
-							}
-						}
-						return endpoints;
-					}, null);
-		} catch (final ArangoDBException e) {
-			final Integer responseCode = e.getResponseCode();
-			if (responseCode != null && responseCode == 403) {
-				response = Collections.emptyList();
-			} else {
-				throw e;
-			}
-		}
+    private Collection<String> resolveFromServer() throws ArangoDBException {
 
-		return response;
-	}
+        Collection<String> response;
 
-	private boolean isExpired() {
-		return System.currentTimeMillis() > (lastUpdate + acquireHostListInterval);
-	}
-	
+        try {
+
+            response = executor.execute(
+                    new Request(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
+                    response1 -> {
+                        final VPackSlice field = response1.getBody().get("endpoints");
+                        Collection<String> endpoints;
+                        if (field.isNone()) {
+                            endpoints = Collections.emptyList();
+                        } else {
+                            final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(field, Collection.class);
+                            endpoints = new ArrayList<>();
+                            for (final Map<String, String> map : tmp) {
+                                endpoints.addAll(map.values());
+                            }
+                        }
+                        return endpoints;
+                    }, null);
+        } catch (final ArangoDBException e) {
+            final Integer responseCode = e.getResponseCode();
+            if (responseCode != null && responseCode == 403) {
+                response = Collections.emptyList();
+            } else {
+                throw e;
+            }
+        }
+
+        return response;
+    }
+
+    private boolean isExpired() {
+        return System.currentTimeMillis() > (lastUpdate + acquireHostListInterval);
+    }
+
 }

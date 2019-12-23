@@ -25,6 +25,6 @@ package com.arangodb.entity;
  */
 public enum License {
 
-	ENTERPRISE, COMMUNITY
-	
+    ENTERPRISE, COMMUNITY
+
 }

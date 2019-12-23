@@ -24,70 +24,66 @@ import com.arangodb.entity.IndexType;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
- *      Documentation</a>
+ * Documentation</a>
  */
 public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions> {
 
-	private Iterable<String> fields;
-	protected final IndexType type = IndexType.persistent;
-	private Boolean unique;
-	private Boolean sparse;
+    private Iterable<String> fields;
+    protected final IndexType type = IndexType.persistent;
+    private Boolean unique;
+    private Boolean sparse;
 
-	public PersistentIndexOptions() {
-		super();
-	}
+    public PersistentIndexOptions() {
+        super();
+    }
 
     @Override
     protected PersistentIndexOptions getThis() {
         return this;
     }
 
-	protected Iterable<String> getFields() {
-		return fields;
-	}
+    protected Iterable<String> getFields() {
+        return fields;
+    }
 
-	/**
-	 * @param fields
-	 *            A list of attribute paths
-	 * @return options
-	 */
-	protected PersistentIndexOptions fields(final Iterable<String> fields) {
-		this.fields = fields;
-		return this;
-	}
+    /**
+     * @param fields A list of attribute paths
+     * @return options
+     */
+    protected PersistentIndexOptions fields(final Iterable<String> fields) {
+        this.fields = fields;
+        return this;
+    }
 
-	protected IndexType getType() {
-		return type;
-	}
+    protected IndexType getType() {
+        return type;
+    }
 
-	public Boolean getUnique() {
-		return unique;
-	}
+    public Boolean getUnique() {
+        return unique;
+    }
 
-	/**
-	 * @param unique
-	 *            if true, then create a unique index
-	 * @return options
-	 */
-	public PersistentIndexOptions unique(final Boolean unique) {
-		this.unique = unique;
-		return this;
-	}
+    /**
+     * @param unique if true, then create a unique index
+     * @return options
+     */
+    public PersistentIndexOptions unique(final Boolean unique) {
+        this.unique = unique;
+        return this;
+    }
 
-	public Boolean getSparse() {
-		return sparse;
-	}
+    public Boolean getSparse() {
+        return sparse;
+    }
 
-	/**
-	 * @param sparse
-	 *            if true, then create a sparse index
-	 * @return options
-	 */
-	public PersistentIndexOptions sparse(final Boolean sparse) {
-		this.sparse = sparse;
-		return this;
-	}
+    /**
+     * @param sparse if true, then create a sparse index
+     * @return options
+     */
+    public PersistentIndexOptions sparse(final Boolean sparse) {
+        this.sparse = sparse;
+        return this;
+    }
 
 }

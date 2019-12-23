@@ -36,106 +36,105 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements ArangoCursor<T> {
 
-	private final Class<T> type;
-	protected final ArangoCursorIterator<T> iterator;
-	private final String id;
-	private final ArangoCursorExecute execute;
+    private final Class<T> type;
+    protected final ArangoCursorIterator<T> iterator;
+    private final String id;
+    private final ArangoCursorExecute execute;
 
-	public ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
-		final Class<T> type, final CursorEntity result) {
-		super();
-		this.execute = execute;
-		this.type = type;
-		iterator = createIterator(this, db, execute, result);
-		id = result.getId();
-	}
+    public ArangoCursorImpl(final InternalArangoDatabase<?, ?> db, final ArangoCursorExecute execute,
+                            final Class<T> type, final CursorEntity result) {
+        super();
+        this.execute = execute;
+        this.type = type;
+        iterator = createIterator(this, db, execute, result);
+        id = result.getId();
+    }
 
-	protected ArangoCursorIterator<T> createIterator(
-		final ArangoCursor<T> cursor,
-		final InternalArangoDatabase<?, ?> db,
-		final ArangoCursorExecute execute,
-		final CursorEntity result) {
-		return new ArangoCursorIterator<>(cursor, execute, db, result);
-	}
+    protected ArangoCursorIterator<T> createIterator(
+            final ArangoCursor<T> cursor,
+            final InternalArangoDatabase<?, ?> db,
+            final ArangoCursorExecute execute,
+            final CursorEntity result) {
+        return new ArangoCursorIterator<>(cursor, execute, db, result);
+    }
 
-	@Override
-	public String getId() {
-		return id;
-	}
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public Class<T> getType() {
-		return type;
-	}
+    @Override
+    public Class<T> getType() {
+        return type;
+    }
 
-	@Override
-	public Integer getCount() {
-		return iterator.getResult().getCount();
-	}
+    @Override
+    public Integer getCount() {
+        return iterator.getResult().getCount();
+    }
 
-	@Override
-	public Stats getStats() {
-		final Extras extra = iterator.getResult().getExtra();
-		return extra != null ? extra.getStats() : null;
-	}
+    @Override
+    public Stats getStats() {
+        final Extras extra = iterator.getResult().getExtra();
+        return extra != null ? extra.getStats() : null;
+    }
 
-	@Override
-	public Collection<Warning> getWarnings() {
-		final Extras extra = iterator.getResult().getExtra();
-		return extra != null ? extra.getWarnings() : null;
-	}
+    @Override
+    public Collection<Warning> getWarnings() {
+        final Extras extra = iterator.getResult().getExtra();
+        return extra != null ? extra.getWarnings() : null;
+    }
 
-	@Override
-	public boolean isCached() {
-		final Boolean cached = iterator.getResult().getCached();
-		return Boolean.TRUE == cached;
-	}
+    @Override
+    public boolean isCached() {
+        final Boolean cached = iterator.getResult().getCached();
+        return Boolean.TRUE == cached;
+    }
 
-	@Override
-	public void close() {
-		if (id != null && hasNext()) {
-			execute.close(id, iterator.getResult().getMeta());
-		}
-	}
+    @Override
+    public void close() {
+        if (id != null && hasNext()) {
+            execute.close(id, iterator.getResult().getMeta());
+        }
+    }
 
-	@Override
-	public boolean hasNext() {
-		return iterator.hasNext();
-	}
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
 
-	@Override
-	public T next() {
-		return iterator.next();
-	}
+    @Override
+    public T next() {
+        return iterator.next();
+    }
 
-	@Override
-	public List<T> asListRemaining() {
-		final List<T> remaining = new ArrayList<>();
-		while (hasNext()) {
-			remaining.add(next());
-		}
-		return remaining;
-	}
+    @Override
+    public List<T> asListRemaining() {
+        final List<T> remaining = new ArrayList<>();
+        while (hasNext()) {
+            remaining.add(next());
+        }
+        return remaining;
+    }
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public ArangoIterator<T> iterator() {
-		return iterator;
-	}
+    @Override
+    public ArangoIterator<T> iterator() {
+        return iterator;
+    }
 
-	@Override
-	public void foreach(final Consumer<? super T> action) {
-		while (hasNext()) {
-			action.accept(next());
-		}
-	}
+    @Override
+    public void foreach(final Consumer<? super T> action) {
+        while (hasNext()) {
+            action.accept(next());
+        }
+    }
 
 }

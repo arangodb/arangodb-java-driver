@@ -26,25 +26,23 @@ import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface ArangoSerializationAccessor {
 
-	/**
-	 * Returns driver internal serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice}
-	 * 
-	 * @return ArangoSerialization
-	 */
-	ArangoSerialization util();
+    /**
+     * Returns driver internal serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice}
+     *
+     * @return ArangoSerialization
+     */
+    ArangoSerialization util();
 
-	/**
-	 * Returns serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice} by the given
-	 * type
-	 * 
-	 * @param serializer
-	 *            type of serializer
-	 * @return ArangoSerialization
-	 */
-	ArangoSerialization util(Serializer serializer);
+    /**
+     * Returns serialization API for serializing and deserializing Java POJOs to/from {@link VPackSlice} by the given
+     * type
+     *
+     * @param serializer type of serializer
+     * @return ArangoSerialization
+     */
+    ArangoSerialization util(Serializer serializer);
 
 }

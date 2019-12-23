@@ -28,89 +28,88 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class Request {
 
-	private int version = 1;
-	private int type = 1;
-	private final String database;
-	private final RequestType requestType;
-	private final String request;
-	private final Map<String, String> queryParam;
-	private final Map<String, String> headerParam;
-	@Expose(serialize = false)
-	private VPackSlice body;
+    private int version = 1;
+    private int type = 1;
+    private final String database;
+    private final RequestType requestType;
+    private final String request;
+    private final Map<String, String> queryParam;
+    private final Map<String, String> headerParam;
+    @Expose(serialize = false)
+    private VPackSlice body;
 
-	public Request(final String database, final RequestType requestType, final String path) {
-		super();
-		this.database = database;
-		this.requestType = requestType;
-		this.request = path;
-		body = null;
+    public Request(final String database, final RequestType requestType, final String path) {
+        super();
+        this.database = database;
+        this.requestType = requestType;
+        this.request = path;
+        body = null;
         queryParam = new HashMap<>();
         headerParam = new HashMap<>();
-	}
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public Request setVersion(final int version) {
-		this.version = version;
-		return this;
-	}
+    public Request setVersion(final int version) {
+        this.version = version;
+        return this;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public Request setType(final int type) {
-		this.type = type;
-		return this;
-	}
+    public Request setType(final int type) {
+        this.type = type;
+        return this;
+    }
 
-	public String getDatabase() {
-		return database;
-	}
+    public String getDatabase() {
+        return database;
+    }
 
-	public RequestType getRequestType() {
-		return requestType;
-	}
+    public RequestType getRequestType() {
+        return requestType;
+    }
 
-	public String getRequest() {
-		return request;
-	}
+    public String getRequest() {
+        return request;
+    }
 
-	public Map<String, String> getQueryParam() {
-		return queryParam;
-	}
+    public Map<String, String> getQueryParam() {
+        return queryParam;
+    }
 
-	public Request putQueryParam(final String key, final Object value) {
-		if (value != null) {
-			queryParam.put(key, value.toString());
-		}
-		return this;
-	}
+    public Request putQueryParam(final String key, final Object value) {
+        if (value != null) {
+            queryParam.put(key, value.toString());
+        }
+        return this;
+    }
 
-	public Map<String, String> getHeaderParam() {
-		return headerParam;
-	}
+    public Map<String, String> getHeaderParam() {
+        return headerParam;
+    }
 
-	public Request putHeaderParam(final String key, final String value) {
-		if (value != null) {
-			headerParam.put(key, value);
-		}
-		return this;
-	}
+    public Request putHeaderParam(final String key, final String value) {
+        if (value != null) {
+            headerParam.put(key, value);
+        }
+        return this;
+    }
 
-	public VPackSlice getBody() {
-		return body;
-	}
+    public VPackSlice getBody() {
+        return body;
+    }
 
-	public Request setBody(final VPackSlice body) {
-		this.body = body;
-		return this;
-	}
+    public Request setBody(final VPackSlice body) {
+        this.body = body;
+        return this;
+    }
 
 }

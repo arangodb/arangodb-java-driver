@@ -28,43 +28,42 @@ import com.arangodb.velocystream.RequestType;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- *
  */
 public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
-		extends ArangoExecuteable<E> {
+        extends ArangoExecuteable<E> {
 
-	protected static final String PATH_API_VIEW = "/_api/view";
-	protected static final String PATH_API_ANALYZER = "/_api/analyzer";
+    protected static final String PATH_API_VIEW = "/_api/view";
+    protected static final String PATH_API_ANALYZER = "/_api/analyzer";
 
-	protected final D db;
-	protected volatile String name;
+    protected final D db;
+    protected volatile String name;
 
-	protected InternalArangoView(final D db, final String name) {
-		super(db.executor, db.util, db.context);
-		this.db = db;
-		this.name = name;
-	}
+    protected InternalArangoView(final D db, final String name) {
+        super(db.executor, db.util, db.context);
+        this.db = db;
+        this.name = name;
+    }
 
-	public D db() {
-		return db;
-	}
+    public D db() {
+        return db;
+    }
 
-	public String name() {
-		return name;
-	}
+    public String name() {
+        return name;
+    }
 
-	protected Request dropRequest() {
-		return request(db.name(), RequestType.DELETE, PATH_API_VIEW, name);
-	}
+    protected Request dropRequest() {
+        return request(db.name(), RequestType.DELETE, PATH_API_VIEW, name);
+    }
 
-	protected Request renameRequest(final String newName) {
-		final Request request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, "rename");
-		request.setBody(util().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
-		return request;
-	}
+    protected Request renameRequest(final String newName) {
+        final Request request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, "rename");
+        request.setBody(util().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
+        return request;
+    }
 
-	protected Request getInfoRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_VIEW, name);
-	}
+    protected Request getInfoRequest() {
+        return request(db.name(), RequestType.GET, PATH_API_VIEW, name);
+    }
 
 }

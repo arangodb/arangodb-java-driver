@@ -22,35 +22,34 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ViewEntity implements Entity {
 
-	private String id;
-	private String name;
-	private ViewType type;
+    private String id;
+    private String name;
+    private ViewType type;
 
-	public ViewEntity() {
-		super();
-	}
+    public ViewEntity() {
+        super();
+    }
 
-	public ViewEntity(final String id, final String name, final ViewType type) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.type = type;
-	}
+    public ViewEntity(final String id, final String name, final ViewType type) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public ViewType getType() {
-		return type;
-	}
+    public ViewType getType() {
+        return type;
+    }
 
 }

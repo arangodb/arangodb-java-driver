@@ -24,19 +24,18 @@ import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class VertexUpdateEntity extends DocumentEntity {
 
-	@SerializedName("_oldRev")
-	private String oldRev;
+    @SerializedName("_oldRev")
+    private String oldRev;
 
-	public VertexUpdateEntity() {
-		super();
-	}
+    public VertexUpdateEntity() {
+        super();
+    }
 
-	public String getOldRev() {
-		return oldRev;
-	}
+    public String getOldRev() {
+        return oldRev;
+    }
 
 }

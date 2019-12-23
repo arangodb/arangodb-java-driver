@@ -38,128 +38,127 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, G extends InternalArangoGraph<A, D, E>, E extends ArangoExecutor>
-		extends ArangoExecuteable<E> {
+        extends ArangoExecuteable<E> {
 
-	private static final String PATH_API_GHARIAL = "/_api/gharial";
-	private static final String EDGE = "edge";
+    private static final String PATH_API_GHARIAL = "/_api/gharial";
+    private static final String EDGE = "edge";
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
-	private final G graph;
-	private final String name;
+    private final G graph;
+    private final String name;
 
-	protected InternalArangoEdgeCollection(final G graph, final String name) {
-		super(graph.executor, graph.util, graph.context);
-		this.graph = graph;
-		this.name = name;
-	}
+    protected InternalArangoEdgeCollection(final G graph, final String name) {
+        super(graph.executor, graph.util, graph.context);
+        this.graph = graph;
+        this.name = name;
+    }
 
-	public G graph() {
-		return graph;
-	}
+    public G graph() {
+        return graph;
+    }
 
-	public String name() {
-		return name;
-	}
+    public String name() {
+        return name;
+    }
 
-	protected <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-		final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE,
-			name);
-		final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
+    protected <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
+        final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE,
+                name);
+        final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.setBody(util(Serializer.CUSTOM).serialize(value));
-		return request;
-	}
+        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+        request.setBody(util(Serializer.CUSTOM).serialize(value));
+        return request;
+    }
 
-	protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get(EDGE);
-			final EdgeEntity doc = util().deserialize(body, EdgeEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.ID, doc.getId());
-			values.put(DocumentField.Type.KEY, doc.getKey());
-			values.put(DocumentField.Type.REV, doc.getRev());
-			executor.documentCache().setValues(value, values);
-			return doc;
-		};
-	}
+    protected <T> ResponseDeserializer<EdgeEntity> insertEdgeResponseDeserializer(final T value) {
+        return response -> {
+            final VPackSlice body = response.getBody().get(EDGE);
+            final EdgeEntity doc = util().deserialize(body, EdgeEntity.class);
+            final Map<DocumentField.Type, String> values = new HashMap<>();
+            values.put(DocumentField.Type.ID, doc.getId());
+            values.put(DocumentField.Type.KEY, doc.getKey());
+            values.put(DocumentField.Type.REV, doc.getRev());
+            executor.documentCache().setValues(value, values);
+            return doc;
+        };
+    }
 
-	protected Request getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
-		final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE,
-			DocumentUtil.createDocumentHandle(name, key));
-		final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
+    protected Request getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
+        final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE,
+                DocumentUtil.createDocumentHandle(name, key));
+        final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-		request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
-		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		if (params.getAllowDirtyRead() == Boolean.TRUE) {
-			RequestUtils.allowDirtyRead(request);
-		}
-		return request;
-	}
+        request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
+        request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
+        if (params.getAllowDirtyRead() == Boolean.TRUE) {
+            RequestUtils.allowDirtyRead(request);
+        }
+        return request;
+    }
 
-	protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
-		return response -> util(Serializer.CUSTOM).deserialize(response.getBody().get(EDGE), type);
-	}
+    protected <T> ResponseDeserializer<T> getEdgeResponseDeserializer(final Class<T> type) {
+        return response -> util(Serializer.CUSTOM).deserialize(response.getBody().get(EDGE), type);
+    }
 
-	protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-		final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE,
-			DocumentUtil.createDocumentHandle(name, key));
-		final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
+    protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
+        final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE,
+                DocumentUtil.createDocumentHandle(name, key));
+        final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		request.setBody(util(Serializer.CUSTOM).serialize(value));
-		return request;
-	}
+        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+        request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
+        request.setBody(util(Serializer.CUSTOM).serialize(value));
+        return request;
+    }
 
-	protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get(EDGE);
-			final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.REV, doc.getRev());
-			executor.documentCache().setValues(value, values);
-			return doc;
-		};
-	}
+    protected <T> ResponseDeserializer<EdgeUpdateEntity> replaceEdgeResponseDeserializer(final T value) {
+        return response -> {
+            final VPackSlice body = response.getBody().get(EDGE);
+            final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
+            final Map<DocumentField.Type, String> values = new HashMap<>();
+            values.put(DocumentField.Type.REV, doc.getRev());
+            executor.documentCache().setValues(value, values);
+            return doc;
+        };
+    }
 
-	protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
-		final Request request;
-		request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE,
-			DocumentUtil.createDocumentHandle(name, key));
-		final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
+    protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
+        final Request request;
+        request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE,
+                DocumentUtil.createDocumentHandle(name, key));
+        final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-		request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
-		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		request.setBody(
-			util(Serializer.CUSTOM).serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
-		return request;
-	}
+        request.putQueryParam(ArangoRequestParam.KEEP_NULL, params.getKeepNull());
+        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+        request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
+        request.setBody(
+                util(Serializer.CUSTOM).serialize(value, new ArangoSerializer.Options().serializeNullValues(true)));
+        return request;
+    }
 
-	protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
-		return response -> {
-			final VPackSlice body = response.getBody().get(EDGE);
-			final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
-			final Map<DocumentField.Type, String> values = new HashMap<>();
-			values.put(DocumentField.Type.REV, doc.getRev());
-			executor.documentCache().setValues(value, values);
-			return doc;
-		};
-	}
+    protected <T> ResponseDeserializer<EdgeUpdateEntity> updateEdgeResponseDeserializer(final T value) {
+        return response -> {
+            final VPackSlice body = response.getBody().get(EDGE);
+            final EdgeUpdateEntity doc = util().deserialize(body, EdgeUpdateEntity.class);
+            final Map<DocumentField.Type, String> values = new HashMap<>();
+            values.put(DocumentField.Type.REV, doc.getRev());
+            executor.documentCache().setValues(value, values);
+            return doc;
+        };
+    }
 
-	protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-		final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE,
-			DocumentUtil.createDocumentHandle(name, key));
-		final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
+    protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
+        final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE,
+                DocumentUtil.createDocumentHandle(name, key));
+        final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
-		request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
-		request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
-		return request;
-	}
+        request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
+        request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
+        return request;
+    }
 
 }

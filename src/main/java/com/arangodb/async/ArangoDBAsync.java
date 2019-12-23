@@ -103,9 +103,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param options Creation options
      * @return true if the database was created successfully.
-     * @since ArangoDB 3.6.0
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @since ArangoDB 3.6.0
      */
     CompletableFuture<Boolean> createDatabase(final DBCreateOptions options);
 

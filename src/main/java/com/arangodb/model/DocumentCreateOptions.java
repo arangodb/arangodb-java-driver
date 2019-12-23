@@ -28,100 +28,100 @@ package com.arangodb.model;
  */
 public class DocumentCreateOptions {
 
-	private Boolean waitForSync;
-	private Boolean returnNew;
-	private Boolean returnOld;
-	private Boolean overwrite;
-	private Boolean silent;
-	private String streamTransactionId;
+    private Boolean waitForSync;
+    private Boolean returnNew;
+    private Boolean returnOld;
+    private Boolean overwrite;
+    private Boolean silent;
+    private String streamTransactionId;
 
-	public DocumentCreateOptions() {
-		super();
-	}
+    public DocumentCreateOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync Wait until document has been synced to disk.
-	 * @return options
-	 */
-	public DocumentCreateOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until document has been synced to disk.
+     * @return options
+     */
+    public DocumentCreateOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
 
-	public Boolean getReturnNew() {
-		return returnNew;
-	}
+    public Boolean getReturnNew() {
+        return returnNew;
+    }
 
-	/**
-	 * @param returnNew Return additionally the complete new document under the attribute new in the result.
-	 * @return options
-	 */
-	public DocumentCreateOptions returnNew(final Boolean returnNew) {
-		this.returnNew = returnNew;
-		return this;
-	}
+    /**
+     * @param returnNew Return additionally the complete new document under the attribute new in the result.
+     * @return options
+     */
+    public DocumentCreateOptions returnNew(final Boolean returnNew) {
+        this.returnNew = returnNew;
+        return this;
+    }
 
-	public Boolean getReturnOld() {
-		return returnOld;
-	}
+    public Boolean getReturnOld() {
+        return returnOld;
+    }
 
-	/**
-	 * @param returnOld Additionally return the complete old document under the attribute old in the result. Only
-	 *                  available if the {@code overwrite} option is used.
-	 * @return options
-	 * @since ArangoDB 3.4
-	 */
-	public DocumentCreateOptions returnOld(final Boolean returnOld) {
-		this.returnOld = returnOld;
-		return this;
-	}
+    /**
+     * @param returnOld Additionally return the complete old document under the attribute old in the result. Only
+     *                  available if the {@code overwrite} option is used.
+     * @return options
+     * @since ArangoDB 3.4
+     */
+    public DocumentCreateOptions returnOld(final Boolean returnOld) {
+        this.returnOld = returnOld;
+        return this;
+    }
 
-	public Boolean getOverwrite() {
-		return overwrite;
-	}
+    public Boolean getOverwrite() {
+        return overwrite;
+    }
 
-	/**
-	 * @param overwrite If set to true, the insert becomes a replace-insert. If a document with the same {@code _key}
-	 *                  already exists the new document is not rejected with unique constraint violated but will replace
-	 *                  the old document.
-	 * @return options
-	 * @since ArangoDB 3.4
-	 */
-	public DocumentCreateOptions overwrite(final Boolean overwrite) {
-		this.overwrite = overwrite;
-		return this;
-	}
+    /**
+     * @param overwrite If set to true, the insert becomes a replace-insert. If a document with the same {@code _key}
+     *                  already exists the new document is not rejected with unique constraint violated but will replace
+     *                  the old document.
+     * @return options
+     * @since ArangoDB 3.4
+     */
+    public DocumentCreateOptions overwrite(final Boolean overwrite) {
+        this.overwrite = overwrite;
+        return this;
+    }
 
-	public Boolean getSilent() {
-		return silent;
-	}
+    public Boolean getSilent() {
+        return silent;
+    }
 
-	/**
-	 * @param silent If set to true, an empty object will be returned as response. No meta-data will be returned for the
-	 *               created document. This option can be used to save some network traffic.
-	 * @return options
-	 */
-	public DocumentCreateOptions silent(final Boolean silent) {
-		this.silent = silent;
-		return this;
-	}
+    /**
+     * @param silent If set to true, an empty object will be returned as response. No meta-data will be returned for the
+     *               created document. This option can be used to save some network traffic.
+     * @return options
+     */
+    public DocumentCreateOptions silent(final Boolean silent) {
+        this.silent = silent;
+        return this;
+    }
 
-	public String getStreamTransactionId() {
-		return streamTransactionId;
-	}
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
 
-	/**
-	 * @param streamTransactionId If set, the operation will be executed within the transaction.
-	 * @return options
-	 * @since ArangoDB 3.5.0
-	 */
-	public DocumentCreateOptions streamTransactionId(final String streamTransactionId) {
-		this.streamTransactionId = streamTransactionId;
-		return this;
-	}
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.0
+     */
+    public DocumentCreateOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

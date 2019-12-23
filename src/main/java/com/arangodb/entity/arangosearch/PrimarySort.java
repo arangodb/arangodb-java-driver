@@ -22,36 +22,35 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Heiko Kernbach
- *
  */
 public class PrimarySort {
 
-	private final String fieldName;
-	private Boolean ascending;
+    private final String fieldName;
+    private Boolean ascending;
 
-	private PrimarySort(final String fieldName) {
-		super();
-		this.fieldName = fieldName;
-	}
+    private PrimarySort(final String fieldName) {
+        super();
+        this.fieldName = fieldName;
+    }
 
-	public static PrimarySort on(final String fieldName) {
-		return new PrimarySort(fieldName);
-	}
+    public static PrimarySort on(final String fieldName) {
+        return new PrimarySort(fieldName);
+    }
 
-	/**
-	 * @param ascending
-	 * @return primarySort
-	 */
-	public PrimarySort ascending(final Boolean ascending) {
-		this.ascending = ascending;
-		return this;
-	}
+    /**
+     * @param ascending
+     * @return primarySort
+     */
+    public PrimarySort ascending(final Boolean ascending) {
+        this.ascending = ascending;
+        return this;
+    }
 
-	public Boolean getAscending() {
-		return ascending;
-	}
+    public Boolean getAscending() {
+        return ascending;
+    }
 
-	public String getFieldName() {
-		return fieldName;
-	}
+    public String getFieldName() {
+        return fieldName;
+    }
 }
