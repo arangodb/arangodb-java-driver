@@ -8,9 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [6.5.0] - 2019-xx-xx
 
-- createDatabase with options (replicationFactor, minReplicationFactor, sharding)
-- extended DatabaseEntity with replicationFactor, minReplicationFactor, sharding
- 
+- createDatabase with options (replicationFactor, minReplicationFactor, sharding) (ArangoDB v3.6)
+- extended DatabaseEntity with replicationFactor, minReplicationFactor, sharding (ArangoDB v3.6)
+- timeout option for AQL queries (ArangoDB v3.6)
+- enhancedNgramAnalyzer and enhancedTextAnalyzer (ArangoDB v3.6)
+
 ## [6.4.1] - 2019-10-23
 
 - jackson v2.9.10

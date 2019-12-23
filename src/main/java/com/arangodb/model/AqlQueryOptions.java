@@ -174,6 +174,16 @@ public class AqlQueryOptions implements Serializable {
 		return this;
 	}
 
+    /**
+     * @param timeout The query has to be executed within the given runtime or it will be killed. The value is specified
+	 *                in seconds. The default value is 0.0 (no timeout).
+     * @return options
+     */
+    public AqlQueryOptions maxRuntime(final Double timeout) {
+        getOptions().maxRuntime = timeout;
+        return this;
+    }
+
 	/**
 	 * @return If set to true, then the additional query profiling information will be returned in the sub-attribute
 	 * profile of the extra return attribute if the query result is not served from the query cache.
@@ -396,6 +406,7 @@ public class AqlQueryOptions implements Serializable {
 		private Integer maxPlans;
 		private Boolean stream;
 		private Collection<String> shardIds;
+		private Double maxRuntime;
 
 		protected Optimizer getOptimizer() {
 			if (optimizer == null) {
