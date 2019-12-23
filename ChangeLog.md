@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [6.5.0] - 2019-xx-xx
+## [6.5.0] - 2019-12-23
 
 - createDatabase with options (replicationFactor, minReplicationFactor, sharding) (ArangoDB v3.6)
 - extended DatabaseEntity with replicationFactor, minReplicationFactor, sharding (ArangoDB v3.6)
