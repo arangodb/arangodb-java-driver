@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - extended DatabaseEntity with replicationFactor, minReplicationFactor, sharding (ArangoDB v3.6)
 - timeout option for AQL queries (ArangoDB v3.6)
 - enhancedNgramAnalyzer and enhancedTextAnalyzer (ArangoDB v3.6)
+- velocypack v2.1.0
 
 ## [6.4.1] - 2019-10-23
 
