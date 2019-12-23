@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.5.0] - 2019-xx-xx
+
+- enhancedNgramAnalyzer and enhancedTextAnalyzer (ArangoDB v3.6)
+
 ## [6.4.1] - 2019-10-23
 
 - jackson v2.9.10

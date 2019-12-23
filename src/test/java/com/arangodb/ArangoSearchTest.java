@@ -398,6 +398,34 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
+    public void enhancedNgramAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("max", 6L);
+        properties.put("min", 3L);
+        properties.put("preserveOriginal", true);
+        properties.put("startMarker", "^");
+        properties.put("endMarker", "^");
+        properties.put("streamType", "utf8");
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.ngram);
+        options.setProperties(properties);
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
     public void textAnalyzer() {
         assumeTrue(isAtLeastVersion(3, 5));
 
@@ -414,6 +442,39 @@ public class ArangoSearchTest extends BaseTest {
         properties.put("stopwords", Collections.emptyList());
         properties.put("accent", true);
         properties.put("stemming", true);
+
+        AnalyzerEntity options = new AnalyzerEntity();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setType(AnalyzerType.text);
+        options.setProperties(properties);
+
+        createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void enhancedTextAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        Map<String, Object> edgeNgram = new HashMap<>();
+        edgeNgram.put("min", 2L);
+        edgeNgram.put("max", 100000L);
+        edgeNgram.put("preserveOriginal", true);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("locale", "ru.utf-8");
+        properties.put("case", "lower");
+        properties.put("stopwords", Collections.emptyList());
+        properties.put("accent", true);
+        properties.put("stemming", true);
+        properties.put("edgeNgram", edgeNgram);
 
         AnalyzerEntity options = new AnalyzerEntity();
         options.setFeatures(features);
