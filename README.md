@@ -14,4 +14,4 @@ The official [ArangoDB](https://www.arangodb.com/) Java Driver.
 - [Examples Async](src/test/java/com/arangodb/async/example)
 - [Tutorial](https://www.arangodb.com/tutorials/tutorial-sync-java-driver/)
 - [Documentation](https://www.arangodb.com/docs/stable/drivers/java.html)
-- [JavaDoc](http://arangodb.github.io/arangodb-java-driver/javadoc-6_4/)
+- [JavaDoc](http://arangodb.github.io/arangodb-java-driver/)
