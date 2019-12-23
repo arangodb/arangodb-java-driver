@@ -366,6 +366,7 @@ public class ArangoSearchTest extends BaseTest {
     @Test
     public void ngramAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
+
         String name = "test-" + UUID.randomUUID().toString();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -390,6 +391,7 @@ public class ArangoSearchTest extends BaseTest {
     @Test
     public void textAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
+
         String name = "test-" + UUID.randomUUID().toString();
 
         Set<AnalyzerFeature> features = new HashSet<>();

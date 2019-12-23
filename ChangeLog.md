@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [6.5.0] - 2019-xx-xx
 
-- timeout option for AQL queries
+- timeout option for AQL queries (ArangoDB v3.6)
+- enhancedNgramAnalyzer and enhancedTextAnalyzer (ArangoDB v3.6)
 
 ## [6.4.1] - 2019-10-23
 
