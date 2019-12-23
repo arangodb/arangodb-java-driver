@@ -175,7 +175,8 @@ public class AqlQueryOptions implements Serializable {
 	}
 
     /**
-     * @param timeout TODO: write doc
+     * @param timeout The query has to be executed within the given runtime or it will be killed. The value is specified
+	 *                in seconds. The default value is 0.0 (no timeout).
      * @return options
      */
     public AqlQueryOptions maxRuntime(final Double timeout) {
