@@ -20,12 +20,11 @@
 
 package com.arangodb.async;
 
+import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.*;
-import com.arangodb.model.LogOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -36,11 +35,13 @@ import org.junit.rules.TestRule;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
@@ -54,6 +55,22 @@ public class ArangoDBTest {
 
     @ClassRule
     public static TestRule acquireHostListRule = TestUtils.acquireHostListRule;
+
+    private boolean isEnterprise() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+        return arangoDB.getVersion().getLicense() == License.ENTERPRISE;
+    }
+
+    private boolean isCluster() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+        return arangoDB.getRole() == ServerRole.COORDINATOR;
+    }
+
+    private boolean isAtLeastVersion(final int major, final int minor) {
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+        final String[] split = arangoDB.getVersion().getVersion().split("\\.");
+        return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
+    }
 
     @Test
     public void getVersion() throws InterruptedException, ExecutionException {
@@ -120,6 +137,61 @@ public class ArangoDBTest {
     }
 
     @Test
+    public void createDatabaseWithOptions() throws ExecutionException, InterruptedException {
+        assumeTrue(isCluster());
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
+                .name(dbName)
+                .options(new DatabaseOptions()
+                        .writeConcern(2)
+                        .replicationFactor(2)
+                        .sharding("")
+                )
+        ).get();
+        assertThat(resultCreate, is(true));
+
+        DatabaseEntity info = arangoDB.db(dbName).getInfo().get();
+        assertThat(info.getReplicationFactor(), is(2));
+        assertThat(info.getWriteConcern(), is(2));
+        assertThat(info.getSharding(), is(""));
+        assertThat(info.getSatellite(), nullValue());
+
+        final Boolean resultDelete = arangoDB.db(dbName).drop().get();
+        assertThat(resultDelete, is(true));
+    }
+
+    @Test
+    public void createDatabaseWithOptionsSatellite() throws ExecutionException, InterruptedException {
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
+                .name(dbName)
+                .options(new DatabaseOptions()
+                        .writeConcern(2)
+                        .satellite(true)
+                        .sharding("")
+                )
+        ).get();
+        assertThat(resultCreate, is(true));
+
+        DatabaseEntity info = arangoDB.db(dbName).getInfo().get();
+        assertThat(info.getReplicationFactor(), nullValue());
+        assertThat(info.getSatellite(), is(true));
+        assertThat(info.getWriteConcern(), is(2));
+        assertThat(info.getSharding(), is(""));
+
+        final Boolean resultDelete = arangoDB.db(dbName).drop().get();
+        assertThat(resultDelete, is(true));
+    }
+
+    @Test
     public void deleteDatabase() throws InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final Boolean resultCreate = arangoDB.createDatabase(BaseTest.TEST_DB).get();
@@ -132,20 +204,17 @@ public class ArangoDBTest {
     @Test
     public void getDatabases() throws InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-        try {
-            Collection<String> dbs = arangoDB.getDatabases().get();
-            assertThat(dbs, is(notNullValue()));
-            assertThat(dbs.size(), is(greaterThan(0)));
-            final int dbCount = dbs.size();
-            assertThat(dbs.iterator().next(), is("_system"));
-            arangoDB.createDatabase(BaseTest.TEST_DB).get();
-            dbs = arangoDB.getDatabases().get();
-            assertThat(dbs.size(), is(greaterThan(dbCount)));
-            assertThat(dbs, hasItem("_system"));
-            assertThat(dbs, hasItem(BaseTest.TEST_DB));
-        } finally {
-            arangoDB.db(BaseTest.TEST_DB).drop().get();
-        }
+        Collection<String> dbs = arangoDB.getDatabases().get();
+        assertThat(dbs, is(notNullValue()));
+        assertThat(dbs.size(), is(greaterThan(0)));
+        final int dbCount = dbs.size();
+        assertThat(dbs, hasItem("_system"));
+        arangoDB.createDatabase(BaseTest.TEST_DB).get();
+        dbs = arangoDB.getDatabases().get();
+        assertThat(dbs.size(), is(greaterThan(dbCount)));
+        assertThat(dbs, hasItem("_system"));
+        assertThat(dbs, hasItem(BaseTest.TEST_DB));
+        arangoDB.db(BaseTest.TEST_DB).drop().get();
     }
 
     @Test

@@ -100,10 +100,6 @@ public class OptionsBuilder {
 		return options.name(name);
 	}
 
-	public static DBCreateOptions build(final DBCreateOptions options, final String name) {
-		return options.name(name);
-	}
-
 	public static UserAccessOptions build(final UserAccessOptions options, final Permissions grant) {
 		return options.grant(grant);
 	}

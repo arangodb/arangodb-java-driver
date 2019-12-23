@@ -62,10 +62,10 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
 		return response -> util().deserialize(response.getBody().get("role"), ServerRole.class);
 	}
 	
-	protected Request createDatabaseRequest(final String name) {
+	protected Request createDatabaseRequest(final DBCreateOptions options) {
 		final Request request = request(ArangoRequestParam.SYSTEM, RequestType.POST,
 			InternalArangoDatabase.PATH_API_DATABASE);
-		request.setBody(util().serialize(OptionsBuilder.build(new DBCreateOptions(), name)));
+		request.setBody(util().serialize(options));
 		return request;
 	}
 

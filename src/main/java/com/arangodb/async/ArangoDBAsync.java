@@ -38,6 +38,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
+import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -96,6 +97,17 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     CompletableFuture<Boolean> createDatabase(final String name);
+
+    /**
+     * Creates a new database
+     *
+     * @param options Creation options
+     * @return true if the database was created successfully.
+     * @since ArangoDB 3.6.0
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     */
+    CompletableFuture<Boolean> createDatabase(final DBCreateOptions options);
 
     /**
      * Retrieves a list of all existing databases
