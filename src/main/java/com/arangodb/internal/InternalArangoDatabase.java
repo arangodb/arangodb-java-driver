@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -485,7 +486,20 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         };
     }
 
+    protected ResponseDeserializer<Collection<SearchAnalyzer>> getSearchAnalyzersResponseDeserializer() {
+        return response -> {
+            final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+            return util().deserialize(result, new Type<Collection<SearchAnalyzer>>() {
+            }.getType());
+        };
+    }
+
     protected Request createAnalyzerRequest(final AnalyzerEntity options) {
+        return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
+                .setBody(util().serialize(options));
+    }
+
+    protected Request createAnalyzerRequest(final SearchAnalyzer options) {
         return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
                 .setBody(util().serialize(options));
     }

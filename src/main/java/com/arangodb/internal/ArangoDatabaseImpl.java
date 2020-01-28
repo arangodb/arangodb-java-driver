@@ -23,6 +23,7 @@ package com.arangodb.internal;
 import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.cursor.ArangoCursorImpl;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
@@ -429,13 +430,28 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     }
 
     @Override
+    public SearchAnalyzer createSearchAnalyzer(SearchAnalyzer analyzer) throws ArangoDBException {
+        return executor.execute(createAnalyzerRequest(analyzer), SearchAnalyzer.class);
+    }
+
+    @Override
     public AnalyzerEntity getAnalyzer(String name) throws ArangoDBException {
         return executor.execute(getAnalyzerRequest(name), AnalyzerEntity.class);
     }
 
     @Override
+    public SearchAnalyzer getSearchAnalyzer(String name) throws ArangoDBException {
+        return executor.execute(getAnalyzerRequest(name), SearchAnalyzer.class);
+    }
+
+    @Override
     public Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException {
         return executor.execute(getAnalyzersRequest(), getAnalyzersResponseDeserializer());
+    }
+
+    @Override
+    public Collection<SearchAnalyzer> getSearchAnalyzers() throws ArangoDBException {
+        return executor.execute(getAnalyzersRequest(), getSearchAnalyzersResponseDeserializer());
     }
 
     @Override
@@ -446,6 +462,16 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     @Override
     public void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException {
         executor.execute(deleteAnalyzerRequest(name, options), Void.class);
+    }
+
+    @Override
+    public void deleteSearchAnalyzer(String name) throws ArangoDBException {
+        deleteAnalyzer(name);
+    }
+
+    @Override
+    public void deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException {
+        deleteAnalyzer(name, options);
     }
 
 }

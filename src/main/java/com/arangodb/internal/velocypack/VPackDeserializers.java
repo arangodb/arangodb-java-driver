@@ -22,6 +22,7 @@ package com.arangodb.internal.velocypack;
 
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
+import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
@@ -60,6 +61,26 @@ public class VPackDeserializers {
 
     @SuppressWarnings("unchecked")
     public static final VPackDeserializer<BaseDocument> BASE_DOCUMENT = (parent, vpack, context) -> new BaseDocument((Map) context.deserialize(vpack, Map.class));
+
+    public static final VPackDeserializer<SearchAnalyzer> SEARCH_ANALYZER = (parent, vpack, context) -> {
+        AnalyzerType type = context.deserialize(vpack.get("type"), AnalyzerType.class);
+        switch (type) {
+            case identity:
+                return context.deserialize(vpack, IdentityAnalyzer.class);
+            case text:
+                return context.deserialize(vpack, TextAnalyzer.class);
+            case ngram:
+                return context.deserialize(vpack, NGramAnalyzer.class);
+            case delimiter:
+                return context.deserialize(vpack, DelimiterAnalyzer.class);
+            case stem:
+                return context.deserialize(vpack, StemAnalyzer.class);
+            case norm:
+                return context.deserialize(vpack, NormAnalyzer.class);
+            default:
+                throw new IllegalArgumentException("Unknown analyzer type: " + type);
+        }
+    };
 
     @SuppressWarnings("unchecked")
     public static final VPackDeserializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = (parent, vpack, context) -> new BaseEdgeDocument((Map) context.deserialize(vpack, Map.class));
