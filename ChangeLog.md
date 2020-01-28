@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- updated dependecies
+- bugfix asynchronous shutdown
+
 ## [6.5.0] - 2019-12-23
 
 - createDatabase with options (replicationFactor, minReplicationFactor, sharding) (ArangoDB v3.6)
