@@ -29,11 +29,12 @@ jobs:
     strategy:
       matrix:
         docker-img:
-          - docker.io/arangodb:3.3.23
-          - docker.io/arangodb:3.4.8
-          - docker.io/arangodb:3.5.1
-          - docker.io/arangodb/enterprise:3.4.8
-          - docker.io/arangodb/enterprise:3.5.1
+          - docker.io/arangodb:3.4.9
+          - docker.io/arangodb:3.5.4
+          - docker.io/arangodb:3.6.1
+          - docker.io/arangodb/enterprise:3.4.9
+          - docker.io/arangodb/enterprise:3.5.4
+          - docker.io/arangodb/enterprise:3.6.1
         topology:
           - single
           - cluster
