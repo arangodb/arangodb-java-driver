@@ -28,9 +28,6 @@ import java.util.Objects;
  */
 public class StemAnalyzerProperties {
 
-    /**
-     * TODO: clarify: what are the supported locales? can this field be an enum?
-     */
     private String locale;
 
     public String getLocale() {

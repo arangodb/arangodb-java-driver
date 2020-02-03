@@ -36,9 +36,6 @@ public class TextAnalyzerProperties {
         stopwords = Collections.emptyList();
     }
 
-    /**
-     * TODO: clarify: what are the supported locales? can this field be an enum?
-     */
     private String locale;
 
     private boolean accent;
@@ -52,10 +49,6 @@ public class TextAnalyzerProperties {
 
     private List<String> stopwords;
 
-    /**
-     * FIXME: the server-side API should be modeled as List<String> and avoid the following:
-     * > Each word has to be on a separate line.
-     */
     private String stopwordsPath;
 
     public String getLocale() {

@@ -30,9 +30,6 @@ import java.util.Objects;
  */
 public class NormAnalyzerProperties {
 
-    /**
-     * TODO: clarify: what are the supported locales? can this field be an enum?
-     */
     private String locale;
 
     private boolean accent;

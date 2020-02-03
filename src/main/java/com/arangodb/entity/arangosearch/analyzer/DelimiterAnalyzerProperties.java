@@ -28,12 +28,6 @@ import java.util.Objects;
  */
 public class DelimiterAnalyzerProperties {
 
-    /**
-     * TODO: clarify the following:
-     * > delimiter (string): the delimiting character(s)
-     * https://www.arangodb.com/docs/3.7/arangosearch-analyzers.html#delimiter
-     * can this be optionally a list? or comma separated chars?
-     */
     private String delimiter;
 
     public String getDelimiter() {
