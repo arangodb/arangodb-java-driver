@@ -25,6 +25,7 @@ import java.util.Set;
 
 /**
  * @author Michele Rastelli
+ * @deprecated use typed analyzers {@link com.arangodb.entity.arangosearch.analyzer}
  */
 public class AnalyzerEntity {
 
