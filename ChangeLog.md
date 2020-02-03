@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.6.0] - 2020-02-03
+
 - typed ArangoSearch analyzers
 - updated dependecies
 - bugfix asynchronous shutdown
