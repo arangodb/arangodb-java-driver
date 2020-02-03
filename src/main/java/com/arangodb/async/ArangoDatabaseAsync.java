@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
@@ -704,8 +705,20 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @return the created Analyzer
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
+     * @deprecated use {@link this#createSearchAnalyzer(SearchAnalyzer)}}
      */
     CompletableFuture<AnalyzerEntity> createAnalyzer(AnalyzerEntity options);
+
+    /**
+     * Creates an Analyzer
+     *
+     * @param analyzer SearchAnalyzer
+     * @return the created Analyzer
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
+     * @since ArangoDB 3.5.0
+     */
+    CompletableFuture<SearchAnalyzer> createSearchAnalyzer(SearchAnalyzer analyzer);
 
     /**
      * Gets information about an Analyzer
@@ -714,8 +727,20 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @return information about an Analyzer
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
+     * @deprecated use {@link this#getSearchAnalyzer(String)}}
      */
     CompletableFuture<AnalyzerEntity> getAnalyzer(String name);
+
+    /**
+     * Gets information about an Analyzer
+     *
+     * @param name of the Analyzer without database prefix
+     * @return information about an Analyzer
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
+     * @since ArangoDB 3.5.0
+     */
+    CompletableFuture<SearchAnalyzer> getSearchAnalyzer(String name);
 
     /**
      * Retrieves all analyzers definitions.
@@ -723,8 +748,19 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @return collection of all analyzers definitions
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
+     * @deprecated use {@link this#getSearchAnalyzers()}
      */
     CompletableFuture<Collection<AnalyzerEntity>> getAnalyzers();
+
+    /**
+     * Retrieves all analyzers definitions.
+     *
+     * @return collection of all analyzers definitions
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
+     * @since ArangoDB 3.5.0
+     */
+    CompletableFuture<Collection<SearchAnalyzer>> getSearchAnalyzers();
 
     /**
      * Deletes an Analyzer
@@ -732,6 +768,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param name of the Analyzer without database prefix
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
+     * @deprecated use {@link this#deleteSearchAnalyzer(String)}}}
      */
     CompletableFuture<Void> deleteAnalyzer(String name);
 
@@ -742,7 +779,29 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @param options AnalyzerDeleteOptions
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
+     * @deprecated use {@link this#deleteSearchAnalyzer(String, AnalyzerDeleteOptions)}}}
      */
     CompletableFuture<Void> deleteAnalyzer(String name, AnalyzerDeleteOptions options);
+
+    /**
+     * Deletes an Analyzer
+     *
+     * @param name of the Analyzer without database prefix
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
+     * @since ArangoDB 3.5.0
+     */
+    CompletableFuture<Void> deleteSearchAnalyzer(String name);
+
+    /**
+     * Deletes an Analyzer
+     *
+     * @param name    of the Analyzer without database prefix
+     * @param options AnalyzerDeleteOptions
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
+     * @since ArangoDB 3.5.0
+     */
+    CompletableFuture<Void> deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options);
 
 }

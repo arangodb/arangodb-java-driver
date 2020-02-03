@@ -304,7 +304,8 @@ public class ArangoSearchTest extends BaseTest {
             db.getAnalyzer(analyzer.getName());
             fail("deleted analyzer should not be found!");
         } catch (ArangoDBException e) {
-            // ok
+            assertThat(e.getResponseCode(), is(404));
+            assertThat(e.getErrorNum(), is(1202));
         }
 
     }
