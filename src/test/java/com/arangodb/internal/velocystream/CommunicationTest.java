@@ -56,11 +56,11 @@ public class CommunicationTest {
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
         final Thread fast = new Thread(() -> {
-            arangoDB.db().query("return sleep(.01)", null, null, null);
+            arangoDB.db().query("return sleep(0.1)", null, null, null);
             result.add(FAST);
         });
         final Thread slow = new Thread(() -> {
-            arangoDB.db().query("return sleep(.05)", null, null, null);
+            arangoDB.db().query("return sleep(0.5)", null, null, null);
             result.add(SLOW);
         });
         slow.start();
@@ -84,11 +84,11 @@ public class CommunicationTest {
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
         final Thread t1 = new Thread(() -> {
-            db.query("return sleep(.01)", null, null, null);
+            db.query("return sleep(0.1)", null, null, null);
             result.add("1");
         });
         final Thread t2 = new Thread(() -> {
-            db.query("return sleep(.01)", null, null, null);
+            db.query("return sleep(0.1)", null, null, null);
             result.add("1");
         });
         t2.start();
