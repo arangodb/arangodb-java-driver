@@ -20,19 +20,20 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.UUID;
 
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -43,21 +44,17 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test";
 
-    public ConcurrentStreamTransactionsTest(final Builder builder) {
-        super(builder);
-        if (db.collection(COLLECTION_NAME).exists())
-            db.collection(COLLECTION_NAME).drop();
-
-        db.createCollection(COLLECTION_NAME, null);
+    @BeforeClass
+    public static void init() {
+        BaseTest.initCollections(COLLECTION_NAME);
     }
 
-    @After
-    public void teardown() {
-        if (db.collection(COLLECTION_NAME).exists())
-            db.collection(COLLECTION_NAME).drop();
+    public ConcurrentStreamTransactionsTest(final ArangoDB arangoDB) {
+        super(arangoDB);
     }
 
     @Test
+    @Ignore
     public void conflictOnInsertDocumentWithNotYetCommittedTx() {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
@@ -80,7 +77,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
                     new DocumentCreateOptions().streamTransactionId(tx2.getId()));
 
-            throw new RuntimeException("This should never be thrown");
+            fail();
         } catch (ArangoDBException e) {
             e.printStackTrace();
         }
@@ -115,7 +112,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
                     new DocumentCreateOptions().streamTransactionId(tx2.getId()));
 
-            throw new RuntimeException("This should never be thrown");
+            fail();
         } catch (ArangoDBException e) {
             e.printStackTrace();
         }

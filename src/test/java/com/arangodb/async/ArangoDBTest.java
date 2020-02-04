@@ -37,9 +37,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -308,10 +309,11 @@ public class ArangoDBTest {
             arangoDB.getUsers()
                     .whenComplete((users, ex) -> {
                         assertThat(users, is(notNullValue()));
-                        assertThat(users.size(), is(2));
-                        for (final UserEntity user : users) {
-                            assertThat(user.getUser(), anyOf(is(ROOT), is(USER)));
-                        }
+                        assertThat(users.size(), greaterThanOrEqualTo(2));
+                        assertThat(
+                                users.stream().map(UserEntity::getUser).collect(Collectors.toList()),
+                                hasItems(ROOT, USER)
+                        );
                     })
                     .get();
         } finally {

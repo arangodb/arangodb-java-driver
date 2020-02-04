@@ -24,20 +24,21 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
 public class MapBuilderTest {
 
-    @Test
-    public void build() {
-        final Map<String, Object> map = new MapBuilder().put("foo", "bar").get();
-        assertThat(map.size(), is(1));
-        assertThat(map.get("foo"), is(notNullValue()));
-        assertThat(map.get("foo").toString(), is("bar"));
-    }
+	@Test
+	public void build() {
+		final Map<String, Object> map = new MapBuilder().put("foo", "bar").get();
+		assertThat(map.size(), is(1));
+		assertThat(map.get("foo"), is(notNullValue()));
+		assertThat(map.get("foo").toString(), is("bar"));
+	}
 }

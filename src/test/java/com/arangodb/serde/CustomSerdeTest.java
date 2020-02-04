@@ -27,20 +27,20 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.VelocyJack;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.model.DocumentCreateOptions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+
 
 /**
  * @author Michele Rastelli
@@ -49,11 +49,11 @@ public class CustomSerdeTest {
 
     private static final String COLLECTION_NAME = "collection";
 
-    private ArangoDatabase db;
-    private ArangoCollection collection;
+    private static ArangoDatabase db;
+    private static ArangoCollection collection;
 
-    @Before
-    public void init() {
+    @BeforeClass
+    public static void init() {
         VelocyJack velocyJack = new VelocyJack();
         velocyJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
@@ -73,8 +73,8 @@ public class CustomSerdeTest {
         }
     }
 
-    @After
-    public void shutdown() {
+    @AfterClass
+    public static void shutdown() {
         if (db.exists())
             db.drop();
     }

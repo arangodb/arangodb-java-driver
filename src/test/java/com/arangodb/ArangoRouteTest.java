@@ -20,16 +20,16 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.velocystream.Response;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
@@ -38,8 +38,17 @@ import static org.junit.Assert.fail;
 @RunWith(Parameterized.class)
 public class ArangoRouteTest extends BaseTest {
 
-    public ArangoRouteTest(final Builder builder) {
-        super(builder);
+    private static final String COLLECTION_NAME = "ArangoRouteTest_collection";
+    private final ArangoCollection collection;
+
+    @BeforeClass
+    public static void init() {
+        BaseTest.initCollections(COLLECTION_NAME);
+    }
+
+	public ArangoRouteTest(final ArangoDB arangoDB) {
+		super(arangoDB);
+        collection = db.collection(COLLECTION_NAME);
     }
 
     @Test
@@ -50,9 +59,7 @@ public class ArangoRouteTest extends BaseTest {
 
     @Test
     public void withHeader() {
-        final ArangoCollection collection = db.collection("route-test-col");
         try {
-            collection.create();
             final BaseDocument doc = new BaseDocument();
             collection.insertDocument(doc);
             db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
@@ -60,16 +67,12 @@ public class ArangoRouteTest extends BaseTest {
             fail();
         } catch (final ArangoDBException e) {
             assertThat(e.getResponseCode(), is(304));
-        } finally {
-            collection.drop();
         }
     }
 
     @Test
     public void withParentHeader() {
-        final ArangoCollection collection = db.collection("route-test-col");
         try {
-            collection.create();
             final BaseDocument doc = new BaseDocument();
             collection.insertDocument(doc);
             db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
@@ -77,8 +80,6 @@ public class ArangoRouteTest extends BaseTest {
             fail();
         } catch (final ArangoDBException e) {
             assertThat(e.getResponseCode(), is(304));
-        } finally {
-            collection.drop();
         }
     }
 

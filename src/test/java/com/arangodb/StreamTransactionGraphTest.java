@@ -20,10 +20,10 @@
 
 package com.arangodb;
 
-import com.arangodb.ArangoDB.Builder;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import org.junit.After;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,9 +31,9 @@ import org.junit.runners.Parameterized;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -52,9 +52,13 @@ public class StreamTransactionGraphTest extends BaseTest {
     private final ArangoVertexCollection vertexCollection2;
     private final ArangoEdgeCollection edgeCollection;
 
-    public StreamTransactionGraphTest(final Builder builder) {
-        super(builder);
+    @BeforeClass
+    public static void init() {
+        BaseTest.initDB();
+    }
 
+    public StreamTransactionGraphTest(final ArangoDB arangoDB) {
+        super(arangoDB);
         graph = db.graph(GRAPH_NAME);
 
         if (graph.exists())
