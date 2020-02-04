@@ -44,10 +44,7 @@ public abstract class BaseTest {
     static final List<ArangoDB> arangos = Arrays.asList(
             new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.VST).acquireHostList(true).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).acquireHostList(true).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).acquireHostList(true).build()
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build()
     );
 
     @Parameters
