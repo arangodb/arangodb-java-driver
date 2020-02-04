@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Graph traversals in AQL

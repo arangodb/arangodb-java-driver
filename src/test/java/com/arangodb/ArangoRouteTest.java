@@ -20,25 +20,16 @@
 
 package com.arangodb;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import static org.junit.Assert.fail;
-
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.internal.ArangoRequestParam;
+import com.arangodb.velocystream.Response;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.internal.ArangoRequestParam;
-import com.arangodb.velocystream.Response;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**

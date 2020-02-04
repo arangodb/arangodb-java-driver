@@ -20,13 +20,6 @@
 
 package com.arangodb.entity;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-
-
-import org.junit.Test;
-
 import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPack.Builder;
@@ -36,9 +29,9 @@ import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary

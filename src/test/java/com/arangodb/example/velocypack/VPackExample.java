@@ -20,14 +20,6 @@
 
 package com.arangodb.example.velocypack;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import org.junit.Test;
-
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
@@ -37,8 +29,8 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary

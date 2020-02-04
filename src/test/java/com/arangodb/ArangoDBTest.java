@@ -20,21 +20,13 @@
 
 package com.arangodb;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-
-import static org.junit.Assert.fail;
-
-import java.util.*;
-
+import com.arangodb.entity.*;
+import com.arangodb.model.*;
+import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocystream.Request;
+import com.arangodb.velocystream.RequestType;
+import com.arangodb.velocystream.Response;
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,28 +35,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.UserEntity;
-import com.arangodb.model.LogOptions;
-import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.velocypack.exception.VPackException;
-import com.arangodb.velocystream.Request;
-import com.arangodb.velocystream.RequestType;
-import com.arangodb.velocystream.Response;
-import org.hamcrest.Matcher;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import java.util.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 

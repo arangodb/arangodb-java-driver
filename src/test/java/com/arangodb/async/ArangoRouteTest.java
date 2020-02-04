@@ -28,7 +28,7 @@ import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 /**

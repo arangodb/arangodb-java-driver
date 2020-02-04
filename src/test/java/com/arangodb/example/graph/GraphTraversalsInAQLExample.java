@@ -20,6 +20,12 @@
 
 package com.arangodb.example.graph;
 
+import com.arangodb.ArangoCursor;
+import com.arangodb.ArangoDBException;
+import org.junit.Test;
+
+import java.util.Collection;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;

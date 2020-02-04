@@ -20,6 +20,13 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.DocumentField;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -39,10 +46,10 @@ public class DocumentCacheTest {
         assertThat(doc.getKey(), is(nullValue()));
         assertThat(doc.getRevision(), is(nullValue()));
 
-        final Map<Type, String> values = new HashMap<>();
-        values.put(Type.ID, "testId");
-        values.put(Type.KEY, "testKey");
-        values.put(Type.REV, "testRev");
+        final Map<DocumentField.Type, String> values = new HashMap<>();
+        values.put(DocumentField.Type.ID, "testId");
+        values.put(DocumentField.Type.KEY, "testKey");
+        values.put(DocumentField.Type.REV, "testRev");
         cache.setValues(doc, values);
 
         assertThat(doc.getId(), is("testId"));
@@ -55,10 +62,10 @@ public class DocumentCacheTest {
         final DocumentCache cache = new DocumentCache();
         final Map<String, String> map = new HashMap<>();
 
-        final Map<Type, String> values = new HashMap<>();
-        values.put(Type.ID, "testId");
-        values.put(Type.KEY, "testKey");
-        values.put(Type.REV, "testRev");
+        final Map<DocumentField.Type, String> values = new HashMap<>();
+        values.put(DocumentField.Type.ID, "testId");
+        values.put(DocumentField.Type.KEY, "testKey");
+        values.put(DocumentField.Type.REV, "testRev");
         cache.setValues(map, values);
 
         assertThat(map.isEmpty(), is(true));

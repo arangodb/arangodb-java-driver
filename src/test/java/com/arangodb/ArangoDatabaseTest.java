@@ -259,8 +259,6 @@ public class ArangoDatabaseTest extends BaseTest {
 
         assertThat(db.collection(name1).getProperties().getNumberOfShards(), is(numberOfShards));
         assertThat(db.collection(name2).getProperties().getNumberOfShards(), is(numberOfShards));
-
-        db.collection(COLLECTION_NAME + "2").drop();
     }
 
     private void createCollectionWithKeyType(KeyType keyType) {
