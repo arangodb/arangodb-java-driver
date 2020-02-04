@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         docker-img:
           - docker.io/arangodb:3.4.9
