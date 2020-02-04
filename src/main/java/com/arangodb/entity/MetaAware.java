@@ -4,12 +4,11 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface MetaAware {
 
-	Map<String, String> getMeta();
+    Map<String, String> getMeta();
 
-	void setMeta(final Map<String, String> meta);
+    void setMeta(final Map<String, String> meta);
 
 }

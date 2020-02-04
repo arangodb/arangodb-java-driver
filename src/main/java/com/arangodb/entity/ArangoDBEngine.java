@@ -22,26 +22,26 @@ package com.arangodb.entity;
 
 /**
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-database-engine-type">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-database-engine-type">API
  * Documentation</a>
  */
 public class ArangoDBEngine implements Entity {
 
-	public enum StorageEngineName {
-		mmfiles, rocksdb
-	}
+    public enum StorageEngineName {
+        mmfiles, rocksdb
+    }
 
-	private StorageEngineName name;
+    private StorageEngineName name;
 
-	public ArangoDBEngine() {
-		super();
-	}
+    public ArangoDBEngine() {
+        super();
+    }
 
-	/**
-	 * @return the storage engine name
-	 */
-	public StorageEngineName getName() {
-		return name;
-	}
+    /**
+     * @return the storage engine name
+     */
+    public StorageEngineName getName() {
+        return name;
+    }
 
 }

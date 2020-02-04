@@ -26,29 +26,28 @@ import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class InternalArangoSearch<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
-		extends InternalArangoView<A, D, E> {
+        extends InternalArangoView<A, D, E> {
 
-	protected InternalArangoSearch(final D db, final String name) {
-		super(db, name);
-	}
+    protected InternalArangoSearch(final D db, final String name) {
+        super(db, name);
+    }
 
-	protected Request getPropertiesRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_VIEW, name, "properties");
-	}
+    protected Request getPropertiesRequest() {
+        return request(db.name(), RequestType.GET, PATH_API_VIEW, name, "properties");
+    }
 
-	protected Request replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-		final Request request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, "properties");
-		request.setBody(util().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
-		return request;
-	}
+    protected Request replacePropertiesRequest(final ArangoSearchPropertiesOptions options) {
+        final Request request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, "properties");
+        request.setBody(util().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
+        return request;
+    }
 
-	protected Request updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
-		final Request request = request(db.name(), RequestType.PATCH, PATH_API_VIEW, name, "properties");
-		request.setBody(util().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
-		return request;
-	}
+    protected Request updatePropertiesRequest(final ArangoSearchPropertiesOptions options) {
+        final Request request = request(db.name(), RequestType.PATCH, PATH_API_VIEW, name, "properties");
+        request.setBody(util().serialize(options != null ? options : new ArangoSearchPropertiesOptions()));
+        return request;
+    }
 
 }

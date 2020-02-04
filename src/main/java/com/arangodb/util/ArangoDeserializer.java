@@ -20,27 +20,24 @@
 
 package com.arangodb.util;
 
-import java.lang.reflect.Type;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.velocypack.VPackSlice;
 
+import java.lang.reflect.Type;
+
 /**
  * @author Mark Vollmary
- *
  */
 public interface ArangoDeserializer {
 
-	/**
-	 * Deserialize a given VelocyPack to an instance of a given type
-	 * 
-	 * @param vpack
-	 *            The VelocyPack to deserialize
-	 * @param type
-	 *            The target type to deserialize to. Use String for raw JSON.
-	 * @return The deserialized VelocyPack
-	 * @throws ArangoDBException
-	 */
-	<T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException;
+    /**
+     * Deserialize a given VelocyPack to an instance of a given type
+     *
+     * @param vpack The VelocyPack to deserialize
+     * @param type  The target type to deserialize to. Use String for raw JSON.
+     * @return The deserialized VelocyPack
+     * @throws ArangoDBException
+     */
+    <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException;
 
 }

@@ -38,7 +38,6 @@ import static org.hamcrest.Matchers.*;
 
 /**
  * @author Mark Vollmary
- *
  */
 @RunWith(Parameterized.class)
 public class ArangoCursorTest extends BaseTest {
@@ -60,16 +59,16 @@ public class ArangoCursorTest extends BaseTest {
 		assertThat(first.isInteger(), is(true));
 		assertThat(first.getAsLong(), is(0L));
 	}
-	
+
 	@Test
 	public void next() {
-		
+
 		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), VPackSlice.class);
-	
-		while(cursor.hasNext()) {
-			cursor.next();	
+
+		while (cursor.hasNext()) {
+			cursor.next();
 		}
-		
+
 	}
 
 	@Test

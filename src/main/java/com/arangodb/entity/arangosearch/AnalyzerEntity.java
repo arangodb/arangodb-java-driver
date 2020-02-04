@@ -25,47 +25,48 @@ import java.util.Set;
 
 /**
  * @author Michele Rastelli
+ * @deprecated use typed analyzers {@link com.arangodb.entity.arangosearch.analyzer}
  */
 public class AnalyzerEntity {
 
-	private Set<AnalyzerFeature> features;
-	private AnalyzerType type;
-	private String name;
-	private Map<String, Object> properties;
+    private Set<AnalyzerFeature> features;
+    private AnalyzerType type;
+    private String name;
+    private Map<String, Object> properties;
 
-	public AnalyzerEntity() {
-	}
+    public AnalyzerEntity() {
+    }
 
-	public Set<AnalyzerFeature> getFeatures() {
-		return features;
-	}
+    public Set<AnalyzerFeature> getFeatures() {
+        return features;
+    }
 
-	public void setFeatures(Set<AnalyzerFeature> features) {
-		this.features = features;
-	}
+    public void setFeatures(Set<AnalyzerFeature> features) {
+        this.features = features;
+    }
 
-	public AnalyzerType getType() {
-		return type;
-	}
+    public AnalyzerType getType() {
+        return type;
+    }
 
-	public void setType(AnalyzerType type) {
-		this.type = type;
-	}
+    public void setType(AnalyzerType type) {
+        this.type = type;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Map<String, Object> getProperties() {
-		return properties;
-	}
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, Object> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 
 }

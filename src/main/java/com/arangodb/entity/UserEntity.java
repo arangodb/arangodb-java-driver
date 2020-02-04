@@ -24,39 +24,38 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html">API Documentation</a>
  */
 public class UserEntity implements Entity {
 
-	private String user;
-	private Boolean active;
-	private Map<String, Object> extra;
-	private Boolean changePassword;
+    private String user;
+    private Boolean active;
+    private Map<String, Object> extra;
+    private Boolean changePassword;
 
-	/**
-	 * @return The name of the user as a string
-	 */
-	public String getUser() {
-		return user;
-	}
+    /**
+     * @return The name of the user as a string
+     */
+    public String getUser() {
+        return user;
+    }
 
-	/**
-	 * @return An flag that specifies whether the user is active
-	 */
-	public Boolean getActive() {
-		return active;
-	}
+    /**
+     * @return An flag that specifies whether the user is active
+     */
+    public Boolean getActive() {
+        return active;
+    }
 
-	/**
-	 * @return An object with arbitrary extra data about the user
-	 */
-	public Map<String, Object> getExtra() {
-		return extra;
-	}
+    /**
+     * @return An object with arbitrary extra data about the user
+     */
+    public Map<String, Object> getExtra() {
+        return extra;
+    }
 
-	public Boolean getChangePassword() {
-		return changePassword;
-	}
+    public Boolean getChangePassword() {
+        return changePassword;
+    }
 
 }

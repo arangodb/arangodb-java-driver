@@ -24,5 +24,5 @@ package com.arangodb.entity.arangosearch;
  * @author Michele Rastelli
  */
 public enum AnalyzerFeature {
-	frequency, norm, position
+    frequency, norm, position
 }

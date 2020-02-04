@@ -20,59 +20,57 @@
 
 package com.arangodb;
 
-import org.junit.Test;
-
 import com.arangodb.internal.util.DocumentUtil;
+import org.junit.Test;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoDocumentUtilTest {
 
-	@Test
-	public void validateDocumentKeyValid() {
-		checkDocumentKey("1test");
-		checkDocumentKey("test1");
-		checkDocumentKey("test-1");
-		checkDocumentKey("test_1");
-		checkDocumentKey("_test");
-	}
+    @Test
+    public void validateDocumentKeyValid() {
+        checkDocumentKey("1test");
+        checkDocumentKey("test1");
+        checkDocumentKey("test-1");
+        checkDocumentKey("test_1");
+        checkDocumentKey("_test");
+    }
 
-	@Test(expected = ArangoDBException.class)
-	public void validateDocumentKeyInvalidSlash() {
-		checkDocumentKey("test/test");
-	}
+    @Test(expected = ArangoDBException.class)
+    public void validateDocumentKeyInvalidSlash() {
+        checkDocumentKey("test/test");
+    }
 
-	@Test(expected = ArangoDBException.class)
-	public void validateDocumentKeyEmpty() {
-		checkDocumentKey("");
-	}
+    @Test(expected = ArangoDBException.class)
+    public void validateDocumentKeyEmpty() {
+        checkDocumentKey("");
+    }
 
-	private void checkDocumentKey(final String key) throws ArangoDBException {
-		DocumentUtil.validateDocumentKey(key);
-	}
+    private void checkDocumentKey(final String key) throws ArangoDBException {
+        DocumentUtil.validateDocumentKey(key);
+    }
 
-	@Test
-	public void validateDocumentIdValid() {
-		checkDocumentId("1test/1test");
-		checkDocumentId("test1/test1");
-		checkDocumentId("test-1/test-1");
-		checkDocumentId("test_1/test_1");
-		checkDocumentId("_test/_test");
-	}
+    @Test
+    public void validateDocumentIdValid() {
+        checkDocumentId("1test/1test");
+        checkDocumentId("test1/test1");
+        checkDocumentId("test-1/test-1");
+        checkDocumentId("test_1/test_1");
+        checkDocumentId("_test/_test");
+    }
 
-	@Test(expected = ArangoDBException.class)
-	public void validateDocumentIdInvalidWithoutSlash() {
-		checkDocumentId("test");
-	}
+    @Test(expected = ArangoDBException.class)
+    public void validateDocumentIdInvalidWithoutSlash() {
+        checkDocumentId("test");
+    }
 
-	@Test(expected = ArangoDBException.class)
-	public void validateDocumentIdEmpty() {
-		checkDocumentId("");
-	}
+    @Test(expected = ArangoDBException.class)
+    public void validateDocumentIdEmpty() {
+        checkDocumentId("");
+    }
 
-	private void checkDocumentId(final String id) throws ArangoDBException {
-		DocumentUtil.validateDocumentId(id);
-	}
+    private void checkDocumentId(final String id) throws ArangoDBException {
+        DocumentUtil.validateDocumentId(id);
+    }
 }

@@ -20,55 +20,54 @@
 
 package com.arangodb.internal.cursor;
 
-import java.util.NoSuchElementException;
-
 import com.arangodb.ArangoIterator;
 import com.arangodb.Predicate;
 
+import java.util.NoSuchElementException;
+
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoFilterIterator<T> implements ArangoIterator<T> {
 
-	private final ArangoIterator<T> iterator;
-	private final Predicate<? super T> predicate;
-	private T next;
+    private final ArangoIterator<T> iterator;
+    private final Predicate<? super T> predicate;
+    private T next;
 
-	protected ArangoFilterIterator(final ArangoIterator<T> iterator, final Predicate<? super T> predicate) {
-		super();
-		this.iterator = iterator;
-		this.predicate = predicate;
-		next = null;
-	}
+    protected ArangoFilterIterator(final ArangoIterator<T> iterator, final Predicate<? super T> predicate) {
+        super();
+        this.iterator = iterator;
+        this.predicate = predicate;
+        next = null;
+    }
 
-	@Override
-	public boolean hasNext() {
-		if (next != null) {
-			return true;
-		}
-		while (iterator.hasNext()) {
-			next = iterator.next();
-			if (predicate.test(next)) {
-				return true;
-			}
-		}
-		next = null;
-		return false;
-	}
+    @Override
+    public boolean hasNext() {
+        if (next != null) {
+            return true;
+        }
+        while (iterator.hasNext()) {
+            next = iterator.next();
+            if (predicate.test(next)) {
+                return true;
+            }
+        }
+        next = null;
+        return false;
+    }
 
-	@Override
-	public T next() {
-		if (next == null && !hasNext()) {
-			throw new NoSuchElementException();
-		}
-		final T tmp = next;
-		next = null;
-		return tmp;
-	}
+    @Override
+    public T next() {
+        if (next == null && !hasNext()) {
+            throw new NoSuchElementException();
+        }
+        final T tmp = next;
+        next = null;
+        return tmp;
+    }
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
 }

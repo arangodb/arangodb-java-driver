@@ -27,113 +27,107 @@ import java.util.Collection;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#explain-an-aql-query">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#explain-an-aql-query">API Documentation</a>
  */
 public class AqlQueryExplainOptions {
 
-	private VPackSlice bindVars;
-	private String query;
-	private Options options;
+    private VPackSlice bindVars;
+    private String query;
+    private Options options;
 
-	public AqlQueryExplainOptions() {
-		super();
-	}
+    public AqlQueryExplainOptions() {
+        super();
+    }
 
-	protected VPackSlice getBindVars() {
-		return bindVars;
-	}
+    protected VPackSlice getBindVars() {
+        return bindVars;
+    }
 
-	/**
-	 * @param bindVars
-	 *            key/value pairs representing the bind parameters
-	 * @return options
-	 */
-	protected AqlQueryExplainOptions bindVars(final VPackSlice bindVars) {
-		this.bindVars = bindVars;
-		return this;
-	}
+    /**
+     * @param bindVars key/value pairs representing the bind parameters
+     * @return options
+     */
+    protected AqlQueryExplainOptions bindVars(final VPackSlice bindVars) {
+        this.bindVars = bindVars;
+        return this;
+    }
 
-	protected String getQuery() {
-		return query;
-	}
+    protected String getQuery() {
+        return query;
+    }
 
-	/**
-	 * @param query
-	 *            the query which you want explained
-	 * @return options
-	 */
-	protected AqlQueryExplainOptions query(final String query) {
-		this.query = query;
-		return this;
-	}
+    /**
+     * @param query the query which you want explained
+     * @return options
+     */
+    protected AqlQueryExplainOptions query(final String query) {
+        this.query = query;
+        return this;
+    }
 
-	public Integer getMaxNumberOfPlans() {
-		return getOptions().maxNumberOfPlans;
-	}
+    public Integer getMaxNumberOfPlans() {
+        return getOptions().maxNumberOfPlans;
+    }
 
-	/**
-	 * @param maxNumberOfPlans
-	 *            an optional maximum number of plans that the optimizer is allowed to generate. Setting this attribute
-	 *            to a low value allows to put a cap on the amount of work the optimizer does.
-	 * @return options
-	 */
-	public AqlQueryExplainOptions maxNumberOfPlans(final Integer maxNumberOfPlans) {
-		getOptions().maxNumberOfPlans = maxNumberOfPlans;
-		return this;
-	}
+    /**
+     * @param maxNumberOfPlans an optional maximum number of plans that the optimizer is allowed to generate. Setting this attribute
+     *                         to a low value allows to put a cap on the amount of work the optimizer does.
+     * @return options
+     */
+    public AqlQueryExplainOptions maxNumberOfPlans(final Integer maxNumberOfPlans) {
+        getOptions().maxNumberOfPlans = maxNumberOfPlans;
+        return this;
+    }
 
-	public Boolean getAllPlans() {
-		return getOptions().allPlans;
-	}
+    public Boolean getAllPlans() {
+        return getOptions().allPlans;
+    }
 
-	/**
-	 * @param allPlans
-	 *            if set to true, all possible execution plans will be returned. The default is false, meaning only the
-	 *            optimal plan will be returned.
-	 * @return options
-	 */
-	public AqlQueryExplainOptions allPlans(final Boolean allPlans) {
-		getOptions().allPlans = allPlans;
-		return this;
-	}
+    /**
+     * @param allPlans if set to true, all possible execution plans will be returned. The default is false, meaning only the
+     *                 optimal plan will be returned.
+     * @return options
+     */
+    public AqlQueryExplainOptions allPlans(final Boolean allPlans) {
+        getOptions().allPlans = allPlans;
+        return this;
+    }
 
-	public Collection<String> getRules() {
-		return getOptions().getOptimizer().rules;
-	}
+    public Collection<String> getRules() {
+        return getOptions().getOptimizer().rules;
+    }
 
-	/**
-	 * @param rules
-	 *            an array of to-be-included or to-be-excluded optimizer rules can be put into this attribute, telling
-	 *            the optimizer to include or exclude specific rules.
-	 * @return options
-	 */
-	public AqlQueryExplainOptions rules(final Collection<String> rules) {
-		getOptions().getOptimizer().rules = rules;
-		return this;
-	}
+    /**
+     * @param rules an array of to-be-included or to-be-excluded optimizer rules can be put into this attribute, telling
+     *              the optimizer to include or exclude specific rules.
+     * @return options
+     */
+    public AqlQueryExplainOptions rules(final Collection<String> rules) {
+        getOptions().getOptimizer().rules = rules;
+        return this;
+    }
 
-	private Options getOptions() {
-		if (options == null) {
-			options = new Options();
-		}
-		return options;
-	}
+    private Options getOptions() {
+        if (options == null) {
+            options = new Options();
+        }
+        return options;
+    }
 
-	private static class Options {
-		private Optimizer optimizer;
-		private Integer maxNumberOfPlans;
-		private Boolean allPlans;
+    private static class Options {
+        private Optimizer optimizer;
+        private Integer maxNumberOfPlans;
+        private Boolean allPlans;
 
-		protected Optimizer getOptimizer() {
-			if (optimizer == null) {
-				optimizer = new Optimizer();
-			}
-			return optimizer;
-		}
-	}
+        protected Optimizer getOptimizer() {
+            if (optimizer == null) {
+                optimizer = new Optimizer();
+            }
+            return optimizer;
+        }
+    }
 
-	private static class Optimizer {
-		private Collection<String> rules;
-	}
+    private static class Optimizer {
+        private Collection<String> rules;
+    }
 }

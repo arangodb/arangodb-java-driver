@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB view level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Views/">View API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views.html">View API Documentation</a>
  * @since ArangoDB 3.4.0
  */
 @SuppressWarnings("unused")
@@ -59,7 +59,7 @@ public interface ArangoViewAsync extends ArangoSerializationAccessor {
     /**
      * Deletes the view from the database.
      *
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/Views/Creating.html#drops-a-view">API Documentation</a>
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#drops-a-view">API Documentation</a>
      */
     CompletableFuture<Void> drop();
 
@@ -68,7 +68,7 @@ public interface ArangoViewAsync extends ArangoSerializationAccessor {
      *
      * @param newName The new name
      * @return information about the view
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/Views/Modifying.html#rename-view">API Documentation</a>
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#rename-a-view">API Documentation</a>
      */
     CompletableFuture<ViewEntity> rename(String newName);
 
@@ -76,7 +76,7 @@ public interface ArangoViewAsync extends ArangoSerializationAccessor {
      * Returns information about the view.
      *
      * @return information about the view
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/Views/Getting.html#return-information-about-a-view">API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/views-arangosearch.html#return-information-about-a-view">API
      * Documentation</a>
      */
     CompletableFuture<ViewEntity> getInfo();

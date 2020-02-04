@@ -22,8 +22,7 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum ImportType {
-	documents, list, auto
+    documents, list, auto
 }

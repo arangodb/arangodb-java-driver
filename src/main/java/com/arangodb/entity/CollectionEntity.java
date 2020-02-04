@@ -22,49 +22,48 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html">API Documentation</a>
  */
 public class CollectionEntity implements Entity {
 
-	private String id;
-	private String name;
-	private Boolean waitForSync;
-	private Boolean isVolatile;
-	private Boolean isSystem;
-	private CollectionStatus status;
-	private CollectionType type;
+    private String id;
+    private String name;
+    private Boolean waitForSync;
+    private Boolean isVolatile;
+    private Boolean isSystem;
+    private CollectionStatus status;
+    private CollectionType type;
 
-	public CollectionEntity() {
-		super();
-	}
+    public CollectionEntity() {
+        super();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	public Boolean getIsVolatile() {
-		return isVolatile;
-	}
+    public Boolean getIsVolatile() {
+        return isVolatile;
+    }
 
-	public Boolean getIsSystem() {
-		return isSystem;
-	}
+    public Boolean getIsSystem() {
+        return isSystem;
+    }
 
-	public CollectionStatus getStatus() {
-		return status;
-	}
+    public CollectionStatus getStatus() {
+        return status;
+    }
 
-	public CollectionType getType() {
-		return type;
-	}
+    public CollectionType getType() {
+        return type;
+    }
 
 }

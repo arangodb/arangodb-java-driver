@@ -36,7 +36,7 @@ public abstract class ArangoExecutor {
     @SuppressWarnings("unchecked")
     protected <T> T createResult(final Type type, final Response response) {
         if (type != Void.class && response.getBody() != null) {
-            if (type instanceof Class && Entity.class.isAssignableFrom((Class) type)  ) {
+            if (type instanceof Class && Entity.class.isAssignableFrom((Class) type)) {
                 return (T) util.get(Serializer.INTERNAL).deserialize(response.getBody(), type);
             } else {
                 return (T) util.get(Serializer.CUSTOM).deserialize(response.getBody(), type);

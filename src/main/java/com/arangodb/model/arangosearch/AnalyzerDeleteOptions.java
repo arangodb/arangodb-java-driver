@@ -25,16 +25,16 @@ package com.arangodb.model.arangosearch;
  */
 public class AnalyzerDeleteOptions {
 
-	private Boolean force;
+    private Boolean force;
 
-	public AnalyzerDeleteOptions() {
-	}
+    public AnalyzerDeleteOptions() {
+    }
 
-	public Boolean getForce() {
-		return force;
-	}
+    public Boolean getForce() {
+        return force;
+    }
 
-	public void setForce(Boolean force) {
-		this.force = force;
-	}
+    public void setForce(Boolean force) {
+        this.force = force;
+    }
 }

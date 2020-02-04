@@ -36,59 +36,58 @@ import java.lang.reflect.Type;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoExecutorSync extends ArangoExecutor {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(ArangoExecutorSync.class);
 
-	private final CommunicationProtocol protocol;
+    private static final Logger LOG = LoggerFactory.getLogger(ArangoExecutorSync.class);
 
-	public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
-		final DocumentCache documentCache) {
-		super(util, documentCache);
-		this.protocol = protocol;
-	}
+    private final CommunicationProtocol protocol;
 
-	public <T> T execute(final Request request, final Type type) throws ArangoDBException {
-		return execute(request, type, null);
-	}
+    public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
+                              final DocumentCache documentCache) {
+        super(util, documentCache);
+        this.protocol = protocol;
+    }
 
-	public <T> T execute(final Request request, final Type type, final HostHandle hostHandle) throws ArangoDBException {
-		return execute(request, response -> createResult(type, response), hostHandle);
-	}
+    public <T> T execute(final Request request, final Type type) throws ArangoDBException {
+        return execute(request, type, null);
+    }
 
-	public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer) throws ArangoDBException {
-		return execute(request, responseDeserializer, null);
-	}
+    public <T> T execute(final Request request, final Type type, final HostHandle hostHandle) throws ArangoDBException {
+        return execute(request, response -> createResult(type, response), hostHandle);
+    }
 
-	public <T> T execute(
-		final Request request,
-		final ResponseDeserializer<T> responseDeserializer,
-		final HostHandle hostHandle) throws ArangoDBException {
-		
-		try {
-			
-			final Response response = protocol.execute(request, hostHandle);
-			T deserialize = responseDeserializer.deserialize(response);
-			
-			if(deserialize instanceof MetaAware) {
-				LOG.debug("Respone is MetaAware " + deserialize.getClass().getName());
-				((MetaAware) deserialize).setMeta(response.getMeta());
-			}
-			
-			return deserialize;
-			
-		} catch (final VPackException e) {
-			throw new ArangoDBException(e);
-		}
-	}
+    public <T> T execute(final Request request, final ResponseDeserializer<T> responseDeserializer) throws ArangoDBException {
+        return execute(request, responseDeserializer, null);
+    }
 
-	public void disconnect() {
-		try {
-			protocol.close();
-		} catch (final IOException e) {
-			throw new ArangoDBException(e);
-		}
-	}
+    public <T> T execute(
+            final Request request,
+            final ResponseDeserializer<T> responseDeserializer,
+            final HostHandle hostHandle) throws ArangoDBException {
+
+        try {
+
+            final Response response = protocol.execute(request, hostHandle);
+            T deserialize = responseDeserializer.deserialize(response);
+
+            if (deserialize instanceof MetaAware) {
+                LOG.debug("Response is MetaAware " + deserialize.getClass().getName());
+                ((MetaAware) deserialize).setMeta(response.getMeta());
+            }
+
+            return deserialize;
+
+        } catch (final VPackException e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    public void disconnect() {
+        try {
+            protocol.close();
+        } catch (final IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
 }

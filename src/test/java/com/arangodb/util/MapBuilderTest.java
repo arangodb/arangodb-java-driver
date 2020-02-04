@@ -25,13 +25,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 
-import java.util.Map;
-
-import org.junit.Test;
-
 /**
  * @author Mark Vollmary
- *
  */
 public class MapBuilderTest {
 

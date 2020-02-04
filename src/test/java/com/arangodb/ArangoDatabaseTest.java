@@ -259,6 +259,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
         assertThat(db.collection(name1).getProperties().getNumberOfShards(), is(numberOfShards));
         assertThat(db.collection(name2).getProperties().getNumberOfShards(), is(numberOfShards));
+
+        db.collection(COLLECTION_NAME + "2").drop();
     }
 
     private void createCollectionWithKeyType(KeyType keyType) {
@@ -650,6 +652,17 @@ public class ArangoDatabaseTest extends BaseTest {
         final ArangoCursor<String> cursor = db
                 .query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(false), String.class);
         assertThat(cursor.next(), is("null"));
+    }
+
+    @Test
+    public void queryWithTimeout() {
+        assumeTrue(isAtLeastVersion(3, 6));
+        try {
+            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().maxRuntime(0.1), String.class).next();
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(410));
+        }
     }
 
     @Test
@@ -1146,6 +1159,12 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(info.getName(), is(BaseTest.TEST_DB));
         assertThat(info.getPath(), is(notNullValue()));
         assertThat(info.getIsSystem(), is(false));
+
+        if (isAtLeastVersion(3, 6) && isCluster()) {
+            assertThat(info.getSharding(), notNullValue());
+            assertThat(info.getWriteConcern(), notNullValue());
+            assertThat(info.getReplicationFactor(), notNullValue());
+        }
     }
 
     @Test

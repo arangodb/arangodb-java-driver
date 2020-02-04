@@ -24,42 +24,41 @@ import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
- *      Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
+ * Documentation</a>
  */
 public class DocumentCreateEntity<T> extends DocumentEntity {
 
-	@Expose(deserialize = false)
-	private T newDocument;
-	@Expose(deserialize = false)
-	private T oldDocument;
+    @Expose(deserialize = false)
+    private T newDocument;
+    @Expose(deserialize = false)
+    private T oldDocument;
 
-	public DocumentCreateEntity() {
-		super();
-	}
+    public DocumentCreateEntity() {
+        super();
+    }
 
-	/**
-	 * @return If the query parameter returnNew is true, then the complete new document is returned.
-	 */
-	public T getNew() {
-		return newDocument;
-	}
+    /**
+     * @return If the query parameter returnNew is true, then the complete new document is returned.
+     */
+    public T getNew() {
+        return newDocument;
+    }
 
-	public void setNew(final T newDocument) {
-		this.newDocument = newDocument;
-	}
+    public void setNew(final T newDocument) {
+        this.newDocument = newDocument;
+    }
 
-	/**
-	 * @return If the query parameter returnOld is true, then the complete previous revision of the document is
-	 *         returned.
-	 */
-	public T getOld() {
-		return oldDocument;
-	}
+    /**
+     * @return If the query parameter returnOld is true, then the complete previous revision of the document is
+     * returned.
+     */
+    public T getOld() {
+        return oldDocument;
+    }
 
-	public void setOld(final T oldDocument) {
-		this.oldDocument = oldDocument;
-	}
+    public void setOld(final T oldDocument) {
+        this.oldDocument = oldDocument;
+    }
 
 }

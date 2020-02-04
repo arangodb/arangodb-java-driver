@@ -22,29 +22,27 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API Documentation</a>
  */
 public class AqlQueryParseOptions {
 
-	private String query;
+    private String query;
 
-	public AqlQueryParseOptions() {
-		super();
-	}
+    public AqlQueryParseOptions() {
+        super();
+    }
 
-	protected String getQuery() {
-		return query;
-	}
+    protected String getQuery() {
+        return query;
+    }
 
-	/**
-	 * @param query
-	 *            the query which you want parse
-	 * @return options
-	 */
-	protected AqlQueryParseOptions query(final String query) {
-		this.query = query;
-		return this;
-	}
+    /**
+     * @param query the query which you want parse
+     * @return options
+     */
+    protected AqlQueryParseOptions query(final String query) {
+        this.query = query;
+        return this;
+    }
 
 }

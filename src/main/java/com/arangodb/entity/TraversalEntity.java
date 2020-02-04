@@ -24,33 +24,32 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href= "https://docs.arangodb.com/current/HTTP/Traversal/index.html#executes-a-traversal">API
- *      Documentation</a>
+ * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
+ * Documentation</a>
  */
 public class TraversalEntity<V, E> implements Entity {
 
-	private Collection<V> vertices;
-	private Collection<PathEntity<V, E>> paths;
+    private Collection<V> vertices;
+    private Collection<PathEntity<V, E>> paths;
 
-	public TraversalEntity() {
-		super();
-	}
+    public TraversalEntity() {
+        super();
+    }
 
-	public Collection<V> getVertices() {
-		return vertices;
-	}
+    public Collection<V> getVertices() {
+        return vertices;
+    }
 
-	public void setVertices(final Collection<V> vertices) {
-		this.vertices = vertices;
-	}
+    public void setVertices(final Collection<V> vertices) {
+        this.vertices = vertices;
+    }
 
-	public Collection<PathEntity<V, E>> getPaths() {
-		return paths;
-	}
+    public Collection<PathEntity<V, E>> getPaths() {
+        return paths;
+    }
 
-	public void setPaths(final Collection<PathEntity<V, E>> paths) {
-		this.paths = paths;
-	}
+    public void setPaths(final Collection<PathEntity<V, E>> paths) {
+        this.paths = paths;
+    }
 
 }

@@ -24,62 +24,61 @@ import java.io.IOException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class DirtyReadHostHandler implements HostHandler {
 
-	private final HostHandler master;
-	private final HostHandler follower;
-	private AccessType currentAccessType;
+    private final HostHandler master;
+    private final HostHandler follower;
+    private AccessType currentAccessType;
 
-	public DirtyReadHostHandler(final HostHandler master, final HostHandler follower) {
-		super();
-		this.master = master;
-		this.follower = follower;
-	}
+    public DirtyReadHostHandler(final HostHandler master, final HostHandler follower) {
+        super();
+        this.master = master;
+        this.follower = follower;
+    }
 
-	private HostHandler determineHostHandler() {
-		if (currentAccessType == AccessType.DIRTY_READ) {
-			return follower;
-		}
-		return master;
-	}
+    private HostHandler determineHostHandler() {
+        if (currentAccessType == AccessType.DIRTY_READ) {
+            return follower;
+        }
+        return master;
+    }
 
-	@Override
-	public Host get(final HostHandle hostHandle, final AccessType accessType) {
-		this.currentAccessType = accessType;
-		return determineHostHandler().get(hostHandle, accessType);
-	}
+    @Override
+    public Host get(final HostHandle hostHandle, final AccessType accessType) {
+        this.currentAccessType = accessType;
+        return determineHostHandler().get(hostHandle, accessType);
+    }
 
-	@Override
-	public void success() {
-		determineHostHandler().success();
-	}
+    @Override
+    public void success() {
+        determineHostHandler().success();
+    }
 
-	@Override
-	public void fail() {
-		determineHostHandler().fail();
-	}
+    @Override
+    public void fail() {
+        determineHostHandler().fail();
+    }
 
-	@Override
-	public void reset() {
-		determineHostHandler().reset();
-	}
+    @Override
+    public void reset() {
+        determineHostHandler().reset();
+    }
 
-	@Override
-	public void confirm() {
-		determineHostHandler().confirm();
-	}
+    @Override
+    public void confirm() {
+        determineHostHandler().confirm();
+    }
 
-	@Override
-	public void close() throws IOException {
-		master.close();
-		follower.close();
-	}
+    @Override
+    public void close() throws IOException {
+        master.close();
+        follower.close();
+    }
 
-	@Override
-	public void closeCurrentOnError() {
-		determineHostHandler().closeCurrentOnError();
-	}
+    @Override
+    public void closeCurrentOnError() {
+        determineHostHandler().closeCurrentOnError();
+    }
 
 }

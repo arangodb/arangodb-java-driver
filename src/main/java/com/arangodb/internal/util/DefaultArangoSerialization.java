@@ -20,42 +20,41 @@
 
 package com.arangodb.internal.util;
 
-import java.lang.reflect.Type;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackSlice;
 
+import java.lang.reflect.Type;
+
 /**
  * @author Mark Vollmary
- *
  */
 public class DefaultArangoSerialization implements ArangoSerialization {
 
-	private final ArangoSerializer serializer;
-	private final ArangoDeserializer deserializer;
+    private final ArangoSerializer serializer;
+    private final ArangoDeserializer deserializer;
 
-	public DefaultArangoSerialization(final ArangoSerializer serializer, final ArangoDeserializer deserializer) {
-		super();
-		this.serializer = serializer;
-		this.deserializer = deserializer;
-	}
+    public DefaultArangoSerialization(final ArangoSerializer serializer, final ArangoDeserializer deserializer) {
+        super();
+        this.serializer = serializer;
+        this.deserializer = deserializer;
+    }
 
-	@Override
-	public VPackSlice serialize(final Object entity) throws ArangoDBException {
-		return serializer.serialize(entity);
-	}
+    @Override
+    public VPackSlice serialize(final Object entity) throws ArangoDBException {
+        return serializer.serialize(entity);
+    }
 
-	@Override
-	public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
-		return serializer.serialize(entity, options);
-	}
+    @Override
+    public VPackSlice serialize(final Object entity, final Options options) throws ArangoDBException {
+        return serializer.serialize(entity, options);
+    }
 
-	@Override
-	public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
-		return deserializer.deserialize(vpack, type);
-	}
+    @Override
+    public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
+        return deserializer.deserialize(vpack, type);
+    }
 
 }

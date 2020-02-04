@@ -26,28 +26,27 @@ import com.arangodb.velocystream.RequestType;
 
 /**
  * @author Mark Vollmary
- *
  */
 public final class RequestUtils {
 
-	public static final String HEADER_ALLOW_DIRTY_READ = "X-Arango-Allow-Dirty-Read";
+    public static final String HEADER_ALLOW_DIRTY_READ = "X-Arango-Allow-Dirty-Read";
 
-	private RequestUtils() {
-		super();
-	}
+    private RequestUtils() {
+        super();
+    }
 
-	public static Request allowDirtyRead(final Request request) {
-		return request.putHeaderParam(HEADER_ALLOW_DIRTY_READ, "true");
-	}
+    public static Request allowDirtyRead(final Request request) {
+        return request.putHeaderParam(HEADER_ALLOW_DIRTY_READ, "true");
+    }
 
-	public static AccessType determineAccessType(final Request request) {
-		if (request.getHeaderParam().containsKey(HEADER_ALLOW_DIRTY_READ)) {
-			return AccessType.DIRTY_READ;
-		}
-		if (request.getRequestType() == RequestType.GET) {
-			return AccessType.READ;
-		}
-		return AccessType.WRITE;
-	}
+    public static AccessType determineAccessType(final Request request) {
+        if (request.getHeaderParam().containsKey(HEADER_ALLOW_DIRTY_READ)) {
+            return AccessType.DIRTY_READ;
+        }
+        if (request.getRequestType() == RequestType.GET) {
+            return AccessType.READ;
+        }
+        return AccessType.WRITE;
+    }
 
 }

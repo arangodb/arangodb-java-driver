@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.6.0] - 2020-02-03
+
+- typed ArangoSearch analyzers
+- updated dependecies
+- bugfix asynchronous shutdown
+
+## [6.5.0] - 2019-12-23
+
+- createDatabase with options (replicationFactor, minReplicationFactor, sharding) (ArangoDB v3.6)
+- extended DatabaseEntity with replicationFactor, minReplicationFactor, sharding (ArangoDB v3.6)
+- timeout option for AQL queries (ArangoDB v3.6)
+- enhancedNgramAnalyzer and enhancedTextAnalyzer (ArangoDB v3.6)
+- velocypack v2.1.0
+
+## [6.4.1] - 2019-10-23
+
+- jackson v2.9.10
+
+## [6.4.0] - 2019-10-09
+
+### Added
+
+- Stream Transactions support for graph APIs
+
+### Fixed
+
+- `catchExceptions` option in async `getEdge` and `getVertex`
+
 ## [6.3.0] - 2019-09-16
 
 ### Added
@@ -113,7 +141,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
-- added dirty read support ([reading from followers](https://docs.arangodb.com/current/Manual/Administration/ActiveFailover/#reading-from-follower))
+- added dirty read support ([reading from followers](https://www.arangodb.com/docs/stable/administration-active-failover.html#reading-from-follower))
 
   - added option `AqlQueryOptions#allowDirtyRead` for `ArangoDatabase#query`.
   - added option `DocumentReadOptions#allowDirtyRead` for `ArangoCollection#getDocument`

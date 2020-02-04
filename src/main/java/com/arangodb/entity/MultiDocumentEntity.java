@@ -24,49 +24,48 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class MultiDocumentEntity<E> implements Entity {
 
-	private Collection<E> documents;
-	private Collection<ErrorEntity> errors;
-	private Collection<Object> documentsAndErrors;
+    private Collection<E> documents;
+    private Collection<ErrorEntity> errors;
+    private Collection<Object> documentsAndErrors;
 
-	public MultiDocumentEntity() {
-		super();
-	}
+    public MultiDocumentEntity() {
+        super();
+    }
 
-	/**
-	 * @return all successfully processed documents
-	 */
-	public Collection<E> getDocuments() {
-		return documents;
-	}
+    /**
+     * @return all successfully processed documents
+     */
+    public Collection<E> getDocuments() {
+        return documents;
+    }
 
-	public void setDocuments(final Collection<E> documents) {
-		this.documents = documents;
-	}
+    public void setDocuments(final Collection<E> documents) {
+        this.documents = documents;
+    }
 
-	/**
-	 * @return all errors
-	 */
-	public Collection<ErrorEntity> getErrors() {
-		return errors;
-	}
+    /**
+     * @return all errors
+     */
+    public Collection<ErrorEntity> getErrors() {
+        return errors;
+    }
 
-	public void setErrors(final Collection<ErrorEntity> errors) {
-		this.errors = errors;
-	}
+    public void setErrors(final Collection<ErrorEntity> errors) {
+        this.errors = errors;
+    }
 
-	/**
-	 * @return all successfully processed documents and all errors in the same order they are processed
-	 */
-	public Collection<Object> getDocumentsAndErrors() {
-		return documentsAndErrors;
-	}
+    /**
+     * @return all successfully processed documents and all errors in the same order they are processed
+     */
+    public Collection<Object> getDocumentsAndErrors() {
+        return documentsAndErrors;
+    }
 
-	public void setDocumentsAndErrors(final Collection<Object> documentsAndErrors) {
-		this.documentsAndErrors = documentsAndErrors;
-	}
+    public void setDocumentsAndErrors(final Collection<Object> documentsAndErrors) {
+        this.documentsAndErrors = documentsAndErrors;
+    }
 
 }

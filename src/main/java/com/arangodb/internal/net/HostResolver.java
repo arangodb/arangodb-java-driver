@@ -25,12 +25,11 @@ import com.arangodb.util.ArangoSerialization;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface HostResolver {
 
-	void init(ArangoExecutorSync executorSync, ArangoSerialization arangoSerialization);
+    void init(ArangoExecutorSync executorSync, ArangoSerialization arangoSerialization);
 
-	HostSet resolve(boolean initial, boolean closeConnections);
+    HostSet resolve(boolean initial, boolean closeConnections);
 
 }

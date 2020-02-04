@@ -24,51 +24,49 @@ import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
 
 /**
- * @author Mark Vollmary
  * @param <T>
- * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
- *      Documentation</a>
- *
+ * @author Mark Vollmary
+ * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
+ * Documentation</a>
  */
 public class DocumentUpdateEntity<T> extends DocumentEntity {
 
-	@SerializedName("_oldRev")
-	private String oldRev;
-	@Expose(deserialize = false)
-	private T newDocument;
-	@Expose(deserialize = false)
-	private T oldDocument;
+    @SerializedName("_oldRev")
+    private String oldRev;
+    @Expose(deserialize = false)
+    private T newDocument;
+    @Expose(deserialize = false)
+    private T oldDocument;
 
-	public DocumentUpdateEntity() {
-		super();
-	}
+    public DocumentUpdateEntity() {
+        super();
+    }
 
-	public String getOldRev() {
-		return oldRev;
-	}
+    public String getOldRev() {
+        return oldRev;
+    }
 
-	/**
-	 * @return If the query parameter returnNew is true, then the complete new document is returned.
-	 */
-	public T getNew() {
-		return newDocument;
-	}
+    /**
+     * @return If the query parameter returnNew is true, then the complete new document is returned.
+     */
+    public T getNew() {
+        return newDocument;
+    }
 
-	public void setNew(final T newDocument) {
-		this.newDocument = newDocument;
-	}
+    public void setNew(final T newDocument) {
+        this.newDocument = newDocument;
+    }
 
-	/**
-	 * @return If the query parameter returnOld is true, then the complete previous revision of the document is
-	 *         returned.
-	 */
-	public T getOld() {
-		return oldDocument;
-	}
+    /**
+     * @return If the query parameter returnOld is true, then the complete previous revision of the document is
+     * returned.
+     */
+    public T getOld() {
+        return oldDocument;
+    }
 
-	public void setOld(final T oldDocument) {
-		this.oldDocument = oldDocument;
-	}
+    public void setOld(final T oldDocument) {
+        this.oldDocument = oldDocument;
+    }
 
 }

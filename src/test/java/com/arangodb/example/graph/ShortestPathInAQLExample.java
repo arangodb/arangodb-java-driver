@@ -28,18 +28,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.arangodb.ArangoCursor;
-import com.arangodb.ArangoDBException;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Shortest Path in AQL
- * 
- * @see <a href="https://docs.arangodb.com/current/AQL/Graphs/ShortestPath.html">Shortest Path in AQL</a>
- * 
- * @author a-brandt
  *
+ * @author a-brandt
+ * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-shortest-path.html">Shortest Path in AQL</a>
  */
 public class ShortestPathInAQLExample extends BaseGraphTest {
 
@@ -97,7 +94,7 @@ public class ShortestPathInAQLExample extends BaseGraphTest {
 
 	private Collection<String> toVertexCollection(final ArangoCursor<Pair> cursor) {
 		final List<String> result = new ArrayList<>();
-		for (; cursor.hasNext();) {
+		for (; cursor.hasNext(); ) {
 			final Pair pair = cursor.next();
 			result.add(pair.getVertex());
 		}

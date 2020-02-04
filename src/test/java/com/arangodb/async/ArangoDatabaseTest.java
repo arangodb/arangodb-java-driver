@@ -448,6 +448,19 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
+    public void queryWithTimeout() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 6));
+
+        try {
+            db.query("RETURN SLEEP(1)", null, new AqlQueryOptions().maxRuntime(0.1), String.class).get().next();
+            fail();
+        } catch (ExecutionException e) {
+            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(410));
+        }
+    }
+
+    @Test
     public void queryWithCount() throws InterruptedException, ExecutionException {
         try {
             db.createCollection(COLLECTION_NAME, null).get();
@@ -948,6 +961,18 @@ public class ArangoDatabaseTest extends BaseTest {
             assertThat(info.getName(), is(TEST_DB));
             assertThat(info.getPath(), is(notNullValue()));
             assertThat(info.getIsSystem(), is(false));
+
+            try {
+                if (isAtLeastVersion(3, 6) && isCluster()) {
+                    assertThat(info.getSharding(), notNullValue());
+                    assertThat(info.getWriteConcern(), notNullValue());
+                    assertThat(info.getReplicationFactor(), notNullValue());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                fail();
+            }
+
         });
         f.get();
     }

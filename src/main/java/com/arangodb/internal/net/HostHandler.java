@@ -24,21 +24,20 @@ import java.io.IOException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface HostHandler {
 
-	Host get(HostHandle hostHandle, AccessType accessType);
+    Host get(HostHandle hostHandle, AccessType accessType);
 
-	void success();
+    void success();
 
-	void fail();
+    void fail();
 
-	void reset();
+    void reset();
 
-	void confirm();
+    void confirm();
 
-	void close() throws IOException;
+    void close() throws IOException;
 
-	void closeCurrentOnError();
+    void closeCurrentOnError();
 }

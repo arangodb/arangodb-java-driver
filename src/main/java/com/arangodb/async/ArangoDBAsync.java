@@ -38,6 +38,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
+import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -92,16 +93,27 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param name Has to contain a valid database name
      * @return true if the database was created successfully.
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#create-database">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
      */
     CompletableFuture<Boolean> createDatabase(final String name);
 
     /**
+     * Creates a new database
+     *
+     * @param options Creation options
+     * @return true if the database was created successfully.
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     * @since ArangoDB 3.6.0
+     */
+    CompletableFuture<Boolean> createDatabase(final DBCreateOptions options);
+
+    /**
      * Retrieves a list of all existing databases
      *
      * @return a list of all existing databases
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-databases">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-databases">API
      * Documentation</a>
      */
     CompletableFuture<Collection<String>> getDatabases();
@@ -111,7 +123,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @return a list of all databases the current user can access
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Database/DatabaseManagement.html#list-of-accessible-databases">API
+     * "https://www.arangodb.com/docs/stable/http/database-database-management.html#list-of-accessible-databases">API
      * Documentation</a>
      */
     CompletableFuture<Collection<String>> getAccessibleDatabases();
@@ -122,7 +134,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @param user The name of the user for which you want to query the databases
      * @return
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-the-databases-available-to-a-user">API
+     * "https://www.arangodb.com/docs/stable/http/user-management.html#list-the-accessible-databases-for-a-user">API
      * Documentation</a>
      */
     CompletableFuture<Collection<String>> getAccessibleDatabasesFor(final String user);
@@ -131,7 +143,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * Returns the server name and version number.
      *
      * @return the server version, number
-     * @see <a href="https://docs.arangodb.com/current/HTTP/MiscellaneousFunctions/index.html#return-server-version">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/miscellaneous-functions.html#return-server-version">API
      * Documentation</a>
      */
     CompletableFuture<ArangoDBVersion> getVersion();
@@ -150,7 +162,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @param user   The name of the user
      * @param passwd The user password
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
      */
     CompletableFuture<UserEntity> createUser(final String user, final String passwd);
 
@@ -162,7 +174,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @param passwd  The user password
      * @param options Additional properties of the user, can be null
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
      */
     CompletableFuture<UserEntity> createUser(final String user, final String passwd, final UserCreateOptions options);
 
@@ -171,7 +183,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#remove-user">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#remove-user">API Documentation</a>
      */
     CompletableFuture<Void> deleteUser(final String user);
 
@@ -181,7 +193,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#fetch-user">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#fetch-user">API Documentation</a>
      */
     CompletableFuture<UserEntity> getUser(final String user);
 
@@ -189,7 +201,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * Fetches data about all users. You can only execute this call if you have access to the _system database.
      *
      * @return informations about all users
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#list-available-users">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#list-available-users">API
      * Documentation</a>
      */
     CompletableFuture<Collection<UserEntity>> getUsers();
@@ -201,7 +213,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @param user    The name of the user
      * @param options Properties of the user to be changed
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#update-user">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#modify-user">API Documentation</a>
      */
     CompletableFuture<UserEntity> updateUser(final String user, final UserUpdateOptions options);
 
@@ -212,7 +224,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @param user    The name of the user
      * @param options Additional properties of the user, can be null
      * @return information about the user
-     * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#replace-user">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#replace-user">API
      * Documentation</a>
      */
     CompletableFuture<UserEntity> replaceUser(final String user, final UserUpdateOptions options);
@@ -253,7 +265,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return the log messages
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
+     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      */
     CompletableFuture<LogEntity> getLogs(final LogOptions options);

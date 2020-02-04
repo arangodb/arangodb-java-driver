@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.async.*;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.net.HostHandle;
@@ -432,13 +433,28 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
+    public CompletableFuture<SearchAnalyzer> createSearchAnalyzer(SearchAnalyzer analyzer) {
+        return executor.execute(createAnalyzerRequest(analyzer), SearchAnalyzer.class);
+    }
+
+    @Override
     public CompletableFuture<AnalyzerEntity> getAnalyzer(String name) {
         return executor.execute(getAnalyzerRequest(name), AnalyzerEntity.class);
     }
 
     @Override
+    public CompletableFuture<SearchAnalyzer> getSearchAnalyzer(String name) {
+        return executor.execute(getAnalyzerRequest(name), SearchAnalyzer.class);
+    }
+
+    @Override
     public CompletableFuture<Collection<AnalyzerEntity>> getAnalyzers() {
         return executor.execute(getAnalyzersRequest(), getAnalyzersResponseDeserializer());
+    }
+
+    @Override
+    public CompletableFuture<Collection<SearchAnalyzer>> getSearchAnalyzers() {
+        return executor.execute(getAnalyzersRequest(), getSearchAnalyzersResponseDeserializer());
     }
 
     @Override
@@ -449,6 +465,16 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     @Override
     public CompletableFuture<Void> deleteAnalyzer(String name, AnalyzerDeleteOptions options) {
         return executor.execute(deleteAnalyzerRequest(name, options), Void.class);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteSearchAnalyzer(String name) {
+        return deleteAnalyzer(name);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options) {
+        return deleteAnalyzer(name, options);
     }
 
 

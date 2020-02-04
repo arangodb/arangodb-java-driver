@@ -22,28 +22,27 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum CollectionType {
 
-	DOCUMENT(2), EDGES(3);
+    DOCUMENT(2), EDGES(3);
 
-	private final int type;
+    private final int type;
 
-	CollectionType(final int type) {
-		this.type = type;
-	}
+    CollectionType(final int type) {
+        this.type = type;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public static CollectionType fromType(final int type) {
-		for (final CollectionType cType : CollectionType.values()) {
-			if (cType.type == type) {
-				return cType;
-			}
-		}
-		return null;
-	}
+    public static CollectionType fromType(final int type) {
+        for (final CollectionType cType : CollectionType.values()) {
+            if (cType.type == type) {
+                return cType;
+            }
+        }
+        return null;
+    }
 }

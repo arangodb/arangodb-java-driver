@@ -31,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB edge collection level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
 public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
@@ -55,7 +55,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param value A representation of a single edge (POJO, VPackSlice or String for Json)
      * @return information about the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<EdgeEntity> insertEdge(final T value);
 
@@ -65,7 +65,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      * @param value   A representation of a single edge (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<EdgeEntity> insertEdge(final T value, final EdgeCreateOptions options);
 
@@ -75,7 +75,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      * @param key  The key of the edge
      * @param type The type of the edge-document (POJO class, VPackSlice or String for Json)
      * @return the edge identified by the key
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<T> getEdge(final String key, final Class<T> type);
 
@@ -86,7 +86,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      * @param type    The type of the edge-document (POJO class, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return the edge identified by the key
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#get-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#get-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<T> getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options);
 
@@ -96,7 +96,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param key The key of the edge
      * @return information about the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<EdgeUpdateEntity> replaceEdge(final String key, final T value);
 
@@ -107,7 +107,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      * @param key     The key of the edge
      * @param options Additional options, can be null
      * @return information about the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#replace-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#replace-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<EdgeUpdateEntity> replaceEdge(
             final String key,
@@ -121,7 +121,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param key The key of the edge
      * @return information about the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<EdgeUpdateEntity> updateEdge(final String key, final T value);
 
@@ -133,7 +133,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      * @param key     The key of the edge
      * @param options Additional options, can be null
      * @return information about the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#modify-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#modify-an-edge">API Documentation</a>
      */
     <T> CompletableFuture<EdgeUpdateEntity> updateEdge(
             final String key,
@@ -144,7 +144,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      * Removes a edge
      *
      * @param key The key of the edge
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
      */
     CompletableFuture<Void> deleteEdge(final String key);
 
@@ -153,7 +153,7 @@ public interface ArangoEdgeCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param key     The key of the edge
      * @param options Additional options, can be null
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
      */
     CompletableFuture<Void> deleteEdge(final String key, final EdgeDeleteOptions options);
 

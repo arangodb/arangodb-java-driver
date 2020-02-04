@@ -22,29 +22,28 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum LogLevel {
 
-	FATAL(0), ERROR(1), WARNING(2), INFO(3), DEBUG(4);
+    FATAL(0), ERROR(1), WARNING(2), INFO(3), DEBUG(4);
 
-	private final int level;
+    private final int level;
 
-	LogLevel(final int level) {
-		this.level = level;
-	}
+    LogLevel(final int level) {
+        this.level = level;
+    }
 
-	public int getLevel() {
-		return level;
-	}
+    public int getLevel() {
+        return level;
+    }
 
-	public static LogLevel fromLevel(final int level) {
-		for (final LogLevel logLevel : LogLevel.values()) {
-			if (logLevel.level == level) {
-				return logLevel;
-			}
-		}
-		return null;
-	}
+    public static LogLevel fromLevel(final int level) {
+        for (final LogLevel logLevel : LogLevel.values()) {
+            if (logLevel.level == level) {
+                return logLevel;
+            }
+        }
+        return null;
+    }
 
 }

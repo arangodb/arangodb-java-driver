@@ -26,80 +26,78 @@ import java.io.IOException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class HostImpl implements Host {
 
-	private final ConnectionPool connectionPool;
-	private final HostDescription description;
-	private boolean markforDeletion = false;
+    private final ConnectionPool connectionPool;
+    private final HostDescription description;
+    private boolean markforDeletion = false;
 
-	public HostImpl(final ConnectionPool connectionPool, final HostDescription description) {
-		super();
-		this.connectionPool = connectionPool;
-		this.description = description;
-	}
+    public HostImpl(final ConnectionPool connectionPool, final HostDescription description) {
+        super();
+        this.connectionPool = connectionPool;
+        this.description = description;
+    }
 
-	@Override
-	public void close() throws IOException {
-		connectionPool.close();
-	}
+    @Override
+    public void close() throws IOException {
+        connectionPool.close();
+    }
 
-	@Override
-	public HostDescription getDescription() {
-		return description;
-	}
+    @Override
+    public HostDescription getDescription() {
+        return description;
+    }
 
-	@Override
-	public Connection connection() {
-		return connectionPool.connection();
-	}
+    @Override
+    public Connection connection() {
+        return connectionPool.connection();
+    }
 
-	@Override
-	public void closeOnError() {
-		try {
-			connectionPool.close();
-		} catch (final IOException e) {
-			throw new ArangoDBException(e);
-		}
-	}
+    @Override
+    public void closeOnError() {
+        try {
+            connectionPool.close();
+        } catch (final IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "HostImpl [connectionPool=" + connectionPool + ", description=" + description + ", markforDeletion="
-				+ markforDeletion + "]";
-	}
+    @Override
+    public String toString() {
+        return "HostImpl [connectionPool=" + connectionPool + ", description=" + description + ", markforDeletion="
+                + markforDeletion + "]";
+    }
 
-	public boolean isMarkforDeletion() {
-		return markforDeletion;
-	}
+    public boolean isMarkforDeletion() {
+        return markforDeletion;
+    }
 
-	public void setMarkforDeletion(boolean markforDeletion) {
-		this.markforDeletion = markforDeletion;
-	}
+    public void setMarkforDeletion(boolean markforDeletion) {
+        this.markforDeletion = markforDeletion;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		HostImpl other = (HostImpl) obj;
-		if (description == null) {
-			return other.description == null;
-		} else return description.equals(other.description);
-	}
-	
-	
-	
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        HostImpl other = (HostImpl) obj;
+        if (description == null) {
+            return other.description == null;
+        } else return description.equals(other.description);
+    }
+
+
 }

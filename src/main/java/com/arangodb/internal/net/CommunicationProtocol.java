@@ -20,18 +20,17 @@
 
 package com.arangodb.internal.net;
 
-import java.io.Closeable;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
+import java.io.Closeable;
+
 /**
  * @author Mark Vollmary
- *
  */
 public interface CommunicationProtocol extends Closeable {
 
-	Response execute(final Request request, HostHandle hostHandle) throws ArangoDBException;
+    Response execute(final Request request, HostHandle hostHandle) throws ArangoDBException;
 
 }

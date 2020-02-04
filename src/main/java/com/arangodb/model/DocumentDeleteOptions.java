@@ -23,87 +23,87 @@ package com.arangodb.model;
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
- * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+ * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
  * Documentation</a>
  */
 public class DocumentDeleteOptions {
 
-	private Boolean waitForSync;
-	private String ifMatch;
-	private Boolean returnOld;
-	private Boolean silent;
-	private String streamTransactionId;
+    private Boolean waitForSync;
+    private String ifMatch;
+    private Boolean returnOld;
+    private Boolean silent;
+    private String streamTransactionId;
 
-	public DocumentDeleteOptions() {
-		super();
-	}
+    public DocumentDeleteOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync Wait until deletion operation has been synced to disk.
-	 * @return options
-	 */
-	public DocumentDeleteOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until deletion operation has been synced to disk.
+     * @return options
+     */
+    public DocumentDeleteOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
 
-	public String getIfMatch() {
-		return ifMatch;
-	}
+    public String getIfMatch() {
+        return ifMatch;
+    }
 
-	/**
-	 * @param ifMatch remove a document based on a target revision
-	 * @return options
-	 */
-	public DocumentDeleteOptions ifMatch(final String ifMatch) {
-		this.ifMatch = ifMatch;
-		return this;
-	}
+    /**
+     * @param ifMatch remove a document based on a target revision
+     * @return options
+     */
+    public DocumentDeleteOptions ifMatch(final String ifMatch) {
+        this.ifMatch = ifMatch;
+        return this;
+    }
 
-	public Boolean getReturnOld() {
-		return returnOld;
-	}
+    public Boolean getReturnOld() {
+        return returnOld;
+    }
 
-	/**
-	 * @param returnOld Return additionally the complete previous revision of the changed document under the attribute old in
-	 *                  the result.
-	 * @return options
-	 */
-	public DocumentDeleteOptions returnOld(final Boolean returnOld) {
-		this.returnOld = returnOld;
-		return this;
-	}
+    /**
+     * @param returnOld Return additionally the complete previous revision of the changed document under the attribute old in
+     *                  the result.
+     * @return options
+     */
+    public DocumentDeleteOptions returnOld(final Boolean returnOld) {
+        this.returnOld = returnOld;
+        return this;
+    }
 
-	public Boolean getSilent() {
-		return silent;
-	}
+    public Boolean getSilent() {
+        return silent;
+    }
 
-	/**
-	 * @param silent If set to true, an empty object will be returned as response. No meta-data will be returned for the
-	 *               created document. This option can be used to save some network traffic.
-	 * @return options
-	 */
-	public DocumentDeleteOptions silent(final Boolean silent) {
-		this.silent = silent;
-		return this;
-	}
+    /**
+     * @param silent If set to true, an empty object will be returned as response. No meta-data will be returned for the
+     *               created document. This option can be used to save some network traffic.
+     * @return options
+     */
+    public DocumentDeleteOptions silent(final Boolean silent) {
+        this.silent = silent;
+        return this;
+    }
 
-	public String getStreamTransactionId() {
-		return streamTransactionId;
-	}
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
 
-	/**
-	 * @param streamTransactionId If set, the operation will be executed within the transaction.
-	 * @return options
-	 * @since ArangoDB 3.5.0
-	 */
-	public DocumentDeleteOptions streamTransactionId(final String streamTransactionId) {
-		this.streamTransactionId = streamTransactionId;
-		return this;
-	}
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.0
+     */
+    public DocumentDeleteOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

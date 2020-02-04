@@ -25,88 +25,87 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class DocumentImportEntity implements Entity {
 
-	private Integer created;
-	private Integer errors;
-	private Integer empty;
-	private Integer updated;
-	private Integer ignored;
-	private Collection<String> details;
+    private Integer created;
+    private Integer errors;
+    private Integer empty;
+    private Integer updated;
+    private Integer ignored;
+    private Collection<String> details;
 
-	public DocumentImportEntity() {
-		super();
+    public DocumentImportEntity() {
+        super();
         details = new ArrayList<>();
-	}
+    }
 
-	/**
-	 * @return number of documents imported.
-	 */
-	public Integer getCreated() {
-		return created;
-	}
+    /**
+     * @return number of documents imported.
+     */
+    public Integer getCreated() {
+        return created;
+    }
 
-	public void setCreated(final Integer created) {
-		this.created = created;
-	}
+    public void setCreated(final Integer created) {
+        this.created = created;
+    }
 
-	/**
-	 * @return number of documents that were not imported due to an error.
-	 */
-	public Integer getErrors() {
-		return errors;
-	}
+    /**
+     * @return number of documents that were not imported due to an error.
+     */
+    public Integer getErrors() {
+        return errors;
+    }
 
-	public void setErrors(final Integer errors) {
-		this.errors = errors;
-	}
+    public void setErrors(final Integer errors) {
+        this.errors = errors;
+    }
 
-	/**
-	 * @return number of empty lines found in the input (will only contain a value greater zero for types documents or
-	 *         auto).
-	 */
-	public Integer getEmpty() {
-		return empty;
-	}
+    /**
+     * @return number of empty lines found in the input (will only contain a value greater zero for types documents or
+     * auto).
+     */
+    public Integer getEmpty() {
+        return empty;
+    }
 
-	public void setEmpty(final Integer empty) {
-		this.empty = empty;
-	}
+    public void setEmpty(final Integer empty) {
+        this.empty = empty;
+    }
 
-	/**
-	 * @return number of updated/replaced documents (in case onDuplicate was set to either update or replace).
-	 */
-	public Integer getUpdated() {
-		return updated;
-	}
+    /**
+     * @return number of updated/replaced documents (in case onDuplicate was set to either update or replace).
+     */
+    public Integer getUpdated() {
+        return updated;
+    }
 
-	public void setUpdated(final Integer updated) {
-		this.updated = updated;
-	}
+    public void setUpdated(final Integer updated) {
+        this.updated = updated;
+    }
 
-	/**
-	 * @return number of failed but ignored insert operations (in case onDuplicate was set to ignore).
-	 */
-	public Integer getIgnored() {
-		return ignored;
-	}
+    /**
+     * @return number of failed but ignored insert operations (in case onDuplicate was set to ignore).
+     */
+    public Integer getIgnored() {
+        return ignored;
+    }
 
-	public void setIgnored(final Integer ignored) {
-		this.ignored = ignored;
-	}
+    public void setIgnored(final Integer ignored) {
+        this.ignored = ignored;
+    }
 
-	/**
-	 * @return if query parameter details is set to true, the result contain details with more detailed information
-	 *         about which documents could not be inserted.
-	 */
-	public Collection<String> getDetails() {
-		return details;
-	}
+    /**
+     * @return if query parameter details is set to true, the result contain details with more detailed information
+     * about which documents could not be inserted.
+     */
+    public Collection<String> getDetails() {
+        return details;
+    }
 
-	public void setDetails(final Collection<String> details) {
-		this.details = details;
-	}
+    public void setDetails(final Collection<String> details) {
+        this.details = details;
+    }
 
 }

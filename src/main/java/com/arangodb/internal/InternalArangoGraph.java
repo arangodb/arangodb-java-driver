@@ -33,108 +33,107 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- *
  */
 public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D extends InternalArangoDatabase<A, E>, E extends ArangoExecutor>
-		extends ArangoExecuteable<E> {
+        extends ArangoExecuteable<E> {
 
-	protected static final String PATH_API_GHARIAL = "/_api/gharial";
-	private static final String GRAPH = "graph";
-	private static final String VERTEX = "vertex";
-	private static final String EDGE = "edge";
+    protected static final String PATH_API_GHARIAL = "/_api/gharial";
+    private static final String GRAPH = "graph";
+    private static final String VERTEX = "vertex";
+    private static final String EDGE = "edge";
 
-	private final D db;
-	private final String name;
+    private final D db;
+    private final String name;
 
-	protected InternalArangoGraph(final D db, final String name) {
-		super(db.executor, db.util, db.context);
-		this.db = db;
-		this.name = name;
-	}
+    protected InternalArangoGraph(final D db, final String name) {
+        super(db.executor, db.util, db.context);
+        this.db = db;
+        this.name = name;
+    }
 
-	public D db() {
-		return db;
-	}
+    public D db() {
+        return db;
+    }
 
-	public String name() {
-		return name;
-	}
+    public String name() {
+        return name;
+    }
 
-	protected Request dropRequest() {
-		return dropRequest(false);
-	}
+    protected Request dropRequest() {
+        return dropRequest(false);
+    }
 
-	protected Request dropRequest(final boolean dropCollections) {
-		final Request request = request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name);
-		if (dropCollections) {
-			request.putQueryParam("dropCollections", dropCollections);
-		}
-		return request;
-	}
+    protected Request dropRequest(final boolean dropCollections) {
+        final Request request = request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name);
+        if (dropCollections) {
+            request.putQueryParam("dropCollections", true);
+        }
+        return request;
+    }
 
-	protected Request getInfoRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name);
-	}
+    protected Request getInfoRequest() {
+        return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name);
+    }
 
-	protected ResponseDeserializer<GraphEntity> getInfoResponseDeserializer() {
-		return addVertexCollectionResponseDeserializer();
-	}
+    protected ResponseDeserializer<GraphEntity> getInfoResponseDeserializer() {
+        return addVertexCollectionResponseDeserializer();
+    }
 
-	protected Request getVertexCollectionsRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, VERTEX);
-	}
+    protected Request getVertexCollectionsRequest() {
+        return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, VERTEX);
+    }
 
-	protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
-		return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
-		}.getType());
-	}
+    protected ResponseDeserializer<Collection<String>> getVertexCollectionsResponseDeserializer() {
+        return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+        }.getType());
+    }
 
-	protected Request addVertexCollectionRequest(final String name) {
-		final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
-		request.setBody(util().serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
-		return request;
-	}
+    protected Request addVertexCollectionRequest(final String name) {
+        final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
+        request.setBody(util().serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
+        return request;
+    }
 
-	protected ResponseDeserializer<GraphEntity> addVertexCollectionResponseDeserializer() {
-		return addEdgeDefinitionResponseDeserializer();
-	}
+    protected ResponseDeserializer<GraphEntity> addVertexCollectionResponseDeserializer() {
+        return addEdgeDefinitionResponseDeserializer();
+    }
 
-	protected Request getEdgeDefinitionsRequest() {
-		return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, EDGE);
-	}
+    protected Request getEdgeDefinitionsRequest() {
+        return request(db.name(), RequestType.GET, PATH_API_GHARIAL, name, EDGE);
+    }
 
-	protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
-		return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
-		}.getType());
-	}
+    protected ResponseDeserializer<Collection<String>> getEdgeDefinitionsDeserializer() {
+        return response -> util().deserialize(response.getBody().get("collections"), new Type<Collection<String>>() {
+        }.getType());
+    }
 
-	protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name, EDGE);
-		request.setBody(util().serialize(definition));
-		return request;
-	}
+    protected Request addEdgeDefinitionRequest(final EdgeDefinition definition) {
+        final Request request = request(db.name(), RequestType.POST, PATH_API_GHARIAL, name, EDGE);
+        request.setBody(util().serialize(definition));
+        return request;
+    }
 
-	protected ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
-		return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
-	}
+    protected ResponseDeserializer<GraphEntity> addEdgeDefinitionResponseDeserializer() {
+        return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+    }
 
-	protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
-		final Request request = request(db.name(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE,
-			definition.getCollection());
-		request.setBody(util().serialize(definition));
-		return request;
-	}
+    protected Request replaceEdgeDefinitionRequest(final EdgeDefinition definition) {
+        final Request request = request(db.name(), RequestType.PUT, PATH_API_GHARIAL, name, EDGE,
+                definition.getCollection());
+        request.setBody(util().serialize(definition));
+        return request;
+    }
 
-	protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
-		return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
-	}
+    protected ResponseDeserializer<GraphEntity> replaceEdgeDefinitionResponseDeserializer() {
+        return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+    }
 
-	protected Request removeEdgeDefinitionRequest(final String definitionName) {
-		return request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name, EDGE, definitionName);
-	}
+    protected Request removeEdgeDefinitionRequest(final String definitionName) {
+        return request(db.name(), RequestType.DELETE, PATH_API_GHARIAL, name, EDGE, definitionName);
+    }
 
-	protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
-		return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
-	}
+    protected ResponseDeserializer<GraphEntity> removeEdgeDefinitionResponseDeserializer() {
+        return response -> util().deserialize(response.getBody().get(GRAPH), GraphEntity.class);
+    }
 
 }

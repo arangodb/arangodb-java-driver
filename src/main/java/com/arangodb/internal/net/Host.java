@@ -24,19 +24,18 @@ import java.io.IOException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface Host {
 
-	HostDescription getDescription();
+    HostDescription getDescription();
 
-	Connection connection();
+    Connection connection();
 
-	void closeOnError();
+    void closeOnError();
 
-	void close() throws IOException;
+    void close() throws IOException;
 
-	void setMarkforDeletion(boolean markforDeletion);
+    void setMarkforDeletion(boolean markforDeletion);
 
-	boolean isMarkforDeletion();
+    boolean isMarkforDeletion();
 }

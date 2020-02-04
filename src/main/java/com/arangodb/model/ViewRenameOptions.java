@@ -22,28 +22,26 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ViewRenameOptions {
 
-	private String name;
+    private String name;
 
-	public ViewRenameOptions() {
-		super();
-	}
+    public ViewRenameOptions() {
+        super();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            The new name
-	 * @return options
-	 */
-	protected ViewRenameOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
+    /**
+     * @param name The new name
+     * @return options
+     */
+    protected ViewRenameOptions name(final String name) {
+        this.name = name;
+        return this;
+    }
 
 }

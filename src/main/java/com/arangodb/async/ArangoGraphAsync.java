@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB graph level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial.html">API Documentation</a>
  */
 @SuppressWarnings("unused")
 public interface ArangoGraphAsync extends ArangoSerializationAccessor {
@@ -64,7 +64,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      *
      * @param edgeDefinitions An array of definitions for the edge
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> create(final Collection<EdgeDefinition> edgeDefinitions);
@@ -76,7 +76,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * @param edgeDefinitions An array of definitions for the edge
      * @param options         Additional options, can be null
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#create-a-graph">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#create-a-graph">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> createGraph(
@@ -87,7 +87,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * Delete an existing graph
      *
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
      */
     CompletableFuture<Void> drop();
 
@@ -97,7 +97,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * @param dropCollections Drop collections of this graph as well. Collections will only be dropped if they are not used in other
      *                        graphs.
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#drop-a-graph">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#drop-a-graph">API Documentation</a>
      */
     CompletableFuture<Void> drop(boolean dropCollections);
 
@@ -105,7 +105,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * Get a graph from the graph module
      *
      * @return the definition content of this graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#get-a-graph">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#get-a-graph">API Documentation</a>
      */
     CompletableFuture<GraphEntity> getInfo();
 
@@ -113,7 +113,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * Lists all vertex collections used in this graph
      *
      * @return all vertex collections within this graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-vertex-collections">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-vertex-collections">API
      * Documentation</a>
      */
     CompletableFuture<Collection<String>> getVertexCollections();
@@ -124,7 +124,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      *
      * @param name The name of the collection
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-vertex-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> addVertexCollection(final String name);
@@ -149,7 +149,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * Lists all edge collections used in this graph
      *
      * @return all edge collections within this graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#list-edge-definitions">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#list-edge-definitions">API
      * Documentation</a>
      */
     CompletableFuture<Collection<String>> getEdgeDefinitions();
@@ -159,7 +159,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      *
      * @param definition
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#add-edge-definition">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-edge-definition">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> addEdgeDefinition(final EdgeDefinition definition);
@@ -170,7 +170,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      *
      * @param definition The edge definition
      * @return information about the graph
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Management.html#replace-an-edge-definition">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#replace-an-edge-definition">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> replaceEdgeDefinition(final EdgeDefinition definition);
@@ -182,7 +182,7 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * @param definitionName The name of the edge collection used in the definition
      * @return information about the graph
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Gharial/Management.html#remove-an-edge-definition-from-the-graph">API
+     * "https://www.arangodb.com/docs/stable/http/gharial-management.html#remove-an-edge-definition-from-the-graph">API
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> removeEdgeDefinition(final String definitionName);

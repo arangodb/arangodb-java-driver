@@ -117,6 +117,6 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             e.printStackTrace();
         }
 
-		db.abortStreamTransaction(tx2.getId());
+        db.abortStreamTransaction(tx2.getId());
     }
 }

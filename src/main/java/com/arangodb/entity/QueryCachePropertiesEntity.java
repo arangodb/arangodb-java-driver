@@ -22,52 +22,49 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/AqlQueryCache/index.html#http-interface-for-the-aql-query-cache">API
- *      Documentation</a>
+ * "https://www.arangodb.com/docs/stable/http/aql-query-cache.html">API
+ * Documentation</a>
  */
 public class QueryCachePropertiesEntity implements Entity {
 
-	public enum CacheMode {
-		off, on, demand
-	}
+    public enum CacheMode {
+        off, on, demand
+    }
 
-	private CacheMode mode;
-	private Long maxResults;
+    private CacheMode mode;
+    private Long maxResults;
 
-	public QueryCachePropertiesEntity() {
-		super();
-	}
+    public QueryCachePropertiesEntity() {
+        super();
+    }
 
-	/**
-	 * @return the mode the AQL query cache operates in. The mode is one of the following values: off, on or demand
-	 */
-	public CacheMode getMode() {
-		return mode;
-	}
+    /**
+     * @return the mode the AQL query cache operates in. The mode is one of the following values: off, on or demand
+     */
+    public CacheMode getMode() {
+        return mode;
+    }
 
-	/**
-	 * @param mode
-	 *            the mode the AQL query cache operates in. The mode is one of the following values: off, on or demand
-	 */
-	public void setMode(final CacheMode mode) {
-		this.mode = mode;
-	}
+    /**
+     * @param mode the mode the AQL query cache operates in. The mode is one of the following values: off, on or demand
+     */
+    public void setMode(final CacheMode mode) {
+        this.mode = mode;
+    }
 
-	/**
-	 * @return the maximum number of query results that will be stored per database-specific cache
-	 */
-	public Long getMaxResults() {
-		return maxResults;
-	}
+    /**
+     * @return the maximum number of query results that will be stored per database-specific cache
+     */
+    public Long getMaxResults() {
+        return maxResults;
+    }
 
-	/**
-	 * @param maxResults
-	 *            the maximum number of query results that will be stored per database-specific cache
-	 */
-	public void setMaxResults(final Long maxResults) {
-		this.maxResults = maxResults;
-	}
+    /**
+     * @param maxResults the maximum number of query results that will be stored per database-specific cache
+     */
+    public void setMaxResults(final Long maxResults) {
+        this.maxResults = maxResults;
+    }
 
 }

@@ -22,28 +22,36 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class DBCreateOptions {
 
-	private String name;
+    private String name;
+    private DatabaseOptions options;
 
-	public DBCreateOptions() {
-		super();
-	}
+    public DBCreateOptions() {
+        super();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            Has to contain a valid database name
-	 * @return options
-	 */
-	protected DBCreateOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
+    /**
+     * @param name Has to contain a valid database name
+     * @return options
+     */
+    public DBCreateOptions name(final String name) {
+        this.name = name;
+        return this;
+    }
+
+    public DatabaseOptions getOptions() {
+        return options;
+    }
+
+    public DBCreateOptions options(DatabaseOptions options) {
+        this.options = options;
+        return this;
+    }
 
 }

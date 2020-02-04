@@ -32,10 +32,16 @@ import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
+import org.junit.Test;
+
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class VPackExample {
 
@@ -60,7 +66,7 @@ public class VPackExample {
 		assertThat(bar.getAsInt(), is(2));
 
 		// iterate over the fields
-		for (final Iterator<Entry<String, VPackSlice>> iterator = slice.objectIterator(); iterator.hasNext();) {
+		for (final Iterator<Entry<String, VPackSlice>> iterator = slice.objectIterator(); iterator.hasNext(); ) {
 			final Entry<String, VPackSlice> field = iterator.next();
 			assertThat(field.getValue().isInteger(), is(true));
 		}
@@ -87,7 +93,7 @@ public class VPackExample {
 		}
 
 		// iterate over values with Iterator
-		for (final Iterator<VPackSlice> iterator = slice.arrayIterator(); iterator.hasNext();) {
+		for (final Iterator<VPackSlice> iterator = slice.arrayIterator(); iterator.hasNext(); ) {
 			final VPackSlice value = iterator.next();
 			assertThat(value.isInteger(), is(true));
 		}

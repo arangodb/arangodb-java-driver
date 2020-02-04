@@ -25,32 +25,31 @@ import com.arangodb.Function;
 
 /**
  * @author Mark Vollmary
- * 
  */
 public class ArangoMappingIterator<R, T> implements ArangoIterator<T> {
 
-	private final ArangoIterator<R> iterator;
-	private final Function<? super R, ? extends T> mapper;
+    private final ArangoIterator<R> iterator;
+    private final Function<? super R, ? extends T> mapper;
 
-	public ArangoMappingIterator(final ArangoIterator<R> iterator, final Function<? super R, ? extends T> mapper) {
-		super();
-		this.iterator = iterator;
-		this.mapper = mapper;
-	}
+    public ArangoMappingIterator(final ArangoIterator<R> iterator, final Function<? super R, ? extends T> mapper) {
+        super();
+        this.iterator = iterator;
+        this.mapper = mapper;
+    }
 
-	@Override
-	public boolean hasNext() {
-		return iterator.hasNext();
-	}
+    @Override
+    public boolean hasNext() {
+        return iterator.hasNext();
+    }
 
-	@Override
-	public T next() {
-		return mapper.apply(iterator.next());
-	}
+    @Override
+    public T next() {
+        return mapper.apply(iterator.next());
+    }
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
 
 }

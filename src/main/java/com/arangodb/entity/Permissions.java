@@ -22,18 +22,17 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum Permissions {
 
-	/**
-	 * read and write access
-	 */
-	RW,
-	/**
-	 * read-only access
-	 */
-	RO,
-	NONE
+    /**
+     * read and write access
+     */
+    RW,
+    /**
+     * read-only access
+     */
+    RO,
+    NONE
 
 }

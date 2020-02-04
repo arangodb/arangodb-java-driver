@@ -30,68 +30,67 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class VstConnectionSync extends VstConnection {
 
-	public static class Builder {
+    public static class Builder {
 
-		private HostDescription host;
-		private MessageStore messageStore;
-		private Integer timeout;
-		private Long ttl;
-		private Boolean useSsl;
-		private SSLContext sslContext;
+        private HostDescription host;
+        private MessageStore messageStore;
+        private Integer timeout;
+        private Long ttl;
+        private Boolean useSsl;
+        private SSLContext sslContext;
 
-		public Builder host(final HostDescription host) {
-			this.host = host;
-			return this;
-		}
+        public Builder host(final HostDescription host) {
+            this.host = host;
+            return this;
+        }
 
-		public Builder messageStore(final MessageStore messageStore) {
-			this.messageStore = messageStore;
-			return this;
-		}
+        public Builder messageStore(final MessageStore messageStore) {
+            this.messageStore = messageStore;
+            return this;
+        }
 
-		public Builder timeout(final Integer timeout) {
-			this.timeout = timeout;
-			return this;
-		}
+        public Builder timeout(final Integer timeout) {
+            this.timeout = timeout;
+            return this;
+        }
 
-		public Builder useSsl(final Boolean useSsl) {
-			this.useSsl = useSsl;
-			return this;
-		}
+        public Builder useSsl(final Boolean useSsl) {
+            this.useSsl = useSsl;
+            return this;
+        }
 
-		public Builder sslContext(final SSLContext sslContext) {
-			this.sslContext = sslContext;
-			return this;
-		}
+        public Builder sslContext(final SSLContext sslContext) {
+            this.sslContext = sslContext;
+            return this;
+        }
 
-		public Builder ttl(final Long ttl) {
-			this.ttl = ttl;
-			return this;
-		}
+        public Builder ttl(final Long ttl) {
+            this.ttl = ttl;
+            return this;
+        }
 
-		public VstConnectionSync build() {
-			return new VstConnectionSync(host, timeout, ttl, useSsl, sslContext, messageStore);
-		}
-	}
+        public VstConnectionSync build() {
+            return new VstConnectionSync(host, timeout, ttl, useSsl, sslContext, messageStore);
+        }
+    }
 
-	private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
-		final SSLContext sslContext, final MessageStore messageStore) {
-		super(host, timeout, ttl, useSsl, sslContext, messageStore);
-	}
+    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
+                              final SSLContext sslContext, final MessageStore messageStore) {
+        super(host, timeout, ttl, useSsl, sslContext, messageStore);
+    }
 
-	public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
-		final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
-		messageStore.storeMessage(message.getId(), task);
-		super.writeIntern(message, chunks);
-		try {
-			return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
-		} catch (final Exception e) {
-			throw new ArangoDBException(e);
-		}
-	}
+    public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
+        final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
+        messageStore.storeMessage(message.getId(), task);
+        super.writeIntern(message, chunks);
+        try {
+            return timeout == null || timeout == 0L ? task.get() : task.get(timeout, TimeUnit.MILLISECONDS);
+        } catch (final Exception e) {
+            throw new ArangoDBException(e);
+        }
+    }
 
 }

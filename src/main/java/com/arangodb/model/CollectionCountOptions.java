@@ -25,24 +25,24 @@ package com.arangodb.model;
  */
 public class CollectionCountOptions {
 
-	private String streamTransactionId;
+    private String streamTransactionId;
 
-	public CollectionCountOptions() {
-		super();
-	}
+    public CollectionCountOptions() {
+        super();
+    }
 
-	public String getStreamTransactionId() {
-		return streamTransactionId;
-	}
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
 
-	/**
-	 * @param streamTransactionId If set, the operation will be executed within the transaction.
-	 * @return options
-	 * @since ArangoDB 3.5.0
-	 */
-	public CollectionCountOptions streamTransactionId(final String streamTransactionId) {
-		this.streamTransactionId = streamTransactionId;
-		return this;
-	}
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.0
+     */
+    public CollectionCountOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

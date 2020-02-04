@@ -22,62 +22,58 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#create-aql-user-function">API
- *      Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-user-functions.html#create-aql-user-function">API
+ * Documentation</a>
  */
 public class AqlFunctionCreateOptions {
 
-	private String name;
-	private String code;
-	private Boolean isDeterministic;
+    private String name;
+    private String code;
+    private Boolean isDeterministic;
 
-	public AqlFunctionCreateOptions() {
-		super();
-	}
+    public AqlFunctionCreateOptions() {
+        super();
+    }
 
-	/**
-	 * @param name
-	 *            the fully qualified name of the user functions
-	 * @return options
-	 */
-	protected AqlFunctionCreateOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
+    /**
+     * @param name the fully qualified name of the user functions
+     * @return options
+     */
+    protected AqlFunctionCreateOptions name(final String name) {
+        this.name = name;
+        return this;
+    }
 
-	protected String getName() {
-		return name;
-	}
+    protected String getName() {
+        return name;
+    }
 
-	/**
-	 * @param code
-	 *            a string representation of the function body
-	 * @return options
-	 */
-	protected AqlFunctionCreateOptions code(final String code) {
-		this.code = code;
-		return this;
-	}
+    /**
+     * @param code a string representation of the function body
+     * @return options
+     */
+    protected AqlFunctionCreateOptions code(final String code) {
+        this.code = code;
+        return this;
+    }
 
-	protected String getCode() {
-		return code;
-	}
+    protected String getCode() {
+        return code;
+    }
 
-	/**
-	 * @param isDeterministic
-	 *            an optional boolean value to indicate that the function results are fully deterministic (function
-	 *            return value solely depends on the input value and return value is the same for repeated calls with
-	 *            same input)
-	 * @return options
-	 */
-	public AqlFunctionCreateOptions isDeterministic(final Boolean isDeterministic) {
-		this.isDeterministic = isDeterministic;
-		return this;
-	}
+    /**
+     * @param isDeterministic an optional boolean value to indicate that the function results are fully deterministic (function
+     *                        return value solely depends on the input value and return value is the same for repeated calls with
+     *                        same input)
+     * @return options
+     */
+    public AqlFunctionCreateOptions isDeterministic(final Boolean isDeterministic) {
+        this.isDeterministic = isDeterministic;
+        return this;
+    }
 
-	public Boolean getIsDeterministic() {
-		return isDeterministic;
-	}
+    public Boolean getIsDeterministic() {
+        return isDeterministic;
+    }
 
 }

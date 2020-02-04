@@ -24,75 +24,70 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/UserManagement/index.html#create-user">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/user-management.html#create-user">API Documentation</a>
  */
 public class UserCreateOptions {
 
-	private String user;
-	private String passwd;
-	private Boolean active;
-	private Map<String, Object> extra;
+    private String user;
+    private String passwd;
+    private Boolean active;
+    private Map<String, Object> extra;
 
-	public UserCreateOptions() {
-		super();
-	}
+    public UserCreateOptions() {
+        super();
+    }
 
-	protected String getUser() {
-		return user;
-	}
+    protected String getUser() {
+        return user;
+    }
 
-	/**
-	 * @param user
-	 *            The name of the user
-	 * @return options
-	 */
-	protected UserCreateOptions user(final String user) {
-		this.user = user;
-		return this;
-	}
+    /**
+     * @param user The name of the user
+     * @return options
+     */
+    protected UserCreateOptions user(final String user) {
+        this.user = user;
+        return this;
+    }
 
-	protected String getPasswd() {
-		return passwd;
-	}
+    protected String getPasswd() {
+        return passwd;
+    }
 
-	/**
-	 * @param passwd
-	 *            The user password
-	 * @return options
-	 */
-	protected UserCreateOptions passwd(final String passwd) {
-		this.passwd = passwd;
-		return this;
-	}
+    /**
+     * @param passwd The user password
+     * @return options
+     */
+    protected UserCreateOptions passwd(final String passwd) {
+        this.passwd = passwd;
+        return this;
+    }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	/**
-	 * @param active
-	 *            An optional flag that specifies whether the user is active. If not specified, this will default to
-	 *            true
-	 * @return options
-	 */
-	public UserCreateOptions active(final Boolean active) {
-		this.active = active;
-		return this;
-	}
+    /**
+     * @param active An optional flag that specifies whether the user is active. If not specified, this will default to
+     *               true
+     * @return options
+     */
+    public UserCreateOptions active(final Boolean active) {
+        this.active = active;
+        return this;
+    }
 
-	public Map<String, Object> getExtra() {
-		return extra;
-	}
+    public Map<String, Object> getExtra() {
+        return extra;
+    }
 
-	/**
-	 * @param extra
-	 *            Optional data about the user
-	 * @return options
-	 */
-	public UserCreateOptions extra(final Map<String, Object> extra) {
-		this.extra = extra;
-		return this;
-	}
+    /**
+     * @param extra Optional data about the user
+     * @return options
+     */
+    public UserCreateOptions extra(final Map<String, Object> extra) {
+        this.extra = extra;
+        return this;
+    }
 
 }

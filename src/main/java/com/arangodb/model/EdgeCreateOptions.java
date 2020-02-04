@@ -22,29 +22,42 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#create-an-edge">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#create-an-edge">API Documentation</a>
  */
 public class EdgeCreateOptions {
 
-	private Boolean waitForSync;
+    private Boolean waitForSync;
+    private String streamTransactionId;
 
-	public EdgeCreateOptions() {
-		super();
-	}
+    public EdgeCreateOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync
-	 *            Wait until document has been synced to disk.
-	 * @return options
-	 */
-	public EdgeCreateOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until document has been synced to disk.
+     * @return options
+     */
+    public EdgeCreateOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.1
+     */
+    public EdgeCreateOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
 
 }

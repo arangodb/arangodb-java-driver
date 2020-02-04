@@ -24,27 +24,26 @@ import com.arangodb.entity.ViewType;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ViewCreateOptions {
 
-	@SuppressWarnings("unused")
-	private String name;
-	@SuppressWarnings("unused")
-	private ViewType type;
+    @SuppressWarnings("unused")
+    private String name;
+    @SuppressWarnings("unused")
+    private ViewType type;
 
-	public ViewCreateOptions() {
-		super();
-	}
+    public ViewCreateOptions() {
+        super();
+    }
 
-	protected ViewCreateOptions name(final String name) {
-		this.name = name;
-		return this;
-	}
+    protected ViewCreateOptions name(final String name) {
+        this.name = name;
+        return this;
+    }
 
-	protected ViewCreateOptions type(final ViewType type) {
-		this.type = type;
-		return this;
-	}
+    protected ViewCreateOptions type(final ViewType type) {
+        this.type = type;
+        return this;
+    }
 
 }

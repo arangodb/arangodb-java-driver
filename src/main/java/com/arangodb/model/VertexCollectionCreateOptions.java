@@ -22,28 +22,26 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class VertexCollectionCreateOptions {
 
-	private String collection;
+    private String collection;
 
-	public VertexCollectionCreateOptions() {
-		super();
-	}
+    public VertexCollectionCreateOptions() {
+        super();
+    }
 
-	protected String getCollection() {
-		return collection;
-	}
+    protected String getCollection() {
+        return collection;
+    }
 
-	/**
-	 * @param collection
-	 *            The name of the collection
-	 * @return options
-	 */
-	protected VertexCollectionCreateOptions collection(final String collection) {
-		this.collection = collection;
-		return this;
-	}
+    /**
+     * @param collection The name of the collection
+     * @return options
+     */
+    protected VertexCollectionCreateOptions collection(final String collection) {
+        this.collection = collection;
+        return this;
+    }
 
 }

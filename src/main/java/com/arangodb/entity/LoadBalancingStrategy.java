@@ -22,8 +22,7 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum LoadBalancingStrategy {
-	NONE, ROUND_ROBIN, ONE_RANDOM
+    NONE, ROUND_ROBIN, ONE_RANDOM
 }

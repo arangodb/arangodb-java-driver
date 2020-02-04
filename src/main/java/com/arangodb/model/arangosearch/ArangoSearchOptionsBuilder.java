@@ -22,15 +22,14 @@ package com.arangodb.model.arangosearch;
 
 /**
  * @author Mark Vollmary
- *
  */
 public abstract class ArangoSearchOptionsBuilder {
 
-	private ArangoSearchOptionsBuilder() {
-		super();
-	}
+    private ArangoSearchOptionsBuilder() {
+        super();
+    }
 
-	public static ArangoSearchCreateOptions build(final ArangoSearchCreateOptions options, final String name) {
-		return options.name(name);
-	}
+    public static ArangoSearchCreateOptions build(final ArangoSearchCreateOptions options, final String name) {
+        return options.name(name);
+    }
 }

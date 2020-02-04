@@ -30,8 +30,6 @@ import com.arangodb.model.*;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.function.Function;
 
 /**
  * @author Mark Vollmary
@@ -116,29 +114,7 @@ public class ArangoCollectionAsyncImpl
         DocumentUtil.validateDocumentKey(key);
         boolean isCatchException = options != null ? options.isCatchException() : new DocumentReadOptions().isCatchException();
         return (CompletableFuture<T>) executor.execute(getDocumentRequest(key, options), type)
-                .exceptionally(handleGetDocumentExceptions(isCatchException));
-    }
-
-    private <T> Function<Throwable, T> handleGetDocumentExceptions(Boolean isCatchException) {
-        return throwable -> {
-            if (throwable instanceof CompletionException) {
-                if (throwable.getCause() instanceof ArangoDBException) {
-                    ArangoDBException arangoDBException = (ArangoDBException) throwable.getCause();
-
-                    // handle Response: 404, Error: 1655 - transaction not found
-                    if (arangoDBException.getErrorNum() != null && arangoDBException.getErrorNum() == 1655) {
-                        throw (CompletionException) throwable;
-                    }
-
-                    if ((arangoDBException.getResponseCode() != null && (arangoDBException.getResponseCode() == 404 || arangoDBException.getResponseCode() == 304
-                            || arangoDBException.getResponseCode() == 412)) && isCatchException) {
-                        return null;
-                    }
-                }
-                throw (CompletionException) throwable;
-            }
-            throw new CompletionException(throwable);
-        };
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException));
     }
 
     @Override
@@ -260,7 +236,7 @@ public class ArangoCollectionAsyncImpl
     public CompletableFuture<Boolean> documentExists(final String key, final DocumentExistsOptions options) {
         boolean isCatchException = options != null ? options.isCatchException() : new DocumentExistsOptions().isCatchException();
         return executor.execute(documentExistsRequest(key, options), response -> response)
-                .exceptionally(handleGetDocumentExceptions(isCatchException))
+                .exceptionally(ExceptionUtil.catchGetDocumentExceptions(isCatchException))
                 .thenApply(Objects::nonNull);
     }
 

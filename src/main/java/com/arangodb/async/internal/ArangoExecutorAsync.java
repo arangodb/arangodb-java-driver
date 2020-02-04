@@ -72,5 +72,6 @@ public class ArangoExecutorAsync extends ArangoExecutor {
 
     public void disconnect() throws IOException {
         communication.close();
+        outgoingExecutor.shutdown();
     }
 }

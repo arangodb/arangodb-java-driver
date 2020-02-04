@@ -22,55 +22,52 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ConsolidationPolicy {
 
-	private final ConsolidationType type;
-	private Double threshold;
-	private Long segmentThreshold;
+    private final ConsolidationType type;
+    private Double threshold;
+    private Long segmentThreshold;
 
-	private ConsolidationPolicy(final ConsolidationType type) {
-		super();
-		this.type = type;
-	}
+    private ConsolidationPolicy(final ConsolidationType type) {
+        super();
+        this.type = type;
+    }
 
-	public static ConsolidationPolicy of(final ConsolidationType type) {
-		return new ConsolidationPolicy(type);
-	}
+    public static ConsolidationPolicy of(final ConsolidationType type) {
+        return new ConsolidationPolicy(type);
+    }
 
-	/**
-	 * @param threshold
-	 *            Select a given segment for "consolidation" if and only if the formula based on type (as defined above)
-	 *            evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
-	 * @return policy
-	 */
-	public ConsolidationPolicy threshold(final Double threshold) {
-		this.threshold = threshold;
-		return this;
-	}
+    /**
+     * @param threshold Select a given segment for "consolidation" if and only if the formula based on type (as defined above)
+     *                  evaluates to true, valid value range [0.0, 1.0] (default: 0.85)
+     * @return policy
+     */
+    public ConsolidationPolicy threshold(final Double threshold) {
+        this.threshold = threshold;
+        return this;
+    }
 
-	/**
-	 * @param segmentThreshold
-	 *            Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} <
-	 *            number_of_segments
-	 * @return policy
-	 */
-	public ConsolidationPolicy segmentThreshold(final Long segmentThreshold) {
-		this.segmentThreshold = segmentThreshold;
-		return this;
-	}
+    /**
+     * @param segmentThreshold Apply the "consolidation" operation if and only if (default: 300): {segmentThreshold} <
+     *                         number_of_segments
+     * @return policy
+     */
+    public ConsolidationPolicy segmentThreshold(final Long segmentThreshold) {
+        this.segmentThreshold = segmentThreshold;
+        return this;
+    }
 
-	public ConsolidationType getType() {
-		return type;
-	}
+    public ConsolidationType getType() {
+        return type;
+    }
 
-	public Double getThreshold() {
-		return threshold;
-	}
+    public Double getThreshold() {
+        return threshold;
+    }
 
-	public Long getSegmentThreshold() {
-		return segmentThreshold;
-	}
+    public Long getSegmentThreshold() {
+        return segmentThreshold;
+    }
 
 }

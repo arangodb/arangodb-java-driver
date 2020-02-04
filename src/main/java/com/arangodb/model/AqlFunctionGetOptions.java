@@ -22,31 +22,29 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/AqlUserFunctions/index.html#return-registered-aql-user-functions">API
- *      Documentation</a>
+ * "https://www.arangodb.com/docs/stable/http/aql-user-functions.html#return-registered-aql-user-functions">API
+ * Documentation</a>
  */
 public class AqlFunctionGetOptions {
 
-	private String namespace;
+    private String namespace;
 
-	public AqlFunctionGetOptions() {
-		super();
-	}
+    public AqlFunctionGetOptions() {
+        super();
+    }
 
-	public String getNamespace() {
-		return namespace;
-	}
+    public String getNamespace() {
+        return namespace;
+    }
 
-	/**
-	 * @param namespace
-	 *            Returns all registered AQL user functions from namespace namespace
-	 * @return options
-	 */
-	public AqlFunctionGetOptions namespace(final String namespace) {
-		this.namespace = namespace;
-		return this;
-	}
+    /**
+     * @param namespace Returns all registered AQL user functions from namespace namespace
+     * @return options
+     */
+    public AqlFunctionGetOptions namespace(final String namespace) {
+        this.namespace = namespace;
+        return this;
+    }
 
 }

@@ -29,45 +29,45 @@ import java.util.Collection;
  */
 public class TransactionCollectionOptions {
 
-	private Collection<String> read;
-	private Collection<String> write;
-	private Collection<String> exclusive;
-	private Boolean allowImplicit;
+    private Collection<String> read;
+    private Collection<String> write;
+    private Collection<String> exclusive;
+    private Boolean allowImplicit;
 
-	public Collection<String> getRead() {
-		return read;
-	}
+    public Collection<String> getRead() {
+        return read;
+    }
 
-	public TransactionCollectionOptions read(final String... read) {
-		this.read = Arrays.asList(read);
-		return this;
-	}
+    public TransactionCollectionOptions read(final String... read) {
+        this.read = Arrays.asList(read);
+        return this;
+    }
 
-	public Collection<String> getWrite() {
-		return write;
-	}
+    public Collection<String> getWrite() {
+        return write;
+    }
 
-	public TransactionCollectionOptions write(final String... write) {
-		this.write = Arrays.asList(write);
-		return this;
-	}
+    public TransactionCollectionOptions write(final String... write) {
+        this.write = Arrays.asList(write);
+        return this;
+    }
 
-	public Collection<String> getExclusive() {
-		return exclusive;
-	}
+    public Collection<String> getExclusive() {
+        return exclusive;
+    }
 
-	public TransactionCollectionOptions exclusive(final String... exclusive) {
-		this.exclusive = Arrays.asList(exclusive);
-		return this;
-	}
+    public TransactionCollectionOptions exclusive(final String... exclusive) {
+        this.exclusive = Arrays.asList(exclusive);
+        return this;
+    }
 
-	public Boolean getAllowImplicit() {
-		return allowImplicit;
-	}
+    public Boolean getAllowImplicit() {
+        return allowImplicit;
+    }
 
-	public TransactionCollectionOptions allowImplicit(final Boolean allowImplicit) {
-		this.allowImplicit = allowImplicit;
-		return this;
-	}
+    public TransactionCollectionOptions allowImplicit(final Boolean allowImplicit) {
+        this.allowImplicit = allowImplicit;
+        return this;
+    }
 
 }

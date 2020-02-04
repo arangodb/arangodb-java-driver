@@ -25,23 +25,22 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class MapBuilder {
 
-	private final Map<String, Object> map;
+    private final Map<String, Object> map;
 
-	public MapBuilder() {
-		super();
+    public MapBuilder() {
+        super();
         map = new LinkedHashMap<>();
-	}
+    }
 
-	public MapBuilder put(final String key, final Object value) {
-		map.put(key, value);
-		return this;
-	}
+    public MapBuilder put(final String key, final Object value) {
+        map.put(key, value);
+        return this;
+    }
 
-	public Map<String, Object> get() {
-		return map;
-	}
+    public Map<String, Object> get() {
+        return map;
+    }
 }

@@ -24,12 +24,11 @@ import java.io.Closeable;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface ConnectionPool extends Closeable {
 
-	Connection createConnection(final HostDescription host);
+    Connection createConnection(final HostDescription host);
 
-	Connection connection();
+    Connection connection();
 
 }

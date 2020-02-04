@@ -20,17 +20,16 @@
 
 package com.arangodb.example.graph;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Mark Vollmary

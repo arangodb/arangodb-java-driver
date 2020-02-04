@@ -24,53 +24,52 @@ import java.util.List;
 
 /**
  * @author Mark Vollmary
- *
  * @see <a href=
- *      "https://docs.arangodb.com/current/HTTP/AdministrationAndMonitoring/index.html#read-global-logs-from-the-server">API
- *      Documentation</a>
+ * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+ * Documentation</a>
  */
 public class LogEntity implements Entity {
 
-	private List<Long> lid;
-	private List<LogLevel> level;
-	private List<Long> timestamp;
-	private List<String> text;
-	private Long totalAmount;
+    private List<Long> lid;
+    private List<LogLevel> level;
+    private List<Long> timestamp;
+    private List<String> text;
+    private Long totalAmount;
 
-	/**
-	 * @return a list of log entry identifiers. Each log message is uniquely identified by its @LIT{lid} and the
-	 *         identifiers are in ascending order
-	 */
-	public List<Long> getLid() {
-		return lid;
-	}
+    /**
+     * @return a list of log entry identifiers. Each log message is uniquely identified by its @LIT{lid} and the
+     * identifiers are in ascending order
+     */
+    public List<Long> getLid() {
+        return lid;
+    }
 
-	/**
-	 * @return a list of the log-levels for all log entries
-	 */
-	public List<LogLevel> getLevel() {
-		return level;
-	}
+    /**
+     * @return a list of the log-levels for all log entries
+     */
+    public List<LogLevel> getLevel() {
+        return level;
+    }
 
-	/**
-	 * @return a list of the timestamps as seconds since 1970-01-01 for all log entries
-	 */
-	public List<Long> getTimestamp() {
-		return timestamp;
-	}
+    /**
+     * @return a list of the timestamps as seconds since 1970-01-01 for all log entries
+     */
+    public List<Long> getTimestamp() {
+        return timestamp;
+    }
 
-	/**
-	 * @return a list of the texts of all log entries
-	 */
-	public List<String> getText() {
-		return text;
-	}
+    /**
+     * @return a list of the texts of all log entries
+     */
+    public List<String> getText() {
+        return text;
+    }
 
-	/**
-	 * @return the total amount of log entries before pagination
-	 */
-	public Long getTotalAmount() {
-		return totalAmount;
-	}
+    /**
+     * @return the total amount of log entries before pagination
+     */
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
 
 }

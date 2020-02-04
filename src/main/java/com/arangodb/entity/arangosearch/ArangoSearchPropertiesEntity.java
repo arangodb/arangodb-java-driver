@@ -20,10 +20,10 @@
 
 package com.arangodb.entity.arangosearch;
 
-import java.util.Collection;
-
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
+
+import java.util.Collection;
 
 /**
  * @author Mark Vollmary

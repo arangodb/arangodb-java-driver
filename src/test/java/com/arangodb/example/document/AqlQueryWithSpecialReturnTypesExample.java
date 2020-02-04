@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.Matchers.notNullValue;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +36,13 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
 
 /**
  * @author Mark Vollmary

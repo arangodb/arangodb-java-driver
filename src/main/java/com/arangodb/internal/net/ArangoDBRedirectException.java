@@ -24,20 +24,19 @@ import com.arangodb.ArangoDBException;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoDBRedirectException extends ArangoDBException {
 
-	private static final long serialVersionUID = -94810262465567613L;
-	private final String location;
+    private static final long serialVersionUID = -94810262465567613L;
+    private final String location;
 
-	public ArangoDBRedirectException(final String message, final String location) {
-		super(message);
-		this.location = location;
-	}
+    public ArangoDBRedirectException(final String message, final String location) {
+        super(message);
+        this.location = location;
+    }
 
-	public String getLocation() {
-		return location;
-	}
+    public String getLocation() {
+        return location;
+    }
 
 }

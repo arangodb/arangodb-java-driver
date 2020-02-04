@@ -22,10 +22,9 @@ package com.arangodb.internal.net;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum AccessType {
 
-	WRITE, READ, DIRTY_READ
+    WRITE, READ, DIRTY_READ
 
 }

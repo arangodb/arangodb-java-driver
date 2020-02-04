@@ -21,19 +21,16 @@
 package com.arangodb;
 
 /**
+ * @param <T> the type of the input to the operation
  * @author Mark Vollmary
- * @param <T>
- *            the type of the input to the operation
- *
  */
 public interface Consumer<T> {
 
-	/**
-	 * Performs this operation on the given argument.
-	 *
-	 * @param t
-	 *            the input argument
-	 */
-	void accept(T t);
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     */
+    void accept(T t);
 
 }

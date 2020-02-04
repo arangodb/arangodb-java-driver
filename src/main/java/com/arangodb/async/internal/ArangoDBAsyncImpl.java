@@ -34,6 +34,7 @@ import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
 import com.arangodb.internal.velocystream.VstProtocol;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
+import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
@@ -92,7 +93,12 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public CompletableFuture<Boolean> createDatabase(final String name) {
-        return executor.execute(createDatabaseRequest(name), createDatabaseResponseDeserializer());
+        return createDatabase(new DBCreateOptions().name(name));
+    }
+
+    @Override
+    public CompletableFuture<Boolean> createDatabase(DBCreateOptions options) {
+        return executor.execute(createDatabaseRequest(options), createDatabaseResponseDeserializer());
     }
 
     @Override

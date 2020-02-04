@@ -22,6 +22,7 @@ package com.arangodb.internal;
 
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -290,7 +291,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     protected ResponseDeserializer<Integer> deleteAqlFunctionResponseDeserializer() {
         return response -> {
             // compatibility with ArangoDB < 3.4
-            // https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+            // https://www.arangodb.com/docs/stable/release-notes-upgrading-changes34.html
             Integer count = null;
             final VPackSlice body = response.getBody();
             if (body.isObject()) {
@@ -314,7 +315,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         return response -> {
             final VPackSlice body = response.getBody();
             // compatibility with ArangoDB < 3.4
-            // https://docs.arangodb.com/devel/Manual/ReleaseNotes/UpgradingChanges34.html
+            // https://www.arangodb.com/docs/stable/release-notes-upgrading-changes34.html
             final VPackSlice result = body.isArray() ? body : body.get(ArangoResponseField.RESULT);
             return util().deserialize(result, new Type<Collection<AqlFunctionEntity>>() {
             }.getType());
@@ -485,7 +486,20 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         };
     }
 
+    protected ResponseDeserializer<Collection<SearchAnalyzer>> getSearchAnalyzersResponseDeserializer() {
+        return response -> {
+            final VPackSlice result = response.getBody().get(ArangoResponseField.RESULT);
+            return util().deserialize(result, new Type<Collection<SearchAnalyzer>>() {
+            }.getType());
+        };
+    }
+
     protected Request createAnalyzerRequest(final AnalyzerEntity options) {
+        return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
+                .setBody(util().serialize(options));
+    }
+
+    protected Request createAnalyzerRequest(final SearchAnalyzer options) {
         return request(name(), RequestType.POST, InternalArangoView.PATH_API_ANALYZER)
                 .setBody(util().serialize(options));
     }

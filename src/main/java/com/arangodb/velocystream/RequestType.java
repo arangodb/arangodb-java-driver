@@ -22,38 +22,37 @@ package com.arangodb.velocystream;
 
 /**
  * @author Mark Vollmary
- *
  */
 public enum RequestType {
 
-	DELETE(0),
-	GET(1),
-	POST(2),
-	PUT(3),
-	HEAD(4),
-	PATCH(5),
-	OPTIONS(6),
-	VSTREAM_CRED(7),
-	VSTREAM_REGISTER(8),
-	VSTREAM_STATUS(9),
-	ILLEGAL(10);
+    DELETE(0),
+    GET(1),
+    POST(2),
+    PUT(3),
+    HEAD(4),
+    PATCH(5),
+    OPTIONS(6),
+    VSTREAM_CRED(7),
+    VSTREAM_REGISTER(8),
+    VSTREAM_STATUS(9),
+    ILLEGAL(10);
 
-	private final int type;
+    private final int type;
 
-	RequestType(final int type) {
-		this.type = type;
-	}
+    RequestType(final int type) {
+        this.type = type;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public static RequestType fromType(final int type) {
-		for (final RequestType rType : RequestType.values()) {
-			if (rType.type == type) {
-				return rType;
-			}
-		}
-		return null;
-	}
+    public static RequestType fromType(final int type) {
+        for (final RequestType rType : RequestType.values()) {
+            if (rType.type == type) {
+                return rType;
+            }
+        }
+        return null;
+    }
 }

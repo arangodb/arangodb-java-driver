@@ -22,23 +22,22 @@ package com.arangodb.internal.net;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class HostHandle {
 
-	private HostDescription host;
+    private HostDescription host;
 
-	public HostHandle() {
-		super();
-	}
+    public HostHandle() {
+        super();
+    }
 
-	public HostDescription getHost() {
-		return host;
-	}
+    public HostDescription getHost() {
+        return host;
+    }
 
-	public HostHandle setHost(final HostDescription host) {
-		this.host = host;
-		return this;
-	}
+    public HostHandle setHost(final HostDescription host) {
+        this.host = host;
+        return this;
+    }
 
 }

@@ -32,8 +32,8 @@ import java.util.concurrent.CompletableFuture;
  * Interface for operations on ArangoDB collection level.
  *
  * @author Mark Vollmary
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Collection API Documentation</a>
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/">Documents API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Collection API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection.html">Documents API Documentation</a>
  */
 @SuppressWarnings("unused")
 public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
@@ -58,7 +58,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param value A representation of a single document (POJO, VPackSlice or String for Json)
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value);
@@ -70,7 +70,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param value   A representation of a single document (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentCreateEntity<T>> insertDocument(final T value, final DocumentCreateOptions options);
@@ -81,7 +81,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param values A List of documents (POJO, VPackSlice or String for Json)
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(final Collection<T> values);
@@ -93,7 +93,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param values  A List of documents (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#create-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentCreateEntity<T>>> insertDocuments(
@@ -142,7 +142,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param key  The key of the document
      * @param type The type of the document (POJO class, VPackSlice or String for Json)
      * @return the document identified by the key
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<T> getDocument(final String key, final Class<T> type) throws ArangoDBException;
@@ -154,7 +154,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param type    The type of the document (POJO class, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return the document identified by the key
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<T> getDocument(final String key, final Class<T> type, final DocumentReadOptions options)
@@ -189,7 +189,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param key   The key of the document
      * @param value A representation of a single document (POJO, VPackSlice or String for Json)
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(final String key, final T value);
@@ -202,7 +202,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param value   A representation of a single document (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentUpdateEntity<T>> replaceDocument(
@@ -216,7 +216,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param values A List of documents (POJO, VPackSlice or String for Json)
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(final Collection<T> values);
@@ -228,7 +228,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param values  A List of documents (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#replace-documents">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> replaceDocuments(
@@ -243,7 +243,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param key   The key of the document
      * @param value A representation of a single document (POJO, VPackSlice or String for Json)
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(final String key, final T value);
@@ -257,7 +257,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param value   A representation of a single document (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(
@@ -273,7 +273,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param values A list of documents (POJO, VPackSlice or String for Json)
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(final Collection<T> values);
@@ -287,7 +287,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param values  A list of documents (POJO, VPackSlice or String for Json)
      * @param options Additional options, can be null
      * @return information about the documents
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#update-documents">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
@@ -299,7 +299,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param key The key of the document
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
     CompletableFuture<DocumentDeleteEntity<Void>> deleteDocument(final String key);
@@ -312,7 +312,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *                options.returnOld is set to true, otherwise can be null.
      * @param options Additional options, can be null
      * @return information about the document
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
      * Documentation</a>
      */
     <T> CompletableFuture<DocumentDeleteEntity<T>> deleteDocument(
@@ -326,7 +326,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param values The keys of the documents or the documents themselves
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
     CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<Void>>> deleteDocuments(final Collection<?> values);
@@ -340,7 +340,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return information about the documents
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-multiple-documents">API
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-multiple-documents">API
      * Documentation</a>
      */
     <T> CompletableFuture<MultiDocumentEntity<DocumentDeleteEntity<T>>> deleteDocuments(
@@ -354,7 +354,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param key The key of the document
      * @return true if the document was found, otherwise false
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
      * Documentation</a>
      */
     CompletableFuture<Boolean> documentExists(final String key);
@@ -366,7 +366,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return true if the document was found, otherwise false
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#read-document-header">API
+     * "https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#read-document-header">API
      * Documentation</a>
      */
     CompletableFuture<Boolean> documentExists(final String key, final DocumentExistsOptions options);
@@ -376,7 +376,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param id The index-handle
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-index">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-index">API Documentation</a>
      */
     CompletableFuture<IndexEntity> getIndex(final String id);
 
@@ -385,7 +385,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param id The index-handle
      * @return the id of the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#delete-index">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-working-with.html#delete-index">API Documentation</a>
      */
     CompletableFuture<String> deleteIndex(final String id);
 
@@ -395,7 +395,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Hash.html#create-hash-index">API Documentation</a>
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
      */
     CompletableFuture<IndexEntity> ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options);
 
@@ -405,7 +405,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Skiplist.html#create-skip-list">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API
      * Documentation</a>
      */
     CompletableFuture<IndexEntity> ensureSkiplistIndex(
@@ -418,7 +418,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Persistent.html#create-a-persistent-index">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-persistent.html#create-a-persistent-index">API
      * Documentation</a>
      */
     CompletableFuture<IndexEntity> ensurePersistentIndex(
@@ -431,7 +431,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Geo.html#create-geospatial-index">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-geo.html#create-geo-spatial-index">API
      * Documentation</a>
      */
     CompletableFuture<IndexEntity> ensureGeoIndex(final Iterable<String> fields, final GeoIndexOptions options);
@@ -442,7 +442,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param fields  A list of attribute paths
      * @param options Additional options, can be null
      * @return information about the index
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Indexes/Fulltext.html#create-fulltext-index">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-fulltext.html#create-fulltext-index">API
      * Documentation</a>
      */
     CompletableFuture<IndexEntity> ensureFulltextIndex(
@@ -465,7 +465,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @return information about the indexes
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Indexes/WorkingWith.html#read-all-indexes-of-a-collection">API
+     * "https://www.arangodb.com/docs/stable/http/indexes-working-with.html#read-all-indexes-of-a-collection">API
      * Documentation</a>
      */
     CompletableFuture<Collection<IndexEntity>> getIndexes();
@@ -481,7 +481,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Removes all documents from the collection, but leaves the indexes intact
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#truncate-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> truncate();
@@ -490,7 +490,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Removes all documents from the collection, but leaves the indexes intact
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#truncate-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#truncate-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> truncate(CollectionTruncateOptions options);
@@ -500,7 +500,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @return information about the collection, including the number of documents
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+     * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-number-of-documents-in-a-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionPropertiesEntity> count();
@@ -510,7 +510,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @return information about the collection, including the number of documents
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-number-of-documents-in-a-collection">API
+     * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-number-of-documents-in-a-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionPropertiesEntity> count(CollectionCountOptions options);
@@ -519,7 +519,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Creates the collection
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> create();
@@ -529,7 +529,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param options Additional options, can be null
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#create-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#create-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> create(final CollectionCreateOptions options);
@@ -538,7 +538,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Drops the collection
      *
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#drops-collection">API
      * Documentation</a>
      */
     CompletableFuture<Void> drop();
@@ -549,7 +549,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param isSystem Whether or not the collection to drop is a system collection. This parameter must be set to true in
      *                 order to drop a system collection.
      * @return void
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Creating.html#drops-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html#drops-collection">API
      * Documentation</a>
      */
     CompletableFuture<Void> drop(final boolean isSystem);
@@ -558,7 +558,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Loads a collection into memory.
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#load-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#load-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> load();
@@ -568,7 +568,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * in which case it will be loaded into memory, again.
      *
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#unload-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#unload-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> unload();
@@ -578,7 +578,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @return information about the collection
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-information-about-a-collection">API
+     * "https://www.arangodb.com/docs/stable/http/collection-getting.html#return-information-about-a-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> getInfo();
@@ -588,7 +588,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @return properties of the collection
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Collection/Getting.html#read-properties-of-a-collection">API
+     * "https://www.arangodb.com/docs/stable/http/collection-getting.html#read-properties-of-a-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionPropertiesEntity> getProperties();
@@ -599,7 +599,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return properties of the collection
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#change-properties-of-a-collection">API
+     * "https://www.arangodb.com/docs/stable/http/collection-modifying.html#change-properties-of-a-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionPropertiesEntity> changeProperties(final CollectionPropertiesOptions options);
@@ -609,7 +609,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param newName The new name
      * @return information about the collection
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Modifying.html#rename-collection">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#rename-collection">API
      * Documentation</a>
      */
     CompletableFuture<CollectionEntity> rename(final String newName);
@@ -621,7 +621,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param value A projection of the document containing at least the shard key (_key or a custom attribute) for
      *              which the responsible shard should be determined
      * @return information about the responsible shard
-     * @see <a href="https://docs.arangodb.com/current/HTTP/collection-getting.html#return-responsible-shard-for-a-document">
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-responsible-shard-for-a-document">
      * API Documentation</a>
      * @since ArangoDB 3.5.0
      */
@@ -631,7 +631,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Retrieve the collections revision
      *
      * @return information about the collection, including the collections revision
-     * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
+     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-collection-revision-id">API
      * Documentation</a>
      */
     CompletableFuture<CollectionRevisionEntity> getRevision();
@@ -644,7 +644,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param permissions The permissions the user grant
      * @return void
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+     * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
      * Documentation</a>
      */
     CompletableFuture<Void> grantAccess(final String user, final Permissions permissions);
@@ -656,7 +656,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param user The name of the user
      * @return void
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+     * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
      * Documentation</a>
      */
     CompletableFuture<Void> revokeAccess(final String user);
@@ -667,7 +667,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param user The name of the user
      * @return void
      * @see <a href=
-     * "https://docs.arangodb.com/current/HTTP/UserManagement/index.html#grant-or-revoke-collection-access"> API
+     * "https://www.arangodb.com/docs/stable/http/user-management.html#set-the-collection-access-level"> API
      * Documentation</a>
      * @since ArangoDB 3.2.0
      */
@@ -678,7 +678,7 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      *
      * @param user The name of the user
      * @return permissions of the user
-     * @see <a href= "https://docs.arangodb.com/current/HTTP/UserManagement/#get-the-specific-collection-access-level">
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/user-management.html#get-the-specific-collection-access-level">
      * API Documentation</a>
      * @since ArangoDB 3.2.0
      */

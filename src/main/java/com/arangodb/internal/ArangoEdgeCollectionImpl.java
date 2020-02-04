@@ -20,97 +20,95 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.EdgeUpdateEntity;
+import com.arangodb.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoEdgeCollectionImpl
-		extends InternalArangoEdgeCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync>
-		implements ArangoEdgeCollection {
+        extends InternalArangoEdgeCollection<ArangoDBImpl, ArangoDatabaseImpl, ArangoGraphImpl, ArangoExecutorSync>
+        implements ArangoEdgeCollection {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoEdgeCollectionImpl.class);
 
-	protected ArangoEdgeCollectionImpl(final ArangoGraphImpl graph, final String name) {
-		super(graph, name);
-	}
+    protected ArangoEdgeCollectionImpl(final ArangoGraphImpl graph, final String name) {
+        super(graph, name);
+    }
 
-	@Override
-	public <T> EdgeEntity insertEdge(final T value) throws ArangoDBException {
-		return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
-			insertEdgeResponseDeserializer(value));
-	}
+    @Override
+    public <T> EdgeEntity insertEdge(final T value) throws ArangoDBException {
+        return executor.execute(insertEdgeRequest(value, new EdgeCreateOptions()),
+                insertEdgeResponseDeserializer(value));
+    }
 
-	@Override
-	public <T> EdgeEntity insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException {
-		return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
-	}
+    @Override
+    public <T> EdgeEntity insertEdge(final T value, final EdgeCreateOptions options) throws ArangoDBException {
+        return executor.execute(insertEdgeRequest(value, options), insertEdgeResponseDeserializer(value));
+    }
 
-	@Override
-	public <T> T getEdge(final String key, final Class<T> type) throws ArangoDBException {
-		try {
-			return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()), getEdgeResponseDeserializer(type));
-		} catch (final ArangoDBException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			return null;
-		}
-	}
+    @Override
+    public <T> T getEdge(final String key, final Class<T> type) throws ArangoDBException {
+        try {
+            return executor.execute(getEdgeRequest(key, new GraphDocumentReadOptions()), getEdgeResponseDeserializer(type));
+        } catch (final ArangoDBException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
+        }
+    }
 
-	@Override
-	public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options)
-			throws ArangoDBException {
-		try {
-			return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
-		} catch (final ArangoDBException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			return null;
-		}
-	}
+    @Override
+    public <T> T getEdge(final String key, final Class<T> type, final GraphDocumentReadOptions options)
+            throws ArangoDBException {
+        try {
+            return executor.execute(getEdgeRequest(key, options), getEdgeResponseDeserializer(type));
+        } catch (final ArangoDBException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
+        }
+    }
 
-	@Override
-	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value) throws ArangoDBException {
-		return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
-			replaceEdgeResponseDeserializer(value));
-	}
+    @Override
+    public <T> EdgeUpdateEntity replaceEdge(final String key, final T value) throws ArangoDBException {
+        return executor.execute(replaceEdgeRequest(key, value, new EdgeReplaceOptions()),
+                replaceEdgeResponseDeserializer(value));
+    }
 
-	@Override
-	public <T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
-			throws ArangoDBException {
-		return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
-	}
+    @Override
+    public <T> EdgeUpdateEntity replaceEdge(final String key, final T value, final EdgeReplaceOptions options)
+            throws ArangoDBException {
+        return executor.execute(replaceEdgeRequest(key, value, options), replaceEdgeResponseDeserializer(value));
+    }
 
-	@Override
-	public <T> EdgeUpdateEntity updateEdge(final String key, final T value) throws ArangoDBException {
-		return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
-			updateEdgeResponseDeserializer(value));
-	}
+    @Override
+    public <T> EdgeUpdateEntity updateEdge(final String key, final T value) throws ArangoDBException {
+        return executor.execute(updateEdgeRequest(key, value, new EdgeUpdateOptions()),
+                updateEdgeResponseDeserializer(value));
+    }
 
-	@Override
-	public <T> EdgeUpdateEntity updateEdge(final String key, final T value, final EdgeUpdateOptions options)
-			throws ArangoDBException {
-		return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
-	}
+    @Override
+    public <T> EdgeUpdateEntity updateEdge(final String key, final T value, final EdgeUpdateOptions options)
+            throws ArangoDBException {
+        return executor.execute(updateEdgeRequest(key, value, options), updateEdgeResponseDeserializer(value));
+    }
 
-	@Override
-	public void deleteEdge(final String key) throws ArangoDBException {
-		executor.execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
-	}
+    @Override
+    public void deleteEdge(final String key) throws ArangoDBException {
+        executor.execute(deleteEdgeRequest(key, new EdgeDeleteOptions()), Void.class);
+    }
 
-	@Override
-	public void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException {
-		executor.execute(deleteEdgeRequest(key, options), Void.class);
-	}
+    @Override
+    public void deleteEdge(final String key, final EdgeDeleteOptions options) throws ArangoDBException {
+        executor.execute(deleteEdgeRequest(key, options), Void.class);
+    }
 
 }

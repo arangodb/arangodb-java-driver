@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.*;
+import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
@@ -33,8 +34,8 @@ import org.junit.Test;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -225,6 +226,42 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(link.getFields().iterator().next().getName(), is("value"));
     }
 
+    private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) throws ExecutionException, InterruptedException {
+
+        String fullyQualifiedName = db.name() + "::" + analyzer.getName();
+        analyzer.setName(fullyQualifiedName);
+
+        // createAnalyzer
+        SearchAnalyzer createdAnalyzer = db.createSearchAnalyzer(analyzer).get();
+        assertThat(createdAnalyzer, is(analyzer));
+
+        // getAnalyzer
+        SearchAnalyzer gotAnalyzer = db.getSearchAnalyzer(analyzer.getName()).get();
+        assertThat(gotAnalyzer, is(analyzer));
+
+        // getAnalyzers
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().get().stream().filter(it -> it.getName().equals(fullyQualifiedName))
+                .findFirst().get();
+        assertThat(foundAnalyzer, is(analyzer));
+
+        // deleteAnalyzer
+        AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
+        deleteOptions.setForce(true);
+
+        db.deleteSearchAnalyzer(analyzer.getName(), deleteOptions).get();
+
+        try {
+            db.getAnalyzer(analyzer.getName()).get();
+            fail("deleted analyzer should not be found!");
+        } catch (ExecutionException e) {
+            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(404));
+            assertThat(((ArangoDBException) e.getCause()).getErrorNum(), is(1202));
+        }
+
+    }
+
     private void createGetAndDeleteAnalyzer(AnalyzerEntity options) throws ExecutionException, InterruptedException {
 
         String fullyQualifiedName = db.name() + "::" + options.getName();
@@ -235,14 +272,14 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
         assertThat(createdAnalyzer.getType(), is(options.getType()));
         assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
-        assertThat(createdAnalyzer.getProperties(), is(options.getProperties()));
+        compareProperties(createdAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzer
         AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName()).get();
         assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
         assertThat(gotAnalyzer.getType(), is(options.getType()));
         assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
-        assertThat(gotAnalyzer.getProperties(), is(options.getProperties()));
+        compareProperties(gotAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzers
         @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -252,7 +289,7 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
         assertThat(foundAnalyzer.getType(), is(options.getType()));
         assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
-        assertThat(foundAnalyzer.getProperties(), is(options.getProperties()));
+        compareProperties(foundAnalyzer.getProperties(), options.getProperties());
 
         AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
         deleteOptions.setForce(true);
@@ -267,6 +304,19 @@ public class ArangoSearchTest extends BaseTest {
             assertThat(e.getCause(), instanceOf(ArangoDBException.class));
             assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(404));
         }
+    }
+
+    private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
+        expectedProperties.forEach((key, value) -> {
+            Object expectedValue = actualProperties.get(key);
+            if (value instanceof Map) {
+                assertThat(expectedValue, notNullValue());
+                assertThat(expectedValue, instanceOf(Map.class));
+                compareProperties((Map) value, (Map) expectedValue);
+            } else {
+                assertThat(value, is(expectedValue));
+            }
+        });
     }
 
     @Test
@@ -289,6 +339,24 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
+    public void identityAnalyzerTyped() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        IdentityAnalyzer analyzer = new IdentityAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+
+        createGetAndDeleteTypedAnalyzer(analyzer);
+    }
+
+    @Test
     public void delimiterAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         String name = "test-" + UUID.randomUUID().toString();
@@ -308,6 +376,28 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
+    public void delimiterAnalyzerTyped() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        DelimiterAnalyzerProperties properties = new DelimiterAnalyzerProperties();
+        properties.setDelimiter("-");
+
+        DelimiterAnalyzer analyzer = new DelimiterAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+        analyzer.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(analyzer);
+    }
+
+    @Test
     public void stemAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         String name = "test-" + UUID.randomUUID().toString();
@@ -324,6 +414,28 @@ public class ArangoSearchTest extends BaseTest {
         options.setProperties(Collections.singletonMap("locale", "ru.utf-8"));
 
         createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void stemAnalyzerTyped() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        StemAnalyzerProperties properties = new StemAnalyzerProperties();
+        properties.setLocale("ru.utf-8");
+
+        StemAnalyzer options = new StemAnalyzer();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(options);
     }
 
     @Test
@@ -351,8 +463,33 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
+    public void normAnalyzerTyped() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        NormAnalyzerProperties properties = new NormAnalyzerProperties();
+        properties.setLocale("ru.utf-8");
+        properties.setAnalyzerCase(SearchAnalyzerCase.lower);
+        properties.setAccent(true);
+
+        NormAnalyzer options = new NormAnalyzer();
+        options.setFeatures(features);
+        options.setName(name);
+        options.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(options);
+    }
+
+    @Test
     public void ngramAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
+
         String name = "test-" + UUID.randomUUID().toString();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -375,8 +512,34 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
+    public void ngramAnalyzerTyped() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        NGramAnalyzerProperties properties = new NGramAnalyzerProperties();
+        properties.setMax(6L);
+        properties.setMin(3L);
+        properties.setPreserveOriginal(true);
+
+        NGramAnalyzer analyzer = new NGramAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+        analyzer.setType(AnalyzerType.ngram);
+        analyzer.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(analyzer);
+    }
+
+    @Test
     public void textAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
+
         String name = "test-" + UUID.randomUUID().toString();
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -398,6 +561,32 @@ public class ArangoSearchTest extends BaseTest {
         options.setProperties(properties);
 
         createGetAndDeleteAnalyzer(options);
+    }
+
+    @Test
+    public void textAnalyzerTyped() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 5));
+
+        String name = "test-" + UUID.randomUUID().toString();
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        TextAnalyzerProperties properties = new TextAnalyzerProperties();
+        properties.setLocale("ru.utf-8");
+        properties.setAnalyzerCase(SearchAnalyzerCase.lower);
+        properties.setAccent(true);
+        properties.setStemming(true);
+
+        TextAnalyzer analyzer = new TextAnalyzer();
+        analyzer.setFeatures(features);
+        analyzer.setName(name);
+        analyzer.setType(AnalyzerType.text);
+        analyzer.setProperties(properties);
+
+        createGetAndDeleteTypedAnalyzer(analyzer);
     }
 
 }

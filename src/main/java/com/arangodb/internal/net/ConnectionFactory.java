@@ -22,10 +22,9 @@ package com.arangodb.internal.net;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface ConnectionFactory {
 
-	Connection create(final HostDescription host);
+    Connection create(final HostDescription host);
 
 }

@@ -24,54 +24,53 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/AqlQuery/index.html#parse-an-aql-query">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query.html#parse-an-aql-query">API Documentation</a>
  */
 public class AqlParseEntity implements Entity {
 
-	public static class AstNode {
-		private String type;
-		private Collection<AstNode> subNodes;
-		private String name;
-		private Long id;
-		private Object value;
+    public static class AstNode {
+        private String type;
+        private Collection<AstNode> subNodes;
+        private String name;
+        private Long id;
+        private Object value;
 
-		public String getType() {
-			return type;
-		}
+        public String getType() {
+            return type;
+        }
 
-		public Collection<AstNode> getSubNodes() {
-			return subNodes;
-		}
+        public Collection<AstNode> getSubNodes() {
+            return subNodes;
+        }
 
-		public String getName() {
-			return name;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public Long getId() {
-			return id;
-		}
+        public Long getId() {
+            return id;
+        }
 
-		public Object getValue() {
-			return value;
-		}
+        public Object getValue() {
+            return value;
+        }
 
-	}
+    }
 
-	private Collection<String> collections;
-	private Collection<String> bindVars;
-	private Collection<AstNode> ast;
+    private Collection<String> collections;
+    private Collection<String> bindVars;
+    private Collection<AstNode> ast;
 
-	public Collection<String> getCollections() {
-		return collections;
-	}
+    public Collection<String> getCollections() {
+        return collections;
+    }
 
-	public Collection<String> getBindVars() {
-		return bindVars;
-	}
+    public Collection<String> getBindVars() {
+        return bindVars;
+    }
 
-	public Collection<AstNode> getAst() {
-		return ast;
-	}
+    public Collection<AstNode> getAst() {
+        return ast;
+    }
 
 }

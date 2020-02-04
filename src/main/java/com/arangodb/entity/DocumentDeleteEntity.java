@@ -24,28 +24,27 @@ import com.arangodb.velocypack.annotations.Expose;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Document/WorkingWithDocuments.html#removes-a-document">API
- *      Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#removes-a-document">API
+ * Documentation</a>
  */
 public class DocumentDeleteEntity<T> extends DocumentEntity {
 
-	@Expose(deserialize = false)
-	private T oldDocument;
+    @Expose(deserialize = false)
+    private T oldDocument;
 
-	public DocumentDeleteEntity() {
-		super();
-	}
+    public DocumentDeleteEntity() {
+        super();
+    }
 
-	/**
-	 * @return If the query parameter returnOld is true, then the complete previous revision of the document is
-	 *         returned.
-	 */
-	public T getOld() {
-		return oldDocument;
-	}
+    /**
+     * @return If the query parameter returnOld is true, then the complete previous revision of the document is
+     * returned.
+     */
+    public T getOld() {
+        return oldDocument;
+    }
 
-	public void setOld(final T oldDocument) {
-		this.oldDocument = oldDocument;
-	}
+    public void setOld(final T oldDocument) {
+        this.oldDocument = oldDocument;
+    }
 }

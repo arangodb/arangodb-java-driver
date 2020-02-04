@@ -22,16 +22,15 @@ package com.arangodb.entity;
 
 /**
  * @author Mark Vollmary
- *
- * @see <a href="https://docs.arangodb.com/current/HTTP/Collection/Getting.html#return-collection-revision-id">API
- *      Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/collection-getting.html#return-collection-revision-id">API
+ * Documentation</a>
  */
 public class CollectionRevisionEntity extends CollectionEntity {
 
-	private String revision;
+    private String revision;
 
-	public String getRevision() {
-		return revision;
-	}
+    public String getRevision() {
+        return revision;
+    }
 
 }

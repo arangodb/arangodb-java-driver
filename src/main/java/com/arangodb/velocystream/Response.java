@@ -28,60 +28,59 @@ import java.util.Map;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class Response {
 
-	private int version = 1;
-	private int type = 2;
-	private int responseCode;
-	private Map<String, String> meta;
-	@Expose(deserialize = false)
-	private VPackSlice body = null;
+    private int version = 1;
+    private int type = 2;
+    private int responseCode;
+    private Map<String, String> meta;
+    @Expose(deserialize = false)
+    private VPackSlice body = null;
 
-	public Response() {
-		super();
+    public Response() {
+        super();
         meta = new HashMap<>();
-	}
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public void setVersion(final int version) {
-		this.version = version;
-	}
+    public void setVersion(final int version) {
+        this.version = version;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public void setType(final int type) {
-		this.type = type;
-	}
+    public void setType(final int type) {
+        this.type = type;
+    }
 
-	public int getResponseCode() {
-		return responseCode;
-	}
+    public int getResponseCode() {
+        return responseCode;
+    }
 
-	public void setResponseCode(final int responseCode) {
-		this.responseCode = responseCode;
-	}
+    public void setResponseCode(final int responseCode) {
+        this.responseCode = responseCode;
+    }
 
-	public Map<String, String> getMeta() {
-		return meta;
-	}
+    public Map<String, String> getMeta() {
+        return meta;
+    }
 
-	public void setMeta(final Map<String, String> meta) {
-		this.meta = meta;
-	}
+    public void setMeta(final Map<String, String> meta) {
+        this.meta = meta;
+    }
 
-	public VPackSlice getBody() {
-		return body;
-	}
+    public VPackSlice getBody() {
+        return body;
+    }
 
-	public void setBody(final VPackSlice body) {
-		this.body = body;
-	}
+    public void setBody(final VPackSlice body) {
+        this.body = body;
+    }
 
 }

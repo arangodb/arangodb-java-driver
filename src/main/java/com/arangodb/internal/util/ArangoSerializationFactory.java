@@ -24,31 +24,30 @@ import com.arangodb.util.ArangoSerialization;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoSerializationFactory {
 
-	public enum Serializer {
-		INTERNAL, CUSTOM
-	}
+    public enum Serializer {
+        INTERNAL, CUSTOM
+    }
 
-	private final ArangoSerialization interal;
-	private final ArangoSerialization custom;
+    private final ArangoSerialization interal;
+    private final ArangoSerialization custom;
 
-	public ArangoSerializationFactory(final ArangoSerialization interal, final ArangoSerialization custom) {
-		super();
-		this.interal = interal;
-		this.custom = custom;
-	}
+    public ArangoSerializationFactory(final ArangoSerialization interal, final ArangoSerialization custom) {
+        super();
+        this.interal = interal;
+        this.custom = custom;
+    }
 
-	public ArangoSerialization get(final Serializer serializer) {
-		switch (serializer) {
-		case CUSTOM:
-			return custom;
-		case INTERNAL:
-		default:
-			return interal;
-		}
-	}
+    public ArangoSerialization get(final Serializer serializer) {
+        switch (serializer) {
+            case CUSTOM:
+                return custom;
+            case INTERNAL:
+            default:
+                return interal;
+        }
+    }
 
 }

@@ -24,7 +24,6 @@ import java.io.Closeable;
 
 /**
  * @author Mark Vollmary
- *
  */
 public interface Connection extends Closeable {
 

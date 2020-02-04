@@ -22,43 +22,56 @@ package com.arangodb.model;
 
 /**
  * @author Mark Vollmary
- * 
- * @see <a href="https://docs.arangodb.com/current/HTTP/Gharial/Edges.html#remove-an-edge">API Documentation</a>
+ * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-edges.html#remove-an-edge">API Documentation</a>
  */
 public class EdgeDeleteOptions {
 
-	private Boolean waitForSync;
-	private String ifMatch;
+    private Boolean waitForSync;
+    private String ifMatch;
+    private String streamTransactionId;
 
-	public EdgeDeleteOptions() {
-		super();
-	}
+    public EdgeDeleteOptions() {
+        super();
+    }
 
-	public Boolean getWaitForSync() {
-		return waitForSync;
-	}
+    public Boolean getWaitForSync() {
+        return waitForSync;
+    }
 
-	/**
-	 * @param waitForSync
-	 *            Wait until deletion operation has been synced to disk.
-	 * @return options
-	 */
-	public EdgeDeleteOptions waitForSync(final Boolean waitForSync) {
-		this.waitForSync = waitForSync;
-		return this;
-	}
+    /**
+     * @param waitForSync Wait until deletion operation has been synced to disk.
+     * @return options
+     */
+    public EdgeDeleteOptions waitForSync(final Boolean waitForSync) {
+        this.waitForSync = waitForSync;
+        return this;
+    }
 
-	public String getIfMatch() {
-		return ifMatch;
-	}
+    public String getIfMatch() {
+        return ifMatch;
+    }
 
-	/**
-	 * @param ifMatch
-	 *            remove a document based on a target revision
-	 * @return options
-	 */
-	public EdgeDeleteOptions ifMatch(final String ifMatch) {
-		this.ifMatch = ifMatch;
-		return this;
-	}
+    /**
+     * @param ifMatch remove a document based on a target revision
+     * @return options
+     */
+    public EdgeDeleteOptions ifMatch(final String ifMatch) {
+        this.ifMatch = ifMatch;
+        return this;
+    }
+
+    public String getStreamTransactionId() {
+        return streamTransactionId;
+    }
+
+    /**
+     * @param streamTransactionId If set, the operation will be executed within the transaction.
+     * @return options
+     * @since ArangoDB 3.5.1
+     */
+    public EdgeDeleteOptions streamTransactionId(final String streamTransactionId) {
+        this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
 }

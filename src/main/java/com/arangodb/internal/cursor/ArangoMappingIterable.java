@@ -27,29 +27,28 @@ import com.arangodb.Function;
 
 /**
  * @author Mark Vollmary
- *
  */
 public class ArangoMappingIterable<R, T> extends AbstractArangoIterable<T> implements ArangoIterable<T> {
 
-	private final ArangoIterable<R> iterable;
-	private final Function<? super R, ? extends T> mapper;
+    private final ArangoIterable<R> iterable;
+    private final Function<? super R, ? extends T> mapper;
 
-	protected ArangoMappingIterable(final ArangoIterable<R> iterable, final Function<? super R, ? extends T> mapper) {
-		super();
-		this.iterable = iterable;
-		this.mapper = mapper;
-	}
+    protected ArangoMappingIterable(final ArangoIterable<R> iterable, final Function<? super R, ? extends T> mapper) {
+        super();
+        this.iterable = iterable;
+        this.mapper = mapper;
+    }
 
-	@Override
-	public ArangoIterator<T> iterator() {
+    @Override
+    public ArangoIterator<T> iterator() {
         return new ArangoMappingIterator<>(iterable.iterator(), mapper);
-	}
+    }
 
-	@Override
-	public void foreach(final Consumer<? super T> action) {
-		for (final R t : iterable) {
-			action.accept(mapper.apply(t));
-		}
-	}
+    @Override
+    public void foreach(final Consumer<? super T> action) {
+        for (final R t : iterable) {
+            action.accept(mapper.apply(t));
+        }
+    }
 
 }

@@ -33,10 +33,16 @@ import org.junit.runners.Parameterized;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.velocystream.Response;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author Mark Vollmary
- *
  */
 @RunWith(Parameterized.class)
 public class ArangoRouteTest extends BaseTest {
@@ -54,36 +60,36 @@ public class ArangoRouteTest extends BaseTest {
         collection = db.collection(COLLECTION_NAME);
     }
 
-	@Test
-	public void get() {
-		final Response res = db.route("/_api/version").get();
-		assertThat(res.getBody().get("version").isString(), is(true));
-	}
+    @Test
+    public void get() {
+        final Response res = db.route("/_api/version").get();
+        assertThat(res.getBody().get("version").isString(), is(true));
+    }
 
-	@Test
-	public void withHeader() {
-		try {
-			final BaseDocument doc = new BaseDocument();
-			collection.insertDocument(doc);
-			db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
-					.get();
-			fail();
-		} catch (final ArangoDBException e) {
-			assertThat(e.getResponseCode(), is(304));
-		}
-	}
+    @Test
+    public void withHeader() {
+        try {
+            final BaseDocument doc = new BaseDocument();
+            collection.insertDocument(doc);
+            db.route("/_api/document", doc.getId()).withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
+                    .get();
+            fail();
+        } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(304));
+        }
+    }
 
-	@Test
-	public void withParentHeader() {
-		try {
-			final BaseDocument doc = new BaseDocument();
-			collection.insertDocument(doc);
-			db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
-					.route(doc.getId()).get();
-			fail();
-		} catch (final ArangoDBException e) {
-			assertThat(e.getResponseCode(), is(304));
-		}
-	}
+    @Test
+    public void withParentHeader() {
+        try {
+            final BaseDocument doc = new BaseDocument();
+            collection.insertDocument(doc);
+            db.route("/_api/document").withHeader(ArangoRequestParam.IF_NONE_MATCH, doc.getRevision())
+                    .route(doc.getId()).get();
+            fail();
+        } catch (final ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(304));
+        }
+    }
 
 }

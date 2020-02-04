@@ -29,34 +29,33 @@ import com.arangodb.velocystream.Response;
 
 /**
  * @author Mark Vollmary
- *
  */
 public final class ResponseUtils {
 
-	private static final int ERROR_STATUS = 300;
-	private static final int ERROR_INTERNAL = 503;
-	private static final String HEADER_ENDPOINT = "X-Arango-Endpoint";
+    private static final int ERROR_STATUS = 300;
+    private static final int ERROR_INTERNAL = 503;
+    private static final String HEADER_ENDPOINT = "X-Arango-Endpoint";
 
-	private ResponseUtils() {
-		super();
-	}
+    private ResponseUtils() {
+        super();
+    }
 
-	public static void checkError(final ArangoSerialization util, final Response response) throws ArangoDBException {
-		try {
-			final int responseCode = response.getResponseCode();
-			if (responseCode >= ERROR_STATUS) {
-				if (responseCode == ERROR_INTERNAL && response.getMeta().containsKey(HEADER_ENDPOINT)) {
-					throw new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
-							response.getMeta().get(HEADER_ENDPOINT));
-				} else if (response.getBody() != null) {
-					final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-					throw new ArangoDBException(errorEntity);
-				} else {
-					throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
-				}
-			}
-		} catch (final VPackParserException e) {
-			throw new ArangoDBException(e);
-		}
-	}
+    public static void checkError(final ArangoSerialization util, final Response response) throws ArangoDBException {
+        try {
+            final int responseCode = response.getResponseCode();
+            if (responseCode >= ERROR_STATUS) {
+                if (responseCode == ERROR_INTERNAL && response.getMeta().containsKey(HEADER_ENDPOINT)) {
+                    throw new ArangoDBRedirectException(String.format("Response Code: %s", responseCode),
+                            response.getMeta().get(HEADER_ENDPOINT));
+                } else if (response.getBody() != null) {
+                    final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
+                    throw new ArangoDBException(errorEntity);
+                } else {
+                    throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
+                }
+            }
+        } catch (final VPackParserException e) {
+            throw new ArangoDBException(e);
+        }
+    }
 }
