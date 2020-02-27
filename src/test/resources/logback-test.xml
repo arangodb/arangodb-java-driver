@@ -11,4 +11,7 @@
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="org.reflections.Reflections" level="warn"/>
+
 </configuration>

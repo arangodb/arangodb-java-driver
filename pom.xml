@@ -5,7 +5,7 @@
 
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>6.6.0</version>
+    <version>6.6.1-SNAPSHOT</version>
     <inceptionYear>2016</inceptionYear>
     <packaging>jar</packaging>
 
@@ -216,6 +216,12 @@
             <groupId>com.arangodb</groupId>
             <artifactId>jackson-dataformat-velocypack</artifactId>
             <version>0.1.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
