@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- GraalVM Native Image support
+
 ## [6.6.0] - 2020-02-03
 
 - typed ArangoSearch analyzers
