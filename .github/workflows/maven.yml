@@ -32,10 +32,12 @@ jobs:
         docker-img:
           - docker.io/arangodb:3.4.9
           - docker.io/arangodb:3.5.4
-          - docker.io/arangodb:3.6.1
+          - docker.io/arangodb:3.6.2
+          - docker.io/arangodb/arangodb-preview:3.7.0-alpha.2
           - docker.io/arangodb/enterprise:3.4.9
           - docker.io/arangodb/enterprise:3.5.4
-          - docker.io/arangodb/enterprise:3.6.1
+          - docker.io/arangodb/enterprise:3.6.2
+          - docker.io/arangodb/enterprise-preview:3.7.0-alpha.2
         topology:
           - single
           - cluster
