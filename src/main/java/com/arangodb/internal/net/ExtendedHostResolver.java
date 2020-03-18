@@ -137,7 +137,10 @@ public class ExtendedHostResolver implements HostResolver {
                     }, null);
         } catch (final ArangoDBException e) {
             final Integer responseCode = e.getResponseCode();
-            if (responseCode != null && responseCode == 403) {
+
+            // responseCode == 403: single server < 3.7
+            // responseCode == 501: single server >= 3.7
+            if (responseCode != null && (responseCode == 403 || responseCode == 501)) {
                 response = Collections.emptyList();
             } else {
                 throw e;
