@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.6.1] - 2020-03-18
+
 - GraalVM Native Image support
+- fixed acquire host list (ArangoDB v3.7)
 
 ## [6.6.0] - 2020-02-03
 
