@@ -159,6 +159,44 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void insertDocumentOverwriteModeReplace() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        final BaseDocument doc2 = new BaseDocument(key);
+        doc2.addAttribute("bar", "b");
+        final DocumentCreateEntity<BaseDocument> repsert = collection
+                .insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.replace).returnNew(true));
+
+        assertThat(repsert, is(notNullValue()));
+        assertThat(repsert.getRev(), is(not(meta.getRev())));
+        assertThat(repsert.getNew().getProperties().containsKey("foo"), is(false));
+        assertThat(repsert.getNew().getAttribute("bar").toString(), is("b"));
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeUpdate() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc = new BaseDocument();
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        doc.addAttribute("bar", "b");
+        final DocumentCreateEntity<BaseDocument> upsert = collection
+                .insertDocument(doc, new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
+
+        assertThat(upsert, is(notNullValue()));
+        assertThat(upsert.getRev(), is(not(meta.getRev())));
+        assertThat(upsert.getNew().getAttribute("foo").toString(), is("a"));
+        assertThat(upsert.getNew().getAttribute("bar").toString(), is("b"));
+    }
+
+    @Test
     public void insertDocumentWaitForSync() {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
         final DocumentCreateEntity<BaseDocument> doc = collection
@@ -1503,6 +1541,35 @@ public class ArangoCollectionTest extends BaseTest {
             assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));
             assertThat(documentCreateEntity.getOld().getAttribute("value").toString(), is("a"));
             assertThat(documentCreateEntity.getNew().getAttribute("value").toString(), is("b"));
+        }
+    }
+
+    @Test
+    public void insertDocumentsOverwriteModeUpdate() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc1 = new BaseDocument();
+        doc1.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta1 = collection.insertDocument(doc1);
+
+        final BaseDocument doc2 = new BaseDocument();
+        doc2.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta2 = collection.insertDocument(doc2);
+
+        doc1.addAttribute("bar", "b");
+        doc2.addAttribute("bar", "b");
+
+        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert = collection
+                .insertDocuments(Arrays.asList(doc1, doc2),
+                        new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
+        assertThat(repsert, is(notNullValue()));
+        assertThat(repsert.getDocuments().size(), is(2));
+        assertThat(repsert.getErrors().size(), is(0));
+        for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
+            assertThat(documentCreateEntity.getRev(), is(not(meta1.getRev())));
+            assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));
+            assertThat(documentCreateEntity.getNew().getAttribute("foo").toString(), is("a"));
+            assertThat(documentCreateEntity.getNew().getAttribute("bar").toString(), is("b"));
         }
     }
 
