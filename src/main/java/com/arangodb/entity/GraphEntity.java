@@ -38,7 +38,7 @@ public class GraphEntity implements Entity {
     private Boolean isSmart;
     private Integer numberOfShards;
     private String smartGraphAttribute;
-    private Integer replicationFactor;
+    private ReplicationFactor replicationFactor;
     private Integer minReplicationFactor;
 
     public String getName() {
@@ -62,7 +62,11 @@ public class GraphEntity implements Entity {
     }
 
     public Integer getReplicationFactor() {
-        return replicationFactor;
+        return replicationFactor.getReplicationFactor();
+    }
+
+    public Boolean getSatellite() {
+        return this.replicationFactor.getSatellite();
     }
 
     public Integer getMinReplicationFactor() {

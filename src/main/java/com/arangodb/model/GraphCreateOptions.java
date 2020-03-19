@@ -21,6 +21,7 @@
 package com.arangodb.model;
 
 import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.ReplicationFactor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,7 +95,7 @@ public class GraphCreateOptions {
     }
 
     public Integer getReplicationFactor() {
-        return getOptions().getReplicationFactor();
+        return getOptions().replicationFactor.getReplicationFactor();
     }
 
     /**
@@ -108,7 +109,22 @@ public class GraphCreateOptions {
      * @return options
      */
     public GraphCreateOptions replicationFactor(final Integer replicationFactor) {
-        getOptions().setReplicationFactor(replicationFactor);
+        getOptions().replicationFactor.setReplicationFactor(replicationFactor);
+        return this;
+    }
+
+    public Boolean getSatellite() {
+        return getOptions().replicationFactor.getSatellite();
+    }
+
+    /**
+     * @param satellite If the true the graph is created as a satellite graph. In this case
+     *                  {@link #replicationFactor(Integer)} is ignored.
+     * @return options
+     * @since ArangoDB 3.7
+     */
+    public GraphCreateOptions satellite(final Boolean satellite) {
+        getOptions().replicationFactor.setSatellite(satellite);
         return this;
     }
 
@@ -167,21 +183,30 @@ public class GraphCreateOptions {
     }
 
     public static class SmartOptions {
-        private Integer replicationFactor;
+        private ReplicationFactor replicationFactor;
         private Integer minReplicationFactor;
         private Integer numberOfShards;
         private String smartGraphAttribute;
 
         public SmartOptions() {
             super();
+            replicationFactor = new ReplicationFactor();
         }
 
         public Integer getReplicationFactor() {
-            return replicationFactor;
+            return replicationFactor.getReplicationFactor();
         }
 
         public void setReplicationFactor(final Integer replicationFactor) {
-            this.replicationFactor = replicationFactor;
+            this.replicationFactor.setReplicationFactor(replicationFactor);
+        }
+
+        public Boolean getSatellite() {
+            return replicationFactor.getSatellite();
+        }
+
+        public void setSatellite(final Boolean satellite) {
+            replicationFactor.setSatellite(satellite);
         }
 
         public Integer getMinReplicationFactor() {

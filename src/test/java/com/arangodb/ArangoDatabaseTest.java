@@ -974,6 +974,23 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
+    public void createGraphSatellite() {
+        assumeTrue(isAtLeastVersion(3, 7));
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+
+        String name = "graph-" + rnd();
+        final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().satellite(true));
+        assertThat(result.getSatellite(), is(true));
+
+        GraphEntity info = db.graph(name).getInfo();
+        assertThat(info.getSatellite(), is(true));
+
+        GraphEntity graph = db.getGraphs().stream().filter(g -> name.equals(g.getName())).findFirst().get();
+        assertThat(graph.getSatellite(), is(true));
+    }
+
+    @Test
     public void createGraphReplicationFaktor() {
         assumeTrue(isCluster());
         String name = "graph-" + rnd();
