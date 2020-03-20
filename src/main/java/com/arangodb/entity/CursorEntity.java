@@ -141,6 +141,7 @@ public class CursorEntity implements Entity, MetaAware {
         private Long filtered;
         private Long fullCount;
         private Double executionTime;
+        private Long peakMemoryUsage;
 
         public Long getWritesExecuted() {
             return writesExecuted;
@@ -170,5 +171,8 @@ public class CursorEntity implements Entity, MetaAware {
             return executionTime;
         }
 
+        public Long getPeakMemoryUsage() {
+            return peakMemoryUsage;
+        }
     }
 }
