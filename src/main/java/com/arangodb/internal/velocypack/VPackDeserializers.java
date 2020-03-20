@@ -23,7 +23,9 @@ package com.arangodb.internal.velocypack;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
+import com.arangodb.model.CollectionValidation;
 import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -256,6 +258,15 @@ public class VPackDeserializers {
             return consolidate;
         }
         return null;
+    };
+
+    public static final VPackDeserializer<CollectionValidation> COLLECTION_VALIDATION = (parent, vpack, context) -> {
+        VPackParser parser = new VPackParser.Builder().build();
+        CollectionValidation collectionValidation = new CollectionValidation();
+        collectionValidation.setLevel(CollectionValidation.Level.of(vpack.get("level").getAsString()));
+        collectionValidation.setRule(parser.toJson(vpack.get("rule"), true));
+        collectionValidation.setMessage(vpack.get("message").getAsString());
+        return collectionValidation;
     };
 
 }

@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.model.CollectionValidation;
+
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html">API Documentation</a>
@@ -33,6 +35,7 @@ public class CollectionEntity implements Entity {
     private Boolean isSystem;
     private CollectionStatus status;
     private CollectionType type;
+    private CollectionValidation validation;
 
     public CollectionEntity() {
         super();
@@ -64,6 +67,10 @@ public class CollectionEntity implements Entity {
 
     public CollectionType getType() {
         return type;
+    }
+
+    public CollectionValidation getValidation() {
+        return validation;
     }
 
 }
