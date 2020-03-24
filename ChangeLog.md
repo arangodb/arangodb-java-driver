@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.7.0_PREVIEW_3.7.0-alpha.2_0] - 2020-03-24
+
+- added `overwriteMode` parameter to support insert-update (ArangoDB v3.7)
+- satellite graphs support (ArangoDB v3.7)
+- schema validation (ArangoDB v3.7)
+- added peakMemoryUsage to AQL stats
+
 ## [6.6.1] - 2020-03-18
 
 - GraalVM Native Image support
