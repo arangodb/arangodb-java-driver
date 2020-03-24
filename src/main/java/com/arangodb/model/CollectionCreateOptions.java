@@ -47,6 +47,8 @@ public class CollectionCreateOptions {
     private String shardingStrategy; // cluster option
     private String smartJoinAttribute; // enterprise option
 
+    private CollectionValidation validation;
+
     public CollectionCreateOptions() {
         super();
         replicationFactor = new ReplicationFactor();
@@ -320,6 +322,15 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions distributeShardsLike(final String distributeShardsLike) {
         this.distributeShardsLike = distributeShardsLike;
+        return this;
+    }
+
+    public CollectionValidation getValidation() {
+        return validation;
+    }
+
+    public CollectionCreateOptions setValidation(final CollectionValidation validation) {
+        this.validation = validation;
         return this;
     }
 

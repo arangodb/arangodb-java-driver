@@ -27,6 +27,7 @@ import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.model.CollectionValidation;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackModule;
@@ -66,6 +67,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
+        context.registerSerializer(CollectionValidation.class, VPackSerializers.COLLECTION_VALIDATION);
 
         context.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
         context.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
@@ -84,6 +86,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
         context.registerDeserializer(ArangoSearchPropertiesEntity.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);
         context.registerDeserializer(ConsolidationPolicy.class, VPackDeserializers.CONSOLIDATE);
+        context.registerDeserializer(CollectionValidation.class, VPackDeserializers.COLLECTION_VALIDATION);
     }
 
     @Override

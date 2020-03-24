@@ -295,6 +295,54 @@ public class ArangoDatabaseTest extends BaseTest {
         createCollectionWithKeyType(KeyType.uuid);
     }
 
+    @Test
+    public void createCollectionWithJsonSchema() {
+        assumeTrue(isAtLeastVersion(3, 7));
+        String name = "collection-" + rnd();
+        String rule = ("{  " +
+                "           \"properties\": {" +
+                "               \"number\": {" +
+                "                   \"type\": \"number\"" +
+                "               }" +
+                "           }" +
+                "       }")
+                .replaceAll("\\s", "");
+        String message = "The document has problems!";
+
+        final CollectionEntity result = db
+                .createCollection(name, new CollectionCreateOptions()
+                        .setValidation(
+                                new CollectionValidation()
+                                        .setLevel(CollectionValidation.Level.NEW)
+                                        .setMessage(message)
+                                        .setRule(rule)
+                        )
+                );
+        assertThat(result.getValidation().getLevel(), is(CollectionValidation.Level.NEW));
+        assertThat(result.getValidation().getRule(), is(rule));
+        assertThat(result.getValidation().getMessage(), is(message));
+
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getValidation().getLevel(), is(CollectionValidation.Level.NEW));
+        assertThat(props.getValidation().getRule(), is(rule));
+        assertThat(props.getValidation().getMessage(), is(message));
+
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("number", 33);
+        db.collection(name).insertDocument(doc);
+
+        try {
+            BaseDocument wrongDoc = new BaseDocument();
+            doc.addAttribute("number", "notANumber");
+            db.collection(name).insertDocument(doc);
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getMessage(), containsString(message));
+            assertThat(e.getResponseCode(), is(500));
+            assertThat(e.getErrorNum(), is(1620));
+        }
+    }
+
     @Test(expected = ArangoDBException.class)
     public void deleteCollection() {
         String name = "collection-" + rnd();
