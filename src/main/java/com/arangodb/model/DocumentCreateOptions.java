@@ -32,6 +32,7 @@ public class DocumentCreateOptions {
     private Boolean returnNew;
     private Boolean returnOld;
     private Boolean overwrite;
+    private OverwriteMode overwriteMode;
     private Boolean silent;
     private String streamTransactionId;
 
@@ -93,6 +94,22 @@ public class DocumentCreateOptions {
      */
     public DocumentCreateOptions overwrite(final Boolean overwrite) {
         this.overwrite = overwrite;
+        return this;
+    }
+
+    public OverwriteMode getOverwriteMode() {
+        return overwriteMode;
+    }
+
+    /**
+     * @param overwriteMode This parameter can be set to replace or update. If given it sets implicitly the overwrite
+     *                      flag. In case it is set to update, the replace-insert becomes an update-insert. Otherwise
+     *                      this option follows the rules of the overwrite parameter.
+     * @return options
+     * @since ArangoDB 3.7
+     */
+    public DocumentCreateOptions overwriteMode(final OverwriteMode overwriteMode) {
+        this.overwriteMode = overwriteMode;
         return this;
     }
 

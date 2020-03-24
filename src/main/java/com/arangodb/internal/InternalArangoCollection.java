@@ -56,6 +56,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String NEW = "new";
     private static final String RETURN_OLD = "returnOld";
     private static final String OVERWRITE = "overwrite";
+    private static final String OVERWRITE_MODE = "overwriteMode";
     private static final String OLD = "old";
     private static final String SILENT = "silent";
 
@@ -86,6 +87,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(OVERWRITE, params.getOverwrite());
+        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.setBody(util(Serializer.CUSTOM).serialize(value));
         return request;
@@ -122,6 +124,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(OVERWRITE, params.getOverwrite());
+        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.setBody(util(Serializer.CUSTOM)
                 .serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
