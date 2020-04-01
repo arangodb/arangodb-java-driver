@@ -30,6 +30,11 @@ public class StemAnalyzerProperties {
 
     private String locale;
 
+    /**
+     * @return a locale in the format `language[_COUNTRY][.encoding][@variant]` (square brackets denote optional parts),
+     * e.g. `de.utf-8` or `en_US.utf-8`. Only UTF-8 encoding is meaningful in ArangoDB.
+     * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
+     */
     public String getLocale() {
         return locale;
     }

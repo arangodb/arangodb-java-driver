@@ -24,7 +24,15 @@ package com.arangodb.entity.arangosearch.analyzer;
 import java.util.Objects;
 
 /**
+ * An Analyzer capable of producing n-grams from a specified input in a range of min..max (inclusive). Can optionally
+ * preserve the original input.
+ * <p>
+ * This Analyzer type can be used to implement substring matching. Note that it slices the input based on bytes and not
+ * characters by default (streamType). The “binary” mode supports single-byte characters only; multi-byte UTF-8
+ * characters raise an Invalid UTF-8 sequence query error.
+ *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#n-gram">API Documentation</a>
  */
 public class NGramAnalyzerProperties {
 
@@ -41,6 +49,9 @@ public class NGramAnalyzerProperties {
         streamType = StreamType.binary;
     }
 
+    /**
+     * @return minimum n-gram length
+     */
     public long getMin() {
         return min;
     }
@@ -49,6 +60,9 @@ public class NGramAnalyzerProperties {
         this.min = min;
     }
 
+    /**
+     * @return maximum n-gram length
+     */
     public long getMax() {
         return max;
     }
@@ -57,6 +71,10 @@ public class NGramAnalyzerProperties {
         this.max = max;
     }
 
+    /**
+     * @return <code>true</code> to include the original value as well
+     *         <code>false</code> to produce the n-grams based on min and max only
+     */
     public boolean isPreserveOriginal() {
         return preserveOriginal;
     }
@@ -65,6 +83,10 @@ public class NGramAnalyzerProperties {
         this.preserveOriginal = preserveOriginal;
     }
 
+    /**
+     * @return this value will be prepended to n-grams which include the beginning of the input. Can be used for
+     * matching prefixes. Choose a character or sequence as marker which does not occur in the input
+     */
     public String getStartMarker() {
         return startMarker;
     }
@@ -73,6 +95,10 @@ public class NGramAnalyzerProperties {
         this.startMarker = startMarker;
     }
 
+    /**
+     * @return this value will be appended to n-grams which include the end of the input. Can be used for matching
+     * suffixes. Choose a character or sequence as marker which does not occur in the input.
+     */
     public String getEndMarker() {
         return endMarker;
     }

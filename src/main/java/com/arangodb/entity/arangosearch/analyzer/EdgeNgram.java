@@ -31,6 +31,9 @@ public class EdgeNgram {
     private long max;
     private boolean preserveOriginal;
 
+    /**
+     * @return minimal n-gram length
+     */
     public long getMin() {
         return min;
     }
@@ -39,6 +42,9 @@ public class EdgeNgram {
         this.min = min;
     }
 
+    /**
+     * @return maximal n-gram length
+     */
     public long getMax() {
         return max;
     }
@@ -47,6 +53,9 @@ public class EdgeNgram {
         this.max = max;
     }
 
+    /**
+     * @return whether to include the original token even if its length is less than min or greater than max
+     */
     public boolean isPreserveOriginal() {
         return preserveOriginal;
     }

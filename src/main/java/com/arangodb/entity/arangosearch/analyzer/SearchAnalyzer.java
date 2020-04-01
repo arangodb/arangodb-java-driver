@@ -35,6 +35,9 @@ public abstract class SearchAnalyzer {
     private AnalyzerType type;
     private Set<AnalyzerFeature> features;
 
+    /**
+     * @return The Analyzer name.
+     */
     public String getName() {
         return name;
     }
@@ -43,6 +46,9 @@ public abstract class SearchAnalyzer {
         this.name = name;
     }
 
+    /**
+     * @return The Analyzer type.
+     */
     public AnalyzerType getType() {
         return type;
     }
@@ -51,6 +57,9 @@ public abstract class SearchAnalyzer {
         this.type = type;
     }
 
+    /**
+     * @return The set of features to set on the Analyzer generated fields.
+     */
     public Set<AnalyzerFeature> getFeatures() {
         return features;
     }

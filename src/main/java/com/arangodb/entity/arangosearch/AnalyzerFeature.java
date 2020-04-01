@@ -22,7 +22,23 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#analyzer-features">API Documentation</a>
  */
 public enum AnalyzerFeature {
-    frequency, norm, position
+
+    /**
+     * how often a term is seen, required for PHRASE()
+     */
+    frequency,
+
+    /**
+     * the field normalization factor
+     */
+    norm,
+
+    /**
+     * sequentially increasing term position, required for PHRASE(). If present then the frequency feature is also required
+     */
+    position
+
 }

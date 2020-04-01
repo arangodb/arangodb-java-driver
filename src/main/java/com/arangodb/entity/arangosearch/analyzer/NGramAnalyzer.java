@@ -26,7 +26,15 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
+ * An Analyzer capable of producing n-grams from a specified input in a range of min..max (inclusive). Can optionally
+ * preserve the original input.
+ * <p>
+ * This Analyzer type can be used to implement substring matching. Note that it slices the input based on bytes and not
+ * characters by default (streamType). The “binary” mode supports single-byte characters only; multi-byte UTF-8
+ * characters raise an Invalid UTF-8 sequence query error.
+ *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#n-gram">API Documentation</a>
  */
 public class NGramAnalyzer extends SearchAnalyzer {
     public NGramAnalyzer() {
