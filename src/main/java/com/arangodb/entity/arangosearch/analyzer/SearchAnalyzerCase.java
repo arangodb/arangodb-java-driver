@@ -25,5 +25,18 @@ package com.arangodb.entity.arangosearch.analyzer;
  * @author Michele Rastelli
  */
 public enum SearchAnalyzerCase {
-    lower, upper, none
+    /**
+     * convert to all lower-case characters
+     */
+    lower,
+
+    /**
+     * convert to all upper-case characters
+     */
+    upper,
+
+    /**
+     * to not change character case (default)
+     */
+    none
 }

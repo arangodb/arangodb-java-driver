@@ -34,7 +34,7 @@ import java.util.stream.IntStream;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -717,4 +717,30 @@ public class StreamTransactionTest extends BaseTest {
         db.abortStreamTransaction(tx2.getId());
     }
 
+    @Test
+    public void transactionAllowImplicitFalse() {
+        assumeTrue(isSingleServer());
+        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
+
+        StreamTransactionEntity tx = db
+                .beginStreamTransaction(new StreamTransactionOptions().allowImplicit(false));
+
+        // insert a document from outside the tx
+        DocumentCreateEntity<BaseDocument> externalDoc = collection
+                .insertDocument(new BaseDocument(), null);
+
+        // assert that we cannot read from collection
+        try {
+            collection.getDocument(externalDoc.getKey(), BaseDocument.class,
+                    new DocumentReadOptions().streamTransactionId(tx.getId()));
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(400));
+            assertThat(e.getErrorNum(), is(1652));
+            assertThat(e.getMessage(), containsString("unregistered collection used in transaction"));
+        }
+
+        db.abortStreamTransaction(tx.getId());
+    }
 }

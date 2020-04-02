@@ -26,7 +26,11 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
+ * An Analyzer capable of breaking up strings into individual words while also optionally filtering out stop-words,
+ * extracting word stems, applying case conversion and accent removal.
+ *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#text">API Documentation</a>
  */
 public class TextAnalyzer extends SearchAnalyzer {
     public TextAnalyzer() {

@@ -25,5 +25,13 @@ package com.arangodb.entity.arangosearch.analyzer;
  * @author Michele Rastelli
  */
 public enum StreamType {
-    binary, utf8
+    /**
+     * one byte is considered as one character (default)
+     */
+    binary,
+
+    /**
+     * one Unicode codepoint is treated as one character
+     */
+    utf8
 }

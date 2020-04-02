@@ -30,6 +30,9 @@ public class DelimiterAnalyzerProperties {
 
     private String delimiter;
 
+    /**
+     * @return the delimiting character(s)
+     */
     public String getDelimiter() {
         return delimiter;
     }
