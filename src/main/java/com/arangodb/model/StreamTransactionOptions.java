@@ -32,6 +32,7 @@ public class StreamTransactionOptions {
     private Integer lockTimeout;
     private Boolean waitForSync;
     private Long maxTransactionSize;
+    private Boolean allowImplicit;
 
     public StreamTransactionOptions() {
         super();
@@ -94,16 +95,16 @@ public class StreamTransactionOptions {
         return this;
     }
 
+    public Boolean getAllowImplicit() {
+        return allowImplicit;
+    }
+
     /**
-     * @param allowImplicit Collections that will be written to in the transaction must be declared with the write attribute or it
-     *                      will fail, whereas non-declared collections from which is solely read will be added lazily. The
-     *                      optional attribute allowImplicit can be set to false to let transactions fail in case of undeclared
-     *                      collections for reading. Collections for reading should be fully declared if possible, to avoid
-     *                      deadlocks.
+     * @param allowImplicit Allow reading from undeclared collections.
      * @return options
      */
     public StreamTransactionOptions allowImplicit(final Boolean allowImplicit) {
-        collections.allowImplicit(allowImplicit);
+        this.allowImplicit = allowImplicit;
         return this;
     }
 

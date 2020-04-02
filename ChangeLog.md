@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- bugfix `allowImplicit` parameter in stream transactions
+- added `peakMemoryUsage` to aql statistics
+
 ## [6.6.1] - 2020-03-18
 
 - GraalVM Native Image support
