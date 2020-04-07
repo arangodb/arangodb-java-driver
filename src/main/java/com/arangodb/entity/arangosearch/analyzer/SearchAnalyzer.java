@@ -21,6 +21,7 @@
 package com.arangodb.entity.arangosearch.analyzer;
 
 
+import com.arangodb.entity.Entity;
 import com.arangodb.entity.arangosearch.AnalyzerFeature;
 import com.arangodb.entity.arangosearch.AnalyzerType;
 
@@ -30,7 +31,7 @@ import java.util.Set;
 /**
  * @author Michele Rastelli
  */
-public abstract class SearchAnalyzer {
+public abstract class SearchAnalyzer implements Entity {
     private String name;
     private AnalyzerType type;
     private Set<AnalyzerFeature> features;

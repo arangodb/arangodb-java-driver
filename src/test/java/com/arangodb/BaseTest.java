@@ -44,7 +44,8 @@ public abstract class BaseTest {
     static final List<ArangoDB> arangos = Arrays.asList(
             new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
-            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build()
+            new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
+            new ArangoDB.Builder().serializer(new VelocyJack()).build()
     );
 
     @Parameters
