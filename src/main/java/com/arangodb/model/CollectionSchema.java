@@ -25,7 +25,7 @@ package com.arangodb.model;
 /**
  * @author Michele Rastelli
  */
-public class CollectionValidation {
+public class CollectionSchema {
     private String rule;
     private Level level;
     private String message;
@@ -34,7 +34,7 @@ public class CollectionValidation {
         return rule;
     }
 
-    public CollectionValidation setRule(String rule) {
+    public CollectionSchema setRule(String rule) {
         this.rule = rule;
         return this;
     }
@@ -43,7 +43,7 @@ public class CollectionValidation {
         return level;
     }
 
-    public CollectionValidation setLevel(Level level) {
+    public CollectionSchema setLevel(Level level) {
         this.level = level;
         return this;
     }
@@ -52,7 +52,7 @@ public class CollectionValidation {
         return message;
     }
 
-    public CollectionValidation setMessage(String message) {
+    public CollectionSchema setMessage(String message) {
         this.message = message;
         return this;
     }

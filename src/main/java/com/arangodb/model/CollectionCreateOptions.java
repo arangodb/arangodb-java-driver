@@ -47,7 +47,7 @@ public class CollectionCreateOptions {
     private String shardingStrategy; // cluster option
     private String smartJoinAttribute; // enterprise option
 
-    private CollectionValidation validation;
+    private CollectionSchema schema;
 
     public CollectionCreateOptions() {
         super();
@@ -325,12 +325,12 @@ public class CollectionCreateOptions {
         return this;
     }
 
-    public CollectionValidation getValidation() {
-        return validation;
+    public CollectionSchema getSchema() {
+        return schema;
     }
 
-    public CollectionCreateOptions setValidation(final CollectionValidation validation) {
-        this.validation = validation;
+    public CollectionCreateOptions setSchema(final CollectionSchema schema) {
+        this.schema = schema;
         return this;
     }
 

@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.model.CollectionValidation;
+import com.arangodb.model.CollectionSchema;
 
 /**
  * @author Mark Vollmary
@@ -35,7 +35,7 @@ public class CollectionEntity implements Entity {
     private Boolean isSystem;
     private CollectionStatus status;
     private CollectionType type;
-    private CollectionValidation validation;
+    private CollectionSchema schema;
 
     public CollectionEntity() {
         super();
@@ -69,8 +69,8 @@ public class CollectionEntity implements Entity {
         return type;
     }
 
-    public CollectionValidation getValidation() {
-        return validation;
+    public CollectionSchema getSchema() {
+        return schema;
     }
 
 }

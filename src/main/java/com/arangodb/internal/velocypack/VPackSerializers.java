@@ -23,7 +23,7 @@ package com.arangodb.internal.velocypack;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
-import com.arangodb.model.CollectionValidation;
+import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
@@ -223,7 +223,7 @@ public class VPackSerializers {
 
     public static final VPackSerializer<ConsolidationType> CONSOLIDATE_TYPE = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase());
 
-    public static final VPackSerializer<CollectionValidation> COLLECTION_VALIDATION = (builder, attribute, value, context) -> {
+    public static final VPackSerializer<CollectionSchema> COLLECTION_VALIDATION = (builder, attribute, value, context) -> {
         VPackParser parser = new VPackParser.Builder().build();
         VPackSlice rule = parser.fromJson(value.getRule(), true);
         final Map<String, Object> doc = new HashMap<>();

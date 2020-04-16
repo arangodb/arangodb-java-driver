@@ -311,21 +311,21 @@ public class ArangoDatabaseTest extends BaseTest {
 
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions()
-                        .setValidation(
-                                new CollectionValidation()
-                                        .setLevel(CollectionValidation.Level.NEW)
+                        .setSchema(
+                                new CollectionSchema()
+                                        .setLevel(CollectionSchema.Level.NEW)
                                         .setMessage(message)
                                         .setRule(rule)
                         )
                 );
-        assertThat(result.getValidation().getLevel(), is(CollectionValidation.Level.NEW));
-        assertThat(result.getValidation().getRule(), is(rule));
-        assertThat(result.getValidation().getMessage(), is(message));
+        assertThat(result.getSchema().getLevel(), is(CollectionSchema.Level.NEW));
+        assertThat(result.getSchema().getRule(), is(rule));
+        assertThat(result.getSchema().getMessage(), is(message));
 
         CollectionPropertiesEntity props = db.collection(name).getProperties();
-        assertThat(props.getValidation().getLevel(), is(CollectionValidation.Level.NEW));
-        assertThat(props.getValidation().getRule(), is(rule));
-        assertThat(props.getValidation().getMessage(), is(message));
+        assertThat(props.getSchema().getLevel(), is(CollectionSchema.Level.NEW));
+        assertThat(props.getSchema().getRule(), is(rule));
+        assertThat(props.getSchema().getMessage(), is(message));
 
         BaseDocument doc = new BaseDocument();
         doc.addAttribute("number", 33);
