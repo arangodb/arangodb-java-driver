@@ -338,7 +338,7 @@ public class ArangoDatabaseTest extends BaseTest {
             fail();
         } catch (ArangoDBException e) {
             assertThat(e.getMessage(), containsString(message));
-            assertThat(e.getResponseCode(), is(500));
+            assertThat(e.getResponseCode(), is(400));
             assertThat(e.getErrorNum(), is(1620));
         }
     }
