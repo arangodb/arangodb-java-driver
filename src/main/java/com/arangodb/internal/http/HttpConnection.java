@@ -24,7 +24,6 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
-import com.arangodb.internal.util.CURLLogger;
 import com.arangodb.internal.util.IOUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.util.ArangoSerialization;

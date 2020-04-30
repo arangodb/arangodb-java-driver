@@ -21,7 +21,6 @@
 package com.arangodb.entity;
 
 import com.arangodb.velocypack.VPackSlice;
-import org.apache.http.protocol.HTTP;
 
 import java.util.Collection;
 import java.util.Map;
@@ -95,8 +94,8 @@ public class CursorEntity implements Entity, MetaAware {
      * @return remove not allowed (valid storable) meta information
      */
     public Map<String, String> cleanupMeta(Map<String, String> meta) {
-        meta.remove(HTTP.CONTENT_LEN);
-        meta.remove(HTTP.TRANSFER_ENCODING);
+        meta.remove("Content-Length");
+        meta.remove("Transfer-Encoding");
         return meta;
     }
 
