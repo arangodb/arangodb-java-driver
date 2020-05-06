@@ -5,7 +5,7 @@
 
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>6.6.2</version>
+    <version>6.6.3</version>
     <inceptionYear>2016</inceptionYear>
     <packaging>jar</packaging>
 
@@ -160,7 +160,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>

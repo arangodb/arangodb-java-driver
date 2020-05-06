@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.6.3] - 2020-05-06
+
+- velocypack v2.3.1
+
 ## [6.6.2] - 2020-04-07
 
 - bugfix VelocyJack deserialization
