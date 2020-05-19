@@ -25,7 +25,10 @@ package com.arangodb.model;
  * @author Michele Rastelli
  */
 public enum OverwriteMode {
-    replace("replace"), update("update");
+    ignore("ignore"),
+    replace("replace"),
+    update("update"),
+    conflict("conflict");
 
     private final String value;
 

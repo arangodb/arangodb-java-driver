@@ -159,6 +159,43 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void insertDocumentOverwriteModeIgnore() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        final BaseDocument doc2 = new BaseDocument(key);
+        doc2.addAttribute("bar", "b");
+        final DocumentCreateEntity<BaseDocument> insertIgnore = collection
+                .insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.ignore));
+
+        assertThat(insertIgnore, is(notNullValue()));
+        assertThat(insertIgnore.getRev(), is(meta.getRev()));
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeConflict() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        final BaseDocument doc2 = new BaseDocument(key);
+        try {
+            collection.insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.conflict));
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(409));
+            assertThat(e.getErrorNum(), is(1210));
+        }
+    }
+
+    @Test
     public void insertDocumentOverwriteModeReplace() {
         assumeTrue(isAtLeastVersion(3, 7));
 
