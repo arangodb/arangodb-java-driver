@@ -26,7 +26,9 @@ import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Response;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -36,7 +38,7 @@ public abstract class ArangoExecutor {
     @SuppressWarnings("unchecked")
     protected <T> T createResult(final Type type, final Response response) {
         if (type != Void.class && response.getBody() != null) {
-            if (type instanceof Class && Entity.class.isAssignableFrom((Class) type)) {
+            if (isInternal(type)) {
                 return (T) util.get(Serializer.INTERNAL).deserialize(response.getBody(), type);
             } else {
                 return (T) util.get(Serializer.CUSTOM).deserialize(response.getBody(), type);
@@ -44,6 +46,26 @@ public abstract class ArangoExecutor {
         } else {
             return null;
         }
+    }
+
+    private boolean isInternal(final Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pType = ((ParameterizedType) type);
+            Type rawType = pType.getRawType();
+
+            if (rawType instanceof Class<?> && (
+                    Map.class.isAssignableFrom((Class<?>) rawType) || Iterable.class.isAssignableFrom((Class<?>) rawType)
+            )) {
+                for (Type arg : pType.getActualTypeArguments()) {
+                    if (!isInternal(arg)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        return type instanceof Class<?> && Entity.class.isAssignableFrom((Class<?>) type);
     }
 
     private final DocumentCache documentCache;

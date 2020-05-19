@@ -18,7 +18,7 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal.util;
+package com.arangodb.internal.http;
 
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;

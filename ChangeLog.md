@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.6.3] - 2020-05-06
+
+- velocypack v2.3.1
+
+## [6.6.2] - 2020-04-07
+
+- bugfix VelocyJack deserialization
 - bugfix `allowImplicit` parameter in stream transactions
 
 ## [6.7.0_PREVIEW_3.7.0-alpha.2_0] - 2020-03-24
