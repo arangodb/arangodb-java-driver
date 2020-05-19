@@ -193,6 +193,23 @@ public class VPackSerializers {
             builder.add("primarySortCompression", primarySortCompression.getValue());
         }
 
+        final Collection<StoredValue> storedValues = value.getStoredValues();
+        if (!storedValues.isEmpty()) {
+            builder.add("storedValues", ValueType.ARRAY); // open array
+            for (final StoredValue storedValue : storedValues) {
+                builder.add(ValueType.OBJECT); // open object
+                builder.add("fields", ValueType.ARRAY);
+                for (final String field : storedValue.getFields()) {
+                    builder.add(field);
+                }
+                builder.close();
+                builder.add("compression", storedValue.getCompression().getValue());
+                builder.close(); // close object
+            }
+            builder.close(); // close array
+        }
+
+
     };
 
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {

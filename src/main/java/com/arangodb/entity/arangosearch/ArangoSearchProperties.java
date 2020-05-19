@@ -37,11 +37,13 @@ public class ArangoSearchProperties {
     private final Collection<PrimarySort> primarySorts;
     private final Collection<CollectionLink> links;
     private ArangoSearchCompression primarySortCompression;
+    private final Collection<StoredValue> storedValues;
 
     public ArangoSearchProperties() {
         super();
         links = new ArrayList<>();
         primarySorts = new ArrayList<>();
+        storedValues = new ArrayList<>();
     }
 
     public Long getCommitIntervalMsec() {
@@ -98,6 +100,14 @@ public class ArangoSearchProperties {
 
     public void setPrimarySortCompression(ArangoSearchCompression primarySortCompression) {
         this.primarySortCompression = primarySortCompression;
+    }
+
+    public Collection<StoredValue> getStoredValues() {
+        return storedValues;
+    }
+
+    public void addStoredValues(final StoredValue... storedValues) {
+        this.storedValues.addAll(Arrays.asList(storedValues));
     }
 
 }

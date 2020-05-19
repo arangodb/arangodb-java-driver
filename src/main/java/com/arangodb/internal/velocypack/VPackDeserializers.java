@@ -33,9 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -203,6 +201,24 @@ public class VPackDeserializers {
         final VPackSlice primarySortCompression = vpack.get("primarySortCompression");
         if (primarySortCompression.isString()) {
             properties.setPrimarySortCompression(ArangoSearchCompression.valueOf(primarySortCompression.getAsString()));
+        }
+
+        final VPackSlice storedValues = vpack.get("storedValues");
+        if (storedValues.isArray()) {
+            final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
+            for (; storedValueIterator.hasNext(); ) {
+                final VPackSlice entry = storedValueIterator.next();
+                if (entry.isObject()) {
+                    VPackSlice fields = entry.get("fields");
+                    VPackSlice compression = entry.get("compression");
+                    if (fields.isArray() && compression.isString()) {
+                        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
+                        List<String> fieldsList = new ArrayList<>();
+                        fieldsIterator.forEachRemaining(it -> fieldsList.add(it.getAsString()));
+                        properties.addStoredValues(new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString())));
+                    }
+                }
+            }
         }
 
         return properties;

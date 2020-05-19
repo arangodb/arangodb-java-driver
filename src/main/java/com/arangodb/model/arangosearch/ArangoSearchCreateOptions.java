@@ -126,4 +126,12 @@ public class ArangoSearchCreateOptions {
         return this;
     }
 
+    /**
+     * @return options
+     */
+    public ArangoSearchCreateOptions storedValues(final StoredValue... storedValues) {
+        properties.addStoredValues(storedValues);
+        return this;
+    }
+
 }

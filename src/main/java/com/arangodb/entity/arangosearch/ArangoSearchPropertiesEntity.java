@@ -102,4 +102,8 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
         return properties.getPrimarySortCompression();
     }
 
+    public Collection<StoredValue> getStoredValues() {
+        return properties.getStoredValues();
+    }
+
 }
