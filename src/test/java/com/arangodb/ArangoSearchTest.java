@@ -146,15 +146,17 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
         assertThat(db.arangoSearch(viewName).exists(), is(true));
 
-        final ArangoSearchPropertiesEntity properties = view.getProperties();
-        assertThat(properties.getPrimarySortCompression(), is(ArangoSearchCompression.none));
-        Collection<StoredValue> retrievedStoredValues = properties.getStoredValues();
-        assertThat(retrievedStoredValues, is(notNullValue()));
-        assertThat(retrievedStoredValues.size(), is(1));
-        StoredValue retrievedStoredValue = retrievedStoredValues.iterator().next();
-        assertThat(retrievedStoredValue, is(notNullValue()));
-        assertThat(retrievedStoredValue.getFields(), is(storedValue.getFields()));
-        assertThat(retrievedStoredValue.getCompression(), is(storedValue.getCompression()));
+        if(isAtLeastVersion(3,7)){
+            final ArangoSearchPropertiesEntity properties = view.getProperties();
+            assertThat(properties.getPrimarySortCompression(), is(ArangoSearchCompression.none));
+            Collection<StoredValue> retrievedStoredValues = properties.getStoredValues();
+            assertThat(retrievedStoredValues, is(notNullValue()));
+            assertThat(retrievedStoredValues.size(), is(1));
+            StoredValue retrievedStoredValue = retrievedStoredValues.iterator().next();
+            assertThat(retrievedStoredValue, is(notNullValue()));
+            assertThat(retrievedStoredValue.getFields(), is(storedValue.getFields()));
+            assertThat(retrievedStoredValue.getCompression(), is(storedValue.getCompression()));
+        }
     }
 
     @Test
