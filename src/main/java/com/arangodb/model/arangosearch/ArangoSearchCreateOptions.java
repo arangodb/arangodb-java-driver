@@ -21,10 +21,7 @@
 package com.arangodb.model.arangosearch;
 
 import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.PrimarySort;
+import com.arangodb.entity.arangosearch.*;
 
 /**
  * @author Mark Vollmary
@@ -119,4 +116,14 @@ public class ArangoSearchCreateOptions {
         properties.addPrimarySort(primarySorts);
         return this;
     }
+
+    /**
+     * @param primarySortCompression Defines how to compress the primary sort data
+     * @return options
+     */
+    public ArangoSearchCreateOptions primarySortCompression(final ArangoSearchCompression primarySortCompression) {
+        properties.setPrimarySortCompression(primarySortCompression);
+        return this;
+    }
+
 }

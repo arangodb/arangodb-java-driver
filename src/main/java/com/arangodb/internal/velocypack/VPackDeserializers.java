@@ -200,6 +200,11 @@ public class VPackDeserializers {
             }
         }
 
+        final VPackSlice primarySortCompression = vpack.get("primarySortCompression");
+        if (primarySortCompression.isString()) {
+            properties.setPrimarySortCompression(ArangoSearchCompression.valueOf(primarySortCompression.getAsString()));
+        }
+
         return properties;
     };
 

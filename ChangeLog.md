@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-- support `overwriteMode` values `ignore` and `conflict` (ArangoDB v3.7)
+- support for `ArangoSearchProperties` value `primarySortCompression` (ArangoDB v3.7)
+- support for `overwriteMode` values `ignore` and `conflict` (ArangoDB v3.7)
 
 ## [6.6.3] - 2020-05-06
 

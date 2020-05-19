@@ -36,6 +36,7 @@ public class ArangoSearchProperties {
     private ConsolidationPolicy consolidationPolicy;
     private final Collection<PrimarySort> primarySorts;
     private final Collection<CollectionLink> links;
+    private ArangoSearchCompression primarySortCompression;
 
     public ArangoSearchProperties() {
         super();
@@ -90,4 +91,13 @@ public class ArangoSearchProperties {
     public void addPrimarySort(final PrimarySort... primarySorts) {
         this.primarySorts.addAll(Arrays.asList(primarySorts));
     }
+
+    public ArangoSearchCompression getPrimarySortCompression() {
+        return primarySortCompression;
+    }
+
+    public void setPrimarySortCompression(ArangoSearchCompression primarySortCompression) {
+        this.primarySortCompression = primarySortCompression;
+    }
+
 }

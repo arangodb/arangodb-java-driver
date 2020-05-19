@@ -94,4 +94,12 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
     public Collection<PrimarySort> getPrimarySort() {
         return properties.getPrimarySort();
     }
+
+    /**
+     * @return how to compress the primary sort data
+     */
+    public ArangoSearchCompression getPrimarySortCompression() {
+        return properties.getPrimarySortCompression();
+    }
+
 }

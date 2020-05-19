@@ -187,6 +187,12 @@ public class VPackSerializers {
             }
             builder.close(); // close array
         }
+
+        final ArangoSearchCompression primarySortCompression = value.getPrimarySortCompression();
+        if (primarySortCompression != null) {
+            builder.add("primarySortCompression", primarySortCompression.getValue());
+        }
+
     };
 
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {
