@@ -94,6 +94,15 @@ public class GraphCreateOptions {
         return this;
     }
 
+    public Boolean getIsDisjoint() {
+        return getOptions().getIsDisjoint();
+    }
+
+    public GraphCreateOptions isDisjoint(final Boolean isDisjoint) {
+        getOptions().setIsDisjoint(isDisjoint);
+        return this;
+    }
+
     public Integer getReplicationFactor() {
         return getOptions().replicationFactor.getReplicationFactor();
     }
@@ -187,6 +196,7 @@ public class GraphCreateOptions {
         private Integer minReplicationFactor;
         private Integer numberOfShards;
         private String smartGraphAttribute;
+        private Boolean isDisjoint;
 
         public SmartOptions() {
             super();
@@ -231,6 +241,14 @@ public class GraphCreateOptions {
 
         public void setSmartGraphAttribute(final String smartGraphAttribute) {
             this.smartGraphAttribute = smartGraphAttribute;
+        }
+
+        public Boolean getIsDisjoint() {
+            return isDisjoint;
+        }
+
+        public void setIsDisjoint(final Boolean isDisjoint) {
+            this.isDisjoint = isDisjoint;
         }
 
     }

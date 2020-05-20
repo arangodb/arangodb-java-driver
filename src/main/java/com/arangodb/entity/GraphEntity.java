@@ -36,6 +36,7 @@ public class GraphEntity implements Entity {
     private Collection<EdgeDefinition> edgeDefinitions;
     private Collection<String> orphanCollections;
     private Boolean isSmart;
+    private Boolean isDisjoint;
     private Integer numberOfShards;
     private String smartGraphAttribute;
     private ReplicationFactor replicationFactor;
@@ -55,6 +56,10 @@ public class GraphEntity implements Entity {
 
     public Boolean getIsSmart() {
         return isSmart;
+    }
+
+    public Boolean getIsDisjoint() {
+        return isDisjoint;
     }
 
     public Integer getNumberOfShards() {
