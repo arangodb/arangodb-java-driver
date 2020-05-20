@@ -928,6 +928,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void getAndClearSlowQueries() {
+        db.clearSlowQueries();
+
         final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties();
         final Long slowQueryThreshold = properties.getSlowQueryThreshold();
         properties.setSlowQueryThreshold(1L);
