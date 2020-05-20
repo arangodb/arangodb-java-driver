@@ -35,6 +35,9 @@ public class DocumentCreateOptions {
     private OverwriteMode overwriteMode;
     private Boolean silent;
     private String streamTransactionId;
+    private Boolean keepNull;
+    private Boolean mergeObjects;
+
 
     public DocumentCreateOptions() {
         super();
@@ -138,6 +141,40 @@ public class DocumentCreateOptions {
      */
     public DocumentCreateOptions streamTransactionId(final String streamTransactionId) {
         this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
+    public Boolean getKeepNull() {
+        return keepNull;
+    }
+
+    /**
+     * @param keepNull If the intention is to delete existing attributes with the patch command, the URL query parameter
+     *                 keepNull can be used with a value of false. This will modify the behavior of the patch command to
+     *                 remove any attributes from the existing document that are contained in the patch document with an
+     *                 attribute value of null.
+     * @return options
+     * @apiNote only considered if {@link this#overwriteMode} is set to {@link OverwriteMode#update}
+     * @apiNote the document key field must be not null
+     */
+    public DocumentCreateOptions keepNull(Boolean keepNull) {
+        this.keepNull = keepNull;
+        return this;
+    }
+
+    public Boolean getMergeObjects() {
+        return mergeObjects;
+    }
+
+    /**
+     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and the patch
+     *                     document. If set to false, the value in the patch document will overwrite the existing document's
+     *                     value. If set to true, objects will be merged. The default is true.
+     * @return options
+     * @apiNote only considered if {@link this#overwriteMode} is set to {@link OverwriteMode#update}
+     */
+    public DocumentCreateOptions mergeObjects(Boolean mergeObjects) {
+        this.mergeObjects = mergeObjects;
         return this;
     }
 
