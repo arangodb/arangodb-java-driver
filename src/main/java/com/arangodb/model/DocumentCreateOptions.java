@@ -35,6 +35,8 @@ public class DocumentCreateOptions {
     private OverwriteMode overwriteMode;
     private Boolean silent;
     private String streamTransactionId;
+    private Boolean mergeObjects;
+
 
     public DocumentCreateOptions() {
         super();
@@ -138,6 +140,22 @@ public class DocumentCreateOptions {
      */
     public DocumentCreateOptions streamTransactionId(final String streamTransactionId) {
         this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
+    public Boolean getMergeObjects() {
+        return mergeObjects;
+    }
+
+    /**
+     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and the patch
+     *                     document. If set to false, the value in the patch document will overwrite the existing document's
+     *                     value. If set to true, objects will be merged. The default is true.
+     * @return options
+     * @apiNote only considered if {@link this#overwriteMode} is set to {@link OverwriteMode#update}
+     */
+    public DocumentCreateOptions mergeObjects(Boolean mergeObjects) {
+        this.mergeObjects = mergeObjects;
         return this;
     }
 

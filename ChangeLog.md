@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [6.7.0_PREVIEW_3.7.1-alpha.1] - 2020-05-??
 
+- added support of `mergeObjects` for insert document with `overwriteMode: update` (ArangoDB v3.7)
 - added support of `DisjointSmartGraphs` (ArangoDB v3.7)
 - added support of `ArangoSearchProperties` value `storedValues` (ArangoDB v3.7)
 - added support of `ArangoSearchProperties` value `primarySortCompression` (ArangoDB v3.7)

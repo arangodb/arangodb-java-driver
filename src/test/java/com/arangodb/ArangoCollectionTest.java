@@ -224,13 +224,35 @@ public class ArangoCollectionTest extends BaseTest {
         final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
 
         doc.addAttribute("bar", "b");
-        final DocumentCreateEntity<BaseDocument> upsert = collection
+        final DocumentCreateEntity<BaseDocument> updated = collection
                 .insertDocument(doc, new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
 
-        assertThat(upsert, is(notNullValue()));
-        assertThat(upsert.getRev(), is(not(meta.getRev())));
-        assertThat(upsert.getNew().getAttribute("foo").toString(), is("a"));
-        assertThat(upsert.getNew().getAttribute("bar").toString(), is("b"));
+        assertThat(updated, is(notNullValue()));
+        assertThat(updated.getRev(), is(not(meta.getRev())));
+        assertThat(updated.getNew().getAttribute("foo").toString(), is("a"));
+        assertThat(updated.getNew().getAttribute("bar").toString(), is("b"));
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeUpdateMergeObjectsFalse() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc = new BaseDocument();
+        Map<String, String> fieldA = Collections.singletonMap("a", "a");
+        doc.addAttribute("foo", fieldA);
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        Map<String, String> fieldB = Collections.singletonMap("b", "b");
+        doc.addAttribute("foo", fieldB);
+        final DocumentCreateEntity<BaseDocument> updated = collection
+                .insertDocument(doc, new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .mergeObjects(false)
+                        .returnNew(true));
+
+        assertThat(updated, is(notNullValue()));
+        assertThat(updated.getRev(), is(not(meta.getRev())));
+        assertThat(updated.getNew().getAttribute("foo"), is(fieldB));
     }
 
     @Test

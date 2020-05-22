@@ -88,8 +88,11 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(OVERWRITE, params.getOverwrite());
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
+        request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
+
         request.setBody(util(Serializer.CUSTOM).serialize(value));
+
         return request;
     }
 
@@ -125,7 +128,9 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(OVERWRITE, params.getOverwrite());
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
+        request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
+
         request.setBody(util(Serializer.CUSTOM)
                 .serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
         return request;
