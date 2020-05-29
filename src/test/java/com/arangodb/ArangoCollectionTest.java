@@ -2212,6 +2212,36 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void updateDocumentsWithDifferentReturnType() {
+        List<String> keys = IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID().toString()).collect(Collectors.toList());
+        List<BaseDocument> docs = keys.stream()
+                .map(BaseDocument::new)
+                .peek(it -> it.addAttribute("a", "test"))
+                .collect(Collectors.toList());
+
+        collection.insertDocuments(docs);
+
+        List<Map<String, Object>> modifiedDocs = docs.stream()
+                .peek(it -> it.addAttribute("b", "test"))
+                .map(it -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("_key", it.getKey());
+                    map.put("a", it.getAttribute("a"));
+                    map.put("b", it.getAttribute("b"));
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
+                .updateDocuments(modifiedDocs, new DocumentUpdateOptions().returnNew(true), BaseDocument.class);
+        assertThat(updateResult.getDocuments().size(), is(3));
+        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments().stream().map(DocumentUpdateEntity::getNew)
+                        .allMatch(it -> it.getAttribute("a").equals("test") && it.getAttribute("b").equals("test")),
+                is(true));
+    }
+
+    @Test
     public void updateDocumentsOne() {
         final Collection<BaseDocument> values = new ArrayList<>();
         {

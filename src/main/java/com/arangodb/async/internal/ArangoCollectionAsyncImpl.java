@@ -191,18 +191,24 @@ public class ArangoCollectionAsyncImpl
     @Override
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
             final Collection<T> values) {
-        final DocumentUpdateOptions params = new DocumentUpdateOptions();
-        return executor.execute(updateDocumentsRequest(values, params),
-                updateDocumentsResponseDeserializer(values, params));
+        return updateDocuments(values, new DocumentUpdateOptions());
     }
 
     @Override
     public <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
             final Collection<T> values,
             final DocumentUpdateOptions options) {
+        return updateDocuments(values, options, values.isEmpty() ? null : (Class<T>) values.iterator().next().getClass());
+    }
+
+    @Override
+    public <T, U> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<U>>> updateDocuments(
+            final Collection<T> values,
+            final DocumentUpdateOptions options,
+            final Class<U> returnType) {
         final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
         return executor.execute(updateDocumentsRequest(values, params),
-                updateDocumentsResponseDeserializer(values, params));
+                updateDocumentsResponseDeserializer(returnType));
     }
 
     @Override

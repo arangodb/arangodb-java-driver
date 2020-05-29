@@ -31,10 +31,12 @@ import org.junit.Test;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -290,7 +292,7 @@ public class ArangoCollectionTest extends BaseTest {
         final String key = "key-" + UUID.randomUUID().toString();
         final BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("a", "test");
-        collection.insertDocument(doc);
+        collection.insertDocument(doc).get();
 
         final DocumentUpdateEntity<BaseDocument> updateResult = collection
                 .updateDocument(key, Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(true), BaseDocument.class).get();
@@ -1858,6 +1860,37 @@ public class ArangoCollectionTest extends BaseTest {
                     assertThat(updateResult.getErrors().size(), is(0));
                 })
                 .get();
+    }
+
+    @Test
+    public void updateDocumentsWithDifferentReturnType() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        List<String> keys = IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID().toString()).collect(Collectors.toList());
+        List<BaseDocument> docs = keys.stream()
+                .map(BaseDocument::new)
+                .peek(it -> it.addAttribute("a", "test"))
+                .collect(Collectors.toList());
+
+        collection.insertDocuments(docs).get();
+
+        List<Map<String, Object>> modifiedDocs = docs.stream()
+                .peek(it -> it.addAttribute("b", "test"))
+                .map(it -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("_key", it.getKey());
+                    map.put("a", it.getAttribute("a"));
+                    map.put("b", it.getAttribute("b"));
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
+                .updateDocuments(modifiedDocs, new DocumentUpdateOptions().returnNew(true), BaseDocument.class).get();
+        assertThat(updateResult.getDocuments().size(), is(3));
+        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments().stream().map(DocumentUpdateEntity::getNew)
+                        .allMatch(it -> it.getAttribute("a").equals("test") && it.getAttribute("b").equals("test")),
+                is(true));
     }
 
     @Test

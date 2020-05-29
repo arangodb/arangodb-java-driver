@@ -399,14 +399,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     @SuppressWarnings("unchecked")
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
-            final Collection<T> values, final DocumentUpdateOptions params) {
+            final Class<T> returnType) {
         return response -> {
-            Class<T> type = null;
-            if (Boolean.TRUE == params.getReturnNew() || Boolean.TRUE == params.getReturnOld()) {
-                if (!values.isEmpty()) {
-                    type = (Class<T>) values.iterator().next().getClass();
-                }
-            }
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
@@ -423,11 +417,11 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                         final DocumentUpdateEntity<T> doc = util().deserialize(next, DocumentUpdateEntity.class);
                         final VPackSlice newDoc = next.get(NEW);
                         if (newDoc.isObject()) {
-                            doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, type));
+                            doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, returnType));
                         }
                         final VPackSlice oldDoc = next.get(OLD);
                         if (oldDoc.isObject()) {
-                            doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, type));
+                            doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, returnType));
                         }
                         docs.add(doc);
                         documentsAndErrors.add(doc);
