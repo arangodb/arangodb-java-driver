@@ -167,9 +167,7 @@ public class ArangoCollectionAsyncImpl
 
     @Override
     public <T> CompletableFuture<DocumentUpdateEntity<T>> updateDocument(final String key, final T value) {
-        final DocumentUpdateOptions options = new DocumentUpdateOptions();
-        return executor.execute(updateDocumentRequest(key, value, options),
-                updateDocumentResponseDeserializer(value, options));
+        return updateDocument(key, value, new DocumentUpdateOptions());
     }
 
     @Override
@@ -177,8 +175,17 @@ public class ArangoCollectionAsyncImpl
             final String key,
             final T value,
             final DocumentUpdateOptions options) {
+        return updateDocument(key, value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T, U> CompletableFuture<DocumentUpdateEntity<U>> updateDocument(
+            final String key,
+            final T value,
+            final DocumentUpdateOptions options,
+            final Class<U> returnType) {
         return executor.execute(updateDocumentRequest(key, value, options),
-                updateDocumentResponseDeserializer(value, options));
+                updateDocumentResponseDeserializer(value, options, returnType));
     }
 
     @Override

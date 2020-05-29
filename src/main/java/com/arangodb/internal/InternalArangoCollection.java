@@ -357,18 +357,18 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> updateDocumentResponseDeserializer(
-            final T value, final DocumentUpdateOptions options) {
+    protected <T, U> ResponseDeserializer<DocumentUpdateEntity<U>> updateDocumentResponseDeserializer(
+            final T value, final DocumentUpdateOptions options, final Class<U> returnType) {
         return response -> {
             final VPackSlice body = response.getBody();
-            final DocumentUpdateEntity<T> doc = util().deserialize(body, DocumentUpdateEntity.class);
+            final DocumentUpdateEntity<U> doc = util().deserialize(body, DocumentUpdateEntity.class);
             final VPackSlice newDoc = body.get(NEW);
             if (newDoc.isObject()) {
-                doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, value.getClass()));
+                doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, returnType));
             }
             final VPackSlice oldDoc = body.get(OLD);
             if (oldDoc.isObject()) {
-                doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
+                doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, returnType));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<DocumentField.Type, String> values = new HashMap<>();

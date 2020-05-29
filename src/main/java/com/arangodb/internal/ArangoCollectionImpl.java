@@ -168,8 +168,14 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     @Override
     public <T> DocumentUpdateEntity<T> updateDocument(
             final String key, final T value, final DocumentUpdateOptions options) throws ArangoDBException {
+        return updateDocument(key, value, options, (Class<T>) value.getClass());
+    }
+
+    @Override
+    public <T, U> DocumentUpdateEntity<U> updateDocument(
+            final String key, final T value, final DocumentUpdateOptions options, final Class<U> returnType) throws ArangoDBException {
         return executor.execute(updateDocumentRequest(key, value, options),
-                updateDocumentResponseDeserializer(value, options));
+                updateDocumentResponseDeserializer(value, options, returnType));
     }
 
     @Override

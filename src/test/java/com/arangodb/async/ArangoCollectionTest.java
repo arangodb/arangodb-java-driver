@@ -285,6 +285,24 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void updateDocumentWithDifferentReturnType() throws ExecutionException, InterruptedException {
+        ArangoCollectionAsync collection = db.collection(COLLECTION_NAME);
+        final String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("a", "test");
+        collection.insertDocument(doc);
+
+        final DocumentUpdateEntity<BaseDocument> updateResult = collection
+                .updateDocument(key, Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(true), BaseDocument.class).get();
+        assertThat(updateResult, is(notNullValue()));
+        assertThat(updateResult.getKey(), is(key));
+        BaseDocument updated = updateResult.getNew();
+        assertThat(updated, is(notNullValue()));
+        assertThat(updated.getAttribute("a"), is("test"));
+        assertThat(updated.getAttribute("b"), is("test"));
+    }
+
+    @Test
     public void updateDocumentIfMatch() throws InterruptedException, ExecutionException {
         final BaseDocument doc = new BaseDocument();
         doc.addAttribute("a", "test");
