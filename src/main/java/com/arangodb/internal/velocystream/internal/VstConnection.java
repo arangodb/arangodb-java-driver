@@ -42,8 +42,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,7 +69,7 @@ public abstract class VstConnection implements Connection {
 
     private final HostDescription host;
 
-    private final HashMap<Long, Long> sendTimestamps = new HashMap<>();
+    private final Map<Long, Long> sendTimestamps = new ConcurrentHashMap<>();
 
     private final String connectionName;
 
@@ -252,9 +253,8 @@ public abstract class VstConnection implements Connection {
         final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 
         if (LOGGER.isDebugEnabled()) {
-
             LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
-            LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (sendTimestamps.get(chunk.getMessageId()) - System.currentTimeMillis()));
+            LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (System.currentTimeMillis() - sendTimestamps.get(chunk.getMessageId())));
         }
 
         return chunk;
