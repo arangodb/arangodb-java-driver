@@ -18,105 +18,108 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb;
+package com.arangodb.async;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ConcurrentStreamTransactionsTest extends BaseTest {
+public class StreamTransactionConflictsTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test";
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
+    public StreamTransactionConflictsTest() throws ExecutionException, InterruptedException {
+        if (db.collection(COLLECTION_NAME).exists().get())
+            db.collection(COLLECTION_NAME).drop().get();
+
+        db.createCollection(COLLECTION_NAME, null).get();
     }
 
-    public ConcurrentStreamTransactionsTest(final ArangoDB arangoDB) {
-        super(arangoDB);
+    @After
+    public void teardown() throws ExecutionException, InterruptedException {
+        if (db.collection(COLLECTION_NAME).exists().get())
+            db.collection(COLLECTION_NAME).drop().get();
     }
 
     @Test
-    @Ignore
-    public void conflictOnInsertDocumentWithNotYetCommittedTx() {
+    public void conflictOnInsertDocumentWithNotYetCommittedTx() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
-                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
 
         StreamTransactionEntity tx2 = db.beginStreamTransaction(
-                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
 
         String key = UUID.randomUUID().toString();
 
         // insert a document from within tx1
         db.collection(COLLECTION_NAME)
-                .insertDocument(new BaseDocument(key), new DocumentCreateOptions().streamTransactionId(tx1.getId()));
+                .insertDocument(new BaseDocument(key), new DocumentCreateOptions().streamTransactionId(tx1.getId())).get();
 
         try {
             // insert conflicting document from within tx2
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
-                    new DocumentCreateOptions().streamTransactionId(tx2.getId()));
-
+                    new DocumentCreateOptions().streamTransactionId(tx2.getId())).get();
             fail();
-        } catch (ArangoDBException e) {
-            e.printStackTrace();
+        } catch (ExecutionException e) {
+            assertThat(e.getCause(), Matchers.instanceOf(ArangoDBException.class));
+            e.getCause().printStackTrace();
         }
 
-        db.abortStreamTransaction(tx1.getId());
-        db.abortStreamTransaction(tx2.getId());
+        db.abortStreamTransaction(tx1.getId()).get();
+        db.abortStreamTransaction(tx2.getId()).get();
     }
 
     @Test
-    public void conflictOnInsertDocumentWithAlreadyCommittedTx() {
+    public void conflictOnInsertDocumentWithAlreadyCommittedTx() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx1 = db.beginStreamTransaction(
-                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
 
         StreamTransactionEntity tx2 = db.beginStreamTransaction(
-                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME));
+                new StreamTransactionOptions().readCollections(COLLECTION_NAME).writeCollections(COLLECTION_NAME)).get();
 
         String key = UUID.randomUUID().toString();
 
         // insert a document from within tx1
         db.collection(COLLECTION_NAME)
-                .insertDocument(new BaseDocument(key), new DocumentCreateOptions().streamTransactionId(tx1.getId()));
+                .insertDocument(new BaseDocument(key), new DocumentCreateOptions().streamTransactionId(tx1.getId())).get();
 
         // commit tx1
-        db.commitStreamTransaction(tx1.getId());
+        db.commitStreamTransaction(tx1.getId()).get();
 
         try {
             // insert conflicting document from within tx2
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument(key),
-                    new DocumentCreateOptions().streamTransactionId(tx2.getId()));
-
+                    new DocumentCreateOptions().streamTransactionId(tx2.getId())).get();
             fail();
-        } catch (ArangoDBException e) {
-            e.printStackTrace();
+        } catch (ExecutionException e) {
+            assertThat(e.getCause(), Matchers.instanceOf(ArangoDBException.class));
+            e.getCause().printStackTrace();
         }
 
-        db.abortStreamTransaction(tx2.getId());
+        db.abortStreamTransaction(tx2.getId()).get();
     }
 }
