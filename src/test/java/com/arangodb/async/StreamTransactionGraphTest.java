@@ -221,7 +221,7 @@ public class StreamTransactionGraphTest extends BaseTest {
                         .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)).get();
 
         // delete vertex from within the tx
-        vertexCollection1.deleteVertex(createdDoc.getKey(), new VertexDeleteOptions().streamTransactionId(tx.getId()));
+        vertexCollection1.deleteVertex(createdDoc.getKey(), new VertexDeleteOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the vertex has not been deleted from outside the tx
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null).get(), is(notNullValue()));
@@ -374,7 +374,7 @@ public class StreamTransactionGraphTest extends BaseTest {
                         .writeCollections(VERTEX_COLLECTION_1, VERTEX_COLLECTION_2, EDGE_COLLECTION)).get();
 
         // delete edge from within the tx
-        edgeCollection.deleteEdge(createdDoc.getKey(), new EdgeDeleteOptions().streamTransactionId(tx.getId()));
+        edgeCollection.deleteEdge(createdDoc.getKey(), new EdgeDeleteOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the edge has not been deleted from outside the tx
         assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null).get(), is(notNullValue()));
