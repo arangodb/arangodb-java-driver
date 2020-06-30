@@ -1,4 +1,4 @@
-package com.arangodb.async;/*
+/*
  * DISCLAIMER
  *
  * Copyright 2016 ArangoDB GmbH, Cologne, Germany
@@ -17,6 +17,9 @@ package com.arangodb.async;/*
  *
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
+
+
+package com.arangodb.async;
 
 
 import org.junit.rules.TestRule;

@@ -23,6 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -101,8 +102,7 @@ public class ArangoDBTest {
 	}
 
 	private boolean isAtLeastVersion(final int major, final int minor) {
-		final String[] split = arangoDB.getVersion().getVersion().split("\\.");
-		return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
+        return TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major, minor, 0);
 	}
 
 	@Test
