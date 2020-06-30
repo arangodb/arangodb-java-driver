@@ -98,6 +98,12 @@ public class GraphCreateOptions {
         return getOptions().getIsDisjoint();
     }
 
+    /**
+     * @param isDisjoint If set to true, a Disjoint SmartGraph will be created. This flag is not editable after
+     *                   creation. Default: false.
+     * @return options
+     * @since ArangoDB 3.7
+     */
     public GraphCreateOptions isDisjoint(final Boolean isDisjoint) {
         getOptions().setIsDisjoint(isDisjoint);
         return this;

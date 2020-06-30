@@ -209,7 +209,6 @@ public class VPackSerializers {
             builder.close(); // close array
         }
 
-
     };
 
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {

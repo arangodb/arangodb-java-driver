@@ -24,12 +24,17 @@ package com.arangodb.model;
 
 /**
  * @author Michele Rastelli
+ * @see <a href="https://www.arangodb.com/docs/stable/data-modeling-documents-schema-validation.html">API Documentation</a>
+ * @since ArangoDB 3.7
  */
 public class CollectionSchema {
     private String rule;
     private Level level;
     private String message;
 
+    /**
+     * @return JSON Schema description
+     */
     public String getRule() {
         return rule;
     }
@@ -39,6 +44,9 @@ public class CollectionSchema {
         return this;
     }
 
+    /**
+     * @return controls when the validation will be applied
+     */
     public Level getLevel() {
         return level;
     }
@@ -48,6 +56,9 @@ public class CollectionSchema {
         return this;
     }
 
+    /**
+     * @return the message that will be used when validation fails
+     */
     public String getMessage() {
         return message;
     }
@@ -58,9 +69,28 @@ public class CollectionSchema {
     }
 
     public enum Level {
+
+        /**
+         * The rule is inactive and validation thus turned off.
+         */
         NONE("none"),
+
+        /**
+         * Only newly inserted documents are validated.
+         */
         NEW("new"),
+
+        /**
+         * New and modified documents must pass validation, except for modified documents where the OLD value did not
+         * pass validation already. This level is useful if you have documents which do not match your target structure,
+         * but you want to stop the insertion of more invalid documents and prohibit that valid documents are changed to
+         * invalid documents.
+         */
         MODERATE("moderate"),
+
+        /**
+         * All new and modified document must strictly pass validation. No exceptions are made (default).
+         */
         STRICT("strict");
 
         private final String value;

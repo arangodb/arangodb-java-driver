@@ -69,6 +69,10 @@ public class CollectionEntity implements Entity {
         return type;
     }
 
+    /**
+     * @return Optional object that specifies the collection level schema for documents.
+     * @since ArangoDB 3.7
+     */
     public CollectionSchema getSchema() {
         return schema;
     }
