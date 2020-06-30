@@ -23,9 +23,19 @@ package com.arangodb.entity.arangosearch;
 
 /**
  * @author Michele Rastelli
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
+ * @since ArangoDB 3.7
  */
 public enum ArangoSearchCompression {
+
+    /**
+     * (default): use LZ4 fast compression.
+     */
     lz4("lz4"),
+
+    /**
+     * disable compression to trade space for speed.
+     */
     none("none");
 
     private final String value;

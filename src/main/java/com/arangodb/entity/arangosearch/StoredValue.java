@@ -25,6 +25,8 @@ import java.util.List;
 
 /**
  * @author Michele Rastelli
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
+ * @since ArangoDB 3.7
  */
 public class StoredValue {
 
@@ -40,10 +42,18 @@ public class StoredValue {
         this(fields, null);
     }
 
+    /**
+     * @return an array of strings with one or more document attribute paths. The specified attributes are placed into a
+     * single column of the index. A column with all fields that are involved in common search queries is ideal for
+     * performance. The column should not include too many unneeded fields however.
+     */
     public List<String> getFields() {
         return fields;
     }
 
+    /**
+     * @return defines the compression type used for the internal column-store
+     */
     public ArangoSearchCompression getCompression() {
         return compression;
     }
