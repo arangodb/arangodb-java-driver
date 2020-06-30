@@ -69,8 +69,7 @@ public class ArangoDBTest {
 
     private boolean isAtLeastVersion(final int major, final int minor) {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
-        final String[] split = arangoDB.getVersion().getVersion().split("\\.");
-        return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
+        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major,minor,0);
     }
 
     @Test

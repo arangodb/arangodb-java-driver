@@ -66,8 +66,7 @@ public abstract class BaseTest {
 
     protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
             throws InterruptedException, ExecutionException {
-        final String[] split = arangoDB.getVersion().get().getVersion().split("\\.");
-        return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
+        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor, 0);
     }
 
     protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException, ExecutionException {
