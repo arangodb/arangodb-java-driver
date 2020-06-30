@@ -32,14 +32,12 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb:3.4.10
           - docker.io/arangodb:3.5.5
-          - docker.io/arangodb:3.6.3
-          - docker.io/arangodb/arangodb-preview:3.7-alpha.3
-          - docker.io/arangodb/enterprise:3.4.10
+          - docker.io/arangodb:3.6.4
+          - docker.io/arangodb/arangodb-preview:3.7.1-rc.1
           - docker.io/arangodb/enterprise:3.5.5
-          - docker.io/arangodb/enterprise:3.6.3
-          - docker.io/arangodb/enterprise-preview:3.7-alpha.3
+          - docker.io/arangodb/enterprise:3.6.4
+          - docker.io/arangodb/enterprise-preview:3.7.1-rc.1
         topology:
           - single
           - cluster
