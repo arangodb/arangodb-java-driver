@@ -60,6 +60,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
+     *
+     * @implNote The current implementation has the following limitations:
+     * - the fields having {@code null} value are always removed during serialization
      */
     <T> DocumentCreateEntity<T> insertDocument(T value) throws ArangoDBException;
 
@@ -73,6 +76,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
+     *
+     * @implNote The current implementation has the following limitations:
+     * - the fields having {@code null} value are always removed during serialization
      */
     <T> DocumentCreateEntity<T> insertDocument(T value, DocumentCreateOptions options) throws ArangoDBException;
 
@@ -85,6 +91,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
+     *
+     * @implNote The current implementation has the following limitations:
+     * - the fields having {@code null} value are always removed during serialization
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values) throws ArangoDBException;
 
@@ -98,6 +107,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
+     *
+     * @implNote The current implementation has the following limitations:
+     * - the fields having {@code null} value are always removed during serialization
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
             Collection<T> values, DocumentCreateOptions options) throws ArangoDBException;
