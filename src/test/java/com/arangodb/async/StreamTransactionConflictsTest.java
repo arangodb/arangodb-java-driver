@@ -59,7 +59,6 @@ public class StreamTransactionConflictsTest extends BaseTest {
 
     @Test
     public void conflictOnInsertDocumentWithNotYetCommittedTx() throws ExecutionException, InterruptedException {
-        assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -82,7 +81,6 @@ public class StreamTransactionConflictsTest extends BaseTest {
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause(), Matchers.instanceOf(ArangoDBException.class));
-            e.getCause().printStackTrace();
         }
 
         db.abortStreamTransaction(tx1.getId()).get();
@@ -91,7 +89,6 @@ public class StreamTransactionConflictsTest extends BaseTest {
 
     @Test
     public void conflictOnInsertDocumentWithAlreadyCommittedTx() throws ExecutionException, InterruptedException {
-        assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -117,7 +114,6 @@ public class StreamTransactionConflictsTest extends BaseTest {
             fail();
         } catch (ExecutionException e) {
             assertThat(e.getCause(), Matchers.instanceOf(ArangoDBException.class));
-            e.getCause().printStackTrace();
         }
 
         db.abortStreamTransaction(tx2.getId()).get();
