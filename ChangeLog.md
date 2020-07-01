@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.7.0] - 2020-07-01
+
+- added support of schema validation (ArangoDB v3.7)
+- added support of `overwriteMode` on document creation, to allow `insert-ignore`, `insert-replace` and `insert-update` (ArangoDB v3.7)
+- added support of `mergeObjects` for insert document with `overwriteMode: update` (ArangoDB v3.7)
+- added support of `storedValues` in `ArangoSearchProperties` (ArangoDB v3.7)
+- added support of `primarySortCompression` in `ArangoSearchProperties` (ArangoDB v3.7)
+- added support of `DisjointSmartGraphs` and `SatelliteGraphs` (ArangoDB v3.7)
+- added support of `SatelliteGraphs` support (ArangoDB v3.7)
+- allow specifying return type on document update
+- added `peakMemoryUsage` to aql statistics
+
 ## [6.7.0_PREVIEW_3.7.1-alpha.1] - 2020-05-22
 
 - added support of `DisjointSmartGraphs` and `SatelliteGraphs` (ArangoDB v3.7)
