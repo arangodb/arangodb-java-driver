@@ -32,8 +32,11 @@ public class DocumentCreateOptions {
     private Boolean returnNew;
     private Boolean returnOld;
     private Boolean overwrite;
+    private OverwriteMode overwriteMode;
     private Boolean silent;
     private String streamTransactionId;
+    private Boolean mergeObjects;
+
 
     public DocumentCreateOptions() {
         super();
@@ -96,6 +99,27 @@ public class DocumentCreateOptions {
         return this;
     }
 
+    public OverwriteMode getOverwriteMode() {
+        return overwriteMode;
+    }
+
+    /**
+     * @param overwriteMode This parameter can be set to replace or update. If given it sets implicitly the overwrite
+     *                      flag. In case it is set to update, the replace-insert becomes an update-insert. Otherwise
+     *                      this option follows the rules of the overwrite parameter.
+     * @return options
+     * @since ArangoDB 3.7
+     *
+     * @implNote The current implementation has the following limitations:
+     * - `keepNull` parameter is not supported
+     * - the fields having {@code null} value are always removed during serialization
+     * Therefore in case of {@link OverwriteMode#update}, existing attributes cannot be removed.
+     */
+    public DocumentCreateOptions overwriteMode(final OverwriteMode overwriteMode) {
+        this.overwriteMode = overwriteMode;
+        return this;
+    }
+
     public Boolean getSilent() {
         return silent;
     }
@@ -121,6 +145,24 @@ public class DocumentCreateOptions {
      */
     public DocumentCreateOptions streamTransactionId(final String streamTransactionId) {
         this.streamTransactionId = streamTransactionId;
+        return this;
+    }
+
+    public Boolean getMergeObjects() {
+        return mergeObjects;
+    }
+
+    /**
+     * @param mergeObjects Controls whether objects (not arrays) will be merged if present in both the existing and the patch
+     *                     document. If set to false, the value in the patch document will overwrite the existing document's
+     *                     value. If set to true, objects will be merged. The default is true.
+     * @return options
+     * @since ArangoDB 3.7
+     *
+     * @apiNote only considered if {@link this#overwriteMode} is set to {@link OverwriteMode#update}
+     */
+    public DocumentCreateOptions mergeObjects(Boolean mergeObjects) {
+        this.mergeObjects = mergeObjects;
         return this;
     }
 

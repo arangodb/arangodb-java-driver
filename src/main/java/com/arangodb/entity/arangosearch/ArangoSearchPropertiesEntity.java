@@ -27,6 +27,8 @@ import java.util.Collection;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
+ * @see <a href="https://www.arangodb.com/docs/stable/http/views-arangosearch.html">API Documentation</a>
  */
 public class ArangoSearchPropertiesEntity extends ViewEntity {
 
@@ -94,4 +96,24 @@ public class ArangoSearchPropertiesEntity extends ViewEntity {
     public Collection<PrimarySort> getPrimarySort() {
         return properties.getPrimarySort();
     }
+
+    /**
+     * @return Defines how to compress the primary sort data (introduced in v3.7.0). ArangoDB v3.5 and v3.6 always
+     * compress the index using LZ4.
+     * @since ArangoDB 3.7
+     */
+    public ArangoSearchCompression getPrimarySortCompression() {
+        return properties.getPrimarySortCompression();
+    }
+
+    /**
+     * @return An array of objects to describe which document attributes to store in the View index. It can then cover
+     * search queries, which means the data can be taken from the index directly and accessing the storage engine can be
+     * avoided.
+     * @since ArangoDB 3.7
+     */
+    public Collection<StoredValue> getStoredValues() {
+        return properties.getStoredValues();
+    }
+
 }

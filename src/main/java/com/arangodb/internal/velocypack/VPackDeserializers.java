@@ -23,7 +23,9 @@ package com.arangodb.internal.velocypack;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
+import com.arangodb.model.CollectionSchema;
 import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
 import org.slf4j.Logger;
@@ -31,9 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -198,6 +198,29 @@ public class VPackDeserializers {
             }
         }
 
+        final VPackSlice primarySortCompression = vpack.get("primarySortCompression");
+        if (primarySortCompression.isString()) {
+            properties.setPrimarySortCompression(ArangoSearchCompression.valueOf(primarySortCompression.getAsString()));
+        }
+
+        final VPackSlice storedValues = vpack.get("storedValues");
+        if (storedValues.isArray()) {
+            final Iterator<VPackSlice> storedValueIterator = storedValues.arrayIterator();
+            for (; storedValueIterator.hasNext(); ) {
+                final VPackSlice entry = storedValueIterator.next();
+                if (entry.isObject()) {
+                    VPackSlice fields = entry.get("fields");
+                    VPackSlice compression = entry.get("compression");
+                    if (fields.isArray() && compression.isString()) {
+                        final Iterator<VPackSlice> fieldsIterator = fields.arrayIterator();
+                        List<String> fieldsList = new ArrayList<>();
+                        fieldsIterator.forEachRemaining(it -> fieldsList.add(it.getAsString()));
+                        properties.addStoredValues(new StoredValue(fieldsList, ArangoSearchCompression.valueOf(compression.getAsString())));
+                    }
+                }
+            }
+        }
+
         return properties;
     };
 
@@ -256,6 +279,15 @@ public class VPackDeserializers {
             return consolidate;
         }
         return null;
+    };
+
+    public static final VPackDeserializer<CollectionSchema> COLLECTION_VALIDATION = (parent, vpack, context) -> {
+        VPackParser parser = new VPackParser.Builder().build();
+        CollectionSchema collectionValidation = new CollectionSchema();
+        collectionValidation.setLevel(CollectionSchema.Level.of(vpack.get("level").getAsString()));
+        collectionValidation.setRule(parser.toJson(vpack.get("rule"), true));
+        collectionValidation.setMessage(vpack.get("message").getAsString());
+        return collectionValidation;
     };
 
 }

@@ -11,7 +11,7 @@ docker pull "$1"
 
 docker network create arangodb --subnet 172.28.0.0/16
 
-docker run -d -p 8529:8529 -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 "$1"
+docker run -d -p 8529:8529 -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name arangodb "$1"
 
 echo "waiting for arangodb ..."
 

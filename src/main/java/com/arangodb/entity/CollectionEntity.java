@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.model.CollectionSchema;
+
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/collection-creating.html">API Documentation</a>
@@ -33,6 +35,7 @@ public class CollectionEntity implements Entity {
     private Boolean isSystem;
     private CollectionStatus status;
     private CollectionType type;
+    private CollectionSchema schema;
 
     public CollectionEntity() {
         super();
@@ -64,6 +67,14 @@ public class CollectionEntity implements Entity {
 
     public CollectionType getType() {
         return type;
+    }
+
+    /**
+     * @return Optional object that specifies the collection level schema for documents.
+     * @since ArangoDB 3.7
+     */
+    public CollectionSchema getSchema() {
+        return schema;
     }
 
 }

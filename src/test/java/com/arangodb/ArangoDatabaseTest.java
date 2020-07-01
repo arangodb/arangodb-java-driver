@@ -295,6 +295,54 @@ public class ArangoDatabaseTest extends BaseTest {
         createCollectionWithKeyType(KeyType.uuid);
     }
 
+    @Test
+    public void createCollectionWithJsonSchema() {
+        assumeTrue(isAtLeastVersion(3, 7));
+        String name = "collection-" + rnd();
+        String rule = ("{  " +
+                "           \"properties\": {" +
+                "               \"number\": {" +
+                "                   \"type\": \"number\"" +
+                "               }" +
+                "           }" +
+                "       }")
+                .replaceAll("\\s", "");
+        String message = "The document has problems!";
+
+        final CollectionEntity result = db
+                .createCollection(name, new CollectionCreateOptions()
+                        .setSchema(
+                                new CollectionSchema()
+                                        .setLevel(CollectionSchema.Level.NEW)
+                                        .setMessage(message)
+                                        .setRule(rule)
+                        )
+                );
+        assertThat(result.getSchema().getLevel(), is(CollectionSchema.Level.NEW));
+        assertThat(result.getSchema().getRule(), is(rule));
+        assertThat(result.getSchema().getMessage(), is(message));
+
+        CollectionPropertiesEntity props = db.collection(name).getProperties();
+        assertThat(props.getSchema().getLevel(), is(CollectionSchema.Level.NEW));
+        assertThat(props.getSchema().getRule(), is(rule));
+        assertThat(props.getSchema().getMessage(), is(message));
+
+        BaseDocument doc = new BaseDocument();
+        doc.addAttribute("number", 33);
+        db.collection(name).insertDocument(doc);
+
+        try {
+            BaseDocument wrongDoc = new BaseDocument();
+            doc.addAttribute("number", "notANumber");
+            db.collection(name).insertDocument(doc);
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getMessage(), containsString(message));
+            assertThat(e.getResponseCode(), is(400));
+            assertThat(e.getErrorNum(), is(1620));
+        }
+    }
+
     @Test(expected = ArangoDBException.class)
     public void deleteCollection() {
         String name = "collection-" + rnd();
@@ -880,6 +928,8 @@ public class ArangoDatabaseTest extends BaseTest {
 
     @Test
     public void getAndClearSlowQueries() {
+        db.clearSlowQueries();
+
         final QueryTrackingPropertiesEntity properties = db.getQueryTrackingProperties();
         final Long slowQueryThreshold = properties.getSlowQueryThreshold();
         properties.setSlowQueryThreshold(1L);
@@ -971,6 +1021,23 @@ public class ArangoDatabaseTest extends BaseTest {
         String name = "graph-" + rnd();
         final GraphEntity result = db.createGraph(name, null, null);
         assertThat(result.getName(), is(name));
+    }
+
+    @Test
+    public void createGraphSatellite() {
+        assumeTrue(isAtLeastVersion(3, 7));
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+
+        String name = "graph-" + rnd();
+        final GraphEntity result = db.createGraph(name, null, new GraphCreateOptions().satellite(true));
+        assertThat(result.getSatellite(), is(true));
+
+        GraphEntity info = db.graph(name).getInfo();
+        assertThat(info.getSatellite(), is(true));
+
+        GraphEntity graph = db.getGraphs().stream().filter(g -> name.equals(g.getName())).findFirst().get();
+        assertThat(graph.getSatellite(), is(true));
     }
 
     @Test

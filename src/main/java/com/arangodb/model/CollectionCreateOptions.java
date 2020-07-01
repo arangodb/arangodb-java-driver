@@ -47,6 +47,8 @@ public class CollectionCreateOptions {
     private String shardingStrategy; // cluster option
     private String smartJoinAttribute; // enterprise option
 
+    private CollectionSchema schema;
+
     public CollectionCreateOptions() {
         super();
         replicationFactor = new ReplicationFactor();
@@ -320,6 +322,20 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions distributeShardsLike(final String distributeShardsLike) {
         this.distributeShardsLike = distributeShardsLike;
+        return this;
+    }
+
+    public CollectionSchema getSchema() {
+        return schema;
+    }
+
+    /**
+     * @param schema object that specifies the collection level schema for documents
+     * @since ArangoDB 3.7
+     * @return options
+     */
+    public CollectionCreateOptions setSchema(final CollectionSchema schema) {
+        this.schema = schema;
         return this;
     }
 

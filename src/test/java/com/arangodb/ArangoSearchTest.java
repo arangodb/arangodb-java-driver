@@ -133,14 +133,30 @@ public class ArangoSearchTest extends BaseTest {
         final PrimarySort primarySort = PrimarySort.on("myFieldName");
         primarySort.ascending(true);
         options.primarySort(primarySort);
+        options.primarySortCompression(ArangoSearchCompression.none);
         options.consolidationIntervalMsec(666666L);
+        StoredValue storedValue = new StoredValue(Arrays.asList("a", "b"), ArangoSearchCompression.none);
+        options.storedValues(storedValue);
 
-        final ViewEntity info = db.arangoSearch(viewName).create(options);
+        final ArangoSearch view = db.arangoSearch(viewName);
+        final ViewEntity info = view.create(options);
         assertThat(info, is(not(nullValue())));
         assertThat(info.getId(), is(not(nullValue())));
         assertThat(info.getName(), is(viewName));
         assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
         assertThat(db.arangoSearch(viewName).exists(), is(true));
+
+        if(isAtLeastVersion(3,7)){
+            final ArangoSearchPropertiesEntity properties = view.getProperties();
+            assertThat(properties.getPrimarySortCompression(), is(ArangoSearchCompression.none));
+            Collection<StoredValue> retrievedStoredValues = properties.getStoredValues();
+            assertThat(retrievedStoredValues, is(notNullValue()));
+            assertThat(retrievedStoredValues.size(), is(1));
+            StoredValue retrievedStoredValue = retrievedStoredValues.iterator().next();
+            assertThat(retrievedStoredValue, is(notNullValue()));
+            assertThat(retrievedStoredValue.getFields(), is(storedValue.getFields()));
+            assertThat(retrievedStoredValue.getCompression(), is(storedValue.getCompression()));
+        }
     }
 
     @Test
