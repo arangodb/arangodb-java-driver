@@ -3,7 +3,7 @@ name: Java CI
 on:
   push:
     branches:
-      - api-tests
+      - api-test
 
 jobs:
 
