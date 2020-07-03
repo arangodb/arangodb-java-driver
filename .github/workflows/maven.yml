@@ -3,7 +3,7 @@ name: Java CI
 on:
   push:
     branches:
-      - dbg/aqlCursorStream
+      - api-tests
 
 jobs:
 
@@ -39,7 +39,7 @@ jobs:
         env:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
       - name: Test
-        run: mvn --no-transfer-progress test -Dtest=com.arangodb.AqlApiTest
+        run: mvn --no-transfer-progress test
       - name: Debug containers
         if: ${{ cancelled() || failure() }}
         run: ./docker/debug_containers_${{ matrix.topology }}.sh
