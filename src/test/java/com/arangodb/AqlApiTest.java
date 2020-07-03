@@ -51,7 +51,7 @@ public class AqlApiTest extends BaseTest {
 
     /**
      * It performs the following steps:
-     * - create 100 documents in the document collection <c>
+     * - create 40 documents in the document collection <c>
      * - create a stream AQL cursor which reads all the documents in collection <c>, batch size 10
      * - read 20 documents from the cursor (2 batches)
      * - explicitly close the cursor
@@ -59,11 +59,11 @@ public class AqlApiTest extends BaseTest {
      * @see <a href="https://www.arangodb.com/docs/stable/http/aql-query-cursor-accessing-cursors.html#delete-cursor">API
      * Documentation</a>
      */
-    @Test
+    @Test(timeout = 120_000L)
     public void explicitlyDestroyStreamCursor() throws IOException {
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 40; i++) {
             db.collection(COLLECTION_NAME).insertDocument(new BaseDocument());
         }
 

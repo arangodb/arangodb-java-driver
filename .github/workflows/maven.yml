@@ -3,7 +3,7 @@ name: Java CI
 on:
   push:
     branches:
-      - dbg/concurrentApiStream
+      - dbg/aqlCursorStream
 
 jobs:
 
@@ -18,9 +18,12 @@ jobs:
           - docker.io/arangodb:3.5.5
           - docker.io/arangodb:3.6.4
           - docker.io/arangodb/arangodb-preview:3.7.1-rc.1
-          - docker.io/arangodb/enterprise:3.5.5
-          - docker.io/arangodb/enterprise:3.6.4
-          - docker.io/arangodb/enterprise-preview:3.7.1-rc.1
+          - docker.io/arangodb/arangodb-test:3.5-nightly
+          - docker.io/arangodb/arangodb-test:3.6-nightly
+          - docker.io/arangodb/arangodb-test:3.7-nightly
+          - docker.io/arangodb/arangodb-preview:3.5-nightly
+          - docker.io/arangodb/arangodb-preview:3.6-nightly
+          - docker.io/arangodb/arangodb-preview:3.7-nightly
         topology:
           - single
           - cluster
@@ -36,7 +39,7 @@ jobs:
         env:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
       - name: Test
-        run: mvn --no-transfer-progress test -Dtest=com.arangodb.AqlApiTest#explicitlyDestroyStreamCursor
+        run: mvn --no-transfer-progress test -Dtest=com.arangodb.AqlApiTest
       - name: Debug containers
         if: ${{ cancelled() || failure() }}
         run: ./docker/debug_containers_${{ matrix.topology }}.sh
