@@ -1,28 +1,11 @@
 name: Java CI
 
 on:
-  pull_request:
-    branches:
-      - master
-      - preview
   push:
     branches:
-      - master
-      - preview
+      - dbg/concurrentApiStream
 
 jobs:
-  package:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Package
-        run: mvn --no-transfer-progress -DskipTests=true package
 
   test:
 
@@ -53,7 +36,7 @@ jobs:
         env:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
       - name: Test
-        run: mvn --no-transfer-progress test
+        run: mvn --no-transfer-progress test -Dtest=com.arangodb.AqlApiTest#explicitlyDestroyStreamCursor
       - name: Debug containers
         if: ${{ cancelled() || failure() }}
         run: ./docker/debug_containers_${{ matrix.topology }}.sh
