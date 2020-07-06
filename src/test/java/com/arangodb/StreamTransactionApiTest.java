@@ -66,9 +66,8 @@ public class StreamTransactionApiTest {
 
     @Before
     public void init() {
-        if (collection.exists())
-            collection.drop();
-        collection.create();
+        if (!collection.exists())
+            collection.create();
     }
 
     @Test
