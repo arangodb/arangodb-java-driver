@@ -24,7 +24,7 @@ package com.arangodb;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.ServerRole;
-import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,6 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assume.assumeTrue;
 
@@ -70,17 +69,17 @@ public class StreamTransactionApiTest {
             collection.create();
     }
 
+    /**
+     * It performs the following steps, using a driver instance configured with loadBalancingStrategy set to {@link LoadBalancingStrategy#ROUND_ROBIN}:
+     * - begin a stream transaction <t> with writeCollections: [<c>]
+     * - insert a new document into <c> from within <t>
+     */
     @Test
     public void streamTransactionFromDifferentCoordinators() {
         assumeTrue(isCluster());
-
-        String key = "key-" + UUID.randomUUID().toString();
-        collection.insertDocument(new BaseDocument(key));
-
         String transactionId = db.beginStreamTransaction(
                 new StreamTransactionOptions().writeCollections(COLLECTION_NAME)).getId();
-
-        collection.updateDocument(key, new BaseDocument(key), new DocumentUpdateOptions().streamTransactionId(transactionId));
+        collection.insertDocument(new BaseDocument(), new DocumentCreateOptions().streamTransactionId(transactionId));
     }
 
     private boolean isCluster() {
