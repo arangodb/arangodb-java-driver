@@ -650,6 +650,16 @@
     ]
   },
   {
+    "name": "com.arangodb.entity.arangosearch.StoredValue",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.entity.DocumentImportEntity",
     "allDeclaredFields": true,
     "methods": [
@@ -1101,6 +1111,16 @@
   },
   {
     "name": "com.arangodb.model.SkiplistIndexOptions",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.model.CollectionSchema",
     "allDeclaredFields": true,
     "methods": [
       {
