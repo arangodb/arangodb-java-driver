@@ -149,7 +149,9 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
         return response;
     }
 
-    protected Message createMessage(final Request request) throws VPackParserException {
+    protected final Message createMessage(final Request request) throws VPackParserException {
+        request.putHeaderParam("accept", "application/x-velocypack");
+        request.putHeaderParam("content-type", "application/x-velocypack");
         final long id = mId.incrementAndGet();
         return new Message(id, util.serialize(request), request.getBody());
     }
