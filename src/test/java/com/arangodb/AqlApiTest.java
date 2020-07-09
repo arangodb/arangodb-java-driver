@@ -1,4 +1,4 @@
-package com.arangodb;/*
+/*
  * DISCLAIMER
  *
  * Copyright 2016 ArangoDB GmbH, Cologne, Germany
@@ -18,6 +18,8 @@ package com.arangodb;/*
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
+
+package com.arangodb;
 
 import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.BaseDocument;
@@ -61,6 +63,9 @@ public class AqlApiTest extends BaseTest {
      */
     @Test(timeout = 120_000L)
     public void explicitlyDestroyStreamCursor() throws IOException {
+        assumeTrue(isAtLeastVersion(3, 7) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         for (int i = 0; i < 40; i++) {

@@ -81,6 +81,10 @@ public abstract class BaseTest {
         return isAtLeastVersion(major, minor, 0);
     }
 
+    protected static boolean isMinorVersionAndAtLeastPatch(final int major, final int minor, final int patch) throws ExecutionException, InterruptedException {
+        return com.arangodb.util.TestUtils.isMinorVersionAndAtLeastPatch(arangoDB.getVersion().get().getVersion(), major, minor, patch);
+    }
+
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) throws ExecutionException, InterruptedException {
         return name.equals(db.getEngine().get().getName());
     }

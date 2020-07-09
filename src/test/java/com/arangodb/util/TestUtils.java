@@ -65,4 +65,19 @@ public final class TestUtils {
         return true;
     }
 
+    /**
+     * Checks whether [version.major, version.minor] == [major, minor] AND version.patch >= patch
+     */
+    public static boolean isMinorVersionAndAtLeastPatch(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
+        String[] parts = version.split("-")[0].split("\\.");
+
+        int major = Integer.parseInt(parts[0]);
+        int minor = Integer.parseInt(parts[1]);
+        int patch = Integer.parseInt(parts[2]);
+
+        return major == otherMajor &&
+                minor == otherMinor &&
+                patch >= otherPatch;
+    }
+
 }

@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Mark Vollmary
@@ -117,6 +118,10 @@ public abstract class BaseTest {
 
     boolean isAtLeastVersion(final int major, final int minor, final int patch) {
         return TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major, minor, patch);
+    }
+
+    boolean isMinorVersionAndAtLeastPatch(final int major, final int minor, final int patch)  {
+        return TestUtils.isMinorVersionAndAtLeastPatch(arangoDB.getVersion().getVersion(), major, minor, patch);
     }
 
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {

@@ -64,7 +64,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void concurrentWriteWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isAtLeastVersion(3, 7) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -90,7 +92,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void concurrentAqlWriteWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isAtLeastVersion(3, 7) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -126,7 +130,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void failingAqlFromBTS57() {
-        assumeTrue(isAtLeastVersion(3, 6, 5));
+        assumeTrue(isAtLeastVersion(3, 7) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         String key = "key-" + UUID.randomUUID().toString();
@@ -152,7 +158,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void concurrentReadWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isAtLeastVersion(3, 7) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -178,7 +186,9 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
 
     @Test
     public void concurrentAqlReadWithinSameTransaction() {
-        assumeTrue(isAtLeastVersion(3, 5));
+        assumeTrue(isAtLeastVersion(3, 7) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
         ExecutorService executor = Executors.newCachedThreadPool();
 
