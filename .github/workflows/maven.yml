@@ -12,7 +12,7 @@ on:
 
 jobs:
   package:
-    timeout-minutes: 10
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
         run: mvn --no-transfer-progress -DskipTests=true package
 
   test:
-    timeout-minutes: 10
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     strategy:
