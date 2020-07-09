@@ -40,7 +40,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -279,11 +280,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             }
             fail();
         } catch (ExecutionException e) {
-            if (e.getCause() instanceof ArangoDBException) {
-                ArangoDBException arangoDBException = (ArangoDBException) e.getCause();
-                assertThat(arangoDBException.getErrorNum(), is(28));
-                assertThat(arangoDBException.getErrorMessage(), containsString("cannot read-lock"));
-            } else {
+            if (!(e.getCause() instanceof ArangoDBException)) {
                 throw e;
             }
         }
@@ -524,9 +521,6 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
                 cursors.add(request.get());
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof ArangoDBException) {
-                    ArangoDBException arangoDBException = (ArangoDBException) e.getCause();
-                    assertThat(arangoDBException.getErrorNum(), is(28));
-                    assertThat(arangoDBException.getErrorMessage(), containsString("cannot write-lock"));
                     threw = true;
                 } else {
                     throw e;
