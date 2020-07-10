@@ -74,7 +74,7 @@ public class StreamTransactionApiTest {
      * - begin a stream transaction <t> with writeCollections: [<c>]
      * - insert a new document into <c> from within <t>
      */
-    @Test
+    @Test(timeout = 10_000)
     public void streamTransactionFromDifferentCoordinators() {
         assumeTrue(isCluster());
         String transactionId = db.beginStreamTransaction(
