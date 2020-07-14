@@ -20,8 +20,6 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.ReplicationFactor;
-
 import java.util.Map;
 
 /**
@@ -30,16 +28,9 @@ import java.util.Map;
 public class DatabaseUsersOptions {
 
     private String username;
-    private ReplicationFactor replicationFactor;
     private Map<String, Object> extra;
     private String passwd;
-    private Integer writeConcern;
     private Boolean active;
-    private String sharding;
-
-    public DatabaseUsersOptions() {
-        replicationFactor = new ReplicationFactor();
-    }
 
     public String getUsername() {
         return username;
@@ -51,28 +42,6 @@ public class DatabaseUsersOptions {
      */
     public DatabaseUsersOptions username(final String username) {
         this.username = username;
-        return this;
-    }
-
-    public Integer getReplicationFactor() {
-        return replicationFactor.getReplicationFactor();
-    }
-
-    /**
-     * @param replicationFactor Default replication factor for new collections created in this database.
-     * @return options
-     */
-    public DatabaseUsersOptions replicationFactor(final Integer replicationFactor) {
-        this.replicationFactor.setReplicationFactor(replicationFactor);
-        return this;
-    }
-
-    public Boolean getSatellite() {
-        return this.replicationFactor.getSatellite();
-    }
-
-    public DatabaseUsersOptions satellite(final Boolean satellite) {
-        this.replicationFactor.setSatellite(satellite);
         return this;
     }
 
@@ -103,24 +72,6 @@ public class DatabaseUsersOptions {
         return this;
     }
 
-    public Integer getWriteConcern() {
-        return writeConcern;
-    }
-
-    /**
-     * @param writeConcern Default write concern for new collections created in this database.
-     *                     It determines how many copies of each shard are required to be
-     *                     in sync on the different DBServers. If there are less then these many copies
-     *                     in the cluster a shard will refuse to write. Writes to shards with enough
-     *                     up-to-date copies will succeed at the same time however. The value of
-     *                     writeConcern can not be larger than replicationFactor. (cluster only)
-     * @return options
-     */
-    public DatabaseUsersOptions writeConcern(final Integer writeConcern) {
-        this.writeConcern = writeConcern;
-        return this;
-    }
-
     public Boolean getActive() {
         return active;
     }
@@ -133,20 +84,6 @@ public class DatabaseUsersOptions {
      */
     public DatabaseUsersOptions active(final Boolean active) {
         this.active = active;
-        return this;
-    }
-
-    public String getSharding() {
-        return sharding;
-    }
-
-    /**
-     * @param sharding The sharding method to use for new collections in this database. Valid values
-     *                 are: "", "flexible", or "single". The first two are equivalent. (cluster only)
-     * @return options
-     */
-    public DatabaseUsersOptions sharding(final String sharding) {
-        this.sharding = sharding;
         return this;
     }
 
