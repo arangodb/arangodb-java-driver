@@ -64,7 +64,7 @@ public class AqlApiTest extends BaseTest {
     @Test(timeout = 120_000L)
     public void explicitlyDestroyStreamCursor() throws IOException {
         assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
+                isMinorVersionAndAtLeastPatch(3, 5, 5) ||
                 isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
