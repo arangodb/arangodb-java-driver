@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.7.2] - 2020-07-29
+
+- velocypack v2.4.0
+
 ## [6.7.1] - 2020-07-07
 
 - fixed VST communication adding `accept` and `content-type` headers to every message
