@@ -484,7 +484,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
      * - consume all the batches of all cursors in parallel
      * - expect error from db
      */
-    @Test
+    @Test(timeout = 300_000L)
     public void concurrentAqlStreamWithinSameTransactionShouldThrow() throws ExecutionException, InterruptedException, IOException {
         assumeTrue(isAtLeastVersion(3, 7) ||
                 isMinorVersionAndAtLeastPatch(3, 5, 6) ||
