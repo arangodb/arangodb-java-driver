@@ -86,6 +86,7 @@ public class StreamTransactionApiTest {
         String transactionId = db.beginStreamTransaction(
                 new StreamTransactionOptions().writeCollections(COLLECTION_NAME)).getId();
         collection.insertDocument(new BaseDocument(), new DocumentCreateOptions().streamTransactionId(transactionId));
+        db.abortStreamTransaction(transactionId);
     }
 
     private boolean isCluster() {
