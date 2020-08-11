@@ -30,6 +30,11 @@ docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO
 docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.2 --name coordinator2 "$1" arangodb --cluster.start-dbserver false --cluster.start-coordinator true --starter.join agent1 --auth.jwt-secret /jwtSecret
 
 debug_container() {
+  if [ ! "$(docker ps -aqf name="$1")" ]; then
+    echo "$1 container not found!"
+    exit 1
+  fi
+
   running=$(docker inspect -f '{{.State.Running}}' "$1")
 
   if [ "$running" = false ]
