@@ -11,13 +11,32 @@ docker pull "$1"
 
 docker network create arangodb --subnet 172.28.0.0/16
 
-docker run -d -p 8529:8529 -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name arangodb "$1"
+docker run -d -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name arangodb "$1"
+
+debug_container() {
+  if [ ! "$(docker ps -aqf name="$1")" ]; then
+    echo "$1 container not found!"
+    exit 1
+  fi
+
+  running=$(docker inspect -f '{{.State.Running}}' "$1")
+
+  if [ "$running" = false ]
+  then
+    echo "$1 is not running!"
+    echo "---"
+    docker logs "$1"
+    echo "---"
+    exit 1
+  fi
+}
 
 echo "waiting for arangodb ..."
 
 # shellcheck disable=SC2091
-until $(curl --output /dev/null --silent --head --fail -i -u root:test 'http://localhost:8529/_api/version'); do
+until $(curl --output /dev/null --silent --head --fail -i -u root:test 'http://172.28.3.1:8529/_api/version'); do
     printf '.'
+    debug_container arangodb
     sleep 1
 done
 echo "READY!"
