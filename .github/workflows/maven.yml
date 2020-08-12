@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb:3.5.5
-          - docker.io/arangodb:3.6.5
-          - docker.io/arangodb/arangodb-preview:3.7.1-rc.1
+          - docker.io/arangodb/arangodb:3.5.5
+          - docker.io/arangodb/arangodb:3.6.5
+          - docker.io/arangodb/arangodb:3.7.1
           - docker.io/arangodb/arangodb-test:3.5-nightly
           - docker.io/arangodb/arangodb-test:3.6-nightly
           - docker.io/arangodb/arangodb-test:3.7-nightly
@@ -35,7 +35,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Start Database
-        run: ./docker/start_db_${{ matrix.topology }}.sh ${{ matrix.docker-img }}
+        run: ./docker/start_db_${{ matrix.topology }}_retry_fail.sh ${{ matrix.docker-img }}
         env:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
       - name: Test
