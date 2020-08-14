@@ -24,8 +24,8 @@ package com.arangodb.serde;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.VelocyJack;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
 import com.arangodb.model.DocumentCreateOptions;
 import org.junit.*;
 
