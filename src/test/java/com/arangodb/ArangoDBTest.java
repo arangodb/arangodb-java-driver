@@ -177,13 +177,14 @@ public class ArangoDBTest {
     @Test
     public void createDatabaseWithUsers() {
         final String dbName = "testDB-" + UUID.randomUUID().toString();
-
+        final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .users(Collections.singletonList(new DatabaseUsersOptions()
                         .active(true)
                         .username("testUser")
                         .passwd("testPasswd")
+                        .extra(extra)
                 ))
         );
         assertThat(resultCreate, is(true));
@@ -191,7 +192,14 @@ public class ArangoDBTest {
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
         assertThat(info.getName(), is(dbName));
 
-        assertThat(arangoDB.getUsers().stream().anyMatch(it -> it.getUser().equals("testUser")), is(true));
+        Optional<UserEntity> retrievedUserOptional = arangoDB.getUsers().stream()
+                .filter(it -> it.getUser().equals("testUser"))
+                .findFirst();
+        assertThat(retrievedUserOptional.isPresent(), is(true));
+
+        UserEntity retrievedUser = retrievedUserOptional.get();
+        assertThat(retrievedUser.getActive(), is(true));
+        assertThat(retrievedUser.getExtra(), is(extra));
 
         ArangoDB arangoDBTestUser = new ArangoDB.Builder()
                 .user("testUser")
