@@ -80,14 +80,14 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values A List of documents (POJO, VPackSlice or String for JSON)
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(Collection<T> values) throws ArangoDBException;
 
@@ -95,15 +95,15 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values  A List of documents (POJO, VPackSlice or String for JSON)
      * @param options Additional options, can be null
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#create-document">API
      * Documentation</a>
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     <T> MultiDocumentEntity<DocumentCreateEntity<T>> insertDocuments(
             Collection<T> values, DocumentCreateOptions options) throws ArangoDBException;
@@ -111,50 +111,50 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     /**
      * Bulk imports the given values into the collection.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values a list of Objects that will be stored as documents
      * @return information about the import
      * @throws ArangoDBException
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     DocumentImportEntity importDocuments(Collection<?> values) throws ArangoDBException;
 
     /**
      * Bulk imports the given values into the collection.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values  a list of Objects that will be stored as documents
      * @param options Additional options, can be null
      * @return information about the import
      * @throws ArangoDBException
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     DocumentImportEntity importDocuments(Collection<?> values, DocumentImportOptions options) throws ArangoDBException;
 
     /**
      * Bulk imports the given values into the collection.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values JSON-encoded array of objects that will be stored as documents
      * @return information about the import
      * @throws ArangoDBException
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     DocumentImportEntity importDocuments(String values) throws ArangoDBException;
 
     /**
      * Bulk imports the given values into the collection.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values  JSON-encoded array of objects that will be stored as documents
      * @param options Additional options, can be null
      * @return information about the import
      * @throws ArangoDBException
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     DocumentImportEntity importDocuments(String values, DocumentImportOptions options) throws ArangoDBException;
 
@@ -237,14 +237,14 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values A List of documents (POJO, VPackSlice or String for JSON)
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(Collection<T> values) throws ArangoDBException;
 
@@ -252,15 +252,15 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values  A List of documents (POJO, VPackSlice or String for JSON)
      * @param options Additional options, can be null
      * @return information about the documents
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#replace-documents">API
      * Documentation</a>
-     *
-     * @implNote The current implementation has the following limitations:
-     * - the fields having {@code null} value are always removed during serialization
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> replaceDocuments(
             Collection<T> values, DocumentReplaceOptions options) throws ArangoDBException;
