@@ -39,7 +39,10 @@ public class ArangoRouteImpl extends InternalArangoRoute<ArangoDBImpl, ArangoDat
 
     @Override
     public ArangoRoute route(final String... path) {
-        return new ArangoRouteImpl(db, createPath(this.path, createPath(path)), headerParam);
+        final String[] fullPath = new String[path.length + 1];
+        fullPath[0] = this.path;
+        System.arraycopy(path, 0, fullPath, 1, path.length);
+        return new ArangoRouteImpl(db, String.join("/", fullPath), headerParam);
     }
 
     @Override
