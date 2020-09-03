@@ -33,11 +33,11 @@ jobs:
       matrix:
         docker-img:
           - docker.io/arangodb/arangodb:3.5.5
-          - docker.io/arangodb/arangodb:3.6.5
-          - docker.io/arangodb/arangodb:3.7.1
+          - docker.io/arangodb/arangodb:3.6.6
+          - docker.io/arangodb/arangodb:3.7.2
           - docker.io/arangodb/enterprise:3.5.5
-          - docker.io/arangodb/enterprise:3.6.5
-          - docker.io/arangodb/enterprise:3.7.1
+          - docker.io/arangodb/enterprise:3.6.6
+          - docker.io/arangodb/enterprise:3.7.2
         topology:
           - single
           - cluster
