@@ -34,6 +34,7 @@ import com.arangodb.velocypack.VPackParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,6 +75,7 @@ public abstract class InternalArangoDBBuilder {
     protected Boolean useSsl;
     protected String httpCookieSpec;
     protected SSLContext sslContext;
+    protected HostnameVerifier hostnameVerifier;
     protected Integer chunksize;
     protected Integer maxConnections;
     protected Long connectionTtl;
@@ -158,6 +160,10 @@ public abstract class InternalArangoDBBuilder {
 
     protected void setSslContext(final SSLContext sslContext) {
         this.sslContext = sslContext;
+    }
+
+    protected void setHostnameVerifier(final HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
     }
 
     protected void setChunksize(final Integer chunksize) {

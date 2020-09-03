@@ -46,6 +46,7 @@ import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -172,6 +173,17 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          */
         public Builder sslContext(final SSLContext sslContext) {
             setSslContext(sslContext);
+            return this;
+        }
+
+        /**
+         * Sets the {@link javax.net.ssl.HostnameVerifier} to be used when using ssl with http protocol.
+         *
+         * @param hostnameVerifier HostnameVerifier to be used
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder hostnameVerifier(final HostnameVerifier hostnameVerifier) {
+            setHostnameVerifier(hostnameVerifier);
             return this;
         }
 
@@ -571,8 +583,8 @@ public interface ArangoDB extends ArangoSerializationAccessor {
 
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
                     ? new VstConnectionFactorySync(host, timeout, connectionTtl, useSsl, sslContext)
-                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, custom, protocol,
-                    connectionTtl, httpCookieSpec);
+                    : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, custom,
+                    protocol, connectionTtl, httpCookieSpec);
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);
             final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
