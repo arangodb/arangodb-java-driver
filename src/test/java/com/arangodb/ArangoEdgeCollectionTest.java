@@ -29,6 +29,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -437,4 +438,20 @@ public class ArangoEdgeCollectionTest extends BaseTest {
             }
         }
     }
+
+    @Test
+    public void edgeKeyWithSpecialChars() {
+        final BaseEdgeDocument value = createEdgeValue();
+        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID().toString();
+        value.setKey(key);
+        final EdgeEntity edge = edges.insertEdge(value, null);
+        assertThat(edge, is(notNullValue()));
+        final BaseEdgeDocument document = edgeCollection.getDocument(edge.getKey(),
+                BaseEdgeDocument.class, null);
+        assertThat(document, is(notNullValue()));
+        assertThat(document.getKey(), is(key));
+        assertThat(document.getFrom(), is(notNullValue()));
+        assertThat(document.getTo(), is(notNullValue()));
+    }
+
 }
