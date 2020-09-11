@@ -69,7 +69,6 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
     @Test
     public void aqlWithDocumentExpression() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
                 isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -108,7 +107,6 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
             throws ExecutionException, InterruptedException {
 
         assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
                 isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -429,7 +427,6 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
     @Ignore
     public void concurrentAqlStreamWithinSameTransaction() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
                 isMinorVersionAndAtLeastPatch(3, 6, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -487,7 +484,6 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
     @Test(timeout = 300_000L)
     public void concurrentAqlStreamWithinSameTransactionShouldThrow() throws ExecutionException, InterruptedException, IOException {
         assumeTrue(isAtLeastVersion(3, 7) ||
-                isMinorVersionAndAtLeastPatch(3, 5, 6) ||
                 isMinorVersionAndAtLeastPatch(3, 6, 6));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
