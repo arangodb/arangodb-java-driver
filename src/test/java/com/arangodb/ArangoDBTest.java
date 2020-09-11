@@ -83,105 +83,146 @@ public class ArangoDBTest {
 
     @Parameters
     public static List<ArangoDB> builders() {
-		return BaseTest.arangos;
-	}
+        return BaseTest.arangos;
+    }
 
-	public ArangoDBTest(final ArangoDB arangoDB) {
-		super();
-		this.arangoDB = arangoDB;
-		db1 = arangoDB.db(DB1);
-		db2 = arangoDB.db(DB2);
-	}
+    public ArangoDBTest(final ArangoDB arangoDB) {
+        super();
+        this.arangoDB = arangoDB;
+        db1 = arangoDB.db(DB1);
+        db2 = arangoDB.db(DB2);
+    }
 
-	private boolean isEnterprise() {
-		return arangoDB.getVersion().getLicense() == License.ENTERPRISE;
-	}
+    private boolean isEnterprise() {
+        return arangoDB.getVersion().getLicense() == License.ENTERPRISE;
+    }
 
-	private boolean isCluster() {
-		return arangoDB.getRole() == ServerRole.COORDINATOR;
-	}
+    private boolean isCluster() {
+        return arangoDB.getRole() == ServerRole.COORDINATOR;
+    }
 
-	private boolean isAtLeastVersion(final int major, final int minor) {
+    private boolean isAtLeastVersion(final int major, final int minor) {
         return TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major, minor, 0);
-	}
+    }
 
-	@Test
-	public void getVersion() {
-		final ArangoDBVersion version = arangoDB.getVersion();
-		assertThat(version, is(notNullValue()));
-		assertThat(version.getServer(), is(notNullValue()));
-		assertThat(version.getVersion(), is(notNullValue()));
-	}
+    @Test
+    public void getVersion() {
+        final ArangoDBVersion version = arangoDB.getVersion();
+        assertThat(version, is(notNullValue()));
+        assertThat(version.getServer(), is(notNullValue()));
+        assertThat(version.getVersion(), is(notNullValue()));
+    }
 
-	@Test
-	public void createAndDeleteDatabase() {
-		final String dbName = "testDB-" + UUID.randomUUID().toString();
-		final Boolean resultCreate = arangoDB.createDatabase(dbName);
-		assertThat(resultCreate, is(true));
-		final Boolean resultDelete = arangoDB.db(dbName).drop();
-		assertThat(resultDelete, is(true));
-	}
+    @Test
+    public void createAndDeleteDatabase() {
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Boolean resultCreate = arangoDB.createDatabase(dbName);
+        assertThat(resultCreate, is(true));
+        final Boolean resultDelete = arangoDB.db(dbName).drop();
+        assertThat(resultDelete, is(true));
+    }
 
-	@Test
-	public void createDatabaseWithOptions() {
-		assumeTrue(isCluster());
-		assumeTrue(isAtLeastVersion(3, 6));
-		final String dbName = "testDB-" + UUID.randomUUID().toString();
-		final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
-				.name(dbName)
-				.options(new DatabaseOptions()
-						.writeConcern(2)
-						.replicationFactor(2)
-						.sharding("")
-				)
-		);
-		assertThat(resultCreate, is(true));
+    @Test
+    public void createDatabaseWithOptions() {
+        assumeTrue(isCluster());
+        assumeTrue(isAtLeastVersion(3, 6));
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
+                .name(dbName)
+                .options(new DatabaseOptions()
+                        .writeConcern(2)
+                        .replicationFactor(2)
+                        .sharding("")
+                )
+        );
+        assertThat(resultCreate, is(true));
 
-		DatabaseEntity info = arangoDB.db(dbName).getInfo();
-		assertThat(info.getReplicationFactor(), is(2));
-		assertThat(info.getWriteConcern(), is(2));
-		assertThat(info.getSharding(), is(""));
-		assertThat(info.getSatellite(), nullValue());
+        DatabaseEntity info = arangoDB.db(dbName).getInfo();
+        assertThat(info.getReplicationFactor(), is(2));
+        assertThat(info.getWriteConcern(), is(2));
+        assertThat(info.getSharding(), is(""));
+        assertThat(info.getSatellite(), nullValue());
 
-		final Boolean resultDelete = arangoDB.db(dbName).drop();
-		assertThat(resultDelete, is(true));
-	}
+        final Boolean resultDelete = arangoDB.db(dbName).drop();
+        assertThat(resultDelete, is(true));
+    }
 
-	@Test
+    @Test
 	public void createDatabaseWithOptionsSatellite() {
-		assumeTrue(isCluster());
-		assumeTrue(isEnterprise());
-		assumeTrue(isAtLeastVersion(3, 6));
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 6));
 
-		final String dbName = "testDB-" + UUID.randomUUID().toString();
-		final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
-				.name(dbName)
-				.options(new DatabaseOptions()
-						.writeConcern(2)
-						.satellite(true)
-						.sharding("")
-				)
-		);
-		assertThat(resultCreate, is(true));
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
+                .name(dbName)
+                .options(new DatabaseOptions()
+                        .writeConcern(2)
+                        .satellite(true)
+                        .sharding("")
+                )
+        );
+        assertThat(resultCreate, is(true));
 
-		DatabaseEntity info = arangoDB.db(dbName).getInfo();
-		assertThat(info.getReplicationFactor(), nullValue());
-		assertThat(info.getSatellite(), is(true));
-		assertThat(info.getWriteConcern(), is(2));
-		assertThat(info.getSharding(), is(""));
+        DatabaseEntity info = arangoDB.db(dbName).getInfo();
+        assertThat(info.getReplicationFactor(), nullValue());
+        assertThat(info.getSatellite(), is(true));
+        assertThat(info.getWriteConcern(), is(2));
+        assertThat(info.getSharding(), is(""));
 
-		final Boolean resultDelete = arangoDB.db(dbName).drop();
-		assertThat(resultDelete, is(true));
-	}
+        final Boolean resultDelete = arangoDB.db(dbName).drop();
+        assertThat(resultDelete, is(true));
+    }
 
-	@Test
-	public void getDatabases() {
-		Collection<String> dbs = arangoDB.getDatabases();
-		assertThat(dbs, is(notNullValue()));
-		assertThat(dbs.size(), is(greaterThan(0)));
-		assertThat(dbs.contains("_system"), is(true));
-		assertThat(dbs, hasItem(DB1));
-	}
+    @Test
+    public void createDatabaseWithUsers() {
+        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final Map<String, Object> extra = Collections.singletonMap("key", "value");
+        final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
+                .name(dbName)
+                .users(Collections.singletonList(new DatabaseUsersOptions()
+                        .active(true)
+                        .username("testUser")
+                        .passwd("testPasswd")
+                        .extra(extra)
+                ))
+        );
+        assertThat(resultCreate, is(true));
+
+        DatabaseEntity info = arangoDB.db(dbName).getInfo();
+        assertThat(info.getName(), is(dbName));
+
+        Optional<UserEntity> retrievedUserOptional = arangoDB.getUsers().stream()
+                .filter(it -> it.getUser().equals("testUser"))
+                .findFirst();
+        assertThat(retrievedUserOptional.isPresent(), is(true));
+
+        UserEntity retrievedUser = retrievedUserOptional.get();
+        assertThat(retrievedUser.getActive(), is(true));
+        assertThat(retrievedUser.getExtra(), is(extra));
+
+        ArangoDB arangoDBTestUser = new ArangoDB.Builder()
+                .user("testUser")
+                .password("testPasswd")
+                .build();
+
+        // check if testUser has been created and can access the created db
+        ArangoCollection collection = arangoDBTestUser.db(dbName).collection("col-" + UUID.randomUUID().toString());
+        collection.create();
+        arangoDBTestUser.shutdown();
+
+        final Boolean resultDelete = arangoDB.db(dbName).drop();
+        assertThat(resultDelete, is(true));
+    }
+
+    @Test
+    public void getDatabases() {
+        Collection<String> dbs = arangoDB.getDatabases();
+        assertThat(dbs, is(notNullValue()));
+        assertThat(dbs.size(), is(greaterThan(0)));
+        assertThat(dbs.contains("_system"), is(true));
+        assertThat(dbs, hasItem(DB1));
+    }
 
     @Test
     public void getAccessibleDatabases() {

@@ -23,6 +23,7 @@ package com.arangodb.example.ssl;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -55,6 +56,35 @@ public class SslExample {
 	@Test
 	@Ignore
 	public void connect() throws Exception {
+		final ArangoDB arangoDB = new ArangoDB.Builder()
+				.host("localhost", 8529)
+				.password("test")
+				.useSsl(true)
+				.sslContext(createSslContext())
+				.useProtocol(Protocol.HTTP_JSON)
+				.build();
+		final ArangoDBVersion version = arangoDB.getVersion();
+		assertThat(version, is(notNullValue()));
+		System.out.println(version.getVersion());
+	}
+
+	@Test
+	@Ignore
+	public void noopHostnameVerifier() throws Exception {
+		final ArangoDB arangoDB = new ArangoDB.Builder()
+				.host("127.0.0.1", 8529)
+				.password("test")
+				.useSsl(true)
+				.sslContext(createSslContext())
+				.hostnameVerifier(NoopHostnameVerifier.INSTANCE)
+				.useProtocol(Protocol.HTTP_JSON)
+				.build();
+		final ArangoDBVersion version = arangoDB.getVersion();
+		assertThat(version, is(notNullValue()));
+		System.out.println(version.getVersion());
+	}
+
+	private SSLContext createSslContext() throws Exception {
 		final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 		ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
@@ -67,17 +97,7 @@ public class SslExample {
 		final SSLContext sc = SSLContext.getInstance("TLS");
 		sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-
-		final ArangoDB arangoDB = new ArangoDB.Builder()
-				.host("127.0.0.1", 8529)
-				.password("test")
-				.useSsl(true)
-				.sslContext(sc)
-				.useProtocol(Protocol.HTTP_JSON)
-				.build();
-		final ArangoDBVersion version = arangoDB.getVersion();
-		assertThat(version, is(notNullValue()));
-		System.out.println(version.getVersion());
+		return sc;
 	}
 
 }

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.7.4] - 2020-09-03
+
+- fixed path escaping in `ArangoDatabase.route()`
+- added ssl hostname verifier to ArangoDB builder
+
+## [6.7.3] - 2020-08-14
+
+- added `users` field to `DBCreateOptions`
+- velocypack v2.4.1
+
 ## [6.7.2] - 2020-07-29
 
 - velocypack v2.4.0

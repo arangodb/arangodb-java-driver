@@ -42,7 +42,10 @@ public class ArangoRouteAsyncImpl
 
     @Override
     public ArangoRouteAsync route(final String... path) {
-        return new ArangoRouteAsyncImpl(db, createPath(this.path, createPath(path)), headerParam);
+        final String[] fullPath = new String[path.length + 1];
+        fullPath[0] = this.path;
+        System.arraycopy(path, 0, fullPath, 1, path.length);
+        return new ArangoRouteAsyncImpl(db, String.join("/", fullPath), headerParam);
     }
 
     @Override

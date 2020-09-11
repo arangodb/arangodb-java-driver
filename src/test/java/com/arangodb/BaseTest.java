@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;

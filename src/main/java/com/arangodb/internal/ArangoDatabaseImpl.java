@@ -395,7 +395,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public ArangoRoute route(final String... path) {
-        return new ArangoRouteImpl(this, createPath(path), Collections.emptyMap());
+        return new ArangoRouteImpl(this, String.join("/", path), Collections.emptyMap());
     }
 
     @Override

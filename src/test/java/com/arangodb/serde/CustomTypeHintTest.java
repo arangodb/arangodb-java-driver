@@ -24,7 +24,7 @@ package com.arangodb.serde;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.VelocyJack;
+import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

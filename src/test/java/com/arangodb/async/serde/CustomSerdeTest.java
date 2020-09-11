@@ -21,11 +21,11 @@
 package com.arangodb.async.serde;
 
 
-import com.arangodb.VelocyJack;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
 import com.arangodb.model.DocumentCreateOptions;
 import org.junit.After;
 import org.junit.Before;

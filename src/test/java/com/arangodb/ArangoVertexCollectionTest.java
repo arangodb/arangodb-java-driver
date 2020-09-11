@@ -459,4 +459,17 @@ public class ArangoVertexCollectionTest extends BaseTest {
             }
         }
     }
+
+    @Test
+    public void vertexKeyWithSpecialChars() {
+        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID().toString();
+        final VertexEntity vertex = vertices
+                .insertVertex(new BaseDocument(key), null);
+        assertThat(vertex, is(notNullValue()));
+        final BaseDocument document = collection
+                .getDocument(vertex.getKey(), BaseDocument.class, null);
+        assertThat(document, is(notNullValue()));
+        assertThat(document.getKey(), is(key));
+    }
+
 }
