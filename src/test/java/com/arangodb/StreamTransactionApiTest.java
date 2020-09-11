@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.arangodb.util.TestUtils.isAtLeastVersion;
-import static com.arangodb.util.TestUtils.isMinorVersionAndAtLeastPatch;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -80,8 +79,7 @@ public class StreamTransactionApiTest {
     public void streamTransactionFromDifferentCoordinators() {
         assumeTrue(isCluster());
         String version = arangoDB.getVersion().getVersion();
-        assumeTrue(isAtLeastVersion(version, 3, 6, 0) ||
-                isMinorVersionAndAtLeastPatch(version, 3, 5, 6));
+        assumeTrue(isAtLeastVersion(version, 3, 6, 0));
 
         String transactionId = db.beginStreamTransaction(
                 new StreamTransactionOptions().writeCollections(COLLECTION_NAME)).getId();
