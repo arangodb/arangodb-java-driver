@@ -45,6 +45,7 @@ import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+import org.apache.http.client.HttpRequestRetryHandler;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -184,6 +185,23 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          */
         public Builder hostnameVerifier(final HostnameVerifier hostnameVerifier) {
             setHostnameVerifier(hostnameVerifier);
+            return this;
+        }
+
+        /**
+         * Sets the {@link HttpRequestRetryHandler} to be used when using http protocol.
+         *
+         * @param httpRequestRetryHandler HttpRequestRetryHandler to be used
+         * @return {@link ArangoDB.Builder}
+         *
+         * <br /><br />
+         * NOTE:
+         * Some ArangoDB HTTP endpoints do not honor RFC-2616 HTTP 1.1 specification in respect to
+         * <a href="https://tools.ietf.org/html/rfc2616#section-9.1">9.1 Safe and Idempotent Methods</a>.
+         * Please refer to <a href="https://www.arangodb.com/docs/stable/http/">HTTP API Documentation</a> for details.
+         */
+        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+            setHttpRequestRetryHandler(httpRequestRetryHandler);
             return this;
         }
 
@@ -584,7 +602,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             final ConnectionFactory connectionFactory = (protocol == null || Protocol.VST == protocol)
                     ? new VstConnectionFactorySync(host, timeout, connectionTtl, useSsl, sslContext)
                     : new HttpConnectionFactory(timeout, user, password, useSsl, sslContext, hostnameVerifier, custom,
-                    protocol, connectionTtl, httpCookieSpec);
+                    protocol, connectionTtl, httpCookieSpec, httpRequestRetryHandler);
 
             final Collection<Host> hostList = createHostList(max, connectionFactory);
             final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
