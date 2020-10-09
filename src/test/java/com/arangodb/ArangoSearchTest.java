@@ -334,7 +334,9 @@ public class ArangoSearchTest extends BaseTest {
                 assertThat(expectedValue, notNullValue());
                 assertThat(expectedValue, instanceOf(Map.class));
                 compareProperties((Map) value, (Map) expectedValue);
-            } else {
+            } else if(value instanceof Number){
+                assertThat(Double.valueOf(value.toString()), is(Double.valueOf(expectedValue.toString())));
+            }else {
                 assertThat(value, is(expectedValue));
             }
         });
