@@ -200,7 +200,7 @@ public class ArangoCollectionTest extends BaseTest {
         db.collection(COLLECTION_NAME).getDocument("docRaw", String.class, null)
                 .whenComplete((readResult, ex) -> {
                     assertThat(readResult.contains("\"_key\":\"docRaw\""), is(true));
-                    assertThat(readResult.contains("\"_id\":\"db_collection_test\\/docRaw\""), is(true));
+                    assertThat(readResult.contains("\"_id\":\"db_collection_test/docRaw\""), is(true));
                 })
                 .get();
     }
