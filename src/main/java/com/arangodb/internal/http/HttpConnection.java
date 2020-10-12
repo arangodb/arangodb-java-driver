@@ -35,6 +35,7 @@ import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -90,6 +91,7 @@ public class HttpConnection implements Connection {
         private SSLContext sslContext;
         private HostnameVerifier hostnameVerifier;
         private Integer timeout;
+        private HttpRequestRetryHandler httpRequestRetryHandler;
 
         public Builder user(final String user) {
             this.user = user;
@@ -146,8 +148,14 @@ public class HttpConnection implements Connection {
             return this;
         }
 
+        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+            this.httpRequestRetryHandler = httpRequestRetryHandler;
+            return this;
+        }
+
         public HttpConnection build() {
-            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, hostnameVerifier, util, contentType, ttl, httpCookieSpec);
+            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, hostnameVerifier, util,
+                    contentType, ttl, httpCookieSpec, httpRequestRetryHandler);
         }
     }
 
@@ -162,7 +170,7 @@ public class HttpConnection implements Connection {
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final ArangoSerialization util, final Protocol contentType,
-                           final Long ttl, final String httpCookieSpec) {
+                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
         super();
         this.host = host;
         this.user = user;
@@ -197,7 +205,7 @@ public class HttpConnection implements Connection {
         final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
         final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
                 .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-                .setRetryHandler(new DefaultHttpRequestRetryHandler());
+                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryHandler());
         if (ttl != null) {
             builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
         }
