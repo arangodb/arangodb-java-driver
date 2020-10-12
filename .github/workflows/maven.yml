@@ -18,12 +18,6 @@ jobs:
           - docker.io/arangodb/arangodb:3.5.5
           - docker.io/arangodb/arangodb:3.6.6
           - docker.io/arangodb/arangodb:3.7.2
-          - docker.io/arangodb/arangodb-test:3.5-nightly
-          - docker.io/arangodb/arangodb-test:3.6-nightly
-          - docker.io/arangodb/arangodb-test:3.7-nightly
-          - docker.io/arangodb/arangodb-preview:3.5-nightly
-          - docker.io/arangodb/arangodb-preview:3.6-nightly
-          - docker.io/arangodb/arangodb-preview:3.7-nightly
         topology:
           - single
           - cluster
