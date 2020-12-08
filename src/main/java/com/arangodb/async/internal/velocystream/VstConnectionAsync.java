@@ -34,13 +34,14 @@ import java.util.concurrent.FutureTask;
 /**
  * @author Mark Vollmary
  */
-public class VstConnectionAsync extends VstConnection {
+public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
     private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
                                final SSLContext sslContext, final MessageStore messageStore) {
         super(host, timeout, ttl, useSsl, sslContext, messageStore);
     }
 
+    @Override
     public synchronized CompletableFuture<Message> write(final Message message, final Collection<Chunk> chunks) {
         final CompletableFuture<Message> future = new CompletableFuture<>();
         final FutureTask<Message> task = new FutureTask<>(() -> {
@@ -54,6 +55,11 @@ public class VstConnectionAsync extends VstConnection {
         messageStore.storeMessage(message.getId(), task);
         super.writeIntern(message, chunks);
         return future;
+    }
+
+    @Override
+    protected void doKeepAlive() {
+        sendKeepAlive().join();
     }
 
     public static class Builder {

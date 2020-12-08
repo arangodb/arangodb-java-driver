@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Mark Vollmary
  */
-public class VstConnectionSync extends VstConnection {
+public class VstConnectionSync extends VstConnection<Message> {
 
     public static class Builder {
 
@@ -82,6 +82,7 @@ public class VstConnectionSync extends VstConnection {
         super(host, timeout, ttl, useSsl, sslContext, messageStore);
     }
 
+    @Override
     public Message write(final Message message, final Collection<Chunk> chunks) throws ArangoDBException {
         final FutureTask<Message> task = new FutureTask<>(() -> messageStore.get(message.getId()));
         messageStore.storeMessage(message.getId(), task);
@@ -91,6 +92,11 @@ public class VstConnectionSync extends VstConnection {
         } catch (final Exception e) {
             throw new ArangoDBException(e);
         }
+    }
+
+    @Override
+    protected void doKeepAlive() {
+        sendKeepAlive();
     }
 
 }
