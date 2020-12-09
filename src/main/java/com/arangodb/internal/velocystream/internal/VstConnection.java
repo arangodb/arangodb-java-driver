@@ -70,6 +70,8 @@ public abstract class VstConnection<T> implements Connection {
 
     protected final Integer timeout;
     private final Long ttl;
+
+    private final Integer keepAliveInterval;
     private final Boolean useSsl;
     private final SSLContext sslContext;
 
@@ -97,12 +99,18 @@ public abstract class VstConnection<T> implements Connection {
             .close()
             .slice();
 
-    protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
-                            final SSLContext sslContext, final MessageStore messageStore) {
+    protected VstConnection(final HostDescription host,
+                            final Integer timeout,
+                            final Long ttl,
+                            final Integer keepAliveInterval,
+                            final Boolean useSsl,
+                            final SSLContext sslContext,
+                            final MessageStore messageStore) {
         super();
         this.host = host;
         this.timeout = timeout;
         this.ttl = ttl;
+        this.keepAliveInterval = keepAliveInterval;
         this.useSsl = useSsl;
         this.sslContext = sslContext;
         this.messageStore = messageStore;
@@ -212,15 +220,18 @@ public abstract class VstConnection<T> implements Connection {
             return null;
         });
 
-        // TODO: if keepAliveInterval >0
-        keepAliveScheduler = Executors.newScheduledThreadPool(1);
-        keepAliveScheduler.scheduleAtFixedRate(this::keepAlive, 0, 1, TimeUnit.SECONDS);
+        if (keepAliveInterval != null) {
+            keepAliveScheduler = Executors.newScheduledThreadPool(1);
+            keepAliveScheduler.scheduleAtFixedRate(this::keepAlive, 0, keepAliveInterval, TimeUnit.SECONDS);
+        }
 
     }
 
     @Override
     public synchronized void close() {
-        keepAliveScheduler.shutdownNow();
+        if (keepAliveScheduler != null) {
+            keepAliveScheduler.shutdownNow();
+        }
         messageStore.clear();
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();

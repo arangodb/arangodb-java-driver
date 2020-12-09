@@ -36,9 +36,9 @@ import java.util.concurrent.FutureTask;
  */
 public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
-    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
-                               final SSLContext sslContext, final MessageStore messageStore) {
-        super(host, timeout, ttl, useSsl, sslContext, messageStore);
+    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
+                               final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
+        super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
     }
 
     @Override
@@ -68,6 +68,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
         private HostDescription host;
         private Integer timeout;
         private Long ttl;
+        private Integer keepAliveInterval;
         private Boolean useSsl;
         private SSLContext sslContext;
 
@@ -95,6 +96,11 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
             return this;
         }
 
+        public Builder keepAliveInterval(final Integer keepAliveInterval) {
+            this.keepAliveInterval = keepAliveInterval;
+            return this;
+        }
+
         public Builder useSsl(final Boolean useSsl) {
             this.useSsl = useSsl;
             return this;
@@ -106,7 +112,7 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
         }
 
         public VstConnectionAsync build() {
-            return new VstConnectionAsync(host, timeout, ttl, useSsl, sslContext, messageStore);
+            return new VstConnectionAsync(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
         }
     }
 

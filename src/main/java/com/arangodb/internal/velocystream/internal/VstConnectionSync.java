@@ -39,6 +39,7 @@ public class VstConnectionSync extends VstConnection<Message> {
         private MessageStore messageStore;
         private Integer timeout;
         private Long ttl;
+        private Integer keepAliveInterval;
         private Boolean useSsl;
         private SSLContext sslContext;
 
@@ -72,14 +73,20 @@ public class VstConnectionSync extends VstConnection<Message> {
             return this;
         }
 
+        public Builder keepAliveInterval(final Integer keepAliveInterval) {
+            this.keepAliveInterval = keepAliveInterval;
+            return this;
+        }
+
         public VstConnectionSync build() {
-            return new VstConnectionSync(host, timeout, ttl, useSsl, sslContext, messageStore);
+            return new VstConnectionSync(host, timeout, ttl, keepAliveInterval,
+                    useSsl, sslContext, messageStore);
         }
     }
 
-    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
-                              final SSLContext sslContext, final MessageStore messageStore) {
-        super(host, timeout, ttl, useSsl, sslContext, messageStore);
+    private VstConnectionSync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
+                              final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
+        super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
     }
 
     @Override
