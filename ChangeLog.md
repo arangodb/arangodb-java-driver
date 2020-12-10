@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.8.0] - 2020-12-10
+
+- added configurable VST keep-alive
+
 ## [6.7.5] - 2020-09-22
 
 - allow customizing httpRequestRetryHandler
