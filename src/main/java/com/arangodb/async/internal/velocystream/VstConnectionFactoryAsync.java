@@ -35,9 +35,10 @@ public class VstConnectionFactoryAsync implements ConnectionFactory {
     private final VstConnectionAsync.Builder builder;
 
     public VstConnectionFactoryAsync(final HostDescription host, final Integer timeout, final Long connectionTtl,
-                                     final Boolean useSsl, final SSLContext sslContext) {
+                                     final Integer keepAliveInterval, final Boolean useSsl, final SSLContext sslContext) {
         super();
-        builder = new VstConnectionAsync.Builder().timeout(timeout).ttl(connectionTtl).useSsl(useSsl)
+        builder = new VstConnectionAsync.Builder().timeout(timeout).ttl(connectionTtl)
+                .keepAliveInterval(keepAliveInterval).useSsl(useSsl)
                 .sslContext(sslContext);
     }
 
