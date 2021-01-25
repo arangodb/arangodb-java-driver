@@ -22,7 +22,12 @@ package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
-import com.arangodb.internal.net.*;
+import com.arangodb.internal.net.AccessType;
+import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
@@ -87,7 +92,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                     connection.open();
                     hostHandler.success();
                     if (user != null) {
-                        authenticate(connection);
+                        tryAuthenticate(connection);
                     }
                     hostHandler.confirm();
                     return connection;
@@ -108,6 +113,15 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                     }
                 }
             }
+        }
+    }
+
+    private void tryAuthenticate(final C connection) {
+        try {
+            authenticate(connection);
+        } catch (final ArangoDBException authException) {
+            connection.close();
+            throw authException;
         }
     }
 
