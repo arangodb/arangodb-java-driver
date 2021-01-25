@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.8.2] - 2021-01-25
+
 - fixed closing connection on failed authentication (#ES-772)
 
 ## [6.8.1] - 2020-12-22
