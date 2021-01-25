@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- fixed closing connection on failed authentication (#ES-772)
+
 ## [6.8.1] - 2020-12-22
 
 - fixed ignoring internal endpoints in acquireHostList (#DEVSUP-673)
