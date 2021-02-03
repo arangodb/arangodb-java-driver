@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class HostSet {
@@ -75,15 +76,17 @@ public class HostSet {
 
         LOGGER.debug("Clear all Hosts in Set with markForDeletion");
 
-        for (Host host : hosts) {
+        Iterator<Host> iterable = hosts.iterator();
+        while (iterable.hasNext()){
+            Host host = iterable.next();
             if (host.isMarkforDeletion()) {
                 try {
-
                     LOGGER.debug("Try to close Host " + host);
                     host.close();
-
                 } catch (IOException e) {
                     LOGGER.warn("Error during closing the Host " + host, e);
+                } finally {
+                    iterable.remove();
                 }
             }
         }
