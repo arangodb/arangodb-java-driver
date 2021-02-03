@@ -21,8 +21,10 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.util.TestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runners.Parameterized.Parameters;
@@ -111,8 +113,11 @@ public abstract class BaseTest {
     }
 
     boolean isAtLeastVersion(final int major, final int minor) {
-        final String[] split = arangoDB.getVersion().getVersion().split("\\.");
-        return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
+        return isAtLeastVersion(major, minor, 0);
+    }
+
+    boolean isAtLeastVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major, minor, patch);
     }
 
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {

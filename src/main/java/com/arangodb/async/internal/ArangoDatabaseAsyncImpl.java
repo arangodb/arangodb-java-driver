@@ -399,7 +399,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
 
     @Override
     public ArangoRouteAsync route(final String... path) {
-        return new ArangoRouteAsyncImpl(this, createPath(path), Collections.emptyMap());
+        return new ArangoRouteAsyncImpl(this, String.join("/", path), Collections.emptyMap());
     }
 
     @Override

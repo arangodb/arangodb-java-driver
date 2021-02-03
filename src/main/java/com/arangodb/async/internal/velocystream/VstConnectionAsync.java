@@ -34,13 +34,14 @@ import java.util.concurrent.FutureTask;
 /**
  * @author Mark Vollmary
  */
-public class VstConnectionAsync extends VstConnection {
+public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>> {
 
-    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
-                               final SSLContext sslContext, final MessageStore messageStore) {
-        super(host, timeout, ttl, useSsl, sslContext, messageStore);
+    private VstConnectionAsync(final HostDescription host, final Integer timeout, final Long ttl, final Integer keepAliveInterval,
+                               final Boolean useSsl, final SSLContext sslContext, final MessageStore messageStore) {
+        super(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
     }
 
+    @Override
     public synchronized CompletableFuture<Message> write(final Message message, final Collection<Chunk> chunks) {
         final CompletableFuture<Message> future = new CompletableFuture<>();
         final FutureTask<Message> task = new FutureTask<>(() -> {
@@ -56,12 +57,18 @@ public class VstConnectionAsync extends VstConnection {
         return future;
     }
 
+    @Override
+    protected void doKeepAlive() {
+        sendKeepAlive().join();
+    }
+
     public static class Builder {
 
         private MessageStore messageStore;
         private HostDescription host;
         private Integer timeout;
         private Long ttl;
+        private Integer keepAliveInterval;
         private Boolean useSsl;
         private SSLContext sslContext;
 
@@ -89,6 +96,11 @@ public class VstConnectionAsync extends VstConnection {
             return this;
         }
 
+        public Builder keepAliveInterval(final Integer keepAliveInterval) {
+            this.keepAliveInterval = keepAliveInterval;
+            return this;
+        }
+
         public Builder useSsl(final Boolean useSsl) {
             this.useSsl = useSsl;
             return this;
@@ -100,7 +112,7 @@ public class VstConnectionAsync extends VstConnection {
         }
 
         public VstConnectionAsync build() {
-            return new VstConnectionAsync(host, timeout, ttl, useSsl, sslContext, messageStore);
+            return new VstConnectionAsync(host, timeout, ttl, keepAliveInterval, useSsl, sslContext, messageStore);
         }
     }
 

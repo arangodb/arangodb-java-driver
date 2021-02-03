@@ -35,6 +35,7 @@ import org.apache.http.*;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -58,6 +59,7 @@ import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,7 +89,9 @@ public class HttpConnection implements Connection {
         private HostDescription host;
         private Long ttl;
         private SSLContext sslContext;
+        private HostnameVerifier hostnameVerifier;
         private Integer timeout;
+        private HttpRequestRetryHandler httpRequestRetryHandler;
 
         public Builder user(final String user) {
             this.user = user;
@@ -134,13 +138,24 @@ public class HttpConnection implements Connection {
             return this;
         }
 
+        public Builder hostnameVerifier(final HostnameVerifier hostnameVerifier) {
+            this.hostnameVerifier = hostnameVerifier;
+            return this;
+        }
+
         public Builder timeout(final Integer timeout) {
             this.timeout = timeout;
             return this;
         }
 
+        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+            this.httpRequestRetryHandler = httpRequestRetryHandler;
+            return this;
+        }
+
         public HttpConnection build() {
-            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, util, contentType, ttl, httpCookieSpec);
+            return new HttpConnection(host, timeout, user, password, useSsl, sslContext, hostnameVerifier, util,
+                    contentType, ttl, httpCookieSpec, httpRequestRetryHandler);
         }
     }
 
@@ -154,8 +169,8 @@ public class HttpConnection implements Connection {
     private final HostDescription host;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
-                           final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util, final Protocol contentType,
-                           final Long ttl, final String httpCookieSpec) {
+                           final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final ArangoSerialization util, final Protocol contentType,
+                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
         super();
         this.host = host;
         this.user = user;
@@ -166,11 +181,10 @@ public class HttpConnection implements Connection {
         final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
                 .create();
         if (Boolean.TRUE == useSsl) {
-            if (sslContext != null) {
-                registryBuilder.register("https", new SSLConnectionSocketFactory(sslContext));
-            } else {
-                registryBuilder.register("https", new SSLConnectionSocketFactory(SSLContexts.createSystemDefault()));
-            }
+            registryBuilder.register("https", new SSLConnectionSocketFactory(
+                    sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
+                    hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier()
+            ));
         } else {
             registryBuilder.register("http", new PlainConnectionSocketFactory());
         }
@@ -191,7 +205,7 @@ public class HttpConnection implements Connection {
         final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
         final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
                 .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-                .setRetryHandler(new DefaultHttpRequestRetryHandler());
+                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryHandler());
         if (ttl != null) {
             builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
         }

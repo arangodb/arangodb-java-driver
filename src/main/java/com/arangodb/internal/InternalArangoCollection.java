@@ -56,6 +56,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String NEW = "new";
     private static final String RETURN_OLD = "returnOld";
     private static final String OVERWRITE = "overwrite";
+    private static final String OVERWRITE_MODE = "overwriteMode";
     private static final String OLD = "old";
     private static final String SILENT = "silent";
 
@@ -86,8 +87,12 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(OVERWRITE, params.getOverwrite());
+        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
+        request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
+
         request.setBody(util(Serializer.CUSTOM).serialize(value));
+
         return request;
     }
 
@@ -122,7 +127,10 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
         request.putQueryParam(OVERWRITE, params.getOverwrite());
+        request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
+        request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
+
         request.setBody(util(Serializer.CUSTOM)
                 .serialize(values, new ArangoSerializer.Options().serializeNullValues(false).stringAsJson(true)));
         return request;
@@ -357,18 +365,18 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
-    protected <T> ResponseDeserializer<DocumentUpdateEntity<T>> updateDocumentResponseDeserializer(
-            final T value, final DocumentUpdateOptions options) {
+    protected <T, U> ResponseDeserializer<DocumentUpdateEntity<U>> updateDocumentResponseDeserializer(
+            final T value, final DocumentUpdateOptions options, final Class<U> returnType) {
         return response -> {
             final VPackSlice body = response.getBody();
-            final DocumentUpdateEntity<T> doc = util().deserialize(body, DocumentUpdateEntity.class);
+            final DocumentUpdateEntity<U> doc = util().deserialize(body, DocumentUpdateEntity.class);
             final VPackSlice newDoc = body.get(NEW);
             if (newDoc.isObject()) {
-                doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, value.getClass()));
+                doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, returnType));
             }
             final VPackSlice oldDoc = body.get(OLD);
             if (oldDoc.isObject()) {
-                doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
+                doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, returnType));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
                 final Map<DocumentField.Type, String> values = new HashMap<>();
@@ -399,14 +407,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     @SuppressWarnings("unchecked")
     protected <T> ResponseDeserializer<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocumentsResponseDeserializer(
-            final Collection<T> values, final DocumentUpdateOptions params) {
+            final Class<T> returnType) {
         return response -> {
-            Class<T> type = null;
-            if (Boolean.TRUE == params.getReturnNew() || Boolean.TRUE == params.getReturnOld()) {
-                if (!values.isEmpty()) {
-                    type = (Class<T>) values.iterator().next().getClass();
-                }
-            }
             final MultiDocumentEntity<DocumentUpdateEntity<T>> multiDocument = new MultiDocumentEntity<>();
             final Collection<DocumentUpdateEntity<T>> docs = new ArrayList<>();
             final Collection<ErrorEntity> errors = new ArrayList<>();
@@ -423,11 +425,11 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                         final DocumentUpdateEntity<T> doc = util().deserialize(next, DocumentUpdateEntity.class);
                         final VPackSlice newDoc = next.get(NEW);
                         if (newDoc.isObject()) {
-                            doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, type));
+                            doc.setNew(util(Serializer.CUSTOM).deserialize(newDoc, returnType));
                         }
                         final VPackSlice oldDoc = next.get(OLD);
                         if (oldDoc.isObject()) {
-                            doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, type));
+                            doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, returnType));
                         }
                         docs.add(doc);
                         documentsAndErrors.add(doc);

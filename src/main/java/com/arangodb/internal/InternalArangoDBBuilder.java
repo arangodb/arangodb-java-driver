@@ -23,7 +23,18 @@ package com.arangodb.internal;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.internal.net.*;
+import com.arangodb.internal.net.Connection;
+import com.arangodb.internal.net.ConnectionFactory;
+import com.arangodb.internal.net.DirtyReadHostHandler;
+import com.arangodb.internal.net.ExtendedHostResolver;
+import com.arangodb.internal.net.FallbackHostHandler;
+import com.arangodb.internal.net.Host;
+import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.net.HostResolver;
+import com.arangodb.internal.net.RandomHostHandler;
+import com.arangodb.internal.net.RoundRobinHostHandler;
+import com.arangodb.internal.net.SimpleHostResolver;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocypack.VPackDriverModule;
 import com.arangodb.util.ArangoDeserializer;
@@ -31,9 +42,11 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,6 +74,7 @@ public abstract class InternalArangoDBBuilder {
     private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
     private static final String PROPERTY_KEY_MAX_CONNECTIONS = "arangodb.connections.max";
     private static final String PROPERTY_KEY_CONNECTION_TTL = "arangodb.connections.ttl";
+    private static final String PROPERTY_KEEP_ALIVE_INTERVAL = "arangodb.connections.keepAlive.interval";
     private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
     private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL = "arangodb.acquireHostList.interval";
     private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
@@ -73,10 +87,13 @@ public abstract class InternalArangoDBBuilder {
     protected String password;
     protected Boolean useSsl;
     protected String httpCookieSpec;
+    protected HttpRequestRetryHandler httpRequestRetryHandler;
     protected SSLContext sslContext;
+    protected HostnameVerifier hostnameVerifier;
     protected Integer chunksize;
     protected Integer maxConnections;
     protected Long connectionTtl;
+    protected Integer keepAliveInterval;
     protected final VPack.Builder vpackBuilder;
     protected final VPackParser.Builder vpackParserBuilder;
     protected ArangoSerializer serializer;
@@ -131,6 +148,7 @@ public abstract class InternalArangoDBBuilder {
         chunksize = loadChunkSize(properties, chunksize);
         maxConnections = loadMaxConnections(properties, maxConnections);
         connectionTtl = loadConnectionTtl(properties, connectionTtl);
+        keepAliveInterval = loadKeepAliveInterval(properties, keepAliveInterval);
         acquireHostList = loadAcquireHostList(properties, acquireHostList);
         acquireHostListInterval = loadAcquireHostListInterval(properties, acquireHostListInterval);
         loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
@@ -160,6 +178,14 @@ public abstract class InternalArangoDBBuilder {
         this.sslContext = sslContext;
     }
 
+    protected void setHostnameVerifier(final HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
+
+    protected void setHttpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+        this.httpRequestRetryHandler = httpRequestRetryHandler;
+    }
+
     protected void setChunksize(final Integer chunksize) {
         this.chunksize = chunksize;
     }
@@ -170,6 +196,10 @@ public abstract class InternalArangoDBBuilder {
 
     protected void setConnectionTtl(final Long connectionTtl) {
         this.connectionTtl = connectionTtl;
+    }
+
+    protected void setKeepAliveInterval(final Integer keepAliveInterval) {
+        this.keepAliveInterval = keepAliveInterval;
     }
 
     protected void setAcquireHostList(final Boolean acquireHostList) {
@@ -301,6 +331,12 @@ public abstract class InternalArangoDBBuilder {
         final String ttl = getProperty(properties, PROPERTY_KEY_CONNECTION_TTL, currentValue,
                 ArangoDefaults.CONNECTION_TTL_VST_DEFAULT);
         return ttl != null ? Long.parseLong(ttl) : null;
+    }
+
+    private static Integer loadKeepAliveInterval(final Properties properties, final Integer currentValue) {
+        final String keepAliveInterval = getProperty(properties, PROPERTY_KEEP_ALIVE_INTERVAL, currentValue,
+                null);
+        return keepAliveInterval != null ? Integer.parseInt(keepAliveInterval) : null;
     }
 
     private static Boolean loadAcquireHostList(final Properties properties, final Boolean currentValue) {

@@ -6,6 +6,62 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.8.2] - 2021-01-25
+
+- fixed closing connection on failed authentication (#ES-772)
+
+## [6.8.1] - 2020-12-22
+
+- fixed ignoring internal endpoints in acquireHostList (#DEVSUP-673)
+
+## [6.8.0] - 2020-12-10
+
+- added configurable VST keep-alive
+
+## [6.7.5] - 2020-09-22
+
+- allow customizing httpRequestRetryHandler
+
+## [6.7.4] - 2020-09-03
+
+- fixed path escaping in `ArangoDatabase.route()`
+- added ssl hostname verifier to ArangoDB builder
+
+## [6.7.3] - 2020-08-14
+
+- added `users` field to `DBCreateOptions`
+- velocypack v2.4.1
+
+## [6.7.2] - 2020-07-29
+
+- velocypack v2.4.0
+
+## [6.7.1] - 2020-07-07
+
+- fixed VST communication adding `accept` and `content-type` headers to every message
+- fixed missing classes in GraalVM native image reflection configuration
+
+## [6.7.0] - 2020-07-01
+
+- added support of schema validation (ArangoDB v3.7)
+- added support of `overwriteMode` on document creation, to allow `insert-ignore`, `insert-replace` and `insert-update` (ArangoDB v3.7)
+- added support of `mergeObjects` for insert document with `overwriteMode: update` (ArangoDB v3.7)
+- added support of `storedValues` in `ArangoSearchProperties` (ArangoDB v3.7)
+- added support of `primarySortCompression` in `ArangoSearchProperties` (ArangoDB v3.7)
+- added support of `DisjointSmartGraphs` and `SatelliteGraphs` (ArangoDB v3.7)
+- added support of `SatelliteGraphs` support (ArangoDB v3.7)
+- allow specifying return type on document update
+- added `peakMemoryUsage` to aql statistics
+
+## [6.7.0_PREVIEW_3.7.1-alpha.1] - 2020-05-22
+
+- added support of `DisjointSmartGraphs` and `SatelliteGraphs` (ArangoDB v3.7)
+- added support of `storedValues` in `ArangoSearchProperties` (ArangoDB v3.7)
+- added support of `primarySortCompression` in `ArangoSearchProperties` (ArangoDB v3.7)
+- added support of `overwriteMode` on document creation, to allow `insert-ignore`, `insert-replace` and `insert-update` (ArangoDB v3.7)
+- added support of `mergeObjects` for insert document with `overwriteMode: update` (ArangoDB v3.7)
+- velocypack v2.3.1
+
 ## [6.6.3] - 2020-05-06
 
 - velocypack v2.3.1
@@ -14,6 +70,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - bugfix VelocyJack deserialization
 - bugfix `allowImplicit` parameter in stream transactions
+
+## [6.7.0_PREVIEW_3.7.0-alpha.2_0] - 2020-03-24
+
+- added `overwriteMode` parameter to support insert-update (ArangoDB v3.7)
+- satellite graphs support (ArangoDB v3.7)
+- schema validation (ArangoDB v3.7)
 - added `peakMemoryUsage` to aql statistics
 
 ## [6.6.1] - 2020-03-18

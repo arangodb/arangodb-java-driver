@@ -24,7 +24,8 @@ import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -33,7 +34,6 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -273,6 +273,26 @@ public class ArangoGraphTest extends BaseTest {
 
         assertThat(g, is(notNullValue()));
         assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getSmartGraphAttribute(), is("test"));
+        assertThat(g.getNumberOfShards(), is(2));
+    }
+
+    @Test
+    public void disjointSmartGraph() {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+        assumeTrue((isAtLeastVersion(3, 7)));
+
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        edgeDefinitions.add(new EdgeDefinition().collection("smartGraph-edge-" + rnd()).from("smartGraph-vertex-" + rnd()).to("smartGraph-vertex-" + rnd()));
+
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions()
+                .isSmart(true).isDisjoint(true).smartGraphAttribute("test").numberOfShards(2));
+
+        assertThat(g, is(notNullValue()));
+        assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getIsDisjoint(), is(true));
         assertThat(g.getSmartGraphAttribute(), is("test"));
         assertThat(g.getNumberOfShards(), is(2));
     }

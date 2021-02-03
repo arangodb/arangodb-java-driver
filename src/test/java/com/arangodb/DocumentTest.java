@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -119,6 +120,16 @@ public class DocumentTest extends BaseTest {
         final Object artist = ((Map<String, Object>) article).get("artist");
         assertThat(artist, is(notNullValue()));
         assertThat(artist.toString(), is("PREGARDIEN/RHEINISCHE KANTOREI/DAS"));
+    }
+
+    @Test
+    public void documentKeyWithSpecialChars() {
+        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID().toString();
+        final BaseDocument document = new BaseDocument(key);
+        final DocumentCreateEntity<BaseDocument> createResult = collection.insertDocument(document);
+        final BaseDocument doc = collection.getDocument(createResult.getKey(), BaseDocument.class);
+        assertThat(doc, is(notNullValue()));
+        assertThat(doc.getKey(), is(key));
     }
 
 }

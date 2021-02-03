@@ -5,7 +5,7 @@
 #   ./start_db_cluster.sh <dockerImage>
 
 # EXAMPLE:
-#   ./start_db_cluster.sh docker.io/arangodb/arangodb:3.6.1
+#   ./start_db_cluster.sh docker.io/arangodb/arangodb:3.7.1
 
 docker pull "$1"
 
@@ -26,10 +26,15 @@ docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO
 docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.2.1 --name dbserver1 "$1" arangodb --cluster.start-dbserver true --cluster.start-coordinator false --starter.join agent1 --auth.jwt-secret /jwtSecret
 docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.2.2 --name dbserver2 "$1" arangodb --cluster.start-dbserver true --cluster.start-coordinator false --starter.join agent1 --auth.jwt-secret /jwtSecret
 
-docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name coordinator1 -p 8529:8529 "$1" arangodb --cluster.start-dbserver false --cluster.start-coordinator true --starter.join agent1 --auth.jwt-secret /jwtSecret
+docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name coordinator1 "$1" arangodb --cluster.start-dbserver false --cluster.start-coordinator true --starter.join agent1 --auth.jwt-secret /jwtSecret
 docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.2 --name coordinator2 "$1" arangodb --cluster.start-dbserver false --cluster.start-coordinator true --starter.join agent1 --auth.jwt-secret /jwtSecret
 
 debug_container() {
+  if [ ! "$(docker ps -aqf name="$1")" ]; then
+    echo "$1 container not found!"
+    exit 1
+  fi
+
   running=$(docker inspect -f '{{.State.Running}}' "$1")
 
   if [ "$running" = false ]
@@ -75,9 +80,6 @@ for a in 172.28.1.1:8531 \
          172.28.3.2:8529 ; do
     wait_server $a
 done
-
-# wait for port mappings
-wait_server localhost:8529
 
 docker exec coordinator1 arangosh --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
 

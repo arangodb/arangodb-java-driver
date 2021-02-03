@@ -80,6 +80,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values A List of documents (POJO, VPackSlice or String for JSON)
      * @return information about the documents
      * @throws ArangoDBException
@@ -91,6 +94,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     /**
      * Creates new documents from the given documents, unless there is already a document with the _key given. If no
      * _key is given, a new unique _key is generated automatically.
+     *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, VPackSlice or String for JSON)
      * @param options Additional options, can be null
@@ -105,6 +111,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     /**
      * Bulk imports the given values into the collection.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values a list of Objects that will be stored as documents
      * @return information about the import
      * @throws ArangoDBException
@@ -113,6 +122,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
     /**
      * Bulk imports the given values into the collection.
+     *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  a list of Objects that will be stored as documents
      * @param options Additional options, can be null
@@ -124,6 +136,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     /**
      * Bulk imports the given values into the collection.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values JSON-encoded array of objects that will be stored as documents
      * @return information about the import
      * @throws ArangoDBException
@@ -132,6 +147,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
 
     /**
      * Bulk imports the given values into the collection.
+     *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  JSON-encoded array of objects that will be stored as documents
      * @param options Additional options, can be null
@@ -219,6 +237,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
      *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
+     *
      * @param values A List of documents (POJO, VPackSlice or String for JSON)
      * @return information about the documents
      * @throws ArangoDBException
@@ -230,6 +251,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     /**
      * Replaces multiple documents in the specified collection with the ones in the values, the replaced documents are
      * specified by the _key attributes in the documents in values.
+     *
+     * Limitations:
+     * - the fields having {@code null} value are always removed during serialization
      *
      * @param values  A List of documents (POJO, VPackSlice or String for JSON)
      * @param options Additional options, can be null
@@ -272,6 +296,23 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
             throws ArangoDBException;
 
     /**
+     * Partially updates the document identified by document-key. The value must contain a document with the attributes
+     * to patch (the patch document). All attributes from the patch document will be added to the existing document if
+     * they do not yet exist, and overwritten in the existing document if they do exist there.
+     *
+     * @param key           The key of the document
+     * @param value         A representation of a single document (POJO, VPackSlice or String for JSON)
+     * @param options       Additional options, can be null
+     * @param returnType    Type of the returned newDocument and/or oldDocument
+     * @return information about the document
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
+     * Documentation</a>
+     */
+    <T, U> DocumentUpdateEntity<U> updateDocument(String key, T value, DocumentUpdateOptions options, Class<U> returnType)
+            throws ArangoDBException;
+
+    /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
      * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
@@ -300,6 +341,23 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      */
     <T> MultiDocumentEntity<DocumentUpdateEntity<T>> updateDocuments(
             Collection<T> values, DocumentUpdateOptions options) throws ArangoDBException;
+
+    /**
+     * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
+     * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
+     * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
+     * overwritten in the existing documents if they do exist there.
+     *
+     * @param values     A list of documents (POJO, VPackSlice or String for JSON)
+     * @param options    Additional options, can be null
+     * @param returnType Type of the returned newDocument and/or oldDocument
+     * @return information about the documents
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
+     * Documentation</a>
+     */
+    <T, U> MultiDocumentEntity<DocumentUpdateEntity<U>> updateDocuments(
+            Collection<T> values, DocumentUpdateOptions options, Class<U> returnType) throws ArangoDBException;
 
     /**
      * Deletes the document with the given {@code key} from the collection.

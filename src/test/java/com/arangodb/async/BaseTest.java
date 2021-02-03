@@ -64,14 +64,21 @@ public abstract class BaseTest {
         arangoDB = null;
     }
 
+    protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor, final int patch)
+            throws InterruptedException, ExecutionException {
+        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor, patch);
+    }
     protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
             throws InterruptedException, ExecutionException {
-        final String[] split = arangoDB.getVersion().get().getVersion().split("\\.");
-        return Integer.parseInt(split[0]) >= major && Integer.parseInt(split[1]) >= minor;
+        return isAtLeastVersion(arangoDB, major, minor, 0);
+    }
+
+    protected boolean isAtLeastVersion(final int major, final int minor, final int patch) throws InterruptedException, ExecutionException {
+        return isAtLeastVersion(arangoDB, major, minor, patch);
     }
 
     protected boolean isAtLeastVersion(final int major, final int minor) throws InterruptedException, ExecutionException {
-        return isAtLeastVersion(arangoDB, major, minor);
+        return isAtLeastVersion(major, minor, 0);
     }
 
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) throws ExecutionException, InterruptedException {

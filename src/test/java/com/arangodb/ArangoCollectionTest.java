@@ -159,6 +159,103 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void insertDocumentOverwriteModeIgnore() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        final BaseDocument doc2 = new BaseDocument(key);
+        doc2.addAttribute("bar", "b");
+        final DocumentCreateEntity<BaseDocument> insertIgnore = collection
+                .insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.ignore));
+
+        assertThat(insertIgnore, is(notNullValue()));
+        assertThat(insertIgnore.getRev(), is(meta.getRev()));
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeConflict() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        final BaseDocument doc2 = new BaseDocument(key);
+        try {
+            collection.insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.conflict));
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(409));
+            assertThat(e.getErrorNum(), is(1210));
+        }
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeReplace() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        final BaseDocument doc2 = new BaseDocument(key);
+        doc2.addAttribute("bar", "b");
+        final DocumentCreateEntity<BaseDocument> repsert = collection
+                .insertDocument(doc2, new DocumentCreateOptions().overwriteMode(OverwriteMode.replace).returnNew(true));
+
+        assertThat(repsert, is(notNullValue()));
+        assertThat(repsert.getRev(), is(not(meta.getRev())));
+        assertThat(repsert.getNew().getProperties().containsKey("foo"), is(false));
+        assertThat(repsert.getNew().getAttribute("bar").toString(), is("b"));
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeUpdate() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc = new BaseDocument();
+        doc.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        doc.addAttribute("bar", "b");
+        final DocumentCreateEntity<BaseDocument> updated = collection
+                .insertDocument(doc, new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
+
+        assertThat(updated, is(notNullValue()));
+        assertThat(updated.getRev(), is(not(meta.getRev())));
+        assertThat(updated.getNew().getAttribute("foo").toString(), is("a"));
+        assertThat(updated.getNew().getAttribute("bar").toString(), is("b"));
+    }
+
+    @Test
+    public void insertDocumentOverwriteModeUpdateMergeObjectsFalse() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc = new BaseDocument();
+        Map<String, String> fieldA = Collections.singletonMap("a", "a");
+        doc.addAttribute("foo", fieldA);
+        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
+
+        Map<String, String> fieldB = Collections.singletonMap("b", "b");
+        doc.addAttribute("foo", fieldB);
+        final DocumentCreateEntity<BaseDocument> updated = collection
+                .insertDocument(doc, new DocumentCreateOptions()
+                        .overwriteMode(OverwriteMode.update)
+                        .mergeObjects(false)
+                        .returnNew(true));
+
+        assertThat(updated, is(notNullValue()));
+        assertThat(updated.getRev(), is(not(meta.getRev())));
+        assertThat(updated.getNew().getAttribute("foo"), is(fieldB));
+    }
+
+    @Test
     public void insertDocumentWaitForSync() {
         final DocumentCreateOptions options = new DocumentCreateOptions().waitForSync(true);
         final DocumentCreateEntity<BaseDocument> doc = collection
@@ -433,6 +530,23 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
         assertThat(readResult.getRevision(), is(updateResult.getRev()));
         assertThat(readResult.getProperties().keySet(), hasItem("c"));
+    }
+
+    @Test
+    public void updateDocumentWithDifferentReturnType() {
+        final String key = "key-" + UUID.randomUUID().toString();
+        final BaseDocument doc = new BaseDocument(key);
+        doc.addAttribute("a", "test");
+        collection.insertDocument(doc);
+
+        final DocumentUpdateEntity<BaseDocument> updateResult = collection
+                .updateDocument(key, Collections.singletonMap("b", "test"), new DocumentUpdateOptions().returnNew(true), BaseDocument.class);
+        assertThat(updateResult, is(notNullValue()));
+        assertThat(updateResult.getKey(), is(key));
+        BaseDocument updated = updateResult.getNew();
+        assertThat(updated, is(notNullValue()));
+        assertThat(updated.getAttribute("a"), is("test"));
+        assertThat(updated.getAttribute("b"), is("test"));
     }
 
     @Test
@@ -1509,6 +1623,35 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void insertDocumentsOverwriteModeUpdate() {
+        assumeTrue(isAtLeastVersion(3, 7));
+
+        final BaseDocument doc1 = new BaseDocument();
+        doc1.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta1 = collection.insertDocument(doc1);
+
+        final BaseDocument doc2 = new BaseDocument();
+        doc2.addAttribute("foo", "a");
+        final DocumentCreateEntity<BaseDocument> meta2 = collection.insertDocument(doc2);
+
+        doc1.addAttribute("bar", "b");
+        doc2.addAttribute("bar", "b");
+
+        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert = collection
+                .insertDocuments(Arrays.asList(doc1, doc2),
+                        new DocumentCreateOptions().overwriteMode(OverwriteMode.update).returnNew(true));
+        assertThat(repsert, is(notNullValue()));
+        assertThat(repsert.getDocuments().size(), is(2));
+        assertThat(repsert.getErrors().size(), is(0));
+        for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
+            assertThat(documentCreateEntity.getRev(), is(not(meta1.getRev())));
+            assertThat(documentCreateEntity.getRev(), is(not(meta2.getRev())));
+            assertThat(documentCreateEntity.getNew().getAttribute("foo").toString(), is("a"));
+            assertThat(documentCreateEntity.getNew().getAttribute("bar").toString(), is("b"));
+        }
+    }
+
+    @Test
     public void insertDocumentsJson() {
         final Collection<String> values = new ArrayList<>();
         values.add("{}");
@@ -2192,6 +2335,36 @@ public class ArangoCollectionTest extends BaseTest {
                 .updateDocuments(values, null);
         assertThat(updateResult.getDocuments().size(), is(2));
         assertThat(updateResult.getErrors().size(), is(0));
+    }
+
+    @Test
+    public void updateDocumentsWithDifferentReturnType() {
+        List<String> keys = IntStream.range(0, 3).mapToObj(it -> "key-" + UUID.randomUUID().toString()).collect(Collectors.toList());
+        List<BaseDocument> docs = keys.stream()
+                .map(BaseDocument::new)
+                .peek(it -> it.addAttribute("a", "test"))
+                .collect(Collectors.toList());
+
+        collection.insertDocuments(docs);
+
+        List<Map<String, Object>> modifiedDocs = docs.stream()
+                .peek(it -> it.addAttribute("b", "test"))
+                .map(it -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("_key", it.getKey());
+                    map.put("a", it.getAttribute("a"));
+                    map.put("b", it.getAttribute("b"));
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        final MultiDocumentEntity<DocumentUpdateEntity<BaseDocument>> updateResult = collection
+                .updateDocuments(modifiedDocs, new DocumentUpdateOptions().returnNew(true), BaseDocument.class);
+        assertThat(updateResult.getDocuments().size(), is(3));
+        assertThat(updateResult.getErrors().size(), is(0));
+        assertThat(updateResult.getDocuments().stream().map(DocumentUpdateEntity::getNew)
+                        .allMatch(it -> it.getAttribute("a").equals("test") && it.getAttribute("b").equals("test")),
+                is(true));
     }
 
     @Test

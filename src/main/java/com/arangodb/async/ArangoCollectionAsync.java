@@ -266,6 +266,25 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
             final DocumentUpdateOptions options);
 
     /**
+     * Partially updates the document identified by document-key. The value must contain a document with the attributes
+     * to patch (the patch document). All attributes from the patch document will be added to the existing document if
+     * they do not yet exist, and overwritten in the existing document if they do exist there.
+     *
+     * @param key           The key of the document
+     * @param value         A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param options       Additional options, can be null
+     * @param returnType    Type of the returned newDocument and/or oldDocument
+     * @return information about the document
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
+     * Documentation</a>
+     */
+    <T, U> CompletableFuture<DocumentUpdateEntity<U>> updateDocument(
+            final String key,
+            final T value,
+            final DocumentUpdateOptions options,
+            final Class<U> returnType);
+
+    /**
      * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
      * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
      * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
@@ -293,6 +312,24 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
     <T> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<T>>> updateDocuments(
             final Collection<T> values,
             final DocumentUpdateOptions options);
+
+    /**
+     * Partially updates documents, the documents to update are specified by the _key attributes in the objects on
+     * values. Vales must contain a list of document updates with the attributes to patch (the patch documents). All
+     * attributes from the patch documents will be added to the existing documents if they do not yet exist, and
+     * overwritten in the existing documents if they do exist there.
+     *
+     * @param values     A list of documents (POJO, VPackSlice or String for Json)
+     * @param options    Additional options, can be null
+     * @param returnType Type of the returned newDocument and/or oldDocument
+     * @return information about the documents
+     * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-documents">API
+     * Documentation</a>
+     */
+    <T, U> CompletableFuture<MultiDocumentEntity<DocumentUpdateEntity<U>>> updateDocuments(
+            final Collection<T> values,
+            final DocumentUpdateOptions options,
+            final Class<U> returnType);
 
     /**
      * Removes a document

@@ -4,13 +4,15 @@ on:
   pull_request:
     branches:
       - master
+      - preview
   push:
     branches:
       - master
+      - preview
 
 jobs:
   package:
-
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -23,21 +25,19 @@ jobs:
         run: mvn --no-transfer-progress -DskipTests=true package
 
   test:
-
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb:3.4.9
-          - docker.io/arangodb:3.5.4
-          - docker.io/arangodb:3.6.2
-          - docker.io/arangodb/arangodb-preview:3.7.0-alpha.2
-          - docker.io/arangodb/enterprise:3.4.9
-          - docker.io/arangodb/enterprise:3.5.4
-          - docker.io/arangodb/enterprise:3.6.2
-          - docker.io/arangodb/enterprise-preview:3.7.0-alpha.2
+          - docker.io/arangodb/arangodb:3.5.7
+          - docker.io/arangodb/arangodb:3.6.11
+          - docker.io/arangodb/arangodb:3.7.6
+          - docker.io/arangodb/enterprise:3.5.7
+          - docker.io/arangodb/enterprise:3.6.11
+          - docker.io/arangodb/enterprise:3.7.6
         topology:
           - single
           - cluster
@@ -49,8 +49,11 @@ jobs:
         with:
           java-version: 1.8
       - name: Start Database
-        run: ./docker/start_db_${{ matrix.topology }}.sh ${{ matrix.docker-img }}
+        run: ./docker/start_db_${{ matrix.topology }}_retry_fail.sh ${{ matrix.docker-img }}
         env:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
       - name: Test
         run: mvn --no-transfer-progress test
+      - name: Debug containers
+        if: ${{ cancelled() || failure() }}
+        run: ./docker/debug_containers_${{ matrix.topology }}.sh

@@ -21,6 +21,7 @@
 package com.arangodb.model;
 
 import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.ReplicationFactor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -93,8 +94,23 @@ public class GraphCreateOptions {
         return this;
     }
 
+    public Boolean getIsDisjoint() {
+        return getOptions().getIsDisjoint();
+    }
+
+    /**
+     * @param isDisjoint If set to true, a Disjoint SmartGraph will be created. This flag is not editable after
+     *                   creation. Default: false.
+     * @return options
+     * @since ArangoDB 3.7
+     */
+    public GraphCreateOptions isDisjoint(final Boolean isDisjoint) {
+        getOptions().setIsDisjoint(isDisjoint);
+        return this;
+    }
+
     public Integer getReplicationFactor() {
-        return getOptions().getReplicationFactor();
+        return getOptions().replicationFactor.getReplicationFactor();
     }
 
     /**
@@ -108,7 +124,22 @@ public class GraphCreateOptions {
      * @return options
      */
     public GraphCreateOptions replicationFactor(final Integer replicationFactor) {
-        getOptions().setReplicationFactor(replicationFactor);
+        getOptions().replicationFactor.setReplicationFactor(replicationFactor);
+        return this;
+    }
+
+    public Boolean getSatellite() {
+        return getOptions().replicationFactor.getSatellite();
+    }
+
+    /**
+     * @param satellite If the true the graph is created as a satellite graph. In this case
+     *                  {@link #replicationFactor(Integer)} is ignored.
+     * @return options
+     * @since ArangoDB 3.7
+     */
+    public GraphCreateOptions satellite(final Boolean satellite) {
+        getOptions().replicationFactor.setSatellite(satellite);
         return this;
     }
 
@@ -167,21 +198,31 @@ public class GraphCreateOptions {
     }
 
     public static class SmartOptions {
-        private Integer replicationFactor;
+        private ReplicationFactor replicationFactor;
         private Integer minReplicationFactor;
         private Integer numberOfShards;
         private String smartGraphAttribute;
+        private Boolean isDisjoint;
 
         public SmartOptions() {
             super();
+            replicationFactor = new ReplicationFactor();
         }
 
         public Integer getReplicationFactor() {
-            return replicationFactor;
+            return replicationFactor.getReplicationFactor();
         }
 
         public void setReplicationFactor(final Integer replicationFactor) {
-            this.replicationFactor = replicationFactor;
+            this.replicationFactor.setReplicationFactor(replicationFactor);
+        }
+
+        public Boolean getSatellite() {
+            return replicationFactor.getSatellite();
+        }
+
+        public void setSatellite(final Boolean satellite) {
+            replicationFactor.setSatellite(satellite);
         }
 
         public Integer getMinReplicationFactor() {
@@ -206,6 +247,14 @@ public class GraphCreateOptions {
 
         public void setSmartGraphAttribute(final String smartGraphAttribute) {
             this.smartGraphAttribute = smartGraphAttribute;
+        }
+
+        public Boolean getIsDisjoint() {
+            return isDisjoint;
+        }
+
+        public void setIsDisjoint(final Boolean isDisjoint) {
+            this.isDisjoint = isDisjoint;
         }
 
     }

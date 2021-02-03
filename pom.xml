@@ -5,7 +5,7 @@
 
     <groupId>com.arangodb</groupId>
     <artifactId>arangodb-java-driver</artifactId>
-    <version>6.6.3</version>
+    <version>6.8.2</version>
     <inceptionYear>2016</inceptionYear>
     <packaging>jar</packaging>
 
@@ -62,6 +62,24 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -183,7 +201,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -194,7 +211,7 @@
         <dependency>
             <groupId>com.arangodb</groupId>
             <artifactId>jackson-dataformat-velocypack</artifactId>
-            <version>0.1.5</version>
+            <version>0.3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -208,9 +225,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.11.3</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.12</version>
+                <version>4.5.13</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -230,7 +254,7 @@
             <dependency>
                 <groupId>com.arangodb</groupId>
                 <artifactId>velocypack</artifactId>
-                <version>2.3.1</version>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -245,7 +269,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13</version>
+                <version>4.13.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

@@ -23,12 +23,11 @@ package com.arangodb.internal.velocypack;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.*;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -188,6 +187,28 @@ public class VPackSerializers {
             }
             builder.close(); // close array
         }
+
+        final ArangoSearchCompression primarySortCompression = value.getPrimarySortCompression();
+        if (primarySortCompression != null) {
+            builder.add("primarySortCompression", primarySortCompression.getValue());
+        }
+
+        final Collection<StoredValue> storedValues = value.getStoredValues();
+        if (!storedValues.isEmpty()) {
+            builder.add("storedValues", ValueType.ARRAY); // open array
+            for (final StoredValue storedValue : storedValues) {
+                builder.add(ValueType.OBJECT); // open object
+                builder.add("fields", ValueType.ARRAY);
+                for (final String field : storedValue.getFields()) {
+                    builder.add(field);
+                }
+                builder.close();
+                builder.add("compression", storedValue.getCompression().getValue());
+                builder.close(); // close object
+            }
+            builder.close(); // close array
+        }
+
     };
 
     private static void serializeFieldLinks(final VPackBuilder builder, final Collection<FieldLink> links) {
@@ -223,5 +244,15 @@ public class VPackSerializers {
     }
 
     public static final VPackSerializer<ConsolidationType> CONSOLIDATE_TYPE = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase());
+
+    public static final VPackSerializer<CollectionSchema> COLLECTION_VALIDATION = (builder, attribute, value, context) -> {
+        VPackParser parser = new VPackParser.Builder().build();
+        VPackSlice rule = parser.fromJson(value.getRule(), true);
+        final Map<String, Object> doc = new HashMap<>();
+        doc.put("message", value.getMessage());
+        doc.put("level", value.getLevel().getValue());
+        doc.put("rule", rule);
+        context.serialize(builder, attribute, doc);
+    };
 
 }
