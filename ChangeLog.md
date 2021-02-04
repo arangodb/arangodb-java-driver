@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.9.0] - 2021-02-04
+
 - added `com.arangodb.mapping.ArangoJack` to replace `com.arangodb.jackson.dataformat.velocypack.VelocyJack` (from 
   `com.arangodb:jackson-dataformat-velocypack`)
 
