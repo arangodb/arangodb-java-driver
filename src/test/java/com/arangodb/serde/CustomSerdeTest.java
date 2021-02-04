@@ -25,13 +25,14 @@ import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -54,12 +55,12 @@ public class CustomSerdeTest {
 
     @BeforeClass
     public static void init() {
-        VelocyJack velocyJack = new VelocyJack();
-        velocyJack.configure((mapper) -> {
+        ArangoJack arangoJack = new ArangoJack();
+        arangoJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
         });
-        ArangoDB arangoDB = new ArangoDB.Builder().serializer(velocyJack).build();
+        ArangoDB arangoDB = new ArangoDB.Builder().serializer(arangoJack).build();
 
         String TEST_DB = "custom-serde-test";
         db = arangoDB.db(TEST_DB);

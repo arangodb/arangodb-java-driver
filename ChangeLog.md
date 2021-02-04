@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added `com.arangodb.mapping.ArangoJack` to replace `com.arangodb.jackson.dataformat.velocypack.VelocyJack` (from 
+  `com.arangodb:jackson-dataformat-velocypack`)
+
+- fixed removing removed coordinators from the hostlist (#347)
+
 ## [6.8.2] - 2021-01-25
 
 - fixed closing connection on failed authentication (#ES-772)

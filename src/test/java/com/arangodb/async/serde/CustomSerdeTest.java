@@ -25,7 +25,7 @@ import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import org.junit.After;
 import org.junit.Before;
@@ -55,12 +55,12 @@ public class CustomSerdeTest {
 
     @Before
     public void init() throws ExecutionException, InterruptedException {
-        VelocyJack velocyJack = new VelocyJack();
-        velocyJack.configure((mapper) -> {
+        ArangoJack arangoJack = new ArangoJack();
+        arangoJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
         });
-        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(velocyJack).build();
+        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(arangoJack).build();
 
         String TEST_DB = "custom-serde-test";
         db = arangoDB.db(TEST_DB);
