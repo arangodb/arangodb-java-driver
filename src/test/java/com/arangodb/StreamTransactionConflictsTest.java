@@ -54,7 +54,6 @@ public class StreamTransactionConflictsTest extends BaseTest {
     }
 
     @Test
-    @Ignore
     public void conflictOnInsertDocumentWithNotYetCommittedTx() {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
