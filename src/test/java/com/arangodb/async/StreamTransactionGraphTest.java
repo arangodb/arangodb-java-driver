@@ -21,8 +21,23 @@
 package com.arangodb.async;
 
 
-import com.arangodb.entity.*;
-import com.arangodb.model.*;
+import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
+import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.EdgeEntity;
+import com.arangodb.entity.StreamTransactionEntity;
+import com.arangodb.entity.VertexEntity;
+import com.arangodb.model.EdgeCreateOptions;
+import com.arangodb.model.EdgeDeleteOptions;
+import com.arangodb.model.EdgeReplaceOptions;
+import com.arangodb.model.EdgeUpdateOptions;
+import com.arangodb.model.GraphDocumentReadOptions;
+import com.arangodb.model.StreamTransactionOptions;
+import com.arangodb.model.VertexCreateOptions;
+import com.arangodb.model.VertexDeleteOptions;
+import com.arangodb.model.VertexReplaceOptions;
+import com.arangodb.model.VertexUpdateOptions;
 import org.junit.After;
 import org.junit.Test;
 
@@ -30,9 +45,9 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -343,7 +358,8 @@ public class StreamTransactionGraphTest extends BaseTest {
         // update edge from within the tx
         doc.getProperties().clear();
         doc.addAttribute("test", "bar");
-        edgeCollection.updateEdge(createdDoc.getKey(), doc, new EdgeUpdateOptions().streamTransactionId(tx.getId()));
+        edgeCollection.updateEdge(createdDoc.getKey(), doc, new EdgeUpdateOptions().streamTransactionId(tx.getId()))
+                .get();
 
         // assert that the edge has not been updated from outside the tx
         assertThat(edgeCollection.getEdge(createdDoc.getKey(), BaseEdgeDocument.class, null).get()

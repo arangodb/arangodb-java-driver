@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.9.0] - 2021-02-04
+
+- added `com.arangodb.mapping.ArangoJack` to replace `com.arangodb.jackson.dataformat.velocypack.VelocyJack` (from 
+  `com.arangodb:jackson-dataformat-velocypack`)
+
+- fixed removing removed coordinators from the hostlist (#347)
+
+## [6.8.2] - 2021-01-25
+
+- fixed closing connection on failed authentication (#ES-772)
+
+## [6.8.1] - 2020-12-22
+
+- fixed ignoring internal endpoints in acquireHostList (#DEVSUP-673)
+
+## [6.8.0] - 2020-12-10
+
+- added configurable VST keep-alive
+
 ## [6.7.5] - 2020-09-22
 
 - allow customizing httpRequestRetryHandler

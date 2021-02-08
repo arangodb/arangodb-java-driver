@@ -31,7 +31,12 @@ import com.arangodb.velocystream.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mark Vollmary
@@ -130,7 +135,7 @@ public class ExtendedHostResolver implements HostResolver {
                             final Collection<Map<String, String>> tmp = arangoSerialization.deserialize(field, Collection.class);
                             endpoints = new ArrayList<>();
                             for (final Map<String, String> map : tmp) {
-                                endpoints.addAll(map.values());
+                                endpoints.add(map.get("endpoint"));
                             }
                         }
                         return endpoints;

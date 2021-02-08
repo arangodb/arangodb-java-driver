@@ -20,8 +20,12 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.*;
-import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
+import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.License;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.util.TestUtils;
@@ -48,7 +52,7 @@ public abstract class BaseTest {
             new ArangoDB.Builder().useProtocol(Protocol.VST).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_JSON).build(),
             new ArangoDB.Builder().useProtocol(Protocol.HTTP_VPACK).build(),
-            new ArangoDB.Builder().serializer(new VelocyJack()).build()
+            new ArangoDB.Builder().serializer(new ArangoJack()).build()
     );
 
     @Parameters

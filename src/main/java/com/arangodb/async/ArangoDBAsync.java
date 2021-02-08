@@ -26,7 +26,13 @@ import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
-import com.arangodb.entity.*;
+import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.LoadBalancingStrategy;
+import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.UserEntity;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -45,7 +51,18 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
-import com.arangodb.velocypack.*;
+import com.arangodb.velocypack.VPack;
+import com.arangodb.velocypack.VPackAnnotationFieldFilter;
+import com.arangodb.velocypack.VPackAnnotationFieldNaming;
+import com.arangodb.velocypack.VPackDeserializer;
+import com.arangodb.velocypack.VPackInstanceCreator;
+import com.arangodb.velocypack.VPackJsonDeserializer;
+import com.arangodb.velocypack.VPackJsonSerializer;
+import com.arangodb.velocypack.VPackModule;
+import com.arangodb.velocypack.VPackParser;
+import com.arangodb.velocypack.VPackParserModule;
+import com.arangodb.velocypack.VPackSerializer;
+import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -409,6 +426,19 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         }
 
         /**
+         * Set the keep-alive interval for VST connections. If set, every VST connection will perform a no-op request every
+         * {@code keepAliveInterval} seconds, to avoid to be closed due to inactivity by the server (or by the external
+         * environment, eg. firewall, intermediate routers, operating system).
+         *
+         * @param keepAliveInterval interval in seconds
+         * @return {@link ArangoDBAsync.Builder}
+         */
+        public Builder keepAliveInterval(final Integer keepAliveInterval) {
+            setKeepAliveInterval(keepAliveInterval);
+            return this;
+        }
+
+        /**
          * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
          * server with active failover.
          *
@@ -746,7 +776,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
             final ConnectionFactory connectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
-                    useSsl, sslContext);
+                    keepAliveInterval, useSsl, sslContext);
             final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
                     connectionFactory);
             final HostHandler hostHandler = createHostHandler(hostResolver);

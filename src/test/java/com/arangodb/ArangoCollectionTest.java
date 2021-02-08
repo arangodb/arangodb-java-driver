@@ -371,14 +371,12 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
-    @Ignore
-    // FIXME: test with VelocyJack fails due to slash escape char
     public void getDocumentAsJson() {
         String key = rnd();
         collection.insertDocument("{\"_key\":\"" + key + "\",\"a\":\"test\"}", null);
         final String readResult = collection.getDocument(key, String.class, null);
-        assertThat(readResult.contains("\"_key\":\"" + key + "\""), is(true));
-        assertThat(readResult.contains("\"_id\":\"" + COLLECTION_NAME + "\\/" + key + "\""), is(true));
+        assertThat(readResult, containsString("\"_key\":\"" + key + "\""));
+        assertThat(readResult, containsString("\"_id\":\"" + COLLECTION_NAME + "/" + key + "\""));
     }
 
     @Test
@@ -437,11 +435,7 @@ public class ArangoCollectionTest extends BaseTest {
         }
     }
 
-    /**
-     * TODO: uncomment once the fix has been backported (3.4.9 and 3.5.1)
-     */
     @Test
-    @Ignore
     public void getDocumentsWithCustomShardingKey() {
         ArangoCollection collection = db.collection("customShardingKeyCollection");
         if (collection.exists())

@@ -24,7 +24,9 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
+import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import com.arangodb.velocypack.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,25 +43,35 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mark Vollmary
  */
-public abstract class VstConnection implements Connection {
+public abstract class VstConnection<T> implements Connection {
     private static final Logger LOGGER = LoggerFactory.getLogger(VstConnection.class);
     private static final byte[] PROTOCOL_HEADER = "VST/1.0\r\n\r\n".getBytes();
 
     private ExecutorService executor;
+
+    private ScheduledExecutorService keepAliveScheduler;
+    private final AtomicLong keepAliveId = new AtomicLong();
+
     protected final MessageStore messageStore;
 
     protected final Integer timeout;
     private final Long ttl;
+
+    private final Integer keepAliveInterval;
     private final Boolean useSsl;
     private final SSLContext sslContext;
 
@@ -73,18 +85,63 @@ public abstract class VstConnection implements Connection {
 
     private final String connectionName;
 
-    protected VstConnection(final HostDescription host, final Integer timeout, final Long ttl, final Boolean useSsl,
-                            final SSLContext sslContext, final MessageStore messageStore) {
+    private final VPackSlice keepAliveRequest = new VPackBuilder()
+            .add(ValueType.ARRAY)
+            .add(1)
+            .add(1)
+            .add("_system")
+            .add(1)
+            .add("/_admin/server/availability")
+            .add(ValueType.OBJECT)
+            .close()
+            .add(ValueType.OBJECT)
+            .close()
+            .close()
+            .slice();
+
+    protected VstConnection(final HostDescription host,
+                            final Integer timeout,
+                            final Long ttl,
+                            final Integer keepAliveInterval,
+                            final Boolean useSsl,
+                            final SSLContext sslContext,
+                            final MessageStore messageStore) {
         super();
         this.host = host;
         this.timeout = timeout;
         this.ttl = ttl;
+        this.keepAliveInterval = keepAliveInterval;
         this.useSsl = useSsl;
         this.sslContext = sslContext;
         this.messageStore = messageStore;
 
         connectionName = "connection_" + System.currentTimeMillis() + "_" + Math.random();
         LOGGER.debug("Connection " + connectionName + " created");
+    }
+
+    protected T sendKeepAlive() {
+        long id = keepAliveId.decrementAndGet();
+        Message message = new Message(id, keepAliveRequest, null);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("Send keepalive probe (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
+                    message.getBody() != null ? message.getBody() : "{}"));
+        }
+        return write(message, Collections.singleton(new Chunk(
+                id, 0, 1, -1,
+                0, keepAliveRequest.getByteSize()
+        )));
+    }
+
+    public abstract T write(final Message message, final Collection<Chunk> chunks);
+
+    protected abstract void doKeepAlive();
+
+    private void keepAlive() {
+        try {
+            doKeepAlive();
+        } catch (Exception e) {
+            LOGGER.error("Got exception while performing keepAlive request:", e);
+        }
     }
 
     public boolean isOpen() {
@@ -162,10 +219,19 @@ public abstract class VstConnection implements Connection {
 
             return null;
         });
+
+        if (keepAliveInterval != null) {
+            keepAliveScheduler = Executors.newScheduledThreadPool(1);
+            keepAliveScheduler.scheduleAtFixedRate(this::keepAlive, 0, keepAliveInterval, TimeUnit.SECONDS);
+        }
+
     }
 
     @Override
     public synchronized void close() {
+        if (keepAliveScheduler != null) {
+            keepAliveScheduler.shutdownNow();
+        }
         messageStore.clear();
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();

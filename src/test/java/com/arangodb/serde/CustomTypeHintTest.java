@@ -24,7 +24,7 @@ package com.arangodb.serde;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.jackson.dataformat.velocypack.VelocyJack;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -90,7 +90,7 @@ public class CustomTypeHintTest {
     @Before
     public void init() {
         ArangoDB arangoDB = new ArangoDB.Builder()
-                .serializer(new VelocyJack())
+                .serializer(new ArangoJack())
                 .build();
 
         String TEST_DB = "custom-serde-test";
