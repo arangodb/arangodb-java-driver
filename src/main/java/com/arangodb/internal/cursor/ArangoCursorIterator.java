@@ -28,6 +28,7 @@ import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.VPackSlice;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -37,7 +38,7 @@ import java.util.NoSuchElementException;
 public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 
     private CursorEntity result;
-    private int pos;
+    private Iterator<VPackSlice> arrayIterator;
 
     private final ArangoCursor<T> cursor;
     private final InternalArangoDatabase<?, ?> db;
@@ -50,7 +51,7 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
         this.execute = execute;
         this.db = db;
         this.result = result;
-        pos = 0;
+        arrayIterator = result.getResult().arrayIterator();
     }
 
     public CursorEntity getResult() {
@@ -59,19 +60,19 @@ public class ArangoCursorIterator<T> implements ArangoIterator<T> {
 
     @Override
     public boolean hasNext() {
-        return pos < result.getResult().size() || result.getHasMore();
+        return arrayIterator.hasNext() || result.getHasMore();
     }
 
     @Override
     public T next() {
-        if (pos >= result.getResult().size() && result.getHasMore()) {
+        if (!arrayIterator.hasNext() && result.getHasMore()) {
             result = execute.next(cursor.getId(), result.getMeta());
-            pos = 0;
+            arrayIterator = result.getResult().arrayIterator();
         }
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return deserialize(result.getResult().get(pos++), cursor.getType());
+        return deserialize(arrayIterator.next(), cursor.getType());
     }
 
     protected <R> R deserialize(final VPackSlice result, final Class<R> type) {

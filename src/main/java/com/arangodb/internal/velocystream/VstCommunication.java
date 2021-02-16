@@ -104,6 +104,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                     final Host failedHost = host;
                     host = hostHandler.get(hostHandle, accessType);
                     if (host != null) {
+                        LOGGER.warn(String.format("Could not connect to %s", failedHost.getDescription()), e);
                         LOGGER.warn(
                                 String.format("Could not connect to %s or SSL Handshake failed. Try connecting to %s",
                                         failedHost.getDescription(), host.getDescription()));
