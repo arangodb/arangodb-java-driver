@@ -49,6 +49,7 @@ public final class ResponseUtils {
                             response.getMeta().get(HEADER_ENDPOINT));
                 } else if (response.getBody() != null) {
                     final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
+                    errorEntity.setResponseBody(response.getBody());
                     throw new ArangoDBException(errorEntity);
                 } else {
                     throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);

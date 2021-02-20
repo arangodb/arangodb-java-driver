@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.velocypack.VPackSlice;
+
 import java.io.Serializable;
 
 /**
@@ -33,6 +35,8 @@ public class ErrorEntity implements Serializable, Entity {
     private String exception;
     private int code;
     private int errorNum;
+
+    private VPackSlice responseBody;
 
     public ErrorEntity() {
         super();
@@ -66,4 +70,14 @@ public class ErrorEntity implements Serializable, Entity {
         return errorNum;
     }
 
+    /**
+     * @return response body from server
+     */
+    public VPackSlice getResponseBody() {
+        return responseBody;
+    }
+
+    public void setResponseBody(VPackSlice responseBody) {
+        this.responseBody = responseBody;
+    }
 }

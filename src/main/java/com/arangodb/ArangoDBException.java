@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.ErrorEntity;
+import com.arangodb.velocypack.VPackSlice;
 
 /**
  * @author Mark Vollmary
@@ -83,6 +84,13 @@ public class ArangoDBException extends RuntimeException {
      */
     public Integer getErrorNum() {
         return entity != null ? entity.getErrorNum() : null;
+    }
+
+    /**
+     * @return ArangoDB response body
+     */
+    public VPackSlice getResponseBody() {
+        return entity != null ? entity.getResponseBody() : null;
     }
 
 }
