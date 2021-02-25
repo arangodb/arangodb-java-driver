@@ -40,6 +40,13 @@ import java.util.stream.IntStream;
  */
 @RunWith(Parameterized.class)
 public class StreamTransactionExclusiveParallelTest extends BaseTest {
+    static {
+        // http logging
+//        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+//        System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+//        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "DEBUG");
+//        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.wire", "ERROR");
+    }
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StreamTransactionExclusiveParallelTest.class);
 

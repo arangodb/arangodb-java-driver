@@ -13,5 +13,7 @@
     </root>
 
     <logger name="org.reflections.Reflections" level="warn"/>
+    <logger name="log4j.logger.org.apache.http" level="debug"/>
+    <logger name="log4j.logger.org.apache.http.wire" level="debug"/>
 
 </configuration>
