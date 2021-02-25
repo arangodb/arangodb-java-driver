@@ -32,6 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -63,19 +67,20 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * Executes parallel stream transactions with exclusive lock on the same table
      */
     @Test(timeout = 15_000)
-    public void parallelExclusiveStreamTransactions() throws InterruptedException {
+    public void parallelExclusiveStreamTransactions() throws InterruptedException, ExecutionException {
         String colName = "col-" + UUID.randomUUID().toString();
         ArangoCollection col = db.collection(colName);
         if (!col.exists())
             col.create();
 
-        List<Thread> threads = IntStream.range(0, 10)
-                .mapToObj(i -> new Thread(() -> executeTx(colName)))
+        ExecutorService es = Executors.newFixedThreadPool(10);
+
+        List<Future<?>> futures = IntStream.range(0, 10)
+                .mapToObj(i -> es.submit(() -> executeTx(colName)))
                 .collect(Collectors.toList());
 
-        threads.forEach(Thread::start);
-        for (Thread thread : threads) {
-            thread.join();
+        for (Future<?> it : futures) {
+            it.get();
         }
 
     }
