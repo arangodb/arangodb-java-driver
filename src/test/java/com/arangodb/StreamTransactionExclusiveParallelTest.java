@@ -62,7 +62,7 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     /**
      * Executes parallel stream transactions with exclusive lock on the same table
      */
-    @Test(timeout = 10_000)
+    @Test(timeout = 15_000)
     public void parallelExclusiveStreamTransactions() throws InterruptedException {
         String colName = "col-" + UUID.randomUUID().toString();
         ArangoCollection col = db.collection(colName);
