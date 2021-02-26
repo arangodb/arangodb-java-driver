@@ -32,18 +32,24 @@ import com.arangodb.util.TestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Mark Vollmary
  * @author Michele Rastelli
  */
 public abstract class BaseTest {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(BaseTest.class);
+    private final static Set<String> callerClassSet = new HashSet<>();
 
     static final String TEST_DB = "java_driver_test_db";
 
@@ -68,10 +74,28 @@ public abstract class BaseTest {
         db = arangoDB.db(TEST_DB);
     }
 
+    /**
+     * @return the first class in the stacktrace different from this one
+     */
+    private static String getCallerClassName() {
+        String thisClassName = BaseTest.class.getCanonicalName();
+        String callerClass = thisClassName;
+        StackTraceElement[] st = Thread.currentThread().getStackTrace();
+        int externalCallerStackIdx = 0;
+        while (thisClassName.equals(callerClass))
+            callerClass = st[++externalCallerStackIdx].getClassName();
+        return callerClass;
+    }
+
     static ArangoDatabase initDB() {
+        String callerClassName = getCallerClassName();
         ArangoDatabase database = arangos.get(0).db(TEST_DB);
-        if (!database.exists())
+        if (!database.exists()) {
             database.create();
+        } else if (!callerClassSet.contains(callerClassName)) {
+            LOGGER.error("initDB invoked for the first time from: " + callerClassName + " but test DB already exists!");
+        }
+        callerClassSet.add(callerClassName);
         return database;
     }
 
