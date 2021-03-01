@@ -41,7 +41,7 @@ public class ExampleBase {
 
     @BeforeClass
     public static void setUp() throws InterruptedException, ExecutionException {
-        arangoDB = new ArangoDBAsync.Builder().build();
+        arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
         if (arangoDB.db(DB_NAME).exists().get()) {
             arangoDB.db(DB_NAME).drop().get();
         }
