@@ -42,7 +42,7 @@ public class ConcurrencyTest {
 
     @Before
     public void initialize() {
-        arangoDB = new ArangoDBAsync.Builder().build();
+        arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
     }
 
     /**

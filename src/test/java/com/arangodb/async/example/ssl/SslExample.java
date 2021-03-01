@@ -66,7 +66,7 @@ public class SslExample {
         final SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false)
                 .loadProperties(SslExample.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion().get();

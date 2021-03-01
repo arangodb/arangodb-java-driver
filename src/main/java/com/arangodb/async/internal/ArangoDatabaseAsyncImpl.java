@@ -21,15 +21,52 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.async.*;
-import com.arangodb.entity.*;
+import com.arangodb.async.ArangoCollectionAsync;
+import com.arangodb.async.ArangoCursorAsync;
+import com.arangodb.async.ArangoDatabaseAsync;
+import com.arangodb.async.ArangoGraphAsync;
+import com.arangodb.async.ArangoRouteAsync;
+import com.arangodb.async.ArangoSearchAsync;
+import com.arangodb.async.ArangoViewAsync;
+import com.arangodb.entity.AqlExecutionExplainEntity;
+import com.arangodb.entity.AqlFunctionEntity;
+import com.arangodb.entity.AqlParseEntity;
+import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CursorEntity;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.EdgeDefinition;
+import com.arangodb.entity.GraphEntity;
+import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.QueryCachePropertiesEntity;
+import com.arangodb.entity.QueryEntity;
+import com.arangodb.entity.QueryTrackingPropertiesEntity;
+import com.arangodb.entity.StreamTransactionEntity;
+import com.arangodb.entity.TransactionEntity;
+import com.arangodb.entity.TraversalEntity;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
+import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.InternalArangoDatabase;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.DocumentUtil;
-import com.arangodb.model.*;
+import com.arangodb.model.AqlFunctionCreateOptions;
+import com.arangodb.model.AqlFunctionDeleteOptions;
+import com.arangodb.model.AqlFunctionGetOptions;
+import com.arangodb.model.AqlQueryExplainOptions;
+import com.arangodb.model.AqlQueryOptions;
+import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.CollectionsReadOptions;
+import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.StreamTransactionOptions;
+import com.arangodb.model.TransactionOptions;
+import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.velocypack.Type;
@@ -38,8 +75,8 @@ import com.arangodb.velocystream.Request;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -65,7 +102,21 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
 
     @Override
     public CompletableFuture<Boolean> exists() {
-        return getInfo().thenApply(Objects::nonNull).exceptionally(Objects::isNull);
+        return getInfo()
+                .handle((result, ex) -> {
+                    if (result != null) {
+                        return true;
+                    }
+
+                    if (ex instanceof CompletionException && ex.getCause() instanceof ArangoDBException) {
+                        ArangoDBException e = (ArangoDBException) ex.getCause();
+                        if (ArangoErrors.ERROR_ARANGO_DATABASE_NOT_FOUND.equals(e.getErrorNum())) {
+                            return false;
+                        }
+                    }
+
+                    throw new CompletionException(ex);
+                });
     }
 
     @Override
