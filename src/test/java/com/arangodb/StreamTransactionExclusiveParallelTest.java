@@ -105,6 +105,7 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     }
 
     private void doParallelExclusiveStreamTransactions(boolean counting) throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isCluster());
 
         // create collection with 2 shards
