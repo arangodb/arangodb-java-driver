@@ -681,7 +681,7 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void queryWithMemoryLimit() {
         try {
-            db.query("RETURN 'bla'", null, new AqlQueryOptions().memoryLimit(1L), String.class);
+            db.query("RETURN 1..10000", null, new AqlQueryOptions().memoryLimit(32 * 1024L), String.class);
             fail();
         } catch (final ArangoDBException e) {
             assertThat(e.getErrorNum(), is(32));
