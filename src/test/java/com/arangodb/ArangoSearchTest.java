@@ -34,6 +34,8 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.PrimarySort;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.EdgeNgram;
@@ -848,4 +850,27 @@ public class ArangoSearchTest extends BaseTest {
         createGetAndDeleteTypedAnalyzer(pipelineAnalyzer);
     }
 
+    @Test
+    public void aqlAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        AQLAnalyzerProperties properties = new AQLAnalyzerProperties();
+        properties.setBatchSize(2);
+        properties.setCollapsePositions(true);
+        properties.setKeepNull(false);
+        properties.setMemoryLimit(2200L);
+        properties.setQueryString("RETURN SOUNDEX(@param)");
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        AQLAnalyzer aqlAnalyzer = new AQLAnalyzer();
+        aqlAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        aqlAnalyzer.setProperties(properties);
+        aqlAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(aqlAnalyzer);
+    }
 }

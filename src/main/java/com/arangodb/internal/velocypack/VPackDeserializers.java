@@ -43,6 +43,7 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.PrimarySort;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
@@ -111,6 +112,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, NormAnalyzer.class);
             case pipeline:
                 return context.deserialize(vpack, PipelineAnalyzer.class);
+            case aql:
+                return context.deserialize(vpack, AQLAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }
