@@ -39,6 +39,9 @@ import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.EdgeNgram;
+import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerOptions;
+import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties;
@@ -873,4 +876,32 @@ public class ArangoSearchTest extends BaseTest {
 
         createGetAndDeleteTypedAnalyzer(aqlAnalyzer);
     }
+
+    @Test
+    public void geoJsonAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        GeoJSONAnalyzerOptions options = new GeoJSONAnalyzerOptions();
+        options.setMaxLevel(10);
+        options.setMaxCells(11);
+        options.setMinLevel(8);
+
+        GeoJSONAnalyzerProperties properties = new GeoJSONAnalyzerProperties();
+        properties.setOptions(options);
+        properties.setType(GeoJSONAnalyzerProperties.GeoJSONAnalyzerType.point);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        GeoJSONAnalyzer geoJSONAnalyzer = new GeoJSONAnalyzer();
+        geoJSONAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        geoJSONAnalyzer.setProperties(properties);
+        geoJSONAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(geoJSONAnalyzer);
+    }
+
+
 }
