@@ -33,6 +33,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     protected final IndexType type = IndexType.persistent;
     private Boolean unique;
     private Boolean sparse;
+    private Boolean estimates;
 
     public PersistentIndexOptions() {
         super();
@@ -78,12 +79,25 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     }
 
     /**
-     * @param sparse if true, then create a sparse index
+     * @param sparse
+     *         if true, then create a sparse index
      * @return options
      */
     public PersistentIndexOptions sparse(final Boolean sparse) {
         this.sparse = sparse;
         return this;
+    }
+
+    /**
+     * FIXME: add doc
+     */
+    public PersistentIndexOptions estimates(final Boolean estimates) {
+        this.estimates = estimates;
+        return this;
+    }
+
+    public Boolean getEstimates() {
+        return estimates;
     }
 
 }
