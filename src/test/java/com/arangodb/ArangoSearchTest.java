@@ -40,8 +40,10 @@ import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.EdgeNgram;
 import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerOptions;
+import com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions;
 import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties;
@@ -881,7 +883,7 @@ public class ArangoSearchTest extends BaseTest {
     public void geoJsonAnalyzer() {
         assumeTrue(isAtLeastVersion(3, 8));
 
-        GeoJSONAnalyzerOptions options = new GeoJSONAnalyzerOptions();
+        GeoAnalyzerOptions options = new GeoAnalyzerOptions();
         options.setMaxLevel(10);
         options.setMaxCells(11);
         options.setMinLevel(8);
@@ -901,6 +903,34 @@ public class ArangoSearchTest extends BaseTest {
         geoJSONAnalyzer.setFeatures(features);
 
         createGetAndDeleteTypedAnalyzer(geoJSONAnalyzer);
+    }
+
+
+    @Test
+    public void geoPointAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        GeoAnalyzerOptions options = new GeoAnalyzerOptions();
+        options.setMaxLevel(10);
+        options.setMaxCells(11);
+        options.setMinLevel(8);
+
+        GeoPointAnalyzerProperties properties = new GeoPointAnalyzerProperties();
+        properties.setLatitude(new String[]{"a", "b","c"});
+        properties.setLongitude(new String[]{"d", "e","f"});
+        properties.setOptions(options);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        GeoPointAnalyzer geoPointAnalyzer = new GeoPointAnalyzer();
+        geoPointAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        geoPointAnalyzer.setProperties(properties);
+        geoPointAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(geoPointAnalyzer);
     }
 
 

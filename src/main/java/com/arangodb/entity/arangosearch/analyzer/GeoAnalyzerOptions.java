@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * @author Michele Rastelli
  */
-public class GeoJSONAnalyzerOptions {
+public class GeoAnalyzerOptions {
 
     private Integer maxCells;
     private Integer minLevel;
@@ -70,7 +70,7 @@ public class GeoJSONAnalyzerOptions {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GeoJSONAnalyzerOptions that = (GeoJSONAnalyzerOptions) o;
+        GeoAnalyzerOptions that = (GeoAnalyzerOptions) o;
         return Objects.equals(maxCells, that.maxCells) && Objects.equals(minLevel, that.minLevel) && Objects.equals(maxLevel, that.maxLevel);
     }
 

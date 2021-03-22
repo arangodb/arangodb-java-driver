@@ -46,6 +46,7 @@ import com.arangodb.entity.arangosearch.StoredValue;
 import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.NormAnalyzer;
@@ -117,6 +118,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, AQLAnalyzer.class);
             case geojson:
                 return context.deserialize(vpack, GeoJSONAnalyzer.class);
+            case geopoint:
+                return context.deserialize(vpack, GeoPointAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }

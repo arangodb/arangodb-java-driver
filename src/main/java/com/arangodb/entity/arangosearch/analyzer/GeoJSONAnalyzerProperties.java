@@ -49,7 +49,7 @@ public class GeoJSONAnalyzerProperties {
     }
 
     private GeoJSONAnalyzerType type;
-    private GeoJSONAnalyzerOptions options;
+    private GeoAnalyzerOptions options;
 
     public GeoJSONAnalyzerType getType() {
         return type;
@@ -63,11 +63,11 @@ public class GeoJSONAnalyzerProperties {
      * @return Options for fine-tuning geo queries {@link GeoJSONAnalyzerProperties}. These options should generally
      * remain unchanged.
      */
-    public GeoJSONAnalyzerOptions getOptions() {
+    public GeoAnalyzerOptions getOptions() {
         return options;
     }
 
-    public void setOptions(GeoJSONAnalyzerOptions options) {
+    public void setOptions(GeoAnalyzerOptions options) {
         this.options = options;
     }
 
