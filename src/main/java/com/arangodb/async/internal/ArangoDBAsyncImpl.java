@@ -52,8 +52,14 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     private final CommunicationProtocol cp;
 
-    public ArangoDBAsyncImpl(final VstCommunicationAsync.Builder commBuilder, final ArangoSerializationFactory util,
-                             final VstCommunicationSync.Builder syncbuilder, final HostResolver hostResolver, final ArangoContext context) {
+    public ArangoDBAsyncImpl(
+            final VstCommunicationAsync.Builder commBuilder,
+            final ArangoSerializationFactory util,
+            final VstCommunicationSync.Builder syncbuilder,
+            final HostResolver asyncHostResolver,
+            final HostResolver syncHostResolver,
+            final ArangoContext context
+    ) {
 
         super(new ArangoExecutorAsync(commBuilder.build(util.get(Serializer.INTERNAL)), util, new DocumentCache()), util, context);
 
@@ -62,7 +68,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
         cp = new VstProtocol(cacheCom);
 
         ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache());
-        hostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
+        asyncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
+        syncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
 
     }
 

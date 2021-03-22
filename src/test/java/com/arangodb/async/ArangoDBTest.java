@@ -452,6 +452,18 @@ public class ArangoDBTest {
     }
 
     @Test
+    public void execute_acquireHostList_enabled() throws VPackException, InterruptedException, ExecutionException {
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).build();
+        arangoDB
+                .execute(new Request("_system", RequestType.GET, "/_api/version"))
+                .whenComplete((response, ex) -> {
+                    assertThat(response.getBody(), is(notNullValue()));
+                    assertThat(response.getBody().get("version").isString(), is(true));
+                })
+                .get();
+    }
+
+    @Test
     public void getLogs() throws InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
         arangoDB.getLogs(null)
