@@ -20,9 +20,37 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.*;
-import com.arangodb.entity.arangosearch.analyzer.*;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
+import com.arangodb.entity.CollectionStatus;
+import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.License;
+import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.MinReplicationFactor;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.QueryExecutionState;
+import com.arangodb.entity.ReplicationFactor;
+import com.arangodb.entity.ViewEntity;
+import com.arangodb.entity.ViewType;
+import com.arangodb.entity.arangosearch.AnalyzerType;
+import com.arangodb.entity.arangosearch.ArangoSearchCompression;
+import com.arangodb.entity.arangosearch.ArangoSearchProperties;
+import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
+import com.arangodb.entity.arangosearch.ConsolidationType;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.PrimarySort;
+import com.arangodb.entity.arangosearch.StoreValuesType;
+import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.NormAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackParser;
@@ -33,7 +61,11 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -77,6 +109,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, StemAnalyzer.class);
             case norm:
                 return context.deserialize(vpack, NormAnalyzer.class);
+            case pipeline:
+                return context.deserialize(vpack, PipelineAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }
