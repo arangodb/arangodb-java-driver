@@ -60,7 +60,7 @@ public class CustomSerdeTest {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
         });
-        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).serializer(arangoJack).build();
+        ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(arangoJack).build();
 
         String TEST_DB = "custom-serde-test";
         db = arangoDB.db(TEST_DB);

@@ -48,7 +48,7 @@ public class ConsolidationIntervalMsec extends BaseTest {
     public void consolidationIntervalMsec() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
 
-        ArangoDBAsync arango = new ArangoDBAsync.Builder().acquireHostList(false)
+        ArangoDBAsync arango = new ArangoDBAsync.Builder()
                 .user("root")
                 .password("test")
                 .build();
