@@ -6,7 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-- fixed performance issue when consuming big cursor batches in stream mode (arangodb/arangodb#13476) 
+## [6.9.1] - 2021-03-23
+
+- fixed `acquireHostList` in asynchronous driver (#377)
+- fixed exception swallowing in `ArangoDatabaseAsync#exists`
+- fixed performance issue when consuming big AQL cursor batches in stream mode (arangodb/arangodb#13476) 
 
 ## [6.9.0] - 2021-02-04
 
