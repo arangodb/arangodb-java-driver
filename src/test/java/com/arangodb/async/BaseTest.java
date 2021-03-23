@@ -40,13 +40,10 @@ public abstract class BaseTest {
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
 
-    @ClassRule
-    public static TestRule acquireHostListRule = TestUtils.acquireHostListRule;
-
     @BeforeClass
     public static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
-            arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
+            arangoDB = new ArangoDBAsync.Builder().build();
         }
 
         if (arangoDB.db(TEST_DB).exists().get()) {

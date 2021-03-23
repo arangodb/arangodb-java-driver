@@ -53,7 +53,7 @@ public class AQLActorsAndMoviesExample {
 
     @BeforeClass
     public static void setUp() throws InterruptedException, ExecutionException {
-        arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
+        arangoDB = new ArangoDBAsync.Builder().build();
         if (arangoDB.db(TEST_DB).exists().get()) {
             arangoDB.db(TEST_DB).drop().get();
         }
