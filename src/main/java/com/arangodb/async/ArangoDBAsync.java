@@ -44,6 +44,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
+import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
@@ -775,12 +776,22 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-            final ConnectionFactory connectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
+            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(host, timeout, connectionTtl,
                     keepAliveInterval, useSsl, sslContext);
-            final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
-                    connectionFactory);
-            final HostHandler hostHandler = createHostHandler(hostResolver);
-            return new ArangoDBAsyncImpl(asyncBuilder(hostHandler), util, syncBuilder(hostHandler), hostResolver,
+            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
+                    keepAliveInterval, useSsl, sslContext);
+            final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
+                    syncConnectionFactory);
+            final HostResolver asyncHostResolver = createHostResolver(createHostList(max, asyncConnectionFactory), max,
+                    asyncConnectionFactory);
+            final HostHandler syncHostHandler = createHostHandler(syncHostResolver);
+            final HostHandler asyncHostHandler = createHostHandler(asyncHostResolver);
+            return new ArangoDBAsyncImpl(
+                    asyncBuilder(asyncHostHandler),
+                    util,
+                    syncBuilder(syncHostHandler),
+                    asyncHostResolver,
+                    syncHostResolver,
                     new ArangoContext());
         }
 

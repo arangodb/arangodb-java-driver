@@ -68,7 +68,7 @@ public class ArangoSslTest {
         final SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false)
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
                 .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion().get();
@@ -79,7 +79,7 @@ public class ArangoSslTest {
     @Ignore
     public void connectWithoutValidSslContext() throws Exception {
         try {
-            final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false)
+            final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
                     .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
                     .build();
             arangoDB.getVersion().get();

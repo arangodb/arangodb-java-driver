@@ -36,7 +36,7 @@ public class CommunicationTest {
     @Test
     @Ignore
     public void disconnect() {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null, null,
                 null);
         arangoDB.shutdown();
