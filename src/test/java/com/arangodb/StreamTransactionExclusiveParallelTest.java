@@ -42,8 +42,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -136,11 +136,12 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
                 .get();
         es.shutdown();
 
-        // expect that all txs are committed
-        for (String tx : txs) {
-            StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
-            assertThat(status, is(StreamTransactionStatus.committed));
-        }
+        // expect that at least one transaction has been committed
+        long committedTransactions = txs.stream()
+                .map(tx -> db.getStreamTransaction(tx).getStatus())
+                .filter(StreamTransactionStatus.committed::equals)
+                .count();
+        assertThat(committedTransactions, greaterThan(0L));
     }
 
     private void executeTask(int idx, BaseDocument d, boolean counting) {
