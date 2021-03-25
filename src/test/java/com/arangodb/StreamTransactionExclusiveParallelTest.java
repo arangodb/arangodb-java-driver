@@ -194,16 +194,9 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
         }
 
         LOGGER.info("{}: committing", idx);
-        try {
-            db.commitStreamTransaction(tx);
-            LOGGER.info("{}: committed", idx);
-        } catch (ArangoDBException e) {
-            if (e.getErrorNum() == 1653) {
-                LOGGER.info("{}: transaction was already expired", idx);
-            } else {
-                throw e;
-            }
-        }
+        db.commitStreamTransaction(tx);
+        LOGGER.info("{}: committed", idx);
+
     }
 
 }
