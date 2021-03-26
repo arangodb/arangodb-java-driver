@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.entity.StreamTransactionStatus;
 import com.arangodb.model.CollectionCountOptions;
 import com.arangodb.model.CollectionCreateOptions;
@@ -37,10 +36,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -60,6 +62,9 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     private final ConcurrentSkipListSet<String> txs = new ConcurrentSkipListSet<>();
 
     private final ExecutorService es = Executors.newFixedThreadPool(200);
+
+    private final ConcurrentMap<String, LongAdder> runningCountByCollection = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, LongAdder> committedCountByCollection = new ConcurrentHashMap<>();
 
     @BeforeClass
     public static void init() {
@@ -81,6 +86,8 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     }
 
     /**
+     * Executes 10 times in parallel the following:
+     * <p>
      * Executes 2 parallel stream transactions with exclusive lock on the same collection "c", which has 2 shards. Each
      * transaction inserts one document to different shard.
      * <p>
@@ -88,13 +95,15 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * <p>
      * - 3.6.12: Expected exactly 1 transaction running, but got: 2 (after having both inserted a document)
      */
-    @Test(timeout = 120_000)
+    @Test(timeout = 15_000)
     public void parallelExclusiveStreamTransactions() throws ExecutionException, InterruptedException {
         System.out.println("===================================");
         parallelizeTestsExecution(false);
     }
 
     /**
+     * Executes 10 times in parallel the following:
+     * <p>
      * Executes 2 parallel stream transactions with exclusive lock on the same collection "c", which has 2 shards. Each
      * transaction inserts one document to different shard. Then each transaction counts the collection documents.
      * <p>
@@ -102,19 +111,22 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * <p>
      * - 3.6.12: test timed out after 15000 milliseconds due to deadlock on collection.count()
      */
-    @Test(timeout = 120_000)
+    @Test(timeout = 15_000)
     public void parallelExclusiveStreamTransactionsCounting() throws ExecutionException, InterruptedException {
         System.out.println("===================================");
         parallelizeTestsExecution(true);
     }
 
     private void parallelizeTestsExecution(boolean counting) throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 7));
+        assumeTrue(isCluster());
+
         CompletableFuture
                 .allOf(
-                        IntStream.range(0, 50)
+                        IntStream.range(0, 10)
                                 .mapToObj(i -> doParallelExclusiveStreamTransactions(counting))
                                 .collect(Collectors.toList())
-                                .toArray(new CompletableFuture[50])
+                                .toArray(new CompletableFuture[10])
                 )
                 .get();
 
@@ -128,8 +140,6 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     }
 
     private CompletableFuture<Void> doParallelExclusiveStreamTransactions(boolean counting) {
-        assumeTrue(isAtLeastVersion(3, 7));
-        assumeTrue(isCluster());
 
         final String colName = "col-" + UUID.randomUUID().toString();
 
@@ -160,8 +170,12 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
     }
 
     private void executeTask(String idx, BaseDocument d, String colName, boolean counting) {
+        runningCountByCollection.computeIfAbsent(colName, k -> new LongAdder());
+        committedCountByCollection.computeIfAbsent(colName, k -> new LongAdder());
+
         LOGGER.info("{}: beginning tx", idx);
         final String tx = db.beginStreamTransaction(new StreamTransactionOptions().exclusiveCollections(colName)).getId();
+        runningCountByCollection.get(colName).increment();
         txs.add(tx);
         LOGGER.info("{}: begun tx #{}", idx, tx);
 
@@ -180,32 +194,22 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
             Long count = db.collection(colName).count(new CollectionCountOptions().streamTransactionId(tx)).getCount();
             LOGGER.info("{}: counted {} collection documents", idx, count);
 
-            long committedTxs = txs.stream()
-                    .map(db::getStreamTransaction)
-                    .map(StreamTransactionEntity::getStatus)
-                    .filter(StreamTransactionStatus.committed::equals)
-                    .count();
-
-            if (count != 1 + committedTxs) {
-                StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
-                throw new RuntimeException("tx #" + tx + " [status: " + status + "]: transaction sees wrong count: " + count);
+            if (count != 1 + committedCountByCollection.get(colName).intValue()) {
+                throw new RuntimeException("tx #" + tx + ": transaction sees wrong count: " + count);
             }
         }
 
         // expect exactly 1 transaction running
-        // FIXME: Count the number transactions on the client side, counting the threads within this method grouped by colName
-//        LOGGER.info("{}: tx status: {}", idx, db.getStreamTransaction(tx).getStatus());
-//        long runningTransactions = txs.stream()
-//                .map(db::getStreamTransaction)
-//                .map(StreamTransactionEntity::getStatus)
-//                .filter(StreamTransactionStatus.running::equals)
-//                .count();
-//        if (runningTransactions != 1) {
-//            throw new RuntimeException("Expected exactly 1 transaction running, but got: " + runningTransactions);
-//        }
+        LOGGER.info("{}: tx status: {}", idx, db.getStreamTransaction(tx).getStatus());
+        int runningTransactions = runningCountByCollection.get(colName).intValue();
+        if (runningTransactions != 1) {
+            throw new RuntimeException("Expected exactly 1 transaction running, but got: " + runningTransactions);
+        }
 
         LOGGER.info("{}: committing", idx);
         db.commitStreamTransaction(tx);
+        runningCountByCollection.get(colName).decrement();
+        committedCountByCollection.get(colName).increment();
         LOGGER.info("{}: committed", idx);
 
     }
