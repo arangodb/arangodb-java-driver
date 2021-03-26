@@ -41,6 +41,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,10 +56,10 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StreamTransactionExclusiveParallelTest.class);
 
-    private final String colName = "col-" + UUID.randomUUID().toString();
-
     // transactions created during the test
     private final ConcurrentSkipListSet<String> txs = new ConcurrentSkipListSet<>();
+
+    private final ExecutorService es = Executors.newFixedThreadPool(200);
 
     @BeforeClass
     public static void init() {
@@ -86,9 +88,26 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * <p>
      * - 3.6.12: Expected exactly 1 transaction running, but got: 2 (after having both inserted a document)
      */
-    @Test(timeout = 15_000)
+    @Test(timeout = 120_000)
     public void parallelExclusiveStreamTransactions() throws ExecutionException, InterruptedException {
         doParallelExclusiveStreamTransactions(false);
+
+        CompletableFuture
+                .allOf(
+                        IntStream.range(0, 100)
+                                .mapToObj(i -> doParallelExclusiveStreamTransactions(false))
+                                .collect(Collectors.toList())
+                                .toArray(new CompletableFuture[100])
+                )
+                .get();
+
+        // expect that all txs are committed
+        for (String tx : txs) {
+            StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
+            assertThat(status, is(StreamTransactionStatus.committed));
+        }
+
+        es.shutdown();
     }
 
     /**
@@ -99,14 +118,33 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      * <p>
      * - 3.6.12: test timed out after 15000 milliseconds due to deadlock on collection.count()
      */
-    @Test(timeout = 15_000)
+    @Test(timeout = 120_000)
     public void parallelExclusiveStreamTransactionsCounting() throws ExecutionException, InterruptedException {
-        doParallelExclusiveStreamTransactions(true);
+        doParallelExclusiveStreamTransactions(false);
+
+        CompletableFuture
+                .allOf(
+                        IntStream.range(0, 100)
+                                .mapToObj(i -> doParallelExclusiveStreamTransactions(true))
+                                .collect(Collectors.toList())
+                                .toArray(new CompletableFuture[100])
+                )
+                .get();
+
+        // expect that all txs are committed
+        for (String tx : txs) {
+            StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
+            assertThat(status, is(StreamTransactionStatus.committed));
+        }
+
+        es.shutdown();
     }
 
-    private void doParallelExclusiveStreamTransactions(boolean counting) throws InterruptedException, ExecutionException {
+    private CompletableFuture<Void> doParallelExclusiveStreamTransactions(boolean counting) {
         assumeTrue(isAtLeastVersion(3, 7));
         assumeTrue(isCluster());
+
+        final String colName = "col-" + UUID.randomUUID().toString();
 
         // create collection with 2 shards
         final ArangoCollection col = db.collection(colName);
@@ -127,23 +165,14 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
         final BaseDocument d2 = d;
 
         // run actual test tasks with 2 threads in parallel
-        ExecutorService es = Executors.newFixedThreadPool(10);
-        CompletableFuture
+        return CompletableFuture
                 .allOf(
-                        CompletableFuture.runAsync(() -> executeTask(1, d1, counting), es),
-                        CompletableFuture.runAsync(() -> executeTask(2, d2, counting), es)
-                )
-                .get();
-        es.shutdown();
-
-        // expect that all txs are committed
-        for (String tx : txs) {
-            StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
-            assertThat(status, is(StreamTransactionStatus.committed));
-        }
+                        CompletableFuture.runAsync(() -> executeTask("1-" + colName, d1, colName, counting), es),
+                        CompletableFuture.runAsync(() -> executeTask("2-" + colName, d2, colName, counting), es)
+                );
     }
 
-    private void executeTask(int idx, BaseDocument d, boolean counting) {
+    private void executeTask(String idx, BaseDocument d, String colName, boolean counting) {
         LOGGER.info("{}: beginning tx", idx);
         final String tx = db.beginStreamTransaction(new StreamTransactionOptions().exclusiveCollections(colName)).getId();
         txs.add(tx);
@@ -177,21 +206,16 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
         }
 
         // expect exactly 1 transaction running
-        LOGGER.info("{}: tx status: {}", idx, db.getStreamTransaction(tx).getStatus());
-        long runningTransactions = txs.stream()
-                .map(db::getStreamTransaction)
-                .map(StreamTransactionEntity::getStatus)
-                .filter(StreamTransactionStatus.running::equals)
-                .count();
-        if (runningTransactions != 1) {
-            throw new RuntimeException("Expected exactly 1 transaction running, but got: " + runningTransactions);
-        }
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // FIXME: Count the number transactions on the client side, counting the threads within this method grouped by colName
+//        LOGGER.info("{}: tx status: {}", idx, db.getStreamTransaction(tx).getStatus());
+//        long runningTransactions = txs.stream()
+//                .map(db::getStreamTransaction)
+//                .map(StreamTransactionEntity::getStatus)
+//                .filter(StreamTransactionStatus.running::equals)
+//                .count();
+//        if (runningTransactions != 1) {
+//            throw new RuntimeException("Expected exactly 1 transaction running, but got: " + runningTransactions);
+//        }
 
         LOGGER.info("{}: committing", idx);
         db.commitStreamTransaction(tx);
