@@ -90,24 +90,8 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      */
     @Test(timeout = 120_000)
     public void parallelExclusiveStreamTransactions() throws ExecutionException, InterruptedException {
-        doParallelExclusiveStreamTransactions(false);
-
-        CompletableFuture
-                .allOf(
-                        IntStream.range(0, 100)
-                                .mapToObj(i -> doParallelExclusiveStreamTransactions(false))
-                                .collect(Collectors.toList())
-                                .toArray(new CompletableFuture[100])
-                )
-                .get();
-
-        // expect that all txs are committed
-        for (String tx : txs) {
-            StreamTransactionStatus status = db.getStreamTransaction(tx).getStatus();
-            assertThat(status, is(StreamTransactionStatus.committed));
-        }
-
-        es.shutdown();
+        System.out.println("===================================");
+        parallelizeTestsExecution(false);
     }
 
     /**
@@ -120,14 +104,17 @@ public class StreamTransactionExclusiveParallelTest extends BaseTest {
      */
     @Test(timeout = 120_000)
     public void parallelExclusiveStreamTransactionsCounting() throws ExecutionException, InterruptedException {
-        doParallelExclusiveStreamTransactions(false);
+        System.out.println("===================================");
+        parallelizeTestsExecution(true);
+    }
 
+    private void parallelizeTestsExecution(boolean counting) throws ExecutionException, InterruptedException {
         CompletableFuture
                 .allOf(
-                        IntStream.range(0, 100)
-                                .mapToObj(i -> doParallelExclusiveStreamTransactions(true))
+                        IntStream.range(0, 50)
+                                .mapToObj(i -> doParallelExclusiveStreamTransactions(counting))
                                 .collect(Collectors.toList())
-                                .toArray(new CompletableFuture[100])
+                                .toArray(new CompletableFuture[50])
                 )
                 .get();
 
