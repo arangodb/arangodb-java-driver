@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.10.0] - 2021-03-27
+
+- closing VST connection after 3 consecutive keepAlive failures (#ES-837)
+
 ## [6.9.1] - 2021-03-23
 
 - fixed `acquireHostList` in asynchronous driver (#377)
