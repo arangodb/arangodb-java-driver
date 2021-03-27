@@ -72,6 +72,8 @@ public abstract class VstConnection<T> implements Connection {
     private final Long ttl;
 
     private final Integer keepAliveInterval;
+    private int keepAliveFailCounter = 0;
+
     private final Boolean useSsl;
     private final SSLContext sslContext;
 
@@ -139,8 +141,15 @@ public abstract class VstConnection<T> implements Connection {
     private void keepAlive() {
         try {
             doKeepAlive();
+            keepAliveFailCounter = 0;
         } catch (Exception e) {
             LOGGER.error("Got exception while performing keepAlive request:", e);
+            keepAliveFailCounter++;
+            if (keepAliveFailCounter >= 3) {
+                LOGGER.error("KeepAlive request failed consecutively for 3 times, closing connection now...");
+                messageStore.clear(new IOException("Connection unresponsive!"));
+                close();
+            }
         }
     }
 
