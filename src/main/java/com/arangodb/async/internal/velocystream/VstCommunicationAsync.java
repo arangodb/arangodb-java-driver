@@ -21,8 +21,11 @@
 package com.arangodb.async.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.ErrorEntity;
+import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
@@ -58,23 +61,36 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
             final Message message = createMessage(request);
             send(message, connection).whenComplete((m, ex) -> {
                 if (m != null) {
+                    final Response response;
                     try {
-                        final Response response = createResponse(m);
-                        if (response.getResponseCode() >= 300) {
-                            if (response.getBody() != null) {
-                                final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
-                                rfuture.completeExceptionally(new ArangoDBException(errorEntity));
-                            } else {
-                                rfuture.completeExceptionally(new ArangoDBException(
-                                        String.format("Response Code: %s", response.getResponseCode()), response.getResponseCode()));
-                            }
-                        } else {
-                            rfuture.complete(response);
-                        }
+                        response = createResponse(m);
                     } catch (final VPackParserException e) {
                         LOGGER.error(e.getMessage(), e);
                         rfuture.completeExceptionally(e);
+                        return;
                     }
+
+                    try {
+                        checkError(response);
+                    } catch (final ArangoDBRedirectException e) {
+                        final String location = e.getLocation();
+                        final HostDescription redirectHost = HostUtils.createFromLocation(location);
+                        hostHandler.closeCurrentOnError();
+                        hostHandler.fail();
+                        execute(request, new HostHandle().setHost(redirectHost))
+                                .whenComplete((v, err) -> {
+                                    if (v != null) {
+                                        rfuture.complete(v);
+                                    } else if (ex != null) {
+                                        rfuture.completeExceptionally(ex);
+                                    } else {
+                                        rfuture.cancel(true);
+                                    }
+                                });
+                    } catch (ArangoDBException e) {
+                        rfuture.completeExceptionally(e);
+                    }
+                    rfuture.complete(response);
                 } else if (ex != null) {
                     LOGGER.error(ex.getMessage(), ex);
                     rfuture.completeExceptionally(ex);
