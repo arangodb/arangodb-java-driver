@@ -81,12 +81,13 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
                                 .whenComplete((v, err) -> {
                                     if (v != null) {
                                         rfuture.complete(v);
-                                    } else if (ex != null) {
-                                        rfuture.completeExceptionally(ex);
+                                    } else if (err != null) {
+                                        rfuture.completeExceptionally(err);
                                     } else {
                                         rfuture.cancel(true);
                                     }
                                 });
+                        return;
                     } catch (ArangoDBException e) {
                         rfuture.completeExceptionally(e);
                     }
