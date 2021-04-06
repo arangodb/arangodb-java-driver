@@ -410,9 +410,10 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
-    public void getDocumentDirtyRead() {
+    public void getDocumentDirtyRead() throws InterruptedException {
         final BaseDocument doc = new BaseDocument();
-        collection.insertDocument(doc);
+        collection.insertDocument(doc, new DocumentCreateOptions());
+        Thread.sleep(2000);
         final VPackSlice document = collection
                 .getDocument(doc.getKey(), VPackSlice.class, new DocumentReadOptions().allowDirtyRead(true));
         assertThat(document, is(notNullValue()));
