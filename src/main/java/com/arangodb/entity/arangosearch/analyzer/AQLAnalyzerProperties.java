@@ -37,6 +37,12 @@ public class AQLAnalyzerProperties {
     private Integer batchSize;
     private Long memoryLimit;
 
+    private ReturnType returnType;
+
+    public enum ReturnType {
+        string, number, bool
+    }
+
     /**
      * @return AQL query to be executed
      */
@@ -108,16 +114,25 @@ public class AQLAnalyzerProperties {
         this.memoryLimit = memoryLimit;
     }
 
+    public ReturnType getReturnType() {
+        return returnType;
+    }
+
+    public void setReturnType(ReturnType returnType) {
+        this.returnType = returnType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AQLAnalyzerProperties that = (AQLAnalyzerProperties) o;
-        return Objects.equals(queryString, that.queryString) && Objects.equals(collapsePositions, that.collapsePositions) && Objects.equals(keepNull, that.keepNull) && Objects.equals(batchSize, that.batchSize) && Objects.equals(memoryLimit, that.memoryLimit);
+        return Objects.equals(queryString, that.queryString) && Objects.equals(collapsePositions, that.collapsePositions) && Objects.equals(keepNull, that.keepNull) && Objects.equals(batchSize, that.batchSize) && Objects.equals(memoryLimit, that.memoryLimit) && returnType == that.returnType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(queryString, collapsePositions, keepNull, batchSize, memoryLimit);
+        return Objects.hash(queryString, collapsePositions, keepNull, batchSize, memoryLimit, returnType);
     }
+
 }

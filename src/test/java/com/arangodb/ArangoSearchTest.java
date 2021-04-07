@@ -865,6 +865,7 @@ public class ArangoSearchTest extends BaseTest {
         properties.setKeepNull(false);
         properties.setMemoryLimit(2200L);
         properties.setQueryString("RETURN SOUNDEX(@param)");
+        properties.setReturnType(AQLAnalyzerProperties.ReturnType.string);
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
