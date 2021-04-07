@@ -53,6 +53,7 @@ import com.arangodb.entity.arangosearch.analyzer.NormAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.velocypack.VPackDeserializer;
@@ -114,6 +115,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, NormAnalyzer.class);
             case pipeline:
                 return context.deserialize(vpack, PipelineAnalyzer.class);
+            case stopwords:
+                return context.deserialize(vpack, StopwordsAnalyzer.class);
             case aql:
                 return context.deserialize(vpack, AQLAnalyzer.class);
             case geojson:

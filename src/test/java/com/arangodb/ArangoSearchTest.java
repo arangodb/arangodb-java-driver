@@ -55,6 +55,8 @@ import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzerCase;
 import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzerProperties;
 import com.arangodb.entity.arangosearch.analyzer.StreamType;
 import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties;
@@ -853,6 +855,30 @@ public class ArangoSearchTest extends BaseTest {
         pipelineAnalyzer.setFeatures(features);
 
         createGetAndDeleteTypedAnalyzer(pipelineAnalyzer);
+    }
+
+    @Test
+    public void stopwordsAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        StopwordsAnalyzerProperties properties = new StopwordsAnalyzerProperties()
+                .addStopwordAsHex("616e64")
+                .addStopwordAsString("the");
+
+        assertThat(properties.getStopwords(), hasItem("616e64"));
+        assertThat(properties.getStopwords(), hasItem("746865"));
+
+        StopwordsAnalyzer analyzer = new StopwordsAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID().toString());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(analyzer);
     }
 
     @Test
