@@ -486,6 +486,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogLevel() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogLevelEntity logLevel = arangoDB.getLogLevel();
         assertThat(logLevel, is(notNullValue()));
         assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.INFO));
@@ -493,6 +494,7 @@ public class ArangoDBTest {
 
     @Test
     public void setLogLevel() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogLevelEntity entity = new LogLevelEntity();
         try {
             entity.setAgency(LogLevelEntity.LogLevel.ERROR);
