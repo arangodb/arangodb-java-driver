@@ -395,6 +395,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogs() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
         assertThat(logs, is(notNullValue()));
         assertThat(logs.getTotalAmount(), greaterThan(0L));
@@ -406,6 +407,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsUpto() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logsUpto = arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING));
         assertThat(logsUpto, is(notNullValue()));
         assertThat(logsUpto.getLevel(), not(contains(LogLevel.INFO)));
@@ -413,6 +415,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsLevel() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logsInfo = arangoDB.getLogs(new LogOptions().level(LogLevel.INFO));
         assertThat(logsInfo, is(notNullValue()));
         assertThat(logsInfo.getLevel(), everyItem(is(LogLevel.INFO)));
@@ -420,6 +423,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsStart() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
         assertThat(logs.getLid(), not(empty()));
         final LogEntity logsStart = arangoDB.getLogs(new LogOptions().start(logs.getLid().get(0) + 1));
@@ -429,6 +433,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSize() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
         assertThat(logs.getLid().size(), greaterThan(0));
         final LogEntity logsSize = arangoDB.getLogs(new LogOptions().size(logs.getLid().size() - 1));
@@ -438,6 +443,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsOffset() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
         assertThat(logs.getTotalAmount(), greaterThan(0L));
         final LogEntity logsOffset = arangoDB.getLogs(new LogOptions().offset(1));
@@ -447,6 +453,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSearch() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
         final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB));
         assertThat(logsSearch, is(notNullValue()));
@@ -455,6 +462,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSortAsc() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.asc));
         assertThat(logs, is(notNullValue()));
         long lastId = -1;
@@ -466,6 +474,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSortDesc() {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.desc));
         assertThat(logs, is(notNullValue()));
         long lastId = Long.MAX_VALUE;
