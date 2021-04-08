@@ -175,7 +175,7 @@ public class ArangoDBTest {
     }
 
     @Test
-    public void createDatabaseWithUsers() {
+    public void createDatabaseWithUsers() throws InterruptedException {
         final String dbName = "testDB-" + UUID.randomUUID().toString();
         final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
@@ -200,6 +200,9 @@ public class ArangoDBTest {
         UserEntity retrievedUser = retrievedUserOptional.get();
         assertThat(retrievedUser.getActive(), is(true));
         assertThat(retrievedUser.getExtra(), is(extra));
+
+        // needed for active-failover tests only
+        Thread.sleep(1_000);
 
         ArangoDB arangoDBTestUser = new ArangoDB.Builder()
                 .user("testUser")
