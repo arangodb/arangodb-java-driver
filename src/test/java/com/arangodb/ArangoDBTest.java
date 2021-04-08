@@ -20,9 +20,23 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.*;
-import com.arangodb.model.*;
+import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.License;
+import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
+import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.UserEntity;
+import com.arangodb.model.DBCreateOptions;
+import com.arangodb.model.DatabaseOptions;
+import com.arangodb.model.DatabaseUsersOptions;
+import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.model.UserCreateOptions;
+import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
@@ -36,7 +50,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -467,6 +489,121 @@ public class ArangoDBTest {
         assertThat(logs, is(notNullValue()));
         long lastId = Long.MAX_VALUE;
         for (final Long id : logs.getLid()) {
+            assertThat(lastId, greaterThan(id));
+            lastId = id;
+        }
+    }
+
+    @Test
+    public void getLogEntries() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null);
+        assertThat(logs, is(notNullValue()));
+        assertThat(logs.getTotal(), greaterThan(0L));
+        assertThat((long) logs.getMessages().size(), is(logs.getTotal()));
+    }
+
+    @Test
+    public void getLogEntriesUpto() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logsUpto = arangoDB.getLogEntries(new LogOptions().upto(LogLevel.WARNING));
+        assertThat(logsUpto, is(notNullValue()));
+        assertThat(
+                logsUpto.getMessages().stream()
+                        .map(LogEntriesEntity.Message::getLevel)
+                        .noneMatch("INFO"::equals),
+                is(true)
+        );
+    }
+
+    @Test
+    public void getLogEntriesLevel() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logsInfo = arangoDB.getLogEntries(new LogOptions().level(LogLevel.INFO));
+        assertThat(logsInfo, is(notNullValue()));
+        assertThat(
+                logsInfo.getMessages().stream()
+                        .map(LogEntriesEntity.Message::getLevel)
+                        .allMatch("INFO"::equals),
+                is(true)
+        );
+    }
+
+    @Test
+    public void getLogEntriesStart() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null);
+        final Long firstId = logs.getMessages().get(0).getId();
+        final LogEntriesEntity logsStart = arangoDB.getLogEntries(new LogOptions().start(firstId + 1));
+        assertThat(logsStart, is(notNullValue()));
+        assertThat(
+                logsStart.getMessages().stream()
+                        .map(LogEntriesEntity.Message::getId)
+                        .filter(firstId::equals)
+                        .count(),
+                is(0L));
+    }
+
+    @Test
+    public void getLogEntriesSize() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null);
+        int count = logs.getMessages().size();
+        assertThat(count, greaterThan(0));
+        final LogEntriesEntity logsSize = arangoDB.getLogEntries(new LogOptions().size(count - 1));
+        assertThat(logsSize, is(notNullValue()));
+        assertThat(logsSize.getMessages().size(), is(count - 1));
+    }
+
+    @Test
+    public void getLogEntriesOffset() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null);
+        assertThat(logs.getTotal(), greaterThan(0L));
+        Long firstId = logs.getMessages().get(0).getId();
+        final LogEntriesEntity logsOffset = arangoDB.getLogEntries(new LogOptions().offset(1));
+        assertThat(logsOffset, is(notNullValue()));
+        assertThat(logsOffset.getMessages().stream()
+                        .map(LogEntriesEntity.Message::getId)
+                        .filter(firstId::equals)
+                        .count()
+                , is(0L));
+    }
+
+    @Test
+    public void getLogEntriesSearch() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null);
+        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(BaseTest.TEST_DB));
+        assertThat(logsSearch, is(notNullValue()));
+        assertThat(logs.getTotal(), greaterThan(logsSearch.getTotal()));
+    }
+
+    @Test
+    public void getLogEntriesSortAsc() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(new LogOptions().sort(SortOrder.asc));
+        assertThat(logs, is(notNullValue()));
+        long lastId = -1;
+        List<Long> ids = logs.getMessages().stream()
+                .map(LogEntriesEntity.Message::getId)
+                .collect(Collectors.toList());
+        for (final Long id : ids) {
+            assertThat(id, greaterThan(lastId));
+            lastId = id;
+        }
+    }
+
+    @Test
+    public void getLogEntriesSortDesc() {
+        assumeTrue(isAtLeastVersion(3,8));
+        final LogEntriesEntity logs = arangoDB.getLogEntries(new LogOptions().sort(SortOrder.desc));
+        assertThat(logs, is(notNullValue()));
+        long lastId = Long.MAX_VALUE;
+        List<Long> ids = logs.getMessages().stream()
+                .map(LogEntriesEntity.Message::getId)
+                .collect(Collectors.toList());
+        for (final Long id : ids) {
             assertThat(lastId, greaterThan(id));
             lastId = id;
         }

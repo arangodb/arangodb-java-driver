@@ -29,6 +29,7 @@ import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -287,6 +288,11 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     CompletableFuture<LogEntity> getLogs(final LogOptions options);
+
+    /**
+     * FIXME: add doc
+     */
+    CompletableFuture<LogEntriesEntity> getLogEntries(final LogOptions options);
 
     /**
      * Returns the server's current loglevel settings.

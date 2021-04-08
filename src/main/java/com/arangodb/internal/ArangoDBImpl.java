@@ -235,6 +235,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
+    public LogEntriesEntity getLogEntries(final LogOptions options) throws ArangoDBException {
+        return executor.execute(getLogEntriesRequest(options), LogEntriesEntity.class);
+    }
+
+    @Override
     public LogLevelEntity getLogLevel() throws ArangoDBException {
         return executor.execute(getLogLevelRequest(), LogLevelEntity.class);
     }

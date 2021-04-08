@@ -24,6 +24,7 @@ import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -890,6 +891,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     LogEntity getLogs(LogOptions options) throws ArangoDBException;
+
+    /**
+     * FIXME: add doc
+     */
+    LogEntriesEntity getLogEntries(LogOptions options) throws ArangoDBException;
 
     /**
      * Returns the server's current loglevel settings.
