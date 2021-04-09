@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- fixed active failover behavior for the asynchronous driver 
+
 ## [6.10.0] - 2021-03-27
 
 - closing VST connection after 3 consecutive keepAlive failures (#ES-837)

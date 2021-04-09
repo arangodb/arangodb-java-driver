@@ -169,7 +169,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         doc.getProperties().clear();
         doc.addAttribute("test", "bar");
         vertexCollection1.replaceVertex(createdVertex.getKey(), doc,
-                new VertexReplaceOptions().streamTransactionId(tx.getId()));
+                new VertexReplaceOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the vertex has not been replaced from outside the tx
         assertThat(vertexCollection1.getVertex(createdVertex.getKey(), BaseDocument.class, null).get()
@@ -205,7 +205,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         // update vertex from within the tx
         doc.getProperties().clear();
         doc.addAttribute("test", "bar");
-        vertexCollection1.updateVertex(createdDoc.getKey(), doc, new VertexUpdateOptions().streamTransactionId(tx.getId()));
+        vertexCollection1.updateVertex(createdDoc.getKey(), doc, new VertexUpdateOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the vertex has not been updated from outside the tx
         assertThat(vertexCollection1.getVertex(createdDoc.getKey(), BaseDocument.class, null).get()
@@ -322,7 +322,7 @@ public class StreamTransactionGraphTest extends BaseTest {
         doc.getProperties().clear();
         doc.addAttribute("test", "bar");
         edgeCollection.replaceEdge(createdEdge.getKey(), doc,
-                new EdgeReplaceOptions().streamTransactionId(tx.getId()));
+                new EdgeReplaceOptions().streamTransactionId(tx.getId())).get();
 
         // assert that the edge has not been replaced from outside the tx
         assertThat(edgeCollection.getEdge(createdEdge.getKey(), BaseEdgeDocument.class, null).get()
