@@ -901,7 +901,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      *         Additional options, can be null
      * @return the log messages
      *
-     * @see <a href= "https://www.arangodb.com/docs/devel/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
      */
