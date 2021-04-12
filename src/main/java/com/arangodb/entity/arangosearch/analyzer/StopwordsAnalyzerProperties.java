@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
- *
  * @author Michele Rastelli
  */
 public class StopwordsAnalyzerProperties {
@@ -46,6 +44,9 @@ public class StopwordsAnalyzerProperties {
 
     private List<String> stopwords;
 
+    /**
+     * @return array of hex-encoded strings that describe the tokens to be discarded.
+     */
     public List<String> getStopwords() {
         return stopwords;
     }

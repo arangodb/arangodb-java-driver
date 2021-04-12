@@ -25,8 +25,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
- *
  * @author Michele Rastelli
  */
 public class GeoPointAnalyzerProperties {

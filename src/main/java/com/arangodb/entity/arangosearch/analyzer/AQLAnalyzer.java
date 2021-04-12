@@ -26,9 +26,11 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
+ * An Analyzer capable of running a restricted AQL query to perform data manipulation / filtering.
  *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#aql">API Documentation</a>
+ * @since ArangoDB 3.8
  */
 public class AQLAnalyzer extends SearchAnalyzer {
     public AQLAnalyzer() {

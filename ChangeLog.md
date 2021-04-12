@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added support for ArangoSearch `AQL`, `Pipeline`, `Stopwords`, `GeoJSON`, `GeoPoint` analyzers
 - fixed performance issue when consuming big cursor batches in stream mode (arangodb/arangodb#13476) 
 
 ## [6.9.0] - 2021-02-04

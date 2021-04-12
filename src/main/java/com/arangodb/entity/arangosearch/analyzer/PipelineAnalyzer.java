@@ -26,9 +26,12 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
+ * An Analyzer capable of chaining effects of multiple Analyzers into one. The pipeline is a list of Analyzers, where
+ * the output of an Analyzer is passed to the next for further processing.
  *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#pipeline">API Documentation</a>
+ * @since ArangoDB 3.8
  */
 public class PipelineAnalyzer extends SearchAnalyzer {
 

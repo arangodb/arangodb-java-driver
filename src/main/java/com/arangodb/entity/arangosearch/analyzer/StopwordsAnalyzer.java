@@ -26,9 +26,11 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
+ * An Analyzer capable of removing specified tokens from the input.
  *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stopwords">API Documentation</a>
+ * @since ArangoDB 3.8
  */
 public class StopwordsAnalyzer extends SearchAnalyzer {
     public StopwordsAnalyzer() {

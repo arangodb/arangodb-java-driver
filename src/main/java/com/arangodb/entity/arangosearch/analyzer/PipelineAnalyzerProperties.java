@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
- *
  * @author Michele Rastelli
  */
 public class PipelineAnalyzerProperties {
@@ -45,6 +43,9 @@ public class PipelineAnalyzerProperties {
         return this;
     }
 
+    /**
+     * @return an array of Analyzer with type and properties attributes
+     */
     public List<SearchAnalyzer> getPipeline() {
         return pipeline;
     }

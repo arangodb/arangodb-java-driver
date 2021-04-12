@@ -25,8 +25,6 @@ package com.arangodb.entity.arangosearch.analyzer;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
- *
  * @author Michele Rastelli
  */
 public class AQLAnalyzerProperties {
@@ -114,6 +112,10 @@ public class AQLAnalyzerProperties {
         this.memoryLimit = memoryLimit;
     }
 
+    /**
+     * @return data type of the returned tokens. If the indicated type does not match the actual type then an implicit
+     * type conversion is applied.
+     */
     public ReturnType getReturnType() {
         return returnType;
     }

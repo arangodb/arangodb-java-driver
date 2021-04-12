@@ -26,9 +26,12 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
+ * An Analyzer capable of breaking up a GeoJSON object into a set of indexable tokens for further usage with
+ * ArangoSearch Geo functions.
  *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#geojson">API Documentation</a>
+ * @since ArangoDB 3.8
  */
 public class GeoJSONAnalyzer extends SearchAnalyzer {
     public GeoJSONAnalyzer() {

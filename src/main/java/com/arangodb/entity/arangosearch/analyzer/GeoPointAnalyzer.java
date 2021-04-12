@@ -26,9 +26,12 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
+ * An Analyzer capable of breaking up JSON object describing a coordinate into a set of indexable tokens for further
+ * usage with ArangoSearch Geo functions.
  *
  * @author Michele Rastelli
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#geopoint">API Documentation</a>
+ * @since ArangoDB 3.8
  */
 public class GeoPointAnalyzer extends SearchAnalyzer {
     public GeoPointAnalyzer() {

@@ -24,8 +24,6 @@ package com.arangodb.entity.arangosearch.analyzer;
 import java.util.Objects;
 
 /**
- * FIXME: add doc
- *
  * @author Michele Rastelli
  */
 public class GeoJSONAnalyzerProperties {
