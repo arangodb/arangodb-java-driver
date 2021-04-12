@@ -105,6 +105,7 @@ public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
      * @param estimates
      *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
      *         true}
+     * @since ArangoDB 3.8
      */
     public HashIndexOptions estimates(final Boolean estimates) {
         this.estimates = estimates;

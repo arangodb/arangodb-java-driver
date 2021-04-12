@@ -92,6 +92,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
      * @param estimates
      *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
      *         true}
+     * @since ArangoDB 3.8
      */
     public PersistentIndexOptions estimates(final Boolean estimates) {
         this.estimates = estimates;

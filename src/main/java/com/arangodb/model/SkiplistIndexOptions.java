@@ -105,6 +105,7 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
      * @param estimates
      *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
      *         true}
+     * @since ArangoDB 3.8
      */
     public SkiplistIndexOptions estimates(final Boolean estimates) {
         this.estimates = estimates;
