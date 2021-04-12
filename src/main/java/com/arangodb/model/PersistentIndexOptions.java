@@ -89,7 +89,9 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     }
 
     /**
-     * FIXME: add doc
+     * @param estimates
+     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
+     *         true}
      */
     public PersistentIndexOptions estimates(final Boolean estimates) {
         this.estimates = estimates;

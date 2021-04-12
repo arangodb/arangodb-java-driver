@@ -102,7 +102,9 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
     }
 
     /**
-     * FIXME: add doc
+     * @param estimates
+     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
+     *         true}
      */
     public SkiplistIndexOptions estimates(final Boolean estimates) {
         this.estimates = estimates;

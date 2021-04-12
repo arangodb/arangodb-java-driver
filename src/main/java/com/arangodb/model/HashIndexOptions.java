@@ -102,7 +102,9 @@ public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
     }
 
     /**
-     * FIXME: add doc
+     * @param estimates
+     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
+     *         true}
      */
     public HashIndexOptions estimates(final Boolean estimates) {
         this.estimates = estimates;
