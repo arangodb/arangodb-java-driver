@@ -28,6 +28,7 @@ import com.arangodb.Predicate;
 /**
  * @author Mark Vollmary
  */
+@Deprecated
 public class ArangoFilterIterable<T> extends AbstractArangoIterable<T> implements ArangoIterable<T> {
 
     private final ArangoIterable<T> iterable;
