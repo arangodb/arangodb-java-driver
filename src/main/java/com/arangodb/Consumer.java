@@ -23,7 +23,9 @@ package com.arangodb;
 /**
  * @param <T> the type of the input to the operation
  * @author Mark Vollmary
+ * @deprecated Use {@link java.util.function.Consumer} instead.
  */
+@Deprecated
 public interface Consumer<T> {
 
     /**

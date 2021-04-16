@@ -44,6 +44,7 @@ import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializerImpl;
 import com.arangodb.internal.util.DefaultArangoSerialization;
 import com.arangodb.internal.velocystream.VstCommunicationSync;
+import com.arangodb.internal.velocystream.VstConnectionFactorySync;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
@@ -441,6 +442,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         /**
          * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
          * server with active failover.
+         * In case of Active-Failover deployment set to {@code true} to enable automatic master discovery.
          *
          * <p>
          * The host list will be used for failover and load balancing.
@@ -456,6 +458,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
 
         /**
          * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
+         * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
+         * would be the default.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default: {@link LoadBalancingStrategy#NONE}
          * @return {@link ArangoDBAsync.Builder}
@@ -775,12 +779,22 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
 
             final int max = maxConnections != null ? Math.max(1, maxConnections)
                     : ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
-            final ConnectionFactory connectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
+            final ConnectionFactory syncConnectionFactory = new VstConnectionFactorySync(host, timeout, connectionTtl,
                     keepAliveInterval, useSsl, sslContext);
-            final HostResolver hostResolver = createHostResolver(createHostList(max, connectionFactory), max,
-                    connectionFactory);
-            final HostHandler hostHandler = createHostHandler(hostResolver);
-            return new ArangoDBAsyncImpl(asyncBuilder(hostHandler), util, syncBuilder(hostHandler), hostResolver,
+            final ConnectionFactory asyncConnectionFactory = new VstConnectionFactoryAsync(host, timeout, connectionTtl,
+                    keepAliveInterval, useSsl, sslContext);
+            final HostResolver syncHostResolver = createHostResolver(createHostList(max, syncConnectionFactory), max,
+                    syncConnectionFactory);
+            final HostResolver asyncHostResolver = createHostResolver(createHostList(max, asyncConnectionFactory), max,
+                    asyncConnectionFactory);
+            final HostHandler syncHostHandler = createHostHandler(syncHostResolver);
+            final HostHandler asyncHostHandler = createHostHandler(asyncHostResolver);
+            return new ArangoDBAsyncImpl(
+                    asyncBuilder(asyncHostHandler),
+                    util,
+                    syncBuilder(syncHostHandler),
+                    asyncHostResolver,
+                    syncHostResolver,
                     new ArangoContext());
         }
 

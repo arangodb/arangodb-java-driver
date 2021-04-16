@@ -79,7 +79,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         for (final Connection connection : connections) {
             connection.close();
         }

@@ -7,7 +7,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [Unreleased]
 
 - added support for index estimates (ArangoDB v3.8)
-- fixed performance issue when consuming big cursor batches in stream mode (arangodb/arangodb#13476) 
+- added support for ArangoSearch `AQL`, `Pipeline`, `Stopwords`, `GeoJSON`, `GeoPoint` analyzers
+- fixed active failover behavior for the asynchronous driver 
+- deprecated `ArangoIterable` methods in favour of Java 8 Stream equivalents
+
+## [6.10.0] - 2021-03-27
+
+- closing VST connection after 3 consecutive keepAlive failures (#ES-837)
+
+## [6.9.1] - 2021-03-23
+
+- fixed `acquireHostList` in asynchronous driver (#377)
+- fixed exception swallowing in `ArangoDatabaseAsync#exists`
+- fixed performance issue when consuming big AQL cursor batches in stream mode (arangodb/arangodb#13476) 
 
 ## [6.9.0] - 2021-02-04
 
