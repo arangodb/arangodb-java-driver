@@ -6,11 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.11.0] - 2021-04-16
+
 - added support for getting db log entries via `GET /_admin/log/entries` (ArangoDB v3.8)
 - added support for index estimates (ArangoDB v3.8)
-- added support for ArangoSearch `AQL`, `Pipeline`, `Stopwords`, `GeoJSON`, `GeoPoint` analyzers
-- fixed active failover behavior for the asynchronous driver 
-- deprecated `ArangoIterable` methods in favour of Java 8 Stream equivalents
+- added support for ArangoSearch `AQL`, `Pipeline`, `Stopwords`, `GeoJSON`, `GeoPoint` analyzers (ArangoDB v3.8)
+- fixed active failover behavior for the asynchronous driver (#381)
+- deprecated `ArangoIterable` methods in favour of Java 8 Stream equivalents (#382)
 
 ## [6.10.0] - 2021-03-27
 
