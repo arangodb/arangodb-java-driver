@@ -27,11 +27,18 @@ import com.arangodb.Predicate;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Mark Vollmary
  */
 public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
+
+    @Override
+    public Stream<T> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 
     @Override
     public <R> ArangoIterable<R> map(final Function<? super T, ? extends R> mapper) {

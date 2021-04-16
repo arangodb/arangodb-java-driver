@@ -27,15 +27,28 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.util.ArangoSerialization;
+import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static com.arangodb.internal.util.ArangoSerializationFactory.Serializer.CUSTOM;
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,9 +62,40 @@ import static org.hamcrest.Matchers.is;
 public class CustomSerdeTest {
 
     private static final String COLLECTION_NAME = "collection";
+    private static final String PERSON_SERIALIZER_ADDED_PREFIX = "MyNameIs";
+    private static final String PERSON_DESERIALIZER_ADDED_PREFIX = "Hello";
 
+    private static ArangoDB arangoDB;
     private static ArangoDatabase db;
     private static ArangoCollection collection;
+
+    static class PersonSerializer extends JsonSerializer<Person> {
+        @Override
+        public void serialize(Person value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeStartObject();
+            gen.writeFieldName("name");
+            gen.writeString(PERSON_SERIALIZER_ADDED_PREFIX + value.name);
+            gen.writeEndObject();
+        }
+    }
+
+    static class PersonDeserializer extends JsonDeserializer<Person> {
+        @Override
+        public Person deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+            Person person = new Person();
+            JsonNode rootNode = parser.getCodec().readTree(parser);
+            JsonNode nameNode = rootNode.get("name");
+            if (nameNode != null && nameNode.isTextual()) {
+                person.name = PERSON_DESERIALIZER_ADDED_PREFIX + nameNode.asText();
+            }
+            return person;
+        }
+    }
+
+    @JsonSerialize(using = PersonSerializer.class)
+    public static class Person {
+        public String name;
+    }
 
     @BeforeClass
     public static void init() {
@@ -59,8 +103,11 @@ public class CustomSerdeTest {
         arangoJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
             mapper.configure(USE_BIG_INTEGER_FOR_INTS, true);
+            SimpleModule module = new SimpleModule("PersonModule");
+            module.addDeserializer(Person.class, new PersonDeserializer());
+            mapper.registerModule(module);
         });
-        ArangoDB arangoDB = new ArangoDB.Builder().serializer(arangoJack).build();
+        arangoDB = new ArangoDB.Builder().serializer(arangoJack).build();
 
         String TEST_DB = "custom-serde-test";
         db = arangoDB.db(TEST_DB);
@@ -78,6 +125,27 @@ public class CustomSerdeTest {
     public static void shutdown() {
         if (db.exists())
             db.drop();
+    }
+
+    @Test
+    public void customPersonDeserializer() {
+        Person person = new Person();
+        person.name = "Joe";
+        Person result = collection.insertDocument(
+                person,
+                new DocumentCreateOptions().returnNew(true)
+        ).getNew();
+        assertThat(result.name, is(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name));
+    }
+
+    @Test
+    public void manualCustomPersonDeserializer() {
+        Person person = new Person();
+        person.name = "Joe";
+        ArangoSerialization serialization = arangoDB.util(CUSTOM);
+        VPackSlice serializedPerson = serialization.serialize(person);
+        Person deserializedPerson = serialization.deserialize(serializedPerson, Person.class);
+        assertThat(deserializedPerson.name, is(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name));
     }
 
     @Test

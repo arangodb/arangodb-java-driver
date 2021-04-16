@@ -23,7 +23,9 @@ package com.arangodb;
 /**
  * @param <T> the type of the input to the predicate
  * @author Mark Vollmary
+ * @deprecated Use {@link java.util.function.Predicate} instead.
  */
+@Deprecated
 public interface Predicate<T> {
 
     /**

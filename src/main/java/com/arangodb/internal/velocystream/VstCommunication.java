@@ -23,12 +23,9 @@ package com.arangodb.internal.velocystream;
 import com.arangodb.ArangoDBException;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.net.AccessType;
-import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.internal.net.Host;
-import com.arangodb.internal.net.HostDescription;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
-import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.internal.util.ResponseUtils;
 import com.arangodb.internal.velocystream.internal.Chunk;
@@ -64,7 +61,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     protected final String password;
 
     protected final Integer chunksize;
-    private final HostHandler hostHandler;
+    protected final HostHandler hostHandler;
 
     protected VstCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
                                final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
@@ -134,20 +131,8 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
     }
 
     public R execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
-        try {
-            final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
-            return execute(request, connection);
-        } catch (final ArangoDBException e) {
-            if (e instanceof ArangoDBRedirectException) {
-                final String location = ((ArangoDBRedirectException) e).getLocation();
-                final HostDescription redirectHost = HostUtils.createFromLocation(location);
-                hostHandler.closeCurrentOnError();
-                hostHandler.fail();
-                return execute(request, new HostHandle().setHost(redirectHost));
-            } else {
-                throw e;
-            }
-        }
+        final C connection = connect(hostHandle, RequestUtils.determineAccessType(request));
+        return execute(request, connection);
     }
 
     protected abstract R execute(final Request request, C connection) throws ArangoDBException;

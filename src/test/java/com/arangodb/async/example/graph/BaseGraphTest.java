@@ -46,7 +46,7 @@ public abstract class BaseGraphTest {
     @BeforeClass
     public static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
-            arangoDB = new ArangoDBAsync.Builder().acquireHostList(false).build();
+            arangoDB = new ArangoDBAsync.Builder().build();
         }
         if (arangoDB.db(TEST_DB).exists().get()) {
             arangoDB.db(TEST_DB).drop().get();
