@@ -22,15 +22,25 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.*;
-import com.arangodb.model.*;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.License;
+import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
+import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.UserEntity;
+import com.arangodb.model.DBCreateOptions;
+import com.arangodb.model.DatabaseOptions;
+import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.model.UserCreateOptions;
+import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -587,6 +597,32 @@ public class ArangoDBTest {
                         assertThat(lastId, greaterThan(id));
                         lastId = id;
                     }
+                })
+                .get();
+    }
+
+    @Test
+    public void getLogEntries() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 8));
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        arangoDB.getLogEntries(null)
+                .whenComplete((logs, ex) -> {
+                    assertThat(logs, is(notNullValue()));
+                    assertThat(logs.getTotal(), greaterThan(0L));
+                    assertThat((long) logs.getMessages().size(), is(logs.getTotal()));
+                })
+                .get();
+    }
+
+    @Test
+    public void getLogEntriesSearch() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 8));
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
+        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB))
+                .whenComplete((logsSearch, ex) -> {
+                    assertThat(logsSearch, is(notNullValue()));
+                    assertThat(logs.getTotal(), greaterThan(logsSearch.getTotalAmount()));
                 })
                 .get();
     }

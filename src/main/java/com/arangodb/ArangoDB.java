@@ -24,6 +24,7 @@ import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -885,14 +886,29 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     /**
      * Returns fatal, error, warning or info log messages from the server's global log.
      *
-     * @param options Additional options, can be null
+     * @param options
+     *         Additional options, can be null
      * @return the log messages
+     *
      * @throws ArangoDBException
-     * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
+     * @deprecated use {@link #getLogEntries(LogOptions)} instead
      */
     LogEntity getLogs(LogOptions options) throws ArangoDBException;
+
+    /**
+     * Returns the server logs
+     *
+     * @param options
+     *         Additional options, can be null
+     * @return the log messages
+     *
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * Documentation</a>
+     * @since ArangoDB 3.8
+     */
+    LogEntriesEntity getLogEntries(LogOptions options) throws ArangoDBException;
 
     /**
      * Returns the server's current loglevel settings.
