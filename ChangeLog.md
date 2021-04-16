@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added support for ArangoSearch `AQL`, `Pipeline`, `Stopwords`, `GeoJSON`, `GeoPoint` analyzers
 - fixed active failover behavior for the asynchronous driver 
 - deprecated `ArangoIterable` methods in favour of Java 8 Stream equivalents
 
