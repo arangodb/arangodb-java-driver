@@ -42,6 +42,7 @@ jobs:
         topology:
           - single
           - cluster
+          - active-failover
 
     steps:
       - uses: actions/checkout@v1

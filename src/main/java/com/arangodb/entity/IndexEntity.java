@@ -41,6 +41,7 @@ public class IndexEntity implements Entity {
     private Boolean deduplicate;
     private Integer expireAfter;
     private Boolean inBackground;
+    private Boolean estimates;
 
     public IndexEntity() {
         super();
@@ -100,6 +101,10 @@ public class IndexEntity implements Entity {
 
     public Boolean getDeduplicate() {
         return deduplicate;
+    }
+
+    public Boolean getEstimates() {
+        return estimates;
     }
 
 }
