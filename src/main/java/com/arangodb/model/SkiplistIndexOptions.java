@@ -33,6 +33,7 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
     private Boolean unique;
     private Boolean sparse;
     private Boolean deduplicate;
+    private Boolean estimates;
 
     public SkiplistIndexOptions() {
         super();
@@ -91,11 +92,28 @@ public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
     }
 
     /**
-     * @param deduplicate if false, the deduplication of array values is turned off.
+     * @param deduplicate
+     *         if false, the deduplication of array values is turned off.
      * @return options
      */
     public SkiplistIndexOptions deduplicate(final Boolean deduplicate) {
         this.deduplicate = deduplicate;
         return this;
     }
+
+    /**
+     * @param estimates
+     *         This attribute controls whether index selectivity estimates are maintained for the index. Default: {@code
+     *         true}
+     * @since ArangoDB 3.8
+     */
+    public SkiplistIndexOptions estimates(final Boolean estimates) {
+        this.estimates = estimates;
+        return this;
+    }
+
+    public Boolean getEstimates() {
+        return estimates;
+    }
+
 }

@@ -20,9 +20,38 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.*;
-import com.arangodb.model.*;
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.CollectionPropertiesEntity;
+import com.arangodb.entity.CollectionRevisionEntity;
+import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.entity.DocumentDeleteEntity;
+import com.arangodb.entity.DocumentEntity;
+import com.arangodb.entity.DocumentImportEntity;
+import com.arangodb.entity.DocumentUpdateEntity;
+import com.arangodb.entity.IndexEntity;
+import com.arangodb.entity.IndexType;
+import com.arangodb.entity.MultiDocumentEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ShardEntity;
+import com.arangodb.model.CollectionCreateOptions;
+import com.arangodb.model.CollectionPropertiesOptions;
+import com.arangodb.model.DocumentCreateOptions;
+import com.arangodb.model.DocumentDeleteOptions;
+import com.arangodb.model.DocumentExistsOptions;
+import com.arangodb.model.DocumentImportOptions;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
+import com.arangodb.model.DocumentReadOptions;
+import com.arangodb.model.DocumentReplaceOptions;
+import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.model.FulltextIndexOptions;
+import com.arangodb.model.GeoIndexOptions;
+import com.arangodb.model.HashIndexOptions;
+import com.arangodb.model.OverwriteMode;
+import com.arangodb.model.PersistentIndexOptions;
+import com.arangodb.model.SkiplistIndexOptions;
+import com.arangodb.model.TtlIndexOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,7 +62,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -1390,6 +1426,46 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getType(), is(IndexType.persistent));
         assertThat(indexResult.getUnique(), is(false));
         assertThat(indexResult.getName(), is(name));
+    }
+
+    @Test
+    public void indexEstimates() {
+        assumeTrue(isAtLeastVersion(3, 8));
+        assumeTrue(isSingleServer());
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.estimates(true);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult, is(notNullValue()));
+        assertThat(indexResult.getEstimates(), is(true));
+        assertThat(indexResult.getSelectivityEstimate(), is(notNullValue()));
+    }
+
+    @Test
+    public void indexEstimatesFalse() {
+        assumeTrue(isAtLeastVersion(3, 8));
+        assumeTrue(isSingleServer());
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.estimates(false);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult, is(notNullValue()));
+        assertThat(indexResult.getEstimates(), is(false));
+        assertThat(indexResult.getSelectivityEstimate(), is(nullValue()));
     }
 
     @Test
