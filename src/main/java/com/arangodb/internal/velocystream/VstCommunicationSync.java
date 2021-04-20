@@ -21,7 +21,11 @@
 package com.arangodb.internal.velocystream;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.internal.net.ArangoDBRedirectException;
+import com.arangodb.internal.net.HostDescription;
+import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
+import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
@@ -127,6 +131,12 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
             return response;
         } catch (final VPackParserException e) {
             throw new ArangoDBException(e);
+        } catch (final ArangoDBRedirectException e) {
+            final String location = e.getLocation();
+            final HostDescription redirectHost = HostUtils.createFromLocation(location);
+            hostHandler.closeCurrentOnError();
+            hostHandler.fail();
+            return execute(request, new HostHandle().setHost(redirectHost));
         }
     }
 

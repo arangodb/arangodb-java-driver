@@ -82,7 +82,7 @@ public class MessageStore {
         }
     }
 
-    public void clear(final Exception e) {
+    public synchronized void clear(final Exception e) {
         if (!task.isEmpty()) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -96,7 +96,7 @@ public class MessageStore {
         task.clear();
     }
 
-    public void clear() {
+    public synchronized void clear() {
         for (final Entry<Long, FutureTask<Message>> entry : task.entrySet()) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(String.format("Cancel Message (id=%s).", entry.getKey()));

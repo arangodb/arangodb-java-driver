@@ -22,8 +22,44 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.*;
-import com.arangodb.entity.arangosearch.analyzer.*;
+import com.arangodb.entity.arangosearch.AnalyzerEntity;
+import com.arangodb.entity.arangosearch.AnalyzerFeature;
+import com.arangodb.entity.arangosearch.AnalyzerType;
+import com.arangodb.entity.arangosearch.ArangoSearchCompression;
+import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
+import com.arangodb.entity.arangosearch.CollectionLink;
+import com.arangodb.entity.arangosearch.ConsolidationPolicy;
+import com.arangodb.entity.arangosearch.ConsolidationType;
+import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.entity.arangosearch.PrimarySort;
+import com.arangodb.entity.arangosearch.StoreValuesType;
+import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.EdgeNgram;
+import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions;
+import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.NormAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.NormAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzerCase;
+import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.StreamType;
+import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
@@ -32,7 +68,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -769,5 +812,153 @@ public class ArangoSearchTest extends BaseTest {
         assertThat(link.getStoreValues(), is(StoreValuesType.ID));
         assertThat(link.getTrackListPositions(), is(false));
     }
+
+    @Test
+    public void pipelineAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        // comma delimiter
+        DelimiterAnalyzerProperties commaDelimiterProperties = new DelimiterAnalyzerProperties();
+        commaDelimiterProperties.setDelimiter(",");
+
+        DelimiterAnalyzer commaDelimiter = new DelimiterAnalyzer();
+        commaDelimiter.setProperties(commaDelimiterProperties);
+
+        // semicolon delimiter
+        DelimiterAnalyzerProperties semicolonDelimiterProperties = new DelimiterAnalyzerProperties();
+        semicolonDelimiterProperties.setDelimiter(",");
+
+        DelimiterAnalyzer semicolonDelimiter = new DelimiterAnalyzer();
+        semicolonDelimiter.setProperties(semicolonDelimiterProperties);
+
+        // stem
+        StemAnalyzerProperties stemAnalyzerProperties = new StemAnalyzerProperties();
+        stemAnalyzerProperties.setLocale("en.utf-8");
+
+        StemAnalyzer stemAnalyzer = new StemAnalyzer();
+        stemAnalyzer.setProperties(stemAnalyzerProperties);
+
+        // pipeline analyzer
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        PipelineAnalyzerProperties properties = new PipelineAnalyzerProperties()
+                .addAnalyzer(commaDelimiter)
+                .addAnalyzer(semicolonDelimiter)
+                .addAnalyzer(stemAnalyzer);
+
+        PipelineAnalyzer pipelineAnalyzer = new PipelineAnalyzer();
+        pipelineAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        pipelineAnalyzer.setProperties(properties);
+        pipelineAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(pipelineAnalyzer);
+    }
+
+    @Test
+    public void stopwordsAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        StopwordsAnalyzerProperties properties = new StopwordsAnalyzerProperties()
+                .addStopwordAsHex("616e64")
+                .addStopwordAsString("the");
+
+        assertThat(properties.getStopwords(), hasItem("616e64"));
+        assertThat(properties.getStopwords(), hasItem("746865"));
+
+        StopwordsAnalyzer analyzer = new StopwordsAnalyzer();
+        analyzer.setName("test-" + UUID.randomUUID().toString());
+        analyzer.setProperties(properties);
+        analyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(analyzer);
+    }
+
+    @Test
+    public void aqlAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        AQLAnalyzerProperties properties = new AQLAnalyzerProperties();
+        properties.setBatchSize(2);
+        properties.setCollapsePositions(true);
+        properties.setKeepNull(false);
+        properties.setMemoryLimit(2200L);
+        properties.setQueryString("RETURN SOUNDEX(@param)");
+        properties.setReturnType(AQLAnalyzerProperties.ReturnType.string);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        AQLAnalyzer aqlAnalyzer = new AQLAnalyzer();
+        aqlAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        aqlAnalyzer.setProperties(properties);
+        aqlAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(aqlAnalyzer);
+    }
+
+    @Test
+    public void geoJsonAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        GeoAnalyzerOptions options = new GeoAnalyzerOptions();
+        options.setMaxLevel(10);
+        options.setMaxCells(11);
+        options.setMinLevel(8);
+
+        GeoJSONAnalyzerProperties properties = new GeoJSONAnalyzerProperties();
+        properties.setOptions(options);
+        properties.setType(GeoJSONAnalyzerProperties.GeoJSONAnalyzerType.point);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        GeoJSONAnalyzer geoJSONAnalyzer = new GeoJSONAnalyzer();
+        geoJSONAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        geoJSONAnalyzer.setProperties(properties);
+        geoJSONAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(geoJSONAnalyzer);
+    }
+
+
+    @Test
+    public void geoPointAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        GeoAnalyzerOptions options = new GeoAnalyzerOptions();
+        options.setMaxLevel(10);
+        options.setMaxCells(11);
+        options.setMinLevel(8);
+
+        GeoPointAnalyzerProperties properties = new GeoPointAnalyzerProperties();
+        properties.setLatitude(new String[]{"a", "b","c"});
+        properties.setLongitude(new String[]{"d", "e","f"});
+        properties.setOptions(options);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        GeoPointAnalyzer geoPointAnalyzer = new GeoPointAnalyzer();
+        geoPointAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        geoPointAnalyzer.setProperties(properties);
+        geoPointAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(geoPointAnalyzer);
+    }
+
 
 }

@@ -72,6 +72,8 @@ public abstract class VstConnection<T> implements Connection {
     private final Long ttl;
 
     private final Integer keepAliveInterval;
+    private int keepAliveFailCounter = 0;
+
     private final Boolean useSsl;
     private final SSLContext sslContext;
 
@@ -116,14 +118,14 @@ public abstract class VstConnection<T> implements Connection {
         this.messageStore = messageStore;
 
         connectionName = "connection_" + System.currentTimeMillis() + "_" + Math.random();
-        LOGGER.debug("Connection " + connectionName + " created");
+        LOGGER.debug("[" + connectionName + "]: Connection created");
     }
 
     protected T sendKeepAlive() {
         long id = keepAliveId.decrementAndGet();
         Message message = new Message(id, keepAliveRequest, null);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Send keepalive probe (id=%s, head=%s, body=%s)", message.getId(), message.getHead(),
+            LOGGER.debug(String.format("[%s]: Send keepalive probe (id=%s, head=%s, body=%s)", connectionName, message.getId(), message.getHead(),
                     message.getBody() != null ? message.getBody() : "{}"));
         }
         return write(message, Collections.singleton(new Chunk(
@@ -139,8 +141,15 @@ public abstract class VstConnection<T> implements Connection {
     private void keepAlive() {
         try {
             doKeepAlive();
+            keepAliveFailCounter = 0;
         } catch (Exception e) {
             LOGGER.error("Got exception while performing keepAlive request:", e);
+            keepAliveFailCounter++;
+            if (keepAliveFailCounter >= 3) {
+                LOGGER.error("KeepAlive request failed consecutively for 3 times, closing connection now...");
+                messageStore.clear(new IOException("Connection unresponsive!"));
+                close();
+            }
         }
     }
 
@@ -153,7 +162,7 @@ public abstract class VstConnection<T> implements Connection {
             return;
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Open connection to %s", host));
+            LOGGER.debug(String.format("[%s]: Open connection to %s", connectionName, host));
         }
         if (Boolean.TRUE == useSsl) {
             if (sslContext != null) {
@@ -168,7 +177,7 @@ public abstract class VstConnection<T> implements Connection {
         socket.setKeepAlive(true);
         socket.setTcpNoDelay(true);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Connected to %s", socket));
+            LOGGER.debug(String.format("[%s]: Connected to %s", connectionName, socket));
         }
 
         outputStream = new BufferedOutputStream(socket.getOutputStream());
@@ -176,7 +185,7 @@ public abstract class VstConnection<T> implements Connection {
 
         if (Boolean.TRUE == useSsl) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(String.format("Start Handshake on %s", socket));
+                LOGGER.debug(String.format("[%s]: Start Handshake on %s", connectionName, socket));
             }
             ((SSLSocket) socket).startHandshake();
         }
@@ -184,7 +193,7 @@ public abstract class VstConnection<T> implements Connection {
 
         executor = Executors.newSingleThreadExecutor();
         executor.submit((Callable<Void>) () -> {
-            LOGGER.debug("Start Callable for " + connectionName);
+            LOGGER.debug("[" + connectionName + "]: Start Callable");
 
             final long openTime = new Date().getTime();
             final Long ttlTime = ttl != null ? openTime + ttl : null;
@@ -215,7 +224,7 @@ public abstract class VstConnection<T> implements Connection {
                 }
             }
 
-            LOGGER.debug("Stop Callable for " + connectionName);
+            LOGGER.debug("[" + connectionName + "]: Stop Callable");
 
             return null;
         });
@@ -239,7 +248,7 @@ public abstract class VstConnection<T> implements Connection {
         if (socket != null && !socket.isClosed()) {
             try {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(String.format("Close connection %s", socket));
+                    LOGGER.debug(String.format("[%s]: Close connection %s", connectionName, socket));
                 }
                 socket.close();
             } catch (final IOException e) {
@@ -250,7 +259,7 @@ public abstract class VstConnection<T> implements Connection {
 
     private synchronized void sendProtocolHeader() throws IOException {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Send velocystream protocol header to %s", socket));
+            LOGGER.debug(String.format("[%s]: Send velocystream protocol header to %s", connectionName, socket));
         }
         outputStream.write(PROTOCOL_HEADER);
         outputStream.flush();
@@ -261,7 +270,7 @@ public abstract class VstConnection<T> implements Connection {
         for (final Chunk chunk : chunks) {
             try {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(String.format("Send chunk %s:%s from message %s", chunk.getChunk(),
+                    LOGGER.debug(String.format("[%s]: Send chunk %s:%s from message %s", connectionName, chunk.getChunk(),
                             chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
                     sendTimestamps.put(chunk.getMessageId(), System.currentTimeMillis());
                 }
@@ -319,8 +328,8 @@ public abstract class VstConnection<T> implements Connection {
         final Chunk chunk = new Chunk(messageId, chunkX, messageLength, 0, contentLength);
 
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("Received chunk %s:%s from message %s", chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
-            LOGGER.debug("Responsetime for Message " + chunk.getMessageId() + " is " + (System.currentTimeMillis() - sendTimestamps.get(chunk.getMessageId())));
+            LOGGER.debug(String.format("[%s]: Received chunk %s:%s from message %s", connectionName, chunk.getChunk(), chunk.isFirstChunk() ? 1 : 0, chunk.getMessageId()));
+            LOGGER.debug("[" + connectionName + "]: Responsetime for Message " + chunk.getMessageId() + " is " + (System.currentTimeMillis() - sendTimestamps.get(chunk.getMessageId())));
         }
 
         return chunk;

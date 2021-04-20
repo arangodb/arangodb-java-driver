@@ -44,6 +44,7 @@ import java.util.Map.Entry;
 public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoExecuteable<E> {
 
     private static final String PATH_API_ADMIN_LOG = "/_admin/log";
+    private static final String PATH_API_ADMIN_LOG_ENTRIES = "/_admin/log/entries";
     private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
     private static final String PATH_API_ROLE = "/_admin/server/role";
     private static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
@@ -159,6 +160,18 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     protected Request getLogsRequest(final LogOptions options) {
         final LogOptions params = options != null ? options : new LogOptions();
         return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG)
+                .putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
+                .putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
+                .putQueryParam(LogOptions.PROPERTY_START, params.getStart())
+                .putQueryParam(LogOptions.PROPERTY_SIZE, params.getSize())
+                .putQueryParam(LogOptions.PROPERTY_OFFSET, params.getOffset())
+                .putQueryParam(LogOptions.PROPERTY_SEARCH, params.getSearch())
+                .putQueryParam(LogOptions.PROPERTY_SORT, params.getSort());
+    }
+
+    protected Request getLogEntriesRequest(final LogOptions options) {
+        final LogOptions params = options != null ? options : new LogOptions();
+        return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_ENTRIES)
                 .putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
                 .putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
                 .putQueryParam(LogOptions.PROPERTY_START, params.getStart())

@@ -28,6 +28,7 @@ import com.arangodb.Function;
 /**
  * @author Mark Vollmary
  */
+@Deprecated
 public class ArangoMappingIterable<R, T> extends AbstractArangoIterable<T> implements ArangoIterable<T> {
 
     private final ArangoIterable<R> iterable;

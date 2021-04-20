@@ -52,7 +52,7 @@ public class CommunicationTest {
     @Test
     public void multiThread() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
-        arangoDB.getVersion();// authentication
+        arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final Collection<String> result = new ConcurrentLinkedQueue<>();
         final Thread fast = new Thread(() -> {
@@ -78,7 +78,7 @@ public class CommunicationTest {
     @Test
     public void multiThreadSameDatabases() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
-        arangoDB.getVersion();// authentication
+        arangoDB.getUsers(); // authentication and active-failover connection redirect to master
 
         final ArangoDatabase db = arangoDB.db();
 

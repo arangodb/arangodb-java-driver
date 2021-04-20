@@ -29,6 +29,7 @@ import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
 import com.arangodb.entity.ArangoDBVersion;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
 import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
@@ -280,13 +281,28 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     /**
      * Returns fatal, error, warning or info log messages from the server's global log.
      *
-     * @param options Additional options, can be null
+     * @param options
+     *         Additional options, can be null
      * @return the log messages
-     * @see <a href=
-     * "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     *
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
+     * @deprecated use {@link #getLogEntries(LogOptions)} instead
      */
     CompletableFuture<LogEntity> getLogs(final LogOptions options);
+
+    /**
+     * Returns the server logs
+     *
+     * @param options
+     *         Additional options, can be null
+     * @return the log messages
+     *
+     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
+     * Documentation</a>
+     * @since ArangoDB 3.8
+     */
+    CompletableFuture<LogEntriesEntity> getLogEntries(final LogOptions options);
 
     /**
      * Returns the server's current loglevel settings.
@@ -442,6 +458,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         /**
          * Whether or not the driver should acquire a list of available coordinators in an ArangoDB cluster or a single
          * server with active failover.
+         * In case of Active-Failover deployment set to {@code true} to enable automatic master discovery.
          *
          * <p>
          * The host list will be used for failover and load balancing.
@@ -457,6 +474,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
 
         /**
          * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
+         * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
+         * would be the default.
          *
          * @param loadBalancingStrategy the load balancing strategy to be used (default: {@link LoadBalancingStrategy#NONE}
          * @return {@link ArangoDBAsync.Builder}

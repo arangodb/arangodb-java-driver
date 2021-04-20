@@ -22,15 +22,25 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.*;
-import com.arangodb.model.*;
+import com.arangodb.entity.DatabaseEntity;
+import com.arangodb.entity.License;
+import com.arangodb.entity.LogEntity;
+import com.arangodb.entity.LogEntriesEntity;
+import com.arangodb.entity.LogLevel;
+import com.arangodb.entity.LogLevelEntity;
+import com.arangodb.entity.Permissions;
+import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.UserEntity;
+import com.arangodb.model.DBCreateOptions;
+import com.arangodb.model.DatabaseOptions;
+import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
+import com.arangodb.model.UserCreateOptions;
+import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -462,6 +472,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogs() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         arangoDB.getLogs(null)
                 .whenComplete((logs, ex) -> {
@@ -477,6 +488,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsUpto() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
         arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING))
@@ -490,6 +502,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsLevel() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
         arangoDB.getLogs(new LogOptions().level(LogLevel.INFO))
@@ -503,6 +516,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsStart() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
         assertThat(logs.getLid(), not(empty()));
@@ -516,6 +530,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSize() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
         assertThat(logs.getLid().size(), greaterThan(0));
@@ -529,6 +544,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsOffset() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
         assertThat(logs.getTotalAmount(), greaterThan(0L));
@@ -542,6 +558,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSearch() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
         arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB))
@@ -554,6 +571,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSortAsc() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         arangoDB.getLogs(new LogOptions().sort(SortOrder.asc))
                 .whenComplete((logs, ex) -> {
@@ -569,6 +587,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogsSortDesc() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         arangoDB.getLogs(new LogOptions().sort(SortOrder.desc))
                 .whenComplete((logs, ex) -> {
@@ -583,7 +602,34 @@ public class ArangoDBTest {
     }
 
     @Test
+    public void getLogEntries() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 8));
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        arangoDB.getLogEntries(null)
+                .whenComplete((logs, ex) -> {
+                    assertThat(logs, is(notNullValue()));
+                    assertThat(logs.getTotal(), greaterThan(0L));
+                    assertThat((long) logs.getMessages().size(), is(logs.getTotal()));
+                })
+                .get();
+    }
+
+    @Test
+    public void getLogEntriesSearch() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 8));
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
+        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB))
+                .whenComplete((logsSearch, ex) -> {
+                    assertThat(logsSearch, is(notNullValue()));
+                    assertThat(logs.getTotal(), greaterThan(logsSearch.getTotalAmount()));
+                })
+                .get();
+    }
+
+    @Test
     public void getLogLevel() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         arangoDB.getLogLevel()
                 .whenComplete((logLevel, ex) -> {
@@ -595,6 +641,7 @@ public class ArangoDBTest {
 
     @Test
     public void setLogLevel() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogLevelEntity entity = new LogLevelEntity();
         try {
