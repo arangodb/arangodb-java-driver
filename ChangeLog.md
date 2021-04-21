@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [6.11.0] - 2021-04-16
+## [6.11.0] - 2021-04-21
 
 - added support for getting db log entries via `GET /_admin/log/entries` (ArangoDB v3.8)
 - added support for index estimates (ArangoDB v3.8)
