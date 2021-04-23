@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- velocypack v2.5.3
+
 ## [6.11.0] - 2021-04-21
 
 - added support for getting db log entries via `GET /_admin/log/entries` (ArangoDB v3.8)
