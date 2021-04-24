@@ -294,7 +294,13 @@ public class HttpConnection implements Connection {
     }
 
     private String buildBaseUrl(final HostDescription host) {
-        return (Boolean.TRUE == useSsl ? "https://" : "http://") + host.getHost() + ":" + host.getPort();
+        StringBuilder builder = new StringBuilder(Boolean.TRUE == useSsl ? "https://" : "http://");
+        if (host.getHost().contains("/")){
+            builder.append(host.getHost().replaceFirst("/",":"+ host.getPort() + "/"));
+        } else {
+            builder.append(host.getHost()).append(":").append(host.getPort());
+        }
+        return builder.toString();
     }
 
     private static List<NameValuePair> toList(final Map<String, String> parameters) {
