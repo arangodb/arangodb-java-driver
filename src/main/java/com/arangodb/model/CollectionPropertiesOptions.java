@@ -29,6 +29,7 @@ public class CollectionPropertiesOptions {
 
     private Boolean waitForSync;
     private Long journalSize;
+    private CollectionSchema schema;
 
     public CollectionPropertiesOptions() {
         super();
@@ -59,6 +60,20 @@ public class CollectionPropertiesOptions {
      */
     public CollectionPropertiesOptions journalSize(final Long journalSize) {
         this.journalSize = journalSize;
+        return this;
+    }
+
+    public CollectionSchema getSchema() {
+        return schema;
+    }
+
+    /**
+     * @param schema object that specifies the collection level schema for documents
+     * @since ArangoDB 3.7
+     * @return options
+     */
+    public CollectionPropertiesOptions schema(final CollectionSchema schema) {
+        this.schema = schema;
         return this;
     }
 
