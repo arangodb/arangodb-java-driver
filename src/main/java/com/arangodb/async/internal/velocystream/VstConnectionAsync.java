@@ -56,7 +56,11 @@ public class VstConnectionAsync extends VstConnection<CompletableFuture<Message>
         });
         messageStore.storeMessage(message.getId(), task);
         super.writeIntern(message, chunks);
-        return CompletableFutureUtils.orTimeout(future, timeout, TimeUnit.MILLISECONDS);
+        if (timeout == null || timeout == 0L) {
+            return future;
+        } else {
+            return CompletableFutureUtils.orTimeout(future, timeout, TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
