@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.12.0] - 2021-04-28
+
+- added support for modifying collection schema
+
 ## [6.11.1] - 2021-04-23
 
 - velocypack v2.5.3
