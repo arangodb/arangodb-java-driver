@@ -92,6 +92,12 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                         tryAuthenticate(connection);
                     }
                     hostHandler.confirm();
+                    if (!connection.isOpen()) {
+                        // see https://github.com/arangodb/arangodb-java-driver/issues/384
+                        hostHandler.fail();
+                        host = hostHandler.get(hostHandle, accessType);
+                        continue;
+                    }
                     return connection;
                 } catch (final IOException e) {
                     hostHandler.fail();
