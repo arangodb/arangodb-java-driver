@@ -6,7 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-## [6.11.0] - 2021-04-16
+## [6.12.1] - 2021-04-28
+
+- fixed request timeout in async driver (#ES-837)
+
+## [6.12.0] - 2021-04-28
+
+- added support for modifying collection schema
+
+## [6.11.1] - 2021-04-23
+
+- velocypack v2.5.3
+
+## [6.11.0] - 2021-04-21
 
 - added support for getting db log entries via `GET /_admin/log/entries` (ArangoDB v3.8)
 - added support for index estimates (ArangoDB v3.8)

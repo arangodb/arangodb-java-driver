@@ -311,7 +311,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions()
-                        .setSchema(
+                        .schema(
                                 new CollectionSchema()
                                         .setLevel(CollectionSchema.Level.NEW)
                                         .setMessage(message)

@@ -20,7 +20,11 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.*;
+import com.arangodb.entity.CollectionType;
+import com.arangodb.entity.KeyOptions;
+import com.arangodb.entity.KeyType;
+import com.arangodb.entity.MinReplicationFactor;
+import com.arangodb.entity.ReplicationFactor;
 
 /**
  * @author Mark Vollmary
@@ -330,10 +334,21 @@ public class CollectionCreateOptions {
     }
 
     /**
-     * @param schema object that specifies the collection level schema for documents
-     * @since ArangoDB 3.7
+     * @param schema
+     *         object that specifies the collection level schema for documents
      * @return options
+     * @since ArangoDB 3.7
      */
+    public CollectionCreateOptions schema(final CollectionSchema schema) {
+        this.schema = schema;
+        return this;
+    }
+
+    /**
+     * @since ArangoDB 3.7
+     * @deprecated Use {@link #schema(CollectionSchema)} instead.
+     */
+    @Deprecated
     public CollectionCreateOptions setSchema(final CollectionSchema schema) {
         this.schema = schema;
         return this;
