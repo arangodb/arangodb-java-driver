@@ -145,7 +145,7 @@ public class ConcurrentStreamTransactionsTest extends BaseTest {
         params.put("id", id);
         params.put("@col", COLLECTION_NAME);
         ArangoCursor<Boolean> req = db.query("" +
-                        "LET d = DOCUMENT(@id)\n" +
+                        "LET d = DOCUMENT(@id)" +
                         "UPDATE d WITH { \"aaa\": \"aaa\" } IN @@col " +
                         "RETURN true",
                 params,
