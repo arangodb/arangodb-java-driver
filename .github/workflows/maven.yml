@@ -16,7 +16,7 @@ jobs:
       matrix:
         docker-img:
           - docker.io/arangodb/arangodb:3.6.13
-          - docker.io/arangodb/arangodb:3.7.10
+          - docker.io/arangodb/arangodb:3.7.11
           - arangodb/arangodb-preview:3.8.0-beta.1
         topology:
           - single
