@@ -33,5 +33,6 @@ public enum QueryExecutionState {
     EXECUTING,
     FINALIZING,
     FINISHED,
+    KILLED,
     INVALID
 }
