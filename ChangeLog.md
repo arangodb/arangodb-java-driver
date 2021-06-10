@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+**WARNING**: The implementation of Stopwords analyzer is not final in ArangoDB 3.8.0, so using it might result in unpredictable behavior.
+This will be fixed in ArangoDB 3.8.1 and will have a different API.
+Any usage of the current Java driver API related to it is therefore discouraged.
+
 ## [6.12.1] - 2021-04-28
 
 - fixed request timeout in async driver (#ES-837)
