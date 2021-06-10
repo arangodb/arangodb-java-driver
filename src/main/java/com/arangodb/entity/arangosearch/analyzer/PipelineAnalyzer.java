@@ -28,7 +28,10 @@ import java.util.Objects;
 /**
  * An Analyzer capable of chaining effects of multiple Analyzers into one. The pipeline is a list of Analyzers, where
  * the output of an Analyzer is passed to the next for further processing.
- *
+ * <p/>
+ * <b>LIMITATIONS</b>: Analyzers of types {@link GeoPointAnalyzer} and {@link GeoJSONAnalyzer} cannot be used in pipelines and
+ * will make the creation fail.
+ * <p/>
  * @author Michele Rastelli
  * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#pipeline">API Documentation</a>
  * @since ArangoDB 3.8
