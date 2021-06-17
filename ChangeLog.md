@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.12.2] - 2021-06-17
+
+- added missing enum value `QueryExecutionState.KILLED` (#391)
+- fixed `acquireHostList` to loadBalancer or hostname alias (#385)
+
 **WARNING**: The implementation of Stopwords analyzer is not final in ArangoDB 3.8.0, so using it might result in unpredictable behavior.
 This will be fixed in ArangoDB 3.8.1 and will have a different API.
 Any usage of the current Java driver API related to it is therefore discouraged.
