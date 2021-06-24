@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.12.3] - 2021-06-24
+
+- fixed host handler failures count (#DEVSUP-805, #398)
+
 ## [6.12.2] - 2021-06-17
 
 - added missing enum value `QueryExecutionState.KILLED` (#391)
