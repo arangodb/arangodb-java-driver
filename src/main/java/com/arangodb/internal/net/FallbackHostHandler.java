@@ -55,6 +55,7 @@ public class FallbackHostHandler implements HostHandler {
     @Override
     public void success() {
         lastSuccess = current;
+        iterations = 0;
     }
 
     @Override

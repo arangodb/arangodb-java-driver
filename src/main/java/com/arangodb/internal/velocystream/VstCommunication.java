@@ -83,6 +83,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
             }
             final C connection = (C) host.connection();
             if (connection.isOpen()) {
+                hostHandler.success();
                 return connection;
             } else {
                 try {

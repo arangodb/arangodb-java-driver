@@ -30,27 +30,26 @@ public class RandomHostHandler implements HostHandler {
 
     private final HostResolver resolver;
     private final HostHandler fallback;
-    private Host origin;
     private Host current;
 
     public RandomHostHandler(final HostResolver resolver, final HostHandler fallback) {
         super();
         this.resolver = resolver;
         this.fallback = fallback;
-        origin = current = getRandomHost(true, false);
+        current = getRandomHost(true, false);
     }
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
         if (current == null) {
-            origin = current = getRandomHost(false, true);
+            current = getRandomHost(false, true);
         }
         return current;
     }
 
     @Override
     public void success() {
-        current = origin;
+        fallback.success();
     }
 
     @Override
@@ -60,7 +59,6 @@ public class RandomHostHandler implements HostHandler {
     }
 
     private Host getRandomHost(final boolean initial, final boolean closeConnections) {
-
         final ArrayList<Host> hosts = new ArrayList<>(resolver.resolve(initial, closeConnections).getHostsList());
         Collections.shuffle(hosts);
         return hosts.get(0);
