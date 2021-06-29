@@ -28,23 +28,22 @@ import com.arangodb.ArangoDBException;
 public class RoundRobinHostHandler implements HostHandler {
 
     private final HostResolver resolver;
-
     private int current;
     private int fails;
     private Host currentHost;
+    private HostSet hosts;
 
     public RoundRobinHostHandler(final HostResolver resolver) {
         super();
         this.resolver = resolver;
-        resolver.resolve(true, false);
+        hosts = resolver.resolve(true, false);
         current = 0;
         fails = 0;
     }
 
     @Override
     public Host get(final HostHandle hostHandle, AccessType accessType) {
-
-        final HostSet hosts = resolver.resolve(false, false);
+        hosts = resolver.resolve(false, false);
         final int size = hosts.getHostsList().size();
 
         if (fails > size) {
@@ -92,7 +91,6 @@ public class RoundRobinHostHandler implements HostHandler {
 
     @Override
     public void close() {
-        final HostSet hosts = resolver.resolve(false, false);
         hosts.close();
     }
 

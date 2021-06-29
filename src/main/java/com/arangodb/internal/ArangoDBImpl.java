@@ -114,9 +114,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     public void shutdown() throws ArangoDBException {
         try {
             executor.disconnect();
-            cp.close();
-        } catch (final IOException e) {
-            throw new ArangoDBException(e);
+        } finally {
+            try {
+                cp.close();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
