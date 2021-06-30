@@ -20,6 +20,7 @@
 
 package com.arangodb.async.internal;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.DocumentCache;
@@ -70,8 +71,13 @@ public class ArangoExecutorAsync extends ArangoExecutor {
                 .thenApplyAsync(responseDeserializer::deserialize);
     }
 
-    public void disconnect() throws IOException {
-        communication.close();
-        outgoingExecutor.shutdown();
+    public void disconnect() {
+        try {
+            communication.close();
+        } catch (final IOException e) {
+            throw new ArangoDBException(e);
+        } finally {
+            outgoingExecutor.shutdown();
+        }
     }
 }

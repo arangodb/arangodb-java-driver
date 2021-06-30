@@ -40,6 +40,8 @@ import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -49,6 +51,8 @@ import java.util.concurrent.CompletableFuture;
  * @author Mark Vollmary
  */
 public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> implements ArangoDBAsync {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBAsyncImpl.class);
 
     private final CommunicationProtocol cp;
 
@@ -82,9 +86,12 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     public void shutdown() throws ArangoDBException {
         try {
             executor.disconnect();
-            cp.close();
-        } catch (final IOException e) {
-            throw new ArangoDBException(e);
+        } finally {
+            try {
+                cp.close();
+            } catch (final IOException e) {
+                LOGGER.error("Got exception during shutdown:", e);
+            }
         }
     }
 
