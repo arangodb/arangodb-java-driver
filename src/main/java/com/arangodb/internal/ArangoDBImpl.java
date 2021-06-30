@@ -118,7 +118,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
             try {
                 cp.close();
             } catch (final IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Got exception during shutdown:", e);
             }
         }
     }
