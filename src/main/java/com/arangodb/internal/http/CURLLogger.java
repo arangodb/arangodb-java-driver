@@ -23,7 +23,7 @@ package com.arangodb.internal.http;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
-import org.apache.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

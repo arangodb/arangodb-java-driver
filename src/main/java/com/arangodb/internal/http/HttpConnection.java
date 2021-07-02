@@ -31,37 +31,39 @@ import com.arangodb.util.ArangoSerializer.Options;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
-import org.apache.http.*;
-import org.apache.http.auth.AuthenticationException;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeaderElementIterator;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.client5.http.impl.auth.BasicScheme;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.ssl.HttpsSupport;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicHeaderElementIterator;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.net.URLEncodedUtils;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,7 +93,7 @@ public class HttpConnection implements Connection {
         private SSLContext sslContext;
         private HostnameVerifier hostnameVerifier;
         private Integer timeout;
-        private HttpRequestRetryHandler httpRequestRetryHandler;
+        private HttpRequestRetryStrategy httpRequestRetryHandler;
 
         public Builder user(final String user) {
             this.user = user;
@@ -148,7 +150,7 @@ public class HttpConnection implements Connection {
             return this;
         }
 
-        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+        public Builder httpRequestRetryHandler(final HttpRequestRetryStrategy httpRequestRetryHandler) {
             this.httpRequestRetryHandler = httpRequestRetryHandler;
             return this;
         }
@@ -161,76 +163,77 @@ public class HttpConnection implements Connection {
 
     private final PoolingHttpClientConnectionManager cm;
     private final CloseableHttpClient client;
-    private final String user;
-    private final String password;
     private final ArangoSerialization util;
     private final Boolean useSsl;
     private final Protocol contentType;
     private final HostDescription host;
+    private final HttpClientContext authCtx;
+    private final Credentials credentials;
 
     private HttpConnection(final HostDescription host, final Integer timeout, final String user, final String password,
                            final Boolean useSsl, final SSLContext sslContext, final HostnameVerifier hostnameVerifier, final ArangoSerialization util, final Protocol contentType,
-                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryHandler httpRequestRetryHandler) {
+                           final Long ttl, final String httpCookieSpec, final HttpRequestRetryStrategy httpRequestRetryHandler) {
         super();
         this.host = host;
-        this.user = user;
-        this.password = password;
         this.useSsl = useSsl;
         this.util = util;
         this.contentType = contentType;
-        final RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder
-                .create();
+
+        PoolingHttpClientConnectionManagerBuilder cmBuilder = PoolingHttpClientConnectionManagerBuilder.create()
+                .setMaxConnPerRoute(1)
+                .setMaxConnTotal(1);
         if (Boolean.TRUE == useSsl) {
-            registryBuilder.register("https", new SSLConnectionSocketFactory(
+            cmBuilder.setSSLSocketFactory(new SSLConnectionSocketFactory(
                     sslContext != null ? sslContext : SSLContexts.createSystemDefault(),
-                    hostnameVerifier != null ? hostnameVerifier : SSLConnectionSocketFactory.getDefaultHostnameVerifier()
+                    hostnameVerifier != null ? hostnameVerifier : HttpsSupport.getDefaultHostnameVerifier()
             ));
-        } else {
-            registryBuilder.register("http", new PlainConnectionSocketFactory());
         }
-        cm = new PoolingHttpClientConnectionManager(registryBuilder.build());
-        cm.setDefaultMaxPerRoute(1);
-        cm.setMaxTotal(1);
+        if (ttl != null) {
+            cmBuilder.setConnectionTimeToLive(TimeValue.ofMilliseconds(ttl));
+        }
+        cm = cmBuilder.build();
+
         final RequestConfig.Builder requestConfig = RequestConfig.custom();
         if (timeout != null && timeout >= 0) {
-            requestConfig.setConnectTimeout(timeout);
-            requestConfig.setConnectionRequestTimeout(timeout);
-            requestConfig.setSocketTimeout(timeout);
+            requestConfig.setConnectTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS));
+            requestConfig.setConnectionRequestTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS));
+            requestConfig.setResponseTimeout(Timeout.of(timeout, TimeUnit.MILLISECONDS));
         }
 
         if (httpCookieSpec != null && httpCookieSpec.length() > 1) {
             requestConfig.setCookieSpec(httpCookieSpec);
         }
 
-        final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> HttpConnection.this.getKeepAliveDuration(response);
+        final ConnectionKeepAliveStrategy keepAliveStrategy = (response, context) -> TimeValue.ofSeconds(HttpConnection.this.getKeepAliveDuration(response));
         final HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig.build())
                 .setConnectionManager(cm).setKeepAliveStrategy(keepAliveStrategy)
-                .setRetryHandler(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryHandler());
-        if (ttl != null) {
-            builder.setConnectionTimeToLive(ttl, TimeUnit.MILLISECONDS);
-        }
+                .setRetryStrategy(httpRequestRetryHandler != null ? httpRequestRetryHandler : new DefaultHttpRequestRetryStrategy());
+
         client = builder.build();
+        String pwd = password != null ? password : "";
+        credentials = user != null ? new UsernamePasswordCredentials(user, pwd.toCharArray()) : null;
+        authCtx = createAuthCtx();
     }
 
     private long getKeepAliveDuration(final HttpResponse response) {
-        final HeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+        final BasicHeaderElementIterator it = new BasicHeaderElementIterator(response.headerIterator(HeaderElements.KEEP_ALIVE));
         while (it.hasNext()) {
-            final HeaderElement he = it.nextElement();
+            final HeaderElement he = it.next();
             final String param = he.getName();
             final String value = he.getValue();
             if (value != null && "timeout".equalsIgnoreCase(param)) {
                 try {
-                    return Long.parseLong(value) * 1000L;
+                    return Long.parseLong(value);
                 } catch (final NumberFormatException ignore) {
                 }
             }
         }
-        return 30L * 1000L;
+        return 30L;
     }
 
     @Override
     public void close() throws IOException {
-        cm.shutdown();
+        cm.close();
         client.close();
     }
 
@@ -247,14 +250,14 @@ public class HttpConnection implements Connection {
             } else {
                 sb.append("?");
             }
-            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), "utf-8");
+            final String paramString = URLEncodedUtils.format(toList(request.getQueryParam()), StandardCharsets.UTF_8);
             sb.append(paramString);
         }
         return sb.toString();
     }
 
-    private HttpRequestBase buildHttpRequestBase(final Request request, final String url) {
-        final HttpRequestBase httpRequest;
+    private BasicClassicHttpRequest buildHttpRequestBase(final Request request, final String url) {
+        final BasicClassicHttpRequest httpRequest;
         switch (request.getRequestType()) {
             case POST:
                 httpRequest = requestWithBody(new HttpPost(url), request);
@@ -266,7 +269,7 @@ public class HttpConnection implements Connection {
                 httpRequest = requestWithBody(new HttpPatch(url), request);
                 break;
             case DELETE:
-                httpRequest = requestWithBody(new HttpDeleteWithBody(url), request);
+                httpRequest = requestWithBody(new HttpDelete(url), request);
                 break;
             case HEAD:
                 httpRequest = new HttpHead(url);
@@ -279,7 +282,7 @@ public class HttpConnection implements Connection {
         return httpRequest;
     }
 
-    private HttpRequestBase requestWithBody(final HttpEntityEnclosingRequestBase httpRequest, final Request request) {
+    private BasicClassicHttpRequest requestWithBody(final BasicClassicHttpRequest httpRequest, final Request request) {
         final VPackSlice body = request.getBody();
         if (body != null) {
             if (contentType == Protocol.HTTP_VPACK) {
@@ -309,45 +312,42 @@ public class HttpConnection implements Connection {
 
     public Response execute(final Request request) throws ArangoDBException, IOException {
         final String url = buildUrl(buildBaseUrl(host), request);
-        final HttpRequestBase httpRequest = buildHttpRequestBase(request, url);
+        final BasicClassicHttpRequest httpRequest = buildHttpRequestBase(request, url);
         httpRequest.setHeader("User-Agent", "Mozilla/5.0 (compatible; ArangoDB-JavaDriver/1.1; +http://mt.orz.at/)");
         if (contentType == Protocol.HTTP_VPACK) {
             httpRequest.setHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
-        final Credentials credentials = addCredentials(httpRequest);
         if (LOGGER.isDebugEnabled()) {
             CURLLogger.log(url, request, credentials, util);
         }
         Response response;
-        response = buildResponse(client.execute(httpRequest));
+        response = buildResponse(client.execute(httpRequest, authCtx));
         checkError(response);
         return response;
     }
 
-    private static void addHeader(final Request request, final HttpRequestBase httpRequest) {
+    private static void addHeader(final Request request, final BasicClassicHttpRequest httpRequest) {
         for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
             httpRequest.addHeader(header.getKey(), header.getValue());
         }
     }
 
-    public Credentials addCredentials(final HttpRequestBase httpRequest) {
-        Credentials credentials = null;
-        if (user != null) {
-            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
-            try {
-                httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
-            } catch (final AuthenticationException e) {
-                throw new ArangoDBException(e);
-            }
+    public HttpClientContext createAuthCtx() {
+        final HttpClientContext localContext = HttpClientContext.create();
+        if (credentials != null) {
+            BasicScheme auth = new BasicScheme(StandardCharsets.UTF_8);
+            auth.initPreemptive(credentials);
+            HttpHost target = new HttpHost(Boolean.TRUE == useSsl ? "https" : "http", host.getHost(), host.getPort());
+            localContext.resetAuthExchange(target, auth);
         }
-        return credentials;
+        return localContext;
     }
 
     public Response buildResponse(final CloseableHttpResponse httpResponse)
             throws UnsupportedOperationException, IOException {
         final Response response = new Response();
-        response.setResponseCode(httpResponse.getStatusLine().getStatusCode());
+        response.setResponseCode(httpResponse.getCode());
         final HttpEntity entity = httpResponse.getEntity();
         if (entity != null && entity.getContent() != null) {
             if (contentType == Protocol.HTTP_VPACK) {
@@ -363,7 +363,7 @@ public class HttpConnection implements Connection {
                 }
             }
         }
-        final Header[] headers = httpResponse.getAllHeaders();
+        final Header[] headers = httpResponse.getHeaders();
         final Map<String, String> meta = response.getMeta();
         for (final Header header : headers) {
             meta.put(header.getName(), header.getValue());
