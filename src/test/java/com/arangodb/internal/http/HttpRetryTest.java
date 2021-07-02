@@ -24,8 +24,11 @@ package com.arangodb.internal.http;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.Protocol;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.util.TimeValue;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -42,12 +45,22 @@ public class HttpRetryTest {
 
     private final static int RETRIES = 2;
 
-    private static class TestRetryHandler implements HttpRequestRetryHandler {
+    private static class TestRetryHandler implements HttpRequestRetryStrategy {
         private int retriesCounter = 0;
 
         @Override
-        public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+        public boolean retryRequest(HttpRequest request, IOException exception, int execCount, HttpContext context) {
             return ++retriesCounter < RETRIES;
+        }
+
+        @Override
+        public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
+            return ++retriesCounter < RETRIES;
+        }
+
+        @Override
+        public TimeValue getRetryInterval(HttpResponse response, int execCount, HttpContext context) {
+            return TimeValue.ofMilliseconds(10);
         }
 
     }

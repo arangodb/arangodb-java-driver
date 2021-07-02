@@ -23,7 +23,7 @@ package com.arangodb.example.ssl;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.junit.Ignore;
 import org.junit.Test;
 

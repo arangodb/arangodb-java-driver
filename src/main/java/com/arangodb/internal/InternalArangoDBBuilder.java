@@ -42,7 +42,7 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackParser;
-import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +87,7 @@ public abstract class InternalArangoDBBuilder {
     protected String password;
     protected Boolean useSsl;
     protected String httpCookieSpec;
-    protected HttpRequestRetryHandler httpRequestRetryHandler;
+    protected HttpRequestRetryStrategy httpRequestRetryHandler;
     protected SSLContext sslContext;
     protected HostnameVerifier hostnameVerifier;
     protected Integer chunksize;
@@ -182,7 +182,7 @@ public abstract class InternalArangoDBBuilder {
         this.hostnameVerifier = hostnameVerifier;
     }
 
-    protected void setHttpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+    protected void setHttpRequestRetryHandler(final HttpRequestRetryStrategy httpRequestRetryHandler) {
         this.httpRequestRetryHandler = httpRequestRetryHandler;
     }
 

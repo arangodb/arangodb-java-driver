@@ -68,7 +68,7 @@ import com.arangodb.velocypack.VPackSerializer;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
-import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -212,7 +212,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         }
 
         /**
-         * Sets the {@link HttpRequestRetryHandler} to be used when using http protocol.
+         * Sets the {@link HttpRequestRetryStrategy} to be used when using http protocol.
          *
          * @param httpRequestRetryHandler HttpRequestRetryHandler to be used
          * @return {@link ArangoDB.Builder}
@@ -223,7 +223,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * <a href="https://tools.ietf.org/html/rfc2616#section-9.1">9.1 Safe and Idempotent Methods</a>.
          * Please refer to <a href="https://www.arangodb.com/docs/stable/http/">HTTP API Documentation</a> for details.
          */
-        public Builder httpRequestRetryHandler(final HttpRequestRetryHandler httpRequestRetryHandler) {
+        public Builder httpRequestRetryHandler(final HttpRequestRetryStrategy httpRequestRetryHandler) {
             setHttpRequestRetryHandler(httpRequestRetryHandler);
             return this;
         }
