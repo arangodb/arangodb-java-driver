@@ -895,6 +895,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * Documentation</a>
      * @deprecated use {@link #getLogEntries(LogOptions)} instead
      */
+    @Deprecated
     LogEntity getLogs(LogOptions options) throws ArangoDBException;
 
     /**

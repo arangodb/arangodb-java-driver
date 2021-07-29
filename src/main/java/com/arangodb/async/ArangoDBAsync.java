@@ -289,6 +289,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      * @deprecated use {@link #getLogEntries(LogOptions)} instead
      */
+    @Deprecated
     CompletableFuture<LogEntity> getLogs(final LogOptions options);
 
     /**

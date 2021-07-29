@@ -600,7 +600,9 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @return Result of the executed traversal
      * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
      * Documentation</a>
+     * @deprecated use {@link this#query(String, Map, AqlQueryOptions, Class)}
      */
+    @Deprecated
     <V, E> CompletableFuture<TraversalEntity<V, E>> executeTraversal(
             final Class<V> vertexClass,
             final Class<E> edgeClass,
@@ -707,6 +709,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#createSearchAnalyzer(SearchAnalyzer)}}
      */
+    @Deprecated
     CompletableFuture<AnalyzerEntity> createAnalyzer(AnalyzerEntity options);
 
     /**
@@ -729,6 +732,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#getSearchAnalyzer(String)}}
      */
+    @Deprecated
     CompletableFuture<AnalyzerEntity> getAnalyzer(String name);
 
     /**
@@ -750,6 +754,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#getSearchAnalyzers()}
      */
+    @Deprecated
     CompletableFuture<Collection<AnalyzerEntity>> getAnalyzers();
 
     /**
@@ -770,6 +775,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#deleteSearchAnalyzer(String)}}}
      */
+    @Deprecated
     CompletableFuture<Void> deleteAnalyzer(String name);
 
     /**
@@ -781,6 +787,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#deleteSearchAnalyzer(String, AnalyzerDeleteOptions)}}}
      */
+    @Deprecated
     CompletableFuture<Void> deleteAnalyzer(String name, AnalyzerDeleteOptions options);
 
     /**

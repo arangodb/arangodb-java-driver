@@ -117,12 +117,18 @@ public class HostHandlerTest {
     @Test
     public void randomHostHandlerMultipeHosts() {
         final HostHandler handler = new RandomHostHandler(MULTIPLE_HOSTS, new FallbackHostHandler(MULTIPLE_HOSTS));
+
         final Host pick0 = handler.get(null, null);
         assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
         handler.fail();
-        assertThat(handler.get(null, null), anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+
+        final Host pick1 = handler.get(null, null);
+        assertThat(pick1, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
         handler.success();
-        assertThat(handler.get(null, null), is(pick0));
+
+        final Host pick3 = handler.get(null, null);
+        assertThat(pick3, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
+        assertThat(pick3, is(pick1));
     }
 
     @Test

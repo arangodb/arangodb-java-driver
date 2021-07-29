@@ -622,7 +622,9 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
      * Documentation</a>
+     * @deprecated use {@link this#query(String, Map, AqlQueryOptions, Class)}
      */
+    @Deprecated
     <V, E> TraversalEntity<V, E> executeTraversal(Class<V> vertexClass, Class<E> edgeClass, TraversalOptions options)
             throws ArangoDBException;
 
@@ -732,6 +734,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#createSearchAnalyzer(SearchAnalyzer)}}
      */
+    @Deprecated
     AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException;
 
     /**
@@ -755,6 +758,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#getSearchAnalyzer(String)}}
      */
+    @Deprecated
     AnalyzerEntity getAnalyzer(String name) throws ArangoDBException;
 
     /**
@@ -777,6 +781,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#getSearchAnalyzers()}
      */
+    @Deprecated
     Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException;
 
     /**
@@ -798,6 +803,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#deleteSearchAnalyzer(String)}}}
      */
+    @Deprecated
     void deleteAnalyzer(String name) throws ArangoDBException;
 
     /**
@@ -810,6 +816,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      * @deprecated use {@link this#deleteSearchAnalyzer(String, AnalyzerDeleteOptions)}}}
      */
+    @Deprecated
     void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException;
 
     /**

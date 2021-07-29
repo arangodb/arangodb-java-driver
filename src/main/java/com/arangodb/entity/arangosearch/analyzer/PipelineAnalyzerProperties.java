@@ -33,9 +33,12 @@ public class PipelineAnalyzerProperties {
 
     /**
      * Appends the specified analyzer to the end of the pipeline.
+     * <p/>
+     * <b>LIMITATIONS</b>: Analyzers of types {@link GeoPointAnalyzer} and {@link GeoJSONAnalyzer} cannot be used in
+     * pipelines and will make the creation fail.
+     * <p/>
      *
-     * @param analyzer
-     *         analyzer to be appended
+     * @param analyzer analyzer to be appended
      * @return this
      */
     public PipelineAnalyzerProperties addAnalyzer(final SearchAnalyzer analyzer) {
