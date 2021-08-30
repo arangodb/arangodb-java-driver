@@ -26,12 +26,14 @@ import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
+import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.internal.util.RequestUtils;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
 import com.arangodb.util.ArangoSerializer;
+import com.arangodb.util.DBName;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -70,6 +72,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     private static final String TRANSACTION_ID = "x-arango-trx-id";
 
+    @DBName
     private final String name;
     private final A arango;
 
@@ -77,6 +80,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
         super(arango.executor, arango.util, arango.context);
         this.arango = arango;
         this.name = name;
+        EncodeUtils.checkNormalized(name);
     }
 
     public A arango() {

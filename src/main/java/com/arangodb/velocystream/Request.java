@@ -20,6 +20,8 @@
 
 package com.arangodb.velocystream;
 
+import com.arangodb.internal.util.EncodeUtils;
+import com.arangodb.util.DBName;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
@@ -33,6 +35,7 @@ public class Request {
 
     private int version = 1;
     private int type = 1;
+    @DBName
     private final String database;
     private final RequestType requestType;
     private final String request;
@@ -49,6 +52,7 @@ public class Request {
         body = null;
         queryParam = new HashMap<>();
         headerParam = new HashMap<>();
+        EncodeUtils.checkNormalized(database);
     }
 
     public int getVersion() {

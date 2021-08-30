@@ -137,8 +137,9 @@ public class ArangoDBTest {
 
     @Test
     public void createAndDeleteDatabase() {
-        final String dbName = "testDB-" + UUID.randomUUID().toString();
-        final Boolean resultCreate = arangoDB.createDatabase(dbName);
+        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20);
+        final Boolean resultCreate;
+        resultCreate = arangoDB.createDatabase(dbName);
         assertThat(resultCreate, is(true));
         final Boolean resultDelete = arangoDB.db(dbName).drop();
         assertThat(resultDelete, is(true));

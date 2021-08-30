@@ -11,7 +11,7 @@ docker pull "$1"
 
 docker network create arangodb --subnet 172.28.0.0/16
 
-docker run -d -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name arangodb "$1"
+docker run -d -e ARANGO_ROOT_PASSWORD=test -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name arangodb "$1" --database.extended-names-databases
 
 debug_container() {
   if [ ! "$(docker ps -aqf name="$1")" ]; then

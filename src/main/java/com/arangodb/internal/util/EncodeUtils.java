@@ -20,20 +20,57 @@
 
 package com.arangodb.internal.util;
 
+import com.arangodb.ArangoDBException;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
 public final class EncodeUtils {
 
     private EncodeUtils() {
     }
 
-    public static String encodeURL(final String value) throws UnsupportedEncodingException {
-        return URLEncoder.encode(value, "UTF-8").replaceAll("\\+", "%20").replaceAll("\\%21", "!")
-                .replaceAll("\\%27", "'").replaceAll("\\%28", "(").replaceAll("\\%29", ")").replaceAll("\\%7E", "~");
+    /**
+     * Encodes a string by replacing each instance of certain characters by one, two, three, or four escape sequences
+     * representing the UTF-8 encoding of the character.
+     * It behaves the same as Javascript <code>encodeURIComponent()</code>.
+     *
+     * @param value string to encode
+     * @return encoded string
+     */
+    public static String encodeURIComponent(final String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.name())
+                    .replace("+", "%20")
+                    .replace("%21", "!")
+                    .replace("%27", "'")
+                    .replace("%28", "(")
+                    .replace("%29", ")")
+                    .replace("%7E", "~");
+        } catch (UnsupportedEncodingException e) {
+            throw new ArangoDBException(e);
+        }
     }
 
+    /**
+     * Normalizes a unicode string according to ArangoDB extended naming convention.
+     *
+     * @param value string to normalize
+     * @return NFC normalized string
+     */
+    public static String normalize(final String value) {
+        return Normalizer.normalize(value, Normalizer.Form.NFC);
+    }
+
+    public static void checkNormalized(final String value) {
+        if (value != null && !normalize(value).equals(value))
+            throw new ArangoDBException("String not properly normalized: " +
+                    "use com.arangodb.internal.util.EncodeUtils.normalize(String) to do it.");
+    }
 }

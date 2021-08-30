@@ -20,6 +20,9 @@
 
 package com.arangodb.model;
 
+import com.arangodb.internal.util.EncodeUtils;
+import com.arangodb.util.DBName;
+
 import java.util.Collection;
 
 /**
@@ -28,6 +31,7 @@ import java.util.Collection;
 public class DBCreateOptions {
 
     private Collection<DatabaseUsersOptions> users;
+    @DBName
     private String name;
     private DatabaseOptions options;
 
@@ -61,6 +65,7 @@ public class DBCreateOptions {
      * @return options
      */
     public DBCreateOptions name(final String name) {
+        EncodeUtils.checkNormalized(name);
         this.name = name;
         return this;
     }
