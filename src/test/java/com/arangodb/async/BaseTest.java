@@ -25,8 +25,6 @@ import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.rules.TestRule;
 
 import java.util.concurrent.ExecutionException;
 

@@ -27,6 +27,7 @@ import com.arangodb.internal.util.EncodeUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * @author Michele Rastelli
@@ -90,14 +91,18 @@ public final class TestUtils {
         return list.toArray(new String[0]);
     }
 
-    public static String generateRandomDbName(int length) {
-        int max = allChars.length;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            String allChar = allChars[r.nextInt(max)];
-            sb.append(allChar);
+    public static String generateRandomDbName(int length, boolean extendedNames) {
+        if(extendedNames){
+            int max = allChars.length;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                String allChar = allChars[r.nextInt(max)];
+                sb.append(allChar);
+            }
+            return EncodeUtils.normalize(sb.toString());
+        } else {
+            return UUID.randomUUID().toString();
         }
-        return EncodeUtils.normalize(sb.toString());
     }
 
 }

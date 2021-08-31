@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.License;
 import com.arangodb.entity.LogEntity;
@@ -37,6 +38,7 @@ import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -45,7 +47,6 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,7 @@ public class ArangoDBTest {
     private static final String ROOT = "root";
     private static final String USER = "mit dem mund";
     private static final String PW = "machts der hund";
+    private static Boolean extendedNames;
 
     private boolean isEnterprise() {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
@@ -77,6 +79,21 @@ public class ArangoDBTest {
     private boolean isAtLeastVersion(final int major, final int minor) {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
         return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major,minor,0);
+    }
+
+    private boolean supportsExtendedNames() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+        if (extendedNames == null) {
+            try {
+                ArangoDatabase testDb = arangoDB.db("test-" + TestUtils.generateRandomDbName(20, true));
+                testDb.create();
+                extendedNames = true;
+                testDb.drop();
+            } catch (ArangoDBException e) {
+                extendedNames = false;
+            }
+        }
+        return extendedNames;
     }
 
     @Test
@@ -149,7 +166,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 6));
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames());
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -177,7 +194,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 6));
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames());
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()

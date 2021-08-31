@@ -36,7 +36,7 @@ public class EncodeUtilsTest {
     @Test
     public void normalizeShouldBehaveAsJs() {
         for (int i = 0; i < 10_000; i++) {
-            String value = TestUtils.generateRandomDbName(100);
+            String value = TestUtils.generateRandomDbName(100, true);
             String jsNormalized = jsNormalizer.execute(value).as(String.class);
             String javaNormalized = EncodeUtils.normalize(value);
             assertThat(javaNormalized, is(jsNormalized));
@@ -46,7 +46,7 @@ public class EncodeUtilsTest {
     @Test
     public void encodeURIComponentShouldBehaveAsJs() {
         for (int i = 0; i < 10_000; i++) {
-            String value = TestUtils.generateRandomDbName(100);
+            String value = TestUtils.generateRandomDbName(100, true);
             String jsEncoded = jsEncoder.execute(value).as(String.class);
             String driverJavaEncoded = EncodeUtils.encodeURIComponent(value);
             assertThat(driverJavaEncoded, is(jsEncoded));
