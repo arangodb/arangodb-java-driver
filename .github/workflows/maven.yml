@@ -4,11 +4,9 @@ on:
   pull_request:
     branches:
       - master
-      - preview
   push:
     branches:
       - master
-      - preview
 
 jobs:
   package:
@@ -32,12 +30,12 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.6.13
-          - docker.io/arangodb/arangodb:3.7.12
-          - arangodb/arangodb-preview:3.8.0-rc.2
-          - docker.io/arangodb/enterprise:3.6.13
-          - docker.io/arangodb/enterprise:3.7.12
-          - arangodb/enterprise-preview:3.8.0-rc.2
+          - docker.io/arangodb/arangodb:3.7.14
+          - docker.io/arangodb/arangodb:3.8.0
+          - docker.io/arangodb/arangodb-test:PR14700
+          - docker.io/arangodb/enterprise:3.7.14
+          - docker.io/arangodb/enterprise:3.8.0
+          - docker.io/arangodb/enterprise-test:PR14700
 
         topology:
           - single
@@ -59,3 +57,17 @@ jobs:
       - name: Debug containers
         if: ${{ cancelled() || failure() }}
         run: ./docker/debug_containers_${{ matrix.topology }}.sh
+
+  # test encodeURIComponent() and normalize('NFC') comparing to Javascript behavior
+  test-graalvm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: DeLaGuardo/setup-graalvm@4.0
+        with:
+          graalvm: '21.2.0'
+      - name: Info
+        run: mvn -version
+      - name: Test
+        run: mvn -e --no-transfer-progress test -Dtest=com.arangodb.internal.util.EncodeUtilsTest
