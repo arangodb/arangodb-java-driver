@@ -19,9 +19,9 @@ AUTHORIZATION_HEADER=$(cat "$LOCATION"/jwtHeader)
 
 echo "Starting containers..."
 
-docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name server1 "$1" sh -c 'arangodb --starter.address=$(hostname -i) --starter.mode=activefailover --starter.join server1,server2,server3 --auth.jwt-secret /jwtSecret'
-docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.2 --name server2 "$1" sh -c 'arangodb --starter.address=$(hostname -i) --starter.mode=activefailover --starter.join server1,server2,server3 --auth.jwt-secret /jwtSecret'
-docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.3 --name server3 "$1" sh -c 'arangodb --starter.address=$(hostname -i) --starter.mode=activefailover --starter.join server1,server2,server3 --auth.jwt-secret /jwtSecret'
+docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.1 --name server1 "$1" sh -c 'arangodb --starter.address=$(hostname -i) --starter.mode=activefailover --starter.join server1,server2,server3 --auth.jwt-secret /jwtSecret --all.database.extended-names-databases true'
+docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.2 --name server2 "$1" sh -c 'arangodb --starter.address=$(hostname -i) --starter.mode=activefailover --starter.join server1,server2,server3 --auth.jwt-secret /jwtSecret --all.database.extended-names-databases true'
+docker run -d -v "$LOCATION"/jwtSecret:/jwtSecret -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" --network arangodb --ip 172.28.3.3 --name server3 "$1" sh -c 'arangodb --starter.address=$(hostname -i) --starter.mode=activefailover --starter.join server1,server2,server3 --auth.jwt-secret /jwtSecret --all.database.extended-names-databases true'
 
 debug_container() {
   running=$(docker inspect -f '{{.State.Running}}' "$1")
