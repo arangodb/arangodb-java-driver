@@ -22,8 +22,6 @@
 package com.arangodb.util;
 
 
-import com.arangodb.internal.util.EncodeUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -99,7 +97,7 @@ public final class TestUtils {
                 String allChar = allChars[r.nextInt(max)];
                 sb.append(allChar);
             }
-            return EncodeUtils.normalize(sb.toString());
+            return UnicodeUtils.normalize(sb.toString());
         } else {
             return UUID.randomUUID().toString();
         }

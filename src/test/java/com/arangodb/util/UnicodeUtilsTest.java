@@ -1,6 +1,6 @@
-package com.arangodb.internal.util;
+package com.arangodb.util;
 
-import com.arangodb.util.TestUtils;
+import com.arangodb.internal.util.EncodeUtils;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.junit.AfterClass;
@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assume.assumeTrue;
 
-public class EncodeUtilsTest {
+public class UnicodeUtilsTest {
 
     private static Context context;
     private static Value jsEncoder;
@@ -38,7 +38,7 @@ public class EncodeUtilsTest {
         for (int i = 0; i < 10_000; i++) {
             String value = TestUtils.generateRandomDbName(100, true);
             String jsNormalized = jsNormalizer.execute(value).as(String.class);
-            String javaNormalized = EncodeUtils.normalize(value);
+            String javaNormalized = UnicodeUtils.normalize(value);
             assertThat(javaNormalized, is(jsNormalized));
         }
     }

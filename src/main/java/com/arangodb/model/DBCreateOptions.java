@@ -20,7 +20,7 @@
 
 package com.arangodb.model;
 
-import com.arangodb.internal.util.EncodeUtils;
+import com.arangodb.util.UnicodeUtils;
 import com.arangodb.util.DBName;
 
 import java.util.Collection;
@@ -65,7 +65,7 @@ public class DBCreateOptions {
      * @return options
      */
     public DBCreateOptions name(final String name) {
-        EncodeUtils.checkNormalized(name);
+        UnicodeUtils.checkNormalized(name);
         this.name = name;
         return this;
     }

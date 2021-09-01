@@ -20,7 +20,7 @@
 
 package com.arangodb.velocystream;
 
-import com.arangodb.internal.util.EncodeUtils;
+import com.arangodb.util.UnicodeUtils;
 import com.arangodb.util.DBName;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
@@ -52,7 +52,7 @@ public class Request {
         body = null;
         queryParam = new HashMap<>();
         headerParam = new HashMap<>();
-        EncodeUtils.checkNormalized(database);
+        UnicodeUtils.checkNormalized(database);
     }
 
     public int getVersion() {
