@@ -30,17 +30,11 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.7.14
-          - docker.io/arangodb/arangodb:3.8.0
           - docker.io/arangodb/arangodb-test:PR14700
-          - docker.io/arangodb/enterprise:3.7.14
-          - docker.io/arangodb/enterprise:3.8.0
           - docker.io/arangodb/enterprise-test:PR14700
 
         topology:
           - single
-          - cluster
-          - active-failover
 
     steps:
       - uses: actions/checkout@v1
