@@ -64,4 +64,4 @@ jobs:
       - name: Info
         run: mvn -version
       - name: Test
-        run: mvn -e --no-transfer-progress test -Dtest=com.arangodb.internal.util.EncodeUtilsTest
+        run: mvn -e --no-transfer-progress test -Dtest=com.arangodb.util.UnicodeUtilsTest
