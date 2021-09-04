@@ -23,6 +23,7 @@ package com.arangodb.entity;
 import com.arangodb.velocypack.VPackSlice;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -34,7 +35,7 @@ public class CursorEntity implements Entity, MetaAware {
 
     private String id;
     private Integer count;
-    private Extras extra;
+    private Extras extra = new Extras();
     private Boolean cached;
     private Boolean hasMore;
     private VPackSlice result;
@@ -120,7 +121,7 @@ public class CursorEntity implements Entity, MetaAware {
 
     public static class Extras {
         private Stats stats;
-        private Collection<Warning> warnings;
+        private Collection<Warning> warnings = Collections.emptyList();
 
         public Stats getStats() {
             return stats;
