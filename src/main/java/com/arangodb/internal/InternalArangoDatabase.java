@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -128,7 +129,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     }
 
     protected Request dropRequest() {
-        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_DATABASE, dbName.getValue());
+        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_DATABASE, dbName.get());
     }
 
     protected ResponseDeserializer<Boolean> createDropResponseDeserializer() {
@@ -137,22 +138,22 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected Request grantAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                dbName.getValue()).setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+                dbName.get()).setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request resetAccessRequest(final String user) {
         return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                dbName.getValue());
+                dbName.get());
     }
 
     protected Request updateUserDefaultCollectionAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                dbName.getValue(), "*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+                dbName.get(), "*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request getPermissionsRequest(final String user) {
         return request(DbName.SYSTEM, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                dbName.getValue());
+                dbName.get());
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {

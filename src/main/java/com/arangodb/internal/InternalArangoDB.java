@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory;

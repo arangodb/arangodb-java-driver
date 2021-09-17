@@ -21,7 +21,7 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.DbName;
+import com.arangodb.DbName;
 import com.arangodb.internal.ArangoExecutorSync;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.util.ArangoSerialization;

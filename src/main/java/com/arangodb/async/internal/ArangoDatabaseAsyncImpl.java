@@ -21,6 +21,7 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoCursorAsync;
 import com.arangodb.async.ArangoDatabaseAsync;

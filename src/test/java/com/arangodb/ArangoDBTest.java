@@ -237,7 +237,7 @@ public class ArangoDBTest {
         assertThat(resultCreate, is(true));
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
-        assertThat(info.getName(), is(dbName.getValue()));
+        assertThat(info.getName(), is(dbName.get()));
 
         Optional<UserEntity> retrievedUserOptional = arangoDB.getUsers().stream()
                 .filter(it -> it.getUser().equals("testUser"))
@@ -271,7 +271,7 @@ public class ArangoDBTest {
         assertThat(dbs, is(notNullValue()));
         assertThat(dbs.size(), is(greaterThan(0)));
         assertThat(dbs.contains("_system"), is(true));
-        assertThat(dbs, hasItem(DB1.getValue()));
+        assertThat(dbs, hasItem(DB1.get()));
     }
 
     @Test
@@ -502,7 +502,7 @@ public class ArangoDBTest {
     public void getLogsSearch() {
         assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
-        final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.getValue()));
+        final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()));
         assertThat(logsSearch, is(notNullValue()));
         assertThat(logs.getTotalAmount(), greaterThan(logsSearch.getTotalAmount()));
     }
@@ -611,7 +611,7 @@ public class ArangoDBTest {
     public void getLogEntriesSearch() {
         assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
-        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(BaseTest.TEST_DB.getValue()));
+        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(BaseTest.TEST_DB.get()));
         assertThat(logsSearch, is(notNullValue()));
         assertThat(logs.getTotal(), greaterThan(logsSearch.getTotal()));
     }

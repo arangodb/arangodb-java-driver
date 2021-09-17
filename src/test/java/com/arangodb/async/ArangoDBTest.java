@@ -23,6 +23,7 @@ package com.arangodb.async;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.DatabaseOptions;
@@ -229,7 +230,7 @@ public class ArangoDBTest {
         dbs = arangoDB.getDatabases().get();
         assertThat(dbs.size(), is(greaterThan(dbCount)));
         assertThat(dbs, hasItem("_system"));
-        assertThat(dbs, hasItem(BaseTest.TEST_DB.getValue()));
+        assertThat(dbs, hasItem(BaseTest.TEST_DB.get()));
         arangoDB.db(BaseTest.TEST_DB).drop().get();
     }
 
@@ -570,7 +571,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
-        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.getValue()))
+        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()))
                 .whenComplete((logsSearch, ex) -> {
                     assertThat(logsSearch, is(notNullValue()));
                     assertThat(logs.getTotalAmount(), greaterThan(logsSearch.getTotalAmount()));
@@ -628,7 +629,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 8));
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
-        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.getValue()))
+        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()))
                 .whenComplete((logsSearch, ex) -> {
                     assertThat(logsSearch, is(notNullValue()));
                     assertThat(logs.getTotal(), greaterThan(logsSearch.getTotalAmount()));

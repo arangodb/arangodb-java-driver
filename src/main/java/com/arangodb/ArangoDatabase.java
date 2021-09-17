@@ -56,7 +56,7 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      */
     @Deprecated
     default String name() {
-        return dbName().getValue();
+        return dbName().get();
     }
 
     /**

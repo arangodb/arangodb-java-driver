@@ -20,7 +20,7 @@
 
 package com.arangodb.velocystream;
 
-import com.arangodb.entity.DbName;
+import com.arangodb.DbName;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
@@ -83,7 +83,7 @@ public class Request {
      */
     @Deprecated
     public String getDatabase() {
-        return getDbName().getValue();
+        return getDbName().get();
     }
 
     public DbName getDbName() {

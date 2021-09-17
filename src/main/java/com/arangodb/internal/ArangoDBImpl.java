@@ -20,10 +20,7 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;

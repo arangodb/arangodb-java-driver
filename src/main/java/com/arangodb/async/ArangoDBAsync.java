@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;

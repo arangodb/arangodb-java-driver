@@ -20,7 +20,7 @@
 
 package com.arangodb.model;
 
-import com.arangodb.entity.DbName;
+import com.arangodb.DbName;
 
 import java.util.Collection;
 
@@ -73,7 +73,7 @@ public class DBCreateOptions {
      * @return options
      */
     public DBCreateOptions name(final DbName dbName) {
-        name = dbName.getValue();
+        name = dbName.get();
         return this;
     }
 

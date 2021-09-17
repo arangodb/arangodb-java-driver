@@ -1,12 +1,22 @@
-package com.arangodb.entity;
+package com.arangodb;
 
 import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.util.UnicodeUtils;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
-public class DbName {
+/**
+ * Class to represent a NFC-normalized database name (as required by ArangoDB extended naming convention).
+ * To instantiate use {@link DbName#of(String)} or {@link DbName#normalize(String)}.
+ *
+ * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html>
+ */
+public final class DbName implements Supplier<String> {
 
+    /**
+     * DbName of the "_system" database.
+     */
     public static final DbName SYSTEM = DbName.of(ArangoRequestParam.SYSTEM);
 
     private final String value;
@@ -46,7 +56,8 @@ public class DbName {
         this.value = value;
     }
 
-    public String getValue() {
+    @Override
+    public String get() {
         return value;
     }
 
@@ -65,6 +76,6 @@ public class DbName {
 
     @Override
     public String toString() {
-        return getValue();
+        return get();
     }
 }

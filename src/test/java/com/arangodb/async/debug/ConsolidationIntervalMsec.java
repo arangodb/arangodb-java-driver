@@ -23,7 +23,7 @@ package com.arangodb.async.debug;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.async.BaseTest;
-import com.arangodb.entity.DbName;
+import com.arangodb.DbName;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;

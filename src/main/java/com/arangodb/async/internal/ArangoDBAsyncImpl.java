@@ -21,6 +21,7 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;

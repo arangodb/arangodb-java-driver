@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -58,7 +59,7 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      */
     @Deprecated
     default String name() {
-        return dbName().getValue();
+        return dbName().get();
     }
 
     /**

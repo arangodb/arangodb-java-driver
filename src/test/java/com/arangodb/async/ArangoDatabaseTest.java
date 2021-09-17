@@ -21,6 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.*;
 import com.arangodb.entity.AqlParseEntity.AstNode;
@@ -58,10 +59,10 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void create() throws InterruptedException, ExecutionException {
         try {
-            final Boolean result = arangoDB.db(DbName.of(BaseTest.TEST_DB.getValue() + "_1")).create().get();
+            final Boolean result = arangoDB.db(DbName.of(BaseTest.TEST_DB.get() + "_1")).create().get();
             assertThat(result, is(true));
         } finally {
-            arangoDB.db(DbName.of(BaseTest.TEST_DB.getValue() + "_1")).drop().get();
+            arangoDB.db(DbName.of(BaseTest.TEST_DB.get() + "_1")).drop().get();
         }
     }
 

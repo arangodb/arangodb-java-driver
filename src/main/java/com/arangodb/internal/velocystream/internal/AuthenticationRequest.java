@@ -20,7 +20,7 @@
 
 package com.arangodb.internal.velocystream.internal;
 
-import com.arangodb.entity.DbName;
+import com.arangodb.DbName;
 import com.arangodb.velocystream.Request;
 
 /**

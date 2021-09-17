@@ -21,7 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.entity.ArangoDBEngine;
-import com.arangodb.entity.DbName;
+import com.arangodb.DbName;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;

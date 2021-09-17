@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -664,17 +665,17 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request grantAccessRequest(final String user, final Permissions permissions) {
         return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.dbName().getValue(), name).setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+                db.dbName().get(), name).setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request resetAccessRequest(final String user) {
         return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.dbName().getValue(), name);
+                db.dbName().get(), name);
     }
 
     protected Request getPermissionsRequest(final String user) {
         return request(DbName.SYSTEM, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.dbName().getValue(), name);
+                db.dbName().get(), name);
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {

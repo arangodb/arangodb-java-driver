@@ -293,7 +293,7 @@ public class ArangoSearchTest extends BaseTest {
 
     private void createGetAndDeleteAnalyzer(AnalyzerEntity options) {
 
-        String fullyQualifiedName = db.dbName().getValue() + "::" + options.getName();
+        String fullyQualifiedName = db.dbName().get() + "::" + options.getName();
 
         // createAnalyzer
         AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
@@ -337,7 +337,7 @@ public class ArangoSearchTest extends BaseTest {
 
     private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) {
 
-        String fullyQualifiedName = db.dbName().getValue() + "::" + analyzer.getName();
+        String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
         analyzer.setName(fullyQualifiedName);
 
         // createAnalyzer
