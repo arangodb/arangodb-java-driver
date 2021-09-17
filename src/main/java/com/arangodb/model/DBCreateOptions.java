@@ -20,8 +20,7 @@
 
 package com.arangodb.model;
 
-import com.arangodb.util.UnicodeUtils;
-import com.arangodb.util.DBName;
+import com.arangodb.entity.DbName;
 
 import java.util.Collection;
 
@@ -31,8 +30,7 @@ import java.util.Collection;
 public class DBCreateOptions {
 
     private Collection<DatabaseUsersOptions> users;
-    @DBName
-    private String name;
+    private DbName dbName;
     private DatabaseOptions options;
 
     public DBCreateOptions() {
@@ -56,17 +54,34 @@ public class DBCreateOptions {
         return this;
     }
 
+    /**
+     * @deprecated Use {@link #getDbName()} instead.
+     */
+    @Deprecated
     public String getName() {
-        return name;
+        return dbName.getValue();
     }
 
     /**
      * @param name Has to contain a valid database name
      * @return options
+     * @deprecated Use {@link #dbName(DbName)} instead.
      */
+    @Deprecated
     public DBCreateOptions name(final String name) {
-        UnicodeUtils.checkNormalized(name);
-        this.name = name;
+        return dbName(DbName.of(name));
+    }
+
+    public DbName getDbName() {
+        return dbName;
+    }
+
+    /**
+     * @param dbName database name
+     * @return options
+     */
+    public DBCreateOptions dbName(DbName dbName) {
+        this.dbName = dbName;
         return this;
     }
 

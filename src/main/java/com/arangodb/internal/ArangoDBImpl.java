@@ -129,13 +129,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
-    public ArangoDatabase db(final String name) {
-        return new ArangoDatabaseImpl(this, name).setCursorInitializer(cursorInitializer);
+    public ArangoDatabase db(final DbName dbName) {
+        return new ArangoDatabaseImpl(this, dbName.getValue()).setCursorInitializer(cursorInitializer);
     }
 
     @Override
-    public Boolean createDatabase(final String name) throws ArangoDBException {
-        return createDatabase(new DBCreateOptions().name(name));
+    public Boolean createDatabase(final DbName dbName) throws ArangoDBException {
+        return createDatabase(new DBCreateOptions().dbName(dbName));
     }
 
     @Override

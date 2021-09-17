@@ -9,7 +9,7 @@ public class DbName {
     private final String value;
 
     /**
-     * Creates a new DbName instance with the provided value. If the provided value is not
+     * Creates a new {@link DbName} instance with the provided value. If the provided value is not
      * <a href="https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms">NFC-normalized</a>, throws
      * {@link IllegalArgumentException}. No transformation is applied to the provided value.
      * Use {@link #normalize(String)} to create a DbName from a non-NFC-normalized value.
@@ -26,8 +26,8 @@ public class DbName {
     }
 
     /**
-     * Creates a new DbName instance with the NFC normal form of the provided value. The created DbName will hold a
-     * value potentially different from the provided one.
+     * Creates a new {@link DbName} instance with the NFC normal form of the provided value.
+     * Note that the created {@link DbName} will hold a value potentially different from the provided one.
      *
      * @param value desired db name
      * @return the created {@link DbName} instance
