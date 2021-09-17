@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added `DbName` class to represent database names in public API parameters, to ease unicode names normalization (#405)
+
 ## [6.13.0] - 2021-08-25
 
 - added support for `fillBlockCache` in AQL query options (ArangoDB v3.8.1)
