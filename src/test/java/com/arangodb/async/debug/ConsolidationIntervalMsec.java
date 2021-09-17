@@ -23,6 +23,7 @@ package com.arangodb.async.debug;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.async.BaseTest;
+import com.arangodb.entity.DbName;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
@@ -53,7 +54,7 @@ public class ConsolidationIntervalMsec extends BaseTest {
                 .password("test")
                 .build();
 
-        ArangoDatabaseAsync db = arango.db("database_of_things");
+        ArangoDatabaseAsync db = arango.db(DbName.of("database_of_things"));
         if (db.exists().join()) {
             db.drop().join();
         }

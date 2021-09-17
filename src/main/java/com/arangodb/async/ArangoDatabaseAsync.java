@@ -54,8 +54,19 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Returns the name of the database
      *
      * @return database name
+     * @deprecated Use {@link #dbName()} instead
      */
-    String name();
+    @Deprecated
+    default String name() {
+        return dbName().getValue();
+    }
+
+    /**
+     * Returns the name of the database
+     *
+     * @return database name
+     */
+    DbName dbName();
 
     /**
      * Returns the server name and version number.

@@ -1223,7 +1223,7 @@ public class ArangoDatabaseTest extends BaseTest {
         final DatabaseEntity info = db.getInfo();
         assertThat(info, is(notNullValue()));
         assertThat(info.getId(), is(notNullValue()));
-        assertThat(info.getName(), is(BaseTest.TEST_DB));
+        assertThat(info.getName(), is(BaseTest.TEST_DB.getValue()));
         assertThat(info.getPath(), is(notNullValue()));
         assertThat(info.getIsSystem(), is(false));
 

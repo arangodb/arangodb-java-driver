@@ -30,7 +30,7 @@ import java.util.Collection;
 public class DBCreateOptions {
 
     private Collection<DatabaseUsersOptions> users;
-    private DbName dbName;
+    private String name;
     private DatabaseOptions options;
 
     public DBCreateOptions() {
@@ -54,34 +54,26 @@ public class DBCreateOptions {
         return this;
     }
 
-    /**
-     * @deprecated Use {@link #getDbName()} instead.
-     */
-    @Deprecated
     public String getName() {
-        return dbName.getValue();
+        return name;
     }
 
     /**
      * @param name Has to contain a valid database name
      * @return options
-     * @deprecated Use {@link #dbName(DbName)} instead.
+     * @deprecated Use {@link #name(DbName)} instead.
      */
     @Deprecated
     public DBCreateOptions name(final String name) {
-        return dbName(DbName.of(name));
-    }
-
-    public DbName getDbName() {
-        return dbName;
+        return name(DbName.of(name));
     }
 
     /**
      * @param dbName database name
      * @return options
      */
-    public DBCreateOptions dbName(DbName dbName) {
-        this.dbName = dbName;
+    public DBCreateOptions name(final DbName dbName) {
+        name = dbName.getValue();
         return this;
     }
 

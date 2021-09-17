@@ -28,26 +28,7 @@ import com.arangodb.async.ArangoGraphAsync;
 import com.arangodb.async.ArangoRouteAsync;
 import com.arangodb.async.ArangoSearchAsync;
 import com.arangodb.async.ArangoViewAsync;
-import com.arangodb.entity.AqlExecutionExplainEntity;
-import com.arangodb.entity.AqlFunctionEntity;
-import com.arangodb.entity.AqlParseEntity;
-import com.arangodb.entity.ArangoDBEngine;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.CursorEntity;
-import com.arangodb.entity.DatabaseEntity;
-import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.GraphEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.QueryCachePropertiesEntity;
-import com.arangodb.entity.QueryEntity;
-import com.arangodb.entity.QueryTrackingPropertiesEntity;
-import com.arangodb.entity.StreamTransactionEntity;
-import com.arangodb.entity.TransactionEntity;
-import com.arangodb.entity.TraversalEntity;
-import com.arangodb.entity.ViewEntity;
-import com.arangodb.entity.ViewType;
+import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
@@ -86,7 +67,7 @@ import java.util.concurrent.ExecutionException;
 public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyncImpl, ArangoExecutorAsync>
         implements ArangoDatabaseAsync {
 
-    ArangoDatabaseAsyncImpl(final ArangoDBAsyncImpl arangoDB, final String name) {
+    ArangoDatabaseAsyncImpl(final ArangoDBAsyncImpl arangoDB, final DbName name) {
         super(arangoDB, name);
     }
 
@@ -168,7 +149,7 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
 
     @Override
     public CompletableFuture<Boolean> create() {
-        return arango().createDatabase(name());
+        return arango().createDatabase(dbName());
     }
 
     @Override

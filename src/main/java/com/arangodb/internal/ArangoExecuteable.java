@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.entity.DbName;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.EncodeUtils;
@@ -59,8 +60,8 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> {
         return util.get(serializer);
     }
 
-    protected Request request(final String database, final RequestType requestType, final String... path) {
-        final Request request = new Request(database, requestType, createPath(path));
+    protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
+        final Request request = new Request(dbName, requestType, createPath(path));
         for (final Entry<String, String> header : context.getHeaderParam().entrySet()) {
             request.putHeaderParam(header.getKey(), header.getValue());
         }

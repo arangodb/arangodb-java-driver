@@ -63,7 +63,7 @@ public class VPackSerializers {
         builder.add(attribute, ValueType.ARRAY);
         builder.add(value.getVersion());
         builder.add(value.getType());
-        builder.add(value.getDatabase());
+        builder.add(value.getDbName().getValue());
         builder.add(value.getRequestType().getType());
         builder.add(value.getRequest());
         builder.add(ValueType.OBJECT);

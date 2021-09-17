@@ -20,10 +20,7 @@
 
 package com.arangodb.util;
 
-import com.arangodb.ArangoDBException;
-
 import java.text.Normalizer;
-import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -41,12 +38,14 @@ public final class UnicodeUtils {
      * @return NFC normalized string
      */
     public static String normalize(final String value) {
+        if (value == null) {
+            return null;
+        }
         return Normalizer.normalize(value, Normalizer.Form.NFC);
     }
 
     public static void checkNormalized(final String value) {
-        Objects.requireNonNull(value);
-        if (!normalize(value).equals(value))
+        if (value != null && !normalize(value).equals(value))
             throw new IllegalArgumentException("Unicode String not normalized: NFC normal form is required.");
     }
 }

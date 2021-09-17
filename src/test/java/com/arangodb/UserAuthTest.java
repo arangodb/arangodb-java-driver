@@ -20,10 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.CollectionEntity;
-import com.arangodb.entity.IndexEntity;
-import com.arangodb.entity.Permissions;
+import com.arangodb.entity.*;
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
 import com.arangodb.model.HashIndexOptions;
@@ -52,8 +49,8 @@ import static org.junit.Assert.fail;
 @Ignore
 public class UserAuthTest {
 
-    private static final String DB_NAME = "AuthUnitTestDB";
-    private static final String DB_NAME_NEW = DB_NAME + "new";
+    private static final DbName DB_NAME = DbName.of("AuthUnitTestDB");
+    private static final DbName DB_NAME_NEW = DB_NAME.of(DB_NAME.getValue() + "new");
     private static final String COLLECTION_NAME = "AuthUnitTestCollection";
     private static final String COLLECTION_NAME_NEW = COLLECTION_NAME + "new";
     private static final String USER_NAME = "AuthUnitTestUser";
@@ -137,14 +134,14 @@ public class UserAuthTest {
                 } catch (final ArangoDBException e) {
                     fail(details);
                 }
-                assertThat(details, arangoDBRoot.getDatabases(), hasItem(DB_NAME_NEW));
+                assertThat(details, arangoDBRoot.getDatabases(), hasItem(DB_NAME_NEW.getValue()));
             } else {
                 try {
                     arangoDB.createDatabase(DB_NAME_NEW);
                     fail(details);
                 } catch (final ArangoDBException e) {
                 }
-                assertThat(details, arangoDBRoot.getDatabases(), not(hasItem(DB_NAME_NEW)));
+                assertThat(details, arangoDBRoot.getDatabases(), not(hasItem(DB_NAME_NEW.getValue())));
             }
         } finally {
             try {
@@ -164,14 +161,14 @@ public class UserAuthTest {
                 } catch (final ArangoDBException e) {
                     fail(details);
                 }
-                assertThat(details, arangoDBRoot.getDatabases(), not(hasItem(DB_NAME)));
+                assertThat(details, arangoDBRoot.getDatabases(), not(hasItem(DB_NAME.getValue())));
             } else {
                 try {
                     arangoDB.db(DB_NAME).drop();
                     fail(details);
                 } catch (final ArangoDBException e) {
                 }
-                assertThat(details, arangoDBRoot.getDatabases(), hasItem(DB_NAME));
+                assertThat(details, arangoDBRoot.getDatabases(), hasItem(DB_NAME.getValue()));
             }
         } finally {
             try {

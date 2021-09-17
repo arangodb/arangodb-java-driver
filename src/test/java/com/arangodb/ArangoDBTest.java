@@ -20,16 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.DatabaseEntity;
-import com.arangodb.entity.License;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.DatabaseOptions;
 import com.arangodb.model.DatabaseUsersOptions;
@@ -72,8 +63,8 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(Parameterized.class)
 public class ArangoDBTest {
 
-    private static final String DB1 = "ArangoDBTest_db1";
-    private static final String DB2 = "ArangoDBTest_db2";
+    private static final DbName DB1 = DbName.of("ArangoDBTest_db1");
+    private static final DbName DB2 = DbName.of("ArangoDBTest_db2");
 
     private static final String ROOT = "root";
     private static final String PW = "machts der hund";
@@ -87,7 +78,7 @@ public class ArangoDBTest {
     @BeforeClass
     public static void initDB() {
         ArangoDB arango = BaseTest.arangos.get(0);
-        for (String db : new String[]{DB1, DB2}) {
+        for (DbName db : new DbName[]{DB1, DB2}) {
             ArangoDatabase database = arango.db(db);
             if (!database.exists())
                 database.create();
@@ -97,7 +88,7 @@ public class ArangoDBTest {
     @AfterClass
     public static void shutdown() {
         ArangoDB arango = BaseTest.arangos.get(0);
-        for (String db : new String[]{DB1, DB2}) {
+        for (DbName db : new DbName[]{DB1, DB2}) {
             ArangoDatabase database = arango.db(db);
             if (database.exists())
                 database.drop();
@@ -132,7 +123,7 @@ public class ArangoDBTest {
     private boolean supportsExtendedNames() {
         if (extendedNames == null) {
             try {
-                ArangoDatabase testDb = arangoDB.db("test-" + TestUtils.generateRandomDbName(20, true));
+                ArangoDatabase testDb = arangoDB.db(DbName.of("test-" + TestUtils.generateRandomDbName(20, true)));
                 testDb.create();
                 extendedNames = true;
                 testDb.drop();
@@ -153,7 +144,7 @@ public class ArangoDBTest {
 
     @Test
     public void createAndDeleteDatabase() {
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames());
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames()));
         final Boolean resultCreate;
         resultCreate = arangoDB.createDatabase(dbName);
         assertThat(resultCreate, is(true));
@@ -162,13 +153,19 @@ public class ArangoDBTest {
     }
 
     @Test
-    public void createWithInvalidName() {
+    public void createWithNotNormalizedName() {
+        assumeTrue(supportsExtendedNames());
+
         final String dbName = "testDB-\u006E\u0303\u00f1";
+        DbName normalized = DbName.normalize(dbName);
+        arangoDB.createDatabase(normalized);
+        arangoDB.db(normalized).drop();
+
         try {
-            arangoDB.createDatabase(dbName);
+            DbName.of(dbName);
             fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getMessage(), containsString("not properly normalized"));
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), containsString("not normalized"));
         }
     }
 
@@ -176,7 +173,7 @@ public class ArangoDBTest {
     public void createDatabaseWithOptions() {
         assumeTrue(isCluster());
         assumeTrue(isAtLeastVersion(3, 6));
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames());
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames()));
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -203,7 +200,7 @@ public class ArangoDBTest {
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 6));
 
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames());
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames()));
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -226,7 +223,7 @@ public class ArangoDBTest {
 
     @Test
     public void createDatabaseWithUsers() throws InterruptedException {
-        final String dbName = "testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames());
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames()));
         final Map<String, Object> extra = Collections.singletonMap("key", "value");
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
@@ -240,7 +237,7 @@ public class ArangoDBTest {
         assertThat(resultCreate, is(true));
 
         DatabaseEntity info = arangoDB.db(dbName).getInfo();
-        assertThat(info.getName(), is(dbName));
+        assertThat(info.getName(), is(dbName.getValue()));
 
         Optional<UserEntity> retrievedUserOptional = arangoDB.getUsers().stream()
                 .filter(it -> it.getUser().equals("testUser"))
@@ -274,7 +271,7 @@ public class ArangoDBTest {
         assertThat(dbs, is(notNullValue()));
         assertThat(dbs.size(), is(greaterThan(0)));
         assertThat(dbs.contains("_system"), is(true));
-        assertThat(dbs, hasItem(DB1));
+        assertThat(dbs, hasItem(DB1.getValue()));
     }
 
     @Test
@@ -438,7 +435,7 @@ public class ArangoDBTest {
 
     @Test
     public void execute() throws VPackException {
-        final Response response = arangoDB.execute(new Request("_system", RequestType.GET, "/_api/version"));
+        final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
         assertThat(response.getBody(), is(notNullValue()));
         assertThat(response.getBody().get("version").isString(), is(true));
     }
@@ -505,7 +502,7 @@ public class ArangoDBTest {
     public void getLogsSearch() {
         assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final LogEntity logs = arangoDB.getLogs(null);
-        final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB));
+        final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.getValue()));
         assertThat(logsSearch, is(notNullValue()));
         assertThat(logs.getTotalAmount(), greaterThan(logsSearch.getTotalAmount()));
     }
@@ -614,7 +611,7 @@ public class ArangoDBTest {
     public void getLogEntriesSearch() {
         assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
-        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(BaseTest.TEST_DB));
+        final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(BaseTest.TEST_DB.getValue()));
         assertThat(logsSearch, is(notNullValue()));
         assertThat(logs.getTotal(), greaterThan(logsSearch.getTotal()));
     }
@@ -675,7 +672,7 @@ public class ArangoDBTest {
     @Test
     public void arangoDBException() {
         try {
-            arangoDB.db("no").getInfo();
+            arangoDB.db(DbName.of("no")).getInfo();
             fail();
         } catch (final ArangoDBException e) {
             assertThat(e.getResponseCode(), is(404));

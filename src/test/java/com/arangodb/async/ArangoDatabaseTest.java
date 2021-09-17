@@ -58,10 +58,10 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void create() throws InterruptedException, ExecutionException {
         try {
-            final Boolean result = arangoDB.db(BaseTest.TEST_DB + "_1").create().get();
+            final Boolean result = arangoDB.db(DbName.of(BaseTest.TEST_DB.getValue() + "_1")).create().get();
             assertThat(result, is(true));
         } finally {
-            arangoDB.db(BaseTest.TEST_DB + "_1").drop().get();
+            arangoDB.db(DbName.of(BaseTest.TEST_DB.getValue() + "_1")).drop().get();
         }
     }
 
@@ -86,7 +86,7 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void exists() throws InterruptedException, ExecutionException {
         assertThat(db.exists().get(), is(true));
-        assertThat(arangoDB.db("no").exists().get(), is(false));
+        assertThat(arangoDB.db(DbName.of("no")).exists().get(), is(false));
     }
 
     @Test

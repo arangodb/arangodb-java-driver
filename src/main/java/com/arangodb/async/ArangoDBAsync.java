@@ -26,14 +26,7 @@ import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -104,8 +97,20 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(DbName)} instead
      */
-    ArangoDatabaseAsync db(final String name);
+    @Deprecated
+    default ArangoDatabaseAsync db(final String name) {
+        return db(DbName.of(name));
+    }
+
+    /**
+     * Returns a handler of the database by the given name
+     *
+     * @param dbName Name of the database
+     * @return database handler
+     */
+    ArangoDatabaseAsync db(final DbName dbName);
 
     /**
      * Creates a new database
@@ -114,8 +119,22 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return true if the database was created successfully.
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    CompletableFuture<Boolean> createDatabase(final String name);
+    @Deprecated
+    default CompletableFuture<Boolean> createDatabase(final String name) {
+        return createDatabase(DbName.of(name));
+    }
+
+    /**
+     * Creates a new database
+     *
+     * @param dbName database name
+     * @return true if the database was created successfully.
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     */
+    CompletableFuture<Boolean> createDatabase(final DbName dbName);
 
     /**
      * Creates a new database

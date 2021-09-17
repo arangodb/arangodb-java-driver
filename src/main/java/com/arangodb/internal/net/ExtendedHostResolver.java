@@ -21,8 +21,8 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.entity.DbName;
 import com.arangodb.internal.ArangoExecutorSync;
-import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.VPackSlice;
@@ -125,7 +125,7 @@ public class ExtendedHostResolver implements HostResolver {
         try {
 
             response = executor.execute(
-                    new Request(ArangoRequestParam.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
+                    new Request(DbName.SYSTEM, RequestType.GET, "/_api/cluster/endpoints"),
                     response1 -> {
                         final VPackSlice field = response1.getBody().get("endpoints");
                         Collection<String> endpoints;

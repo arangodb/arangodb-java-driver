@@ -20,6 +20,7 @@
 
 package com.arangodb.internal.velocystream.internal;
 
+import com.arangodb.entity.DbName;
 import com.arangodb.velocystream.Request;
 
 /**
@@ -32,7 +33,7 @@ public class AuthenticationRequest extends Request {
     private final String encryption;// "plain"
 
     public AuthenticationRequest(final String user, final String password, final String encryption) {
-        super(null, null, null);
+        super(DbName.of(null), null, null);
         this.user = user;
         this.password = password;
         this.encryption = encryption;

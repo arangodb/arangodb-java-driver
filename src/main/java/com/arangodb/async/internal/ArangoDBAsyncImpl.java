@@ -97,16 +97,16 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public ArangoDatabaseAsync db() {
-        return db(ArangoRequestParam.SYSTEM);
+        return db(DbName.SYSTEM);
     }
 
     @Override
-    public ArangoDatabaseAsync db(final String name) {
+    public ArangoDatabaseAsync db(final DbName name) {
         return new ArangoDatabaseAsyncImpl(this, name);
     }
 
     @Override
-    public CompletableFuture<Boolean> createDatabase(final String name) {
+    public CompletableFuture<Boolean> createDatabase(final DbName name) {
         return createDatabase(new DBCreateOptions().name(name));
     }
 
@@ -117,7 +117,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public CompletableFuture<Collection<String>> getDatabases() {
-        return executor.execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
+        return executor.execute(getDatabasesRequest(db().dbName()), getDatabaseResponseDeserializer());
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public CompletableFuture<Collection<String>> getAccessibleDatabasesFor(final String user) {
-        return executor.execute(getAccessibleDatabasesForRequest(db().name(), user),
+        return executor.execute(getAccessibleDatabasesForRequest(db().dbName(), user),
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
@@ -143,7 +143,7 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
 
     @Override
     public CompletableFuture<UserEntity> createUser(final String user, final String passwd) {
-        return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
+        return executor.execute(createUserRequest(db().dbName(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
     }
 
@@ -152,32 +152,32 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final String user,
             final String passwd,
             final UserCreateOptions options) {
-        return executor.execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
+        return executor.execute(createUserRequest(db().dbName(), user, passwd, options), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<Void> deleteUser(final String user) {
-        return executor.execute(deleteUserRequest(db().name(), user), Void.class);
+        return executor.execute(deleteUserRequest(db().dbName(), user), Void.class);
     }
 
     @Override
     public CompletableFuture<UserEntity> getUser(final String user) {
-        return executor.execute(getUserRequest(db().name(), user), UserEntity.class);
+        return executor.execute(getUserRequest(db().dbName(), user), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<Collection<UserEntity>> getUsers() {
-        return executor.execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
+        return executor.execute(getUsersRequest(db().dbName()), getUsersResponseDeserializer());
     }
 
     @Override
     public CompletableFuture<UserEntity> updateUser(final String user, final UserUpdateOptions options) {
-        return executor.execute(updateUserRequest(db().name(), user, options), UserEntity.class);
+        return executor.execute(updateUserRequest(db().dbName(), user, options), UserEntity.class);
     }
 
     @Override
     public CompletableFuture<UserEntity> replaceUser(final String user, final UserUpdateOptions options) {
-        return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
+        return executor.execute(replaceUserRequest(db().dbName(), user, options), UserEntity.class);
     }
 
     @Override

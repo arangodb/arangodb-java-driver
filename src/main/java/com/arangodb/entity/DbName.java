@@ -1,10 +1,13 @@
 package com.arangodb.entity;
 
+import com.arangodb.internal.ArangoRequestParam;
 import com.arangodb.util.UnicodeUtils;
 
 import java.util.Objects;
 
 public class DbName {
+
+    public static final DbName SYSTEM = DbName.of(ArangoRequestParam.SYSTEM);
 
     private final String value;
 
@@ -62,8 +65,6 @@ public class DbName {
 
     @Override
     public String toString() {
-        return "DbName{" +
-                "value='" + value + '\'' +
-                '}';
+        return getValue();
     }
 }
