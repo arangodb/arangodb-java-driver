@@ -10,7 +10,8 @@ import java.util.function.Supplier;
  * Class to represent a NFC-normalized database name (as required by ArangoDB extended naming convention).
  * To instantiate use {@link DbName#of(String)} or {@link DbName#normalize(String)}.
  *
- * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html>
+ * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html">
+ * API Documentation</a>
  */
 public final class DbName implements Supplier<String> {
 
@@ -30,7 +31,7 @@ public final class DbName implements Supplier<String> {
      * @param value desired db name
      * @return the created {@link DbName} instance
      * @see <a href="https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms">NFC normalization</a>
-     * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html>
+     * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html">
      * API Documentation</a>
      */
     public static DbName of(final String value) {
@@ -45,7 +46,7 @@ public final class DbName implements Supplier<String> {
      * @param value desired db name
      * @return the created {@link DbName} instance
      * @see <a href="https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms">NFC normalization</a>
-     * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html>
+     * @see <a href="http://https://www.arangodb.com/docs/stable/data-modeling-naming-conventions-database-names.html">
      * API Documentation</a>
      */
     public static DbName normalize(final String value) {
