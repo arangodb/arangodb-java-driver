@@ -175,6 +175,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
+    public String getServerId() throws ArangoDBException {
+        return executor.execute(getServerIdRequest(), getServerIdResponseDeserializer());
+    }
+
+    @Override
     public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
         return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
