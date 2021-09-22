@@ -304,7 +304,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         /**
          * Setting the Interval for acquireHostList
          *
-         * @param acquireHostListInterval Interval in Seconds
+         * @param acquireHostListInterval Interval in milliseconds
          * @return {@link ArangoDB.Builder}
          */
         public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
