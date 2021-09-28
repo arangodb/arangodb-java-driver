@@ -26,6 +26,14 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
+ * WARNING:
+ * The implementation of Stopwords analyzer is not final in ArangoDB 3.8.0, so using it might result in unpredictable behavior.
+ * This will be fixed in ArangoDB 3.8.1 and will have a different API.
+ * Any usage of the current Java driver API related to it is therefore discouraged.
+ * See related <a href="https://github.com/arangodb/arangodb-java-driver/issues/394">bug report</a>
+ * <p>
+ * <p>
+ * <p>
  * An Analyzer capable of removing specified tokens from the input.
  *
  * @author Michele Rastelli

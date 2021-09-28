@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.13.0] - 2021-08-25
+
+- added support for `fillBlockCache` in AQL query options (ArangoDB v3.8.1)
+- fixed exceptions handling during shutdown (#400)
+- added native image configuration for HTTP communication
+- updated native image reflection configuration
+
+## [6.12.3] - 2021-06-24
+
+- fixed host handler failures count (#DEVSUP-805, #398)
+
+## [6.12.2] - 2021-06-17
+
+- added missing enum value `QueryExecutionState.KILLED` (#391)
+- fixed `acquireHostList` to loadBalancer or hostname alias (#385)
+
+**WARNING**: The implementation of Stopwords analyzer is not final in ArangoDB 3.8.0, so using it might result in unpredictable behavior.
+This will be fixed in ArangoDB 3.8.1 and will have a different API.
+Any usage of the current Java driver API related to it is therefore discouraged.
+
+## [6.12.1] - 2021-04-28
+
+- fixed request timeout in async driver (#ES-837)
+
+## [6.12.0] - 2021-04-28
+
+- added support for modifying collection schema
+
 ## [6.11.1] - 2021-04-23
 
 - velocypack v2.5.3

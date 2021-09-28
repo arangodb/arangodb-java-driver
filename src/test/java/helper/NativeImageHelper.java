@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.MethodParameterScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,13 +43,16 @@ public class NativeImageHelper {
         packages.stream()
                 .flatMap(p -> {
                     final ConfigurationBuilder config = new ConfigurationBuilder()
-                            .setScanners(new ResourcesScanner(), new SubTypesScanner(false))
+                            .setScanners(new MethodParameterScanner())
                             .setUrls(ClasspathHelper.forPackage(p))
                             .filterInputsBy(new FilterBuilder().includePackage(p));
 
-                    return new Reflections(config).getSubTypesOf(Object.class).stream();
+                    return new Reflections(config).getConstructorsMatchParams().stream();
                 })
-                .map(Class::getName)
+                .filter(it -> packages.contains(it.getDeclaringClass().getPackage().getName()))
+                .filter((it -> Modifier.isPublic(it.getDeclaringClass().getModifiers())))
+                .filter(it -> Modifier.isPublic(it.getModifiers()))
+                .map(Constructor::getName)
                 .map(className -> {
                     ObjectNode entry = mapper.createObjectNode();
                     entry.put("name", className);

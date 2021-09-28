@@ -42,6 +42,7 @@ public class AqlQueryOptions implements Serializable {
     private Integer ttl;
     private Integer batchSize;
     private Boolean cache;
+    private Boolean fillBlockCache;
     private Long memoryLimit;
     private VPackSlice bindVars;
     private String query;
@@ -128,6 +129,26 @@ public class AqlQueryOptions implements Serializable {
      */
     public AqlQueryOptions cache(final Boolean cache) {
         this.cache = cache;
+        return this;
+    }
+
+    public Boolean getFillBlockCache() {
+        return options != null ? options.fillBlockCache : null;
+    }
+
+    /**
+     * @param fillBlockCache if set to <code>true</code> or not specified, this will make the query store
+     *                       the data it reads via the RocksDB storage engine in the RocksDB block cache. This is
+     *                       usually the desired behavior. The option can be set to <code>false</code> for queries that
+     *                       are known to either read a lot of data that would thrash the block cache, or for queries
+     *                       that read data known to be outside of the hot set. By setting the option
+     *                       to <code>false</code>, data read by the query will not make it into the RocksDB block cache if
+     *                       it is not already in there, thus leaving more room for the actual hot set.
+     * @return options
+     * @since ArangoDB 3.8.1
+     */
+    public AqlQueryOptions fillBlockCache(final Boolean fillBlockCache) {
+        getOptions().fillBlockCache = fillBlockCache;
         return this;
     }
 
@@ -407,6 +428,7 @@ public class AqlQueryOptions implements Serializable {
         private Boolean stream;
         private Collection<String> shardIds;
         private Double maxRuntime;
+        private Boolean fillBlockCache;
 
         protected Optimizer getOptimizer() {
             if (optimizer == null) {

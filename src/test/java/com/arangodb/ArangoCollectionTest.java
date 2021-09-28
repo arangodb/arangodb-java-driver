@@ -37,6 +37,7 @@ import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ShardEntity;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.CollectionPropertiesOptions;
+import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentDeleteOptions;
 import com.arangodb.model.DocumentExistsOptions;
@@ -2612,14 +2613,47 @@ public class ArangoCollectionTest extends BaseTest {
     public void changeProperties() {
         final CollectionPropertiesEntity properties = collection.getProperties();
         assertThat(properties.getWaitForSync(), is(notNullValue()));
+        if (isAtLeastVersion(3, 7)) {
+            assertThat(properties.getSchema(), is(nullValue()));
+        }
 
-        final CollectionPropertiesEntity changedProperties = collection.changeProperties(new CollectionPropertiesOptions()
-                .waitForSync(!properties.getWaitForSync()));
+        String schemaRule = ("{  " +
+                "           \"properties\": {" +
+                "               \"number\": {" +
+                "                   \"type\": \"number\"" +
+                "               }" +
+                "           }" +
+                "       }")
+                .replaceAll("\\s", "");
+        String schemaMessage = "The document has problems!";
+
+        CollectionPropertiesOptions updatedOptions = new CollectionPropertiesOptions()
+                .waitForSync(!properties.getWaitForSync())
+                .schema(new CollectionSchema()
+                        .setLevel(CollectionSchema.Level.NEW)
+                        .setMessage(schemaMessage)
+                        .setRule(schemaRule)
+                );
+
+        final CollectionPropertiesEntity changedProperties = collection.changeProperties(updatedOptions);
         assertThat(changedProperties.getWaitForSync(), is(notNullValue()));
         assertThat(changedProperties.getWaitForSync(), is(!properties.getWaitForSync()));
+        if (isAtLeastVersion(3, 7)) {
+            assertThat(changedProperties.getSchema(), is(notNullValue()));
+            assertThat(changedProperties.getSchema().getLevel(), is(CollectionSchema.Level.NEW));
+            assertThat(changedProperties.getSchema().getMessage(), is(schemaMessage));
+            assertThat(changedProperties.getSchema().getRule(), is(schemaRule));
+        }
 
         // revert changes
-        collection.changeProperties(new CollectionPropertiesOptions().waitForSync(properties.getWaitForSync()));
+        CollectionPropertiesEntity revertedProperties = collection.changeProperties(new CollectionPropertiesOptions()
+                .waitForSync(properties.getWaitForSync())
+                .schema(CollectionSchema.NULL_SCHEMA)
+        );
+        if (isAtLeastVersion(3, 7)) {
+            assertThat(revertedProperties.getSchema(), is(nullValue()));
+        }
+
     }
 
     @Test

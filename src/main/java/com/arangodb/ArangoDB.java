@@ -304,7 +304,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         /**
          * Setting the Interval for acquireHostList
          *
-         * @param acquireHostListInterval Interval in Seconds
+         * @param acquireHostListInterval Interval in milliseconds
          * @return {@link ArangoDB.Builder}
          */
         public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
@@ -763,6 +763,16 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     ServerRole getRole() throws ArangoDBException;
 
     /**
+     * Returns the id of a server in a cluster.
+     *
+     * @return the server id
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
+     * Documentation</a>
+     */
+    String getServerId() throws ArangoDBException;
+
+    /**
      * Create a new user. This user will not have access to any database. You need permission to the _system database in
      * order to execute this call.
      *
@@ -895,6 +905,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * Documentation</a>
      * @deprecated use {@link #getLogEntries(LogOptions)} instead
      */
+    @Deprecated
     LogEntity getLogs(LogOptions options) throws ArangoDBException;
 
     /**

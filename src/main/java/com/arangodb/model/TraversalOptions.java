@@ -24,6 +24,7 @@ package com.arangodb.model;
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/traversal.html">API Documentation</a>
  */
+@Deprecated
 public class TraversalOptions {
 
     public enum Direction {

@@ -27,6 +27,7 @@ import java.util.Set;
  * @author Michele Rastelli
  * @deprecated use typed analyzers {@link com.arangodb.entity.arangosearch.analyzer}
  */
+@Deprecated
 public class AnalyzerEntity {
 
     private Set<AnalyzerFeature> features;

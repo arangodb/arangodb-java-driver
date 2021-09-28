@@ -32,13 +32,16 @@ import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -311,7 +314,7 @@ public class ArangoDatabaseTest extends BaseTest {
 
         final CollectionEntity result = db
                 .createCollection(name, new CollectionCreateOptions()
-                        .setSchema(
+                        .schema(
                                 new CollectionSchema()
                                         .setLevel(CollectionSchema.Level.NEW)
                                         .setMessage(message)
@@ -681,8 +684,8 @@ public class ArangoDatabaseTest extends BaseTest {
     @Test
     public void queryWithMemoryLimit() {
         try {
-            db.query("RETURN 1..10000", null, new AqlQueryOptions().memoryLimit(32 * 1024L), String.class);
-            fail();
+            db.query("RETURN 1..100000", null, new AqlQueryOptions().memoryLimit(32 * 1024L), String.class);
+            fail("Memory limit not honored.");
         } catch (final ArangoDBException e) {
             assertThat(e.getErrorNum(), is(32));
         }
@@ -903,27 +906,47 @@ public class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    @Ignore
     public void getCurrentlyRunningQueries() throws InterruptedException {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                db.query("return sleep(0.2)", null, null, Void.class);
-            }
-        };
+        String query = "return sleep(1)";
+        Thread t = new Thread(() -> db.query(query, null, null, Void.class));
         t.start();
-        Thread.sleep(100);
-        try {
-            final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
-            assertThat(currentlyRunningQueries, is(notNullValue()));
-            assertThat(currentlyRunningQueries.size(), is(1));
-            final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
-            assertThat(queryEntity.getQuery(), is("return sleep(0.2)"));
-            assertThat(queryEntity.getState(), is(QueryExecutionState.EXECUTING));
-        } finally {
-            t.join();
-        }
+        Thread.sleep(300);
+        final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
+        assertThat(currentlyRunningQueries, is(notNullValue()));
+        assertThat(currentlyRunningQueries.size(), is(1));
+        final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
+        assertThat(queryEntity.getQuery(), is(query));
+        assertThat(queryEntity.getState(), is(QueryExecutionState.EXECUTING));
+        t.join();
+    }
+
+    @Test
+    public void killQuery() throws InterruptedException, ExecutionException {
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Future<?> future = es.submit(() -> {
+            try {
+                db.query("return sleep(5)", null, null, Void.class);
+                fail();
+            } catch (ArangoDBException e) {
+                assertThat(e.getResponseCode(), is(410));
+                assertThat(e.getErrorNum(), is(1500));
+                assertThat(e.getErrorMessage(), containsString("query killed"));
+            }
+        });
+        Thread.sleep(500);
+
+        Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
+        assertThat(currentlyRunningQueries.size(), is(1));
+        QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
+        assertThat(queryEntity.getState(), is(QueryExecutionState.EXECUTING));
+        db.killQuery(queryEntity.getId());
+
+        db.getCurrentlyRunningQueries().forEach(q ->
+                assertThat(q.getState(), is(QueryExecutionState.KILLED))
+        );
+
+        future.get();
+        es.shutdown();
     }
 
     @Test
@@ -946,27 +969,6 @@ public class ArangoDatabaseTest extends BaseTest {
         assertThat(db.getSlowQueries().size(), is(0));
         properties.setSlowQueryThreshold(slowQueryThreshold);
         db.setQueryTrackingProperties(properties);
-    }
-
-    @Test
-    @Ignore
-    public void killQuery() throws InterruptedException {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                db.query("return sleep(0.2)", null, null, Void.class);
-                fail();
-            }
-        };
-        t.start();
-        Thread.sleep(100);
-
-        final Collection<QueryEntity> currentlyRunningQueries = db.getCurrentlyRunningQueries();
-        assertThat(currentlyRunningQueries.size(), is(1));
-
-        final QueryEntity queryEntity = currentlyRunningQueries.iterator().next();
-        db.killQuery(queryEntity.getId());
     }
 
     @Test
