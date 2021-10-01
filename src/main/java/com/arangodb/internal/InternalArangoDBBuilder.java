@@ -50,10 +50,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -353,7 +350,7 @@ public abstract class InternalArangoDBBuilder {
             final Properties properties,
             final LoadBalancingStrategy currentValue) {
         return LoadBalancingStrategy.valueOf(getProperty(properties, PROPERTY_KEY_LOAD_BALANCING_STRATEGY, currentValue,
-                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase());
+                ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY).toUpperCase(Locale.ENGLISH));
     }
 
     protected static <T> String getProperty(
