@@ -75,6 +75,7 @@ import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -119,7 +120,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
             return Protocol.valueOf(
                     getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
-                            .toUpperCase());
+                            .toUpperCase(Locale.ENGLISH));
         }
 
         public Builder useProtocol(final Protocol protocol) {
