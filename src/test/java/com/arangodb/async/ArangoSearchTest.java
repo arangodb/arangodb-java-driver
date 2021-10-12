@@ -307,14 +307,16 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
-        expectedProperties.forEach((key, value) -> {
-            Object expectedValue = actualProperties.get(key);
-            if (value instanceof Map) {
-                assertThat(expectedValue, notNullValue());
-                assertThat(expectedValue, instanceOf(Map.class));
-                compareProperties((Map) value, (Map) expectedValue);
+        expectedProperties.forEach((key, expectedValue) -> {
+            Object actualValue = actualProperties.get(key);
+            if (expectedValue instanceof Map) {
+                assertThat(actualValue, notNullValue());
+                assertThat(actualValue, instanceOf(Map.class));
+                compareProperties((Map) actualValue, (Map) expectedValue);
+            } else if (expectedValue instanceof Number) {
+                assertThat(Double.valueOf(actualValue.toString()), is(Double.valueOf(expectedValue.toString())));
             } else {
-                assertThat(value, is(expectedValue));
+                assertThat(actualValue, is(expectedValue));
             }
         });
     }
