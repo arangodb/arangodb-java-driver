@@ -75,6 +75,7 @@ import javax.net.ssl.SSLContext;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -119,7 +120,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         private static Protocol loadProtocol(final Properties properties, final Protocol currentValue) {
             return Protocol.valueOf(
                     getProperty(properties, PROPERTY_KEY_PROTOCOL, currentValue, ArangoDefaults.DEFAULT_NETWORK_PROTOCOL)
-                            .toUpperCase());
+                            .toUpperCase(Locale.ENGLISH));
         }
 
         public Builder useProtocol(final Protocol protocol) {
@@ -304,7 +305,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         /**
          * Setting the Interval for acquireHostList
          *
-         * @param acquireHostListInterval Interval in Seconds
+         * @param acquireHostListInterval Interval in milliseconds
          * @return {@link ArangoDB.Builder}
          */
         public Builder acquireHostListInterval(final Integer acquireHostListInterval) {
@@ -761,6 +762,16 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      */
     ServerRole getRole() throws ArangoDBException;
+
+    /**
+     * Returns the id of a server in a cluster.
+     *
+     * @return the server id
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#return-id-of-a-server-in-a-cluster">API
+     * Documentation</a>
+     */
+    String getServerId() throws ArangoDBException;
 
     /**
      * Create a new user. This user will not have access to any database. You need permission to the _system database in

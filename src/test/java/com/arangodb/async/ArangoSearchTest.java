@@ -307,14 +307,16 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
-        expectedProperties.forEach((key, value) -> {
-            Object expectedValue = actualProperties.get(key);
-            if (value instanceof Map) {
-                assertThat(expectedValue, notNullValue());
-                assertThat(expectedValue, instanceOf(Map.class));
-                compareProperties((Map) value, (Map) expectedValue);
+        expectedProperties.forEach((key, expectedValue) -> {
+            Object actualValue = actualProperties.get(key);
+            if (expectedValue instanceof Map) {
+                assertThat(actualValue, notNullValue());
+                assertThat(actualValue, instanceOf(Map.class));
+                compareProperties((Map) actualValue, (Map) expectedValue);
+            } else if (expectedValue instanceof Number) {
+                assertThat(Double.valueOf(actualValue.toString()), is(Double.valueOf(expectedValue.toString())));
             } else {
-                assertThat(value, is(expectedValue));
+                assertThat(actualValue, is(expectedValue));
             }
         });
     }
@@ -411,7 +413,7 @@ public class ArangoSearchTest extends BaseTest {
         options.setFeatures(features);
         options.setName(name);
         options.setType(AnalyzerType.stem);
-        options.setProperties(Collections.singletonMap("locale", "ru.utf-8"));
+        options.setProperties(Collections.singletonMap("locale", "ru"));
 
         createGetAndDeleteAnalyzer(options);
     }
@@ -428,7 +430,7 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         StemAnalyzerProperties properties = new StemAnalyzerProperties();
-        properties.setLocale("ru.utf-8");
+        properties.setLocale("ru");
 
         StemAnalyzer options = new StemAnalyzer();
         options.setFeatures(features);
@@ -449,7 +451,7 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("locale", "ru.utf-8");
+        properties.put("locale", "ru");
         properties.put("case", "lower");
         properties.put("accent", true);
 
@@ -474,7 +476,7 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         NormAnalyzerProperties properties = new NormAnalyzerProperties();
-        properties.setLocale("ru.utf-8");
+        properties.setLocale("ru");
         properties.setAnalyzerCase(SearchAnalyzerCase.lower);
         properties.setAccent(true);
 
@@ -548,7 +550,7 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("locale", "ru.utf-8");
+        properties.put("locale", "ru");
         properties.put("case", "lower");
         properties.put("stopwords", Collections.emptyList());
         properties.put("accent", true);
@@ -575,7 +577,7 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         TextAnalyzerProperties properties = new TextAnalyzerProperties();
-        properties.setLocale("ru.utf-8");
+        properties.setLocale("ru");
         properties.setAnalyzerCase(SearchAnalyzerCase.lower);
         properties.setAccent(true);
         properties.setStemming(true);
