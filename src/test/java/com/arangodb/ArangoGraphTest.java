@@ -234,8 +234,8 @@ public class ArangoGraphTest extends BaseTest {
 
 	@Test
 	public void smartGraph() {
-		
-		if (arangoDB.getVersion().getLicense() == License.ENTERPRISE) {
+
+		if (arangoDB.getRole() != ServerRole.SINGLE && arangoDB.getVersion().getLicense() == License.ENTERPRISE) {
 			
 			for (final String collection : new String[] { EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4 }) {
 				try {
