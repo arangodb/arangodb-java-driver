@@ -72,6 +72,10 @@ public class HttpCommunication implements Closeable {
     }
 
     public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException, IOException {
+        return execute(request, hostHandle, 0);
+    }
+
+    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) throws ArangoDBException, IOException {
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         try {
@@ -99,12 +103,12 @@ public class HttpCommunication implements Closeable {
                 }
             }
         } catch (final ArangoDBException e) {
-            if (e instanceof ArangoDBRedirectException) {
+            if (e instanceof ArangoDBRedirectException && attemptCount < 3) {
                 final String location = ((ArangoDBRedirectException) e).getLocation();
                 final HostDescription redirectHost = HostUtils.createFromLocation(location);
                 hostHandler.closeCurrentOnError();
                 hostHandler.fail();
-                return execute(request, new HostHandle().setHost(redirectHost));
+                return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
             } else {
                 throw e;
             }
