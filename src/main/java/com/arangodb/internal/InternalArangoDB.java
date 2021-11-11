@@ -58,7 +58,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     }
 
     protected Request getServerIdRequest() {
-        return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_SERVER_ID);
+        return request(DbName.SYSTEM, RequestType.GET, PATH_API_SERVER_ID);
     }
 
     protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
