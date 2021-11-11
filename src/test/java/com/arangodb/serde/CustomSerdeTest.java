@@ -28,6 +28,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.util.ArangoSerialization;
+import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -53,7 +54,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTE
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 
 /**
@@ -232,6 +233,12 @@ public class CustomSerdeTest {
         assertThat(result.getAttribute("arr"), is("hello"));
         assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
         assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+    }
+
+    @Test
+    public void parseNullString() {
+        final String json = arangoDB.util(CUSTOM).deserialize(new VPackBuilder().add((String) null).slice(), String.class);
+        assertThat(json, nullValue());
     }
 
 }

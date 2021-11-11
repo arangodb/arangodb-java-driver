@@ -22,10 +22,7 @@ package com.arangodb.util;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.velocypack.Type;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -36,6 +33,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * @author Mark Vollmary
@@ -102,4 +100,11 @@ public class ArangoSerializationTest {
         final String json = util.deserialize(util.serialize(entity, new ArangoSerializer.Options()), String.class);
         assertThat(json, is("{\"value\":[\"test\",null]}"));
     }
+
+    @Test
+    public void parseNullString() {
+        final String json = util.deserialize(new VPackBuilder().add((String) null).slice(), String.class);
+        assertThat(json, nullValue());
+    }
+
 }

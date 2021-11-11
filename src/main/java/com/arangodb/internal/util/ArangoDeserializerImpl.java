@@ -48,7 +48,7 @@ public class ArangoDeserializerImpl implements ArangoDeserializer {
     public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
         try {
             final T doc;
-            if (type == String.class && !vpack.isString()) {
+            if (type == String.class && !vpack.isString() && !vpack.isNull()) {
                 doc = (T) vpackParser.toJson(vpack, true);
             } else {
                 doc = vpacker.deserialize(vpack, type);

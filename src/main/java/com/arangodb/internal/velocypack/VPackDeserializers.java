@@ -65,11 +65,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -144,11 +140,11 @@ public class VPackDeserializers {
 
     public static final VPackDeserializer<LogLevel> LOG_LEVEL = (parent, vpack, context) -> LogLevel.fromLevel(vpack.getAsInt());
 
-    public static final VPackDeserializer<License> LICENSE = (parent, vpack, context) -> License.valueOf(vpack.getAsString().toUpperCase());
+    public static final VPackDeserializer<License> LICENSE = (parent, vpack, context) -> License.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
-    public static final VPackDeserializer<Permissions> PERMISSIONS = (parent, vpack, context) -> Permissions.valueOf(vpack.getAsString().toUpperCase());
+    public static final VPackDeserializer<Permissions> PERMISSIONS = (parent, vpack, context) -> Permissions.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
-    public static final VPackDeserializer<QueryExecutionState> QUERY_EXECUTION_STATE = (parent, vpack, context) -> QueryExecutionState.valueOf(vpack.getAsString().toUpperCase().replaceAll(" ", "_"));
+    public static final VPackDeserializer<QueryExecutionState> QUERY_EXECUTION_STATE = (parent, vpack, context) -> QueryExecutionState.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH).replaceAll(" ", "_"));
 
     public static final VPackDeserializer<ReplicationFactor> REPLICATION_FACTOR = (parent, vpack, context) -> {
         final ReplicationFactor replicationFactor = new ReplicationFactor();
@@ -167,7 +163,7 @@ public class VPackDeserializers {
     };
 
     public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH
-            : ViewType.valueOf(vpack.getAsString().toUpperCase());
+            : ViewType.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
 
     public static final VPackDeserializer<ArangoSearchProperties> ARANGO_SEARCH_PROPERTIES = (parent, vpack, context) -> {
         final ArangoSearchProperties properties = new ArangoSearchProperties();
@@ -216,7 +212,7 @@ public class VPackDeserializers {
                 }
                 final VPackSlice storeValues = value.get("storeValues");
                 if (storeValues.isString()) {
-                    link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase()));
+                    link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase(Locale.ENGLISH)));
                 }
                 final VPackSlice fields = value.get("fields");
                 if (fields.isObject()) {
@@ -290,7 +286,7 @@ public class VPackDeserializers {
         }
         final VPackSlice storeValues = value.get("storeValues");
         if (storeValues.isString()) {
-            link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase()));
+            link.storeValues(StoreValuesType.valueOf(storeValues.getAsString().toUpperCase(Locale.ENGLISH)));
         }
         final VPackSlice fields = value.get("fields");
         if (fields.isObject()) {
@@ -313,7 +309,7 @@ public class VPackDeserializers {
         final VPackSlice type = vpack.get("type");
         if (type.isString()) {
             final ConsolidationPolicy consolidate = ConsolidationPolicy
-                    .of(ConsolidationType.valueOf(type.getAsString().toUpperCase()));
+                    .of(ConsolidationType.valueOf(type.getAsString().toUpperCase(Locale.ENGLISH)));
             final VPackSlice threshold = vpack.get("threshold");
             if (threshold.isNumber()) {
                 consolidate.threshold(threshold.getAsDouble());

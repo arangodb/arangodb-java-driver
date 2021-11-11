@@ -51,6 +51,7 @@ import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -119,7 +120,7 @@ public class VPackSerializers {
 
     public static final VPackSerializer<LogLevel> LOG_LEVEL = (builder, attribute, value, context) -> builder.add(attribute, value.getLevel());
 
-    public static final VPackSerializer<Permissions> PERMISSIONS = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase());
+    public static final VPackSerializer<Permissions> PERMISSIONS = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase(Locale.ENGLISH));
 
     public static final VPackSerializer<ReplicationFactor> REPLICATION_FACTOR = (builder, attribute, value, context) -> {
         final Boolean satellite = value.getSatellite();
@@ -137,7 +138,7 @@ public class VPackSerializers {
     };
 
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
-        final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase();
+        final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
         builder.add(attribute, type);
     };
 
@@ -187,7 +188,7 @@ public class VPackSerializers {
                 }
                 final StoreValuesType storeValues = collectionLink.getStoreValues();
                 if (storeValues != null) {
-                    builder.add("storeValues", storeValues.name().toLowerCase());
+                    builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
                 }
                 serializeFieldLinks(builder, collectionLink.getFields());
                 builder.close();
@@ -253,7 +254,7 @@ public class VPackSerializers {
                 }
                 final StoreValuesType storeValues = fieldLink.getStoreValues();
                 if (storeValues != null) {
-                    builder.add("storeValues", storeValues.name().toLowerCase());
+                    builder.add("storeValues", storeValues.name().toLowerCase(Locale.ENGLISH));
                 }
                 serializeFieldLinks(builder, fieldLink.getFields());
                 builder.close();
@@ -262,7 +263,7 @@ public class VPackSerializers {
         }
     }
 
-    public static final VPackSerializer<ConsolidationType> CONSOLIDATE_TYPE = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase());
+    public static final VPackSerializer<ConsolidationType> CONSOLIDATE_TYPE = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase(Locale.ENGLISH));
 
     public static final VPackSerializer<CollectionSchema> COLLECTION_VALIDATION = (builder, attribute, value, context) -> {
         VPackParser parser = new VPackParser.Builder().build();

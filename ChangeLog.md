@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - added `DbName` class to represent database names in public API parameters, to ease unicode names normalization (#405)
 
+## [6.14.0] - 2021-10-01
+
+- fixed issues with non-English locales (#407)
+- implemented support for `GET /_admin/server/id`
+- fixed `acquireHostListInterval` javadoc, interval in milliseconds
+- fixed NPE in `CursorEntity.extra` and `CursorEntity.Extras.stats`
+
 ## [6.13.0] - 2021-08-25
 
 - added support for `fillBlockCache` in AQL query options (ArangoDB v3.8.1)

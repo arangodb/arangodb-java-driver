@@ -56,6 +56,11 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
 
     @Override
     protected CompletableFuture<Response> execute(final Request request, final VstConnectionAsync connection) {
+        return execute(request, connection, 0);
+    }
+
+    @Override
+    protected CompletableFuture<Response> execute(final Request request, final VstConnectionAsync connection, final int attemptCount) {
         final CompletableFuture<Response> rfuture = new CompletableFuture<>();
         try {
             final Message message = createMessage(request);
@@ -73,11 +78,15 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
                     try {
                         checkError(response);
                     } catch (final ArangoDBRedirectException e) {
+                        if (attemptCount >= 3) {
+                            rfuture.completeExceptionally(e);
+                            return;
+                        }
                         final String location = e.getLocation();
                         final HostDescription redirectHost = HostUtils.createFromLocation(location);
                         hostHandler.closeCurrentOnError();
                         hostHandler.fail();
-                        execute(request, new HostHandle().setHost(redirectHost))
+                        execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1)
                                 .whenComplete((v, err) -> {
                                     if (v != null) {
                                         rfuture.complete(v);

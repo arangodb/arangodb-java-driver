@@ -45,6 +45,7 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
     private static final String PATH_API_ADMIN_LOG_ENTRIES = "/_admin/log/entries";
     private static final String PATH_API_ADMIN_LOG_LEVEL = "/_admin/log/level";
     private static final String PATH_API_ROLE = "/_admin/server/role";
+    private static final String PATH_API_SERVER_ID = "/_admin/server/id";
     private static final String PATH_ENDPOINTS = "/_api/cluster/endpoints";
     private static final String PATH_API_USER = "/_api/user";
 
@@ -56,8 +57,16 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
         return request(DbName.SYSTEM, RequestType.GET, PATH_API_ROLE);
     }
 
+    protected Request getServerIdRequest() {
+        return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_SERVER_ID);
+    }
+
     protected ResponseDeserializer<ServerRole> getRoleResponseDeserializer() {
         return response -> util().deserialize(response.getBody().get("role"), ServerRole.class);
+    }
+
+    protected ResponseDeserializer<String> getServerIdResponseDeserializer() {
+        return response -> util().deserialize(response.getBody().get("id"), String.class);
     }
 
     protected Request createDatabaseRequest(final DBCreateOptions options) {
