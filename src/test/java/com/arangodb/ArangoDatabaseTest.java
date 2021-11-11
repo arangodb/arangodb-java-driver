@@ -700,7 +700,7 @@ public class ArangoDatabaseTest extends BaseTest {
     public void queryWithFailOnWarningFalse() {
         final ArangoCursor<String> cursor = db
                 .query("RETURN 1 / 0", null, new AqlQueryOptions().failOnWarning(false), String.class);
-        assertThat(cursor.next(), is("null"));
+        assertThat(cursor.next(), nullValue());
     }
 
     @Test
