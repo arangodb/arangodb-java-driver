@@ -1,28 +1,15 @@
 name: Java CI
 
 on:
-  pull_request:
-    branches:
-      - master
-      - preview
   push:
     branches:
       - master
-      - preview
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - master
 
 jobs:
-  package:
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Package
-        run: mvn --no-transfer-progress -DskipTests=true package
 
   test:
     timeout-minutes: 20
@@ -33,61 +20,66 @@ jobs:
       matrix:
         docker-img:
           - docker.io/arangodb/arangodb:3.7.15
-          - docker.io/arangodb/arangodb:3.8.1
+          - docker.io/arangodb/arangodb:3.8.2
           - docker.io/arangodb/enterprise:3.7.15
-          - docker.io/arangodb/enterprise:3.8.1
-
+          - docker.io/arangodb/enterprise:3.8.2
         topology:
           - single
           - cluster
-          - active-failover
+          - activefailover
+        db-ext-names:
+          - false
+        java-version:
+          - 8
+        user-language:
+          - en
+        include:
+          - docker-img: docker.io/arangodb/arangodb-test:PR14700
+            topology: single
+            db-ext-names: true
+            java-version: 11
+            user-language: tr
+          - docker-img: docker.io/arangodb/enterprise-test:PR14700
+            topology: cluster
+            db-ext-names: true
+            java-version: 17
+            user-language: tr
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 1.8
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
       - name: Start Database
-        run: ./docker/start_db_${{ matrix.topology }}_retry_fail.sh ${{ matrix.docker-img }}
+        run: ./docker/start_db.sh
         env:
           ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
-      - name: Test
-        run: mvn --no-transfer-progress test
-      - name: Debug containers
-        if: ${{ cancelled() || failure() }}
-        run: ./docker/debug_containers_${{ matrix.topology }}.sh
-
-  test-locale:
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        docker-img:
-#          - docker.io/arangodb/arangodb:3.7.15
-          - docker.io/arangodb/arangodb:3.8.1
-#          - docker.io/arangodb/enterprise:3.7.15
-#          - docker.io/arangodb/enterprise:3.8.1
-
-        topology:
-          - single
-#          - cluster
-#          - active-failover
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
         with:
-          java-version: 1.8
-      - name: Start Database
-        run: ./docker/start_db_${{ matrix.topology }}_retry_fail.sh ${{ matrix.docker-img }}
-        env:
-          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Info
+        run: mvn -version
       - name: Test
-        run: mvn --no-transfer-progress test -DargLine="-Duser.language=tr"
-      - name: Debug containers
+        run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
+      - name: Collect docker logs on failure
         if: ${{ cancelled() || failure() }}
-        run: ./docker/debug_containers_${{ matrix.topology }}.sh
+        uses: jwalton/gh-docker-logs@v1
+        with:
+          dest: './logs'
+      - name: Tar logs
+        if: ${{ cancelled() || failure() }}
+        run: tar cvzf ./logs.tgz ./logs
+      - name: Upload logs to GitHub
+        if: ${{ cancelled() || failure() }}
+        uses: actions/upload-artifact@master
+        with:
+          name: logs.tgz
+          path: ./logs.tgz
