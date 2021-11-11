@@ -123,6 +123,11 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected Response execute(final Request request, final VstConnectionSync connection) throws ArangoDBException {
+        return execute(request, connection, 0);
+    }
+
+    @Override
+    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount) throws ArangoDBException {
         try {
             final Message requestMessage = createMessage(request);
             final Message responseMessage = send(requestMessage, connection);
@@ -132,11 +137,14 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         } catch (final VPackParserException e) {
             throw new ArangoDBException(e);
         } catch (final ArangoDBRedirectException e) {
+            if (attemptCount >= 3) {
+                throw e;
+            }
             final String location = e.getLocation();
             final HostDescription redirectHost = HostUtils.createFromLocation(location);
             hostHandler.closeCurrentOnError();
             hostHandler.fail();
-            return execute(request, new HostHandle().setHost(redirectHost));
+            return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
         }
     }
 
