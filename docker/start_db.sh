@@ -2,7 +2,7 @@
 
 # Configuration environment variables:
 #   STARTER_MODE:             (single|cluster|activefailover), default single
-#   DOCKER_IMAGE:             ArangoDB docker image, default gcr.io/gcr-for-testing/arangodb/arangodb:latest
+#   DOCKER_IMAGE:             ArangoDB docker image, default docker.io/arangodb/arangodb:latest
 #   SSL:                      (true|false), default false
 #   DATABASE_EXTENDED_NAMES:  (true|false), default false
 #   ARANGO_LICENSE_KEY:       only required for ArangoDB Enterprise
@@ -11,11 +11,11 @@
 # STARTER_MODE=cluster SSL=true ./start_db.sh
 
 STARTER_MODE=${STARTER_MODE:=single}
-DOCKER_IMAGE=${DOCKER_IMAGE:=gcr.io/gcr-for-testing/arangodb/arangodb:latest}
+DOCKER_IMAGE=${DOCKER_IMAGE:=docker.io/arangodb/arangodb:latest}
 SSL=${SSL:=false}
 DATABASE_EXTENDED_NAMES=${DATABASE_EXTENDED_NAMES:=false}
 
-STARTER_DOCKER_IMAGE=gcr.io/gcr-for-testing/arangodb/arangodb-starter:latest
+STARTER_DOCKER_IMAGE=docker.io/arangodb/arangodb-starter:latest
 
 # exit when any command fails
 set -e
