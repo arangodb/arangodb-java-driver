@@ -870,15 +870,21 @@ public class ArangoSearchTest extends BaseTest {
                 .addStopwordAsHex("616e64")
                 .addStopwordAsString("the");
 
-        assertThat(properties.getStopwords(), hasItem("616e64"));
-        assertThat(properties.getStopwords(), hasItem("746865"));
+        assertThat(properties.getStopwordsAsStringList(), hasItem("and"));
+        assertThat(properties.getStopwordsAsHexList(), hasItem("746865"));
 
         StopwordsAnalyzer analyzer = new StopwordsAnalyzer();
-        analyzer.setName("test-" + UUID.randomUUID().toString());
+        String name = "test-" + UUID.randomUUID().toString();
+        analyzer.setName(name);
         analyzer.setProperties(properties);
         analyzer.setFeatures(features);
 
         createGetAndDeleteTypedAnalyzer(analyzer);
+        db.createSearchAnalyzer(analyzer);
+        String res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), @aName))",
+                Collections.singletonMap("aName", name), String.class).next();
+        assertThat(res, is("[\"fox\",\"dog\",\"a\",\"theater\"]"));
+        db.deleteSearchAnalyzer(name);
     }
 
     @Test
