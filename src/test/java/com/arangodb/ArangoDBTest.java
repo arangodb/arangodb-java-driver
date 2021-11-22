@@ -645,6 +645,29 @@ public class ArangoDBTest {
     }
 
     @Test
+    public void setAllLogLevel() {
+        assumeTrue(isAtLeastVersion(3, 9));
+        final LogLevelEntity entity = new LogLevelEntity();
+        try {
+            entity.setAll(LogLevelEntity.LogLevel.ERROR);
+            final LogLevelEntity logLevel = arangoDB.setLogLevel(entity);
+            assertThat(logLevel, is(notNullValue()));
+            assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.ERROR));
+            assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.ERROR));
+
+            LogLevelEntity retrievedLevels = arangoDB.getLogLevel();
+            assertThat(retrievedLevels.getAgency(), is(LogLevelEntity.LogLevel.ERROR));
+            assertThat(retrievedLevels.getAgency(), is(LogLevelEntity.LogLevel.ERROR));
+
+            assertThat(logLevel.getAgency(), is(LogLevelEntity.LogLevel.ERROR));
+            assertThat(logLevel.getQueries(), is(LogLevelEntity.LogLevel.ERROR));
+        } finally {
+            entity.setAll(LogLevelEntity.LogLevel.INFO);
+            arangoDB.setLogLevel(entity);
+        }
+    }
+
+    @Test
     public void arangoDBException() {
         try {
             arangoDB.db("no").getInfo();
