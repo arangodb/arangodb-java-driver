@@ -35,17 +35,6 @@ jobs:
           - 8
         user-language:
           - en
-        include:
-          - docker-img: docker.io/arangodb/arangodb-test:PR14700
-            topology: single
-            db-ext-names: true
-            java-version: 11
-            user-language: tr
-          - docker-img: docker.io/arangodb/enterprise-test:PR14700
-            topology: cluster
-            db-ext-names: true
-            java-version: 17
-            user-language: tr
 
     steps:
       - uses: actions/checkout@v2
