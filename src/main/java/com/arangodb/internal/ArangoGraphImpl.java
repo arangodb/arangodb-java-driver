@@ -27,6 +27,7 @@ import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.VertexCollectionCreateOptions;
 
 import java.util.Collection;
 
@@ -86,7 +87,12 @@ public class ArangoGraphImpl extends InternalArangoGraph<ArangoDBImpl, ArangoDat
 
     @Override
     public GraphEntity addVertexCollection(final String name) throws ArangoDBException {
-        return executor.execute(addVertexCollectionRequest(name), addVertexCollectionResponseDeserializer());
+        return addVertexCollection(name, new VertexCollectionCreateOptions());
+    }
+
+    @Override
+    public GraphEntity addVertexCollection(final String name, final VertexCollectionCreateOptions options) throws ArangoDBException {
+        return executor.execute(addVertexCollectionRequest(name, options), addVertexCollectionResponseDeserializer());
     }
 
     @Override
