@@ -65,6 +65,10 @@ public class OptionsBuilder {
         return options.fields(fields);
     }
 
+    public static ZKDIndexOptions build(final ZKDIndexOptions options, final Iterable<String> fields) {
+        return options.fields(fields);
+    }
+
     public static CollectionCreateOptions build(final CollectionCreateOptions options, final String name) {
         return options.name(name);
     }

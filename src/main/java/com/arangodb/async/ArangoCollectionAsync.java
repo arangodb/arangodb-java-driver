@@ -270,10 +270,10 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * to patch (the patch document). All attributes from the patch document will be added to the existing document if
      * they do not yet exist, and overwritten in the existing document if they do exist there.
      *
-     * @param key           The key of the document
-     * @param value         A representation of a single document (POJO, VPackSlice or String for Json)
-     * @param options       Additional options, can be null
-     * @param returnType    Type of the returned newDocument and/or oldDocument
+     * @param key        The key of the document
+     * @param value      A representation of a single document (POJO, VPackSlice or String for Json)
+     * @param options    Additional options, can be null
+     * @param returnType Type of the returned newDocument and/or oldDocument
      * @return information about the document
      * @see <a href="https://www.arangodb.com/docs/stable/http/document-working-with-documents.html#update-document">API
      * Documentation</a>
@@ -496,6 +496,18 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     CompletableFuture<IndexEntity> ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options);
+
+    /**
+     * Creates a ZKD multi-dimensional index for the collection, if it does not already exist.
+     * Note that zkd indexes are an experimental feature in ArangoDB 3.9.
+     *
+     * @param fields  A list of attribute paths
+     * @param options Additional options, can be null
+     * @return information about the index
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-multi-dim.html">API Documentation</a>
+     * @since ArangoDB 3.9
+     */
+    CompletableFuture<IndexEntity> ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options);
 
     /**
      * Returns all indexes of the collection

@@ -35,24 +35,8 @@ import com.arangodb.entity.IndexType;
 import com.arangodb.entity.MultiDocumentEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ShardEntity;
-import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.CollectionPropertiesOptions;
-import com.arangodb.model.CollectionSchema;
-import com.arangodb.model.DocumentCreateOptions;
-import com.arangodb.model.DocumentDeleteOptions;
-import com.arangodb.model.DocumentExistsOptions;
-import com.arangodb.model.DocumentImportOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.DocumentImportOptions.OnDuplicate;
-import com.arangodb.model.DocumentReadOptions;
-import com.arangodb.model.DocumentReplaceOptions;
-import com.arangodb.model.DocumentUpdateOptions;
-import com.arangodb.model.FulltextIndexOptions;
-import com.arangodb.model.GeoIndexOptions;
-import com.arangodb.model.HashIndexOptions;
-import com.arangodb.model.OverwriteMode;
-import com.arangodb.model.PersistentIndexOptions;
-import com.arangodb.model.SkiplistIndexOptions;
-import com.arangodb.model.TtlIndexOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -1427,6 +1411,57 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getType(), is(IndexType.persistent));
         assertThat(indexResult.getUnique(), is(false));
         assertThat(indexResult.getName(), is(name));
+    }
+
+    @Test
+    public void createZKDIndex() {
+        assumeTrue(isAtLeastVersion(3, 9));
+        collection.truncate();
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+        final Collection<String> fields = Arrays.asList(f1, f2);
+
+        final IndexEntity indexResult = collection.ensureZKDIndex(fields, null);
+        assertThat(indexResult, is(notNullValue()));
+        assertThat(indexResult.getConstraint(), is(nullValue()));
+        assertThat(indexResult.getFields(), hasItem(f1));
+        assertThat(indexResult.getFields(), hasItem(f2));
+        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+        assertThat(indexResult.getIsNewlyCreated(), is(true));
+        assertThat(indexResult.getMinLength(), is(nullValue()));
+        assertThat(indexResult.getSparse(), is(false));
+        assertThat(indexResult.getType(), is(IndexType.zkd));
+        assertThat(indexResult.getUnique(), is(false));
+        collection.deleteIndex(indexResult.getId());
+    }
+
+    @Test
+    public void createZKDIndexWithOptions() {
+        assumeTrue(isAtLeastVersion(3, 9));
+        collection.truncate();
+
+        String name = "ZKDIndex-" + rnd();
+        final ZKDIndexOptions options = new ZKDIndexOptions()
+                .name(name)
+                .fieldValueTypes(ZKDIndexOptions.FieldValueTypes.DOUBLE);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensureZKDIndex(fields, options);
+        assertThat(indexResult, is(notNullValue()));
+        assertThat(indexResult.getConstraint(), is(nullValue()));
+        assertThat(indexResult.getFields(), hasItem(f1));
+        assertThat(indexResult.getFields(), hasItem(f2));
+        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+        assertThat(indexResult.getIsNewlyCreated(), is(true));
+        assertThat(indexResult.getMinLength(), is(nullValue()));
+        assertThat(indexResult.getSparse(), is(false));
+        assertThat(indexResult.getType(), is(IndexType.zkd));
+        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult.getName(), is(name));
+        collection.deleteIndex(indexResult.getId());
     }
 
     @Test

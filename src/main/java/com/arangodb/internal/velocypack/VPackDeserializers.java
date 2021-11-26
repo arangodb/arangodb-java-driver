@@ -56,6 +56,7 @@ import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer;
 import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
 import com.arangodb.model.CollectionSchema;
+import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.velocypack.VPackDeserializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
@@ -331,5 +332,9 @@ public class VPackDeserializers {
         collectionValidation.setMessage(vpack.get("message").getAsString());
         return collectionValidation;
     };
+
+    public static final VPackDeserializer<ZKDIndexOptions.FieldValueTypes> ZKD_FIELD_VALUE_TYPES =
+            (parent, vpack, context) -> ZKDIndexOptions.FieldValueTypes.valueOf(vpack.getAsString().toUpperCase(Locale.ENGLISH));
+
 
 }
