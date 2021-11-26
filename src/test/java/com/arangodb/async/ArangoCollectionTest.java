@@ -1129,7 +1129,6 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
         assertThat(indexResult.getIsNewlyCreated(), is(true));
         assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(false));
         assertThat(indexResult.getType(), is(IndexType.zkd));
         assertThat(indexResult.getUnique(), is(false));
         db.collection(COLLECTION_NAME).deleteIndex(indexResult.getId()).get();
@@ -1155,7 +1154,6 @@ public class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
         assertThat(indexResult.getIsNewlyCreated(), is(true));
         assertThat(indexResult.getMinLength(), is(nullValue()));
-        assertThat(indexResult.getSparse(), is(false));
         assertThat(indexResult.getType(), is(IndexType.zkd));
         assertThat(indexResult.getUnique(), is(false));
         assertThat(indexResult.getName(), is("myZKDIndex"));
