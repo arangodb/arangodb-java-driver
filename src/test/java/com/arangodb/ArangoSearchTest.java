@@ -963,5 +963,25 @@ public class ArangoSearchTest extends BaseTest {
         createGetAndDeleteTypedAnalyzer(segmentationAnalyzer);
     }
 
+    @Test
+    public void collationAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        CollationAnalyzerProperties properties = new CollationAnalyzerProperties();
+        properties.setLocale("ru");
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        CollationAnalyzer collationAnalyzer = new CollationAnalyzer();
+        collationAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        collationAnalyzer.setProperties(properties);
+        collationAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(collationAnalyzer);
+    }
+
 
 }

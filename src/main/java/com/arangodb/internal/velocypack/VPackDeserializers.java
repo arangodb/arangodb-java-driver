@@ -110,6 +110,8 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, GeoPointAnalyzer.class);
             case segmentation:
                 return context.deserialize(vpack, SegmentationAnalyzer.class);
+            case collation:
+                return context.deserialize(vpack, CollationAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }
