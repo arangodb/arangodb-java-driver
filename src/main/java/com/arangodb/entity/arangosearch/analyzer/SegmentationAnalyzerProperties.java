@@ -27,39 +27,25 @@ import java.util.Objects;
 
 /**
  * @author Michele Rastelli
+ * @since ArangoDB 3.9
  */
-public class NormAnalyzerProperties {
+public class SegmentationAnalyzerProperties {
 
-    private String locale;
-
-    private boolean accent;
+    @SerializedName("break")
+    private BreakMode breakMode;
 
     @SerializedName("case")
     private SearchAnalyzerCase analyzerCase;
 
-    /**
-     * @return a locale in the format `language[_COUNTRY][.encoding][@variant]` (square brackets denote optional parts),
-     * e.g. `de.utf-8` or `en_US.utf-8`. Only UTF-8 encoding is meaningful in ArangoDB.
-     * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
-     */
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
+    public BreakMode getBreakMode() {
+        return breakMode;
     }
 
     /**
-     * @return <code>true</code> to preserve accented characters (default)
-     *         <code>false</code> to convert accented characters to their base characters
+     * @param breakMode defaults to {@link BreakMode#alpha}
      */
-    public boolean isAccent() {
-        return accent;
-    }
-
-    public void setAccent(boolean accent) {
-        this.accent = accent;
+    public void setBreakMode(BreakMode breakMode) {
+        this.breakMode = breakMode;
     }
 
     public SearchAnalyzerCase getAnalyzerCase() {
@@ -67,24 +53,26 @@ public class NormAnalyzerProperties {
     }
 
     /**
-     * @param analyzerCase defaults to {@link SearchAnalyzerCase#none}
+     * @param analyzerCase defaults to {@link SearchAnalyzerCase#lower}
      */
     public void setAnalyzerCase(SearchAnalyzerCase analyzerCase) {
         this.analyzerCase = analyzerCase;
+    }
+
+    public enum BreakMode {
+        all, alpha, graphic
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NormAnalyzerProperties that = (NormAnalyzerProperties) o;
-        return accent == that.accent &&
-                Objects.equals(locale, that.locale) &&
-                analyzerCase == that.analyzerCase;
+        SegmentationAnalyzerProperties that = (SegmentationAnalyzerProperties) o;
+        return breakMode == that.breakMode && analyzerCase == that.analyzerCase;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(locale, accent, analyzerCase);
+        return Objects.hash(breakMode, analyzerCase);
     }
 }

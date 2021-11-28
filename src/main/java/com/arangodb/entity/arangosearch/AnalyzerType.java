@@ -24,5 +24,5 @@ package com.arangodb.entity.arangosearch;
  * @author Michele Rastelli
  */
 public enum AnalyzerType {
-    identity, delimiter, stem, norm, ngram, text, pipeline, stopwords, aql, geojson, geopoint
+    identity, delimiter, stem, norm, ngram, text, pipeline, stopwords, aql, geojson, geopoint, segmentation
 }

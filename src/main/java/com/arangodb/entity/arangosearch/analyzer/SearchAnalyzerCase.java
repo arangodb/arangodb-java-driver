@@ -36,7 +36,7 @@ public enum SearchAnalyzerCase {
     upper,
 
     /**
-     * to not change character case (default)
+     * to not change character case
      */
     none
 }
