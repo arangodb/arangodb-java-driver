@@ -97,6 +97,7 @@ public class CursorEntity implements Entity, MetaAware {
     public Map<String, String> cleanupMeta(Map<String, String> meta) {
         meta.remove("Content-Length");
         meta.remove("Transfer-Encoding");
+        meta.remove("X-Arango-Queue-Time-Seconds");
         return meta;
     }
 
