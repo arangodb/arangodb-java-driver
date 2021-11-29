@@ -44,8 +44,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
     private final CommunicationProtocol protocol;
 
     public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
-                              final DocumentCache documentCache) {
-        super(util, documentCache);
+                              final DocumentCache documentCache, final QueueTimeMetrics qtMetrics) {
+        super(util, documentCache, qtMetrics);
         this.protocol = protocol;
     }
 

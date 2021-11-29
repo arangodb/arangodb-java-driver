@@ -20,6 +20,8 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.model.QueueTimeSample;
+
 import java.util.Arrays;
 
 /**
@@ -28,31 +30,30 @@ import java.util.Arrays;
 public class QueueTimeMetrics {
     private final CircularFifoQueue samples;
 
+    // TODO: queue size should be configurable
     public QueueTimeMetrics() {
         super();
         samples = new CircularFifoQueue(8192);
     }
 
     public void addSample(double value) {
-        samples.add(new Sample(System.currentTimeMillis(), value));
+        samples.add(new QueueTimeSample(System.currentTimeMillis(), value));
+    }
+
+    public QueueTimeSample[] getSamples() {
+        return samples.getElements();
+    }
+
+    public double getAvg() {
+        return samples.getAvg();
     }
 
     public void clear() {
         samples.clear();
     }
 
-    public static class Sample {
-        public final long timestamp;
-        public final double value;
-
-        public Sample(long timestamp, double value) {
-            this.timestamp = timestamp;
-            this.value = value;
-        }
-    }
-
     static class CircularFifoQueue {
-        private final Sample[] elements;
+        private final QueueTimeSample[] elements;
 
         /**
          * Array index of the oldest queue element.
@@ -69,16 +70,29 @@ public class QueueTimeMetrics {
          */
         private int count;
 
+        /**
+         * Sum of the values in the queue.
+         */
+        private double sum;
+
         CircularFifoQueue(final int size) {
-            elements = new Sample[size];
+            elements = new QueueTimeSample[size];
             this.size = elements.length;
-            start = 0;
-            count = 0;
+            clear();
+        }
+
+        /**
+         * @return the average of the values in the queue, 0.0 if the queue is empty.
+         */
+        synchronized double getAvg() {
+            if (count == 0) return 0.0;
+            return sum / count;
         }
 
         synchronized void clear() {
             start = 0;
             count = 0;
+            sum = 0.0;
             Arrays.fill(elements, null);
         }
 
@@ -88,18 +102,23 @@ public class QueueTimeMetrics {
          *
          * @param element the element to add
          */
-        synchronized void add(final Sample element) {
+        synchronized void add(final QueueTimeSample element) {
             if (count < size) {
                 count++;
+            }
+            QueueTimeSample overridden = elements[start];
+            if (overridden != null) {
+                sum -= overridden.value;
             }
             elements[start++] = element;
             if (start >= size) {
                 start = 0;
             }
+            sum += element.value;
         }
 
-        synchronized Sample[] getElements() {
-            Sample[] out = new Sample[count];
+        synchronized QueueTimeSample[] getElements() {
+            QueueTimeSample[] out = new QueueTimeSample[count];
             if (count < size) {
                 System.arraycopy(elements, 0, out, 0, count);
             } else {

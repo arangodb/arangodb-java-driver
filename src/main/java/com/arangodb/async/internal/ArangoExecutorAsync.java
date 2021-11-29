@@ -24,6 +24,7 @@ import com.arangodb.ArangoDBException;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.internal.ArangoExecutor;
 import com.arangodb.internal.DocumentCache;
+import com.arangodb.internal.QueueTimeMetrics;
 import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.velocystream.Request;
@@ -44,8 +45,8 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     private final ExecutorService outgoingExecutor = Executors.newSingleThreadExecutor();
 
     public ArangoExecutorAsync(final VstCommunicationAsync communication, final ArangoSerializationFactory util,
-                               final DocumentCache documentCache) {
-        super(util, documentCache);
+                               final DocumentCache documentCache, final QueueTimeMetrics qtMetrics) {
+        super(util, documentCache, qtMetrics);
         this.communication = communication;
     }
 

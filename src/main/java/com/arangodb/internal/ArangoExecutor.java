@@ -69,11 +69,14 @@ public abstract class ArangoExecutor {
     }
 
     private final DocumentCache documentCache;
+    private final QueueTimeMetrics qtMetrics;
     private final ArangoSerializationFactory util;
 
-    protected ArangoExecutor(final ArangoSerializationFactory util, final DocumentCache documentCache) {
+    protected ArangoExecutor(final ArangoSerializationFactory util, final DocumentCache documentCache,
+                             final QueueTimeMetrics qtMetrics) {
         super();
         this.documentCache = documentCache;
+        this.qtMetrics = qtMetrics;
         this.util = util;
     }
 

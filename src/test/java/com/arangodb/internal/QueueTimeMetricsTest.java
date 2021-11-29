@@ -1,7 +1,9 @@
 package com.arangodb.internal;
 
+import com.arangodb.model.QueueTimeSample;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,17 +33,17 @@ public class QueueTimeMetricsTest {
     @Test
     public void overSizeTest() {
         testQueue((int) (QSIZE * 1.2));
-        testQueue(QSIZE * 3);
+        testQueue((int) (QSIZE * 3000.4));
     }
 
-    public void testQueue(int size) {
+    private void testQueue(int size) {
         q.clear();
         for (int i = 0; i < size; i++) {
-            q.add(new QueueTimeMetrics.Sample(i, rnd.nextDouble()));
+            q.add(new QueueTimeSample(i, rnd.nextDouble()));
         }
-        QueueTimeMetrics.Sample[] samples = q.getElements();
-
+        QueueTimeSample[] samples = q.getElements();
         assertThat(samples.length, is(Math.min(size, QSIZE)));
+        assertThat(q.getAvg(), is(closeTo(getAvg(samples), 1.0E-12)));
 
         for (int i = 0; i < samples.length; i++) {
             assertThat(samples[i], is(notNullValue()));
@@ -51,5 +53,8 @@ public class QueueTimeMetricsTest {
         }
     }
 
+    private double getAvg(QueueTimeSample[] elements) {
+        return Arrays.stream(elements).mapToDouble(it -> it.value).average().orElse(0.0);
+    }
 
 }
