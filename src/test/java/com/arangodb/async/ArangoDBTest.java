@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
+import com.arangodb.QueueTimeMetrics;
 import com.arangodb.entity.DatabaseEntity;
 import com.arangodb.entity.License;
 import com.arangodb.entity.LogEntity;
@@ -31,23 +32,18 @@ import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.DatabaseOptions;
-import com.arangodb.model.LogOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -76,7 +72,7 @@ public class ArangoDBTest {
 
     private boolean isAtLeastVersion(final int major, final int minor) {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
-        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major,minor,0);
+        return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major, minor, 0);
     }
 
     @Test
@@ -657,4 +653,36 @@ public class ArangoDBTest {
             arangoDB.setLogLevel(entity).get();
         }
     }
+
+    @Test
+    public void queueTime() throws InterruptedException, ExecutionException {
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+
+        List<CompletableFuture<ArangoCursorAsync<Void>>> reqs = IntStream.range(0, 80)
+                .mapToObj(__ -> arangoDB.db().query("RETURN SLEEP(1)", Void.class))
+                .collect(Collectors.toList());
+        Thread.sleep(5_000);
+
+        QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
+        double avg = qt.getAvg();
+        QueueTimeSample[] values = qt.getValues();
+        if (isAtLeastVersion(3, 9)) {
+            assertThat(avg, is(greaterThan(0.0)));
+            assertThat(values.length, is(greaterThan(1)));
+            for (int i = 0; i < values.length; i++) {
+                assertThat(values[i], is(notNullValue()));
+                if (i > 0) {
+                    assertThat(values[i].timestamp, greaterThanOrEqualTo(values[i - 1].timestamp));
+                }
+            }
+        } else {
+            assertThat(avg, is(0.0));
+            assertThat(values, is(emptyArray()));
+        }
+
+        for (CompletableFuture<ArangoCursorAsync<Void>> it : reqs) {
+            it.get();
+        }
+    }
+
 }

@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.QueueTimeMetrics;
 import com.arangodb.entity.Entity;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -88,4 +89,14 @@ public abstract class ArangoExecutor {
         T deserialize(Response response) throws VPackException;
     }
 
+    protected final void interceptResponse(Response response) {
+        String queueTime = response.getMeta().get("X-Arango-Queue-Time-Seconds");
+        if (queueTime != null) {
+            qtMetrics.add(Double.parseDouble(queueTime));
+        }
+    }
+
+    public QueueTimeMetrics getQueueTimeMetrics() {
+        return qtMetrics;
+    }
 }

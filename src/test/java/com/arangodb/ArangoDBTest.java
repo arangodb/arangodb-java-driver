@@ -30,13 +30,8 @@ import com.arangodb.entity.LogLevelEntity;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.entity.UserEntity;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.DatabaseOptions;
-import com.arangodb.model.DatabaseUsersOptions;
-import com.arangodb.model.LogOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
@@ -59,6 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -170,7 +166,7 @@ public class ArangoDBTest {
     }
 
     @Test
-	public void createDatabaseWithOptionsSatellite() {
+    public void createDatabaseWithOptionsSatellite() {
         assumeTrue(isCluster());
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 6));
@@ -508,7 +504,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntries() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
         assertThat(logs, is(notNullValue()));
         assertThat(logs.getTotal(), greaterThan(0L));
@@ -517,7 +513,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesUpto() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logsUpto = arangoDB.getLogEntries(new LogOptions().upto(LogLevel.WARNING));
         assertThat(logsUpto, is(notNullValue()));
         assertThat(
@@ -530,7 +526,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesLevel() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logsInfo = arangoDB.getLogEntries(new LogOptions().level(LogLevel.INFO));
         assertThat(logsInfo, is(notNullValue()));
         assertThat(
@@ -543,7 +539,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesStart() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
         final Long firstId = logs.getMessages().get(0).getId();
         final LogEntriesEntity logsStart = arangoDB.getLogEntries(new LogOptions().start(firstId + 1));
@@ -558,7 +554,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesSize() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
         int count = logs.getMessages().size();
         assertThat(count, greaterThan(0));
@@ -569,7 +565,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesOffset() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
         assertThat(logs.getTotal(), greaterThan(0L));
         Long firstId = logs.getMessages().get(0).getId();
@@ -584,7 +580,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesSearch() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(null);
         final LogEntriesEntity logsSearch = arangoDB.getLogEntries(new LogOptions().search(BaseTest.TEST_DB));
         assertThat(logsSearch, is(notNullValue()));
@@ -593,7 +589,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesSortAsc() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(new LogOptions().sort(SortOrder.asc));
         assertThat(logs, is(notNullValue()));
         long lastId = -1;
@@ -608,7 +604,7 @@ public class ArangoDBTest {
 
     @Test
     public void getLogEntriesSortDesc() {
-        assumeTrue(isAtLeastVersion(3,8));
+        assumeTrue(isAtLeastVersion(3, 8));
         final LogEntriesEntity logs = arangoDB.getLogEntries(new LogOptions().sort(SortOrder.desc));
         assertThat(logs, is(notNullValue()));
         long lastId = Long.MAX_VALUE;
@@ -674,9 +670,39 @@ public class ArangoDBTest {
 
     @Test
     public void accessMultipleDatabases() {
-            final ArangoDBVersion version1 = db1.getVersion();
-            assertThat(version1, is(notNullValue()));
-            final ArangoDBVersion version2 = db2.getVersion();
-            assertThat(version2, is(notNullValue()));
+        final ArangoDBVersion version1 = db1.getVersion();
+        assertThat(version1, is(notNullValue()));
+        final ArangoDBVersion version2 = db2.getVersion();
+        assertThat(version2, is(notNullValue()));
+    }
+
+    @Test
+    public void queueTime() throws InterruptedException {
+        List<Thread> threads = IntStream.range(0, 80)
+                .mapToObj(__ -> new Thread(() -> arangoDB.db().query("RETURN SLEEP(1)", Void.class)))
+                .collect(Collectors.toList());
+        threads.forEach(Thread::start);
+        Thread.sleep(5_000);
+
+        QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
+        double avg = qt.getAvg();
+        QueueTimeSample[] values = qt.getValues();
+        if (isAtLeastVersion(3, 9)) {
+            assertThat(avg, is(greaterThan(0.0)));
+            assertThat(values.length, is(greaterThan(1)));
+            for (int i = 0; i < values.length; i++) {
+                assertThat(values[i], is(notNullValue()));
+                if (i > 0) {
+                    assertThat(values[i].timestamp, greaterThanOrEqualTo(values[i - 1].timestamp));
+                }
+            }
+        } else {
+            assertThat(avg, is(0.0));
+            assertThat(values, is(emptyArray()));
+        }
+
+        for (Thread it : threads) {
+            it.join();
+        }
     }
 }

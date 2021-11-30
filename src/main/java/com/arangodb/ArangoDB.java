@@ -680,6 +680,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     ArangoDatabase db(String name);
 
     /**
+     * @return entry point for accessing client metrics
+     */
+    ArangoMetrics metrics();
+
+    /**
      * Creates a new database with the given name.
      *
      * @param name Name of the database to create

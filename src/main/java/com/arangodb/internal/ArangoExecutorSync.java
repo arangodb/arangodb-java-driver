@@ -69,6 +69,7 @@ public class ArangoExecutorSync extends ArangoExecutor {
         try {
 
             final Response response = protocol.execute(request, hostHandle);
+            interceptResponse(response);
             T deserialize = responseDeserializer.deserialize(response);
 
             if (deserialize instanceof MetaAware) {

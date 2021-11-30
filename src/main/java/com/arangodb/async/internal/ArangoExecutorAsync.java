@@ -69,7 +69,10 @@ public class ArangoExecutorAsync extends ArangoExecutor {
 
         return CompletableFuture.completedFuture(null)
                 .thenComposeAsync((it) -> communication.execute(request, hostHandle), outgoingExecutor)
-                .thenApplyAsync(responseDeserializer::deserialize);
+                .thenApplyAsync(response -> {
+                    interceptResponse(response);
+                    return responseDeserializer.deserialize(response);
+                });
     }
 
     public void disconnect() {

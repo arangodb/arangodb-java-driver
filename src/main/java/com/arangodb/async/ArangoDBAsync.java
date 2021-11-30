@@ -21,6 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoMetrics;
 import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
@@ -106,6 +107,11 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return database handler
      */
     ArangoDatabaseAsync db(final String name);
+
+    /**
+     * @return entry point for accessing client metrics
+     */
+    ArangoMetrics metrics();
 
     /**
      * Creates a new database

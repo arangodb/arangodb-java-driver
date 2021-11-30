@@ -21,6 +21,7 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoMetrics;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
@@ -103,6 +104,11 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     @Override
     public ArangoDatabaseAsync db(final String name) {
         return new ArangoDatabaseAsyncImpl(this, name);
+    }
+
+    @Override
+    public ArangoMetrics metrics() {
+        return new ArangoMetricsImpl(executor.getQueueTimeMetrics());
     }
 
     @Override

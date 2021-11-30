@@ -40,14 +40,14 @@ public class QueueTimeMetricsImplTest {
         for (int i = 0; i < size; i++) {
             q.add(new QueueTimeSample(i, rnd.nextDouble()));
         }
-        QueueTimeSample[] samples = q.getValues();
-        assertThat(samples.length, is(Math.min(size, QSIZE)));
-        assertThat(q.getAvg(), is(closeTo(getAvg(samples), 1.0E-12)));
+        QueueTimeSample[] values = q.getValues();
+        assertThat(values.length, is(Math.min(size, QSIZE)));
+        assertThat(q.getAvg(), is(closeTo(getAvg(values), 1.0E-12)));
 
-        for (int i = 0; i < samples.length; i++) {
-            assertThat(samples[i], is(notNullValue()));
+        for (int i = 0; i < values.length; i++) {
+            assertThat(values[i], is(notNullValue()));
             if (i > 0) {
-                assertThat(samples[i].timestamp, greaterThan(samples[i - 1].timestamp));
+                assertThat(values[i].timestamp, greaterThan(values[i - 1].timestamp));
             }
         }
     }
