@@ -75,6 +75,7 @@ public abstract class InternalArangoDBBuilder {
     private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
     private static final String PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL = "arangodb.acquireHostList.interval";
     private static final String PROPERTY_KEY_LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
+    private static final String PROPERTY_KEY_RESPONSE_QUEUE_TIME_SAMPLES = "arangodb.metrics.responseQueueTimeSamples";
     private static final String DEFAULT_PROPERTY_FILE = "/arangodb.properties";
 
     protected final List<HostDescription> hosts;
@@ -99,6 +100,7 @@ public abstract class InternalArangoDBBuilder {
     protected Integer acquireHostListInterval;
     protected LoadBalancingStrategy loadBalancingStrategy;
     protected ArangoSerialization customSerializer;
+    protected Integer responseQueueTimeSamples;
 
 
     public InternalArangoDBBuilder() {
@@ -149,6 +151,7 @@ public abstract class InternalArangoDBBuilder {
         acquireHostList = loadAcquireHostList(properties, acquireHostList);
         acquireHostListInterval = loadAcquireHostListInterval(properties, acquireHostListInterval);
         loadBalancingStrategy = loadLoadBalancingStrategy(properties, loadBalancingStrategy);
+        responseQueueTimeSamples = loadResponseQueueTimeSamples(properties, responseQueueTimeSamples);
     }
 
     protected void setHost(final String host, final int port) {
@@ -209,6 +212,10 @@ public abstract class InternalArangoDBBuilder {
 
     protected void setLoadBalancingStrategy(final LoadBalancingStrategy loadBalancingStrategy) {
         this.loadBalancingStrategy = loadBalancingStrategy;
+    }
+
+    protected void setResponseQueueTimeSamples(final Integer responseQueueTimeSamples) {
+        this.responseQueueTimeSamples = responseQueueTimeSamples;
     }
 
     protected void serializer(final ArangoSerializer serializer) {
@@ -344,6 +351,11 @@ public abstract class InternalArangoDBBuilder {
     private static int loadAcquireHostListInterval(final Properties properties, final Integer currentValue) {
         return Integer.parseInt(getProperty(properties, PROPERTY_KEY_ACQUIRE_HOST_LIST_INTERVAL, currentValue,
                 ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL));
+    }
+
+    private static int loadResponseQueueTimeSamples(final Properties properties, final Integer currentValue) {
+        return Integer.parseInt(getProperty(properties, PROPERTY_KEY_RESPONSE_QUEUE_TIME_SAMPLES, currentValue,
+                ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES));
     }
 
     private static LoadBalancingStrategy loadLoadBalancingStrategy(

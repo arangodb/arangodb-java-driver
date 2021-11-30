@@ -20,10 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoMetrics;
-import com.arangodb.ArangoSerializationAccessor;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
@@ -480,6 +477,17 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         }
 
         /**
+         * Setting the amount of samples kept for queue time metrics
+         *
+         * @param responseQueueTimeSamples amount of samples to keep
+         * @return {@link ArangoDBAsync.Builder}
+         */
+        public Builder responseQueueTimeSamples(final Integer responseQueueTimeSamples) {
+            setResponseQueueTimeSamples(responseQueueTimeSamples);
+            return this;
+        }
+
+        /**
          * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
          * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
          * would be the default.
@@ -818,7 +826,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
                     syncBuilder(syncHostHandler),
                     asyncHostResolver,
                     syncHostResolver,
-                    new ArangoContext());
+                    new ArangoContext(),
+                    responseQueueTimeSamples);
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {

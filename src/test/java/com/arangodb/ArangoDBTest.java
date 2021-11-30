@@ -689,7 +689,7 @@ public class ArangoDBTest {
         QueueTimeSample[] values = qt.getValues();
         if (isAtLeastVersion(3, 9)) {
             assertThat(avg, is(greaterThan(0.0)));
-            assertThat(values.length, is(greaterThan(1)));
+            assertThat(values.length, is(20));
             for (int i = 0; i < values.length; i++) {
                 assertThat(values[i], is(notNullValue()));
                 if (i > 0) {

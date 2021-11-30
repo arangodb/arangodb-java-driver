@@ -327,6 +327,17 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         }
 
         /**
+         * Setting the amount of samples kept for queue time metrics
+         *
+         * @param responseQueueTimeSamples amount of samples to keep
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder responseQueueTimeSamples(final Integer responseQueueTimeSamples) {
+            setResponseQueueTimeSamples(responseQueueTimeSamples);
+            return this;
+        }
+
+        /**
          * Register a custom {@link VPackSerializer} for a specific type to be used within the internal serialization
          * process.
          *
@@ -652,7 +663,8 @@ public interface ArangoDB extends ArangoSerializationAccessor {
                     new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
                             .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
                             .connectionTtl(connectionTtl),
-                    new HttpCommunication.Builder(hostHandler), util, protocol, hostResolver, new ArangoContext());
+                    new HttpCommunication.Builder(hostHandler), util, protocol, hostResolver, new ArangoContext(),
+                    responseQueueTimeSamples);
         }
 
     }

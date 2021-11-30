@@ -31,11 +31,6 @@ import java.util.Arrays;
 public class QueueTimeMetricsImpl implements QueueTimeMetrics {
     private final CircularFifoQueue samples;
 
-    // FIXME: remove this constructor
-    public QueueTimeMetricsImpl() {
-        this(8192);
-    }
-
     public QueueTimeMetricsImpl(int queueSize) {
         samples = new CircularFifoQueue(queueSize);
     }
