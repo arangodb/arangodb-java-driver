@@ -678,11 +678,13 @@ public class ArangoDBTest {
 
     @Test
     public void queueTime() throws InterruptedException {
-        List<Thread> threads = IntStream.range(0, 80)
+        List<Thread> threads = IntStream.range(0, 50)
                 .mapToObj(__ -> new Thread(() -> arangoDB.db().query("RETURN SLEEP(1)", Void.class)))
                 .collect(Collectors.toList());
         threads.forEach(Thread::start);
-        Thread.sleep(5_000);
+        for (Thread it : threads) {
+            it.join();
+        }
 
         QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
         double avg = qt.getAvg();
@@ -701,8 +703,5 @@ public class ArangoDBTest {
             assertThat(values, is(emptyArray()));
         }
 
-        for (Thread it : threads) {
-            it.join();
-        }
     }
 }
