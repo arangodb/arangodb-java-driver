@@ -5,13 +5,14 @@ import java.util.Objects;
 /**
  * Represents an observed value of the server queue latency, as returned from the "X-Arango-Queue-Time-Seconds" response
  * header.
+ * This header contains the most recent request (de)queuing time (in seconds) as tracked by the server’s scheduler.
  *
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/http/general.html#overload-control">API Documentation</a>
  */
 public class QueueTimeSample {
     /**
-     * Unix-timestamp in milliseconds.
+     * Unix-timestamp in milliseconds, recorded at client side.
      */
     public final long timestamp;
 

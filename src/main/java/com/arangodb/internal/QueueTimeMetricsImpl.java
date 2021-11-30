@@ -20,6 +20,7 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.QueueTimeMetrics;
 import com.arangodb.model.QueueTimeSample;
 
 import java.util.Arrays;
@@ -27,32 +28,41 @@ import java.util.Arrays;
 /**
  * @author Michele Rastelli
  */
-public class QueueTimeMetrics {
+public class QueueTimeMetricsImpl implements QueueTimeMetrics {
     private final CircularFifoQueue samples;
 
-    // TODO: queue size should be configurable
-    public QueueTimeMetrics() {
-        super();
-        samples = new CircularFifoQueue(8192);
+    // FIXME: remove this constructor
+    public QueueTimeMetricsImpl() {
+        this(8192);
     }
 
-    public void addSample(double value) {
-        samples.add(new QueueTimeSample(System.currentTimeMillis(), value));
+    public QueueTimeMetricsImpl(int queueSize) {
+        samples = new CircularFifoQueue(queueSize);
     }
 
-    public QueueTimeSample[] getSamples() {
+    @Override
+    public QueueTimeSample[] getValues() {
         return samples.getElements();
     }
 
+    @Override
     public double getAvg() {
         return samples.getAvg();
     }
 
-    public void clear() {
+    void add(double value) {
+        add(new QueueTimeSample(System.currentTimeMillis(), value));
+    }
+
+    void add(QueueTimeSample value) {
+        samples.add(value);
+    }
+
+    void clear() {
         samples.clear();
     }
 
-    static class CircularFifoQueue {
+    private static class CircularFifoQueue {
         private final QueueTimeSample[] elements;
 
         /**

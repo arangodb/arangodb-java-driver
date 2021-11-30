@@ -9,11 +9,10 @@ import java.util.Random;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class QueueTimeMetricsTest {
+public class QueueTimeMetricsImplTest {
     private final static int QSIZE = 1024;
     private final Random rnd = new Random();
-    private final QueueTimeMetrics.CircularFifoQueue q =
-            new QueueTimeMetrics.CircularFifoQueue(QSIZE);
+    private final QueueTimeMetricsImpl q = new QueueTimeMetricsImpl(QSIZE);
 
     @Test
     public void halfSizeTest() {
@@ -41,7 +40,7 @@ public class QueueTimeMetricsTest {
         for (int i = 0; i < size; i++) {
             q.add(new QueueTimeSample(i, rnd.nextDouble()));
         }
-        QueueTimeSample[] samples = q.getElements();
+        QueueTimeSample[] samples = q.getValues();
         assertThat(samples.length, is(Math.min(size, QSIZE)));
         assertThat(q.getAvg(), is(closeTo(getAvg(samples), 1.0E-12)));
 
