@@ -72,5 +72,5 @@ jobs:
         if: ${{ cancelled() || failure() }}
         uses: actions/upload-artifact@master
         with:
-          name: logs.tgz
+          name: logs-{{github.job}}.tgz
           path: ./logs.tgz
