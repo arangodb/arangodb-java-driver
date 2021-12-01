@@ -622,7 +622,7 @@ public class ArangoDBTest {
 
     @Test
     public void queueTime() throws InterruptedException, ExecutionException {
-        List<CompletableFuture<ArangoCursorAsync<Void>>> reqs = IntStream.range(0, 50)
+        List<CompletableFuture<ArangoCursorAsync<Void>>> reqs = IntStream.range(0, 80)
                 .mapToObj(__ -> arangoDB.db().query("RETURN SLEEP(1)", Void.class))
                 .collect(Collectors.toList());
         for (CompletableFuture<ArangoCursorAsync<Void>> req : reqs) {
