@@ -59,12 +59,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
                         final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
-                        final ArangoContext context, int responseQueueTimeSamples) {
+                        final ArangoContext context, int responseQueueTimeSamples, final int timeoutMs) {
 
         super(new ArangoExecutorSync(
                         createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
                         util,
-                        new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples)),
+                        new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util,
                 context);
 

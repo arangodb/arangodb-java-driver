@@ -664,7 +664,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
                             .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
                             .connectionTtl(connectionTtl),
                     new HttpCommunication.Builder(hostHandler), util, protocol, hostResolver, new ArangoContext(),
-                    responseQueueTimeSamples);
+                    responseQueueTimeSamples, timeout);
         }
 
     }

@@ -45,8 +45,8 @@ public class ArangoExecutorAsync extends ArangoExecutor {
     private final ExecutorService outgoingExecutor = Executors.newSingleThreadExecutor();
 
     public ArangoExecutorAsync(final VstCommunicationAsync communication, final ArangoSerializationFactory util,
-                               final DocumentCache documentCache, final QueueTimeMetricsImpl qtMetrics) {
-        super(util, documentCache, qtMetrics);
+                               final DocumentCache documentCache, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
+        super(util, documentCache, qtMetrics, timeoutMs);
         this.communication = communication;
     }
 
@@ -68,7 +68,7 @@ public class ArangoExecutorAsync extends ArangoExecutor {
             final HostHandle hostHandle) {
 
         return CompletableFuture.completedFuture(null)
-                .thenComposeAsync((it) -> communication.execute(request, hostHandle), outgoingExecutor)
+                .thenComposeAsync((it) -> communication.execute(interceptRequest(request), hostHandle), outgoingExecutor)
                 .thenApplyAsync(response -> {
                     interceptResponse(response);
                     return responseDeserializer.deserialize(response);

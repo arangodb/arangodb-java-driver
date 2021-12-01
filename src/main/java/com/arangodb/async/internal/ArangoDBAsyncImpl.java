@@ -64,18 +64,19 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final HostResolver asyncHostResolver,
             final HostResolver syncHostResolver,
             final ArangoContext context,
-            final int responseQueueTimeSamples
+            final int responseQueueTimeSamples,
+            final int timeoutMs
     ) {
 
         super(new ArangoExecutorAsync(asyncCommBuilder.build(util.get(Serializer.INTERNAL)), util, new DocumentCache(),
-                new QueueTimeMetricsImpl(responseQueueTimeSamples)), util, context);
+                new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util, context);
 
         final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util.get(Serializer.INTERNAL));
 
         cp = new VstProtocol(cacheCom);
 
         ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache(),
-                new QueueTimeMetricsImpl(responseQueueTimeSamples));
+                new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs);
         asyncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
         syncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
 

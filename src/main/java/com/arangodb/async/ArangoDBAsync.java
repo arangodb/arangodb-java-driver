@@ -827,7 +827,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
                     asyncHostResolver,
                     syncHostResolver,
                     new ArangoContext(),
-                    responseQueueTimeSamples);
+                    responseQueueTimeSamples,
+                    timeout);
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
