@@ -95,13 +95,13 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                     hostHandler.confirm();
                     if (!connection.isOpen()) {
                         // see https://github.com/arangodb/arangodb-java-driver/issues/384
-                        hostHandler.fail();
+                        hostHandler.fail(new IOException("The connection is closed."));
                         host = hostHandler.get(hostHandle, accessType);
                         continue;
                     }
                     return connection;
                 } catch (final IOException e) {
-                    hostHandler.fail();
+                    hostHandler.fail(e);
                     if (hostHandle != null && hostHandle.getHost() != null) {
                         hostHandle.setHost(null);
                     }

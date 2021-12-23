@@ -31,7 +31,7 @@ public interface HostHandler {
 
     void success();
 
-    void fail();
+    void fail(Exception exception);
 
     void reset();
 
