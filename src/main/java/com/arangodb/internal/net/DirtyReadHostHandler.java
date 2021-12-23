@@ -56,8 +56,8 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
-    public void fail() {
-        determineHostHandler().fail();
+    public void fail(Exception exception) {
+        determineHostHandler().fail(exception);
     }
 
     @Override

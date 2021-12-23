@@ -87,7 +87,7 @@ public class HttpCommunication implements Closeable {
                     hostHandler.confirm();
                     return response;
                 } catch (final SocketException se) {
-                    hostHandler.fail();
+                    hostHandler.fail(se);
                     if (hostHandle != null && hostHandle.getHost() != null) {
                         hostHandle.setHost(null);
                     }
@@ -107,7 +107,7 @@ public class HttpCommunication implements Closeable {
                 final String location = ((ArangoDBRedirectException) e).getLocation();
                 final HostDescription redirectHost = HostUtils.createFromLocation(location);
                 hostHandler.closeCurrentOnError();
-                hostHandler.fail();
+                hostHandler.fail(e);
                 return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
             } else {
                 throw e;

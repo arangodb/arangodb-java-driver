@@ -85,7 +85,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
                         final String location = e.getLocation();
                         final HostDescription redirectHost = HostUtils.createFromLocation(location);
                         hostHandler.closeCurrentOnError();
-                        hostHandler.fail();
+                        hostHandler.fail(e);
                         execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1)
                                 .whenComplete((v, err) -> {
                                     if (v != null) {
