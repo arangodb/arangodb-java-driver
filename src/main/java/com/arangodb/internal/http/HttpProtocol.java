@@ -46,6 +46,11 @@ public class HttpProtocol implements CommunicationProtocol {
     }
 
     @Override
+    public void setJwt(String jwt) {
+        // no-op: jwt is updated in the host handlers
+    }
+
+    @Override
     public void close() throws IOException {
         httpCommunitaction.close();
     }

@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class VstCommunication<R, C extends VstConnection> implements Closeable {
 
     protected static final String ENCRYPTION_PLAIN = "plain";
+    protected static final String ENCRYPTION_JWT = "jwt";
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
     protected static final AtomicLong mId = new AtomicLong(0L);
@@ -59,7 +60,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 
     protected final String user;
     protected final String password;
-    protected final String jwt;
+    protected volatile String jwt;
 
     protected final Integer chunksize;
     protected final HostHandler hostHandler;
@@ -91,7 +92,7 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                 try {
                     connection.open();
                     hostHandler.success();
-                    if (user != null) {
+                    if (jwt != null || user != null) {
                         tryAuthenticate(connection);
                     }
                     hostHandler.confirm();
@@ -192,5 +193,10 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
         }
         return chunks;
     }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
+
 
 }

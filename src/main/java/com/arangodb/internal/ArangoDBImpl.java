@@ -129,6 +129,8 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     @Override
     public void updateJwt(String jwt) {
         hostHandler.setJwt(jwt);
+        cp.setJwt(jwt);
+        executor.setJwt(jwt);
     }
 
     @Override

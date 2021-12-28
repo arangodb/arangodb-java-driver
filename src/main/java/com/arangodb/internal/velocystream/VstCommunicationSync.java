@@ -27,6 +27,7 @@ import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.util.ArangoSerialization;
@@ -166,9 +167,13 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        // TODO: jwt authentication request
-        final Response response = execute(
-                new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN), connection);
+        Request authRequest;
+        if (jwt != null) {
+            authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
+        } else {
+            authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
+        }
+        final Response response = execute(authRequest, connection);
         checkError(response);
     }
 

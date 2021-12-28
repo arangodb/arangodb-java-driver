@@ -59,6 +59,26 @@ public class JwtAuthTest {
         arangoDB.shutdown();
     }
 
+    @Test
+    public void updateJwt() throws ExecutionException, InterruptedException {
+        arangoDB = getBuilder()
+                .jwt(jwt)
+                .build();
+        arangoDB.getVersion().get();
+        arangoDB.updateJwt("bla");
+        try {
+            arangoDB.getVersion().get();
+            fail();
+        } catch (ExecutionException e) {
+            assertThat(e.getCause(), is(instanceOf(ArangoDBException.class)));
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(401));
+        }
+
+        arangoDB.updateJwt(jwt);
+        arangoDB.getVersion().get();
+        arangoDB.shutdown();
+    }
+
     private ArangoDBAsync.Builder getBuilder() {
         return new ArangoDBAsync.Builder()
                 .user(null)         // unset credentials from properties file

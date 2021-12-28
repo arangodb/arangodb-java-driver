@@ -28,6 +28,7 @@ import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.VstCommunication;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackException;
@@ -125,13 +126,23 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
 
     @Override
     protected void authenticate(final VstConnectionAsync connection) {
-        // TODO: jwt authentication request
+        Request authRequest;
+        if (jwt != null) {
+            authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
+        } else {
+            authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
+        }
+
         Response response;
         try {
-            response = execute(new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN),
-                    connection).get();
+            response = execute(authRequest, connection).get();
         } catch (final InterruptedException | ExecutionException e) {
-            throw new ArangoDBException(e);
+            Throwable cause = e.getCause();
+            if (cause instanceof ArangoDBException) {
+                throw (ArangoDBException) cause;
+            } else {
+                throw new ArangoDBException(e.getCause());
+            }
         }
         checkError(response);
     }

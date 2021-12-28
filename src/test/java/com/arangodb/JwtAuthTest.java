@@ -18,7 +18,6 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -79,11 +78,13 @@ public class JwtAuthTest {
 
     @Test
     public void updateJwt() {
-        assumeTrue("VST does not allow updating JWT", protocol != Protocol.VST);
         arangoDB = getBuilder()
                 .jwt(jwt)
                 .build();
         arangoDB.getVersion();
+        if (protocol == Protocol.VST) {
+            arangoDB.shutdown();
+        }
         arangoDB.updateJwt("bla");
         try {
             arangoDB.getVersion();

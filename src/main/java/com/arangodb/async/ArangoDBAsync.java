@@ -75,6 +75,14 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     void shutdown() throws ArangoDBException;
 
     /**
+     * Updates the JWT used for requests authorization. This is only effective when using HTTP protocol. VST
+     * connections are only authenticated during the initialization.
+     *
+     * @param jwt token to use
+     */
+    void updateJwt(String jwt);
+
+    /**
      * Returns a handler of the system database
      *
      * @return database handler
@@ -263,10 +271,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     /**
      * Returns fatal, error, warning or info log messages from the server's global log.
      *
-     * @param options
-     *         Additional options, can be null
+     * @param options Additional options, can be null
      * @return the log messages
-     *
      * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @deprecated use {@link #getLogEntries(LogOptions)} instead
@@ -277,10 +283,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     /**
      * Returns the server logs
      *
-     * @param options
-     *         Additional options, can be null
+     * @param options Additional options, can be null
      * @return the log messages
-     *
      * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
@@ -805,18 +809,20 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
                     syncBuilder(syncHostHandler),
                     asyncHostResolver,
                     syncHostResolver,
+                    asyncHostHandler,
+                    syncHostHandler,
                     new ArangoContext());
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
             return new VstCommunicationAsync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
                     .connectionTtl(connectionTtl);
         }
 
         private VstCommunicationSync.Builder syncBuilder(final HostHandler hostHandler) {
             return new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
                     .connectionTtl(connectionTtl);
         }
 
