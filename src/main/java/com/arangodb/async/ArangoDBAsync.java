@@ -75,8 +75,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     void shutdown() throws ArangoDBException;
 
     /**
-     * Updates the JWT used for requests authorization. This is only effective when using HTTP protocol. VST
-     * connections are only authenticated during the initialization.
+     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
+     * connections are authenticated during the initialization phase.
      *
      * @param jwt token to use
      */
@@ -370,7 +370,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         }
 
         /**
-         * Sets the JWT for the user for authentication.
+         * Sets the JWT for the user authentication.
          *
          * @param jwt token to use (default: {@code null})
          * @return {@link ArangoDBAsync.Builder}
