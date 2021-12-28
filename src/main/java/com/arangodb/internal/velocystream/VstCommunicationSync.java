@@ -52,6 +52,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         private Long connectionTtl;
         private String user;
         private String password;
+        private String jwt;
         private Boolean useSsl;
         private SSLContext sslContext;
         private Integer chunksize;
@@ -64,8 +65,9 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
         public Builder(final Builder builder) {
             this(builder.hostHandler);
-            timeout(builder.timeout).user(builder.user).password(builder.password).useSsl(builder.useSsl)
-                    .sslContext(builder.sslContext).chunksize(builder.chunksize).maxConnections(builder.maxConnections);
+            timeout(builder.timeout).user(builder.user).password(builder.password).jwt(builder.jwt)
+                    .useSsl(builder.useSsl).sslContext(builder.sslContext).chunksize(builder.chunksize)
+                    .maxConnections(builder.maxConnections);
         }
 
         public Builder timeout(final Integer timeout) {
@@ -80,6 +82,11 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
         public Builder password(final String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder jwt(final String jwt) {
+            this.jwt = jwt;
             return this;
         }
 
@@ -109,16 +116,17 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         }
 
         public VstCommunication<Response, VstConnectionSync> build(final ArangoSerialization util) {
-            return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util, chunksize,
+            return new VstCommunicationSync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
                     maxConnections, connectionTtl);
         }
 
     }
 
     protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                   final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
+                                   final String password, final String jwt, final Boolean useSsl,
+                                   final SSLContext sslContext, final ArangoSerialization util,
                                    final Integer chunksize, final Integer maxConnections, final Long ttl) {
-        super(timeout, user, password, useSsl, sslContext, util, chunksize, hostHandler);
+        super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
     }
 
     @Override
@@ -158,6 +166,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
+        // TODO: jwt authentication request
         final Response response = execute(
                 new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN), connection);
         checkError(response);

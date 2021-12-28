@@ -49,9 +49,9 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunicationAsync.class);
 
     private VstCommunicationAsync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                  final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
+                                  final String password, final String jwt, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
                                   final Integer chunksize, final Integer maxConnections, final Long connectionTtl) {
-        super(timeout, user, password, useSsl, sslContext, util, chunksize, hostHandler);
+        super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
     }
 
     @Override
@@ -125,6 +125,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
 
     @Override
     protected void authenticate(final VstConnectionAsync connection) {
+        // TODO: jwt authentication request
         Response response;
         try {
             response = execute(new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN),
@@ -142,6 +143,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         private Long connectionTtl;
         private String user;
         private String password;
+        private String jwt;
         private Boolean useSsl;
         private SSLContext sslContext;
         private Integer chunksize;
@@ -164,6 +166,11 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
 
         public Builder password(final String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder jwt(final String jwt) {
+            this.jwt = jwt;
             return this;
         }
 
@@ -193,7 +200,7 @@ public class VstCommunicationAsync extends VstCommunication<CompletableFuture<Re
         }
 
         public VstCommunicationAsync build(final ArangoSerialization util) {
-            return new VstCommunicationAsync(hostHandler, timeout, user, password, useSsl, sslContext, util, chunksize,
+            return new VstCommunicationAsync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
                     maxConnections, connectionTtl);
         }
     }

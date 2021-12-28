@@ -4,6 +4,7 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +28,19 @@ public class JwtAuthTest {
 
     private static String jwt;
     private final Protocol protocol;
+    private ArangoDB arangoDB;
 
     @BeforeClass
     public static void init() {
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
+    }
+
+    @After
+    public void after() {
+        if (arangoDB != null)
+            arangoDB.shutdown();
     }
 
     @Parameterized.Parameters
@@ -50,22 +58,20 @@ public class JwtAuthTest {
 
     @Test
     public void notAuthenticated() {
-        ArangoDB arangoDB = getBuilder().build();
+        arangoDB = getBuilder().build();
         try {
             arangoDB.getVersion();
             fail();
         } catch (ArangoDBException e) {
             assertThat(e.getResponseCode(), is(401));
-        } finally {
-            arangoDB.shutdown();
         }
+        arangoDB.shutdown();
     }
 
     @Test
     public void authenticated() {
-        System.out.println(jwt);
-        ArangoDB arangoDB = getBuilder()
-//                .jwt(jwt)
+        arangoDB = getBuilder()
+                .jwt(jwt)
                 .build();
         arangoDB.getVersion();
         arangoDB.shutdown();
@@ -74,11 +80,9 @@ public class JwtAuthTest {
     @Test
     public void updateJwt() {
         assumeTrue("VST does not allow updating JWT", protocol != Protocol.VST);
-        System.out.println(jwt);
-        ArangoDB arangoDB = getBuilder()
-//                .jwt(jwt)
+        arangoDB = getBuilder()
+                .jwt(jwt)
                 .build();
-        arangoDB.updateJwt(jwt);
         arangoDB.getVersion();
         arangoDB.updateJwt("bla");
         try {
@@ -86,10 +90,10 @@ public class JwtAuthTest {
             fail();
         } catch (ArangoDBException e) {
             assertThat(e.getResponseCode(), is(401));
-        } finally {
-            arangoDB.shutdown();
         }
 
+        arangoDB.updateJwt(jwt);
+        arangoDB.getVersion();
         arangoDB.shutdown();
     }
 

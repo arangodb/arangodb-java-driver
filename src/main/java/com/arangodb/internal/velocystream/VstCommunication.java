@@ -59,15 +59,17 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 
     protected final String user;
     protected final String password;
+    protected final String jwt;
 
     protected final Integer chunksize;
     protected final HostHandler hostHandler;
 
-    protected VstCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-                               final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
-                               final HostHandler hostHandler) {
+    protected VstCommunication(final Integer timeout, final String user, final String password, final String jwt,
+                               final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
+                               final Integer chunksize, final HostHandler hostHandler) {
         this.user = user;
         this.password = password;
+        this.jwt = jwt;
         this.util = util;
         this.hostHandler = hostHandler;
         this.chunksize = chunksize != null ? chunksize : ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;

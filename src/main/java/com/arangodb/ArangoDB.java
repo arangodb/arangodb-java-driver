@@ -180,6 +180,17 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         }
 
         /**
+         * Sets the JWT for the user for authentication.
+         *
+         * @param jwt token to use (default: {@code null})
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder jwt(final String jwt) {
+            setJwt(jwt);
+            return this;
+        }
+
+        /**
          * If set to {@code true} SSL will be used when connecting to an ArangoDB server.
          *
          * @param useSsl whether or not use SSL (default: {@code false})
@@ -217,7 +228,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          *
          * @param httpRequestRetryHandler HttpRequestRetryHandler to be used
          * @return {@link ArangoDB.Builder}
-         *
+         * <p>
          * <br /><br />
          * NOTE:
          * Some ArangoDB HTTP endpoints do not honor RFC-2616 HTTP 1.1 specification in respect to
@@ -647,11 +658,12 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             final Collection<Host> hostList = createHostList(max, connectionFactory);
             final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
             final HostHandler hostHandler = createHostHandler(hostResolver);
+            hostHandler.setJwt(jwt);
 
             return new ArangoDBImpl(
                     new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                            .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
-                            .connectionTtl(connectionTtl),
+                            .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
+                            .maxConnections(maxConnections).connectionTtl(connectionTtl),
                     new HttpCommunication.Builder(hostHandler),
                     util,
                     protocol,
@@ -670,10 +682,10 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     void shutdown() throws ArangoDBException;
 
     /**
-     * Updates the bearer jwt used for requests authorization. This is only effective when using HTTP protocol. VST
+     * Updates the JWT used for requests authorization. This is only effective when using HTTP protocol. VST
      * connections are only authenticated during the initialization.
      *
-     * @param jwt the token to use
+     * @param jwt token to use
      */
     void updateJwt(String jwt);
 
