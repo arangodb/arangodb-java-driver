@@ -81,6 +81,7 @@ public class JwtAuthTest {
 
     private ArangoDBAsync.Builder getBuilder() {
         return new ArangoDBAsync.Builder()
+                .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file
     }
