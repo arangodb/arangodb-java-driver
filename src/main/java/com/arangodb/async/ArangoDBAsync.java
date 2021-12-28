@@ -26,14 +26,7 @@ import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -53,18 +46,7 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackAnnotationFieldFilter;
-import com.arangodb.velocypack.VPackAnnotationFieldNaming;
-import com.arangodb.velocypack.VPackDeserializer;
-import com.arangodb.velocypack.VPackInstanceCreator;
-import com.arangodb.velocypack.VPackJsonDeserializer;
-import com.arangodb.velocypack.VPackJsonSerializer;
-import com.arangodb.velocypack.VPackModule;
-import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackParserModule;
-import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -380,6 +362,17 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          */
         public Builder password(final String password) {
             setPassword(password);
+            return this;
+        }
+
+        /**
+         * Sets the JWT for the user for authentication.
+         *
+         * @param jwt token to use (default: {@code null})
+         * @return {@link ArangoDBAsync.Builder}
+         */
+        public Builder jwt(final String jwt) {
+            setJwt(jwt);
             return this;
         }
 
