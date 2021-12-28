@@ -109,4 +109,9 @@ public class RoundRobinHostHandler implements HostHandler {
         currentHost.closeOnError();
     }
 
+    @Override
+    public void setJwt(String jwt) {
+        hosts.setJwt(jwt);
+    }
+
 }

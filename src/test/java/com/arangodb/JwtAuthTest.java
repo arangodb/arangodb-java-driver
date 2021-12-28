@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Michele Rastelli
@@ -62,38 +62,34 @@ public class JwtAuthTest {
     }
 
     @Test
-    public void jwtAndUsernameShouldThrow() {
-        try {
-            getBuilder()
-                    .user("foo")
-                    //                .jwt(jwt)
-                    .build();
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getMessage(), containsString("Cannot use user name together with JWT."));
-        }
-    }
-
-    @Test
-    public void jwtAndPasswordShouldThrow() {
-        try {
-            getBuilder()
-                    .password("foo")
-                    //                .jwt(jwt)
-                    .build();
-            fail();
-        } catch (ArangoDBException e) {
-            assertThat(e.getMessage(), containsString("Cannot use password together with JWT."));
-        }
-    }
-
-    @Test
     public void authenticated() {
         System.out.println(jwt);
         ArangoDB arangoDB = getBuilder()
 //                .jwt(jwt)
                 .build();
         arangoDB.getVersion();
+        arangoDB.shutdown();
+    }
+
+    @Test
+    public void updateJwt() {
+        assumeTrue("VST does not allow updating JWT", protocol != Protocol.VST);
+        System.out.println(jwt);
+        ArangoDB arangoDB = getBuilder()
+//                .jwt(jwt)
+                .build();
+        arangoDB.updateJwt(jwt);
+        arangoDB.getVersion();
+        arangoDB.updateJwt("bla");
+        try {
+            arangoDB.getVersion();
+            fail();
+        } catch (ArangoDBException e) {
+            assertThat(e.getResponseCode(), is(401));
+        } finally {
+            arangoDB.shutdown();
+        }
+
         arangoDB.shutdown();
     }
 

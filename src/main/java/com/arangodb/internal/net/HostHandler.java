@@ -40,4 +40,7 @@ public interface HostHandler {
     void close() throws IOException;
 
     void closeCurrentOnError();
+
+    void setJwt(String jwt);
+
 }

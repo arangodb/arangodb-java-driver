@@ -77,7 +77,7 @@ public class HostSet {
         LOGGER.debug("Clear all Hosts in Set with markForDeletion");
 
         Iterator<Host> iterable = hosts.iterator();
-        while (iterable.hasNext()){
+        while (iterable.hasNext()) {
             Host host = iterable.next();
             if (host.isMarkforDeletion()) {
                 try {
@@ -99,4 +99,11 @@ public class HostSet {
         close();
         hosts.clear();
     }
+
+    public void setJwt(String jwt) {
+        for (Host h : hosts) {
+            h.setJwt(jwt);
+        }
+    }
+
 }
