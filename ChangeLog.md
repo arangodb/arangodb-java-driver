@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- fixed swallowing connection exceptions (#420) 
+- fixed `stopwords` analyzer (#414)
+- set max retries for active failover redirects (#412)
+- fixed deserializing `null` value as String (#411)
+
 ## [6.14.0] - 2021-10-01
 
 - fixed issues with non-English locales (#407)
