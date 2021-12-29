@@ -26,14 +26,7 @@ import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -53,18 +46,7 @@ import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.ArangoDeserializer;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
-import com.arangodb.velocypack.VPack;
-import com.arangodb.velocypack.VPackAnnotationFieldFilter;
-import com.arangodb.velocypack.VPackAnnotationFieldNaming;
-import com.arangodb.velocypack.VPackDeserializer;
-import com.arangodb.velocypack.VPackInstanceCreator;
-import com.arangodb.velocypack.VPackJsonDeserializer;
-import com.arangodb.velocypack.VPackJsonSerializer;
-import com.arangodb.velocypack.VPackModule;
-import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackParserModule;
-import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
@@ -91,6 +73,14 @@ import java.util.concurrent.CompletableFuture;
 public interface ArangoDBAsync extends ArangoSerializationAccessor {
 
     void shutdown() throws ArangoDBException;
+
+    /**
+     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
+     * connections are authenticated during the initialization phase.
+     *
+     * @param jwt token to use
+     */
+    void updateJwt(String jwt);
 
     /**
      * Returns a handler of the system database
@@ -281,10 +271,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     /**
      * Returns fatal, error, warning or info log messages from the server's global log.
      *
-     * @param options
-     *         Additional options, can be null
+     * @param options Additional options, can be null
      * @return the log messages
-     *
      * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @deprecated use {@link #getLogEntries(LogOptions)} instead
@@ -295,10 +283,8 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     /**
      * Returns the server logs
      *
-     * @param options
-     *         Additional options, can be null
+     * @param options Additional options, can be null
      * @return the log messages
-     *
      * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8
@@ -380,6 +366,17 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          */
         public Builder password(final String password) {
             setPassword(password);
+            return this;
+        }
+
+        /**
+         * Sets the JWT for the user authentication.
+         *
+         * @param jwt token to use (default: {@code null})
+         * @return {@link ArangoDBAsync.Builder}
+         */
+        public Builder jwt(final String jwt) {
+            setJwt(jwt);
             return this;
         }
 
@@ -812,18 +809,20 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
                     syncBuilder(syncHostHandler),
                     asyncHostResolver,
                     syncHostResolver,
+                    asyncHostHandler,
+                    syncHostHandler,
                     new ArangoContext());
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
             return new VstCommunicationAsync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
                     .connectionTtl(connectionTtl);
         }
 
         private VstCommunicationSync.Builder syncBuilder(final HostHandler hostHandler) {
             return new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                    .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
+                    .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
                     .connectionTtl(connectionTtl);
         }
 

@@ -104,4 +104,9 @@ public class FallbackHostHandler implements HostHandler {
         current.closeOnError();
     }
 
+    @Override
+    public void setJwt(String jwt) {
+        hosts.setJwt(jwt);
+    }
+
 }

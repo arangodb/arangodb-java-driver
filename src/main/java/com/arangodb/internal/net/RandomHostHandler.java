@@ -85,4 +85,10 @@ public class RandomHostHandler implements HostHandler {
         current.closeOnError();
     }
 
+    @Override
+    public void setJwt(String jwt) {
+        fallback.setJwt(jwt);
+        hosts.setJwt(jwt);
+    }
+
 }

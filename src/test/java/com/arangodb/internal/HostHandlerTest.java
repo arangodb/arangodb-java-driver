@@ -26,6 +26,7 @@ import com.arangodb.internal.net.*;
 import com.arangodb.util.ArangoSerialization;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,9 +39,31 @@ import static org.junit.Assert.fail;
  */
 public class HostHandlerTest {
 
-    private static final Host HOST_0 = new HostImpl(null, new HostDescription("127.0.0.1", 8529));
-    private static final Host HOST_1 = new HostImpl(null, new HostDescription("127.0.0.2", 8529));
-    private static final Host HOST_2 = new HostImpl(null, new HostDescription("127.0.0.3", 8529));
+    private static final ConnectionPool mockCP = new ConnectionPool() {
+        @Override
+        public Connection createConnection(HostDescription host) {
+            return null;
+        }
+
+        @Override
+        public Connection connection() {
+            return null;
+        }
+
+        @Override
+        public void setJwt(String jwt) {
+
+        }
+
+        @Override
+        public void close() throws IOException {
+
+        }
+    };
+
+    private static final Host HOST_0 = new HostImpl(mockCP, new HostDescription("127.0.0.1", 8529));
+    private static final Host HOST_1 = new HostImpl(mockCP, new HostDescription("127.0.0.2", 8529));
+    private static final Host HOST_2 = new HostImpl(mockCP, new HostDescription("127.0.0.3", 8529));
 
     private static final HostResolver SINGLE_HOST = new HostResolver() {
 

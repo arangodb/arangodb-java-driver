@@ -388,7 +388,7 @@ public class ArangoDBTest {
 
     @Test
     public void authenticationFailPassword() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().password("no").build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().password("no").jwt(null).build();
         try {
             arangoDB.getVersion();
             fail();
@@ -399,7 +399,7 @@ public class ArangoDBTest {
 
     @Test
     public void authenticationFailUser() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().user("no").build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().user("no").jwt(null).build();
         try {
             arangoDB.getVersion();
             fail();

@@ -20,10 +20,10 @@ jobs:
       matrix:
         docker-img:
           - docker.io/arangodb/arangodb:3.7.15
-          - docker.io/arangodb/arangodb:3.8.2
+          - docker.io/arangodb/arangodb:3.8.4
           - docker.io/arangodb/arangodb-preview:3.9.0-alpha.1
           - docker.io/arangodb/enterprise:3.7.15
-          - docker.io/arangodb/enterprise:3.8.2
+          - docker.io/arangodb/enterprise:3.8.4
           - docker.io/arangodb/enterprise-preview:3.9.0-alpha.1
         topology:
           - single
@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 1.8
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           java-version: ${{matrix.java-version}}
@@ -56,6 +56,72 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
+      - name: Info
+        run: mvn -version
+      - name: Test
+        run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
+      - name: Collect docker logs on failure
+        if: ${{ cancelled() || failure() }}
+        uses: jwalton/gh-docker-logs@v1
+        with:
+          dest: './logs'
+      - name: Tar logs
+        if: ${{ cancelled() || failure() }}
+        run: tar cvzf ./logs.tgz ./logs
+      - name: Upload logs to GitHub
+        if: ${{ cancelled() || failure() }}
+        uses: actions/upload-artifact@master
+        with:
+          name: logs.tgz
+          path: ./logs.tgz
+
+  test-jwt:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/enterprise:3.8.4
+        topology:
+          - single
+          - cluster
+          - activefailover
+        db-ext-names:
+          - false
+        java-version:
+          - 17
+        user-language:
+          - en
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - name: Set JWT
+        run: |
+          ENDPOINT=$(./docker/find_active_endpoint.sh)
+          echo "Active endpoint: $ENDPOINT"
+          JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
+          echo "Setting JWT: $JWT"
+          sed -i "/arangodb.password/c\arangodb.jwt=$JWT" src/test/resources/arangodb.properties
       - name: Info
         run: mvn -version
       - name: Test

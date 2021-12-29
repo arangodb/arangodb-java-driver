@@ -33,4 +33,6 @@ public interface CommunicationProtocol extends Closeable {
 
     Response execute(final Request request, HostHandle hostHandle) throws ArangoDBException;
 
+    void setJwt(String jwt);
+
 }

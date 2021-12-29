@@ -81,4 +81,10 @@ public class DirtyReadHostHandler implements HostHandler {
         determineHostHandler().closeCurrentOnError();
     }
 
+    @Override
+    public void setJwt(String jwt) {
+        master.setJwt(jwt);
+        follower.setJwt(jwt);
+    }
+
 }

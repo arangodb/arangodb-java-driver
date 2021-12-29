@@ -69,6 +69,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
+
 /**
  * @author Mark Vollmary
  */
@@ -163,6 +165,7 @@ public class HttpConnection implements Connection {
     private final CloseableHttpClient client;
     private final String user;
     private final String password;
+    private volatile String jwt = null;
     private final ArangoSerialization util;
     private final Boolean useSsl;
     private final Protocol contentType;
@@ -315,9 +318,19 @@ public class HttpConnection implements Connection {
             httpRequest.setHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
-        final Credentials credentials = addCredentials(httpRequest);
+        Credentials credentials = null;
+        if (jwt != null) {
+            httpRequest.addHeader(AUTHORIZATION, "Bearer " + jwt);
+        } else if (user != null) {
+            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
+            try {
+                httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
+            } catch (final AuthenticationException e) {
+                throw new ArangoDBException(e);
+            }
+        }
         if (LOGGER.isDebugEnabled()) {
-            CURLLogger.log(url, request, credentials, util);
+            CURLLogger.log(url, request, credentials, jwt, util);
         }
         Response response;
         response = buildResponse(client.execute(httpRequest));
@@ -329,19 +342,6 @@ public class HttpConnection implements Connection {
         for (final Entry<String, String> header : request.getHeaderParam().entrySet()) {
             httpRequest.addHeader(header.getKey(), header.getValue());
         }
-    }
-
-    public Credentials addCredentials(final HttpRequestBase httpRequest) {
-        Credentials credentials = null;
-        if (user != null) {
-            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
-            try {
-                httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
-            } catch (final AuthenticationException e) {
-                throw new ArangoDBException(e);
-            }
-        }
-        return credentials;
     }
 
     public Response buildResponse(final CloseableHttpResponse httpResponse)
@@ -373,6 +373,11 @@ public class HttpConnection implements Connection {
 
     protected void checkError(final Response response) throws ArangoDBException {
         ResponseUtils.checkError(util, response);
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 
 }
