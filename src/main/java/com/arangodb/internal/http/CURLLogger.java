@@ -42,7 +42,8 @@ public final class CURLLogger {
     public static void log(
             final String url,
             final Request request,
-            final Credentials credencials,
+            final Credentials credentials,
+            final String jwt,
             final ArangoSerialization util) {
         final RequestType requestType = request.getRequestType();
         final boolean includeBody = (requestType == RequestType.POST || requestType == RequestType.PUT
@@ -59,9 +60,12 @@ public final class CURLLogger {
                 buffer.append(" -H '").append(header.getKey()).append(":").append(header.getValue()).append("'");
             }
         }
-        if (credencials != null) {
-            buffer.append(" -u ").append(credencials.getUserPrincipal().getName()).append(":")
-                    .append(credencials.getPassword());
+        if (credentials != null) {
+            buffer.append(" -u ").append(credentials.getUserPrincipal().getName()).append(":")
+                    .append(credentials.getPassword());
+        }
+        if (jwt != null) {
+            buffer.append(" -H ").append("'Authorization: Bearer ").append(jwt).append("'");
         }
         if (includeBody) {
             buffer.append(" -d @-");

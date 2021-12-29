@@ -318,10 +318,11 @@ public class HttpConnection implements Connection {
             httpRequest.setHeader("Accept", "application/x-velocypack");
         }
         addHeader(request, httpRequest);
+        Credentials credentials = null;
         if (jwt != null) {
             httpRequest.addHeader(AUTHORIZATION, "Bearer " + jwt);
         } else if (user != null) {
-            Credentials credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
+            credentials = new UsernamePasswordCredentials(user, password != null ? password : "");
             try {
                 httpRequest.addHeader(new BasicScheme().authenticate(credentials, httpRequest, null));
             } catch (final AuthenticationException e) {
@@ -329,8 +330,7 @@ public class HttpConnection implements Connection {
             }
         }
         if (LOGGER.isDebugEnabled()) {
-            // FIXME: add overloaded method to accept bearer token in addition to username and password
-            CURLLogger.log(url, request, null, util);
+            CURLLogger.log(url, request, credentials, jwt, util);
         }
         Response response;
         response = buildResponse(client.execute(httpRequest));
