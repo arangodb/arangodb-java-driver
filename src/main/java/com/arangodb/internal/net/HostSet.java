@@ -13,6 +13,7 @@ public class HostSet {
     private static final Logger LOGGER = LoggerFactory.getLogger(HostSet.class);
 
     private final ArrayList<Host> hosts = new ArrayList<>();
+    private volatile String jwt = null;
 
     public HostSet() {
         super();
@@ -32,21 +33,18 @@ public class HostSet {
     }
 
     public void addHost(Host newHost) {
-
         if (hosts.contains(newHost)) {
             LOGGER.debug("Host" + newHost + " already in Set");
-
             for (Host host : hosts) {
                 if (host.equals(newHost)) {
                     host.setMarkforDeletion(false);
                 }
             }
-
         } else {
+            newHost.setJwt(jwt);
             hosts.add(newHost);
             LOGGER.debug("Added Host " + newHost + " - now " + hosts.size() + " Hosts in List");
         }
-
     }
 
     public void close() {
@@ -101,6 +99,7 @@ public class HostSet {
     }
 
     public void setJwt(String jwt) {
+        this.jwt = jwt;
         for (Host h : hosts) {
             h.setJwt(jwt);
         }
