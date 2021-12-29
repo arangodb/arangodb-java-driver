@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.15.0] - 2021-12-29
+
+- JWT authentication (#421)
 - fixed swallowing connection exceptions (#420) 
 - fixed `stopwords` analyzer (#414)
 - set max retries for active failover redirects (#412)
