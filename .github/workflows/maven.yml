@@ -117,7 +117,10 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
       - name: Set JWT
         run: |
-          JWT=$(curl "http://172.17.0.1:8529/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
+          ENDPOINT=$(./docker/find_active_endpoint.sh)
+          echo "Active endpoint: $ENDPOINT"
+          JWT=$(curl "http://$ENDPOINT/_db/_system/_open/auth" -X POST -d '{"username":"root","password":"test"}' | jq ".jwt" | xargs)
+          echo "Setting JWT: $JWT"
           sed -i "/arangodb.password/c\arangodb.jwt=$JWT" src/test/resources/arangodb.properties
       - name: Info
         run: mvn -version
