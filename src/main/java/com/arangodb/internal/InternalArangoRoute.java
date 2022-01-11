@@ -66,7 +66,7 @@ public abstract class InternalArangoRoute<A extends InternalArangoDB<E>, D exten
     }
 
     protected Request createRequest(final RequestType requestType) {
-        final Request request = request(db.name(), requestType, path);
+        final Request request = request(db.dbName(), requestType, path);
         for (final Entry<String, String> param : headerParam.entrySet()) {
             request.putHeaderParam(param.getKey(), param.getValue());
         }

@@ -20,15 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.ArangoDBEngine;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
@@ -50,10 +42,7 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoDeserializer;
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
+import com.arangodb.util.*;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackAnnotationFieldFilter;
 import com.arangodb.velocypack.VPackAnnotationFieldNaming;
@@ -701,8 +690,20 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(DbName)} instead
      */
-    ArangoDatabase db(String name);
+    @Deprecated
+    default ArangoDatabase db(String name) {
+        return db(DbName.of(name));
+    }
+
+    /**
+     * Returns a {@code ArangoDatabase} instance for the given database name.
+     *
+     * @param dbName Name of the database
+     * @return database handler
+     */
+    ArangoDatabase db(DbName dbName);
 
     /**
      * Creates a new database with the given name.
@@ -712,8 +713,23 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    Boolean createDatabase(String name) throws ArangoDBException;
+    @Deprecated
+    default Boolean createDatabase(String name) throws ArangoDBException {
+        return createDatabase(DbName.of(name));
+    }
+
+    /**
+     * Creates a new database with the given name.
+     *
+     * @param dbName Name of the database to create
+     * @return true if the database was created successfully.
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     */
+    Boolean createDatabase(DbName dbName) throws ArangoDBException;
 
     /**
      * Creates a new database with the given name.

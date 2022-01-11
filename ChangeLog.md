@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+- added `DbName` class to represent database names in public API parameters, to ease unicode names normalization (#405)
+
 ## [6.15.0] - 2021-12-29
 
 - JWT authentication (#421)

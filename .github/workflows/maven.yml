@@ -19,12 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         docker-img:
-          - docker.io/arangodb/arangodb:3.7.15
+          - docker.io/arangodb/arangodb:3.7.16
           - docker.io/arangodb/arangodb:3.8.4
-          - docker.io/arangodb/arangodb-preview:3.9.0-alpha.1
-          - docker.io/arangodb/enterprise:3.7.15
+          - docker.io/arangodb/arangodb-preview:3.9.0-beta.1
+          - docker.io/arangodb/enterprise:3.7.16
           - docker.io/arangodb/enterprise:3.8.4
-          - docker.io/arangodb/enterprise-preview:3.9.0-alpha.1
+          - docker.io/arangodb/enterprise-preview:3.9.0-beta.1
         topology:
           - single
           - cluster
@@ -35,6 +35,17 @@ jobs:
           - 8
         user-language:
           - en
+        include:
+          - docker-img: docker.io/arangodb/arangodb-preview:3.9.0-beta.1
+            topology: single
+            db-ext-names: true
+            java-version: 11
+            user-language: tr
+          - docker-img: docker.io/arangodb/enterprise-preview:3.9.0-beta.1
+            topology: cluster
+            db-ext-names: true
+            java-version: 17
+            user-language: tr
 
     steps:
       - uses: actions/checkout@v2
@@ -74,6 +85,21 @@ jobs:
         with:
           name: logs.tgz
           path: ./logs.tgz
+
+  # test encodeURIComponent() and normalize('NFC') comparing to Javascript behavior
+  test-graalvm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: '11'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Info
+        run: mvn -version
+      - name: Test
+        run: mvn -e --no-transfer-progress test -Dtest=com.arangodb.util.UnicodeUtilsTest
 
   test-jwt:
     timeout-minutes: 20

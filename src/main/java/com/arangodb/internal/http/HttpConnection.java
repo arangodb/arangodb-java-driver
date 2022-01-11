@@ -239,7 +239,7 @@ public class HttpConnection implements Connection {
 
     private static String buildUrl(final String baseUrl, final Request request) {
         final StringBuilder sb = new StringBuilder().append(baseUrl);
-        final String database = request.getDatabase();
+        final String database = request.getDbName().get();
         if (database != null && !database.isEmpty()) {
             sb.append("/_db/").append(database);
         }

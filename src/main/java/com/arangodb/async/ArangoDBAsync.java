@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
@@ -94,8 +95,20 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(DbName)} instead
      */
-    ArangoDatabaseAsync db(final String name);
+    @Deprecated
+    default ArangoDatabaseAsync db(final String name) {
+        return db(DbName.of(name));
+    }
+
+    /**
+     * Returns a handler of the database by the given name
+     *
+     * @param dbName Name of the database
+     * @return database handler
+     */
+    ArangoDatabaseAsync db(final DbName dbName);
 
     /**
      * Creates a new database
@@ -104,8 +117,22 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return true if the database was created successfully.
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    CompletableFuture<Boolean> createDatabase(final String name);
+    @Deprecated
+    default CompletableFuture<Boolean> createDatabase(final String name) {
+        return createDatabase(DbName.of(name));
+    }
+
+    /**
+     * Creates a new database
+     *
+     * @param dbName database name
+     * @return true if the database was created successfully.
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     */
+    CompletableFuture<Boolean> createDatabase(final DbName dbName);
 
     /**
      * Creates a new database

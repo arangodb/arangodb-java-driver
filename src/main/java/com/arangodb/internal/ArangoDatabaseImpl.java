@@ -47,7 +47,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     private ArangoCursorInitializer cursorInitializer;
 
-    protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final String name) {
+    protected ArangoDatabaseImpl(final ArangoDBImpl arangoDB, final DbName name) {
         super(arangoDB, name);
     }
 
@@ -122,7 +122,7 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
 
     @Override
     public Boolean create() throws ArangoDBException {
-        return arango().createDatabase(name());
+        return arango().createDatabase(dbName());
     }
 
     @Override
