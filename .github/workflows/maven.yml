@@ -36,12 +36,12 @@ jobs:
         user-language:
           - en
         include:
-          - docker-img: docker.io/arangodb/arangodb:3.8.4
+          - docker-img: docker.io/arangodb/arangodb-preview:3.9.0-beta.1
             topology: single
             db-ext-names: true
             java-version: 11
             user-language: tr
-          - docker-img: docker.io/arangodb/enterprise:3.8.4
+          - docker-img: docker.io/arangodb/enterprise-preview:3.9.0-beta.1
             topology: cluster
             db-ext-names: true
             java-version: 17
