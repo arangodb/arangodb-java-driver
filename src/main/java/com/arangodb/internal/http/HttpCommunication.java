@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.SocketException;
 
 /**
  * @author Mark Vollmary
@@ -71,11 +70,11 @@ public class HttpCommunication implements Closeable {
         hostHandler.close();
     }
 
-    public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException, IOException {
+    public Response execute(final Request request, final HostHandle hostHandle) throws ArangoDBException {
         return execute(request, hostHandle, 0);
     }
 
-    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) throws ArangoDBException, IOException {
+    private Response execute(final Request request, final HostHandle hostHandle, final int attemptCount) throws ArangoDBException {
         final AccessType accessType = RequestUtils.determineAccessType(request);
         Host host = hostHandler.get(hostHandle, accessType);
         try {
@@ -86,19 +85,20 @@ public class HttpCommunication implements Closeable {
                     hostHandler.success();
                     hostHandler.confirm();
                     return response;
-                } catch (final SocketException se) {
-                    hostHandler.fail();
+                } catch (final IOException e) {
+                    hostHandler.fail(e);
                     if (hostHandle != null && hostHandle.getHost() != null) {
                         hostHandle.setHost(null);
                     }
                     final Host failedHost = host;
                     host = hostHandler.get(hostHandle, accessType);
                     if (host != null) {
-                        LOGGER.warn(String.format("Could not connect to %s", failedHost.getDescription()), se);
+                        LOGGER.warn(String.format("Could not connect to %s", failedHost.getDescription()), e);
                         LOGGER.warn(String.format("Could not connect to %s. Try connecting to %s",
                                 failedHost.getDescription(), host.getDescription()));
                     } else {
-                        throw se;
+                        LOGGER.error(e.getMessage(), e);
+                        throw new ArangoDBException(e);
                     }
                 }
             }
@@ -107,7 +107,7 @@ public class HttpCommunication implements Closeable {
                 final String location = ((ArangoDBRedirectException) e).getLocation();
                 final HostDescription redirectHost = HostUtils.createFromLocation(location);
                 hostHandler.closeCurrentOnError();
-                hostHandler.fail();
+                hostHandler.fail(e);
                 return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
             } else {
                 throw e;

@@ -24,6 +24,7 @@ package com.arangodb.entity.arangosearch.analyzer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Michele Rastelli
@@ -38,26 +39,89 @@ public class StopwordsAnalyzerProperties {
         return hex.toString();
     }
 
+    private static String hexToString(String hex) {
+        final StringBuilder result = new StringBuilder();
+        for (int i = 0; i < hex.length() - 1; i += 2) {
+            String tempInHex = hex.substring(i, (i + 2));
+            int decimal = Integer.parseInt(tempInHex, 16);
+            result.append((char) decimal);
+        }
+        return result.toString();
+    }
+
     public StopwordsAnalyzerProperties() {
         stopwords = new ArrayList<>();
+        hex = true;
     }
 
-    private List<String> stopwords;
+    private final List<String> stopwords;
+    private final boolean hex;
 
     /**
-     * @return array of hex-encoded strings that describe the tokens to be discarded.
+     * @return list of hex-encoded strings that describe the tokens to be discarded.
+     * @deprecated use {@link #getStopwordsAsHexList()} instead
      */
+    @Deprecated
     public List<String> getStopwords() {
-        return stopwords;
+        return getStopwordsAsHexList();
     }
 
+    /**
+     * @return list of verbatim strings that describe the tokens to be discarded.
+     */
+    public List<String> getStopwordsAsStringList() {
+        if (hex) {
+            return stopwords.stream()
+                    .map(StopwordsAnalyzerProperties::hexToString)
+                    .collect(Collectors.toList());
+        } else {
+            return stopwords;
+        }
+    }
+
+    /**
+     * @return list of hex-encoded strings that describe the tokens to be discarded.
+     */
+    public List<String> getStopwordsAsHexList() {
+        if (hex) {
+            return stopwords;
+        } else {
+            return stopwords.stream()
+                    .map(StopwordsAnalyzerProperties::stringToHex)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * @return if false each string in {@link #stopwords} is used as verbatim, if true as hex-encoded.
+     */
+    public boolean getHex() {
+        return hex;
+    }
+
+    /**
+     * @param value stopword as verbatim string
+     * @return this
+     */
     public StopwordsAnalyzerProperties addStopwordAsString(final String value) {
-        stopwords.add(stringToHex(value));
+        if (hex) {
+            stopwords.add(stringToHex(value));
+        } else {
+            stopwords.add(value);
+        }
         return this;
     }
 
+    /**
+     * @param value stopword as hex string
+     * @return this
+     */
     public StopwordsAnalyzerProperties addStopwordAsHex(final String value) {
-        stopwords.add(value);
+        if (hex) {
+            stopwords.add(value);
+        } else {
+            stopwords.add(hexToString(value));
+        }
         return this;
     }
 
@@ -66,11 +130,11 @@ public class StopwordsAnalyzerProperties {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StopwordsAnalyzerProperties that = (StopwordsAnalyzerProperties) o;
-        return Objects.equals(stopwords, that.stopwords);
+        return hex == that.hex && Objects.equals(stopwords, that.stopwords);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stopwords);
+        return Objects.hash(stopwords, hex);
     }
 }

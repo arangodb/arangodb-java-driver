@@ -21,6 +21,10 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDBMultipleException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mark Vollmary
@@ -30,15 +34,17 @@ public class RoundRobinHostHandler implements HostHandler {
     private final HostResolver resolver;
     private int current;
     private int fails;
+    private final List<Exception> lastFailExceptions;
     private Host currentHost;
     private HostSet hosts;
 
     public RoundRobinHostHandler(final HostResolver resolver) {
         super();
         this.resolver = resolver;
+        lastFailExceptions = new ArrayList<>();
         hosts = resolver.resolve(true, false);
         current = 0;
-        fails = 0;
+        reset();
     }
 
     @Override
@@ -47,8 +53,10 @@ public class RoundRobinHostHandler implements HostHandler {
         final int size = hosts.getHostsList().size();
 
         if (fails > size) {
+            ArangoDBException e = new ArangoDBException("Cannot contact any host!",
+                    new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));
             reset();
-            throw new ArangoDBException("Cannot contact any host!");
+            throw e;
         }
 
         final int index = (current++) % size;
@@ -72,17 +80,19 @@ public class RoundRobinHostHandler implements HostHandler {
 
     @Override
     public void success() {
-        fails = 0;
+        reset();
     }
 
     @Override
-    public void fail() {
+    public void fail(Exception exception) {
         fails++;
+        lastFailExceptions.add(exception);
     }
 
     @Override
     public void reset() {
         fails = 0;
+        lastFailExceptions.clear();
     }
 
     @Override
@@ -97,6 +107,11 @@ public class RoundRobinHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         currentHost.closeOnError();
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        hosts.setJwt(jwt);
     }
 
 }

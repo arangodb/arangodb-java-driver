@@ -26,6 +26,7 @@ import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -56,10 +57,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     private ArangoCursorInitializer cursorInitializer;
     private final CommunicationProtocol cp;
+    private final HostHandler hostHandler;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
                         final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
-                        final ArangoContext context) {
+                        final HostHandler hostHandler, final ArangoContext context) {
 
         super(new ArangoExecutorSync(
                         createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
@@ -73,6 +75,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
                 new HttpCommunication.Builder(httpBuilder),
                 util.get(Serializer.INTERNAL),
                 protocol);
+        this.hostHandler = hostHandler;
 
         hostResolver.init(this.executor(), util());
 
@@ -118,6 +121,13 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
                 LOGGER.error("Got exception during shutdown:", e);
             }
         }
+    }
+
+    @Override
+    public void updateJwt(String jwt) {
+        hostHandler.setJwt(jwt);
+        cp.setJwt(jwt);
+        executor.setJwt(jwt);
     }
 
     @Override

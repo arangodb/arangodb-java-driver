@@ -38,4 +38,7 @@ public interface Host {
     void setMarkforDeletion(boolean markforDeletion);
 
     boolean isMarkforDeletion();
+
+    void setJwt(String jwt);
+
 }

@@ -31,4 +31,6 @@ public interface ConnectionPool extends Closeable {
 
     Connection connection();
 
+    void setJwt(String jwt);
+
 }

@@ -54,8 +54,8 @@ public class RandomHostHandler implements HostHandler {
     }
 
     @Override
-    public void fail() {
-        fallback.fail();
+    public void fail(Exception exception) {
+        fallback.fail(exception);
         current = fallback.get(null, null);
     }
 
@@ -83,6 +83,12 @@ public class RandomHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         current.closeOnError();
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        fallback.setJwt(jwt);
+        hosts.setJwt(jwt);
     }
 
 }

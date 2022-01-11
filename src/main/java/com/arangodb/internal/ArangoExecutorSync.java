@@ -90,4 +90,9 @@ public class ArangoExecutorSync extends ArangoExecutor {
             throw new ArangoDBException(e);
         }
     }
+
+    public void setJwt(String jwt) {
+        protocol.setJwt(jwt);
+    }
+
 }

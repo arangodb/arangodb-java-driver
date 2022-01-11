@@ -56,8 +56,8 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
-    public void fail() {
-        determineHostHandler().fail();
+    public void fail(Exception exception) {
+        determineHostHandler().fail(exception);
     }
 
     @Override
@@ -79,6 +79,12 @@ public class DirtyReadHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         determineHostHandler().closeCurrentOnError();
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        master.setJwt(jwt);
+        follower.setJwt(jwt);
     }
 
 }
