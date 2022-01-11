@@ -69,7 +69,7 @@ public abstract class BaseTest {
     protected final ArangoDB arangoDB;
     protected final ArangoDatabase db;
 
-    BaseTest(final ArangoDB arangoDB) {
+    public BaseTest(final ArangoDB arangoDB) {
         this.arangoDB = arangoDB;
         db = arangoDB.db(TEST_DB);
     }
