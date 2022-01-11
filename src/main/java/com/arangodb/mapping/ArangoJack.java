@@ -154,7 +154,7 @@ public class ArangoJack implements ArangoSerialization {
     public <T> T deserialize(final VPackSlice vpack, final Type type) throws ArangoDBException {
         try {
             final T doc;
-            if (type == String.class && !vpack.isString()) {
+            if (type == String.class && !vpack.isString() && !vpack.isNull()) {
                 final JsonNode node = vpackMapper.readTree(
                         Arrays.copyOfRange(vpack.getBuffer(), vpack.getStart(), vpack.getStart() + vpack.getByteSize()));
                 doc = (T) jsonMapper.writeValueAsString(node);

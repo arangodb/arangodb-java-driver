@@ -356,4 +356,8 @@ public abstract class VstConnection<T> implements Connection {
         return this.connectionName;
     }
 
+    @Override
+    public void setJwt(String jwt) {
+        // no-op: VST connections send jwt token only at initialization time
+    }
 }

@@ -27,6 +27,7 @@ import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.entity.*;
 import com.arangodb.internal.*;
 import com.arangodb.internal.net.CommunicationProtocol;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -55,6 +56,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBAsyncImpl.class);
 
     private final CommunicationProtocol cp;
+    private final HostHandler asyncHostHandler;
+    private final HostHandler syncHostHandler;
 
     public ArangoDBAsyncImpl(
             final VstCommunicationAsync.Builder asyncCommBuilder,
@@ -62,6 +65,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final VstCommunicationSync.Builder syncCommBuilder,
             final HostResolver asyncHostResolver,
             final HostResolver syncHostResolver,
+            final HostHandler asyncHostHandler,
+            final HostHandler syncHostHandler,
             final ArangoContext context
     ) {
 
@@ -70,6 +75,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
         final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util.get(Serializer.INTERNAL));
 
         cp = new VstProtocol(cacheCom);
+        this.asyncHostHandler = asyncHostHandler;
+        this.syncHostHandler = syncHostHandler;
 
         ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache());
         asyncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
@@ -93,6 +100,14 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
                 LOGGER.error("Got exception during shutdown:", e);
             }
         }
+    }
+
+    @Override
+    public void updateJwt(String jwt) {
+        asyncHostHandler.setJwt(jwt);
+        syncHostHandler.setJwt(jwt);
+        cp.setJwt(jwt);
+        executor.setJwt(jwt);
     }
 
     @Override

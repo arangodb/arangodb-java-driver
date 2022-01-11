@@ -27,6 +27,7 @@ import com.arangodb.internal.net.HostHandle;
 import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.util.HostUtils;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.Message;
 import com.arangodb.internal.velocystream.internal.VstConnectionSync;
 import com.arangodb.util.ArangoSerialization;
@@ -52,6 +53,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         private Long connectionTtl;
         private String user;
         private String password;
+        private String jwt;
         private Boolean useSsl;
         private SSLContext sslContext;
         private Integer chunksize;
@@ -64,8 +66,9 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
         public Builder(final Builder builder) {
             this(builder.hostHandler);
-            timeout(builder.timeout).user(builder.user).password(builder.password).useSsl(builder.useSsl)
-                    .sslContext(builder.sslContext).chunksize(builder.chunksize).maxConnections(builder.maxConnections);
+            timeout(builder.timeout).user(builder.user).password(builder.password).jwt(builder.jwt)
+                    .useSsl(builder.useSsl).sslContext(builder.sslContext).chunksize(builder.chunksize)
+                    .maxConnections(builder.maxConnections);
         }
 
         public Builder timeout(final Integer timeout) {
@@ -80,6 +83,11 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
         public Builder password(final String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder jwt(final String jwt) {
+            this.jwt = jwt;
             return this;
         }
 
@@ -109,20 +117,26 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         }
 
         public VstCommunication<Response, VstConnectionSync> build(final ArangoSerialization util) {
-            return new VstCommunicationSync(hostHandler, timeout, user, password, useSsl, sslContext, util, chunksize,
+            return new VstCommunicationSync(hostHandler, timeout, user, password, jwt, useSsl, sslContext, util, chunksize,
                     maxConnections, connectionTtl);
         }
 
     }
 
     protected VstCommunicationSync(final HostHandler hostHandler, final Integer timeout, final String user,
-                                   final String password, final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
+                                   final String password, final String jwt, final Boolean useSsl,
+                                   final SSLContext sslContext, final ArangoSerialization util,
                                    final Integer chunksize, final Integer maxConnections, final Long ttl) {
-        super(timeout, user, password, useSsl, sslContext, util, chunksize, hostHandler);
+        super(timeout, user, password, jwt, useSsl, sslContext, util, chunksize, hostHandler);
     }
 
     @Override
     protected Response execute(final Request request, final VstConnectionSync connection) throws ArangoDBException {
+        return execute(request, connection, 0);
+    }
+
+    @Override
+    protected Response execute(final Request request, final VstConnectionSync connection, final int attemptCount) throws ArangoDBException {
         try {
             final Message requestMessage = createMessage(request);
             final Message responseMessage = send(requestMessage, connection);
@@ -132,11 +146,14 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
         } catch (final VPackParserException e) {
             throw new ArangoDBException(e);
         } catch (final ArangoDBRedirectException e) {
+            if (attemptCount >= 3) {
+                throw e;
+            }
             final String location = e.getLocation();
             final HostDescription redirectHost = HostUtils.createFromLocation(location);
             hostHandler.closeCurrentOnError();
-            hostHandler.fail();
-            return execute(request, new HostHandle().setHost(redirectHost));
+            hostHandler.fail(e);
+            return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
         }
     }
 
@@ -150,8 +167,13 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
 
     @Override
     protected void authenticate(final VstConnectionSync connection) {
-        final Response response = execute(
-                new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN), connection);
+        Request authRequest;
+        if (jwt != null) {
+            authRequest = new JwtAuthenticationRequest(jwt, ENCRYPTION_JWT);
+        } else {
+            authRequest = new AuthenticationRequest(user, password != null ? password : "", ENCRYPTION_PLAIN);
+        }
+        final Response response = execute(authRequest, connection);
         checkError(response);
     }
 

@@ -31,7 +31,7 @@ public interface HostHandler {
 
     void success();
 
-    void fail();
+    void fail(Exception exception);
 
     void reset();
 
@@ -40,4 +40,7 @@ public interface HostHandler {
     void close() throws IOException;
 
     void closeCurrentOnError();
+
+    void setJwt(String jwt);
+
 }

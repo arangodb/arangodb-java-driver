@@ -47,6 +47,11 @@ public class VstProtocol implements CommunicationProtocol {
     }
 
     @Override
+    public void setJwt(String jwt) {
+        communication.setJwt(jwt);
+    }
+
+    @Override
     public void close() throws IOException {
         communication.close();
     }
