@@ -38,6 +38,7 @@ import com.arangodb.entity.arangosearch.PrimarySort;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.entity.arangosearch.StoredValue;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
+import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
@@ -65,7 +66,7 @@ public class VPackSerializers {
         builder.add(attribute, ValueType.ARRAY);
         builder.add(value.getVersion());
         builder.add(value.getType());
-        builder.add(value.getDatabase());
+        builder.add(value.getDbName().get());
         builder.add(value.getRequestType().getType());
         builder.add(value.getRequest());
         builder.add(ValueType.OBJECT);
@@ -88,6 +89,15 @@ public class VPackSerializers {
         builder.add(value.getEncryption());
         builder.add(value.getUser());
         builder.add(value.getPassword());
+        builder.close();
+    };
+
+    public static final VPackSerializer<JwtAuthenticationRequest> JWT_AUTH_REQUEST = (builder, attribute, value, context) -> {
+        builder.add(attribute, ValueType.ARRAY);
+        builder.add(value.getVersion());
+        builder.add(value.getType());
+        builder.add(value.getEncryption());
+        builder.add(value.getToken());
         builder.close();
     };
 

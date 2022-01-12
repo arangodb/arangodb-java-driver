@@ -20,12 +20,16 @@
 
 package com.arangodb.model;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * @author Mark Vollmary
  */
 public class VertexCollectionCreateOptions {
 
     private String collection;
+    private Options options;
 
     public VertexCollectionCreateOptions() {
         super();
@@ -42,6 +46,27 @@ public class VertexCollectionCreateOptions {
     protected VertexCollectionCreateOptions collection(final String collection) {
         this.collection = collection;
         return this;
+    }
+
+    public Collection<String> getSatellites() {
+        return options.satellites;
+    }
+
+    /**
+     * @param satellites collection names that will be used to create SatelliteCollections
+     *                   for a Hybrid (Disjoint) SmartGraph (Enterprise Edition only). Each array element
+     *                   must be a valid collection name. The collection type cannot be modified later.
+     * @return options
+     * @since ArangoDB 3.9.0
+     */
+    public VertexCollectionCreateOptions satellites(final String... satellites) {
+        options = new Options();
+        options.satellites = Arrays.asList(satellites);
+        return this;
+    }
+
+    private static class Options {
+        private Collection<String> satellites;
     }
 
 }

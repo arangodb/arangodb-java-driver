@@ -20,7 +20,7 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.internal.util.EncodeUtils;
@@ -28,7 +28,6 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
 
 /**
@@ -61,8 +60,8 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> {
         return util.get(serializer);
     }
 
-    protected Request request(final String database, final RequestType requestType, final String... path) {
-        final Request request = new Request(database, requestType, createPath(path));
+    protected Request request(final DbName dbName, final RequestType requestType, final String... path) {
+        final Request request = new Request(dbName, requestType, createPath(path));
         for (final Entry<String, String> header : context.getHeaderParam().entrySet()) {
             request.putHeaderParam(header.getKey(), header.getValue());
         }
@@ -75,17 +74,13 @@ public abstract class ArangoExecuteable<E extends ArangoExecutor> {
             if (i > 0) {
                 sb.append(SLASH);
             }
-            try {
-                final String param;
-                if (params[i].contains(SLASH)) {
-                    param = createPath(params[i].split(SLASH));
-                } else {
-                    param = EncodeUtils.encodeURL(params[i]);
-                }
-                sb.append(param);
-            } catch (final UnsupportedEncodingException e) {
-                throw new ArangoDBException(e);
+            final String param;
+            if (params[i].contains(SLASH)) {
+                param = createPath(params[i].split(SLASH));
+            } else {
+                param = EncodeUtils.encodeURIComponent(params[i]);
             }
+            sb.append(param);
         }
         return sb.toString();
     }

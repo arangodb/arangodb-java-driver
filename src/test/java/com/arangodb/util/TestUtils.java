@@ -22,10 +22,18 @@
 package com.arangodb.util;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+
 /**
  * @author Michele Rastelli
  */
 public final class TestUtils {
+
+    private static final String[] allChars = TestUtils.generateAllInputChars();
+    private static final Random r = new Random();
 
     private TestUtils() {
     }
@@ -63,6 +71,36 @@ public final class TestUtils {
         }
 
         return true;
+    }
+
+    private static String[] generateAllInputChars() {
+        List<String> list = new ArrayList<>();
+        for (int codePoint = 0; codePoint < Character.MAX_CODE_POINT + 1; codePoint++) {
+            String s = new String(Character.toChars(codePoint));
+            if (codePoint == 47 ||      // '/'
+                    codePoint == 58 ||  // ':'
+                    Character.isISOControl(codePoint) ||
+                    Character.isLowSurrogate(s.charAt(0)) ||
+                    (Character.isHighSurrogate(s.charAt(0)) && s.length() == 1)) {
+                continue;
+            }
+            list.add(s);
+        }
+        return list.toArray(new String[0]);
+    }
+
+    public static String generateRandomDbName(int length, boolean extendedNames) {
+        if(extendedNames){
+            int max = allChars.length;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                String allChar = allChars[r.nextInt(max)];
+                sb.append(allChar);
+            }
+            return UnicodeUtils.normalize(sb.toString());
+        } else {
+            return UUID.randomUUID().toString();
+        }
     }
 
 }

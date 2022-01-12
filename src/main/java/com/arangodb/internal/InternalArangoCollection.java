@@ -21,6 +21,7 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -80,7 +81,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request insertDocumentRequest(final T value, final DocumentCreateOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_DOCUMENT, name);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_DOCUMENT, name);
         final DocumentCreateOptions params = (options != null ? options : new DocumentCreateOptions());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
@@ -121,7 +122,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request insertDocumentsRequest(final Collection<T> values, final DocumentCreateOptions params) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_DOCUMENT, name);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_DOCUMENT, name);
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
@@ -191,7 +192,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request importDocumentsRequest(final DocumentImportOptions options) {
         final DocumentImportOptions params = options != null ? options : new DocumentImportOptions();
-        return request(db.name(), RequestType.POST, PATH_API_IMPORT).putQueryParam(COLLECTION, name)
+        return request(db.dbName(), RequestType.POST, PATH_API_IMPORT).putQueryParam(COLLECTION, name)
                 .putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync())
                 .putQueryParam("fromPrefix", params.getFromPrefix()).putQueryParam("toPrefix", params.getToPrefix())
                 .putQueryParam(OVERWRITE, params.getOverwrite()).putQueryParam("onDuplicate", params.getOnDuplicate())
@@ -199,7 +200,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request getDocumentRequest(final String key, final DocumentReadOptions options) {
-        final Request request = request(db.name(), RequestType.GET, PATH_API_DOCUMENT,
+        final Request request = request(db.dbName(), RequestType.GET, PATH_API_DOCUMENT,
                 DocumentUtil.createDocumentHandle(name, key));
         final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
         request.putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch());
@@ -213,7 +214,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request getDocumentsRequest(final Collection<String> keys, final DocumentReadOptions options) {
         final DocumentReadOptions params = (options != null ? options : new DocumentReadOptions());
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_DOCUMENT, name)
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT, name)
                 .putQueryParam("onlyget", true)
                 .putHeaderParam(ArangoRequestParam.IF_NONE_MATCH, params.getIfNoneMatch())
                 .putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch()).setBody(util().serialize(keys))
@@ -253,7 +254,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected <T> Request replaceDocumentRequest(
             final String key, final T value, final DocumentReplaceOptions options) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_DOCUMENT,
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT,
                 DocumentUtil.createDocumentHandle(name, key));
         final DocumentReplaceOptions params = (options != null ? options : new DocumentReplaceOptions());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
@@ -290,7 +291,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request replaceDocumentsRequest(final Collection<T> values, final DocumentReplaceOptions params) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_DOCUMENT, name);
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_DOCUMENT, name);
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -348,7 +349,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request updateDocumentRequest(final String key, final T value, final DocumentUpdateOptions options) {
-        final Request request = request(db.name(), RequestType.PATCH, PATH_API_DOCUMENT,
+        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_DOCUMENT,
                 DocumentUtil.createDocumentHandle(name, key));
         final DocumentUpdateOptions params = (options != null ? options : new DocumentUpdateOptions());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
@@ -388,7 +389,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request updateDocumentsRequest(final Collection<T> values, final DocumentUpdateOptions params) {
-        final Request request = request(db.name(), RequestType.PATCH, PATH_API_DOCUMENT, name);
+        final Request request = request(db.dbName(), RequestType.PATCH, PATH_API_DOCUMENT, name);
         final Boolean keepNull = params.getKeepNull();
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -444,7 +445,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request deleteDocumentRequest(final String key, final DocumentDeleteOptions options) {
-        final Request request = request(db.name(), RequestType.DELETE, PATH_API_DOCUMENT,
+        final Request request = request(db.dbName(), RequestType.DELETE, PATH_API_DOCUMENT,
                 DocumentUtil.createDocumentHandle(name, key));
         final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
         request.putHeaderParam(ArangoRequestParam.IF_MATCH, params.getIfMatch());
@@ -469,7 +470,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected <T> Request deleteDocumentsRequest(final Collection<T> keys, final DocumentDeleteOptions options) {
-        final Request request = request(db.name(), RequestType.DELETE, PATH_API_DOCUMENT, name);
+        final Request request = request(db.dbName(), RequestType.DELETE, PATH_API_DOCUMENT, name);
         final DocumentDeleteOptions params = (options != null ? options : new DocumentDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         request.putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync());
@@ -513,7 +514,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request documentExistsRequest(final String key, final DocumentExistsOptions options) {
-        final Request request = request(db.name(), RequestType.HEAD, PATH_API_DOCUMENT,
+        final Request request = request(db.dbName(), RequestType.HEAD, PATH_API_DOCUMENT,
                 DocumentUtil.createDocumentHandle(name, key));
         final DocumentExistsOptions params = (options != null ? options : new DocumentExistsOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -523,11 +524,11 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request getIndexRequest(final String id) {
-        return request(db.name(), RequestType.GET, PATH_API_INDEX, createIndexId(id));
+        return request(db.dbName(), RequestType.GET, PATH_API_INDEX, createIndexId(id));
     }
 
     protected Request deleteIndexRequest(final String id) {
-        return request(db.name(), RequestType.DELETE, PATH_API_INDEX, createIndexId(id));
+        return request(db.dbName(), RequestType.DELETE, PATH_API_INDEX, createIndexId(id));
     }
 
     protected ResponseDeserializer<String> deleteIndexResponseDeserializer() {
@@ -547,7 +548,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request createHashIndexRequest(final Iterable<String> fields, final HashIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
                 util().serialize(OptionsBuilder.build(options != null ? options : new HashIndexOptions(), fields)));
@@ -555,7 +556,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request createSkiplistIndexRequest(final Iterable<String> fields, final SkiplistIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
                 util().serialize(OptionsBuilder.build(options != null ? options : new SkiplistIndexOptions(), fields)));
@@ -564,7 +565,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request createPersistentIndexRequest(
             final Iterable<String> fields, final PersistentIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(util().serialize(
                 OptionsBuilder.build(options != null ? options : new PersistentIndexOptions(), fields)));
@@ -572,7 +573,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request createGeoIndexRequest(final Iterable<String> fields, final GeoIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
                 util().serialize(OptionsBuilder.build(options != null ? options : new GeoIndexOptions(), fields)));
@@ -580,7 +581,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request createFulltextIndexRequest(final Iterable<String> fields, final FulltextIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
                 util().serialize(OptionsBuilder.build(options != null ? options : new FulltextIndexOptions(), fields)));
@@ -588,7 +589,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request createTtlIndexRequest(final Iterable<String> fields, final TtlIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(
                 util().serialize(OptionsBuilder.build(options != null ? options : new TtlIndexOptions(), fields)));
@@ -605,7 +606,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request getIndexesRequest() {
-        final Request request = request(db.name(), RequestType.GET, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.GET, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         return request;
     }
@@ -616,74 +617,74 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request truncateRequest(final CollectionTruncateOptions options) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "truncate");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "truncate");
         final CollectionTruncateOptions params = (options != null ? options : new CollectionTruncateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         return request;
     }
 
     protected Request countRequest(final CollectionCountOptions options) {
-        final Request request = request(db.name(), RequestType.GET, PATH_API_COLLECTION, name, "count");
+        final Request request = request(db.dbName(), RequestType.GET, PATH_API_COLLECTION, name, "count");
         final CollectionCountOptions params = (options != null ? options : new CollectionCountOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
         return request;
     }
 
     protected Request dropRequest(final Boolean isSystem) {
-        return request(db.name(), RequestType.DELETE, PATH_API_COLLECTION, name).putQueryParam("isSystem", isSystem);
+        return request(db.dbName(), RequestType.DELETE, PATH_API_COLLECTION, name).putQueryParam("isSystem", isSystem);
     }
 
     protected Request loadRequest() {
-        return request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "load");
+        return request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "load");
     }
 
     protected Request unloadRequest() {
-        return request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "unload");
+        return request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "unload");
     }
 
     protected Request getInfoRequest() {
-        return request(db.name(), RequestType.GET, PATH_API_COLLECTION, name);
+        return request(db.dbName(), RequestType.GET, PATH_API_COLLECTION, name);
     }
 
     protected Request getPropertiesRequest() {
-        return request(db.name(), RequestType.GET, PATH_API_COLLECTION, name, "properties");
+        return request(db.dbName(), RequestType.GET, PATH_API_COLLECTION, name, "properties");
     }
 
     protected Request changePropertiesRequest(final CollectionPropertiesOptions options) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "properties");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "properties");
         request.setBody(util().serialize(options != null ? options : new CollectionPropertiesOptions()));
         return request;
     }
 
     protected Request renameRequest(final String newName) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "rename");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "rename");
         request.setBody(util().serialize(OptionsBuilder.build(new CollectionRenameOptions(), newName)));
         return request;
     }
 
     protected <T> Request responsibleShardRequest(final T value) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_COLLECTION, name, "responsibleShard");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "responsibleShard");
         request.setBody(util(Serializer.CUSTOM).serialize(value));
         return request;
     }
 
     protected Request getRevisionRequest() {
-        return request(db.name(), RequestType.GET, PATH_API_COLLECTION, name, "revision");
+        return request(db.dbName(), RequestType.GET, PATH_API_COLLECTION, name, "revision");
     }
 
     protected Request grantAccessRequest(final String user, final Permissions permissions) {
-        return request(ArangoRequestParam.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.name(), name).setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
+        return request(DbName.SYSTEM, RequestType.PUT, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                db.dbName().get(), name).setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
     protected Request resetAccessRequest(final String user) {
-        return request(ArangoRequestParam.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.name(), name);
+        return request(DbName.SYSTEM, RequestType.DELETE, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                db.dbName().get(), name);
     }
 
     protected Request getPermissionsRequest(final String user) {
-        return request(ArangoRequestParam.SYSTEM, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE,
-                db.name(), name);
+        return request(DbName.SYSTEM, RequestType.GET, PATH_API_USER, user, ArangoRequestParam.DATABASE,
+                db.dbName().get(), name);
     }
 
     protected ResponseDeserializer<Permissions> getPermissionsResponseDeserialzer() {
