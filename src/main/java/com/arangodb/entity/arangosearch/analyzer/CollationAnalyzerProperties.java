@@ -21,43 +21,40 @@
 package com.arangodb.entity.arangosearch.analyzer;
 
 
-import com.arangodb.entity.arangosearch.AnalyzerType;
-
 import java.util.Objects;
 
 /**
- * An Analyzer capable of removing specified tokens from the input.
- *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stopwords">API Documentation</a>
- * @since ArangoDB 3.8
+ * @since ArangoDB 3.9
  */
-public class StopwordsAnalyzer extends SearchAnalyzer {
-    public StopwordsAnalyzer() {
-        setType(AnalyzerType.stopwords);
+public class CollationAnalyzerProperties {
+
+    private String locale;
+
+    /**
+     * @return a locale in the format `language[_COUNTRY][.encoding][@variant]` (square brackets denote optional parts),
+     * e.g. `de.utf-8` or `en_US.utf-8`. Only UTF-8 encoding is meaningful in ArangoDB.
+     * The locale is forwarded to ICU without checks. An invalid locale does not prevent the creation of the Analyzer.
+     * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#supported-languages">Supported Languages</a>
+     */
+    public String getLocale() {
+        return locale;
     }
 
-    private StopwordsAnalyzerProperties properties;
-
-    public StopwordsAnalyzerProperties getProperties() {
-        return properties;
-    }
-
-    public void setProperties(StopwordsAnalyzerProperties properties) {
-        this.properties = properties;
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        StopwordsAnalyzer that = (StopwordsAnalyzer) o;
-        return Objects.equals(properties, that.properties);
+        CollationAnalyzerProperties that = (CollationAnalyzerProperties) o;
+        return Objects.equals(locale, that.locale);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), properties);
+        return Objects.hash(locale);
     }
 }

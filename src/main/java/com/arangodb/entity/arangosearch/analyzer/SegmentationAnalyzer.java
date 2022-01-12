@@ -26,24 +26,27 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * An Analyzer capable of removing specified tokens from the input.
+ * An Analyzer capable of breaking up the input text into tokens in a language-agnostic manner, making it suitable for
+ * mixed language strings.
+ * It can optionally preserve all non-whitespace or all characters instead of keeping alphanumeric characters only, as
+ * well as apply case conversion.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stopwords">API Documentation</a>
- * @since ArangoDB 3.8
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#segmentation">API Documentation</a>
+ * @since ArangoDB 3.9
  */
-public class StopwordsAnalyzer extends SearchAnalyzer {
-    public StopwordsAnalyzer() {
-        setType(AnalyzerType.stopwords);
+public class SegmentationAnalyzer extends SearchAnalyzer {
+    public SegmentationAnalyzer() {
+        setType(AnalyzerType.segmentation);
     }
 
-    private StopwordsAnalyzerProperties properties;
+    private SegmentationAnalyzerProperties properties;
 
-    public StopwordsAnalyzerProperties getProperties() {
+    public SegmentationAnalyzerProperties getProperties() {
         return properties;
     }
 
-    public void setProperties(StopwordsAnalyzerProperties properties) {
+    public void setProperties(SegmentationAnalyzerProperties properties) {
         this.properties = properties;
     }
 
@@ -52,7 +55,7 @@ public class StopwordsAnalyzer extends SearchAnalyzer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        StopwordsAnalyzer that = (StopwordsAnalyzer) o;
+        SegmentationAnalyzer that = (SegmentationAnalyzer) o;
         return Objects.equals(properties, that.properties);
     }
 

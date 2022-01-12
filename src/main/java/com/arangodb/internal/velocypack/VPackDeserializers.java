@@ -43,18 +43,7 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.PrimarySort;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.entity.arangosearch.StoredValue;
-import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.NormAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
+import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.velocypack.VPackDeserializer;
@@ -120,6 +109,10 @@ public class VPackDeserializers {
                 return context.deserialize(vpack, GeoJSONAnalyzer.class);
             case geopoint:
                 return context.deserialize(vpack, GeoPointAnalyzer.class);
+            case segmentation:
+                return context.deserialize(vpack, SegmentationAnalyzer.class);
+            case collation:
+                return context.deserialize(vpack, CollationAnalyzer.class);
             default:
                 throw new IllegalArgumentException("Unknown analyzer type: " + type);
         }

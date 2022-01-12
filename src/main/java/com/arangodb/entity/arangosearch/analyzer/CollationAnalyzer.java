@@ -26,24 +26,25 @@ import com.arangodb.entity.arangosearch.AnalyzerType;
 import java.util.Objects;
 
 /**
- * An Analyzer capable of removing specified tokens from the input.
+ * An Analyzer capable of converting the input into a set of language-specific tokens. This makes comparisons follow the
+ * rules of the respective language, most notable in range queries against Views.
  *
  * @author Michele Rastelli
- * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#stopwords">API Documentation</a>
- * @since ArangoDB 3.8
+ * @see <a href= "https://www.arangodb.com/docs/stable/arangosearch-analyzers.html#collation">API Documentation</a>
+ * @since ArangoDB 3.9
  */
-public class StopwordsAnalyzer extends SearchAnalyzer {
-    public StopwordsAnalyzer() {
-        setType(AnalyzerType.stopwords);
+public class CollationAnalyzer extends SearchAnalyzer {
+    public CollationAnalyzer() {
+        setType(AnalyzerType.collation);
     }
 
-    private StopwordsAnalyzerProperties properties;
+    private CollationAnalyzerProperties properties;
 
-    public StopwordsAnalyzerProperties getProperties() {
+    public CollationAnalyzerProperties getProperties() {
         return properties;
     }
 
-    public void setProperties(StopwordsAnalyzerProperties properties) {
+    public void setProperties(CollationAnalyzerProperties properties) {
         this.properties = properties;
     }
 
@@ -52,7 +53,7 @@ public class StopwordsAnalyzer extends SearchAnalyzer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        StopwordsAnalyzer that = (StopwordsAnalyzer) o;
+        CollationAnalyzer that = (CollationAnalyzer) o;
         return Objects.equals(properties, that.properties);
     }
 
