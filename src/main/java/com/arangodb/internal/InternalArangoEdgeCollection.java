@@ -65,7 +65,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> Request insertEdgeRequest(final T value, final EdgeCreateOptions options) {
-        final Request request = request(graph.db().name(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE,
+        final Request request = request(graph.db().dbName(), RequestType.POST, PATH_API_GHARIAL, graph.name(), EDGE,
                 name);
         final EdgeCreateOptions params = (options != null ? options : new EdgeCreateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -88,7 +88,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected Request getEdgeRequest(final String key, final GraphDocumentReadOptions options) {
-        final Request request = request(graph.db().name(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE,
+        final Request request = request(graph.db().dbName(), RequestType.GET, PATH_API_GHARIAL, graph.name(), EDGE,
                 DocumentUtil.createDocumentHandle(name, key));
         final GraphDocumentReadOptions params = (options != null ? options : new GraphDocumentReadOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -105,7 +105,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected <T> Request replaceEdgeRequest(final String key, final T value, final EdgeReplaceOptions options) {
-        final Request request = request(graph.db().name(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE,
+        final Request request = request(graph.db().dbName(), RequestType.PUT, PATH_API_GHARIAL, graph.name(), EDGE,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeReplaceOptions params = (options != null ? options : new EdgeReplaceOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -128,7 +128,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
 
     protected <T> Request updateEdgeRequest(final String key, final T value, final EdgeUpdateOptions options) {
         final Request request;
-        request = request(graph.db().name(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE,
+        request = request(graph.db().dbName(), RequestType.PATCH, PATH_API_GHARIAL, graph.name(), EDGE,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeUpdateOptions params = (options != null ? options : new EdgeUpdateOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -152,7 +152,7 @@ public abstract class InternalArangoEdgeCollection<A extends InternalArangoDB<E>
     }
 
     protected Request deleteEdgeRequest(final String key, final EdgeDeleteOptions options) {
-        final Request request = request(graph.db().name(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE,
+        final Request request = request(graph.db().dbName(), RequestType.DELETE, PATH_API_GHARIAL, graph.name(), EDGE,
                 DocumentUtil.createDocumentHandle(name, key));
         final EdgeDeleteOptions params = (options != null ? options : new EdgeDeleteOptions());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());

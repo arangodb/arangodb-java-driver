@@ -1113,6 +1113,54 @@ public class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
+    public void createZKDIndex() throws InterruptedException, ExecutionException {
+        assumeTrue(isAtLeastVersion(3, 9));
+        db.collection(COLLECTION_NAME).truncate().get();
+
+        final Collection<String> fields = new ArrayList<>();
+        fields.add("a");
+        fields.add("b");
+        IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureZKDIndex(fields, null).get();
+        assertThat(indexResult, is(notNullValue()));
+        assertThat(indexResult.getConstraint(), is(nullValue()));
+        assertThat(indexResult.getFields(), hasItem("a"));
+        assertThat(indexResult.getFields(), hasItem("b"));
+        assertThat(indexResult.getGeoJson(), is(nullValue()));
+        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+        assertThat(indexResult.getIsNewlyCreated(), is(true));
+        assertThat(indexResult.getMinLength(), is(nullValue()));
+        assertThat(indexResult.getType(), is(IndexType.zkd));
+        assertThat(indexResult.getUnique(), is(false));
+        db.collection(COLLECTION_NAME).deleteIndex(indexResult.getId()).get();
+    }
+
+    @Test
+    public void createZKDIndexWithOptions() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 9));
+        db.collection(COLLECTION_NAME).truncate().get();
+
+        final ZKDIndexOptions options = new ZKDIndexOptions()
+                .name("myZKDIndex")
+                .fieldValueTypes(ZKDIndexOptions.FieldValueTypes.DOUBLE);
+
+        final Collection<String> fields = new ArrayList<>();
+        fields.add("a");
+        fields.add("b");
+        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensureZKDIndex(fields, options).get();
+        assertThat(indexResult, is(notNullValue()));
+        assertThat(indexResult.getConstraint(), is(nullValue()));
+        assertThat(indexResult.getFields(), hasItem("a"));
+        assertThat(indexResult.getFields(), hasItem("b"));
+        assertThat(indexResult.getId(), startsWith(COLLECTION_NAME));
+        assertThat(indexResult.getIsNewlyCreated(), is(true));
+        assertThat(indexResult.getMinLength(), is(nullValue()));
+        assertThat(indexResult.getType(), is(IndexType.zkd));
+        assertThat(indexResult.getUnique(), is(false));
+        assertThat(indexResult.getName(), is("myZKDIndex"));
+        db.collection(COLLECTION_NAME).deleteIndex(indexResult.getId()).get();
+    }
+
+    @Test
     public void getIndexes() throws InterruptedException, ExecutionException {
         final int initialIndexCount = db.collection(COLLECTION_NAME).getIndexes().get().size();
         final Collection<String> fields = new ArrayList<>();

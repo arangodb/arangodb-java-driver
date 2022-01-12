@@ -20,15 +20,13 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoDatabase;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.internal.http.HttpCommunication;
 import com.arangodb.internal.http.HttpProtocol;
 import com.arangodb.internal.net.CommunicationProtocol;
 import com.arangodb.internal.net.HostHandle;
+import com.arangodb.internal.net.HostHandler;
 import com.arangodb.internal.net.HostResolver;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
@@ -59,10 +57,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     private ArangoCursorInitializer cursorInitializer;
     private final CommunicationProtocol cp;
+    private final HostHandler hostHandler;
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
                         final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
-                        final ArangoContext context) {
+                        final HostHandler hostHandler, final ArangoContext context) {
 
         super(new ArangoExecutorSync(
                         createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
@@ -76,6 +75,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
                 new HttpCommunication.Builder(httpBuilder),
                 util.get(Serializer.INTERNAL),
                 protocol);
+        this.hostHandler = hostHandler;
 
         hostResolver.init(this.executor(), util());
 
@@ -124,18 +124,25 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     }
 
     @Override
+    public void updateJwt(String jwt) {
+        hostHandler.setJwt(jwt);
+        cp.setJwt(jwt);
+        executor.setJwt(jwt);
+    }
+
+    @Override
     public ArangoDatabase db() {
-        return db(ArangoRequestParam.SYSTEM);
+        return db(DbName.SYSTEM);
     }
 
     @Override
-    public ArangoDatabase db(final String name) {
-        return new ArangoDatabaseImpl(this, name).setCursorInitializer(cursorInitializer);
+    public ArangoDatabase db(final DbName dbName) {
+        return new ArangoDatabaseImpl(this, dbName).setCursorInitializer(cursorInitializer);
     }
 
     @Override
-    public Boolean createDatabase(final String name) throws ArangoDBException {
-        return createDatabase(new DBCreateOptions().name(name));
+    public Boolean createDatabase(final DbName dbName) throws ArangoDBException {
+        return createDatabase(new DBCreateOptions().name(dbName));
     }
 
     @Override
@@ -145,7 +152,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public Collection<String> getDatabases() throws ArangoDBException {
-        return executor.execute(getDatabasesRequest(db().name()), getDatabaseResponseDeserializer());
+        return executor.execute(getDatabasesRequest(db().dbName()), getDatabaseResponseDeserializer());
     }
 
     @Override
@@ -155,7 +162,7 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public Collection<String> getAccessibleDatabasesFor(final String user) throws ArangoDBException {
-        return executor.execute(getAccessibleDatabasesForRequest(db().name(), user),
+        return executor.execute(getAccessibleDatabasesForRequest(db().dbName(), user),
                 getAccessibleDatabasesForResponseDeserializer());
     }
 
@@ -181,39 +188,39 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     @Override
     public UserEntity createUser(final String user, final String passwd) throws ArangoDBException {
-        return executor.execute(createUserRequest(db().name(), user, passwd, new UserCreateOptions()),
+        return executor.execute(createUserRequest(db().dbName(), user, passwd, new UserCreateOptions()),
                 UserEntity.class);
     }
 
     @Override
     public UserEntity createUser(final String user, final String passwd, final UserCreateOptions options)
             throws ArangoDBException {
-        return executor.execute(createUserRequest(db().name(), user, passwd, options), UserEntity.class);
+        return executor.execute(createUserRequest(db().dbName(), user, passwd, options), UserEntity.class);
     }
 
     @Override
     public void deleteUser(final String user) throws ArangoDBException {
-        executor.execute(deleteUserRequest(db().name(), user), Void.class);
+        executor.execute(deleteUserRequest(db().dbName(), user), Void.class);
     }
 
     @Override
     public UserEntity getUser(final String user) throws ArangoDBException {
-        return executor.execute(getUserRequest(db().name(), user), UserEntity.class);
+        return executor.execute(getUserRequest(db().dbName(), user), UserEntity.class);
     }
 
     @Override
     public Collection<UserEntity> getUsers() throws ArangoDBException {
-        return executor.execute(getUsersRequest(db().name()), getUsersResponseDeserializer());
+        return executor.execute(getUsersRequest(db().dbName()), getUsersResponseDeserializer());
     }
 
     @Override
     public UserEntity updateUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-        return executor.execute(updateUserRequest(db().name(), user, options), UserEntity.class);
+        return executor.execute(updateUserRequest(db().dbName(), user, options), UserEntity.class);
     }
 
     @Override
     public UserEntity replaceUser(final String user, final UserUpdateOptions options) throws ArangoDBException {
-        return executor.execute(replaceUserRequest(db().name(), user, options), UserEntity.class);
+        return executor.execute(replaceUserRequest(db().dbName(), user, options), UserEntity.class);
     }
 
     @Override

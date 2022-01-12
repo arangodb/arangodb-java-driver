@@ -22,6 +22,7 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.ArangoSerializationAccessor;
+import com.arangodb.DbName;
 import com.arangodb.entity.*;
 import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
@@ -54,8 +55,19 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
      * Returns the name of the database
      *
      * @return database name
+     * @deprecated Use {@link #dbName()} instead
      */
-    String name();
+    @Deprecated
+    default String name() {
+        return dbName().get();
+    }
+
+    /**
+     * Returns the name of the database
+     *
+     * @return database name
+     */
+    DbName dbName();
 
     /**
      * Returns the server name and version number.

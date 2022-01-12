@@ -24,6 +24,7 @@ import com.arangodb.ArangoSerializationAccessor;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.VertexCollectionCreateOptions;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -128,6 +129,19 @@ public interface ArangoGraphAsync extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     CompletableFuture<GraphEntity> addVertexCollection(final String name);
+
+    /**
+     * Adds a vertex collection to the set of collections of the graph. If the collection does not exist, it will be
+     * created.
+     *
+     * @param name The name of the collection
+     * @param options additional options
+     * @return information about the graph
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API
+     * Documentation</a>
+     * @since ArangoDB 3.9
+     */
+    CompletableFuture<GraphEntity> addVertexCollection(final String name, final VertexCollectionCreateOptions options);
 
     /**
      * Returns a handler of the vertex collection by the given name

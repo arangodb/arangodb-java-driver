@@ -21,9 +21,13 @@
 package com.arangodb.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDBMultipleException;
 import com.arangodb.internal.net.*;
 import com.arangodb.util.ArangoSerialization;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -35,9 +39,31 @@ import static org.junit.Assert.fail;
  */
 public class HostHandlerTest {
 
-    private static final Host HOST_0 = new HostImpl(null, new HostDescription("127.0.0.1", 8529));
-    private static final Host HOST_1 = new HostImpl(null, new HostDescription("127.0.0.2", 8529));
-    private static final Host HOST_2 = new HostImpl(null, new HostDescription("127.0.0.3", 8529));
+    private static final ConnectionPool mockCP = new ConnectionPool() {
+        @Override
+        public Connection createConnection(HostDescription host) {
+            return null;
+        }
+
+        @Override
+        public Connection connection() {
+            return null;
+        }
+
+        @Override
+        public void setJwt(String jwt) {
+
+        }
+
+        @Override
+        public void close() throws IOException {
+
+        }
+    };
+
+    private static final Host HOST_0 = new HostImpl(mockCP, new HostDescription("127.0.0.1", 8529));
+    private static final Host HOST_1 = new HostImpl(mockCP, new HostDescription("127.0.0.2", 8529));
+    private static final Host HOST_2 = new HostImpl(mockCP, new HostDescription("127.0.0.3", 8529));
 
     private static final HostResolver SINGLE_HOST = new HostResolver() {
 
@@ -76,10 +102,10 @@ public class HostHandlerTest {
     };
 
     @Test
-    public void fallbachHostHandlerSingleHost() {
+    public void fallbackHostHandlerSingleHost() {
         final HostHandler handler = new FallbackHostHandler(SINGLE_HOST);
         assertThat(handler.get(null, null), is(HOST_0));
-        handler.fail();
+        handler.fail(new RuntimeException());
         assertThat(handler.get(null, null), is(HOST_0));
     }
 
@@ -88,19 +114,27 @@ public class HostHandlerTest {
         final HostHandler handler = new FallbackHostHandler(MULTIPLE_HOSTS);
         for (int i = 0; i < 3; i++) {
             assertThat(handler.get(null, null), is(HOST_0));
-            handler.fail();
+            handler.fail(new RuntimeException("HOST_0 failed"));
             assertThat(handler.get(null, null), is(HOST_1));
-            handler.fail();
+            handler.fail(new RuntimeException("HOST_1 failed"));
             assertThat(handler.get(null, null), is(HOST_2));
+            handler.fail(new RuntimeException("HOST_2 failed"));
             if (i < 2) {
-                handler.fail();
                 assertThat(handler.get(null, null), is(HOST_0));
             } else {
-                handler.fail();
                 try {
                     handler.get(null, null);
                     fail();
-                } catch (ArangoDBException ignored) {
+                } catch (ArangoDBException e) {
+                    assertThat(e.getCause(), is(notNullValue()));
+                    assertThat(e.getCause(), is(instanceOf(ArangoDBMultipleException.class)));
+                    List<Throwable> exceptions = ((ArangoDBMultipleException) e.getCause()).getExceptions();
+                    assertThat(exceptions.get(0), is(instanceOf(RuntimeException.class)));
+                    assertThat(exceptions.get(0).getMessage(), is("HOST_0 failed"));
+                    assertThat(exceptions.get(1), is(instanceOf(RuntimeException.class)));
+                    assertThat(exceptions.get(1).getMessage(), is("HOST_1 failed"));
+                    assertThat(exceptions.get(2), is(instanceOf(RuntimeException.class)));
+                    assertThat(exceptions.get(2).getMessage(), is("HOST_2 failed"));
                 }
             }
         }
@@ -110,7 +144,7 @@ public class HostHandlerTest {
     public void randomHostHandlerSingleHost() {
         final HostHandler handler = new RandomHostHandler(SINGLE_HOST, new FallbackHostHandler(SINGLE_HOST));
         assertThat(handler.get(null, null), is(HOST_0));
-        handler.fail();
+        handler.fail(new RuntimeException());
         assertThat(handler.get(null, null), is(HOST_0));
     }
 
@@ -120,7 +154,7 @@ public class HostHandlerTest {
 
         final Host pick0 = handler.get(null, null);
         assertThat(pick0, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
-        handler.fail();
+        handler.fail(new RuntimeException());
 
         final Host pick1 = handler.get(null, null);
         assertThat(pick1, anyOf(is(HOST_0), is(HOST_1), is(HOST_2)));
@@ -135,7 +169,7 @@ public class HostHandlerTest {
     public void roundRobinHostHandlerSingleHost() {
         final HostHandler handler = new RoundRobinHostHandler(SINGLE_HOST);
         assertThat(handler.get(null, null), is(HOST_0));
-        handler.fail();
+        handler.fail(new RuntimeException());
         assertThat(handler.get(null, null), is(HOST_0));
     }
 
