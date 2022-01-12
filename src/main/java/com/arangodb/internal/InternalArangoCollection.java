@@ -598,7 +598,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request createZKDIndexRequest(
             final Iterable<String> fields, final ZKDIndexOptions options) {
-        final Request request = request(db.name(), RequestType.POST, PATH_API_INDEX);
+        final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
         request.setBody(util().serialize(OptionsBuilder.build(options != null ? options :
                 new ZKDIndexOptions().fieldValueTypes(ZKDIndexOptions.FieldValueTypes.DOUBLE), fields)));
