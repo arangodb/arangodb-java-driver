@@ -190,6 +190,22 @@ public class GraphCreateOptions {
         return this;
     }
 
+    public Collection<String> getSatellites() {
+        return getOptions().getSatellites();
+    }
+
+    /**
+     * @param satellites collection names that will be used to create SatelliteCollections
+     *                   for a Hybrid (Disjoint) SmartGraph (Enterprise Edition only). Each array element
+     *                   must be a valid collection name. The collection type cannot be modified later.
+     * @return options
+     * @since ArangoDB 3.9.0
+     */
+    public GraphCreateOptions satellites(final String... satellites) {
+        getOptions().setSatellites(satellites);
+        return this;
+    }
+
     private SmartOptions getOptions() {
         if (options == null) {
             options = new SmartOptions();
@@ -203,6 +219,7 @@ public class GraphCreateOptions {
         private Integer numberOfShards;
         private String smartGraphAttribute;
         private Boolean isDisjoint;
+        private Collection<String> satellites;
 
         public SmartOptions() {
             super();
@@ -257,6 +274,13 @@ public class GraphCreateOptions {
             this.isDisjoint = isDisjoint;
         }
 
+        public Collection<String> getSatellites() {
+            return satellites;
+        }
+
+        public void setSatellites(final String... satellites) {
+            this.satellites = Arrays.asList(satellites);
+        }
     }
 
 }

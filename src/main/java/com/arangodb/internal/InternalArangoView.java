@@ -53,17 +53,17 @@ public abstract class InternalArangoView<A extends InternalArangoDB<E>, D extend
     }
 
     protected Request dropRequest() {
-        return request(db.name(), RequestType.DELETE, PATH_API_VIEW, name);
+        return request(db.dbName(), RequestType.DELETE, PATH_API_VIEW, name);
     }
 
     protected Request renameRequest(final String newName) {
-        final Request request = request(db.name(), RequestType.PUT, PATH_API_VIEW, name, "rename");
+        final Request request = request(db.dbName(), RequestType.PUT, PATH_API_VIEW, name, "rename");
         request.setBody(util().serialize(OptionsBuilder.build(new ViewRenameOptions(), newName)));
         return request;
     }
 
     protected Request getInfoRequest() {
-        return request(db.name(), RequestType.GET, PATH_API_VIEW, name);
+        return request(db.dbName(), RequestType.GET, PATH_API_VIEW, name);
     }
 
 }

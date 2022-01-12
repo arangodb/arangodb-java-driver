@@ -29,10 +29,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 /**
@@ -84,7 +84,9 @@ public class ArangoSslTest {
             arangoDB.getVersion();
             fail("this should fail");
         } catch (final ArangoDBException ex) {
-            assertThat(ex.getCause() instanceof SSLHandshakeException, is(true));
+            assertThat(ex.getCause(), is(instanceOf(ArangoDBMultipleException.class)));
+            List<Throwable> exceptions = ((ArangoDBMultipleException) ex.getCause()).getExceptions();
+            exceptions.forEach(e -> assertThat(e, is(instanceOf(SSLHandshakeException.class))));
         }
     }
 

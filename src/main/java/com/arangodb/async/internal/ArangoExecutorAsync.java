@@ -80,4 +80,9 @@ public class ArangoExecutorAsync extends ArangoExecutor {
             outgoingExecutor.shutdown();
         }
     }
+
+    public void setJwt(String jwt) {
+        communication.setJwt(jwt);
+    }
+
 }
