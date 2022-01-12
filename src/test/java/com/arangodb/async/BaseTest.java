@@ -27,6 +27,7 @@ import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 
@@ -58,6 +59,10 @@ public abstract class BaseTest {
         arangoDB.db(TEST_DB).drop().get();
         arangoDB.shutdown();
         arangoDB = null;
+    }
+
+    static String rnd() {
+        return UUID.randomUUID().toString();
     }
 
     protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor, final int patch)

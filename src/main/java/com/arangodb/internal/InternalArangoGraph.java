@@ -88,9 +88,9 @@ public abstract class InternalArangoGraph<A extends InternalArangoDB<E>, D exten
         }.getType());
     }
 
-    protected Request addVertexCollectionRequest(final String name) {
+    protected Request addVertexCollectionRequest(final String name, final VertexCollectionCreateOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_GHARIAL, name(), VERTEX);
-        request.setBody(util().serialize(OptionsBuilder.build(new VertexCollectionCreateOptions(), name)));
+        request.setBody(util().serialize(OptionsBuilder.build(options, name)));
         return request;
     }
 

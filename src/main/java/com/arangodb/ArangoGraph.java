@@ -23,6 +23,7 @@ package com.arangodb;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.VertexCollectionCreateOptions;
 
 import java.util.Collection;
 
@@ -130,6 +131,20 @@ public interface ArangoGraph extends ArangoSerializationAccessor {
      * Documentation</a>
      */
     GraphEntity addVertexCollection(String name) throws ArangoDBException;
+
+    /**
+     * Adds a vertex collection to the set of collections of the graph. If the collection does not exist, it will be
+     * created.
+     *
+     * @param name Name of the vertex collection
+     * @param options additional options
+     * @return information about the graph
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/gharial-management.html#add-vertex-collection">API
+     * Documentation</a>
+     * @since ArangoDB 3.9
+     */
+    GraphEntity addVertexCollection(String name, VertexCollectionCreateOptions options) throws ArangoDBException;
 
     /**
      * Returns a {@code ArangoVertexCollection} instance for the given vertex collection name.
