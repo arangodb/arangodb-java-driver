@@ -66,6 +66,7 @@ public abstract class InternalArangoDBBuilder {
     private static final String PROPERTY_KEY_TIMEOUT = "arangodb.timeout";
     private static final String PROPERTY_KEY_USER = "arangodb.user";
     private static final String PROPERTY_KEY_PASSWORD = "arangodb.password";
+    private static final String PROPERTY_KEY_JWT = "arangodb.jwt";
     private static final String PROPERTY_KEY_USE_SSL = "arangodb.usessl";
     private static final String PROPERTY_KEY_COOKIE_SPEC = "arangodb.httpCookieSpec";
     private static final String PROPERTY_KEY_V_STREAM_CHUNK_CONTENT_SIZE = "arangodb.chunksize";
@@ -83,6 +84,7 @@ public abstract class InternalArangoDBBuilder {
     protected Integer timeout;
     protected String user;
     protected String password;
+    protected String jwt;
     protected Boolean useSsl;
     protected String httpCookieSpec;
     protected HttpRequestRetryHandler httpRequestRetryHandler;
@@ -142,6 +144,7 @@ public abstract class InternalArangoDBBuilder {
         timeout = loadTimeout(properties, timeout);
         user = loadUser(properties, user);
         password = loadPassword(properties, password);
+        jwt = loadJwt(properties, jwt);
         useSsl = loadUseSsl(properties, useSsl);
         httpCookieSpec = loadhttpCookieSpec(properties, httpCookieSpec);
         chunksize = loadChunkSize(properties, chunksize);
@@ -168,6 +171,10 @@ public abstract class InternalArangoDBBuilder {
 
     protected void setPassword(final String password) {
         this.password = password;
+    }
+
+    protected void setJwt(final String jwt) {
+        this.jwt = jwt;
     }
 
     protected void setUseSsl(final Boolean useSsl) {
@@ -310,6 +317,10 @@ public abstract class InternalArangoDBBuilder {
 
     private static String loadPassword(final Properties properties, final String currentValue) {
         return getProperty(properties, PROPERTY_KEY_PASSWORD, currentValue, null);
+    }
+
+    private static String loadJwt(final Properties properties, final String currentValue) {
+        return getProperty(properties, PROPERTY_KEY_JWT, currentValue, null);
     }
 
     private static Boolean loadUseSsl(final Properties properties, final Boolean currentValue) {

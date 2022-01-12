@@ -32,6 +32,7 @@ public class EdgeDefinition {
     private String collection;
     private Collection<String> from;
     private Collection<String> to;
+    private Options options;
 
     public String getCollection() {
         return collection;
@@ -60,4 +61,24 @@ public class EdgeDefinition {
         return this;
     }
 
+    public Collection<String> getSatellites() {
+        return options.satellites;
+    }
+
+    /**
+     * @param satellites collection names that will be used to create SatelliteCollections
+     *                   for a Hybrid (Disjoint) SmartGraph (Enterprise Edition only). Each array element
+     *                   must be a valid collection name. The collection type cannot be modified later.
+     * @return this
+     * @since ArangoDB 3.9.0
+     */
+    public EdgeDefinition satellites(final String... satellites) {
+        options = new Options();
+        options.satellites = Arrays.asList(satellites);
+        return this;
+    }
+
+    private static class Options {
+        private Collection<String> satellites;
+    }
 }

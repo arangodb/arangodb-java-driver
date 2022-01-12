@@ -21,7 +21,9 @@
 package com.arangodb.internal.net;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoDBMultipleException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,12 +35,14 @@ public class FallbackHostHandler implements HostHandler {
     private Host current;
     private Host lastSuccess;
     private int iterations;
+    private final List<Throwable> lastFailExceptions;
     private boolean firstOpened;
     private HostSet hosts;
 
     public FallbackHostHandler(final HostResolver resolver) {
         this.resolver = resolver;
-        iterations = 0;
+        lastFailExceptions = new ArrayList<>();
+        reset();
         hosts = resolver.resolve(true, false);
         current = lastSuccess = hosts.getHostsList().get(0);
         firstOpened = true;
@@ -49,19 +53,21 @@ public class FallbackHostHandler implements HostHandler {
         if (current != lastSuccess || iterations < 3) {
             return current;
         } else {
+            ArangoDBException e = new ArangoDBException("Cannot contact any host!",
+                    new ArangoDBMultipleException(new ArrayList<>(lastFailExceptions)));
             reset();
-            throw new ArangoDBException("Cannot contact any host!");
+            throw e;
         }
     }
 
     @Override
     public void success() {
         lastSuccess = current;
-        iterations = 0;
+        reset();
     }
 
     @Override
-    public void fail() {
+    public void fail(Exception exception) {
         hosts = resolver.resolve(false, false);
         final List<Host> hostList = hosts.getHostsList();
         final int index = hostList.indexOf(current) + 1;
@@ -70,11 +76,13 @@ public class FallbackHostHandler implements HostHandler {
         if (!inBound) {
             iterations++;
         }
+        lastFailExceptions.add(exception);
     }
 
     @Override
     public void reset() {
         iterations = 0;
+        lastFailExceptions.clear();
     }
 
     @Override
@@ -94,6 +102,11 @@ public class FallbackHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         current.closeOnError();
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        hosts.setJwt(jwt);
     }
 
 }

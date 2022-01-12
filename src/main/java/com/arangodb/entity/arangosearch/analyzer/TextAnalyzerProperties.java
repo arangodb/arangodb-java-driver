@@ -80,6 +80,9 @@ public class TextAnalyzerProperties {
         return analyzerCase;
     }
 
+    /**
+     * @param analyzerCase defaults to {@link SearchAnalyzerCase#lower}
+     */
     public void setAnalyzerCase(SearchAnalyzerCase analyzerCase) {
         this.analyzerCase = analyzerCase;
     }

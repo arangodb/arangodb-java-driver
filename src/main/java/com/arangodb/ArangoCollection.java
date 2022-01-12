@@ -529,6 +529,19 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     IndexEntity ensureTtlIndex(Iterable<String> fields, TtlIndexOptions options) throws ArangoDBException;
 
     /**
+     * Creates a ZKD multi-dimensional index for the collection, if it does not already exist.
+     * Note that zkd indexes are an experimental feature in ArangoDB 3.9.
+     *
+     * @param fields  A list of attribute paths
+     * @param options Additional options, can be null
+     * @return information about the index
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-multi-dim.html">API Documentation</a>
+     * @since ArangoDB 3.9
+     */
+    IndexEntity ensureZKDIndex(Iterable<String> fields, ZKDIndexOptions options) throws ArangoDBException;
+
+    /**
      * Fetches a list of all indexes on this collection.
      *
      * @return information about the indexes

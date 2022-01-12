@@ -25,6 +25,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.VertexCollectionCreateOptions;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,8 +37,8 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -162,6 +163,26 @@ public class ArangoGraphTest extends BaseTest {
     }
 
     @Test
+    public void addSatelliteVertexCollection() throws ExecutionException, InterruptedException {
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        String v1Name = "vertex-" + rnd();
+
+        ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
+        g.createGraph(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
+        g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name)).get();
+
+        Collection<String> vertexCollections = g.getVertexCollections().get();
+        assertThat(vertexCollections, hasItems(v1Name));
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
+
+        // revert
+        g.drop().get();
+    }
+
+    @Test
     public void getEdgeCollections() throws InterruptedException, ExecutionException {
         final Collection<String> edgeCollections = db.graph(GRAPH_NAME).getEdgeDefinitions().get();
         assertThat(edgeCollections, is(notNullValue()));
@@ -196,6 +217,35 @@ public class ArangoGraphTest extends BaseTest {
             assertThat(properties.getNumberOfShards(), is(NUMBER_OF_SHARDS));
         }
         setup();
+    }
+
+    @Test
+    public void addSatelliteEdgeDefinition() throws ExecutionException, InterruptedException {
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        String eName = "edge-" + rnd();
+        String v1Name = "vertex-" + rnd();
+        String v2Name = "vertex-" + rnd();
+        EdgeDefinition ed = new EdgeDefinition().collection(eName).from(v1Name).to(v2Name).satellites(v1Name);
+
+        ArangoGraphAsync g = db.graph(GRAPH_NAME + rnd());
+        g.createGraph(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
+        g.addEdgeDefinition(ed).get();
+        final GraphEntity ge = g.getInfo().get();
+        assertThat(ge, is(notNullValue()));
+        final Collection<EdgeDefinition> edgeDefinitions = ge.getEdgeDefinitions();
+        assertThat(edgeDefinitions.size(), is(1));
+        EdgeDefinition e = edgeDefinitions.iterator().next();
+        assertThat(e.getCollection(), is(eName));
+        assertThat(e.getFrom(), hasItem(v1Name));
+        assertThat(e.getTo(), hasItem(v2Name));
+
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
+
+        // revert
+        g.drop().get();
     }
 
     @Test
@@ -245,8 +295,8 @@ public class ArangoGraphTest extends BaseTest {
         edgeDefinitions
                 .add(new EdgeDefinition().collection(EDGE_COL_2).from(VERTEX_COL_2).to(VERTEX_COL_1, VERTEX_COL_3));
         final GraphEntity graph = db.createGraph(GRAPH_NAME + "_smart", edgeDefinitions,
-                new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").replicationFactor(REPLICATION_FACTOR)
-                        .numberOfShards(NUMBER_OF_SHARDS))
+                        new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").replicationFactor(REPLICATION_FACTOR)
+                                .numberOfShards(NUMBER_OF_SHARDS))
                 .get();
         assertThat(graph, is(notNullValue()));
         assertThat(graph.getIsSmart(), is(true));
@@ -258,12 +308,66 @@ public class ArangoGraphTest extends BaseTest {
     }
 
     @Test
+    public void hybridSmartGraph() throws ExecutionException, InterruptedException {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+        assumeTrue((isAtLeastVersion(3, 9)));
+
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        String eName = "hybridSmartGraph-edge-" + rnd();
+        String v1Name = "hybridSmartGraph-vertex-" + rnd();
+        String v2Name = "hybridSmartGraph-vertex-" + rnd();
+        edgeDefinitions.add(new EdgeDefinition().collection(eName).from(v1Name).to(v2Name));
+
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions()
+                .satellites(eName, v1Name)
+                .isSmart(true).smartGraphAttribute("test").replicationFactor(2).numberOfShards(2)).get();
+
+        assertThat(g, is(notNullValue()));
+        assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getSmartGraphAttribute(), is("test"));
+        assertThat(g.getNumberOfShards(), is(2));
+
+        assertThat(db.collection(eName).getProperties().get().getSatellite(), is(true));
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
+        assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor(), is(2));
+    }
+
+    @Test
+    public void hybridDisjointSmartGraph() throws ExecutionException, InterruptedException {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+        assumeTrue((isAtLeastVersion(3, 9)));
+
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        String eName = "hybridDisjointSmartGraph-edge-" + rnd();
+        String v1Name = "hybridDisjointSmartGraph-vertex-" + rnd();
+        String v2Name = "hybridDisjointSmartGraph-vertex-" + rnd();
+        edgeDefinitions.add(new EdgeDefinition().collection(eName).from(v1Name).to(v2Name));
+
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions()
+                .satellites(v1Name)
+                .isSmart(true).isDisjoint(true).smartGraphAttribute("test").replicationFactor(2).numberOfShards(2)).get();
+
+        assertThat(g, is(notNullValue()));
+        assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getIsDisjoint(), is(true));
+        assertThat(g.getSmartGraphAttribute(), is("test"));
+        assertThat(g.getNumberOfShards(), is(2));
+
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
+        assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor(), is(2));
+    }
+
+    @Test
     public void drop() throws InterruptedException, ExecutionException {
         final String edgeCollection = "edge_drop";
         final String vertexCollection = "vertex_drop";
         final String graph = GRAPH_NAME + "_drop";
         final GraphEntity result = db.graph(graph).create(Collections
-                .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)))
+                        .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)))
                 .get();
         assertThat(result, is(notNullValue()));
         db.graph(graph).drop().get();
@@ -277,7 +381,7 @@ public class ArangoGraphTest extends BaseTest {
         final String vertexCollection = "vertex_dropC";
         final String graph = GRAPH_NAME + "_dropC";
         final GraphEntity result = db.graph(graph).create(Collections
-                .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)))
+                        .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)))
                 .get();
         assertThat(result, is(notNullValue()));
         db.graph(graph).drop(true).get();

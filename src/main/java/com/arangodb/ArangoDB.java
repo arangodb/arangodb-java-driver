@@ -20,15 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.ArangoDBEngine;
-import com.arangodb.entity.ArangoDBVersion;
-import com.arangodb.entity.LoadBalancingStrategy;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.entity.*;
 import com.arangodb.internal.ArangoContext;
 import com.arangodb.internal.ArangoDBImpl;
 import com.arangodb.internal.ArangoDefaults;
@@ -50,10 +42,7 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.util.ArangoCursorInitializer;
-import com.arangodb.util.ArangoDeserializer;
-import com.arangodb.util.ArangoSerialization;
-import com.arangodb.util.ArangoSerializer;
+import com.arangodb.util.*;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackAnnotationFieldFilter;
 import com.arangodb.velocypack.VPackAnnotationFieldNaming;
@@ -180,6 +169,17 @@ public interface ArangoDB extends ArangoSerializationAccessor {
         }
 
         /**
+         * Sets the JWT for the user authentication.
+         *
+         * @param jwt token to use (default: {@code null})
+         * @return {@link ArangoDB.Builder}
+         */
+        public Builder jwt(final String jwt) {
+            setJwt(jwt);
+            return this;
+        }
+
+        /**
          * If set to {@code true} SSL will be used when connecting to an ArangoDB server.
          *
          * @param useSsl whether or not use SSL (default: {@code false})
@@ -217,7 +217,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          *
          * @param httpRequestRetryHandler HttpRequestRetryHandler to be used
          * @return {@link ArangoDB.Builder}
-         *
+         * <p>
          * <br /><br />
          * NOTE:
          * Some ArangoDB HTTP endpoints do not honor RFC-2616 HTTP 1.1 specification in respect to
@@ -658,12 +658,18 @@ public interface ArangoDB extends ArangoSerializationAccessor {
             final Collection<Host> hostList = createHostList(max, connectionFactory);
             final HostResolver hostResolver = createHostResolver(hostList, max, connectionFactory);
             final HostHandler hostHandler = createHostHandler(hostResolver);
+            hostHandler.setJwt(jwt);
 
             return new ArangoDBImpl(
                     new VstCommunicationSync.Builder(hostHandler).timeout(timeout).user(user).password(password)
-                            .useSsl(useSsl).sslContext(sslContext).chunksize(chunksize).maxConnections(maxConnections)
-                            .connectionTtl(connectionTtl),
-                    new HttpCommunication.Builder(hostHandler), util, protocol, hostResolver, new ArangoContext(),
+                            .jwt(jwt).useSsl(useSsl).sslContext(sslContext).chunksize(chunksize)
+                            .maxConnections(maxConnections).connectionTtl(connectionTtl),
+                    new HttpCommunication.Builder(hostHandler),
+                    util,
+                    protocol,
+                    hostResolver,
+                    hostHandler,
+                    new ArangoContext(),
                     responseQueueTimeSamples, timeout);
         }
 
@@ -677,6 +683,14 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     void shutdown() throws ArangoDBException;
 
     /**
+     * Updates the JWT used for requests authorization. It does not change already existing VST connections, since VST
+     * connections are authenticated during the initialization phase.
+     *
+     * @param jwt token to use
+     */
+    void updateJwt(String jwt);
+
+    /**
      * Returns a {@code ArangoDatabase} instance for the {@code _system} database.
      *
      * @return database handler
@@ -688,8 +702,20 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(DbName)} instead
      */
-    ArangoDatabase db(String name);
+    @Deprecated
+    default ArangoDatabase db(String name) {
+        return db(DbName.of(name));
+    }
+
+    /**
+     * Returns a {@code ArangoDatabase} instance for the given database name.
+     *
+     * @param dbName Name of the database
+     * @return database handler
+     */
+    ArangoDatabase db(DbName dbName);
 
     /**
      * @return entry point for accessing client metrics
@@ -704,8 +730,23 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    Boolean createDatabase(String name) throws ArangoDBException;
+    @Deprecated
+    default Boolean createDatabase(String name) throws ArangoDBException {
+        return createDatabase(DbName.of(name));
+    }
+
+    /**
+     * Creates a new database with the given name.
+     *
+     * @param dbName Name of the database to create
+     * @return true if the database was created successfully.
+     * @throws ArangoDBException
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     */
+    Boolean createDatabase(DbName dbName) throws ArangoDBException;
 
     /**
      * Creates a new database with the given name.
@@ -914,10 +955,8 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     /**
      * Returns fatal, error, warning or info log messages from the server's global log.
      *
-     * @param options
-     *         Additional options, can be null
+     * @param options Additional options, can be null
      * @return the log messages
-     *
      * @throws ArangoDBException
      * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
@@ -929,10 +968,8 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     /**
      * Returns the server logs
      *
-     * @param options
-     *         Additional options, can be null
+     * @param options Additional options, can be null
      * @return the log messages
-     *
      * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
      * Documentation</a>
      * @since ArangoDB 3.8

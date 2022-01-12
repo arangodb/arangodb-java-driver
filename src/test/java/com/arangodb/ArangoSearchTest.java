@@ -34,32 +34,7 @@ import com.arangodb.entity.arangosearch.FieldLink;
 import com.arangodb.entity.arangosearch.PrimarySort;
 import com.arangodb.entity.arangosearch.StoreValuesType;
 import com.arangodb.entity.arangosearch.StoredValue;
-import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.AQLAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.DelimiterAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.EdgeNgram;
-import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.GeoAnalyzerOptions;
-import com.arangodb.entity.arangosearch.analyzer.GeoJSONAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.GeoPointAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.IdentityAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.NGramAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.NormAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.NormAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.PipelineAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzerCase;
-import com.arangodb.entity.arangosearch.analyzer.StemAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.StemAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.StopwordsAnalyzerProperties;
-import com.arangodb.entity.arangosearch.analyzer.StreamType;
-import com.arangodb.entity.arangosearch.analyzer.TextAnalyzer;
-import com.arangodb.entity.arangosearch.analyzer.TextAnalyzerProperties;
+import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
@@ -293,7 +268,7 @@ public class ArangoSearchTest extends BaseTest {
 
     private void createGetAndDeleteAnalyzer(AnalyzerEntity options) {
 
-        String fullyQualifiedName = db.name() + "::" + options.getName();
+        String fullyQualifiedName = db.dbName().get() + "::" + options.getName();
 
         // createAnalyzer
         AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
@@ -337,7 +312,7 @@ public class ArangoSearchTest extends BaseTest {
 
     private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) {
 
-        String fullyQualifiedName = db.name() + "::" + analyzer.getName();
+        String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
         analyzer.setName(fullyQualifiedName);
 
         // createAnalyzer
@@ -964,6 +939,48 @@ public class ArangoSearchTest extends BaseTest {
         geoPointAnalyzer.setFeatures(features);
 
         createGetAndDeleteTypedAnalyzer(geoPointAnalyzer);
+    }
+
+
+    @Test
+    public void segmentationAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        SegmentationAnalyzerProperties properties = new SegmentationAnalyzerProperties();
+        properties.setBreakMode(SegmentationAnalyzerProperties.BreakMode.graphic);
+        properties.setAnalyzerCase(SearchAnalyzerCase.upper);
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        SegmentationAnalyzer segmentationAnalyzer = new SegmentationAnalyzer();
+        segmentationAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        segmentationAnalyzer.setProperties(properties);
+        segmentationAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(segmentationAnalyzer);
+    }
+
+    @Test
+    public void collationAnalyzer() {
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        CollationAnalyzerProperties properties = new CollationAnalyzerProperties();
+        properties.setLocale("ru");
+
+        Set<AnalyzerFeature> features = new HashSet<>();
+        features.add(AnalyzerFeature.frequency);
+        features.add(AnalyzerFeature.norm);
+        features.add(AnalyzerFeature.position);
+
+        CollationAnalyzer collationAnalyzer = new CollationAnalyzer();
+        collationAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        collationAnalyzer.setProperties(properties);
+        collationAnalyzer.setFeatures(features);
+
+        createGetAndDeleteTypedAnalyzer(collationAnalyzer);
     }
 
 
