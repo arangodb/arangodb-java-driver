@@ -21,6 +21,7 @@
 package com.arangodb.async;
 
 import com.arangodb.entity.ArangoDBEngine;
+import com.arangodb.DbName;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
 import org.junit.AfterClass;
@@ -35,7 +36,7 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class BaseTest {
 
-    static final String TEST_DB = "java_driver_test_db";
+    static final DbName TEST_DB = DbName.of("java_driver_test_db");
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
 

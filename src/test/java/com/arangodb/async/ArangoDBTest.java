@@ -22,21 +22,16 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
-import com.arangodb.entity.DatabaseEntity;
-import com.arangodb.entity.License;
-import com.arangodb.entity.LogEntity;
-import com.arangodb.entity.LogEntriesEntity;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.LogLevelEntity;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ServerRole;
-import com.arangodb.entity.UserEntity;
+import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
+import com.arangodb.entity.*;
 import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.DatabaseOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
+import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -45,7 +40,6 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -63,6 +57,7 @@ public class ArangoDBTest {
     private static final String ROOT = "root";
     private static final String USER = "mit dem mund";
     private static final String PW = "machts der hund";
+    private static Boolean extendedNames;
 
     private boolean isEnterprise() {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
@@ -77,6 +72,21 @@ public class ArangoDBTest {
     private boolean isAtLeastVersion(final int major, final int minor) {
         final ArangoDB arangoDB = new ArangoDB.Builder().build();
         return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().getVersion(), major,minor,0);
+    }
+
+    private boolean supportsExtendedNames() {
+        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+        if (extendedNames == null) {
+            try {
+                ArangoDatabase testDb = arangoDB.db(DbName.of("test-" + TestUtils.generateRandomDbName(20, true)));
+                testDb.create();
+                extendedNames = true;
+                testDb.drop();
+            } catch (ArangoDBException e) {
+                extendedNames = false;
+            }
+        }
+        return extendedNames;
     }
 
     @Test
@@ -149,7 +159,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 6));
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames()));
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -177,7 +187,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 6));
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
-        final String dbName = "testDB-" + UUID.randomUUID().toString();
+        final DbName dbName = DbName.of("testDB-" + TestUtils.generateRandomDbName(20, supportsExtendedNames()));
         final Boolean resultCreate = arangoDB.createDatabase(new DBCreateOptions()
                 .name(dbName)
                 .options(new DatabaseOptions()
@@ -220,7 +230,7 @@ public class ArangoDBTest {
         dbs = arangoDB.getDatabases().get();
         assertThat(dbs.size(), is(greaterThan(dbCount)));
         assertThat(dbs, hasItem("_system"));
-        assertThat(dbs, hasItem(BaseTest.TEST_DB));
+        assertThat(dbs, hasItem(BaseTest.TEST_DB.get()));
         arangoDB.db(BaseTest.TEST_DB).drop().get();
     }
 
@@ -426,7 +436,7 @@ public class ArangoDBTest {
 
     @Test
     public void authenticationFailPassword() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().password("no").build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().password("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -437,7 +447,7 @@ public class ArangoDBTest {
 
     @Test
     public void authenticationFailUser() throws InterruptedException {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().user("no").build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().user("no").jwt(null).build();
         try {
             arangoDB.getVersion().get();
             fail();
@@ -450,7 +460,7 @@ public class ArangoDBTest {
     public void execute() throws VPackException, InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         arangoDB
-                .execute(new Request("_system", RequestType.GET, "/_api/version"))
+                .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody(), is(notNullValue()));
                     assertThat(response.getBody().get("version").isString(), is(true));
@@ -462,7 +472,7 @@ public class ArangoDBTest {
     public void execute_acquireHostList_enabled() throws VPackException, InterruptedException, ExecutionException {
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().acquireHostList(true).build();
         arangoDB
-                .execute(new Request("_system", RequestType.GET, "/_api/version"))
+                .execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"))
                 .whenComplete((response, ex) -> {
                     assertThat(response.getBody(), is(notNullValue()));
                     assertThat(response.getBody().get("version").isString(), is(true));
@@ -561,7 +571,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntity logs = arangoDB.getLogs(null).get();
-        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB))
+        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()))
                 .whenComplete((logsSearch, ex) -> {
                     assertThat(logsSearch, is(notNullValue()));
                     assertThat(logs.getTotalAmount(), greaterThan(logsSearch.getTotalAmount()));
@@ -619,7 +629,7 @@ public class ArangoDBTest {
         assumeTrue(isAtLeastVersion(3, 8));
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
         final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
-        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB))
+        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()))
                 .whenComplete((logsSearch, ex) -> {
                     assertThat(logsSearch, is(notNullValue()));
                     assertThat(logs.getTotal(), greaterThan(logsSearch.getTotalAmount()));

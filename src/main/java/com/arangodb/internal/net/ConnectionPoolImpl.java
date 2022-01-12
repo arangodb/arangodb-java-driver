@@ -41,6 +41,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private final List<Connection> connections;
     private int current;
     private final ConnectionFactory factory;
+    private volatile String jwt = null;
 
     public ConnectionPoolImpl(final HostDescription host, final Integer maxConnections,
                               final ConnectionFactory factory) {
@@ -54,7 +55,9 @@ public class ConnectionPoolImpl implements ConnectionPool {
 
     @Override
     public Connection createConnection(final HostDescription host) {
-        return factory.create(host);
+        Connection c = factory.create(host);
+        c.setJwt(jwt);
+        return c;
     }
 
     @Override
@@ -76,6 +79,14 @@ public class ConnectionPoolImpl implements ConnectionPool {
         }
 
         return connection;
+    }
+
+    @Override
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+        for (Connection connection : connections) {
+            connection.setJwt(jwt);
+        }
     }
 
     @Override

@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public abstract class VstCommunication<R, C extends VstConnection> implements Closeable {
 
     protected static final String ENCRYPTION_PLAIN = "plain";
+    protected static final String ENCRYPTION_JWT = "jwt";
     private static final Logger LOGGER = LoggerFactory.getLogger(VstCommunication.class);
 
     protected static final AtomicLong mId = new AtomicLong(0L);
@@ -59,15 +60,17 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
 
     protected final String user;
     protected final String password;
+    protected volatile String jwt;
 
     protected final Integer chunksize;
     protected final HostHandler hostHandler;
 
-    protected VstCommunication(final Integer timeout, final String user, final String password, final Boolean useSsl,
-                               final SSLContext sslContext, final ArangoSerialization util, final Integer chunksize,
-                               final HostHandler hostHandler) {
+    protected VstCommunication(final Integer timeout, final String user, final String password, final String jwt,
+                               final Boolean useSsl, final SSLContext sslContext, final ArangoSerialization util,
+                               final Integer chunksize, final HostHandler hostHandler) {
         this.user = user;
         this.password = password;
+        this.jwt = jwt;
         this.util = util;
         this.hostHandler = hostHandler;
         this.chunksize = chunksize != null ? chunksize : ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
@@ -89,19 +92,19 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
                 try {
                     connection.open();
                     hostHandler.success();
-                    if (user != null) {
+                    if (jwt != null || user != null) {
                         tryAuthenticate(connection);
                     }
                     hostHandler.confirm();
                     if (!connection.isOpen()) {
                         // see https://github.com/arangodb/arangodb-java-driver/issues/384
-                        hostHandler.fail();
+                        hostHandler.fail(new IOException("The connection is closed."));
                         host = hostHandler.get(hostHandle, accessType);
                         continue;
                     }
                     return connection;
                 } catch (final IOException e) {
-                    hostHandler.fail();
+                    hostHandler.fail(e);
                     if (hostHandle != null && hostHandle.getHost() != null) {
                         hostHandle.setHost(null);
                     }
@@ -190,5 +193,10 @@ public abstract class VstCommunication<R, C extends VstConnection> implements Cl
         }
         return chunks;
     }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
+
 
 }
