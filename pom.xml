@@ -102,8 +102,8 @@
                         <arg>-Xlint:deprecation</arg>
                     </compilerArgs>
                     <showWarnings>true</showWarnings>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>

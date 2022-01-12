@@ -16,7 +16,9 @@ import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -40,7 +42,7 @@ public class OverloadControlTest {
 
     @Parameterized.Parameters
     public static List<Protocol> builders() {
-        return List.of(
+        return Arrays.asList(
                 Protocol.VST,
                 Protocol.HTTP_JSON,
                 Protocol.HTTP_VPACK
@@ -71,9 +73,7 @@ public class OverloadControlTest {
         if (queueTime != null) {
             req.putHeaderParam(QUEUE_TIME_HEADER, String.valueOf(queueTime));
         }
-        req.setBody(PARSER.fromJson("""
-                {"query": "FOR i IN 1..100 RETURN SLEEP(1)", "batchSize": 1, "options": {"stream": true}}"""
-        ));
+        req.setBody(PARSER.fromJson("{\"query\": \"FOR i IN 1..100 RETURN SLEEP(1)\", \"batchSize\": 1, \"options\": {\"stream\": true}}"));
         return arangoDB.execute(req);
     }
 
@@ -144,21 +144,21 @@ public class OverloadControlTest {
     public void queueTimeValues() throws InterruptedException {
         List<CreateCursorRequest> reqsWithNoQT = IntStream.range(0, 50)
                 .mapToObj(__ -> new CreateCursorRequest(arangoDB1, null))
-                .toList();
+                .collect(Collectors.toList());
 
         List<CreateCursorRequest> reqsWithHighQT = IntStream.range(0, 10)
                 .mapToObj(__ -> new CreateCursorRequest(arangoDB1, 20.0))
-                .toList();
+                .collect(Collectors.toList());
 
         List<CreateCursorRequest> reqsWithLowQT = IntStream.range(0, 10)
                 .mapToObj(__ -> new CreateCursorRequest(arangoDB1, 1.0))
-                .toList();
+                .collect(Collectors.toList());
 
-        List<CreateCursorRequest> reqs = Stream.concat(reqsWithNoQT.stream(), reqsWithHighQT.stream()).toList();
+        List<CreateCursorRequest> reqs = Stream.concat(reqsWithNoQT.stream(), reqsWithHighQT.stream()).collect(Collectors.toList());
 
         List<Thread> threads = reqs.stream()
                 .map(Thread::new)
-                .toList();
+                .collect(Collectors.toList());
 
         for (Thread t : threads) {
             t.start();
@@ -200,11 +200,11 @@ public class OverloadControlTest {
 
         List<CreateCursorRequest> createCursorReqs = IntStream.range(0, 50)
                 .mapToObj(__ -> new CreateCursorRequest(arangoDB1, null))
-                .toList();
+                .collect(Collectors.toList());
 
         List<Thread> threads = createCursorReqs.stream()
                 .map(Thread::new)
-                .toList();
+                .collect(Collectors.toList());
 
         for (Thread t : threads) {
             t.start();
@@ -219,11 +219,11 @@ public class OverloadControlTest {
                 .limit(40)
                 .map(CreateCursorRequest::getCursorId)
                 .map(cid -> new ReadCursorRequest(arangoDB1, cid, null))
-                .toList();
+                .collect(Collectors.toList());
 
         List<Thread> threads2 = reqsWithNoQT.stream()
                 .map(Thread::new)
-                .toList();
+                .collect(Collectors.toList());
 
         for (Thread t : threads2) {
             t.start();
@@ -233,7 +233,7 @@ public class OverloadControlTest {
                 .skip(40)
                 .map(CreateCursorRequest::getCursorId)
                 .map(cid -> new ReadCursorRequest(arangoDB2, cid, 2.0))
-                .toList();
+                .collect(Collectors.toList());
 
         int errorCount = 0;
         for (ReadCursorRequest r : reqsWithLowQT) {
