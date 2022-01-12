@@ -30,6 +30,7 @@ import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.TraversalOptions;
+import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackModule;
 import com.arangodb.velocypack.VPackParserModule;
@@ -70,6 +71,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
         context.registerSerializer(ConsolidationType.class, VPackSerializers.CONSOLIDATE_TYPE);
         context.registerSerializer(CollectionSchema.class, VPackSerializers.COLLECTION_VALIDATION);
+        context.registerSerializer(ZKDIndexOptions.FieldValueTypes.class, VPackSerializers.ZKD_FIELD_VALUE_TYPES);
 
         context.registerDeserializer(Response.class, VPackDeserializers.RESPONSE);
         context.registerDeserializer(CollectionType.class, VPackDeserializers.COLLECTION_TYPE);
@@ -89,6 +91,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(ArangoSearchPropertiesEntity.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);
         context.registerDeserializer(ConsolidationPolicy.class, VPackDeserializers.CONSOLIDATE);
         context.registerDeserializer(CollectionSchema.class, VPackDeserializers.COLLECTION_VALIDATION);
+        context.registerDeserializer(ZKDIndexOptions.FieldValueTypes.class, VPackDeserializers.ZKD_FIELD_VALUE_TYPES);
     }
 
     @Override

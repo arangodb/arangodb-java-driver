@@ -296,6 +296,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
+    public IndexEntity ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options)
+            throws ArangoDBException {
+        return executor.execute(createZKDIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
     public Collection<IndexEntity> getIndexes() throws ArangoDBException {
         return executor.execute(getIndexesRequest(), getIndexesResponseDeserializer());
     }

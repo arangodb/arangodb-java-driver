@@ -302,6 +302,13 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    public CompletableFuture<IndexEntity> ensureZKDIndex(
+            final Iterable<String> fields,
+            final ZKDIndexOptions options) {
+        return executor.execute(createZKDIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
     public CompletableFuture<Collection<IndexEntity>> getIndexes() {
         return executor.execute(getIndexesRequest(), getIndexesResponseDeserializer());
     }
