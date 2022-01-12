@@ -29,6 +29,7 @@ public class LogLevelEntity implements Entity {
         FATAL, ERROR, WARNING, INFO, DEBUG, TRACE, DEFAULT
     }
 
+    private LogLevel all;
     private LogLevel agency;
     private LogLevel agencycomm;
     private LogLevel cluster;
@@ -50,6 +51,10 @@ public class LogLevelEntity implements Entity {
 
     public LogLevelEntity() {
         super();
+    }
+
+    public void setAll(final LogLevel all) {
+        this.all = all;
     }
 
     public LogLevel getAgency() {
