@@ -21,13 +21,8 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.model.DBCreateOptions;
-import com.arangodb.model.DatabaseOptions;
-import com.arangodb.model.DatabaseUsersOptions;
-import com.arangodb.model.LogOptions;
+import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
-import com.arangodb.model.UserCreateOptions;
-import com.arangodb.model.UserUpdateOptions;
 import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
@@ -50,6 +45,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -726,5 +722,35 @@ public class ArangoDBTest {
         assertThat(version1, is(notNullValue()));
         final ArangoDBVersion version2 = db2.getVersion();
         assertThat(version2, is(notNullValue()));
+    }
+
+    @Test
+    public void queueTime() throws InterruptedException {
+        List<Thread> threads = IntStream.range(0, 80)
+                .mapToObj(__ -> new Thread(() -> arangoDB.db().query("RETURN SLEEP(1)", Void.class)))
+                .collect(Collectors.toList());
+        threads.forEach(Thread::start);
+        for (Thread it : threads) {
+            it.join();
+        }
+
+        QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
+        double avg = qt.getAvg();
+        QueueTimeSample[] values = qt.getValues();
+        if (isAtLeastVersion(3, 9)) {
+            assertThat(values.length, is(20));
+            for (int i = 0; i < values.length; i++) {
+                assertThat(values[i], is(notNullValue()));
+                assertThat(values[i].value, is(greaterThanOrEqualTo(0.0)));
+                if (i > 0) {
+                    assertThat(values[i].timestamp, greaterThanOrEqualTo(values[i - 1].timestamp));
+                }
+            }
+            assertThat(avg, is(greaterThan(0.0)));
+        } else {
+            assertThat(avg, is(0.0));
+            assertThat(values, is(emptyArray()));
+        }
+
     }
 }

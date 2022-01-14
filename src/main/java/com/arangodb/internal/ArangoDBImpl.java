@@ -61,12 +61,12 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
 
     public ArangoDBImpl(final VstCommunicationSync.Builder vstBuilder, final HttpCommunication.Builder httpBuilder,
                         final ArangoSerializationFactory util, final Protocol protocol, final HostResolver hostResolver,
-                        final HostHandler hostHandler, final ArangoContext context) {
+                        final HostHandler hostHandler, final ArangoContext context, int responseQueueTimeSamples, final int timeoutMs) {
 
         super(new ArangoExecutorSync(
                         createProtocol(vstBuilder, httpBuilder, util.get(Serializer.INTERNAL), protocol),
                         util,
-                        new DocumentCache()),
+                        new DocumentCache(), new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs),
                 util,
                 context);
 
@@ -138,6 +138,11 @@ public class ArangoDBImpl extends InternalArangoDB<ArangoExecutorSync> implement
     @Override
     public ArangoDatabase db(final DbName dbName) {
         return new ArangoDatabaseImpl(this, dbName).setCursorInitializer(cursorInitializer);
+    }
+
+    @Override
+    public ArangoMetrics metrics() {
+        return new ArangoMetricsImpl(executor.getQueueTimeMetrics());
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * DISCLAIMER
  *
- * Copyright 2018 ArangoDB GmbH, Cologne, Germany
+ * Copyright 2016 ArangoDB GmbH, Cologne, Germany
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,17 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.internal;
+package com.arangodb;
 
 /**
- * @author Mark Vollmary
+ * Interface for accessing metrics.
+ *
+ * @author Michele Rastelli
+ * @since ArangoDB 3.9
  */
-public final class ArangoErrors {
-
-    private ArangoErrors() {
-        super();
-    }
-
-    public static final Integer ERROR_ARANGO_DATA_SOURCE_NOT_FOUND = 1203;
-    public static final Integer ERROR_ARANGO_DATABASE_NOT_FOUND = 1228;
-    public static final Integer ERROR_GRAPH_NOT_FOUND = 1924;
-    public static final Integer QUEUE_TIME_VIOLATED = 21004;
-
+public interface ArangoMetrics {
+    /**
+     * @return queue time metrics
+     */
+    QueueTimeMetrics getQueueTime();
 }

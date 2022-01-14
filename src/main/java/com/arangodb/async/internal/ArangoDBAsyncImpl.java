@@ -21,6 +21,7 @@
 package com.arangodb.async.internal;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.ArangoMetrics;
 import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
@@ -68,10 +69,13 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
             final HostResolver syncHostResolver,
             final HostHandler asyncHostHandler,
             final HostHandler syncHostHandler,
-            final ArangoContext context
+            final ArangoContext context,
+            final int responseQueueTimeSamples,
+            final int timeoutMs
     ) {
 
-        super(new ArangoExecutorAsync(asyncCommBuilder.build(util.get(Serializer.INTERNAL)), util, new DocumentCache()), util, context);
+        super(new ArangoExecutorAsync(asyncCommBuilder.build(util.get(Serializer.INTERNAL)), util, new DocumentCache(),
+                new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs), util, context);
 
         final VstCommunication<Response, VstConnectionSync> cacheCom = syncCommBuilder.build(util.get(Serializer.INTERNAL));
 
@@ -79,7 +83,8 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
         this.asyncHostHandler = asyncHostHandler;
         this.syncHostHandler = syncHostHandler;
 
-        ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache());
+        ArangoExecutorSync arangoExecutorSync = new ArangoExecutorSync(cp, util, new DocumentCache(),
+                new QueueTimeMetricsImpl(responseQueueTimeSamples), timeoutMs);
         asyncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
         syncHostResolver.init(arangoExecutorSync, util.get(Serializer.INTERNAL));
 
@@ -119,6 +124,11 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     @Override
     public ArangoDatabaseAsync db(final DbName name) {
         return new ArangoDatabaseAsyncImpl(this, name);
+    }
+
+    @Override
+    public ArangoMetrics metrics() {
+        return new ArangoMetricsImpl(executor.getQueueTimeMetrics());
     }
 
     @Override

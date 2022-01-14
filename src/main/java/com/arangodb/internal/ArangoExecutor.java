@@ -20,10 +20,12 @@
 
 package com.arangodb.internal;
 
+import com.arangodb.QueueTimeMetrics;
 import com.arangodb.entity.Entity;
 import com.arangodb.internal.util.ArangoSerializationFactory;
 import com.arangodb.internal.util.ArangoSerializationFactory.Serializer;
 import com.arangodb.velocypack.exception.VPackException;
+import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
 import java.lang.reflect.ParameterizedType;
@@ -69,12 +71,17 @@ public abstract class ArangoExecutor {
     }
 
     private final DocumentCache documentCache;
+    private final QueueTimeMetricsImpl qtMetrics;
     private final ArangoSerializationFactory util;
+    private final String timeoutS;
 
-    protected ArangoExecutor(final ArangoSerializationFactory util, final DocumentCache documentCache) {
+    protected ArangoExecutor(final ArangoSerializationFactory util, final DocumentCache documentCache,
+                             final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
         super();
         this.documentCache = documentCache;
+        this.qtMetrics = qtMetrics;
         this.util = util;
+        timeoutS = timeoutMs >= 1000 ? Integer.toString(timeoutMs / 1000) : null;
     }
 
     public DocumentCache documentCache() {
@@ -85,4 +92,19 @@ public abstract class ArangoExecutor {
         T deserialize(Response response) throws VPackException;
     }
 
+    protected final void interceptResponse(Response response) {
+        String queueTime = response.getMeta().get("X-Arango-Queue-Time-Seconds");
+        if (queueTime != null) {
+            qtMetrics.add(Double.parseDouble(queueTime));
+        }
+    }
+
+    protected final Request interceptRequest(Request request) {
+        request.putHeaderParam("X-Arango-Queue-Time-Seconds", timeoutS);
+        return request;
+    }
+
+    public QueueTimeMetrics getQueueTimeMetrics() {
+        return qtMetrics;
+    }
 }
