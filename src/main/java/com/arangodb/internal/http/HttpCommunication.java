@@ -106,8 +106,7 @@ public class HttpCommunication implements Closeable {
             if (e instanceof ArangoDBRedirectException && attemptCount < 3) {
                 final String location = ((ArangoDBRedirectException) e).getLocation();
                 final HostDescription redirectHost = HostUtils.createFromLocation(location);
-                hostHandler.closeCurrentOnError();
-                hostHandler.fail(e);
+                hostHandler.failIfNotMatch(redirectHost, e);
                 return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
             } else {
                 throw e;

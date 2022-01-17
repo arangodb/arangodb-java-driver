@@ -80,6 +80,13 @@ public class FallbackHostHandler implements HostHandler {
     }
 
     @Override
+    public synchronized void failIfNotMatch(HostDescription host, Exception exception) {
+        if (!host.equals(current.getDescription())) {
+            fail(exception);
+        }
+    }
+
+    @Override
     public void reset() {
         iterations = 0;
         lastFailExceptions.clear();
@@ -102,6 +109,13 @@ public class FallbackHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         current.closeOnError();
+    }
+
+    @Override
+    public synchronized void closeCurrentOnErrorIfNotMatch(HostDescription host) {
+        if (!host.equals(current.getDescription())) {
+            closeCurrentOnError();
+        }
     }
 
     @Override

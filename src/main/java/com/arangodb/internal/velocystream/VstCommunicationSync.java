@@ -151,8 +151,7 @@ public class VstCommunicationSync extends VstCommunication<Response, VstConnecti
             }
             final String location = e.getLocation();
             final HostDescription redirectHost = HostUtils.createFromLocation(location);
-            hostHandler.closeCurrentOnError();
-            hostHandler.fail(e);
+            hostHandler.failIfNotMatch(redirectHost, e);
             return execute(request, new HostHandle().setHost(redirectHost), attemptCount + 1);
         }
     }
