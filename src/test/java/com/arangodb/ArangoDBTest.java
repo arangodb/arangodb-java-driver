@@ -44,6 +44,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -725,13 +728,15 @@ public class ArangoDBTest {
     }
 
     @Test
-    public void queueTime() throws InterruptedException {
-        List<Thread> threads = IntStream.range(0, 80)
-                .mapToObj(__ -> new Thread(() -> arangoDB.db().query("RETURN SLEEP(1)", Void.class)))
+    public void queueTime() throws InterruptedException, ExecutionException {
+        List<CompletableFuture<Void>> futures = IntStream.range(0, 80)
+                .mapToObj(i -> CompletableFuture.runAsync(
+                        () -> arangoDB.db().query("RETURN SLEEP(1)", Void.class),
+                        Executors.newFixedThreadPool(80))
+                )
                 .collect(Collectors.toList());
-        threads.forEach(Thread::start);
-        for (Thread it : threads) {
-            it.join();
+        for (CompletableFuture<Void> f : futures) {
+            f.get();
         }
 
         QueueTimeMetrics qt = arangoDB.metrics().getQueueTime();
