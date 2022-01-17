@@ -96,3 +96,9 @@ for a in ${COORDINATORS[*]} ; do
     echo "$SCHEME://$a"
     echo ""
 done
+
+if [ "$STARTER_MODE" == "activefailover" ]; then
+  LEADER=$("$LOCATION"/find_active_endpoint.sh)
+  echo "Leader: $SCHEME://$LEADER"
+  echo ""
+fi
