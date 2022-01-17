@@ -37,6 +37,7 @@ public class ConcurrencyTests {
         for (CompletableFuture<Void> f : futures) {
             f.get();
         }
+        adb.shutdown();
     }
 
 }

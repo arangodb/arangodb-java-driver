@@ -19,6 +19,7 @@ public class ConcurrencyTests {
         for (CompletableFuture<ArangoCursorAsync<Void>> req : reqs) {
             req.get();
         }
+        adb.shutdown();
     }
 
 }
