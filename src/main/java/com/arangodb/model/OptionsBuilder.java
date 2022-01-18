@@ -41,10 +41,20 @@ public class OptionsBuilder {
         return options.user(user).passwd(passwd);
     }
 
+    /**
+     * @deprecated use {@link #build(PersistentIndexOptions, Iterable)} instead. A hash index is now an alias for a
+     * persistent index.
+     */
+    @Deprecated
     public static HashIndexOptions build(final HashIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }
 
+    /**
+     * @deprecated use {@link #build(PersistentIndexOptions, Iterable)} instead. A skiplist index is now an alias for a
+     * persistent index.
+     */
+    @Deprecated
     public static SkiplistIndexOptions build(final SkiplistIndexOptions options, final Iterable<String> fields) {
         return options.fields(fields);
     }

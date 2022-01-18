@@ -25,7 +25,9 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API Documentation</a>
+ * @deprecated use {@link PersistentIndexOptions} instead. A skiplist index is now an alias for a persistent index.
  */
+@Deprecated
 public class SkiplistIndexOptions extends IndexOptions<SkiplistIndexOptions> {
 
     private Iterable<String> fields;

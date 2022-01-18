@@ -264,6 +264,7 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    @Deprecated
     public CompletableFuture<IndexEntity> ensureHashIndex(
             final Iterable<String> fields,
             final HashIndexOptions options) {
@@ -271,6 +272,7 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
+    @Deprecated
     public CompletableFuture<IndexEntity> ensureSkiplistIndex(
             final Iterable<String> fields,
             final SkiplistIndexOptions options) {
