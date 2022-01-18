@@ -433,7 +433,10 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @param options Additional options, can be null
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
+     * @deprecated use {@link #ensurePersistentIndex(Iterable, PersistentIndexOptions)} instead. Since ArangoDB 3.7 a
+     * hash index is an alias for a persistent index.
      */
+    @Deprecated
     CompletableFuture<IndexEntity> ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options);
 
     /**
@@ -444,7 +447,10 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @return information about the index
      * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-skiplist.html#create-skip-list">API
      * Documentation</a>
+     * @deprecated use {@link #ensurePersistentIndex(Iterable, PersistentIndexOptions)} instead. Since ArangoDB 3.7 a
+     * skiplist index is an alias for a persistent index.
      */
+    @Deprecated
     CompletableFuture<IndexEntity> ensureSkiplistIndex(
             final Iterable<String> fields,
             final SkiplistIndexOptions options);

@@ -547,6 +547,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return index;
     }
 
+    @Deprecated
     protected Request createHashIndexRequest(final Iterable<String> fields, final HashIndexOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
@@ -555,6 +556,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request;
     }
 
+    @Deprecated
     protected Request createSkiplistIndexRequest(final Iterable<String> fields, final SkiplistIndexOptions options) {
         final Request request = request(db.dbName(), RequestType.POST, PATH_API_INDEX);
         request.putQueryParam(COLLECTION, name);
