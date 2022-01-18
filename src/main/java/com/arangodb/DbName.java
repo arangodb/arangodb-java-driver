@@ -1,6 +1,7 @@
 package com.arangodb;
 
 import com.arangodb.internal.ArangoRequestParam;
+import com.arangodb.internal.util.EncodeUtils;
 import com.arangodb.util.UnicodeUtils;
 
 import java.util.Objects;
@@ -60,6 +61,13 @@ public final class DbName implements Supplier<String> {
     @Override
     public String get() {
         return value;
+    }
+
+    /**
+     * @return the value encoded for usage in HTTP urls.
+     */
+    public String getEncoded() {
+        return EncodeUtils.encodeURIComponent(value);
     }
 
     @Override
