@@ -751,6 +751,14 @@ public class ArangoDBTest {
                     assertThat(values[i].timestamp, greaterThanOrEqualTo(values[i - 1].timestamp));
                 }
             }
+
+            if (avg < 0.0) {
+                System.err.println("avg < 0: " + avg);
+                System.err.println("got values:");
+                for (QueueTimeSample v : values) {
+                    System.err.println(v.value);
+                }
+            }
             assertThat(avg, is(greaterThan(0.0)));
         } else {
             assertThat(avg, is(0.0));

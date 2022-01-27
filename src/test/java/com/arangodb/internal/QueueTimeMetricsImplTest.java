@@ -43,6 +43,7 @@ public class QueueTimeMetricsImplTest {
         QueueTimeSample[] values = q.getValues();
         assertThat(values.length, is(Math.min(size, QSIZE)));
         assertThat(q.getAvg(), is(closeTo(getAvg(values), 1.0E-12)));
+        assertThat(q.getAvg(), is(greaterThanOrEqualTo(0.0)));
 
         for (int i = 0; i < values.length; i++) {
             assertThat(values[i], is(notNullValue()));
