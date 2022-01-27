@@ -79,8 +79,10 @@ public class StreamTransactionConflictsTest extends BaseTest {
 
             fail();
         } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(409));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 8)) {
+                assertThat(e.getResponseCode(), is(409));
+                assertThat(e.getErrorNum(), is(1200));
+            }
         }
 
         db.abortStreamTransaction(tx1.getId());
@@ -115,8 +117,10 @@ public class StreamTransactionConflictsTest extends BaseTest {
 
             fail();
         } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(409));
-            assertThat(e.getErrorNum(), is(1200));
+            if (isAtLeastVersion(3, 8)) {
+                assertThat(e.getResponseCode(), is(409));
+                assertThat(e.getErrorNum(), is(1200));
+            }
         }
 
         db.abortStreamTransaction(tx2.getId());
