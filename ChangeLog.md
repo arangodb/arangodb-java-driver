@@ -6,7 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
-- added `DbName` class to represent database names in public API parameters, to ease unicode names normalization (#405)
+## [6.16.0] - 2022-01-27
+
+- deprecated hash and skiplist indexes (#424)
+- fixed active failover concurrency bug (#423)
+- added support for overload metrics (ArangoDB 3.9, #419)
+- added support for Segmentation and Collation ArangoSearch analyzers (ArangoDB 3.9, #418)
+- added support for ZKD indexes (ArangoDB 3.9, #417)
+- added `all` log topic (ArangoDB 3.9, #416)
+- added support for Hybrid SmartGraphs (ArangoDB 3.9, #415)
+- added support for database unicode names, added `DbName` class to represent database names in public API parameters to
+  ease unicode names normalization (ArangoDB 3.9, #405)
 
 ## [6.15.0] - 2021-12-29
 
