@@ -26,13 +26,14 @@ import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -42,7 +43,7 @@ import static org.junit.Assume.assumeTrue;
 @RunWith(Parameterized.class)
 public class StreamTransactionConflictsTest extends BaseTest {
 
-    private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test";
+    private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test-" + UUID.randomUUID();
 
     @BeforeClass
     public static void init() {
@@ -78,7 +79,8 @@ public class StreamTransactionConflictsTest extends BaseTest {
 
             fail();
         } catch (ArangoDBException e) {
-            e.printStackTrace();
+            assertThat(e.getResponseCode(), is(409));
+            assertThat(e.getErrorNum(), is(1200));
         }
 
         db.abortStreamTransaction(tx1.getId());
@@ -113,7 +115,8 @@ public class StreamTransactionConflictsTest extends BaseTest {
 
             fail();
         } catch (ArangoDBException e) {
-            e.printStackTrace();
+            assertThat(e.getResponseCode(), is(409));
+            assertThat(e.getErrorNum(), is(1200));
         }
 
         db.abortStreamTransaction(tx2.getId());

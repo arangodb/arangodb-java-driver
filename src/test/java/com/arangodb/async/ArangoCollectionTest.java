@@ -916,6 +916,7 @@ public class ArangoCollectionTest extends BaseTest {
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+                fail();
             }
         }).get();
     }
