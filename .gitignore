@@ -8,3 +8,5 @@
 
 /docker/jwtHeader
 /docker/jwtSecret
+
+/docker/data

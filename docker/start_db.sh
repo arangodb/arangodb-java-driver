@@ -48,11 +48,16 @@ if [ "$DATABASE_EXTENDED_NAMES" == "true" ]; then
     STARTER_ARGS="${STARTER_ARGS} --all.database.extended-names-databases=true"
 fi
 
+if [ "$USE_MOUNTED_DATA" == "true" ]; then
+    STARTER_ARGS="${STARTER_ARGS} --starter.data-dir=/data"
+fi
+
 docker run -d \
     --name=adb \
     -p 8528:8528 \
     -v "$LOCATION"/server.pem:/server.pem \
     -v "$LOCATION"/jwtSecret:/jwtSecret \
+    -v "$LOCATION"/data:/data \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" \
     $STARTER_DOCKER_IMAGE \
