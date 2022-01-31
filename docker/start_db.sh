@@ -50,6 +50,8 @@ fi
 
 if [ "$USE_MOUNTED_DATA" == "true" ]; then
     STARTER_ARGS="${STARTER_ARGS} --starter.data-dir=/data"
+    MOUNT_DATA="-v $LOCATION/data:/data"
+    echo $MOUNT_DATA
 fi
 
 docker run -d \
@@ -57,7 +59,7 @@ docker run -d \
     -p 8528:8528 \
     -v "$LOCATION"/server.pem:/server.pem \
     -v "$LOCATION"/jwtSecret:/jwtSecret \
-    -v "$LOCATION"/data:/data \
+    $MOUNT_DATA \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" \
     $STARTER_DOCKER_IMAGE \
