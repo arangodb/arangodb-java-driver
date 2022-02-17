@@ -234,7 +234,9 @@ public class VPackSerializers {
                     builder.add(field);
                 }
                 builder.close();
-                builder.add("compression", storedValue.getCompression().getValue());
+                if (storedValue.getCompression() != null) {
+                    builder.add("compression", storedValue.getCompression().getValue());
+                }
                 builder.close(); // close object
             }
             builder.close(); // close array
