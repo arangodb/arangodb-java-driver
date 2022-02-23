@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Mark Vollmary
@@ -85,6 +87,13 @@ public class HttpCommunication implements Closeable {
                     hostHandler.success();
                     hostHandler.confirm();
                     return response;
+                } catch (final SocketTimeoutException e) {
+                    // SocketTimeoutException exceptions are wrapped and rethrown.
+                    // Differently from other IOException exceptions they must not be retried,
+                    // since the requests could not be idempotent.
+                    TimeoutException te = new TimeoutException(e.getMessage());
+                    te.initCause(e);
+                    throw new ArangoDBException(te);
                 } catch (final IOException e) {
                     hostHandler.fail(e);
                     if (hostHandle != null && hostHandle.getHost() != null) {
