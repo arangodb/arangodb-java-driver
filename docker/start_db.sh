@@ -87,12 +87,15 @@ done
 
 set +e
 for a in ${COORDINATORS[*]} ; do
+    echo ""
+    echo "Setting username and password..."
     docker run --rm ${DOCKER_IMAGE} arangosh --server.endpoint="$ARANGOSH_SCHEME://$a" --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
 done
 set -e
 
 for a in ${COORDINATORS[*]} ; do
     echo ""
+    echo "Requesting endpoint version..."
     curl -u root:test --insecure --fail "$SCHEME://$a/_api/version"
 done
 
