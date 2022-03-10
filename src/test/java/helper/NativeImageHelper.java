@@ -49,7 +49,6 @@ public class NativeImageHelper {
 
                     return new Reflections(config).getConstructorsMatchParams().stream();
                 })
-                .filter(it -> packages.contains(it.getDeclaringClass().getPackage().getName()))
                 .filter((it -> Modifier.isPublic(it.getDeclaringClass().getModifiers())))
                 .filter(it -> Modifier.isPublic(it.getModifiers()))
                 .map(Constructor::getName)

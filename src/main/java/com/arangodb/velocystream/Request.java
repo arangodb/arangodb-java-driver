@@ -20,6 +20,7 @@
 
 package com.arangodb.velocystream;
 
+import com.arangodb.DbName;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.annotations.Expose;
 
@@ -33,7 +34,7 @@ public class Request {
 
     private int version = 1;
     private int type = 1;
-    private final String database;
+    private final DbName dbName;
     private final RequestType requestType;
     private final String request;
     private final Map<String, String> queryParam;
@@ -41,9 +42,17 @@ public class Request {
     @Expose(serialize = false)
     private VPackSlice body;
 
+    /**
+     * @deprecated Use {@link #Request(DbName, RequestType, String)} instead
+     */
+    @Deprecated
     public Request(final String database, final RequestType requestType, final String path) {
+        this(DbName.of(database), requestType, path);
+    }
+
+    public Request(final DbName dbName, final RequestType requestType, final String path) {
         super();
-        this.database = database;
+        this.dbName = dbName;
         this.requestType = requestType;
         this.request = path;
         body = null;
@@ -69,8 +78,16 @@ public class Request {
         return this;
     }
 
+    /**
+     * @deprecated Use {@link #getDbName()} instead
+     */
+    @Deprecated
     public String getDatabase() {
-        return database;
+        return getDbName().get();
+    }
+
+    public DbName getDbName() {
+        return dbName;
     }
 
     public RequestType getRequestType() {

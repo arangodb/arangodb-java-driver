@@ -33,6 +33,8 @@ public interface HostHandler {
 
     void fail(Exception exception);
 
+    void failIfNotMatch(HostDescription host, Exception exception);
+
     void reset();
 
     void confirm();
@@ -40,6 +42,8 @@ public interface HostHandler {
     void close() throws IOException;
 
     void closeCurrentOnError();
+
+    void closeCurrentOnErrorIfNotMatch(HostDescription host);
 
     void setJwt(String jwt);
 

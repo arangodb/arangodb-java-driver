@@ -25,7 +25,10 @@ import com.arangodb.entity.IndexType;
 /**
  * @author Mark Vollmary
  * @see <a href="https://www.arangodb.com/docs/stable/http/indexes-hash.html#create-hash-index">API Documentation</a>
+ * @deprecated use {@link PersistentIndexOptions} instead. Since ArangoDB 3.7 a hash index is an alias for a persistent
+ * index.
  */
+@Deprecated
 public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
 
     private Iterable<String> fields;

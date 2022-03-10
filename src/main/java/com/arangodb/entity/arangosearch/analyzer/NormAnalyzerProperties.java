@@ -66,6 +66,9 @@ public class NormAnalyzerProperties {
         return analyzerCase;
     }
 
+    /**
+     * @param analyzerCase defaults to {@link SearchAnalyzerCase#none}
+     */
     public void setAnalyzerCase(SearchAnalyzerCase analyzerCase) {
         this.analyzerCase = analyzerCase;
     }

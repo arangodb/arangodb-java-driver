@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.junit.Assert.fail;
+
 /**
  * @author Michele Rastelli
  */
@@ -76,6 +78,7 @@ public class ImportDocumentExample extends ExampleBase {
                 cf.get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+                fail();
             }
         });
 

@@ -21,6 +21,7 @@
 package com.arangodb.internal.http;
 
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.internal.net.Connection;
 import com.arangodb.internal.net.HostDescription;
@@ -238,10 +239,10 @@ public class HttpConnection implements Connection {
     }
 
     private static String buildUrl(final String baseUrl, final Request request) {
-        final StringBuilder sb = new StringBuilder().append(baseUrl);
-        final String database = request.getDatabase();
-        if (database != null && !database.isEmpty()) {
-            sb.append("/_db/").append(database);
+        StringBuilder sb = new StringBuilder().append(baseUrl);
+        DbName dbName = request.getDbName();
+        if (dbName != null && !dbName.get().isEmpty()) {
+            sb.append("/_db/").append(dbName.getEncoded());
         }
         sb.append(request.getRequest());
         if (!request.getQueryParam().isEmpty()) {

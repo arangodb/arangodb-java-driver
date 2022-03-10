@@ -42,6 +42,7 @@ import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
 import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
+import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackParser;
@@ -65,7 +66,7 @@ public class VPackSerializers {
         builder.add(attribute, ValueType.ARRAY);
         builder.add(value.getVersion());
         builder.add(value.getType());
-        builder.add(value.getDatabase());
+        builder.add(value.getDbName().get());
         builder.add(value.getRequestType().getType());
         builder.add(value.getRequest());
         builder.add(ValueType.OBJECT);
@@ -233,7 +234,9 @@ public class VPackSerializers {
                     builder.add(field);
                 }
                 builder.close();
-                builder.add("compression", storedValue.getCompression().getValue());
+                if (storedValue.getCompression() != null) {
+                    builder.add("compression", storedValue.getCompression().getValue());
+                }
                 builder.close(); // close object
             }
             builder.close(); // close array
@@ -284,5 +287,8 @@ public class VPackSerializers {
         doc.put("rule", rule);
         context.serialize(builder, attribute, doc);
     };
+
+    public static final VPackSerializer<ZKDIndexOptions.FieldValueTypes> ZKD_FIELD_VALUE_TYPES =
+            (builder, attribute, value, context) -> builder.add(attribute, value.name().toLowerCase(Locale.ENGLISH));
 
 }

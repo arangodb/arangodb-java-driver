@@ -90,6 +90,11 @@ public class RoundRobinHostHandler implements HostHandler {
     }
 
     @Override
+    public void failIfNotMatch(HostDescription host, Exception exception) {
+        fail(exception);
+    }
+
+    @Override
     public void reset() {
         fails = 0;
         lastFailExceptions.clear();
@@ -107,6 +112,11 @@ public class RoundRobinHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         currentHost.closeOnError();
+    }
+
+    @Override
+    public void closeCurrentOnErrorIfNotMatch(HostDescription host) {
+        closeCurrentOnError();
     }
 
     @Override

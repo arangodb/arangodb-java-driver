@@ -61,6 +61,11 @@ public class DirtyReadHostHandler implements HostHandler {
     }
 
     @Override
+    public void failIfNotMatch(HostDescription host, Exception exception) {
+        determineHostHandler().failIfNotMatch(host, exception);
+    }
+
+    @Override
     public void reset() {
         determineHostHandler().reset();
     }
@@ -79,6 +84,11 @@ public class DirtyReadHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         determineHostHandler().closeCurrentOnError();
+    }
+
+    @Override
+    public void closeCurrentOnErrorIfNotMatch(HostDescription host) {
+        determineHostHandler().closeCurrentOnErrorIfNotMatch(host);
     }
 
     @Override

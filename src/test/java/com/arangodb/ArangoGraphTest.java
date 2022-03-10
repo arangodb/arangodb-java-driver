@@ -24,6 +24,7 @@ import com.arangodb.entity.CollectionPropertiesEntity;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.GraphEntity;
 import com.arangodb.model.GraphCreateOptions;
+import com.arangodb.model.VertexCollectionCreateOptions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -186,6 +187,26 @@ public class ArangoGraphTest extends BaseTest {
     }
 
     @Test
+    public void addSatelliteVertexCollection() {
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        String v1Name = "vertex-" + rnd();
+
+        ArangoGraph g = db.graph(GRAPH_NAME + rnd());
+        g.create(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
+        g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name));
+
+        Collection<String> vertexCollections = g.getVertexCollections();
+        assertThat(vertexCollections, hasItems(v1Name));
+        assertThat(db.collection(v1Name).getProperties().getSatellite(), is(true));
+
+        // revert
+        g.drop();
+    }
+
+    @Test
     public void getEdgeCollections() {
         final Collection<String> edgeCollections = graph.getEdgeDefinitions();
         assertThat(edgeCollections, is(notNullValue()));
@@ -221,6 +242,35 @@ public class ArangoGraphTest extends BaseTest {
 
         // revert
         graph.removeEdgeDefinition(EDGE_COL_3);
+    }
+
+    @Test
+    public void addSatelliteEdgeDefinition() {
+        assumeTrue(isCluster());
+        assumeTrue(isEnterprise());
+        assumeTrue(isAtLeastVersion(3, 9));
+
+        String eName = "edge-" + rnd();
+        String v1Name = "vertex-" + rnd();
+        String v2Name = "vertex-" + rnd();
+        EdgeDefinition ed = new EdgeDefinition().collection(eName).from(v1Name).to(v2Name).satellites(v1Name);
+
+        ArangoGraph g = db.graph(GRAPH_NAME + rnd());
+        g.create(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test"));
+        g.addEdgeDefinition(ed);
+        final GraphEntity ge = g.getInfo();
+        assertThat(ge, is(notNullValue()));
+        final Collection<EdgeDefinition> edgeDefinitions = ge.getEdgeDefinitions();
+        assertThat(edgeDefinitions.size(), is(1));
+        EdgeDefinition e = edgeDefinitions.iterator().next();
+        assertThat(e.getCollection(), is(eName));
+        assertThat(e.getFrom(), hasItem(v1Name));
+        assertThat(e.getTo(), hasItem(v2Name));
+
+        assertThat(db.collection(v1Name).getProperties().getSatellite(), is(true));
+
+        // revert
+        g.drop();
     }
 
     @Test
@@ -278,6 +328,33 @@ public class ArangoGraphTest extends BaseTest {
     }
 
     @Test
+    public void hybridSmartGraph() {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+        assumeTrue((isAtLeastVersion(3, 9)));
+
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        String eName = "hybridSmartGraph-edge-" + rnd();
+        String v1Name = "hybridSmartGraph-vertex-" + rnd();
+        String v2Name = "hybridSmartGraph-vertex-" + rnd();
+        edgeDefinitions.add(new EdgeDefinition().collection(eName).from(v1Name).to(v2Name));
+
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions()
+                .satellites(eName, v1Name)
+                .isSmart(true).smartGraphAttribute("test").replicationFactor(2).numberOfShards(2));
+
+        assertThat(g, is(notNullValue()));
+        assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getSmartGraphAttribute(), is("test"));
+        assertThat(g.getNumberOfShards(), is(2));
+
+        assertThat(db.collection(eName).getProperties().getSatellite(), is(true));
+        assertThat(db.collection(v1Name).getProperties().getSatellite(), is(true));
+        assertThat(db.collection(v2Name).getProperties().getReplicationFactor(), is(2));
+    }
+
+    @Test
     public void disjointSmartGraph() {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
@@ -295,6 +372,33 @@ public class ArangoGraphTest extends BaseTest {
         assertThat(g.getIsDisjoint(), is(true));
         assertThat(g.getSmartGraphAttribute(), is("test"));
         assertThat(g.getNumberOfShards(), is(2));
+    }
+
+    @Test
+    public void hybridDisjointSmartGraph() {
+        assumeTrue(isEnterprise());
+        assumeTrue(isCluster());
+        assumeTrue((isAtLeastVersion(3, 9)));
+
+        final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
+        String eName = "hybridDisjointSmartGraph-edge-" + rnd();
+        String v1Name = "hybridDisjointSmartGraph-vertex-" + rnd();
+        String v2Name = "hybridDisjointSmartGraph-vertex-" + rnd();
+        edgeDefinitions.add(new EdgeDefinition().collection(eName).from(v1Name).to(v2Name));
+
+        String graphId = GRAPH_NAME + rnd();
+        final GraphEntity g = db.createGraph(graphId, edgeDefinitions, new GraphCreateOptions()
+                .satellites(v1Name)
+                .isSmart(true).isDisjoint(true).smartGraphAttribute("test").replicationFactor(2).numberOfShards(2));
+
+        assertThat(g, is(notNullValue()));
+        assertThat(g.getIsSmart(), is(true));
+        assertThat(g.getIsDisjoint(), is(true));
+        assertThat(g.getSmartGraphAttribute(), is("test"));
+        assertThat(g.getNumberOfShards(), is(2));
+
+        assertThat(db.collection(v1Name).getProperties().getSatellite(), is(true));
+        assertThat(db.collection(v2Name).getProperties().getReplicationFactor(), is(2));
     }
 
     @Test

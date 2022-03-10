@@ -20,11 +20,7 @@
 
 package com.arangodb;
 
-import com.arangodb.entity.ArangoDBEngine;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.EdgeDefinition;
-import com.arangodb.entity.License;
-import com.arangodb.entity.ServerRole;
+import com.arangodb.entity.*;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.GraphCreateOptions;
@@ -51,7 +47,7 @@ public abstract class BaseTest {
     private final static Logger LOGGER = LoggerFactory.getLogger(BaseTest.class);
     private final static Set<String> callerClassSet = new HashSet<>();
 
-    static final String TEST_DB = "java_driver_test_db";
+    static final DbName TEST_DB = DbName.of("java_driver_test_db");
 
     // TODO: make configurable
     static final List<ArangoDB> arangos = Arrays.asList(

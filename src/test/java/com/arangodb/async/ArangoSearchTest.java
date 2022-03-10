@@ -228,7 +228,7 @@ public class ArangoSearchTest extends BaseTest {
 
     private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) throws ExecutionException, InterruptedException {
 
-        String fullyQualifiedName = db.name() + "::" + analyzer.getName();
+        String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
         analyzer.setName(fullyQualifiedName);
 
         // createAnalyzer
@@ -264,7 +264,7 @@ public class ArangoSearchTest extends BaseTest {
 
     private void createGetAndDeleteAnalyzer(AnalyzerEntity options) throws ExecutionException, InterruptedException {
 
-        String fullyQualifiedName = db.name() + "::" + options.getName();
+        String fullyQualifiedName = db.dbName().get() + "::" + options.getName();
 
         // createAnalyzer
         AnalyzerEntity createdAnalyzer = db.createAnalyzer(options).get();

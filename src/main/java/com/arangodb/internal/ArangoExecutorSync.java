@@ -44,8 +44,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
     private final CommunicationProtocol protocol;
 
     public ArangoExecutorSync(final CommunicationProtocol protocol, final ArangoSerializationFactory util,
-                              final DocumentCache documentCache) {
-        super(util, documentCache);
+                              final DocumentCache documentCache, final QueueTimeMetricsImpl qtMetrics, final int timeoutMs) {
+        super(util, documentCache, qtMetrics, timeoutMs);
         this.protocol = protocol;
     }
 
@@ -68,7 +68,8 @@ public class ArangoExecutorSync extends ArangoExecutor {
 
         try {
 
-            final Response response = protocol.execute(request, hostHandle);
+            final Response response = protocol.execute(interceptRequest(request), hostHandle);
+            interceptResponse(response);
             T deserialize = responseDeserializer.deserialize(response);
 
             if (deserialize instanceof MetaAware) {

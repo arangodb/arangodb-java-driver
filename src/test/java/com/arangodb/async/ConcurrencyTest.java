@@ -33,6 +33,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.junit.Assert.fail;
+
 /**
  * @author Michele Rastelli
  */
@@ -69,6 +71,7 @@ public class ConcurrencyTest {
                 future.get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
+                fail();
             }
         });
     }

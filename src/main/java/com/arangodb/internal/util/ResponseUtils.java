@@ -22,10 +22,13 @@ package com.arangodb.internal.util;
 
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.ErrorEntity;
+import com.arangodb.internal.ArangoErrors;
 import com.arangodb.internal.net.ArangoDBRedirectException;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocypack.exception.VPackParserException;
 import com.arangodb.velocystream.Response;
+
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Mark Vollmary
@@ -50,7 +53,11 @@ public final class ResponseUtils {
                 } else if (response.getBody() != null) {
                     final ErrorEntity errorEntity = util.deserialize(response.getBody(), ErrorEntity.class);
                     errorEntity.setResponseBody(response.getBody());
-                    throw new ArangoDBException(errorEntity);
+                    ArangoDBException e = new ArangoDBException(errorEntity);
+                    if(ArangoErrors.QUEUE_TIME_VIOLATED.equals(e.getErrorNum())){
+                        throw new ArangoDBException(new TimeoutException().initCause(e));
+                    }
+                    throw e;
                 } else {
                     throw new ArangoDBException(String.format("Response Code: %s", responseCode), responseCode);
                 }

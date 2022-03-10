@@ -59,6 +59,13 @@ public class RandomHostHandler implements HostHandler {
         current = fallback.get(null, null);
     }
 
+    @Override
+    public synchronized void failIfNotMatch(HostDescription host, Exception exception) {
+        if (!host.equals(current.getDescription())) {
+            fail(exception);
+        }
+    }
+
     private Host getRandomHost(final boolean initial, final boolean closeConnections) {
         hosts = resolver.resolve(initial, closeConnections);
         final ArrayList<Host> hostList = new ArrayList<>(hosts.getHostsList());
@@ -83,6 +90,13 @@ public class RandomHostHandler implements HostHandler {
     @Override
     public void closeCurrentOnError() {
         current.closeOnError();
+    }
+
+    @Override
+    public synchronized void closeCurrentOnErrorIfNotMatch(HostDescription host) {
+        if (!host.equals(current.getDescription())) {
+            closeCurrentOnError();
+        }
     }
 
     @Override

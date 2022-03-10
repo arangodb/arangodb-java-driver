@@ -259,12 +259,14 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
         return executor.execute(deleteIndexRequest(id), deleteIndexResponseDeserializer());
     }
 
+    @Deprecated
     @Override
     public IndexEntity ensureHashIndex(final Iterable<String> fields, final HashIndexOptions options)
             throws ArangoDBException {
         return executor.execute(createHashIndexRequest(fields, options), IndexEntity.class);
     }
 
+    @Deprecated
     @Override
     public IndexEntity ensureSkiplistIndex(final Iterable<String> fields, final SkiplistIndexOptions options)
             throws ArangoDBException {
@@ -293,6 +295,12 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     public IndexEntity ensureTtlIndex(final Iterable<String> fields, final TtlIndexOptions options)
             throws ArangoDBException {
         return executor.execute(createTtlIndexRequest(fields, options), IndexEntity.class);
+    }
+
+    @Override
+    public IndexEntity ensureZKDIndex(final Iterable<String> fields, final ZKDIndexOptions options)
+            throws ArangoDBException {
+        return executor.execute(createZKDIndexRequest(fields, options), IndexEntity.class);
     }
 
     @Override

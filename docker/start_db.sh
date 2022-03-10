@@ -48,11 +48,18 @@ if [ "$DATABASE_EXTENDED_NAMES" == "true" ]; then
     STARTER_ARGS="${STARTER_ARGS} --all.database.extended-names-databases=true"
 fi
 
+if [ "$USE_MOUNTED_DATA" == "true" ]; then
+    STARTER_ARGS="${STARTER_ARGS} --starter.data-dir=/data"
+    MOUNT_DATA="-v $LOCATION/data:/data"
+    echo $MOUNT_DATA
+fi
+
 docker run -d \
     --name=adb \
     -p 8528:8528 \
     -v "$LOCATION"/server.pem:/server.pem \
     -v "$LOCATION"/jwtSecret:/jwtSecret \
+    $MOUNT_DATA \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -e ARANGO_LICENSE_KEY="$ARANGO_LICENSE_KEY" \
     $STARTER_DOCKER_IMAGE \
@@ -80,12 +87,15 @@ done
 
 set +e
 for a in ${COORDINATORS[*]} ; do
+    echo ""
+    echo "Setting username and password..."
     docker run --rm ${DOCKER_IMAGE} arangosh --server.endpoint="$ARANGOSH_SCHEME://$a" --server.authentication=false --javascript.execute-string='require("org/arangodb/users").update("root", "test")'
 done
 set -e
 
 for a in ${COORDINATORS[*]} ; do
     echo ""
+    echo "Requesting endpoint version..."
     curl -u root:test --insecure --fail "$SCHEME://$a/_api/version"
 done
 
@@ -96,3 +106,9 @@ for a in ${COORDINATORS[*]} ; do
     echo "$SCHEME://$a"
     echo ""
 done
+
+if [ "$STARTER_MODE" == "activefailover" ]; then
+  LEADER=$("$LOCATION"/find_active_endpoint.sh)
+  echo "Leader: $SCHEME://$LEADER"
+  echo ""
+fi

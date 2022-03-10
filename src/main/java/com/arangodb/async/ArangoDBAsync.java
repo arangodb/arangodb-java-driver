@@ -20,9 +20,7 @@
 
 package com.arangodb.async;
 
-import com.arangodb.ArangoDBException;
-import com.arangodb.ArangoSerializationAccessor;
-import com.arangodb.Protocol;
+import com.arangodb.*;
 import com.arangodb.async.internal.ArangoDBAsyncImpl;
 import com.arangodb.async.internal.velocystream.VstCommunicationAsync;
 import com.arangodb.async.internal.velocystream.VstConnectionFactoryAsync;
@@ -94,8 +92,25 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      *
      * @param name Name of the database
      * @return database handler
+     * @deprecated Use {@link #db(DbName)} instead
      */
-    ArangoDatabaseAsync db(final String name);
+    @Deprecated
+    default ArangoDatabaseAsync db(final String name) {
+        return db(DbName.of(name));
+    }
+
+    /**
+     * Returns a handler of the database by the given name
+     *
+     * @param dbName Name of the database
+     * @return database handler
+     */
+    ArangoDatabaseAsync db(final DbName dbName);
+
+    /**
+     * @return entry point for accessing client metrics
+     */
+    ArangoMetrics metrics();
 
     /**
      * Creates a new database
@@ -104,8 +119,22 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return true if the database was created successfully.
      * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
      * Documentation</a>
+     * @deprecated Use {@link #createDatabase(DbName)} instead
      */
-    CompletableFuture<Boolean> createDatabase(final String name);
+    @Deprecated
+    default CompletableFuture<Boolean> createDatabase(final String name) {
+        return createDatabase(DbName.of(name));
+    }
+
+    /**
+     * Creates a new database
+     *
+     * @param dbName database name
+     * @return true if the database was created successfully.
+     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
+     * Documentation</a>
+     */
+    CompletableFuture<Boolean> createDatabase(final DbName dbName);
 
     /**
      * Creates a new database
@@ -471,6 +500,17 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
         }
 
         /**
+         * Setting the amount of samples kept for queue time metrics
+         *
+         * @param responseQueueTimeSamples amount of samples to keep
+         * @return {@link ArangoDBAsync.Builder}
+         */
+        public Builder responseQueueTimeSamples(final Integer responseQueueTimeSamples) {
+            setResponseQueueTimeSamples(responseQueueTimeSamples);
+            return this;
+        }
+
+        /**
          * Sets the load balancing strategy to be used in an ArangoDB cluster setup.
          * In case of Active-Failover deployment set to {@link LoadBalancingStrategy#NONE} or not set at all, since that
          * would be the default.
@@ -811,7 +851,9 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
                     syncHostResolver,
                     asyncHostHandler,
                     syncHostHandler,
-                    new ArangoContext());
+                    new ArangoContext(),
+                    responseQueueTimeSamples,
+                    timeout);
         }
 
         private VstCommunicationAsync.Builder asyncBuilder(final HostHandler hostHandler) {
