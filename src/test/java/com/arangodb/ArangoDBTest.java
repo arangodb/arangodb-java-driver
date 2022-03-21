@@ -68,7 +68,7 @@ class ArangoDBTest extends BaseJunit5 {
     private static Boolean extendedNames;
 
     @BeforeAll
-    static void initDB() {
+    static void initDBs() {
         ArangoDB arango = arangos.get(0);
         for (DbName db : new DbName[]{DB1, DB2}) {
             ArangoDatabase database = arango.db(db);
