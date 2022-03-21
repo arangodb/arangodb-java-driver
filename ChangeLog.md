@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.16.1] - 2022-02-23
+
+- fixed retry behavior of HTTP connections in case of timeout exceptions (#429)
+- fixed NPE when serializing ArangoSearch properties (#427)
+
 ## [6.16.0] - 2022-01-27
 
 - deprecated hash and skiplist indexes (#424)

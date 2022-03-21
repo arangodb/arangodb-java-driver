@@ -71,7 +71,7 @@ public class AQLActorsAndMoviesExample {
     @Test
     public void allActorsActsInMovie1or2() {
         final ArangoCursor<String> cursor = db.query(
-                "WITH actors FOR x IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN x._id",
+                "WITH actors, movies FOR x IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN x._id",
                 null, null, String.class);
         assertThat(cursor.asListRemaining(),
                 hasItems("actors/Keanu", "actors/Hugo", "actors/Emil", "actors/Carrie", "actors/Laurence"));
@@ -85,7 +85,7 @@ public class AQLActorsAndMoviesExample {
     @Test
     public void allActorsActsInMovie1or2UnionDistinct() {
         final ArangoCursor<String> cursor = db.query(
-                "WITH actors FOR x IN UNION_DISTINCT ((FOR y IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'movies/TheDevilsAdvocate' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
+                "WITH actors, movies FOR x IN UNION_DISTINCT ((FOR y IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'movies/TheDevilsAdvocate' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
                 null, null, String.class);
         assertThat(cursor.asListRemaining(), hasItems("actors/Emil", "actors/Hugo", "actors/Carrie", "actors/Laurence",
                 "actors/Keanu", "actors/Al", "actors/Charlize"));
@@ -99,7 +99,7 @@ public class AQLActorsAndMoviesExample {
     @Test
     public void allActorsActsInMovie1and2() {
         final ArangoCursor<String> cursor = db.query(
-                "WITH actors FOR x IN INTERSECTION ((FOR y IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'movies/TheDevilsAdvocate' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
+                "WITH actors, movies FOR x IN INTERSECTION ((FOR y IN ANY 'movies/TheMatrix' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'movies/TheDevilsAdvocate' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
                 null, null, String.class);
         assertThat(cursor.asListRemaining(), hasItems("actors/Keanu"));
     }
@@ -112,7 +112,7 @@ public class AQLActorsAndMoviesExample {
     @Test
     public void allMoviesBetweenActor1andActor2() {
         final ArangoCursor<String> cursor = db.query(
-                "WITH movies FOR x IN INTERSECTION ((FOR y IN ANY 'actors/Hugo' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'actors/Keanu' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
+                "WITH actors, movies FOR x IN INTERSECTION ((FOR y IN ANY 'actors/Hugo' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id), (FOR y IN ANY 'actors/Keanu' actsIn OPTIONS {bfs: true, uniqueVertices: 'global'} RETURN y._id)) RETURN x",
                 null, null, String.class);
         assertThat(cursor.asListRemaining(),
                 hasItems("movies/TheMatrixRevolutions", "movies/TheMatrixReloaded", "movies/TheMatrix"));
