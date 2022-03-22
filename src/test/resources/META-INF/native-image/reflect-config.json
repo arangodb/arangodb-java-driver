@@ -105,5 +105,15 @@
         ]
       }
     ]
+  },
+  {
+    "name": "com.arangodb.ArangoDatabaseTest$TransactionTestEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   }
 ]

@@ -756,9 +756,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         final ArangoCursor<String> cursorWithLimitedWarnings = db
                 .query("RETURN 1 / 0", null, new AqlQueryOptions().maxWarningCount(0L), String.class);
         final Collection<Warning> warnings = cursorWithLimitedWarnings.getWarnings();
-        if (warnings != null) {
-            assertThat(warnings).isEmpty();
-        }
+        assertThat(warnings).isNullOrEmpty();
     }
 
     @ParameterizedTest(name = "{index}")

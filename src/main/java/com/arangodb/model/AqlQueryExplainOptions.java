@@ -114,7 +114,7 @@ public class AqlQueryExplainOptions {
         return options;
     }
 
-    private static class Options {
+    public static class Options {
         private Optimizer optimizer;
         private Integer maxNumberOfPlans;
         private Boolean allPlans;
@@ -127,7 +127,7 @@ public class AqlQueryExplainOptions {
         }
     }
 
-    private static class Optimizer {
+    public static class Optimizer {
         private Collection<String> rules;
     }
 }
