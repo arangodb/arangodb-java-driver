@@ -115,5 +115,15 @@
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "com.arangodb.ArangoCollectionTest$TestUpdateEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
   }
 ]

@@ -751,7 +751,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    private static class TestUpdateEntity {
+    static class TestUpdateEntity {
         @SuppressWarnings("unused")
         private String a, b;
     }
