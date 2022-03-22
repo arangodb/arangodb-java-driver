@@ -22,40 +22,41 @@ package com.arangodb;
 
 import com.arangodb.entity.*;
 import com.arangodb.model.*;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoEdgeCollectionTest extends BaseTest {
+class ArangoEdgeCollectionTest extends BaseJunit5 {
 
     private static final String GRAPH_NAME = "EdgeCollectionTest_graph";
     private static final String VERTEX_COLLECTION_NAME = "EdgeCollectionTest_vertex_collection";
     private static final String EDGE_COLLECTION_NAME = "EdgeCollectionTest_edge_collection";
 
-    private final ArangoCollection vertexCollection;
-    private final ArangoCollection edgeCollection;
+    private static Stream<Arguments> args() {
+        return dbsStream()
+                .map(db -> new Object[]{
+                        db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME),
+                        db.graph(GRAPH_NAME).edgeCollection(EDGE_COLLECTION_NAME)
+                })
+                .map(Arguments::of);
+    }
 
-    private final ArangoGraph graph;
-    private final ArangoVertexCollection vertices;
-    private final ArangoEdgeCollection edges;
-
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         BaseTest.initCollections(VERTEX_COLLECTION_NAME);
         BaseTest.initEdgeCollections(EDGE_COLLECTION_NAME);
         BaseTest.initGraph(
@@ -69,22 +70,9 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         );
     }
 
-    public ArangoEdgeCollectionTest(final ArangoDB arangoDB) {
-        super(arangoDB);
-
-        vertexCollection = db.collection(VERTEX_COLLECTION_NAME);
-        edgeCollection = db.collection(EDGE_COLLECTION_NAME);
-
-        graph = db.graph(GRAPH_NAME);
-        vertices = graph.vertexCollection(VERTEX_COLLECTION_NAME);
-        edges = graph.edgeCollection(EDGE_COLLECTION_NAME);
-    }
-
-    private BaseEdgeDocument createEdgeValue() {
-        final VertexEntity v1 = vertices
-                .insertVertex(new BaseDocument(), null);
-        final VertexEntity v2 = vertices
-                .insertVertex(new BaseDocument(), null);
+    private BaseEdgeDocument createEdgeValue(ArangoVertexCollection vertices) {
+        final VertexEntity v1 = vertices.insertVertex(new BaseDocument());
+        final VertexEntity v2 = vertices.insertVertex(new BaseDocument());
 
         final BaseEdgeDocument value = new BaseEdgeDocument();
         value.setFrom(v1.getId());
@@ -92,366 +80,362 @@ public class ArangoEdgeCollectionTest extends BaseTest {
         return value;
     }
 
-    @Test
-    public void insertEdge() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
-        assertThat(edge, is(notNullValue()));
-        final BaseEdgeDocument document = edgeCollection.getDocument(edge.getKey(),
-                BaseEdgeDocument.class, null);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
-        assertThat(document.getFrom(), is(notNullValue()));
-        assertThat(document.getTo(), is(notNullValue()));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void insertEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
+        assertThat(edge).isNotNull();
+        final BaseEdgeDocument document = edges.getEdge(edge.getKey(), BaseEdgeDocument.class);
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
+        assertThat(document.getFrom()).isNotNull();
+        assertThat(document.getTo()).isNotNull();
     }
 
-    @Test
-    public void insertEdgeUpdateRev() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
-        assertThat(value.getRevision(), is(edge.getRev()));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void insertEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
+        assertThat(value.getRevision()).isEqualTo(edge.getRev());
     }
 
-    @Test
-    public void insertEdgeViolatingUniqueConstraint() {
-        // FIXME: remove once fix is backported to 3.4
-        assumeTrue(isAtLeastVersion(3, 5));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void insertEdgeViolatingUniqueConstraint(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        edges.graph().db().collection(EDGE_COLLECTION_NAME)
+                .ensurePersistentIndex(Arrays.asList("_from", "_to"), new PersistentIndexOptions().unique(true));
 
-        edgeCollection
-                .ensureSkiplistIndex(Arrays.asList("_from", "_to"), new SkiplistIndexOptions().unique(true));
-
-        BaseEdgeDocument edge = createEdgeValue();
-        edges.insertEdge(edge, null);
+        BaseEdgeDocument edge = createEdgeValue(vertices);
+        edges.insertEdge(edge);
 
         try {
-            edges.insertEdge(edge, null);
+            edges.insertEdge(edge);
         } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(409));
-            assertThat(e.getErrorNum(), is(1210));
+            assertThat(e.getResponseCode()).isEqualTo(409);
+            assertThat(e.getErrorNum()).isEqualTo(1210);
         }
     }
 
-    @Test
-    public void getEdge() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void getEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
         final BaseEdgeDocument document = edges
-                .getEdge(edge.getKey(), BaseEdgeDocument.class, null);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
-        assertThat(document.getFrom(), is(notNullValue()));
-        assertThat(document.getTo(), is(notNullValue()));
+                .getEdge(edge.getKey(), BaseEdgeDocument.class);
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
+        assertThat(document.getFrom()).isNotNull();
+        assertThat(document.getTo()).isNotNull();
     }
 
-    @Test
-    public void getEdgeIfMatch() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void getEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch(edge.getRev());
         final BaseDocument document = edges.getEdge(edge.getKey(),
                 BaseDocument.class, options);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
-    @Test
-    public void getEdgeIfMatchFail() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void getEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifMatch("no");
         final BaseEdgeDocument edge2 = edges.getEdge(edge.getKey(),
                 BaseEdgeDocument.class, options);
-        assertThat(edge2, is(nullValue()));
+        assertThat(edge2).isNull();
     }
 
-    @Test
-    public void getEdgeIfNoneMatch() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void getEdgeIfNoneMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch("no");
         final BaseDocument document = edges.getEdge(edge.getKey(),
                 BaseDocument.class, options);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(edge.getKey()));
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(edge.getKey());
     }
 
-    @Test
-    public void getEdgeIfNoneMatchFail() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final EdgeEntity edge = edges.insertEdge(value, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void getEdgeIfNoneMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final EdgeEntity edge = edges.insertEdge(value);
         final GraphDocumentReadOptions options = new GraphDocumentReadOptions().ifNoneMatch(edge.getRev());
         final BaseEdgeDocument edge2 = edges.getEdge(edge.getKey(),
                 BaseEdgeDocument.class, options);
-        assertThat(edge2, is(nullValue()));
+        assertThat(edge2).isNull();
     }
 
-    @Test
-    public void replaceEdge() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void replaceEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         final EdgeUpdateEntity replaceResult = edges
-                .replaceEdge(createResult.getKey(), doc, null);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+                .replaceEdge(createResult.getKey(), doc);
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void replaceEdgeUpdateRev() {
-        final BaseEdgeDocument doc = createEdgeValue();
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void replaceEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
+        final EdgeEntity createResult = edges.insertEdge(doc);
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final EdgeUpdateEntity replaceResult = edges
-                .replaceEdge(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision(), is(replaceResult.getRev()));
+                .replaceEdge(createResult.getKey(), doc);
+        assertThat(doc.getRevision()).isEqualTo(replaceResult.getRev());
     }
 
-    @Test
-    public void replaceEdgeIfMatch() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void replaceEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
         final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch(createResult.getRev());
         final EdgeUpdateEntity replaceResult = edges
                 .replaceEdge(createResult.getKey(), doc, options);
-        assertThat(replaceResult, is(notNullValue()));
-        assertThat(replaceResult.getId(), is(createResult.getId()));
-        assertThat(replaceResult.getRev(), is(not(replaceResult.getOldRev())));
-        assertThat(replaceResult.getOldRev(), is(createResult.getRev()));
+        assertThat(replaceResult).isNotNull();
+        assertThat(replaceResult.getId()).isEqualTo(createResult.getId());
+        assertThat(replaceResult.getRev()).isNotEqualTo(replaceResult.getOldRev());
+        assertThat(replaceResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getRevision(), is(replaceResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getRevision()).isEqualTo(replaceResult.getRev());
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
     }
 
-    @Test
-    public void replaceEdgeIfMatchFail() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void replaceEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.getProperties().clear();
         doc.addAttribute("b", "test");
-        try {
-            final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch("no");
-            edges.replaceEdge(createResult.getKey(), doc, options);
-            fail();
-        } catch (final ArangoDBException e) {
-            if (isAtLeastVersion(3, 4)) {
-                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-                // assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1200));
-            } else {
-                assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1903));
-            }
-        }
+        final EdgeReplaceOptions options = new EdgeReplaceOptions().ifMatch("no");
+        Throwable thrown = catchThrowable(() -> edges.replaceEdge(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @Test
-    public void updateEdge() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void updateEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
         final EdgeUpdateEntity updateResult = edges
-                .updateEdge(createResult.getKey(), doc, null);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+                .updateEdge(createResult.getKey(), doc);
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @Test
-    public void updateEdgeUpdateRev() {
-        final BaseEdgeDocument doc = createEdgeValue();
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
-        assertThat(doc.getRevision(), is(createResult.getRev()));
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void updateEdgeUpdateRev(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
+        final EdgeEntity createResult = edges.insertEdge(doc);
+        assertThat(doc.getRevision()).isEqualTo(createResult.getRev());
         final EdgeUpdateEntity updateResult = edges
-                .updateEdge(createResult.getKey(), doc, null);
-        assertThat(doc.getRevision(), is(updateResult.getRev()));
+                .updateEdge(createResult.getKey(), doc);
+        assertThat(doc.getRevision()).isEqualTo(updateResult.getRev());
     }
 
-    @Test
-    public void updateEdgeIfMatch() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void updateEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
         final EdgeUpdateOptions options = new EdgeUpdateOptions().ifMatch(createResult.getRev());
         final EdgeUpdateEntity updateResult = edges
                 .updateEdge(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getAttribute("a"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("a")), is("test1"));
-        assertThat(readResult.getAttribute("b"), is(notNullValue()));
-        assertThat(String.valueOf(readResult.getAttribute("b")), is("test"));
-        assertThat(readResult.getRevision(), is(updateResult.getRev()));
-        assertThat(readResult.getProperties().keySet(), hasItem("c"));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getAttribute("a")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("a"))).isEqualTo("test1");
+        assertThat(readResult.getAttribute("b")).isNotNull();
+        assertThat(String.valueOf(readResult.getAttribute("b"))).isEqualTo("test");
+        assertThat(readResult.getRevision()).isEqualTo(updateResult.getRev());
+        assertThat(readResult.getProperties()).containsKey("c");
     }
 
-    @Test
-    public void updateEdgeIfMatchFail() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void updateEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
         doc.addAttribute("c", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.updateAttribute("a", "test1");
         doc.addAttribute("b", "test");
         doc.updateAttribute("c", null);
-        try {
-            final EdgeUpdateOptions options = new EdgeUpdateOptions().ifMatch("no");
-            edges.updateEdge(createResult.getKey(), doc, options);
-            fail();
-        } catch (final ArangoDBException e) {
-            if (isAtLeastVersion(3, 4)) {
-                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-                // assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1200));
-            } else {
-                assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1903));
-            }
-        }
+        final EdgeUpdateOptions options = new EdgeUpdateOptions().ifMatch("no");
+        Throwable thrown = catchThrowable(() -> edges.updateEdge(createResult.getKey(), doc, options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+        // assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @Test
-    public void updateEdgeKeepNullTrue() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void updateEdgeKeepNullTrue(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.updateAttribute("a", null);
         final EdgeUpdateOptions options = new EdgeUpdateOptions().keepNull(true);
         final EdgeUpdateEntity updateResult = edges
                 .updateEdge(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getProperties().keySet().size(), is(1));
-        assertThat(readResult.getProperties().keySet(), hasItem("a"));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getProperties().keySet()).hasSize(1);
+        assertThat(readResult.getProperties()).containsKey("a");
     }
 
-    @Test
-    public void updateEdgeKeepNullFalse() {
-        final BaseEdgeDocument doc = createEdgeValue();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void updateEdgeKeepNullFalse(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
         doc.addAttribute("a", "test");
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         doc.updateAttribute("a", null);
         final EdgeUpdateOptions options = new EdgeUpdateOptions().keepNull(false);
         final EdgeUpdateEntity updateResult = edges
                 .updateEdge(createResult.getKey(), doc, options);
-        assertThat(updateResult, is(notNullValue()));
-        assertThat(updateResult.getId(), is(createResult.getId()));
-        assertThat(updateResult.getRev(), is(not(updateResult.getOldRev())));
-        assertThat(updateResult.getOldRev(), is(createResult.getRev()));
+        assertThat(updateResult).isNotNull();
+        assertThat(updateResult.getId()).isEqualTo(createResult.getId());
+        assertThat(updateResult.getRev()).isNotEqualTo(updateResult.getOldRev());
+        assertThat(updateResult.getOldRev()).isEqualTo(createResult.getRev());
 
         final BaseEdgeDocument readResult = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(readResult.getKey(), is(createResult.getKey()));
-        assertThat(readResult.getId(), is(createResult.getId()));
-        assertThat(readResult.getRevision(), is(notNullValue()));
-        assertThat(readResult.getProperties().keySet(), not(hasItem("a")));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(readResult.getKey()).isEqualTo(createResult.getKey());
+        assertThat(readResult.getId()).isEqualTo(createResult.getId());
+        assertThat(readResult.getRevision()).isNotNull();
+        assertThat(readResult.getProperties().keySet()).doesNotContain("a");
     }
 
-    @Test
-    public void deleteEdge() {
-        final BaseEdgeDocument doc = createEdgeValue();
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
-        edges.deleteEdge(createResult.getKey(), null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void deleteEdge(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
+        final EdgeEntity createResult = edges.insertEdge(doc);
+        edges.deleteEdge(createResult.getKey());
         final BaseEdgeDocument edge = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(edge, is(nullValue()));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(edge).isNull();
     }
 
-    @Test
-    public void deleteEdgeIfMatch() {
-        final BaseEdgeDocument doc = createEdgeValue();
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void deleteEdgeIfMatch(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch(createResult.getRev());
         edges.deleteEdge(createResult.getKey(), options);
         final BaseEdgeDocument edge = edges
-                .getEdge(createResult.getKey(), BaseEdgeDocument.class, null);
-        assertThat(edge, is(nullValue()));
+                .getEdge(createResult.getKey(), BaseEdgeDocument.class);
+        assertThat(edge).isNull();
     }
 
-    @Test
-    public void deleteEdgeIfMatchFail() {
-        final BaseEdgeDocument doc = createEdgeValue();
-        final EdgeEntity createResult = edges.insertEdge(doc, null);
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void deleteEdgeIfMatchFail(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument doc = createEdgeValue(vertices);
+        final EdgeEntity createResult = edges.insertEdge(doc);
         final EdgeDeleteOptions options = new EdgeDeleteOptions().ifMatch("no");
-        try {
-            edges.deleteEdge(createResult.getKey(), options);
-            fail();
-        } catch (final ArangoDBException e) {
-            if (isAtLeastVersion(3, 4)) {
-                // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
-                //            assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1200));
-            } else {
-                assertThat(e.getResponseCode(), is(412));
-                assertThat(e.getErrorNum(), is(1903));
-            }
-        }
+        Throwable thrown = catchThrowable(() -> edges.deleteEdge(createResult.getKey(), options));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        // FIXME: atm the server replies 409 for HTTP_JSON or HTTP_VPACK
+        //            assertThat(e.getResponseCode()).isEqualTo(412));
+        assertThat(e.getErrorNum()).isEqualTo(1200);
     }
 
-    @Test
-    public void edgeKeyWithSpecialChars() {
-        final BaseEdgeDocument value = createEdgeValue();
-        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID().toString();
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("args")
+    void edgeKeyWithSpecialChars(ArangoVertexCollection vertices, ArangoEdgeCollection edges) {
+        final BaseEdgeDocument value = createEdgeValue(vertices);
+        final String key = "_-:.@()+,=;$!*'%" + UUID.randomUUID();
         value.setKey(key);
-        final EdgeEntity edge = edges.insertEdge(value, null);
-        assertThat(edge, is(notNullValue()));
-        final BaseEdgeDocument document = edgeCollection.getDocument(edge.getKey(),
-                BaseEdgeDocument.class, null);
-        assertThat(document, is(notNullValue()));
-        assertThat(document.getKey(), is(key));
-        assertThat(document.getFrom(), is(notNullValue()));
-        assertThat(document.getTo(), is(notNullValue()));
+        final EdgeEntity edge = edges.insertEdge(value);
+        assertThat(edge).isNotNull();
+        final BaseEdgeDocument document = edges.getEdge(edge.getKey(), BaseEdgeDocument.class);
+        assertThat(document).isNotNull();
+        assertThat(document.getKey()).isEqualTo(key);
+        assertThat(document.getFrom()).isNotNull();
+        assertThat(document.getTo()).isNotNull();
     }
 
 }
