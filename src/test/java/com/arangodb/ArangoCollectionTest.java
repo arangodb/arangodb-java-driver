@@ -326,7 +326,7 @@ class ArangoCollectionTest extends BaseJunit5 {
     void insertDocumentSilentDontTouchInstance(ArangoCollection collection) {
         assumeTrue(isSingleServer());
         final BaseDocument doc = new BaseDocument();
-        final String key = "testkey";
+        final String key = "testkey-" + UUID.randomUUID();
         doc.setKey(key);
         final DocumentCreateEntity<BaseDocument> meta = collection
                 .insertDocument(doc, new DocumentCreateOptions().silent(true));
