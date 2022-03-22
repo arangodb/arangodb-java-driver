@@ -117,7 +117,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         assertThat(result.getId()).isNotNull();
         CollectionPropertiesEntity props = db.collection(name).getProperties();
         assertThat(props.getReplicationFactor()).isEqualTo(2);
-        assertThat(props.getSatellite()).isNotNull();
+        assertThat(props.getSatellite()).isNull();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -134,7 +134,7 @@ class ArangoDatabaseTest extends BaseJunit5 {
         CollectionPropertiesEntity props = db.collection(name).getProperties();
         assertThat(props.getReplicationFactor()).isEqualTo(2);
         assertThat(props.getMinReplicationFactor()).isEqualTo(2);
-        assertThat(props.getSatellite()).isNotNull();
+        assertThat(props.getSatellite()).isNull();
     }
 
     @ParameterizedTest(name = "{index}")
