@@ -19,26 +19,36 @@ import java.util.stream.Stream;
 class BaseJunit5 {
     protected static final DbName TEST_DB = DbName.of("java_driver_test_db");
 
-    protected static final List<ArangoDB> arangos = Arrays.stream(Protocol.values()).map(p ->
-            new ArangoDB.Builder()
+    private static final List<ArangoDB> adbs = Arrays.stream(Protocol.values())
+            .map(p -> new ArangoDB.Builder()
                     .useProtocol(p)
                     .serializer(new ArangoJack())
-                    .build()
-    ).collect(Collectors.toList());
+                    .build())
+            .collect(Collectors.toList());
 
-    protected static Stream<Arguments> dbs() {
-        return arangos.stream().map(adb -> adb.db(TEST_DB)).map(Arguments::of);
+    protected static Stream<ArangoDatabase> dbsStream() {
+        return adbs.stream().map(adb -> adb.db(TEST_DB));
     }
 
     protected static Stream<Arguments> arangos() {
-        return arangos.stream().map(Arguments::of);
+        return adbs.stream().map(Arguments::of);
     }
 
-    static ArangoDatabase initDB() {
-        ArangoDatabase database = arangos.get(0).db(TEST_DB);
+    static ArangoDatabase initDB(DbName name) {
+        ArangoDatabase database = adbs.get(0).db(name);
         if (!database.exists())
             database.create();
         return database;
+    }
+
+    static ArangoDatabase initDB() {
+        return initDB(TEST_DB);
+    }
+
+    static void dropDB(DbName name) {
+        ArangoDatabase database = adbs.get(0).db(name);
+        if (database.exists())
+            database.drop();
     }
 
     static void initGraph(String name, Collection<EdgeDefinition> edgeDefinitions, GraphCreateOptions options) {
@@ -66,17 +76,13 @@ class BaseJunit5 {
 
     @BeforeAll
     static void init() {
-        ArangoDatabase database = arangos.get(0).db(TEST_DB);
-        if (database.exists())
-            database.drop();
+        dropDB(TEST_DB);
     }
 
     @AfterAll
     static void shutdown() {
-        ArangoDatabase database = arangos.get(0).db(TEST_DB);
-        if (database.exists())
-            database.drop();
-        arangos.forEach(ArangoDB::shutdown);
+        dropDB(TEST_DB);
+        adbs.forEach(ArangoDB::shutdown);
     }
 
     static String rnd() {
@@ -88,23 +94,23 @@ class BaseJunit5 {
     }
 
     boolean isAtLeastVersion(final int major, final int minor, final int patch) {
-        return TestUtils.isAtLeastVersion(arangos.get(0).getVersion().getVersion(), major, minor, patch);
+        return TestUtils.isAtLeastVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
     }
 
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
-        return name.equals(arangos.get(0).getEngine().getName());
+        return name.equals(adbs.get(0).getEngine().getName());
     }
 
     boolean isSingleServer() {
-        return arangos.get(0).getRole() == ServerRole.SINGLE;
+        return adbs.get(0).getRole() == ServerRole.SINGLE;
     }
 
     boolean isCluster() {
-        return arangos.get(0).getRole() == ServerRole.COORDINATOR;
+        return adbs.get(0).getRole() == ServerRole.COORDINATOR;
     }
 
     boolean isEnterprise() {
-        return arangos.get(0).getVersion().getLicense() == License.ENTERPRISE;
+        return adbs.get(0).getVersion().getLicense() == License.ENTERPRISE;
     }
 
 

@@ -69,23 +69,14 @@ class ArangoDBTest extends BaseJunit5 {
 
     @BeforeAll
     static void initDBs() {
-        ArangoDB arango = arangos.get(0);
-        for (DbName db : new DbName[]{DB1, DB2}) {
-            ArangoDatabase database = arango.db(db);
-            if (!database.exists())
-                database.create();
-        }
+        initDB(DB1);
+        initDB(DB2);
     }
 
     @AfterAll
     static void shutdown() {
-        ArangoDB arango = arangos.get(0);
-        for (DbName db : new DbName[]{DB1, DB2}) {
-            ArangoDatabase database = arango.db(db);
-            if (database.exists())
-                database.drop();
-        }
-        arangos.forEach(ArangoDB::shutdown);
+        dropDB(DB1);
+        dropDB(DB2);
     }
 
     private boolean isEnterprise(ArangoDB arangoDB) {
