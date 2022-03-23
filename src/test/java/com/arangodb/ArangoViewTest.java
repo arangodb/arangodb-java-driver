@@ -81,10 +81,10 @@ class ArangoViewTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void rename(ArangoDatabase db) {
+        assumeTrue(isSingleServer());
         String oldName = "view-" + rnd();
         String newName = "view-" + rnd();
 
-        assumeTrue(isSingleServer());
         db.createView(oldName, ViewType.ARANGO_SEARCH);
         db.view(oldName).rename(newName);
         assertThat(db.view(oldName).exists()).isFalse();
