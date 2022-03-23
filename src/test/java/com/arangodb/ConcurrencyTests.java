@@ -1,8 +1,7 @@
 package com.arangodb;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -11,22 +10,11 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@RunWith(Parameterized.class)
-public class ConcurrencyTests {
+class ConcurrencyTests {
 
-    final Protocol protocol;
-
-    public ConcurrencyTests(Protocol protocol) {
-        this.protocol = protocol;
-    }
-
-    @Parameterized.Parameters
-    public static Protocol[] protocols() {
-        return Protocol.values();
-    }
-
-    @Test
-    public void concurrentPendingRequests() throws ExecutionException, InterruptedException {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void concurrentPendingRequests(Protocol protocol) throws ExecutionException, InterruptedException {
         ArangoDB adb = new ArangoDB.Builder().useProtocol(protocol).build();
         List<CompletableFuture<Void>> futures = IntStream.range(0, 10)
                 .mapToObj(i -> CompletableFuture.runAsync(
