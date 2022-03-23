@@ -12,6 +12,9 @@
       },
       {
         "pattern": "\\Qlogback-test.xml\\E"
+      },
+      {
+        "pattern": "\\Qexample.truststore\\E"
       }
     ]
   },

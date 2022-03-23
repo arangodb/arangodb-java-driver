@@ -10,3 +10,9 @@ To generate reflection configuration run `helper.NativeImageHelper` and copy the
 ```shell
 mvn -Pnative test
 ```
+
+## test ssl
+
+```shell
+mvn test -Dtest=com.arangodb.ArangoSslTest -DSslTest=true
+```
