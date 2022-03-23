@@ -22,10 +22,10 @@ package com.arangodb;
 
 import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.velocypack.VPackSlice;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,243 +34,273 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoCursorTest extends BaseTest {
+class ArangoCursorTest extends BaseJunit5 {
 
-	@BeforeClass
-	public static void init() {
-		BaseTest.initDB();
-	}
+    private static Stream<Arguments> dbs() {
+        return dbsStream().map(Arguments::of);
+    }
 
-	public ArangoCursorTest(final ArangoDB arangoDB) {
-		super(arangoDB);
-	}
+    @BeforeAll
+    static void init() {
+        BaseTest.initDB();
+    }
 
-	@Test
-	public void first() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final VPackSlice first = cursor.first();
-		assertThat(first, is(not(nullValue())));
-		assertThat(first.isInteger(), is(true));
-		assertThat(first.getAsLong(), is(0L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void first(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final VPackSlice first = cursor.first();
+        assertThat(first).isNotNull();
+        assertThat(first.isInteger()).isTrue();
+        assertThat(first.getAsLong()).isZero();
+    }
 
-	@Test
-	public void firstStream() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final Optional<VPackSlice> first = cursor.stream().findFirst();
-		assertThat(first.isPresent(), is(true));
-		assertThat(first.get().isInteger(), is(true));
-		assertThat(first.get().getAsLong(), is(0L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void firstStream(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final Optional<VPackSlice> first = cursor.stream().findFirst();
+        assertThat(first.isPresent()).isTrue();
+        assertThat(first.get().isInteger()).isTrue();
+        assertThat(first.get().getAsLong()).isZero();
+    }
 
-	@Test
-	public void next() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void next(ArangoDatabase db) {
 
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), VPackSlice.class);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", new AqlQueryOptions().batchSize(5), VPackSlice.class);
 
-		while (cursor.hasNext()) {
-			cursor.next();
-		}
+        while (cursor.hasNext()) {
+            cursor.next();
+        }
 
-	}
+    }
 
-	@Test
-	public void mapFilterCount() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final long count = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).count();
-		assertThat(count, is(50L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterCount(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final long count = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).count();
+        assertThat(count).isEqualTo(50L);
+    }
 
-	@Test
-	public void mapFilterCountStream() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final long count = cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).count();
-		assertThat(count, is(50L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterCountStream(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final long count = cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).count();
+        assertThat(count).isEqualTo(50L);
+    }
 
-	@Test
-	public void mapMapFilterCount() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final long count = cursor.map(VPackSlice::getAsLong).map(t -> t * 10).filter(t -> t < 500).count();
-		assertThat(count, is(50L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapMapFilterCount(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final long count = cursor.map(VPackSlice::getAsLong).map(t -> t * 10).filter(t -> t < 500).count();
+        assertThat(count).isEqualTo(50L);
+    }
 
-	@Test
-	public void mapMapFilterFilterCount() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final long count = cursor.map(VPackSlice::getAsLong).map(t -> t * 10).filter(t -> t < 500).filter(t -> t < 250).count();
-		assertThat(count, is(25L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapMapFilterFilterCount(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final long count = cursor.map(VPackSlice::getAsLong).map(t -> t * 10).filter(t -> t < 500).filter(t -> t < 250).count();
+        assertThat(count).isEqualTo(25L);
+    }
 
-	@Test
-	public void mapFilterNext() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final long count = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).iterator().next();
-		assertThat(count, is(0L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterNext(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final long count = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).iterator().next();
+        assertThat(count).isZero();
+    }
 
-	@Test
-	public void mapFilterFirst() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final long count = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).first();
-		assertThat(count, is(0L));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterFirst(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final long count = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).first();
+        assertThat(count).isZero();
+    }
 
-	@Test
-	public void mapFilterCollectIntoList() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final List<Long> target = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).collectInto(new ArrayList<>());
-		assertThat(target, is(not(nullValue())));
-		assertThat(target.size(), is(50));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterCollectIntoList(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final List<Long> target = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).collectInto(new ArrayList<>());
+        assertThat(target).isNotNull();
+        assertThat(target).hasSize(50);
+    }
 
-	@Test
-	public void mapFilterCollectIntoSet() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final Set<Long> target = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).collectInto(new HashSet<>());
-		assertThat(target, is(not(nullValue())));
-		assertThat(target.size(), is(50));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterCollectIntoSet(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final Set<Long> target = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).collectInto(new HashSet<>());
+        assertThat(target).isNotNull();
+        assertThat(target).hasSize(50);
+    }
 
-	@Test
-	public void mapFilterCollectIntoSetStream() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final Set<Long> target = cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).collect(Collectors.toSet());
-		assertThat(target, is(not(nullValue())));
-		assertThat(target.size(), is(50));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterCollectIntoSetStream(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final Set<Long> target = cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).collect(Collectors.toSet());
+        assertThat(target).isNotNull();
+        assertThat(target).hasSize(50);
+    }
 
-	@Test
-	public void foreach() {
-		final AtomicLong i = new AtomicLong(0L);
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		cursor.foreach(t -> assertThat(t.getAsLong(), is(i.getAndIncrement())));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void foreach(ArangoDatabase db) {
+        final AtomicLong i = new AtomicLong(0L);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        cursor.foreach(t -> assertThat(t.getAsLong()).isEqualTo(i.getAndIncrement()));
+    }
 
-	@Test
-	public void forEach() {
-		final AtomicLong i = new AtomicLong(0L);
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		cursor.forEach(t -> assertThat(t.getAsLong(), is(i.getAndIncrement())));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void forEach(ArangoDatabase db) {
+        final AtomicLong i = new AtomicLong(0L);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        cursor.forEach(t -> assertThat(t.getAsLong()).isEqualTo(i.getAndIncrement()));
+    }
 
-	@Test
-	public void mapForeach() {
-		final AtomicLong i = new AtomicLong(0L);
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		cursor.map(VPackSlice::getAsLong).foreach(t -> assertThat(t, is(i.getAndIncrement())));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapForeach(ArangoDatabase db) {
+        final AtomicLong i = new AtomicLong(0L);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        cursor.map(VPackSlice::getAsLong).foreach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
+    }
 
-	@Test
-	public void mapForeachStream() {
-		final AtomicLong i = new AtomicLong(0L);
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		cursor.stream().map(VPackSlice::getAsLong).forEach(t -> assertThat(t, is(i.getAndIncrement())));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapForeachStream(ArangoDatabase db) {
+        final AtomicLong i = new AtomicLong(0L);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        cursor.stream().map(VPackSlice::getAsLong).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
+    }
 
-	@Test
-	public void mapFilterForeach() {
-		final AtomicLong i = new AtomicLong(0L);
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).foreach(t -> assertThat(t, is(i.getAndIncrement())));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterForeach(ArangoDatabase db) {
+        final AtomicLong i = new AtomicLong(0L);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).foreach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
+    }
 
-	@Test
-	public void mapFilterForEachStream() {
-		final AtomicLong i = new AtomicLong(0L);
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).forEach(t -> assertThat(t, is(i.getAndIncrement())));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterForEachStream(ArangoDatabase db) {
+        final AtomicLong i = new AtomicLong(0L);
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        cursor.stream().map(VPackSlice::getAsLong).filter(t -> t < 50).forEach(t -> assertThat(t).isEqualTo(i.getAndIncrement()));
+    }
 
-	@Test
-	public void anyMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.anyMatch(t -> t.getAsLong() == 50L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void anyMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.anyMatch(t -> t.getAsLong() == 50L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void anyMatchStream() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.stream().anyMatch(t -> t.getAsLong() == 50L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void anyMatchStream(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.stream().anyMatch(t -> t.getAsLong() == 50L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void mapAnyMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.map(VPackSlice::getAsLong).anyMatch(t -> t == 50L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapAnyMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.map(VPackSlice::getAsLong).anyMatch(t -> t == 50L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void mapFilterAnyMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).anyMatch(t -> t == 25L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterAnyMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).anyMatch(t -> t == 25L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void noneMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.noneMatch(t -> t.getAsLong() == 100L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void noneMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.noneMatch(t -> t.getAsLong() == 100L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void noneMatchStream() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.stream().noneMatch(t -> t.getAsLong() == 100L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void noneMatchStream(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.stream().noneMatch(t -> t.getAsLong() == 100L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void mapNoneMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.map(VPackSlice::getAsLong).noneMatch(t -> t == 100L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapNoneMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.map(VPackSlice::getAsLong).noneMatch(t -> t == 100L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void mapFilterNoneMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).noneMatch(t -> t == 50L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterNoneMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).noneMatch(t -> t == 50L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void allMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.allMatch(t -> t.getAsLong() < 100L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void allMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.allMatch(t -> t.getAsLong() < 100L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void allMatchStream() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.stream().allMatch(t -> t.getAsLong() < 100L);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void allMatchStream(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.stream().allMatch(t -> t.getAsLong() < 100L);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void mapAllMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.map(VPackSlice::getAsLong).allMatch(t -> t < 100);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapAllMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.map(VPackSlice::getAsLong).allMatch(t -> t < 100);
+        assertThat(match).isTrue();
+    }
 
-	@Test
-	public void mapFilterAllMatch() {
-		final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
-		final boolean match = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).allMatch(t -> t < 50);
-		assertThat(match, is(true));
-	}
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void mapFilterAllMatch(ArangoDatabase db) {
+        final ArangoCursor<VPackSlice> cursor = db.query("FOR i IN 0..99 RETURN i", VPackSlice.class);
+        final boolean match = cursor.map(VPackSlice::getAsLong).filter(t -> t < 50).allMatch(t -> t < 50);
+        assertThat(match).isTrue();
+    }
 }
