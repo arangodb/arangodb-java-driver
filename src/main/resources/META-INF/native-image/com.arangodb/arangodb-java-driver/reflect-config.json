@@ -550,6 +550,16 @@
     ]
   },
   {
+    "name": "com.arangodb.entity.arangosearch.ConsolidationPolicy",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "com.arangodb.entity.VertexUpdateEntity",
     "allDeclaredFields": true,
     "methods": [
@@ -930,7 +940,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.FulltextIndexOptions",
+    "name": "com.arangodb.model.AqlQueryOptions",
     "allDeclaredFields": true,
     "methods": [
       {
@@ -940,7 +950,7 @@
     ]
   },
   {
-    "name": "com.arangodb.model.AqlQueryOptions",
+    "name": "com.arangodb.model.FulltextIndexOptions",
     "allDeclaredFields": true,
     "methods": [
       {
