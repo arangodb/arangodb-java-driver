@@ -38,10 +38,10 @@ import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,99 +51,106 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
+ * @author Michele Rastelli
  */
-@RunWith(Parameterized.class)
-public class ArangoSearchTest extends BaseTest {
+class ArangoSearchTest extends BaseJunit5 {
 
     private static final String COLL_1 = "ArangoSearchTest_view_replace_prop";
     private static final String COLL_2 = "ArangoSearchTest_view_update_prop";
 
-    @BeforeClass
-    public static void init() {
-        BaseTest.initCollections(COLL_1, COLL_2);
+    private static Stream<Arguments> dbs() {
+        return dbsStream().map(Arguments::of);
     }
 
-    public ArangoSearchTest(final ArangoDB arangoDB) {
-        super(arangoDB);
+    @BeforeAll
+    static void init() {
+        initCollections(COLL_1, COLL_2);
     }
 
-    @Test
-    public void exists() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void exists(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
-        assertThat(db.arangoSearch(viewName).exists(), is(true));
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @Test
-    public void getInfo() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getInfo(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         final ViewEntity info = db.arangoSearch(viewName).getInfo();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(viewName));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
-    @Test
-    public void drop() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void drop(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         db.createArangoSearch(viewName, new ArangoSearchCreateOptions());
         final ArangoView view = db.arangoSearch(viewName);
         view.drop();
-        assertThat(view.exists(), is(false));
+        assertThat(view.exists()).isFalse();
     }
 
-    @Test
-    public void rename() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void rename(ArangoDatabase db) {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final String name = viewName + "_new";
         db.createArangoSearch(name, new ArangoSearchCreateOptions());
         db.arangoSearch(name).rename(viewName);
-        assertThat(db.arangoSearch(name).exists(), is(false));
-        assertThat(db.arangoSearch(viewName).exists(), is(true));
+        assertThat(db.arangoSearch(name).exists()).isFalse();
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @Test
-    public void create() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void create(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ViewEntity info = db.arangoSearch(viewName).create();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(viewName));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(viewName).exists(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @Test
-    public void createWithOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void createWithOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         final ViewEntity info = db.arangoSearch(viewName).create(options);
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(viewName));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(viewName).exists(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
     }
 
-    @Test
-    public void createWithPrimarySort() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void createWithPrimarySort(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
         String viewName = "view-" + rnd();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -158,66 +165,69 @@ public class ArangoSearchTest extends BaseTest {
 
         final ArangoSearch view = db.arangoSearch(viewName);
         final ViewEntity info = view.create(options);
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(viewName));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(viewName).exists(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
 
         if (isAtLeastVersion(3, 7)) {
             final ArangoSearchPropertiesEntity properties = view.getProperties();
-            assertThat(properties.getPrimarySortCompression(), is(ArangoSearchCompression.none));
+            assertThat(properties.getPrimarySortCompression()).isEqualTo(ArangoSearchCompression.none);
             Collection<StoredValue> retrievedStoredValues = properties.getStoredValues();
-            assertThat(retrievedStoredValues, is(notNullValue()));
-            assertThat(retrievedStoredValues.size(), is(1));
+            assertThat(retrievedStoredValues).isNotNull();
+            assertThat(retrievedStoredValues).hasSize(1);
             StoredValue retrievedStoredValue = retrievedStoredValues.iterator().next();
-            assertThat(retrievedStoredValue, is(notNullValue()));
-            assertThat(retrievedStoredValue.getFields(), is(storedValue.getFields()));
-            assertThat(retrievedStoredValue.getCompression(), is(storedValue.getCompression()));
+            assertThat(retrievedStoredValue).isNotNull();
+            assertThat(retrievedStoredValue.getFields()).isEqualTo(storedValue.getFields());
+            assertThat(retrievedStoredValue.getCompression()).isEqualTo(storedValue.getCompression());
         }
     }
 
-    @Test
-    public void createWithCommitIntervalMsec() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void createWithCommitIntervalMsec(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
         String viewName = "view-" + rnd();
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         options.commitIntervalMsec(666666L);
 
         final ViewEntity info = db.arangoSearch(viewName).create(options);
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(viewName));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(viewName).exists(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(viewName);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(viewName).exists()).isTrue();
 
         // check commit interval msec property
         final ArangoSearch view = db.arangoSearch(viewName);
         final ArangoSearchPropertiesEntity properties = view.getProperties();
-        assertThat(properties.getCommitIntervalMsec(), is(666666L));
+        assertThat(properties.getCommitIntervalMsec()).isEqualTo(666666L);
     }
 
-    @Test
-    public void getProperties() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void getProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearch view = db.arangoSearch(viewName);
         view.create(new ArangoSearchCreateOptions());
         final ArangoSearchPropertiesEntity properties = view.getProperties();
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getId(), is(not(nullValue())));
-        assertThat(properties.getName(), is(viewName));
-        assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
-        assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(properties.getConsolidationIntervalMsec()).isNotNull();
+        assertThat(properties.getCleanupIntervalStep()).isNotNull();
         final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
-        assertThat(consolidate, is(is(not(nullValue()))));
+        assertThat(consolidate).isNotNull();
         final Collection<CollectionLink> links = properties.getLinks();
-        assertThat(links.isEmpty(), is(true));
+        assertThat(links).isEmpty();
     }
 
-    @Test
-    public void updateProperties() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void updateProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearch view = db.arangoSearch(viewName);
@@ -230,26 +240,27 @@ public class ArangoSearchTest extends BaseTest {
                 .fields(FieldLink.on("value").analyzers("identity").trackListPositions(true).includeAllFields(true)
                         .storeValues(StoreValuesType.ID)));
         final ArangoSearchPropertiesEntity properties = view.updateProperties(options);
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getCleanupIntervalStep(), is(15L));
-        assertThat(properties.getConsolidationIntervalMsec(), is(65000L));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getCleanupIntervalStep()).isEqualTo(15L);
+        assertThat(properties.getConsolidationIntervalMsec()).isEqualTo(65000L);
         final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
-        assertThat(consolidate, is(not(nullValue())));
-        assertThat(consolidate.getType(), is(ConsolidationType.BYTES_ACCUM));
-        assertThat(consolidate.getThreshold(), is(1.));
-        assertThat(properties.getLinks().size(), is(1));
+        assertThat(consolidate).isNotNull();
+        assertThat(consolidate.getType()).isEqualTo(ConsolidationType.BYTES_ACCUM);
+        assertThat(consolidate.getThreshold()).isEqualTo(1.);
+        assertThat(properties.getLinks()).hasSize(1);
         final CollectionLink link = properties.getLinks().iterator().next();
-        assertThat(link.getName(), is(COLL_2));
-        assertThat(link.getFields().size(), is(1));
+        assertThat(link.getName()).isEqualTo(COLL_2);
+        assertThat(link.getFields()).hasSize(1);
         final FieldLink next = link.getFields().iterator().next();
-        assertThat(next.getName(), is("value"));
-        assertThat(next.getIncludeAllFields(), is(true));
-        assertThat(next.getTrackListPositions(), is(true));
-        assertThat(next.getStoreValues(), is(StoreValuesType.ID));
+        assertThat(next.getName()).isEqualTo("value");
+        assertThat(next.getIncludeAllFields()).isTrue();
+        assertThat(next.getTrackListPositions()).isTrue();
+        assertThat(next.getStoreValues()).isEqualTo(StoreValuesType.ID);
     }
 
-    @Test
-    public void replaceProperties() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void replaceProperties(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         final ArangoSearch view = db.arangoSearch(viewName);
@@ -258,31 +269,31 @@ public class ArangoSearchTest extends BaseTest {
         options.link(CollectionLink.on(COLL_1)
                 .fields(FieldLink.on("value").analyzers("identity")));
         final ArangoSearchPropertiesEntity properties = view.replaceProperties(options);
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getLinks().size(), is(1));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getLinks()).hasSize(1);
         final CollectionLink link = properties.getLinks().iterator().next();
-        assertThat(link.getName(), is(COLL_1));
-        assertThat(link.getFields().size(), is(1));
-        assertThat(link.getFields().iterator().next().getName(), is("value"));
+        assertThat(link.getName()).isEqualTo(COLL_1);
+        assertThat(link.getFields()).hasSize(1);
+        assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
     }
 
-    private void createGetAndDeleteAnalyzer(AnalyzerEntity options) {
+    private void createGetAndDeleteAnalyzer(ArangoDatabase db, AnalyzerEntity options) {
 
         String fullyQualifiedName = db.dbName().get() + "::" + options.getName();
 
         // createAnalyzer
         AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
 
-        assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
-        assertThat(createdAnalyzer.getType(), is(options.getType()));
-        assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(createdAnalyzer.getName()).isEqualTo(fullyQualifiedName);
+        assertThat(createdAnalyzer.getType()).isEqualTo(options.getType());
+        assertThat(createdAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
         compareProperties(createdAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzer
         AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
-        assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
-        assertThat(gotAnalyzer.getType(), is(options.getType()));
-        assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(gotAnalyzer.getName()).isEqualTo(fullyQualifiedName);
+        assertThat(gotAnalyzer.getType()).isEqualTo(options.getType());
+        assertThat(gotAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
         compareProperties(gotAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzers
@@ -290,9 +301,9 @@ public class ArangoSearchTest extends BaseTest {
         AnalyzerEntity foundAnalyzer = db.getAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
 
-        assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
-        assertThat(foundAnalyzer.getType(), is(options.getType()));
-        assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(foundAnalyzer.getName()).isEqualTo(fullyQualifiedName);
+        assertThat(foundAnalyzer.getType()).isEqualTo(options.getType());
+        assertThat(foundAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
         compareProperties(foundAnalyzer.getProperties(), options.getProperties());
 
         AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
@@ -301,33 +312,28 @@ public class ArangoSearchTest extends BaseTest {
         // deleteAnalyzer
         db.deleteAnalyzer(options.getName(), deleteOptions);
 
-        try {
-            db.getAnalyzer(options.getName());
-            fail("deleted analyzer should not be found!");
-        } catch (ArangoDBException e) {
-            // ok
-        }
-
+        Throwable thrown = catchThrowable(() -> db.getAnalyzer(options.getName()));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
     }
 
-    private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) {
+    private void createGetAndDeleteTypedAnalyzer(ArangoDatabase db, SearchAnalyzer analyzer) {
 
         String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
         analyzer.setName(fullyQualifiedName);
 
         // createAnalyzer
         SearchAnalyzer createdAnalyzer = db.createSearchAnalyzer(analyzer);
-        assertThat(createdAnalyzer, is(analyzer));
+        assertThat(createdAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzer
         SearchAnalyzer gotAnalyzer = db.getSearchAnalyzer(analyzer.getName());
-        assertThat(gotAnalyzer, is(analyzer));
+        assertThat(gotAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzers
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
-        assertThat(foundAnalyzer, is(analyzer));
+        assertThat(foundAnalyzer).isEqualTo(analyzer);
 
         // deleteAnalyzer
         AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
@@ -335,33 +341,32 @@ public class ArangoSearchTest extends BaseTest {
 
         db.deleteSearchAnalyzer(analyzer.getName(), deleteOptions);
 
-        try {
-            db.getAnalyzer(analyzer.getName());
-            fail("deleted analyzer should not be found!");
-        } catch (ArangoDBException e) {
-            assertThat(e.getResponseCode(), is(404));
-            assertThat(e.getErrorNum(), is(1202));
-        }
-
+        Throwable thrown = catchThrowable(() -> db.getAnalyzer(analyzer.getName()));
+        assertThat(thrown).isInstanceOf(ArangoDBException.class);
+        ArangoDBException e = (ArangoDBException) thrown;
+        assertThat(e.getResponseCode()).isEqualTo(404);
+        assertThat(e.getErrorNum()).isEqualTo(1202);
     }
 
+    @SuppressWarnings("unchecked")
     private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
         expectedProperties.forEach((key, expectedValue) -> {
             Object actualValue = actualProperties.get(key);
             if (expectedValue instanceof Map) {
-                assertThat(actualValue, notNullValue());
-                assertThat(actualValue, instanceOf(Map.class));
-                compareProperties((Map) actualValue, (Map) expectedValue);
+                assertThat(actualValue).isNotNull();
+                assertThat(actualValue).isInstanceOf(Map.class);
+                compareProperties((Map<String, Object>) actualValue, (Map<String, Object>) expectedValue);
             } else if (expectedValue instanceof Number) {
-                assertThat(Double.valueOf(actualValue.toString()), is(Double.valueOf(expectedValue.toString())));
+                assertThat(Double.valueOf(actualValue.toString())).isEqualTo(Double.valueOf(expectedValue.toString()));
             } else {
-                assertThat(actualValue, is(expectedValue));
+                assertThat(actualValue).isEqualTo(expectedValue);
             }
         });
     }
 
-    @Test
-    public void identityAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void identityAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + rnd();
@@ -377,14 +382,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.identity);
         options.setProperties(Collections.emptyMap());
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void identityAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void identityAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -395,11 +401,12 @@ public class ArangoSearchTest extends BaseTest {
         analyzer.setFeatures(features);
         analyzer.setName(name);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @Test
-    public void delimiterAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void delimiterAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + rnd();
@@ -415,14 +422,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.delimiter);
         options.setProperties(Collections.singletonMap("delimiter", "-"));
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void delimiterAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void delimiterAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -437,11 +445,12 @@ public class ArangoSearchTest extends BaseTest {
         analyzer.setName(name);
         analyzer.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @Test
-    public void stemAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void stemAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + rnd();
@@ -457,14 +466,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.stem);
         options.setProperties(Collections.singletonMap("locale", "ru"));
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void stemAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void stemAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -479,11 +489,12 @@ public class ArangoSearchTest extends BaseTest {
         options.setName(name);
         options.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(options);
+        createGetAndDeleteTypedAnalyzer(db, options);
     }
 
-    @Test
-    public void normAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void normAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + rnd();
@@ -504,14 +515,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.norm);
         options.setProperties(properties);
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void normAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void normAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -528,11 +540,12 @@ public class ArangoSearchTest extends BaseTest {
         options.setName(name);
         options.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(options);
+        createGetAndDeleteTypedAnalyzer(db, options);
     }
 
-    @Test
-    public void ngramAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void ngramAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + rnd();
@@ -553,14 +566,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.ngram);
         options.setProperties(properties);
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void ngramAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void ngramAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -578,14 +592,15 @@ public class ArangoSearchTest extends BaseTest {
         analyzer.setType(AnalyzerType.ngram);
         analyzer.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @Test
-    public void enhancedNgramAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void enhancedNgramAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -606,14 +621,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.ngram);
         options.setProperties(properties);
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void enhancedNgramAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void enhancedNgramAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -633,11 +649,12 @@ public class ArangoSearchTest extends BaseTest {
         analyzer.setName(name);
         analyzer.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @Test
-    public void textAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void textAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
         String name = "test-" + rnd();
@@ -660,14 +677,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.text);
         options.setProperties(properties);
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void textAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void textAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -686,14 +704,15 @@ public class ArangoSearchTest extends BaseTest {
         analyzer.setType(AnalyzerType.text);
         analyzer.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @Test
-    public void enhancedTextAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void enhancedTextAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -719,14 +738,15 @@ public class ArangoSearchTest extends BaseTest {
         options.setType(AnalyzerType.text);
         options.setProperties(properties);
 
-        createGetAndDeleteAnalyzer(options);
+        createGetAndDeleteAnalyzer(db, options);
     }
 
-    @Test
-    public void enhancedTextAnalyzerTyped() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void enhancedTextAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 6));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -750,11 +770,12 @@ public class ArangoSearchTest extends BaseTest {
         analyzer.setName(name);
         analyzer.setProperties(properties);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
     }
 
-    @Test
-    public void arangoSearchOptions() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void arangoSearchOptions(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 4));
         String viewName = "view-" + rnd();
         ArangoSearchCreateOptions options = new ArangoSearchCreateOptions()
@@ -775,21 +796,22 @@ public class ArangoSearchTest extends BaseTest {
         view.create(options);
 
         final ArangoSearchPropertiesEntity properties = view.getProperties();
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getId(), is(not(nullValue())));
-        assertThat(properties.getName(), is(viewName));
-        assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(viewName);
+        assertThat(properties.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
 
         CollectionLink link = properties.getLinks().iterator().next();
-        assertThat(link.getAnalyzers(), contains("identity"));
-        assertThat(link.getName(), is(COLL_1));
-        assertThat(link.getIncludeAllFields(), is(true));
-        assertThat(link.getStoreValues(), is(StoreValuesType.ID));
-        assertThat(link.getTrackListPositions(), is(false));
+        assertThat(link.getAnalyzers()).contains("identity");
+        assertThat(link.getName()).isEqualTo(COLL_1);
+        assertThat(link.getIncludeAllFields()).isTrue();
+        assertThat(link.getStoreValues()).isEqualTo(StoreValuesType.ID);
+        assertThat(link.getTrackListPositions()).isFalse();
     }
 
-    @Test
-    public void pipelineAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void pipelineAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
 
         // comma delimiter
@@ -825,15 +847,16 @@ public class ArangoSearchTest extends BaseTest {
                 .addAnalyzer(stemAnalyzer);
 
         PipelineAnalyzer pipelineAnalyzer = new PipelineAnalyzer();
-        pipelineAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        pipelineAnalyzer.setName("test-" + UUID.randomUUID());
         pipelineAnalyzer.setProperties(properties);
         pipelineAnalyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(pipelineAnalyzer);
+        createGetAndDeleteTypedAnalyzer(db, pipelineAnalyzer);
     }
 
-    @Test
-    public void stopwordsAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void stopwordsAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
 
         Set<AnalyzerFeature> features = new HashSet<>();
@@ -845,25 +868,26 @@ public class ArangoSearchTest extends BaseTest {
                 .addStopwordAsHex("616e64")
                 .addStopwordAsString("the");
 
-        assertThat(properties.getStopwordsAsStringList(), hasItem("and"));
-        assertThat(properties.getStopwordsAsHexList(), hasItem("746865"));
+        assertThat(properties.getStopwordsAsStringList()).contains("and");
+        assertThat(properties.getStopwordsAsHexList()).contains("746865");
 
         StopwordsAnalyzer analyzer = new StopwordsAnalyzer();
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
         analyzer.setName(name);
         analyzer.setProperties(properties);
         analyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(analyzer);
+        createGetAndDeleteTypedAnalyzer(db, analyzer);
         db.createSearchAnalyzer(analyzer);
         String res = db.query("RETURN FLATTEN(TOKENS(SPLIT('the fox and the dog and a theater', ' '), @aName))",
                 Collections.singletonMap("aName", name), String.class).next();
-        assertThat(res, is("[\"fox\",\"dog\",\"a\",\"theater\"]"));
+        assertThat(res).isEqualTo("[\"fox\",\"dog\",\"a\",\"theater\"]");
         db.deleteSearchAnalyzer(name);
     }
 
-    @Test
-    public void aqlAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void aqlAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
 
         AQLAnalyzerProperties properties = new AQLAnalyzerProperties();
@@ -880,15 +904,16 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         AQLAnalyzer aqlAnalyzer = new AQLAnalyzer();
-        aqlAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        aqlAnalyzer.setName("test-" + UUID.randomUUID());
         aqlAnalyzer.setProperties(properties);
         aqlAnalyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(aqlAnalyzer);
+        createGetAndDeleteTypedAnalyzer(db, aqlAnalyzer);
     }
 
-    @Test
-    public void geoJsonAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void geoJsonAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
 
         GeoAnalyzerOptions options = new GeoAnalyzerOptions();
@@ -906,16 +931,17 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         GeoJSONAnalyzer geoJSONAnalyzer = new GeoJSONAnalyzer();
-        geoJSONAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        geoJSONAnalyzer.setName("test-" + UUID.randomUUID());
         geoJSONAnalyzer.setProperties(properties);
         geoJSONAnalyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(geoJSONAnalyzer);
+        createGetAndDeleteTypedAnalyzer(db, geoJSONAnalyzer);
     }
 
 
-    @Test
-    public void geoPointAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void geoPointAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 8));
 
         GeoAnalyzerOptions options = new GeoAnalyzerOptions();
@@ -934,16 +960,17 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         GeoPointAnalyzer geoPointAnalyzer = new GeoPointAnalyzer();
-        geoPointAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        geoPointAnalyzer.setName("test-" + UUID.randomUUID());
         geoPointAnalyzer.setProperties(properties);
         geoPointAnalyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(geoPointAnalyzer);
+        createGetAndDeleteTypedAnalyzer(db, geoPointAnalyzer);
     }
 
 
-    @Test
-    public void segmentationAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void segmentationAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 9));
 
         SegmentationAnalyzerProperties properties = new SegmentationAnalyzerProperties();
@@ -956,15 +983,16 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         SegmentationAnalyzer segmentationAnalyzer = new SegmentationAnalyzer();
-        segmentationAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        segmentationAnalyzer.setName("test-" + UUID.randomUUID());
         segmentationAnalyzer.setProperties(properties);
         segmentationAnalyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(segmentationAnalyzer);
+        createGetAndDeleteTypedAnalyzer(db, segmentationAnalyzer);
     }
 
-    @Test
-    public void collationAnalyzer() {
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("dbs")
+    void collationAnalyzer(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 9));
 
         CollationAnalyzerProperties properties = new CollationAnalyzerProperties();
@@ -976,11 +1004,11 @@ public class ArangoSearchTest extends BaseTest {
         features.add(AnalyzerFeature.position);
 
         CollationAnalyzer collationAnalyzer = new CollationAnalyzer();
-        collationAnalyzer.setName("test-" + UUID.randomUUID().toString());
+        collationAnalyzer.setName("test-" + UUID.randomUUID());
         collationAnalyzer.setProperties(properties);
         collationAnalyzer.setFeatures(features);
 
-        createGetAndDeleteTypedAnalyzer(collationAnalyzer);
+        createGetAndDeleteTypedAnalyzer(db, collationAnalyzer);
     }
 
 
