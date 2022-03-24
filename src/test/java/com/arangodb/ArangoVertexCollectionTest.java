@@ -55,8 +55,8 @@ class ArangoVertexCollectionTest extends BaseJunit5 {
 
     @BeforeAll
     static void init() {
-        BaseTest.initCollections(COLLECTION_NAME);
-        BaseTest.initGraph(
+        initCollections(COLLECTION_NAME);
+        initGraph(
                 GRAPH_NAME,
                 null,
                 new GraphCreateOptions().orphanCollections(COLLECTION_NAME)

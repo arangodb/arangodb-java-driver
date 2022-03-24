@@ -57,9 +57,9 @@ class ArangoEdgeCollectionTest extends BaseJunit5 {
 
     @BeforeAll
     static void init() {
-        BaseTest.initCollections(VERTEX_COLLECTION_NAME);
-        BaseTest.initEdgeCollections(EDGE_COLLECTION_NAME);
-        BaseTest.initGraph(
+        initCollections(VERTEX_COLLECTION_NAME);
+        initEdgeCollections(EDGE_COLLECTION_NAME);
+        initGraph(
                 GRAPH_NAME,
                 Collections.singletonList(new EdgeDefinition()
                         .collection(EDGE_COLLECTION_NAME)

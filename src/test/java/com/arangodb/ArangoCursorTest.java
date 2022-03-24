@@ -40,7 +40,7 @@ class ArangoCursorTest extends BaseJunit5 {
 
     @BeforeAll
     static void init() {
-        BaseTest.initDB();
+        initDB();
     }
 
     @ParameterizedTest(name = "{index}")
