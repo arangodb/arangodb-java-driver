@@ -24,10 +24,7 @@ import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -38,10 +35,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * @author Michele Rastelli
  */
 class ArangoViewTest extends BaseJunit5 {
-
-    private static Stream<Arguments> dbs() {
-        return dbsStream().map(Arguments::of);
-    }
 
     @BeforeAll
     static void init() {

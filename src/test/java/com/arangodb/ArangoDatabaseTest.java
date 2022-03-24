@@ -33,7 +33,6 @@ import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocypack.exception.VPackException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
@@ -43,7 +42,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -60,10 +58,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
     private static final String CNAME1 = "ArangoDatabaseTest_collection_1";
     private static final String CNAME2 = "ArangoDatabaseTest_collection_2";
     private static final String ENAMES = "ArangoDatabaseTest_edge_collection";
-
-    private static Stream<Arguments> dbs() {
-        return dbsStream().map(Arguments::of);
-    }
 
     @BeforeAll
     static void init() {

@@ -34,6 +34,10 @@ class BaseJunit5 {
         return adbs.stream().map(Arguments::of);
     }
 
+    protected static Stream<Arguments> dbs() {
+        return dbsStream().map(Arguments::of);
+    }
+
     static ArangoDatabase initDB(DbName name) {
         ArangoDatabase database = adbs.get(0).db(name);
         if (!database.exists())

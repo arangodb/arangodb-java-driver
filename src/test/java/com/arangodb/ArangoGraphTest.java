@@ -66,10 +66,6 @@ class ArangoGraphTest extends BaseJunit5 {
                 .map(Arguments::of);
     }
 
-    private static Stream<Arguments> dbs() {
-        return dbsStream().map(Arguments::of);
-    }
-
     @BeforeAll
     static void init() {
         final Collection<EdgeDefinition> edgeDefinitions = Arrays.asList(ed1, ed2);

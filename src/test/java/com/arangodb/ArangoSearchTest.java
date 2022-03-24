@@ -22,36 +22,16 @@ package com.arangodb;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.AnalyzerEntity;
-import com.arangodb.entity.arangosearch.AnalyzerFeature;
-import com.arangodb.entity.arangosearch.AnalyzerType;
-import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationPolicy;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.entity.arangosearch.StoreValuesType;
-import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.arangosearch.*;
 import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -65,10 +45,6 @@ class ArangoSearchTest extends BaseJunit5 {
 
     private static final String COLL_1 = "ArangoSearchTest_view_replace_prop";
     private static final String COLL_2 = "ArangoSearchTest_view_update_prop";
-
-    private static Stream<Arguments> dbs() {
-        return dbsStream().map(Arguments::of);
-    }
 
     @BeforeAll
     static void init() {

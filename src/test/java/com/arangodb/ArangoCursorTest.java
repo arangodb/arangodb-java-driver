@@ -24,17 +24,11 @@ import com.arangodb.model.AqlQueryOptions;
 import com.arangodb.velocypack.VPackSlice;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,10 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Michele Rastelli
  */
 class ArangoCursorTest extends BaseJunit5 {
-
-    private static Stream<Arguments> dbs() {
-        return dbsStream().map(Arguments::of);
-    }
 
     @BeforeAll
     static void init() {
