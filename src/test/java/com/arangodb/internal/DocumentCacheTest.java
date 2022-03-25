@@ -22,29 +22,27 @@ package com.arangodb.internal;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentField;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
  * @author Mark Vollmary
  */
-public class DocumentCacheTest {
+class DocumentCacheTest {
 
     @Test
-    public void setValues() {
+    void setValues() {
         final DocumentCache cache = new DocumentCache();
         final BaseDocument doc = new BaseDocument();
 
-        assertThat(doc.getId(), is(nullValue()));
-        assertThat(doc.getKey(), is(nullValue()));
-        assertThat(doc.getRevision(), is(nullValue()));
+        assertThat(doc.getId()).isNull();
+        assertThat(doc.getKey()).isNull();
+        assertThat(doc.getRevision()).isNull();
 
         final Map<DocumentField.Type, String> values = new HashMap<>();
         values.put(DocumentField.Type.ID, "testId");
@@ -52,13 +50,13 @@ public class DocumentCacheTest {
         values.put(DocumentField.Type.REV, "testRev");
         cache.setValues(doc, values);
 
-        assertThat(doc.getId(), is("testId"));
-        assertThat(doc.getKey(), is("testKey"));
-        assertThat(doc.getRevision(), is("testRev"));
+        assertThat(doc.getId()).isEqualTo("testId");
+        assertThat(doc.getKey()).isEqualTo("testKey");
+        assertThat(doc.getRevision()).isEqualTo("testRev");
     }
 
     @Test
-    public void setValuesMap() {
+    void setValuesMap() {
         final DocumentCache cache = new DocumentCache();
         final Map<String, String> map = new HashMap<>();
 
@@ -68,6 +66,6 @@ public class DocumentCacheTest {
         values.put(DocumentField.Type.REV, "testRev");
         cache.setValues(map, values);
 
-        assertThat(map.isEmpty(), is(true));
+        assertThat(map.isEmpty()).isTrue();
     }
 }

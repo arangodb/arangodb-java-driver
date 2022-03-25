@@ -27,55 +27,53 @@ import com.arangodb.entity.arangosearch.StoredValue;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.velocypack.VPack;
 import com.arangodb.velocypack.VPackSlice;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class VPackSerializersTest {
+class VPackSerializersTest {
 
     private VPack vpack;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         vpack = new VPack.Builder()
                 .registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES)
                 .build();
     }
 
     @Test
-    public void serializeArangoSearchProperties() {
+    void serializeArangoSearchProperties() {
         final ArangoSearchCreateOptions opts = new ArangoSearchCreateOptions()
                 .storedValues(new StoredValue(Collections.singletonList("dummy"), ArangoSearchCompression.lz4));
 
         final VPackSlice slice = vpack.serialize(opts);
 
-        assertThat(slice.isObject(), is(true));
-        assertThat(slice.get("type").isString(), is(true));
-        assertThat(slice.get("type").getAsString(), is(ViewType.ARANGO_SEARCH.name()));
-        assertThat(slice.get("storedValues"), notNullValue());
-        assertThat(slice.get("storedValues").isArray(), is(true));
-        assertThat(slice.get("storedValues").size(), is(1));
-        assertThat(slice.get("storedValues").get(0).isObject(), is(true));
-        assertThat(slice.get("storedValues").get(0).get("fields").isArray(), is(true));
-        assertThat(slice.get("storedValues").get(0).get("fields").size(), is(1));
-        assertThat(slice.get("storedValues").get(0).get("fields").get(0).isString(), is(true));
-        assertThat(slice.get("storedValues").get(0).get("fields").get(0).getAsString(), is("dummy"));
-        assertThat(slice.get("storedValues").get(0).get("compression").isString(), is(true));
-        assertThat(slice.get("storedValues").get(0).get("compression").getAsString(), is(ArangoSearchCompression.lz4.name()));
+        assertThat(slice.isObject()).isTrue();
+        assertThat(slice.get("type").isString()).isTrue();
+        assertThat(slice.get("type").getAsString()).isEqualTo(ViewType.ARANGO_SEARCH.name());
+        assertThat(slice.get("storedValues")).isNotNull();
+        assertThat(slice.get("storedValues").isArray()).isTrue();
+        assertThat(slice.get("storedValues").size()).isEqualTo(1);
+        assertThat(slice.get("storedValues").get(0).isObject()).isTrue();
+        assertThat(slice.get("storedValues").get(0).get("fields").isArray()).isTrue();
+        assertThat(slice.get("storedValues").get(0).get("fields").size()).isEqualTo(1);
+        assertThat(slice.get("storedValues").get(0).get("fields").get(0).isString()).isTrue();
+        assertThat(slice.get("storedValues").get(0).get("fields").get(0).getAsString()).isEqualTo("dummy");
+        assertThat(slice.get("storedValues").get(0).get("compression").isString()).isTrue();
+        assertThat(slice.get("storedValues").get(0).get("compression").getAsString()).isEqualTo(ArangoSearchCompression.lz4.name());
     }
 
     @Test
-    public void serializeArangoSearchPropertiesWithDefaultCompression() {
+    void serializeArangoSearchPropertiesWithDefaultCompression() {
         final ArangoSearchCreateOptions opts = new ArangoSearchCreateOptions()
                 .storedValues(new StoredValue(Collections.singletonList("dummy")));
 
         final VPackSlice slice = vpack.serialize(opts);
 
-        assertThat(slice.get("storedValues").get(0).get("compression").isNone(), is(true));
+        assertThat(slice.get("storedValues").get(0).get("compression").isNone()).isTrue();
     }
 }
