@@ -20,25 +20,24 @@
 
 package com.arangodb.util;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
  * @author Mark Vollmary
  */
-public class MapBuilderTest {
+class MapBuilderTest {
 
-	@Test
-	public void build() {
-		final Map<String, Object> map = new MapBuilder().put("foo", "bar").get();
-		assertThat(map.size(), is(1));
-		assertThat(map.get("foo"), is(notNullValue()));
-		assertThat(map.get("foo").toString(), is("bar"));
-	}
+    @Test
+    void build() {
+        final Map<String, Object> map = new MapBuilder().put("foo", "bar").get();
+        assertThat(map).hasSize(1);
+        assertThat(map.get("foo")).isNotNull();
+        assertThat(map).containsEntry("foo", "bar");
+    }
 }
