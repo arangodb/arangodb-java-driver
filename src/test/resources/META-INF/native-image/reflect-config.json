@@ -176,5 +176,254 @@
     "name": "com.arangodb.mapping.annotations.SerializedNameParameterEntity",
     "allDeclaredFields": true,
     "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$BinaryEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$CustomAnEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestCollection",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityA",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityArray",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityArrayInArray",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityArrayInArrayInArray",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityB",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityBaseAttributes",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityBigNumber",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityBoolean",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityByte",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityC",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityCollection",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityCollectionExtendedWithNulls",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityCollectionWithObjects",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityD",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityDImpl",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityDate",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityDouble",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityEmpty",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityEmptyMap",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityEnum",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityFloat",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityInteger",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityLong",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityMap",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityMapStringableKey",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityMapWithObjectKey",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityObject",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityObjectInArray",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityShort",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityString",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityString[]"
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityTyped",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEntityUUID",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEnum",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.arangodb.mapping.VPackSerializeDeserializeTest$TestEnum[]"
+  },
+  {
+    "name": "java.util.HashSet",
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
   }
 ]
