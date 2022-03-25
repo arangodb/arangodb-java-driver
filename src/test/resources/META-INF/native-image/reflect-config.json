@@ -125,5 +125,56 @@
         "parameterTypes": []
       }
     ]
+  },
+  {
+    "name": "com.arangodb.example.graph.AQLActorsAndMoviesExampleTest$Actor",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.example.graph.AQLActorsAndMoviesExampleTest$Movie",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.mapping.annotations.SerializedNameEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.arangodb.mapping.annotations.ExposeEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.mapping.annotations.DocumentFieldEntity",
+    "allDeclaredFields": true,
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.arangodb.mapping.annotations.SerializedNameParameterEntity",
+    "allDeclaredFields": true,
+    "allDeclaredConstructors": true
   }
 ]

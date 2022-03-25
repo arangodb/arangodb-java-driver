@@ -217,7 +217,6 @@ class AQLActorsAndMoviesExampleTest {
                         new Actor("actors/TomH", 2), new Actor("actors/VictorG", 1));
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class Actor {
         private String actor;
         private Integer movies;
@@ -267,7 +266,6 @@ class AQLActorsAndMoviesExampleTest {
 
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class Movie {
         private String movie;
         private Integer actors;
