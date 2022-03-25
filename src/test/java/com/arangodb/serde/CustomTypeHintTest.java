@@ -24,21 +24,22 @@ package com.arangodb.serde;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Michele Rastelli
  */
-public class CustomTypeHintTest {
+class CustomTypeHintTest {
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
     public interface Animal {
@@ -87,14 +88,13 @@ public class CustomTypeHintTest {
     private ArangoDatabase db;
     private ArangoCollection collection;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         ArangoDB arangoDB = new ArangoDB.Builder()
                 .serializer(new ArangoJack())
                 .build();
 
-        String TEST_DB = "custom-serde-test";
-        db = arangoDB.db(TEST_DB);
+        db = arangoDB.db(DbName.of("custom-serde-test"));
         if (!db.exists()) {
             db.create();
         }
@@ -105,14 +105,14 @@ public class CustomTypeHintTest {
         }
     }
 
-    @After
-    public void shutdown() {
+    @AfterEach
+    void shutdown() {
         if (db.exists())
             db.drop();
     }
 
     @Test
-    public void insertDocument() {
+    void insertDocument() {
         Gorilla gorilla = new Gorilla();
         gorilla.setName("kingKong");
 
@@ -124,7 +124,7 @@ public class CustomTypeHintTest {
                 new DocumentCreateOptions().returnNew(true)
         ).getNew();
 
-        assertThat((insertedDoc.getAnimal().getName()), is("kingKong"));
+        assertThat((insertedDoc.getAnimal().getName())).isEqualTo("kingKong");
 
         String key = insertedDoc.getKey();
 
@@ -141,6 +141,6 @@ public class CustomTypeHintTest {
                 Zoo.class,
                 null);
 
-        assertThat((readDoc.getAnimal().getName()), is("kingKong"));
+        assertThat((readDoc.getAnimal().getName())).isEqualTo("kingKong");
     }
 }
