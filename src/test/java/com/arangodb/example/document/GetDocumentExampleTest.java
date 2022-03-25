@@ -24,24 +24,23 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.example.ExampleBase;
 import com.arangodb.velocypack.VPackSlice;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class GetDocumentExample extends ExampleBase {
+class GetDocumentExampleTest extends ExampleBase {
 
     private static String key = null;
 
-    @BeforeClass
-    public static void before() {
+    @BeforeAll
+    static void before() {
         final BaseDocument value = new BaseDocument();
         value.addAttribute("foo", "bar");
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value);
@@ -49,43 +48,43 @@ public class GetDocumentExample extends ExampleBase {
     }
 
     @Test
-    public void getAsBean() {
+    void getAsBean() {
         final TestEntity doc = collection.getDocument(key, TestEntity.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getFoo(), is("bar"));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getFoo()).isEqualTo("bar");
     }
 
     @Test
-    public void getAsBaseDocument() {
+    void getAsBaseDocument() {
         final BaseDocument doc = collection.getDocument(key, BaseDocument.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.getAttribute("foo"), is(notNullValue()));
-        assertThat(String.valueOf(doc.getAttribute("foo")), is("bar"));
+        assertThat(doc).isNotNull();
+        assertThat(doc.getAttribute("foo")).isNotNull();
+        assertThat(String.valueOf(doc.getAttribute("foo"))).isEqualTo("bar");
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void getAsMap() {
+    void getAsMap() {
         final Map<String, Object> doc = collection.getDocument(key, Map.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.get("foo"), is(notNullValue()));
-        assertThat(String.valueOf(doc.get("foo")), is("bar"));
+        assertThat(doc).isNotNull();
+        assertThat(doc.get("foo")).isNotNull();
+        assertThat(String.valueOf(doc.get("foo"))).isEqualTo("bar");
     }
 
     @Test
-    public void getAsVPack() {
+    void getAsVPack() {
         final VPackSlice doc = collection.getDocument(key, VPackSlice.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.get("foo").isString(), is(true));
-        assertThat(doc.get("foo").getAsString(), is("bar"));
+        assertThat(doc).isNotNull();
+        assertThat(doc.get("foo").isString()).isTrue();
+        assertThat(doc.get("foo").getAsString()).isEqualTo("bar");
     }
 
     @Test
-    public void getAsJson() {
+    void getAsJson() {
         final String doc = collection.getDocument(key, String.class);
-        assertThat(doc, is(notNullValue()));
-        assertThat(doc.contains("foo"), is(true));
-        assertThat(doc.contains("bar"), is(true));
+        assertThat(doc).isNotNull();
+        assertThat(doc).contains("foo");
+        assertThat(doc).contains("bar");
     }
 
 }

@@ -23,8 +23,8 @@ package com.arangodb.example;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * @author Mark Vollmary
@@ -38,8 +38,8 @@ public class ExampleBase {
     protected static ArangoDatabase db;
     protected static ArangoCollection collection;
 
-    @BeforeClass
-    public static void setUp() {
+    @BeforeAll
+    static void setUp() {
         arangoDB = new ArangoDB.Builder().build();
         if (arangoDB.db(DB_NAME).exists())
             arangoDB.db(DB_NAME).drop();
@@ -49,8 +49,8 @@ public class ExampleBase {
         collection = db.collection(COLLECTION_NAME);
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @AfterAll
+    static void tearDown() {
         db.drop();
         arangoDB.shutdown();
     }
