@@ -24,8 +24,8 @@ import com.arangodb.entity.ArangoDBEngine;
 import com.arangodb.DbName;
 import com.arangodb.entity.License;
 import com.arangodb.entity.ServerRole;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -40,8 +40,8 @@ public abstract class BaseTest {
     static ArangoDBAsync arangoDB;
     static ArangoDatabaseAsync db;
 
-    @BeforeClass
-    public static void init() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
             arangoDB = new ArangoDBAsync.Builder().build();
         }
@@ -54,8 +54,8 @@ public abstract class BaseTest {
         BaseTest.db = arangoDB.db(TEST_DB);
     }
 
-    @AfterClass
-    public static void shutdown() throws InterruptedException, ExecutionException {
+    @AfterAll
+    static void shutdown() throws InterruptedException, ExecutionException {
         arangoDB.db(TEST_DB).drop().get();
         arangoDB.shutdown();
         arangoDB = null;
@@ -69,6 +69,7 @@ public abstract class BaseTest {
             throws InterruptedException, ExecutionException {
         return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDB.getVersion().get().getVersion(), major, minor, patch);
     }
+
     protected static boolean isAtLeastVersion(final ArangoDBAsync arangoDB, final int major, final int minor)
             throws InterruptedException, ExecutionException {
         return isAtLeastVersion(arangoDB, major, minor, 0);

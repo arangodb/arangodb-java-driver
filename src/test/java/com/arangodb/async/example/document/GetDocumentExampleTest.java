@@ -24,24 +24,24 @@ import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentCreateEntity;
 import com.arangodb.velocypack.VPackSlice;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class GetDocumentExample extends ExampleBase {
+class GetDocumentExampleTest extends ExampleBase {
 
     private static String key = null;
 
-    @BeforeClass
-    public static void before() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void before() throws InterruptedException, ExecutionException {
         final BaseDocument value = new BaseDocument();
         value.addAttribute("foo", "bar");
         final DocumentCreateEntity<BaseDocument> doc = collection.insertDocument(value).get();
@@ -49,44 +49,44 @@ public class GetDocumentExample extends ExampleBase {
     }
 
     @Test
-    public void getAsBean() throws InterruptedException, ExecutionException {
+    void getAsBean() throws InterruptedException, ExecutionException {
         collection.getDocument(key, TestEntity.class)
                 .whenComplete((doc, ex) -> {
-                    assertThat(doc, is(notNullValue()));
-                    assertThat(doc.getFoo(), is("bar"));
+                    assertThat(doc).isNotNull();
+                    assertThat(doc.getFoo()).isEqualTo("bar");
                 })
                 .get();
     }
 
     @Test
-    public void getAsBaseDocument() throws InterruptedException, ExecutionException {
+    void getAsBaseDocument() throws InterruptedException, ExecutionException {
         collection.getDocument(key, BaseDocument.class)
                 .whenComplete((doc, ex) -> {
-                    assertThat(doc, is(notNullValue()));
-                    assertThat(doc.getAttribute("foo"), is(notNullValue()));
-                    assertThat(String.valueOf(doc.getAttribute("foo")), is("bar"));
+                    assertThat(doc).isNotNull();
+                    assertThat(doc.getAttribute("foo")).isNotNull();
+                    assertThat(String.valueOf(doc.getAttribute("foo"))).isEqualTo("bar");
                 })
                 .get();
     }
 
     @Test
-    public void getAsVPack() throws InterruptedException, ExecutionException {
+    void getAsVPack() throws InterruptedException, ExecutionException {
         collection.getDocument(key, VPackSlice.class)
                 .whenComplete((doc, ex) -> {
-                    assertThat(doc, is(notNullValue()));
-                    assertThat(doc.get("foo").isString(), is(true));
-                    assertThat(doc.get("foo").getAsString(), is("bar"));
+                    assertThat(doc).isNotNull();
+                    assertThat(doc.get("foo").isString()).isEqualTo(true);
+                    assertThat(doc.get("foo").getAsString()).isEqualTo("bar");
                 })
                 .get();
     }
 
     @Test
-    public void getAsJson() throws InterruptedException, ExecutionException {
+    void getAsJson() throws InterruptedException, ExecutionException {
         collection.getDocument(key, String.class)
                 .whenComplete((doc, ex) -> {
-                    assertThat(doc, is(notNullValue()));
-                    assertThat(doc.contains("foo"), is(true));
-                    assertThat(doc.contains("bar"), is(true));
+                    assertThat(doc).isNotNull();
+                    assertThat(doc.contains("foo")).isEqualTo(true);
+                    assertThat(doc.contains("bar")).isEqualTo(true);
                 })
                 .get();
     }

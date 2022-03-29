@@ -20,12 +20,13 @@
 
 package com.arangodb.async.example.graph;
 
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,15 +37,15 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class BaseGraphTest {
 
-    private static final String TEST_DB = "java_driver_graph_test_db";
+    private static final DbName TEST_DB = DbName.of("java_driver_graph_test_db");
     private static final String GRAPH_NAME = "traversalGraph";
     private static final String EDGE_COLLECTION_NAME = "edges";
-    private static final String VERTEXT_COLLECTION_NAME = "circles";
+    private static final String VERTEX_COLLECTION_NAME = "circles";
     static ArangoDatabaseAsync db;
     private static ArangoDBAsync arangoDB;
 
-    @BeforeClass
-    public static void init() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
             arangoDB = new ArangoDBAsync.Builder().build();
         }
@@ -56,14 +57,14 @@ public abstract class BaseGraphTest {
 
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         final EdgeDefinition edgeDefinition = new EdgeDefinition().collection(EDGE_COLLECTION_NAME)
-                .from(VERTEXT_COLLECTION_NAME).to(VERTEXT_COLLECTION_NAME);
+                .from(VERTEX_COLLECTION_NAME).to(VERTEX_COLLECTION_NAME);
         edgeDefinitions.add(edgeDefinition);
         db.createGraph(GRAPH_NAME, edgeDefinitions, null).get();
         addExampleElements();
     }
 
-    @AfterClass
-    public static void shutdown() throws InterruptedException, ExecutionException {
+    @AfterAll
+    static void shutdown() throws InterruptedException, ExecutionException {
         arangoDB.db(TEST_DB).drop().get();
         arangoDB.shutdown();
         arangoDB = null;
@@ -106,7 +107,7 @@ public abstract class BaseGraphTest {
 
     private static VertexEntity createVertex(final Circle vertex)
             throws InterruptedException, ExecutionException {
-        return db.graph(GRAPH_NAME).vertexCollection(VERTEXT_COLLECTION_NAME).insertVertex(vertex).get();
+        return db.graph(GRAPH_NAME).vertexCollection(VERTEX_COLLECTION_NAME).insertVertex(vertex).get();
     }
 
 }

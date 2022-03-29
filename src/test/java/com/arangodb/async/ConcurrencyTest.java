@@ -23,9 +23,10 @@ package com.arangodb.async;
 
 import com.arangodb.async.internal.ArangoExecutorAsync;
 import com.arangodb.entity.ArangoDBVersion;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,17 +34,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 /**
  * @author Michele Rastelli
  */
-public class ConcurrencyTest {
+class ConcurrencyTest {
 
     private ArangoDBAsync arangoDB;
 
-    @Before
-    public void initialize() {
+    @BeforeEach
+    void initialize() {
         arangoDB = new ArangoDBAsync.Builder().build();
     }
 
@@ -51,9 +53,10 @@ public class ConcurrencyTest {
      * FIXME:   make the user executor configurable in com.arangodb.internal.ArangoExecutorAsync::execute
      * (eg. this test passes using a CachedThreadPool)
      */
-    @Ignore
-    @Test(timeout = 2000)
-    public void executorLimit() {
+    @Disabled
+    @Test
+    @Timeout(2)
+    void executorLimit() {
         List<CompletableFuture<ArangoDBVersion>> futures = IntStream.range(0, 20)
                 .mapToObj(i -> arangoDB.getVersion()
                         .whenComplete((dbVersion, ex) -> {
@@ -80,9 +83,10 @@ public class ConcurrencyTest {
     /**
      * outgoing requests should be queued in the {@link ArangoExecutorAsync} outgoingExecutor
      */
-    @Ignore
-    @Test(timeout = 1000)
-    public void outgoingRequestsParallelismTest() {
+    @Disabled
+    @Test
+    @Timeout(1)
+    void outgoingRequestsParallelismTest() {
         for (int i = 0; i < 50_000; i++) {
             arangoDB.getVersion();
         }

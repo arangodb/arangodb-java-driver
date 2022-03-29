@@ -258,18 +258,6 @@
             <version>3.22.0</version>
             <scope>test</scope>
         </dependency>
-        <!--        TODO: remove after migration to Junit5-->
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--        TODO: remove after migration to AssertJ-->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>

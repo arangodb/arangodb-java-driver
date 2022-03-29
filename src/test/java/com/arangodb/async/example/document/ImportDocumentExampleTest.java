@@ -23,7 +23,8 @@ package com.arangodb.async.example.document;
 import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.DocumentImportEntity;
 import com.arangodb.model.DocumentImportOptions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -34,17 +35,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Michele Rastelli
  */
-public class ImportDocumentExample extends ExampleBase {
+class ImportDocumentExampleTest extends ExampleBase {
 
     private static final int MAX_PENDING_REQUESTS = 10;
 
     @Test
-    public void importDocument() {
+    void importDocument() {
         AtomicLong pendingReqsCount = new AtomicLong();
 
         Stream<List<TestEntity>> chunks = IntStream.range(0, 100)

@@ -22,22 +22,23 @@ package com.arangodb.async.example.ssl;
 
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.ArangoDBVersion;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class SslExample {
+@EnabledIfSystemProperty(named = "SslTest", matches = "true")
+class SslExampleTest {
 
     /*-
      * a SSL trust store
@@ -52,8 +53,7 @@ public class SslExample {
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
     @Test
-    @Ignore
-    public void connect() throws Exception {
+    void connect() throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
@@ -67,10 +67,10 @@ public class SslExample {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(SslExample.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
+                .loadProperties(SslExampleTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
                 .sslContext(sc).build();
         final ArangoDBVersion version = arangoDB.getVersion().get();
-        assertThat(version, is(notNullValue()));
+        assertThat(version).isNotNull();
     }
 
 }

@@ -22,55 +22,34 @@ package perf;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 
 /**
  * @author Michele Rastelli
  */
-@Ignore
-@RunWith(Parameterized.class)
-public class SimpleSyncPerfTest {
+@Disabled
+class SimpleSyncPerfTest {
     private static final int REPETITIONS = 50_000;
-    private final ArangoDB arangoDB;
 
-    @Parameterized.Parameters
-    public static Collection<Protocol> protocols() {
-        return Arrays.asList(
-                Protocol.VST,
-                Protocol.HTTP_VPACK,
-                Protocol.HTTP_JSON
-        );
-    }
-
-    public SimpleSyncPerfTest(final Protocol protocol) {
-        System.out.println("---");
-        System.out.println(protocol);
-        this.arangoDB = new ArangoDB.Builder().useProtocol(protocol).build();
-    }
-
-    @Before
-    public void warmup() {
-        doGetVersion();
-    }
-
-    private void doGetVersion() {
+    private void doGetVersion(ArangoDB arangoDB) {
         for (int i = 0; i < REPETITIONS; i++) {
             arangoDB.getVersion();
         }
     }
 
-    @Test
-    public void getVersion() throws InterruptedException {
+    @ParameterizedTest
+    @EnumSource(Protocol.class)
+    void getVersion(Protocol protocol) throws InterruptedException {
+        ArangoDB arangoDB = new ArangoDB.Builder().useProtocol(protocol).build();
+        // warmup
+        doGetVersion(arangoDB);
+
         long start = new Date().getTime();
-        doGetVersion();
+        doGetVersion(arangoDB);
         long end = new Date().getTime();
         System.out.println("elapsed ms: " + (end - start));
         Thread.sleep(5000);

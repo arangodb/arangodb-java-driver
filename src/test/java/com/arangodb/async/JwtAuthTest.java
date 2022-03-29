@@ -2,56 +2,57 @@ package com.arangodb.async;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
+import com.arangodb.DbName;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
-public class JwtAuthTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+
+class JwtAuthTest {
 
     private static String jwt;
     private ArangoDBAsync arangoDB;
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         ArangoDB arangoDB = new ArangoDB.Builder().build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
     }
 
-    @After
-    public void after() {
+    @AfterEach
+    void after() {
         if (arangoDB != null)
             arangoDB.shutdown();
     }
 
     @Test
-    public void notAuthenticated() throws InterruptedException {
+    void notAuthenticated() throws InterruptedException {
         arangoDB = getBuilder().build();
         try {
             arangoDB.getVersion().get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), is(instanceOf(ArangoDBException.class)));
-            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(401));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode()).isEqualTo(401);
         }
         arangoDB.shutdown();
     }
 
     @Test
-    public void authenticated() throws ExecutionException, InterruptedException {
+    void authenticated() throws ExecutionException, InterruptedException {
         arangoDB = getBuilder()
                 .jwt(jwt)
                 .build();
@@ -60,7 +61,7 @@ public class JwtAuthTest {
     }
 
     @Test
-    public void updateJwt() throws ExecutionException, InterruptedException {
+    void updateJwt() throws ExecutionException, InterruptedException {
         arangoDB = getBuilder()
                 .jwt(jwt)
                 .build();
@@ -70,8 +71,8 @@ public class JwtAuthTest {
             arangoDB.getVersion().get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), is(instanceOf(ArangoDBException.class)));
-            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(401));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode()).isEqualTo(401);
         }
 
         arangoDB.updateJwt(jwt);
@@ -92,7 +93,7 @@ public class JwtAuthTest {
         reqBody.put("username", "root");
         reqBody.put("password", "test");
 
-        Request req = new Request("_system", RequestType.POST, "/_open/auth");
+        Request req = new Request(DbName.SYSTEM, RequestType.POST, "/_open/auth");
         req.setBody(serde.serialize(reqBody));
 
         Response resp = arangoDB.execute(req);

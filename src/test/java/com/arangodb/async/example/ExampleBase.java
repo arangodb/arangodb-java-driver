@@ -20,11 +20,12 @@
 
 package com.arangodb.async.example;
 
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.util.concurrent.ExecutionException;
 
@@ -34,13 +35,13 @@ import java.util.concurrent.ExecutionException;
 public class ExampleBase {
 
     protected static final String COLLECTION_NAME = "json_example_collection";
-    private static final String DB_NAME = "json_example_db";
+    private static final DbName DB_NAME = DbName.of("json_example_db");
     protected static ArangoDatabaseAsync db;
     protected static ArangoCollectionAsync collection;
     private static ArangoDBAsync arangoDB;
 
-    @BeforeClass
-    public static void setUp() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void setUp() throws InterruptedException, ExecutionException {
         arangoDB = new ArangoDBAsync.Builder().build();
         if (arangoDB.db(DB_NAME).exists().get()) {
             arangoDB.db(DB_NAME).drop().get();
@@ -51,8 +52,8 @@ public class ExampleBase {
         collection = db.collection(COLLECTION_NAME);
     }
 
-    @AfterClass
-    public static void tearDown() throws InterruptedException, ExecutionException {
+    @AfterAll
+    static void tearDown() throws InterruptedException, ExecutionException {
         db.drop().get();
         arangoDB.shutdown();
     }

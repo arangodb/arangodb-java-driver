@@ -21,14 +21,14 @@
 package com.arangodb.async.example.graph;
 
 import com.arangodb.async.ArangoCursorAsync;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * Graph traversals in AQL
@@ -36,84 +36,84 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author a-brandt
  * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-traversals.html">Graph traversals in AQL</a>
  */
-public class GraphTraversalsInAQLExample extends BaseGraphTest {
+class GraphTraversalsInAQLExample extends BaseGraphTest {
 
     @Test
-    public void queryAllVertices() throws InterruptedException, ExecutionException {
+    void queryAllVertices() throws InterruptedException, ExecutionException {
         String queryString = "FOR v IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' RETURN v._key";
         ArangoCursorAsync<String> cursor = db.query(queryString, null, null, String.class).get();
         Collection<String> result = cursor.asListRemaining();
-        assertThat(result.size(), is(10));
+        assertThat(result).hasSize(10);
 
         queryString = "WITH circles FOR v IN 1..3 OUTBOUND 'circles/A' edges RETURN v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(10));
+        assertThat(result).hasSize(10);
     }
 
     @Test
-    public void queryDepthTwo() throws InterruptedException, ExecutionException {
+    void queryDepthTwo() throws InterruptedException, ExecutionException {
         String queryString = "FOR v IN 2..2 OUTBOUND 'circles/A' GRAPH 'traversalGraph' return v._key";
         ArangoCursorAsync<String> cursor = db.query(queryString, null, null, String.class).get();
         Collection<String> result = cursor.asListRemaining();
-        assertThat(result.size(), is(4));
-        assertThat(result, hasItems("C", "E", "H", "J"));
+        assertThat(result).hasSize(4);
+        assertThat(result).contains("C", "E", "H", "J");
 
         queryString = "FOR v IN 2 OUTBOUND 'circles/A' GRAPH 'traversalGraph' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(4));
-        assertThat(result, hasItems("C", "E", "H", "J"));
+        assertThat(result).hasSize(4);
+        assertThat(result).contains("C", "E", "H", "J");
     }
 
     @Test
-    public void queryWithFilter() throws InterruptedException, ExecutionException {
+    void queryWithFilter() throws InterruptedException, ExecutionException {
         String queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G' RETURN v._key";
         ArangoCursorAsync<String> cursor = db.query(queryString, null, null, String.class).get();
         Collection<String> result = cursor.asListRemaining();
-        assertThat(result.size(), is(5));
-        assertThat(result, hasItems("B", "C", "D", "E", "F"));
+        assertThat(result).hasSize(5);
+        assertThat(result).contains("B", "C", "D", "E", "F");
 
         queryString = "FOR v, e, p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.edges[0].label != 'right_foo' RETURN v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(5));
-        assertThat(result, hasItems("B", "C", "D", "E", "F"));
+        assertThat(result).hasSize(5);
+        assertThat(result).contains("B", "C", "D", "E", "F");
 
         queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G' FILTER p.edges[1].label != 'left_blub' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
 
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(3));
-        assertThat(result, hasItems("B", "C", "D"));
+        assertThat(result).hasSize(3);
+        assertThat(result).contains("B", "C", "D");
 
         queryString = "FOR v,e,p IN 1..3 OUTBOUND 'circles/A' GRAPH 'traversalGraph' FILTER p.vertices[1]._key != 'G' AND    p.edges[1].label != 'left_blub' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(3));
-        assertThat(result, hasItems("B", "C", "D"));
+        assertThat(result).hasSize(3);
+        assertThat(result).contains("B", "C", "D");
     }
 
     @Test
-    public void queryOutboundInbound() throws InterruptedException, ExecutionException {
+    void queryOutboundInbound() throws InterruptedException, ExecutionException {
         String queryString = "FOR v IN 1..3 OUTBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
         ArangoCursorAsync<String> cursor = db.query(queryString, null, null, String.class).get();
         Collection<String> result = cursor.asListRemaining();
-        assertThat(result.size(), is(1));
-        assertThat(result, hasItems("F"));
+        assertThat(result).hasSize(1);
+        assertThat(result).contains("F");
 
         queryString = "FOR v IN 1..3 INBOUND 'circles/E' GRAPH 'traversalGraph' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(2));
-        assertThat(result, hasItems("B", "A"));
+        assertThat(result).hasSize(2);
+        assertThat(result).contains("B", "A");
 
         queryString = "FOR v IN 1..3 ANY 'circles/E' GRAPH 'traversalGraph' return v._key";
         cursor = db.query(queryString, null, null, String.class).get();
 
         result = cursor.asListRemaining();
-        assertThat(result.size(), is(6));
-        assertThat(result, hasItems("F", "B", "C", "D", "A", "G"));
+        assertThat(result).hasSize(6);
+        assertThat(result).contains("F", "B", "C", "D", "A", "G");
     }
 
 }

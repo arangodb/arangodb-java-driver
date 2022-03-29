@@ -30,6 +30,7 @@ import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -409,6 +410,7 @@ class ArangoDBTest extends BaseJunit5 {
         assertThat(logs.getText()).hasSize(logs.getTotalAmount().intValue());
     }
 
+    @Disabled
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void getLogsUpto(ArangoDB arangoDB) {

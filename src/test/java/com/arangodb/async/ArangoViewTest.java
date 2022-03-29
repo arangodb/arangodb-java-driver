@@ -22,66 +22,65 @@ package com.arangodb.async;
 
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
  */
 
-public class ArangoViewTest extends BaseTest {
+class ArangoViewTest extends BaseTest {
 
     private static final String VIEW_NAME = "view_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void setup() throws InterruptedException, ExecutionException {
         if (!isAtLeastVersion(arangoDB, 3, 4))
             return;
         db.createView(VIEW_NAME, ViewType.ARANGO_SEARCH).get();
     }
 
     @Test
-    public void exists() throws InterruptedException, ExecutionException {
+    void exists() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
-        assertThat(db.view(VIEW_NAME).exists().get(), is(true));
+        assertThat(db.view(VIEW_NAME).exists().get()).isTrue();
     }
 
     @Test
-    public void getInfo() throws InterruptedException, ExecutionException {
+    void getInfo() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final ViewEntity info = db.view(VIEW_NAME).getInfo().get();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(VIEW_NAME));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(VIEW_NAME);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
     @Test
-    public void drop() throws InterruptedException, ExecutionException {
+    void drop() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_droptest";
         db.createView(name, ViewType.ARANGO_SEARCH).get();
         final ArangoViewAsync view = db.view(name);
         view.drop().get();
-        assertThat(view.exists().get(), is(false));
+        assertThat(view.exists().get()).isFalse();
     }
 
     @Test
-    public void rename() throws InterruptedException, ExecutionException {
+    void rename() throws InterruptedException, ExecutionException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_renametest";
         final String newName = name + "_new";
         db.createView(name, ViewType.ARANGO_SEARCH).get();
         db.view(name).rename(newName).get();
-        assertThat(db.view(name).exists().get(), is(false));
-        assertThat(db.view(newName).exists().get(), is(true));
+        assertThat(db.view(name).exists().get()).isFalse();
+        assertThat(db.view(newName).exists().get()).isTrue();
     }
 
 }

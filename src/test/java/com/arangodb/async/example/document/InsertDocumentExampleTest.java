@@ -24,48 +24,48 @@ import com.arangodb.async.example.ExampleBase;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.ValueType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class InsertDocumentExample extends ExampleBase {
+class InsertDocumentExampleTest extends ExampleBase {
 
     @Test
-    public void insertBean() throws ExecutionException, InterruptedException {
+    void insertBean() throws ExecutionException, InterruptedException {
         collection.insertDocument(new TestEntity("bar"))
-                .whenComplete((doc, ex) -> assertThat(doc.getKey(), is(notNullValue())))
+                .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())
                 .get();
     }
 
     @Test
-    public void insertBaseDocument() throws ExecutionException, InterruptedException {
+    void insertBaseDocument() throws ExecutionException, InterruptedException {
         final BaseDocument value = new BaseDocument();
         value.addAttribute("foo", "bar");
         collection.insertDocument(value)
-                .whenComplete((doc, ex) -> assertThat(doc.getKey(), is(notNullValue())))
+                .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())
                 .get();
     }
 
     @Test
-    public void insertVPack() throws ExecutionException, InterruptedException {
+    void insertVPack() throws ExecutionException, InterruptedException {
         final VPackBuilder builder = new VPackBuilder();
         builder.add(ValueType.OBJECT).add("foo", "bar").close();
         collection.insertDocument(builder.slice())
-                .whenComplete((doc, ex) -> assertThat(doc.getKey(), is(notNullValue())))
+                .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())
                 .get();
     }
 
     @Test
-    public void insertJson() throws ExecutionException, InterruptedException {
+    void insertJson() throws ExecutionException, InterruptedException {
         collection.insertDocument("{\"foo\":\"bar\"}")
-                .whenComplete((doc, ex) -> assertThat(doc.getKey(), is(notNullValue())))
+                .whenComplete((doc, ex) -> assertThat(doc.getKey()).isNotNull())
                 .get();
     }
 
