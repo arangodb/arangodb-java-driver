@@ -29,6 +29,7 @@ import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +50,7 @@ class ConsolidationIntervalMsecTest extends BaseTest {
         assumeTrue(isAtLeastVersion(3, 4));
 
         ArangoDBAsync arango = new ArangoDBAsync.Builder()
+                .serializer(new ArangoJack())
                 .user("root")
                 .password("test")
                 .build();

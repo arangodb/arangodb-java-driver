@@ -23,6 +23,7 @@ package com.arangodb.example.ssl;
 import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.mapping.ArangoJack;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -56,6 +57,7 @@ class SslExampleTest {
     @Test
     void connect() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
+                .serializer(new ArangoJack())
                 .host("localhost", 8529)
                 .password("test")
                 .useSsl(true)
@@ -70,6 +72,7 @@ class SslExampleTest {
     @Test
     void noopHostnameVerifier() throws Exception {
         final ArangoDB arangoDB = new ArangoDB.Builder()
+                .serializer(new ArangoJack())
                 .host("127.0.0.1", 8529)
                 .password("test")
                 .useSsl(true)

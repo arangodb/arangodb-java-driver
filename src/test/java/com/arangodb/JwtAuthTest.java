@@ -1,5 +1,6 @@
 package com.arangodb;
 
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -24,7 +25,7 @@ class JwtAuthTest {
 
     @BeforeAll
     static void init() {
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
     }
@@ -75,6 +76,7 @@ class JwtAuthTest {
     private ArangoDB.Builder getBuilder(Protocol protocol) {
         return new ArangoDB.Builder()
                 .useProtocol(protocol)
+                .serializer(new ArangoJack())
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file

@@ -23,6 +23,7 @@ package com.arangodb.async;
 
 import com.arangodb.async.internal.ArangoExecutorAsync;
 import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class ConcurrencyTest {
 
     @BeforeEach
     void initialize() {
-        arangoDB = new ArangoDBAsync.Builder().build();
+        arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
     }
 
     /**

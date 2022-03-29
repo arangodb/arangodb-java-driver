@@ -3,6 +3,7 @@ package com.arangodb.async;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDBException;
 import com.arangodb.DbName;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.util.ArangoSerialization;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
@@ -27,7 +28,7 @@ class JwtAuthTest {
 
     @BeforeAll
     static void init() {
-        ArangoDB arangoDB = new ArangoDB.Builder().build();
+        ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         jwt = getJwt(arangoDB);
         arangoDB.shutdown();
     }
@@ -82,6 +83,7 @@ class JwtAuthTest {
 
     private ArangoDBAsync.Builder getBuilder() {
         return new ArangoDBAsync.Builder()
+                .serializer(new ArangoJack())
                 .jwt(null)          // unset credentials from properties file
                 .user(null)         // unset credentials from properties file
                 .password(null);    // unset credentials from properties file

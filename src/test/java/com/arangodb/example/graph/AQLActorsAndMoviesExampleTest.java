@@ -25,6 +25,7 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.CollectionCreateOptions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,7 +47,7 @@ class AQLActorsAndMoviesExampleTest {
 
     @BeforeAll
     static void setUp() {
-        arangoDB = new ArangoDB.Builder().build();
+        arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         if (arangoDB.db(TEST_DB).exists())
             arangoDB.db(TEST_DB).drop();
         arangoDB.createDatabase(TEST_DB);

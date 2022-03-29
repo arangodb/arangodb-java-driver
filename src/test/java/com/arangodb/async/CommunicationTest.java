@@ -20,6 +20,7 @@
 
 package com.arangodb.async;
 
+import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ class CommunicationTest {
     @Test
     @Disabled
     void disconnect() {
-        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().build();
+        final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         final CompletableFuture<ArangoCursorAsync<Object>> result = arangoDB.db().query("return sleep(1)", null, null,
                 null);
         arangoDB.shutdown();

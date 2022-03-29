@@ -25,6 +25,7 @@ import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.VertexEntity;
+import com.arangodb.mapping.ArangoJack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -47,7 +48,7 @@ public abstract class BaseGraphTest {
     @BeforeAll
     static void init() throws InterruptedException, ExecutionException {
         if (arangoDB == null) {
-            arangoDB = new ArangoDBAsync.Builder().build();
+            arangoDB = new ArangoDBAsync.Builder().serializer(new ArangoJack()).build();
         }
         if (arangoDB.db(TEST_DB).exists().get()) {
             arangoDB.db(TEST_DB).drop().get();

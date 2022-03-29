@@ -21,6 +21,7 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.*;
 import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.TestUtils;
@@ -215,6 +216,7 @@ class ArangoDBTest extends BaseJunit5 {
         Thread.sleep(1_000);
 
         ArangoDB arangoDBTestUser = new ArangoDB.Builder()
+                .serializer(new ArangoJack())
                 .user("testUser")
                 .password("testPasswd")
                 .build();
@@ -376,7 +378,7 @@ class ArangoDBTest extends BaseJunit5 {
 
     @Test
     void authenticationFailPassword() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().password("no").jwt(null).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().password("no").jwt(null).serializer(new ArangoJack()).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);
@@ -385,7 +387,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void authenticationFailUser() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().user("no").jwt(null).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().user("no").jwt(null).serializer(new ArangoJack()).build();
         Throwable thrown = catchThrowable(arangoDB::getVersion);
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         assertThat(((ArangoDBException) thrown).getResponseCode()).isEqualTo(401);
@@ -654,7 +656,7 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void fallbackHost() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().host("not-accessible", 8529).host("127.0.0.1", 8529).build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().host("not-accessible", 8529).host("127.0.0.1", 8529).serializer(new ArangoJack()).build();
         final ArangoDBVersion version = arangoDB.getVersion();
         assertThat(version).isNotNull();
     }

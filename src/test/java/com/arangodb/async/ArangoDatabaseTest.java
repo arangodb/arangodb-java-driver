@@ -1063,10 +1063,10 @@ class ArangoDatabaseTest extends BaseTest {
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    protected static class TransactionTestEntity {
+    static class TransactionTestEntity {
         private String value;
 
-        public TransactionTestEntity() {
+        TransactionTestEntity() {
             super();
         }
     }

@@ -22,6 +22,7 @@ package com.arangodb.util;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.velocypack.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class ArangoSerializationTest {
 
     @BeforeAll
     static void setup() {
-        final ArangoDB arangoDB = new ArangoDB.Builder().build();
+        final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         util = arangoDB.util();
     }
 
