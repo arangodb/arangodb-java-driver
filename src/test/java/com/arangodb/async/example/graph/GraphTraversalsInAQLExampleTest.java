@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author a-brandt
  * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-traversals.html">Graph traversals in AQL</a>
  */
-class GraphTraversalsInAQLExample extends BaseGraphTest {
+class GraphTraversalsInAQLExampleTest extends BaseGraphTest {
 
     @Test
     void queryAllVertices() throws InterruptedException, ExecutionException {
