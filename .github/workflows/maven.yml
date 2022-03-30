@@ -147,12 +147,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v2
+      - uses: graalvm/setup-graalvm@v1
         with:
+          version: 'latest'
           java-version: ${{matrix.java-version}}
-          distribution: 'adopt'
-          cache: maven
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          components: 'native-image'
       - name: Start Database
         run: ./docker/start_db.sh
         env:
