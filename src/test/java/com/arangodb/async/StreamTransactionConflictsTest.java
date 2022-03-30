@@ -26,21 +26,20 @@ import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.StreamTransactionEntity;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
  */
-public class StreamTransactionConflictsTest extends BaseTest {
+class StreamTransactionConflictsTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_concurrent_stream_transactions_test";
 
@@ -51,14 +50,14 @@ public class StreamTransactionConflictsTest extends BaseTest {
         db.createCollection(COLLECTION_NAME, null).get();
     }
 
-    @After
-    public void teardown() throws ExecutionException, InterruptedException {
+    @AfterEach
+    void teardown() throws ExecutionException, InterruptedException {
         if (db.collection(COLLECTION_NAME).exists().get())
             db.collection(COLLECTION_NAME).drop().get();
     }
 
     @Test
-    public void conflictOnInsertDocumentWithNotYetCommittedTx() throws ExecutionException, InterruptedException {
+    void conflictOnInsertDocumentWithNotYetCommittedTx() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -80,7 +79,7 @@ public class StreamTransactionConflictsTest extends BaseTest {
                     new DocumentCreateOptions().streamTransactionId(tx2.getId())).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), Matchers.instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
 
         db.abortStreamTransaction(tx1.getId()).get();
@@ -88,7 +87,7 @@ public class StreamTransactionConflictsTest extends BaseTest {
     }
 
     @Test
-    public void conflictOnInsertDocumentWithAlreadyCommittedTx() throws ExecutionException, InterruptedException {
+    void conflictOnInsertDocumentWithAlreadyCommittedTx() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
@@ -113,7 +112,7 @@ public class StreamTransactionConflictsTest extends BaseTest {
                     new DocumentCreateOptions().streamTransactionId(tx2.getId())).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), Matchers.instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
 
         db.abortStreamTransaction(tx2.getId()).get();

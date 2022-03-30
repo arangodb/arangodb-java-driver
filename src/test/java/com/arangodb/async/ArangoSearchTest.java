@@ -28,96 +28,95 @@ import com.arangodb.entity.arangosearch.analyzer.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
  */
 
-public class ArangoSearchTest extends BaseTest {
+class ArangoSearchTest extends BaseTest {
 
     private static final String VIEW_NAME = "view_test";
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void setup() throws InterruptedException, ExecutionException {
         if (!isAtLeastVersion(arangoDB, 3, 4))
             return;
         db.createArangoSearch(VIEW_NAME, new ArangoSearchCreateOptions()).get();
     }
 
     @Test
-    public void exists() throws InterruptedException, ExecutionException {
+    void exists() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
-        assertThat(db.arangoSearch(VIEW_NAME).exists().get(), is(true));
+        assertThat(db.arangoSearch(VIEW_NAME).exists().get()).isTrue();
     }
 
     @Test
-    public void getInfo() throws InterruptedException, ExecutionException {
+    void getInfo() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final ViewEntity info = db.arangoSearch(VIEW_NAME).getInfo().get();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(VIEW_NAME));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(VIEW_NAME);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
     }
 
     @Test
-    public void drop() throws InterruptedException, ExecutionException {
+    void drop() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_droptest";
         db.createArangoSearch(name, new ArangoSearchCreateOptions()).get();
         final ArangoViewAsync view = db.arangoSearch(name);
         view.drop().get();
-        assertThat(view.exists().get(), is(false));
+        assertThat(view.exists().get()).isFalse();
     }
 
     @Test
-    public void rename() throws InterruptedException, ExecutionException {
+    void rename() throws InterruptedException, ExecutionException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_renametest";
         final String newName = name + "_new";
         db.createArangoSearch(name, new ArangoSearchCreateOptions()).get();
         db.arangoSearch(name).rename(newName).get();
-        assertThat(db.arangoSearch(name).exists().get(), is(false));
-        assertThat(db.arangoSearch(newName).exists().get(), is(true));
+        assertThat(db.arangoSearch(name).exists().get()).isFalse();
+        assertThat(db.arangoSearch(newName).exists().get()).isTrue();
     }
 
     @Test
-    public void create() throws InterruptedException, ExecutionException {
+    void create() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_createtest";
         final ViewEntity info = db.arangoSearch(name).create().get();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(name));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(name).exists().get(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(name).exists().get()).isTrue();
     }
 
     @Test
-    public void createWithOptions() throws InterruptedException, ExecutionException {
+    void createWithOptions() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_createtest_withotpions";
         final ViewEntity info = db.arangoSearch(name).create(new ArangoSearchCreateOptions()).get();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(name));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(name).exists().get(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(name).exists().get()).isTrue();
     }
 
     @Test
-    public void createWithPrimarySort() throws ExecutionException, InterruptedException {
+    void createWithPrimarySort() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         final String name = "createWithPrimarySort";
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
@@ -128,54 +127,54 @@ public class ArangoSearchTest extends BaseTest {
         options.consolidationIntervalMsec(666666L);
 
         final ViewEntity info = db.arangoSearch(name).create(options).get();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(name));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(name).exists().get(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(name).exists().get()).isTrue();
     }
 
     @Test
-    public void createWithCommitIntervalMsec() throws ExecutionException, InterruptedException {
+    void createWithCommitIntervalMsec() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         final String name = "createWithCommitIntervalMsec";
         final ArangoSearchCreateOptions options = new ArangoSearchCreateOptions();
         options.commitIntervalMsec(666666L);
 
         final ViewEntity info = db.arangoSearch(name).create(options).get();
-        assertThat(info, is(not(nullValue())));
-        assertThat(info.getId(), is(not(nullValue())));
-        assertThat(info.getName(), is(name));
-        assertThat(info.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(db.arangoSearch(name).exists().get(), is(true));
+        assertThat(info).isNotNull();
+        assertThat(info.getId()).isNotNull();
+        assertThat(info.getName()).isEqualTo(name);
+        assertThat(info.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(db.arangoSearch(name).exists().get()).isTrue();
 
         // check commit interval msec property
         final ArangoSearchAsync view = db.arangoSearch(name);
         final ArangoSearchPropertiesEntity properties = view.getProperties().get();
-        assertThat(properties.getCommitIntervalMsec(), is(666666L));
+        assertThat(properties.getCommitIntervalMsec()).isEqualTo(666666L);
     }
 
     @Test
-    public void getProperties() throws InterruptedException, ExecutionException {
+    void getProperties() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         final String name = VIEW_NAME + "_getpropertiestest";
         final ArangoSearchAsync view = db.arangoSearch(name);
         view.create(new ArangoSearchCreateOptions()).get();
         final ArangoSearchPropertiesEntity properties = view.getProperties().get();
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getId(), is(not(nullValue())));
-        assertThat(properties.getName(), is(name));
-        assertThat(properties.getType(), is(ViewType.ARANGO_SEARCH));
-        assertThat(properties.getConsolidationIntervalMsec(), is(not(nullValue())));
-        assertThat(properties.getCleanupIntervalStep(), is(not(nullValue())));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getId()).isNotNull();
+        assertThat(properties.getName()).isEqualTo(name);
+        assertThat(properties.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
+        assertThat(properties.getConsolidationIntervalMsec()).isNotNull();
+        assertThat(properties.getCleanupIntervalStep()).isNotNull();
         final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
-        assertThat(consolidate, is(is(not(nullValue()))));
+        assertThat(consolidate).isNotNull();
         final Collection<CollectionLink> links = properties.getLinks();
-        assertThat(links.isEmpty(), is(true));
+        assertThat(links).isEmpty();
     }
 
     @Test
-    public void updateProperties() throws InterruptedException, ExecutionException {
+    void updateProperties() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         db.createCollection("view_update_prop_test_collection").get();
         final String name = VIEW_NAME + "_updatepropertiestest";
@@ -189,26 +188,26 @@ public class ArangoSearchTest extends BaseTest {
                 CollectionLink.on("view_update_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")
                         .trackListPositions(true).includeAllFields(true).storeValues(StoreValuesType.ID)));
         final ArangoSearchPropertiesEntity properties = view.updateProperties(options).get();
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getCleanupIntervalStep(), is(15L));
-        assertThat(properties.getConsolidationIntervalMsec(), is(65000L));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getCleanupIntervalStep()).isEqualTo(15L);
+        assertThat(properties.getConsolidationIntervalMsec()).isEqualTo(65000L);
         final ConsolidationPolicy consolidate = properties.getConsolidationPolicy();
-        assertThat(consolidate, is(not(nullValue())));
-        assertThat(consolidate.getType(), is(ConsolidationType.BYTES_ACCUM));
-        assertThat(consolidate.getThreshold(), is(1.));
-        assertThat(properties.getLinks().size(), is(1));
+        assertThat(consolidate).isNotNull();
+        assertThat(consolidate.getType()).isEqualTo(ConsolidationType.BYTES_ACCUM);
+        assertThat(consolidate.getThreshold()).isEqualTo(1.);
+        assertThat(properties.getLinks()).hasSize(1);
         final CollectionLink link = properties.getLinks().iterator().next();
-        assertThat(link.getName(), is("view_update_prop_test_collection"));
-        assertThat(link.getFields().size(), is(1));
+        assertThat(link.getName()).isEqualTo("view_update_prop_test_collection");
+        assertThat(link.getFields()).hasSize(1);
         final FieldLink next = link.getFields().iterator().next();
-        assertThat(next.getName(), is("value"));
-        assertThat(next.getIncludeAllFields(), is(true));
-        assertThat(next.getTrackListPositions(), is(true));
-        assertThat(next.getStoreValues(), is(StoreValuesType.ID));
+        assertThat(next.getName()).isEqualTo("value");
+        assertThat(next.getIncludeAllFields()).isTrue();
+        assertThat(next.getTrackListPositions()).isTrue();
+        assertThat(next.getStoreValues()).isEqualTo(StoreValuesType.ID);
     }
 
     @Test
-    public void replaceProperties() throws InterruptedException, ExecutionException {
+    void replaceProperties() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 4));
         db.createCollection("view_replace_prop_test_collection").get();
         final String name = VIEW_NAME + "_replacepropertiestest";
@@ -218,12 +217,12 @@ public class ArangoSearchTest extends BaseTest {
         options.link(
                 CollectionLink.on("view_replace_prop_test_collection").fields(FieldLink.on("value").analyzers("identity")));
         final ArangoSearchPropertiesEntity properties = view.replaceProperties(options).get();
-        assertThat(properties, is(not(nullValue())));
-        assertThat(properties.getLinks().size(), is(1));
+        assertThat(properties).isNotNull();
+        assertThat(properties.getLinks()).hasSize(1);
         final CollectionLink link = properties.getLinks().iterator().next();
-        assertThat(link.getName(), is("view_replace_prop_test_collection"));
-        assertThat(link.getFields().size(), is(1));
-        assertThat(link.getFields().iterator().next().getName(), is("value"));
+        assertThat(link.getName()).isEqualTo("view_replace_prop_test_collection");
+        assertThat(link.getFields()).hasSize(1);
+        assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
     }
 
     private void createGetAndDeleteTypedAnalyzer(SearchAnalyzer analyzer) throws ExecutionException, InterruptedException {
@@ -233,17 +232,17 @@ public class ArangoSearchTest extends BaseTest {
 
         // createAnalyzer
         SearchAnalyzer createdAnalyzer = db.createSearchAnalyzer(analyzer).get();
-        assertThat(createdAnalyzer, is(analyzer));
+        assertThat(createdAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzer
         SearchAnalyzer gotAnalyzer = db.getSearchAnalyzer(analyzer.getName()).get();
-        assertThat(gotAnalyzer, is(analyzer));
+        assertThat(gotAnalyzer).isEqualTo(analyzer);
 
         // getAnalyzers
         @SuppressWarnings("OptionalGetWithoutIsPresent")
         SearchAnalyzer foundAnalyzer = db.getSearchAnalyzers().get().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
-        assertThat(foundAnalyzer, is(analyzer));
+        assertThat(foundAnalyzer).isEqualTo(analyzer);
 
         // deleteAnalyzer
         AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
@@ -255,9 +254,9 @@ public class ArangoSearchTest extends BaseTest {
             db.getAnalyzer(analyzer.getName()).get();
             fail("deleted analyzer should not be found!");
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
-            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(404));
-            assertThat(((ArangoDBException) e.getCause()).getErrorNum(), is(1202));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode()).isEqualTo(404);
+            assertThat(((ArangoDBException) e.getCause()).getErrorNum()).isEqualTo(1202);
         }
 
     }
@@ -269,16 +268,16 @@ public class ArangoSearchTest extends BaseTest {
         // createAnalyzer
         AnalyzerEntity createdAnalyzer = db.createAnalyzer(options).get();
 
-        assertThat(createdAnalyzer.getName(), is(fullyQualifiedName));
-        assertThat(createdAnalyzer.getType(), is(options.getType()));
-        assertThat(createdAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(createdAnalyzer.getName()).isEqualTo(fullyQualifiedName);
+        assertThat(createdAnalyzer.getType()).isEqualTo(options.getType());
+        assertThat(createdAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
         compareProperties(createdAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzer
         AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName()).get();
-        assertThat(gotAnalyzer.getName(), is(fullyQualifiedName));
-        assertThat(gotAnalyzer.getType(), is(options.getType()));
-        assertThat(gotAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(gotAnalyzer.getName()).isEqualTo(fullyQualifiedName);
+        assertThat(gotAnalyzer.getType()).isEqualTo(options.getType());
+        assertThat(gotAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
         compareProperties(gotAnalyzer.getProperties(), options.getProperties());
 
         // getAnalyzers
@@ -286,9 +285,9 @@ public class ArangoSearchTest extends BaseTest {
         AnalyzerEntity foundAnalyzer = db.getAnalyzers().get().stream().filter(it -> it.getName().equals(fullyQualifiedName))
                 .findFirst().get();
 
-        assertThat(foundAnalyzer.getName(), is(fullyQualifiedName));
-        assertThat(foundAnalyzer.getType(), is(options.getType()));
-        assertThat(foundAnalyzer.getFeatures(), is(options.getFeatures()));
+        assertThat(foundAnalyzer.getName()).isEqualTo(fullyQualifiedName);
+        assertThat(foundAnalyzer.getType()).isEqualTo(options.getType());
+        assertThat(foundAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
         compareProperties(foundAnalyzer.getProperties(), options.getProperties());
 
         AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
@@ -301,8 +300,8 @@ public class ArangoSearchTest extends BaseTest {
             db.getAnalyzer(options.getName()).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
-            assertThat(((ArangoDBException) e.getCause()).getResponseCode(), is(404));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
+            assertThat(((ArangoDBException) e.getCause()).getResponseCode()).isEqualTo(404);
         }
     }
 
@@ -310,21 +309,21 @@ public class ArangoSearchTest extends BaseTest {
         expectedProperties.forEach((key, expectedValue) -> {
             Object actualValue = actualProperties.get(key);
             if (expectedValue instanceof Map) {
-                assertThat(actualValue, notNullValue());
-                assertThat(actualValue, instanceOf(Map.class));
+                assertThat(actualValue).isNotNull();
+                assertThat(actualValue).isInstanceOf(Map.class);
                 compareProperties((Map) actualValue, (Map) expectedValue);
             } else if (expectedValue instanceof Number) {
-                assertThat(Double.valueOf(actualValue.toString()), is(Double.valueOf(expectedValue.toString())));
+                assertThat(Double.valueOf(actualValue.toString())).isEqualTo(Double.valueOf(expectedValue.toString()));
             } else {
-                assertThat(actualValue, is(expectedValue));
+                assertThat(actualValue).isEqualTo(expectedValue);
             }
         });
     }
 
     @Test
-    public void identityAnalyzer() throws ExecutionException, InterruptedException {
+    void identityAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -341,10 +340,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void identityAnalyzerTyped() throws ExecutionException, InterruptedException {
+    void identityAnalyzerTyped() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -359,9 +358,9 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void delimiterAnalyzer() throws ExecutionException, InterruptedException {
+    void delimiterAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -378,10 +377,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void delimiterAnalyzerTyped() throws ExecutionException, InterruptedException {
+    void delimiterAnalyzerTyped() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -400,9 +399,9 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void stemAnalyzer() throws ExecutionException, InterruptedException {
+    void stemAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -419,10 +418,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void stemAnalyzerTyped() throws ExecutionException, InterruptedException {
+    void stemAnalyzerTyped() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -441,9 +440,9 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void normAnalyzer() throws ExecutionException, InterruptedException {
+    void normAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -465,10 +464,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void normAnalyzerTyped() throws ExecutionException, InterruptedException {
+    void normAnalyzerTyped() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -489,10 +488,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void ngramAnalyzer() throws ExecutionException, InterruptedException {
+    void ngramAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -514,10 +513,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void ngramAnalyzerTyped() throws ExecutionException, InterruptedException {
+    void ngramAnalyzerTyped() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -539,10 +538,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void textAnalyzer() throws ExecutionException, InterruptedException {
+    void textAnalyzer() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);
@@ -566,10 +565,10 @@ public class ArangoSearchTest extends BaseTest {
     }
 
     @Test
-    public void textAnalyzerTyped() throws ExecutionException, InterruptedException {
+    void textAnalyzerTyped() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
 
-        String name = "test-" + UUID.randomUUID().toString();
+        String name = "test-" + UUID.randomUUID();
 
         Set<AnalyzerFeature> features = new HashSet<>();
         features.add(AnalyzerFeature.frequency);

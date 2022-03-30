@@ -27,7 +27,7 @@ import com.arangodb.entity.DocumentField.Type;
  * @author a-brandt
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class Circle {
+class Circle {
 
     @DocumentField(Type.ID)
     private String id;
@@ -49,7 +49,7 @@ public class Circle {
         return id;
     }
 
-    public void setId(String id) {
+    void setId(String id) {
         this.id = id;
     }
 
@@ -57,7 +57,7 @@ public class Circle {
         return key;
     }
 
-    public void setKey(String key) {
+    void setKey(String key) {
         this.key = key;
     }
 
@@ -65,7 +65,7 @@ public class Circle {
         return revision;
     }
 
-    public void setRevision(String revision) {
+    void setRevision(String revision) {
         this.revision = revision;
     }
 
@@ -73,7 +73,7 @@ public class Circle {
         return label;
     }
 
-    public void setLabel(String label) {
+    void setLabel(String label) {
         this.label = label;
     }
 

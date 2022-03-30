@@ -1,36 +1,37 @@
 package com.arangodb.internal;
 
 import com.arangodb.model.QueueTimeSample;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
-public class QueueTimeMetricsImplTest {
+
+class QueueTimeMetricsImplTest {
     private final static int QSIZE = 1024;
     private final Random rnd = new Random();
     private final QueueTimeMetricsImpl q = new QueueTimeMetricsImpl(QSIZE);
 
     @Test
-    public void halfSizeTest() {
+    void halfSizeTest() {
         testQueue(QSIZE / 2);
     }
 
     @Test
-    public void fullSizeTest() {
+    void fullSizeTest() {
         testQueue(QSIZE);
     }
 
     @Test
-    public void emptySizeTest() {
+    void emptySizeTest() {
         testQueue(0);
     }
 
     @Test
-    public void overSizeTest() {
+    void overSizeTest() {
         testQueue((int) (QSIZE * 1.2));
         testQueue((int) (QSIZE * 3000.4));
     }
@@ -41,14 +42,14 @@ public class QueueTimeMetricsImplTest {
             q.add(new QueueTimeSample(i, rnd.nextDouble()));
         }
         QueueTimeSample[] values = q.getValues();
-        assertThat(values.length, is(Math.min(size, QSIZE)));
-        assertThat(q.getAvg(), is(closeTo(getAvg(values), 1.0E-12)));
-        assertThat(q.getAvg(), is(greaterThanOrEqualTo(0.0)));
+        assertThat(values).hasSize(Math.min(size, QSIZE));
+        assertThat(q.getAvg()).isEqualTo(getAvg(values), within(1.0E-12));
+        assertThat(q.getAvg()).isGreaterThanOrEqualTo(0.0);
 
         for (int i = 0; i < values.length; i++) {
-            assertThat(values[i], is(notNullValue()));
+            assertThat(values[i]).isNotNull();
             if (i > 0) {
-                assertThat(values[i].timestamp, greaterThan(values[i - 1].timestamp));
+                assertThat(values[i].timestamp).isGreaterThan(values[i - 1].timestamp);
             }
         }
     }

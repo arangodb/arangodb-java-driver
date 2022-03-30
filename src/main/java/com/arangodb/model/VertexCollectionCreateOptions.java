@@ -65,7 +65,7 @@ public class VertexCollectionCreateOptions {
         return this;
     }
 
-    private static class Options {
+    public static class Options {
         private Collection<String> satellites;
     }
 

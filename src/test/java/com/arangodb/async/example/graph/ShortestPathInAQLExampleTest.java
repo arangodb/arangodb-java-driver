@@ -21,16 +21,16 @@
 package com.arangodb.async.example.graph;
 
 import com.arangodb.async.ArangoCursorAsync;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * Shortest Path in AQL
@@ -38,39 +38,39 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @author a-brandt
  * @see <a href="https://www.arangodb.com/docs/stable/aql/graphs-shortest-path.html">Shortest Path in AQL</a>
  */
-public class ShortestPathInAQLExample extends BaseGraphTest {
+class ShortestPathInAQLExampleTest extends BaseGraphTest {
 
     @Test
-    public void queryShortestPathFromAToD() throws InterruptedException, ExecutionException {
+    void queryShortestPathFromAToD() throws InterruptedException, ExecutionException {
         String queryString = "FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' GRAPH 'traversalGraph' RETURN {'vertex': v._key, 'edge': e._key}";
         ArangoCursorAsync<Pair> cursor = db.query(queryString, null, null, Pair.class).get();
         final Collection<String> collection = toVertexCollection(cursor);
-        assertThat(collection.size(), is(4));
-        assertThat(collection, hasItems("A", "B", "C", "D"));
+        assertThat(collection).hasSize(4);
+        assertThat(collection).contains("A", "B", "C", "D");
 
         queryString = "WITH circles FOR v, e IN OUTBOUND SHORTEST_PATH 'circles/A' TO 'circles/D' edges RETURN {'vertex': v._key, 'edge': e._key}";
         db.query(queryString, null, null, Pair.class).get();
-        assertThat(collection.size(), is(4));
-        assertThat(collection, hasItems("A", "B", "C", "D"));
+        assertThat(collection).hasSize(4);
+        assertThat(collection).contains("A", "B", "C", "D");
     }
 
     @Test
-    public void queryShortestPathByFilter() throws InterruptedException, ExecutionException {
+    void queryShortestPathByFilter() throws InterruptedException, ExecutionException {
         String queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN OUTBOUND SHORTEST_PATH a TO d GRAPH 'traversalGraph' RETURN {'vertex':v._key, 'edge':e._key}";
         ArangoCursorAsync<Pair> cursor = db.query(queryString, null, null, Pair.class).get();
         final Collection<String> collection = toVertexCollection(cursor);
-        assertThat(collection.size(), is(4));
-        assertThat(collection, hasItems("A", "B", "C", "D"));
+        assertThat(collection).hasSize(4);
+        assertThat(collection).contains("A", "B", "C", "D");
 
         queryString = "FOR a IN circles FILTER a._key == 'A' FOR d IN circles FILTER d._key == 'D' FOR v, e IN OUTBOUND SHORTEST_PATH a TO d edges RETURN {'vertex': v._key, 'edge': e._key}";
         db.query(queryString, null, null, Pair.class).get();
-        assertThat(collection.size(), is(4));
-        assertThat(collection, hasItems("A", "B", "C", "D"));
+        assertThat(collection).hasSize(4);
+        assertThat(collection).contains("A", "B", "C", "D");
     }
 
     private Collection<String> toVertexCollection(final ArangoCursorAsync<Pair> cursor) {
         final List<String> result = new ArrayList<>();
-        for (; cursor.hasNext(); ) {
+        while (cursor.hasNext()) {
             final Pair pair = cursor.next();
             result.add(pair.getVertex());
         }
@@ -87,7 +87,7 @@ public class ShortestPathInAQLExample extends BaseGraphTest {
             return vertex;
         }
 
-        public void setVertex(final String vertex) {
+        void setVertex(final String vertex) {
             this.vertex = vertex;
         }
 
@@ -95,7 +95,7 @@ public class ShortestPathInAQLExample extends BaseGraphTest {
             return edge;
         }
 
-        public void setEdge(final String edge) {
+        void setEdge(final String edge) {
             this.edge = edge;
         }
 

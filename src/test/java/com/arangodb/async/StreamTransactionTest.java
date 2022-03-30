@@ -25,8 +25,8 @@ import com.arangodb.entity.*;
 import com.arangodb.model.DocumentCreateOptions;
 import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.StreamTransactionOptions;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,16 +34,14 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
  */
-public class StreamTransactionTest extends BaseTest {
+class StreamTransactionTest extends BaseTest {
 
     private static final String COLLECTION_NAME = "db_stream_transaction_test";
 
@@ -54,26 +52,26 @@ public class StreamTransactionTest extends BaseTest {
         db.createCollection(COLLECTION_NAME, null).get();
     }
 
-    @After
-    public void teardown() throws ExecutionException, InterruptedException {
+    @AfterEach
+    void teardown() throws ExecutionException, InterruptedException {
         if (db.collection(COLLECTION_NAME).exists().get())
             db.collection(COLLECTION_NAME).drop().get();
     }
 
     @Test
-    public void beginStreamTransaction() throws ExecutionException, InterruptedException {
+    void beginStreamTransaction() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
 
         StreamTransactionEntity tx = db.beginStreamTransaction(null).get();
-        assertThat(tx.getId(), is(notNullValue()));
-        assertThat(tx.getStatus(), is(StreamTransactionStatus.running));
+        assertThat(tx.getId()).isNotNull();
+        assertThat(tx.getStatus()).isEqualTo(StreamTransactionStatus.running);
         db.abortStreamTransaction(tx.getId()).get();
     }
 
     @Test
-    public void beginStreamTransactionWithNonExistingCollectionsShouldThrow() throws ExecutionException, InterruptedException {
+    void beginStreamTransactionWithNonExistingCollectionsShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -82,12 +80,12 @@ public class StreamTransactionTest extends BaseTest {
             db.beginStreamTransaction(new StreamTransactionOptions().writeCollections("notExistingCollection")).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void abortStreamTransaction() throws ExecutionException, InterruptedException {
+    void abortStreamTransaction() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -95,13 +93,13 @@ public class StreamTransactionTest extends BaseTest {
         StreamTransactionEntity begunTx = db.beginStreamTransaction(null).get();
         StreamTransactionEntity abortedTx = db.abortStreamTransaction(begunTx.getId()).get();
 
-        assertThat(abortedTx.getId(), is(notNullValue()));
-        assertThat(abortedTx.getId(), is(begunTx.getId()));
-        assertThat(abortedTx.getStatus(), is(StreamTransactionStatus.aborted));
+        assertThat(abortedTx.getId()).isNotNull();
+        assertThat(abortedTx.getId()).isEqualTo(begunTx.getId());
+        assertThat(abortedTx.getStatus()).isEqualTo(StreamTransactionStatus.aborted);
     }
 
     @Test
-    public void abortStreamTransactionTwice() throws ExecutionException, InterruptedException {
+    void abortStreamTransactionTwice() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -112,7 +110,7 @@ public class StreamTransactionTest extends BaseTest {
     }
 
     @Test
-    public void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
+    void abortStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -121,12 +119,12 @@ public class StreamTransactionTest extends BaseTest {
             db.abortStreamTransaction("000000").get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void abortStreamTransactionWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
+    void abortStreamTransactionWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -135,12 +133,12 @@ public class StreamTransactionTest extends BaseTest {
             db.abortStreamTransaction("invalidTransactionId").get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void abortCommittedStreamTransactionShouldThrow() throws ExecutionException, InterruptedException {
+    void abortCommittedStreamTransactionShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -152,12 +150,12 @@ public class StreamTransactionTest extends BaseTest {
             db.abortStreamTransaction(createdTx.getId()).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getStreamTransaction() throws ExecutionException, InterruptedException {
+    void getStreamTransaction() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -165,15 +163,15 @@ public class StreamTransactionTest extends BaseTest {
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         StreamTransactionEntity gotTx = db.getStreamTransaction(createdTx.getId()).get();
 
-        assertThat(gotTx.getId(), is(notNullValue()));
-        assertThat(gotTx.getId(), is(createdTx.getId()));
-        assertThat(gotTx.getStatus(), is(StreamTransactionStatus.running));
+        assertThat(gotTx.getId()).isNotNull();
+        assertThat(gotTx.getId()).isEqualTo(createdTx.getId());
+        assertThat(gotTx.getStatus()).isEqualTo(StreamTransactionStatus.running);
 
         db.abortStreamTransaction(createdTx.getId()).get();
     }
 
     @Test
-    public void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
+    void getStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -182,12 +180,12 @@ public class StreamTransactionTest extends BaseTest {
             db.getStreamTransaction("000000").get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getStreamTransactionWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
+    void getStreamTransactionWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -196,12 +194,12 @@ public class StreamTransactionTest extends BaseTest {
             db.getStreamTransaction("invalidTransactionId").get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void commitStreamTransaction() throws ExecutionException, InterruptedException {
+    void commitStreamTransaction() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -209,13 +207,13 @@ public class StreamTransactionTest extends BaseTest {
         StreamTransactionEntity createdTx = db.beginStreamTransaction(null).get();
         StreamTransactionEntity committedTx = db.commitStreamTransaction(createdTx.getId()).get();
 
-        assertThat(committedTx.getId(), is(notNullValue()));
-        assertThat(committedTx.getId(), is(createdTx.getId()));
-        assertThat(committedTx.getStatus(), is(StreamTransactionStatus.committed));
+        assertThat(committedTx.getId()).isNotNull();
+        assertThat(committedTx.getId()).isEqualTo(createdTx.getId());
+        assertThat(committedTx.getStatus()).isEqualTo(StreamTransactionStatus.committed);
     }
 
     @Test
-    public void commitStreamTransactionTwice() throws ExecutionException, InterruptedException {
+    void commitStreamTransactionTwice() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -226,7 +224,7 @@ public class StreamTransactionTest extends BaseTest {
     }
 
     @Test
-    public void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
+    void commitStreamTransactionWhenTransactionIdDoesNotExistsShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -235,12 +233,12 @@ public class StreamTransactionTest extends BaseTest {
             db.commitStreamTransaction("000000").get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void commitStreamTransactionWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
+    void commitStreamTransactionWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -249,12 +247,12 @@ public class StreamTransactionTest extends BaseTest {
             db.commitStreamTransaction("invalidTransactionId").get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void commitAbortedStreamTransactionShouldThrow() throws ExecutionException, InterruptedException {
+    void commitAbortedStreamTransactionShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -266,12 +264,12 @@ public class StreamTransactionTest extends BaseTest {
             db.commitStreamTransaction(createdTx.getId()).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getDocument() throws ExecutionException, InterruptedException {
+    void getDocument() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -285,13 +283,13 @@ public class StreamTransactionTest extends BaseTest {
 
         // assert that the document is not found from within the tx
         assertThat(db.collection(COLLECTION_NAME).getDocument(externalDoc.getKey(), BaseDocument.class,
-                new DocumentReadOptions().streamTransactionId(tx.getId())).get(), is(nullValue()));
+                new DocumentReadOptions().streamTransactionId(tx.getId())).get()).isNull();
 
         db.abortStreamTransaction(tx.getId()).get();
     }
 
     @Test
-    public void getDocumentWithNonExistingTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
+    void getDocumentWithNonExistingTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -302,12 +300,12 @@ public class StreamTransactionTest extends BaseTest {
                     .get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void insertDocumentWithNonExistingTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
+    void insertDocumentWithNonExistingTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -317,12 +315,12 @@ public class StreamTransactionTest extends BaseTest {
                     .insertDocument(new BaseDocument(), new DocumentCreateOptions().streamTransactionId("123456")).get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getDocumentWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
+    void getDocumentWithInvalidTransactionIdShouldThrow() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -333,12 +331,12 @@ public class StreamTransactionTest extends BaseTest {
                     .get();
             fail();
         } catch (ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
     }
 
     @Test
-    public void getStreamTransactions() throws ExecutionException, InterruptedException {
+    void getStreamTransactions() throws ExecutionException, InterruptedException {
         assumeTrue(isSingleServer());
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isStorageEngine(ArangoDBEngine.StorageEngineName.rocksdb));
@@ -350,9 +348,9 @@ public class StreamTransactionTest extends BaseTest {
         Set<TransactionEntity> gotTxs = db.getStreamTransactions().get().stream().
                 filter(it -> createdIds.contains(it.getId())).collect(Collectors.toSet());
 
-        assertThat(gotTxs.size(), is(createdIds.size()));
+        assertThat(gotTxs).hasSameSizeAs(createdIds);
         assertThat(gotTxs.stream()
-                .allMatch(it -> it.getStatus() == StreamTransactionStatus.running), is(true));
+                .allMatch(it -> it.getStatus() == StreamTransactionStatus.running)).isTrue();
 
         db.abortStreamTransaction(tx1.getId()).get();
         db.abortStreamTransaction(tx2.getId()).get();

@@ -23,29 +23,30 @@ package com.arangodb.async;
 import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.internal.ArangoRequestParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoRouteTest extends BaseTest {
+class ArangoRouteTest extends BaseTest {
 
   /*
 	@Test
-	public void get() throws InterruptedException, ExecutionException {
+	void get() throws InterruptedException, ExecutionException {
 		final Response res = db.route("/_api/version").get().get();
-		assertThat(res.getBody().get("version").isString(), is(true));
+		assertThat(res.getBody().get("version").isString()).isEqualTo(true);
 	}*/
 
   /*
 	@Test
-	public void withHeader() throws InterruptedException, ExecutionException {
+	void withHeader() throws InterruptedException, ExecutionException {
 		final ArangoCollectionAsync collection = db.collection("route-test-col");
 		try {
 			collection.create();
@@ -55,7 +56,7 @@ public class ArangoRouteTest extends BaseTest {
 					.get().get();
 			fail();
 		} catch (final ExecutionException e) {
-			assertThat(e.getCause() instanceof ArangoDBException, is(true));
+			assertThat(e.getCause() instanceof ArangoDBException).isEqualTo(true);
 		} finally {
 			collection.drop();
 		}
@@ -63,7 +64,7 @@ public class ArangoRouteTest extends BaseTest {
   */
 
     @Test
-    public void withParentHeader() throws InterruptedException, ExecutionException {
+    void withParentHeader() throws InterruptedException, ExecutionException {
         final ArangoCollectionAsync collection = db.collection("route-test-col");
         try {
             collection.create().get();
@@ -73,7 +74,7 @@ public class ArangoRouteTest extends BaseTest {
                     .route(doc.getId()).get().get();
             fail();
         } catch (final ExecutionException e) {
-            assertThat(e.getCause(), instanceOf(ArangoDBException.class));
+            assertThat(e.getCause()).isInstanceOf(ArangoDBException.class);
         }
         collection.drop().get();
     }

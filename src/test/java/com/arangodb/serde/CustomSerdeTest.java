@@ -24,6 +24,7 @@ package com.arangodb.serde;
 import com.arangodb.ArangoCollection;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
@@ -39,9 +40,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -52,15 +53,14 @@ import java.util.UUID;
 import static com.arangodb.internal.util.ArangoSerializationFactory.Serializer.CUSTOM;
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
  * @author Michele Rastelli
  */
-public class CustomSerdeTest {
+class CustomSerdeTest {
 
     private static final String COLLECTION_NAME = "collection";
     private static final String PERSON_SERIALIZER_ADDED_PREFIX = "MyNameIs";
@@ -82,7 +82,7 @@ public class CustomSerdeTest {
 
     static class PersonDeserializer extends JsonDeserializer<Person> {
         @Override
-        public Person deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+        public Person deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
             Person person = new Person();
             JsonNode rootNode = parser.getCodec().readTree(parser);
             JsonNode nameNode = rootNode.get("name");
@@ -94,12 +94,12 @@ public class CustomSerdeTest {
     }
 
     @JsonSerialize(using = PersonSerializer.class)
-    public static class Person {
-        public String name;
+    static class Person {
+        String name;
     }
 
-    @BeforeClass
-    public static void init() {
+    @BeforeAll
+    static void init() {
         ArangoJack arangoJack = new ArangoJack();
         arangoJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
@@ -110,8 +110,7 @@ public class CustomSerdeTest {
         });
         arangoDB = new ArangoDB.Builder().serializer(arangoJack).build();
 
-        String TEST_DB = "custom-serde-test";
-        db = arangoDB.db(TEST_DB);
+        db = arangoDB.db(DbName.of("custom-serde-test"));
         if (!db.exists()) {
             db.create();
         }
@@ -122,36 +121,36 @@ public class CustomSerdeTest {
         }
     }
 
-    @AfterClass
-    public static void shutdown() {
+    @AfterAll
+    static void shutdown() {
         if (db.exists())
             db.drop();
     }
 
     @Test
-    public void customPersonDeserializer() {
+    void customPersonDeserializer() {
         Person person = new Person();
         person.name = "Joe";
         Person result = collection.insertDocument(
                 person,
                 new DocumentCreateOptions().returnNew(true)
         ).getNew();
-        assertThat(result.name, is(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name));
+        assertThat(result.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
     @Test
-    public void manualCustomPersonDeserializer() {
+    void manualCustomPersonDeserializer() {
         Person person = new Person();
         person.name = "Joe";
         ArangoSerialization serialization = arangoDB.util(CUSTOM);
         VPackSlice serializedPerson = serialization.serialize(person);
         Person deserializedPerson = serialization.deserialize(serializedPerson, Person.class);
-        assertThat(deserializedPerson.name, is(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name));
+        assertThat(deserializedPerson.name).isEqualTo(PERSON_DESERIALIZER_ADDED_PREFIX + PERSON_SERIALIZER_ADDED_PREFIX + person.name);
     }
 
     @Test
-    public void aqlSerialization() {
-        String key = "test-" + UUID.randomUUID().toString();
+    void aqlSerialization() {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -165,17 +164,17 @@ public class CustomSerdeTest {
                 "INSERT @doc INTO @@collection RETURN NEW",
                 params,
                 BaseDocument.class
-        ).first();
+        ).next();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void aqlDeserialization() {
-        String key = "test-" + UUID.randomUUID().toString();
+    void aqlDeserialization() {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -187,17 +186,17 @@ public class CustomSerdeTest {
                 "RETURN DOCUMENT(@docId)",
                 Collections.singletonMap("docId", COLLECTION_NAME + "/" + key),
                 BaseDocument.class
-        ).first();
+        ).next();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void insertDocument() {
-        String key = "test-" + UUID.randomUUID().toString();
+    void insertDocument() {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -208,15 +207,15 @@ public class CustomSerdeTest {
                 new DocumentCreateOptions().returnNew(true)
         ).getNew();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void getDocument() {
-        String key = "test-" + UUID.randomUUID().toString();
+    void getDocument() {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -229,16 +228,16 @@ public class CustomSerdeTest {
                 BaseDocument.class,
                 null);
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void parseNullString() {
+    void parseNullString() {
         final String json = arangoDB.util(CUSTOM).deserialize(new VPackBuilder().add((String) null).slice(), String.class);
-        assertThat(json, nullValue());
+        assertThat(json).isNull();
     }
 
 }

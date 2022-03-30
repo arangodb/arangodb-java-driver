@@ -26,9 +26,9 @@ import com.arangodb.entity.GraphEntity;
 import com.arangodb.entity.ServerRole;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.VertexCollectionCreateOptions;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,15 +36,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoGraphTest extends BaseTest {
+class ArangoGraphTest extends BaseTest {
 
     private static final String GRAPH_NAME = "db_collection_test";
     private static final String EDGE_COL_1 = "db_edge1_collection_test";
@@ -57,8 +55,8 @@ public class ArangoGraphTest extends BaseTest {
     private static final Integer REPLICATION_FACTOR = 2;
     private static final Integer NUMBER_OF_SHARDS = 2;
 
-    @BeforeClass
-    public static void setup() throws InterruptedException, ExecutionException {
+    @BeforeAll
+    static void setup() throws InterruptedException, ExecutionException {
         if (db.graph(GRAPH_NAME).exists().get()) {
             db.graph(GRAPH_NAME).drop().get();
         }
@@ -73,8 +71,8 @@ public class ArangoGraphTest extends BaseTest {
         db.createGraph(GRAPH_NAME, edgeDefinitions, options).get();
     }
 
-    @After
-    public void teardown() throws InterruptedException, ExecutionException {
+    @AfterEach
+    void teardown() throws InterruptedException, ExecutionException {
         for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3,
                 VERTEX_COL_4}) {
             final ArangoCollectionAsync c = db.collection(collection);
@@ -85,85 +83,85 @@ public class ArangoGraphTest extends BaseTest {
     }
 
     @Test
-    public void create() throws InterruptedException, ExecutionException {
+    void create() throws InterruptedException, ExecutionException {
         try {
             final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(null).get();
-            assertThat(result, is(notNullValue()));
-            assertThat(result.getName(), is(GRAPH_NAME + "_1"));
+            assertThat(result).isNotNull();
+            assertThat(result.getName()).isEqualTo(GRAPH_NAME + "_1");
         } finally {
             db.graph(GRAPH_NAME + "_1").drop().get();
         }
     }
 
     @Test
-    public void createWithReplicationAndMinReplicationFactor() throws ExecutionException, InterruptedException {
+    void createWithReplicationAndMinReplicationFactor() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
         final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2)).get();
-        assertThat(graph, is(notNullValue()));
-        assertThat(graph.getName(), is(GRAPH_NAME + "_1"));
-        assertThat(graph.getMinReplicationFactor(), is(2));
-        assertThat(graph.getReplicationFactor(), is(2));
+        assertThat(graph).isNotNull();
+        assertThat(graph.getName()).isEqualTo(GRAPH_NAME + "_1");
+        assertThat(graph.getMinReplicationFactor()).isEqualTo(2);
+        assertThat(graph.getReplicationFactor()).isEqualTo(2);
         db.graph(GRAPH_NAME + "_1").drop();
     }
 
     @Test
-    public void getGraphs() throws InterruptedException, ExecutionException {
+    void getGraphs() throws InterruptedException, ExecutionException {
         final Collection<GraphEntity> graphs = db.getGraphs().get();
-        assertThat(graphs, is(notNullValue()));
-        assertThat(graphs.size(), greaterThanOrEqualTo(1));
+        assertThat(graphs).isNotNull();
+        assertThat(graphs).isNotEmpty();
     }
 
     @Test
-    public void getInfo() throws InterruptedException, ExecutionException {
+    void getInfo() throws InterruptedException, ExecutionException {
         final GraphEntity info = db.graph(GRAPH_NAME).getInfo().get();
-        assertThat(info, is(notNullValue()));
-        assertThat(info.getName(), is(GRAPH_NAME));
-        assertThat(info.getEdgeDefinitions().size(), is(2));
+        assertThat(info).isNotNull();
+        assertThat(info.getName()).isEqualTo(GRAPH_NAME);
+        assertThat(info.getEdgeDefinitions()).hasSize(2);
         final Iterator<EdgeDefinition> iterator = info.getEdgeDefinitions().iterator();
         final EdgeDefinition e1 = iterator.next();
-        assertThat(e1.getCollection(), is(EDGE_COL_1));
-        assertThat(e1.getFrom(), hasItem(VERTEX_COL_1));
-        assertThat(e1.getTo(), hasItem(VERTEX_COL_2));
+        assertThat(e1.getCollection()).isEqualTo(EDGE_COL_1);
+        assertThat(e1.getFrom()).contains(VERTEX_COL_1);
+        assertThat(e1.getTo()).contains(VERTEX_COL_2);
         final EdgeDefinition e2 = iterator.next();
-        assertThat(e2.getCollection(), is(EDGE_COL_2));
-        assertThat(e2.getFrom(), hasItem(VERTEX_COL_2));
-        assertThat(e2.getTo(), hasItems(VERTEX_COL_1, VERTEX_COL_3));
-        assertThat(info.getOrphanCollections(), is(empty()));
+        assertThat(e2.getCollection()).isEqualTo(EDGE_COL_2);
+        assertThat(e2.getFrom()).contains(VERTEX_COL_2);
+        assertThat(e2.getTo()).contains(VERTEX_COL_1, VERTEX_COL_3);
+        assertThat(info.getOrphanCollections()).isEmpty();
 
         if (isCluster()) {
             for (final String collection : new String[]{VERTEX_COL_1, VERTEX_COL_2}) {
                 final CollectionPropertiesEntity properties = db.collection(collection).getProperties().get();
-                assertThat(properties.getReplicationFactor(), is(REPLICATION_FACTOR));
-                assertThat(properties.getNumberOfShards(), is(NUMBER_OF_SHARDS));
+                assertThat(properties.getReplicationFactor()).isEqualTo(REPLICATION_FACTOR);
+                assertThat(properties.getNumberOfShards()).isEqualTo(NUMBER_OF_SHARDS);
             }
             for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2}) {
                 final CollectionPropertiesEntity properties = db.collection(collection).getProperties().get();
-                assertThat(properties.getReplicationFactor(), is(REPLICATION_FACTOR));
+                assertThat(properties.getReplicationFactor()).isEqualTo(REPLICATION_FACTOR);
             }
         }
     }
 
     @Test
-    public void getVertexCollections() throws InterruptedException, ExecutionException {
+    void getVertexCollections() throws InterruptedException, ExecutionException {
         final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections().get();
-        assertThat(vertexCollections, is(notNullValue()));
-        assertThat(vertexCollections.size(), is(3));
-        assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3));
+        assertThat(vertexCollections).isNotNull();
+        assertThat(vertexCollections).hasSize(3);
+        assertThat(vertexCollections).contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3);
     }
 
     @Test
-    public void addVertexCollection() throws InterruptedException, ExecutionException {
+    void addVertexCollection() throws InterruptedException, ExecutionException {
         final GraphEntity graph = db.graph(GRAPH_NAME).addVertexCollection(VERTEX_COL_4).get();
-        assertThat(graph, is(notNullValue()));
+        assertThat(graph).isNotNull();
         final Collection<String> vertexCollections = db.graph(GRAPH_NAME).getVertexCollections().get();
-        assertThat(vertexCollections, hasItems(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4));
+        assertThat(vertexCollections).contains(VERTEX_COL_1, VERTEX_COL_2, VERTEX_COL_3, VERTEX_COL_4);
         setup();
     }
 
     @Test
-    public void addSatelliteVertexCollection() throws ExecutionException, InterruptedException {
+    void addSatelliteVertexCollection() throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 9));
@@ -175,52 +173,52 @@ public class ArangoGraphTest extends BaseTest {
         g.addVertexCollection(v1Name, new VertexCollectionCreateOptions().satellites(v1Name)).get();
 
         Collection<String> vertexCollections = g.getVertexCollections().get();
-        assertThat(vertexCollections, hasItems(v1Name));
-        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
+        assertThat(vertexCollections).contains(v1Name);
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite()).isTrue();
 
         // revert
         g.drop().get();
     }
 
     @Test
-    public void getEdgeCollections() throws InterruptedException, ExecutionException {
+    void getEdgeCollections() throws InterruptedException, ExecutionException {
         final Collection<String> edgeCollections = db.graph(GRAPH_NAME).getEdgeDefinitions().get();
-        assertThat(edgeCollections, is(notNullValue()));
-        assertThat(edgeCollections.size(), is(2));
-        assertThat(edgeCollections, hasItems(EDGE_COL_1, EDGE_COL_2));
+        assertThat(edgeCollections).isNotNull();
+        assertThat(edgeCollections).hasSize(2);
+        assertThat(edgeCollections).contains(EDGE_COL_1, EDGE_COL_2);
     }
 
     @Test
-    public void addEdgeDefinition() throws InterruptedException, ExecutionException {
+    void addEdgeDefinition() throws InterruptedException, ExecutionException {
         final GraphEntity graph = db.graph(GRAPH_NAME)
                 .addEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_3).from(VERTEX_COL_1).to(VERTEX_COL_2))
                 .get();
-        assertThat(graph, is(notNullValue()));
+        assertThat(graph).isNotNull();
         final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
-        assertThat(edgeDefinitions.size(), is(3));
+        assertThat(edgeDefinitions).hasSize(3);
         int count = 0;
         for (final EdgeDefinition e : edgeDefinitions) {
             if (e.getCollection().equals(EDGE_COL_3)) {
                 count++;
             }
         }
-        assertThat(count, is(1));
+        assertThat(count).isEqualTo(1);
         for (final EdgeDefinition e : edgeDefinitions) {
             if (e.getCollection().equals(EDGE_COL_3)) {
-                assertThat(e.getFrom(), hasItem(VERTEX_COL_1));
-                assertThat(e.getTo(), hasItem(VERTEX_COL_2));
+                assertThat(e.getFrom()).contains(VERTEX_COL_1);
+                assertThat(e.getTo()).contains(VERTEX_COL_2);
             }
         }
         if (isCluster()) {
             final CollectionPropertiesEntity properties = db.collection(EDGE_COL_3).getProperties().get();
-            assertThat(properties.getReplicationFactor(), is(REPLICATION_FACTOR));
-            assertThat(properties.getNumberOfShards(), is(NUMBER_OF_SHARDS));
+            assertThat(properties.getReplicationFactor()).isEqualTo(REPLICATION_FACTOR);
+            assertThat(properties.getNumberOfShards()).isEqualTo(NUMBER_OF_SHARDS);
         }
         setup();
     }
 
     @Test
-    public void addSatelliteEdgeDefinition() throws ExecutionException, InterruptedException {
+    void addSatelliteEdgeDefinition() throws ExecutionException, InterruptedException {
         assumeTrue(isCluster());
         assumeTrue(isEnterprise());
         assumeTrue(isAtLeastVersion(3, 9));
@@ -234,54 +232,54 @@ public class ArangoGraphTest extends BaseTest {
         g.createGraph(Collections.emptyList(), new GraphCreateOptions().isSmart(true).smartGraphAttribute("test")).get();
         g.addEdgeDefinition(ed).get();
         final GraphEntity ge = g.getInfo().get();
-        assertThat(ge, is(notNullValue()));
+        assertThat(ge).isNotNull();
         final Collection<EdgeDefinition> edgeDefinitions = ge.getEdgeDefinitions();
-        assertThat(edgeDefinitions.size(), is(1));
+        assertThat(edgeDefinitions).hasSize(1);
         EdgeDefinition e = edgeDefinitions.iterator().next();
-        assertThat(e.getCollection(), is(eName));
-        assertThat(e.getFrom(), hasItem(v1Name));
-        assertThat(e.getTo(), hasItem(v2Name));
+        assertThat(e.getCollection()).isEqualTo(eName);
+        assertThat(e.getFrom()).contains(v1Name);
+        assertThat(e.getTo()).contains(v2Name);
 
-        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite()).isTrue();
 
         // revert
         g.drop().get();
     }
 
     @Test
-    public void replaceEdgeDefinition() throws InterruptedException, ExecutionException {
+    void replaceEdgeDefinition() throws InterruptedException, ExecutionException {
         final GraphEntity graph = db.graph(GRAPH_NAME)
                 .replaceEdgeDefinition(new EdgeDefinition().collection(EDGE_COL_1).from(VERTEX_COL_3).to(VERTEX_COL_4))
                 .get();
         final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
-        assertThat(edgeDefinitions.size(), is(2));
+        assertThat(edgeDefinitions).hasSize(2);
         int count = 0;
         for (final EdgeDefinition e : edgeDefinitions) {
             if (e.getCollection().equals(EDGE_COL_1)) {
                 count++;
             }
         }
-        assertThat(count, is(1));
+        assertThat(count).isEqualTo(1);
         for (final EdgeDefinition e : edgeDefinitions) {
             if (e.getCollection().equals(EDGE_COL_1)) {
-                assertThat(e.getFrom(), hasItem(VERTEX_COL_3));
-                assertThat(e.getTo(), hasItem(VERTEX_COL_4));
+                assertThat(e.getFrom()).contains(VERTEX_COL_3);
+                assertThat(e.getTo()).contains(VERTEX_COL_4);
             }
         }
         setup();
     }
 
     @Test
-    public void removeEdgeDefinition() throws InterruptedException, ExecutionException {
+    void removeEdgeDefinition() throws InterruptedException, ExecutionException {
         final GraphEntity graph = db.graph(GRAPH_NAME).removeEdgeDefinition(EDGE_COL_1).get();
         final Collection<EdgeDefinition> edgeDefinitions = graph.getEdgeDefinitions();
-        assertThat(edgeDefinitions.size(), is(1));
-        assertThat(edgeDefinitions.iterator().next().getCollection(), is(EDGE_COL_2));
+        assertThat(edgeDefinitions).hasSize(1);
+        assertThat(edgeDefinitions.iterator().next().getCollection()).isEqualTo(EDGE_COL_2);
         setup();
     }
 
     @Test
-    public void smartGraph() throws InterruptedException, ExecutionException {
+    void smartGraph() throws InterruptedException, ExecutionException {
         assumeTrue(isCluster());
         assumeTrue(isEnterprise());
         for (final String collection : new String[]{EDGE_COL_1, EDGE_COL_2, VERTEX_COL_1, VERTEX_COL_2,
@@ -298,17 +296,17 @@ public class ArangoGraphTest extends BaseTest {
                         new GraphCreateOptions().isSmart(true).smartGraphAttribute("test").replicationFactor(REPLICATION_FACTOR)
                                 .numberOfShards(NUMBER_OF_SHARDS))
                 .get();
-        assertThat(graph, is(notNullValue()));
-        assertThat(graph.getIsSmart(), is(true));
-        assertThat(graph.getSmartGraphAttribute(), is("test"));
-        assertThat(graph.getNumberOfShards(), is(2));
+        assertThat(graph).isNotNull();
+        assertThat(graph.getIsSmart()).isTrue();
+        assertThat(graph.getSmartGraphAttribute()).isEqualTo("test");
+        assertThat(graph.getNumberOfShards()).isEqualTo(2);
         if (db.graph(GRAPH_NAME + "_smart").exists().get()) {
             db.graph(GRAPH_NAME + "_smart").drop().get();
         }
     }
 
     @Test
-    public void hybridSmartGraph() throws ExecutionException, InterruptedException {
+    void hybridSmartGraph() throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
         assumeTrue((isAtLeastVersion(3, 9)));
@@ -324,18 +322,18 @@ public class ArangoGraphTest extends BaseTest {
                 .satellites(eName, v1Name)
                 .isSmart(true).smartGraphAttribute("test").replicationFactor(2).numberOfShards(2)).get();
 
-        assertThat(g, is(notNullValue()));
-        assertThat(g.getIsSmart(), is(true));
-        assertThat(g.getSmartGraphAttribute(), is("test"));
-        assertThat(g.getNumberOfShards(), is(2));
+        assertThat(g).isNotNull();
+        assertThat(g.getIsSmart()).isTrue();
+        assertThat(g.getSmartGraphAttribute()).isEqualTo("test");
+        assertThat(g.getNumberOfShards()).isEqualTo(2);
 
-        assertThat(db.collection(eName).getProperties().get().getSatellite(), is(true));
-        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
-        assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor(), is(2));
+        assertThat(db.collection(eName).getProperties().get().getSatellite()).isTrue();
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite()).isTrue();
+        assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor()).isEqualTo(2);
     }
 
     @Test
-    public void hybridDisjointSmartGraph() throws ExecutionException, InterruptedException {
+    void hybridDisjointSmartGraph() throws ExecutionException, InterruptedException {
         assumeTrue(isEnterprise());
         assumeTrue(isCluster());
         assumeTrue((isAtLeastVersion(3, 9)));
@@ -351,41 +349,41 @@ public class ArangoGraphTest extends BaseTest {
                 .satellites(v1Name)
                 .isSmart(true).isDisjoint(true).smartGraphAttribute("test").replicationFactor(2).numberOfShards(2)).get();
 
-        assertThat(g, is(notNullValue()));
-        assertThat(g.getIsSmart(), is(true));
-        assertThat(g.getIsDisjoint(), is(true));
-        assertThat(g.getSmartGraphAttribute(), is("test"));
-        assertThat(g.getNumberOfShards(), is(2));
+        assertThat(g).isNotNull();
+        assertThat(g.getIsSmart()).isTrue();
+        assertThat(g.getIsDisjoint()).isTrue();
+        assertThat(g.getSmartGraphAttribute()).isEqualTo("test");
+        assertThat(g.getNumberOfShards()).isEqualTo(2);
 
-        assertThat(db.collection(v1Name).getProperties().get().getSatellite(), is(true));
-        assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor(), is(2));
+        assertThat(db.collection(v1Name).getProperties().get().getSatellite()).isTrue();
+        assertThat(db.collection(v2Name).getProperties().get().getReplicationFactor()).isEqualTo(2);
     }
 
     @Test
-    public void drop() throws InterruptedException, ExecutionException {
+    void drop() throws InterruptedException, ExecutionException {
         final String edgeCollection = "edge_drop";
         final String vertexCollection = "vertex_drop";
         final String graph = GRAPH_NAME + "_drop";
         final GraphEntity result = db.graph(graph).create(Collections
                         .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)))
                 .get();
-        assertThat(result, is(notNullValue()));
+        assertThat(result).isNotNull();
         db.graph(graph).drop().get();
-        assertThat(db.collection(edgeCollection).exists().get(), is(true));
-        assertThat(db.collection(vertexCollection).exists().get(), is(true));
+        assertThat(db.collection(edgeCollection).exists().get()).isTrue();
+        assertThat(db.collection(vertexCollection).exists().get()).isTrue();
     }
 
     @Test
-    public void dropPlusDropCollections() throws InterruptedException, ExecutionException {
+    void dropPlusDropCollections() throws InterruptedException, ExecutionException {
         final String edgeCollection = "edge_dropC";
         final String vertexCollection = "vertex_dropC";
         final String graph = GRAPH_NAME + "_dropC";
         final GraphEntity result = db.graph(graph).create(Collections
                         .singleton(new EdgeDefinition().collection(edgeCollection).from(vertexCollection).to(vertexCollection)))
                 .get();
-        assertThat(result, is(notNullValue()));
+        assertThat(result).isNotNull();
         db.graph(graph).drop(true).get();
-        assertThat(db.collection(edgeCollection).exists().get(), is(false));
-        assertThat(db.collection(vertexCollection).exists().get(), is(false));
+        assertThat(db.collection(edgeCollection).exists().get()).isFalse();
+        assertThat(db.collection(vertexCollection).exists().get()).isFalse();
     }
 }

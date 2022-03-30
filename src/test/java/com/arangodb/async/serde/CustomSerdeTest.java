@@ -21,15 +21,17 @@
 package com.arangodb.async.serde;
 
 
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoCollectionAsync;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.DocumentCreateOptions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 import java.math.BigInteger;
 import java.util.Collections;
@@ -39,22 +41,21 @@ import java.util.concurrent.ExecutionException;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_INTEGER_FOR_INTS;
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Michele Rastelli
  */
-public class CustomSerdeTest {
+class CustomSerdeTest {
 
     private static final String COLLECTION_NAME = "collection";
 
     private ArangoDatabaseAsync db;
     private ArangoCollectionAsync collection;
 
-    @Before
-    public void init() throws ExecutionException, InterruptedException {
+    @BeforeEach
+    void init() throws ExecutionException, InterruptedException {
         ArangoJack arangoJack = new ArangoJack();
         arangoJack.configure((mapper) -> {
             mapper.configure(WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
@@ -62,7 +63,7 @@ public class CustomSerdeTest {
         });
         ArangoDBAsync arangoDB = new ArangoDBAsync.Builder().serializer(arangoJack).build();
 
-        String TEST_DB = "custom-serde-test";
+        DbName TEST_DB = DbName.of("custom-serde-test");
         db = arangoDB.db(TEST_DB);
         if (!db.exists().get()) {
             db.create().get();
@@ -74,14 +75,14 @@ public class CustomSerdeTest {
         }
     }
 
-    @After
-    public void shutdown() throws ExecutionException, InterruptedException {
+    @AfterEach
+    void shutdown() throws ExecutionException, InterruptedException {
         db.drop().get();
     }
 
     @Test
-    public void aqlSerialization() throws ExecutionException, InterruptedException {
-        String key = "test-" + UUID.randomUUID().toString();
+    void aqlSerialization() throws ExecutionException, InterruptedException {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -95,17 +96,17 @@ public class CustomSerdeTest {
                 "INSERT @doc INTO @@collection RETURN NEW",
                 params,
                 BaseDocument.class
-        ).get().first();
+        ).get().next();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void aqlDeserialization() throws ExecutionException, InterruptedException {
-        String key = "test-" + UUID.randomUUID().toString();
+    void aqlDeserialization() throws ExecutionException, InterruptedException {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -117,17 +118,17 @@ public class CustomSerdeTest {
                 "RETURN DOCUMENT(@docId)",
                 Collections.singletonMap("docId", COLLECTION_NAME + "/" + key),
                 BaseDocument.class
-        ).get().first();
+        ).get().next();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void insertDocument() throws ExecutionException, InterruptedException {
-        String key = "test-" + UUID.randomUUID().toString();
+    void insertDocument() throws ExecutionException, InterruptedException {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -138,15 +139,15 @@ public class CustomSerdeTest {
                 new DocumentCreateOptions().returnNew(true)
         ).get().getNew();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
     @Test
-    public void getDocument() throws ExecutionException, InterruptedException {
-        String key = "test-" + UUID.randomUUID().toString();
+    void getDocument() throws ExecutionException, InterruptedException {
+        String key = "test-" + UUID.randomUUID();
 
         BaseDocument doc = new BaseDocument(key);
         doc.addAttribute("arr", Collections.singletonList("hello"));
@@ -159,10 +160,10 @@ public class CustomSerdeTest {
                 BaseDocument.class,
                 null).get();
 
-        assertThat(result.getAttribute("arr"), instanceOf(String.class));
-        assertThat(result.getAttribute("arr"), is("hello"));
-        assertThat(result.getAttribute("int"), instanceOf(BigInteger.class));
-        assertThat(result.getAttribute("int"), is(BigInteger.valueOf(10)));
+        assertThat(result.getAttribute("arr")).isInstanceOf(String.class);
+        assertThat(result.getAttribute("arr")).isEqualTo("hello");
+        assertThat(result.getAttribute("int")).isInstanceOf(BigInteger.class);
+        assertThat(result.getAttribute("int")).isEqualTo(BigInteger.valueOf(10));
     }
 
 }

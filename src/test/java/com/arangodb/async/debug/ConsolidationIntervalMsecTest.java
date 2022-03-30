@@ -20,36 +20,37 @@
 
 package com.arangodb.async.debug;
 
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import com.arangodb.async.BaseTest;
-import com.arangodb.DbName;
 import com.arangodb.entity.ViewEntity;
 import com.arangodb.entity.ViewType;
 import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.CollectionLink;
 import com.arangodb.entity.arangosearch.FieldLink;
+import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author Michele Rastelli
  * <p>
  * https://github.com/arangodb/arangodb-java-driver-async/issues/15
  */
-public class ConsolidationIntervalMsec extends BaseTest {
+class ConsolidationIntervalMsecTest extends BaseTest {
 
     @Test
-    public void consolidationIntervalMsec() throws ExecutionException, InterruptedException {
+    void consolidationIntervalMsec() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 4));
 
         ArangoDBAsync arango = new ArangoDBAsync.Builder()
+                .serializer(new ArangoJack())
                 .user("root")
                 .password("test")
                 .build();
@@ -63,20 +64,20 @@ public class ConsolidationIntervalMsec extends BaseTest {
         db.collection("Thing").create().join();
 
         ViewEntity result = db.createArangoSearch("ThingsSearchView", new ArangoSearchCreateOptions()
-                .consolidationIntervalMsec(60000L) //<== This line breaks it
-                .link(CollectionLink.on("Thing")
-                        .fields(FieldLink.on("name")
-                                .analyzers("identity"))))
+                        .consolidationIntervalMsec(60000L) //<== This line breaks it
+                        .link(CollectionLink.on("Thing")
+                                .fields(FieldLink.on("name")
+                                        .analyzers("identity"))))
                 .join();
 
-        assertThat(result.getName(), is("ThingsSearchView"));
-        assertThat(result.getType(), is(ViewType.ARANGO_SEARCH));
+        assertThat(result.getName()).isEqualTo("ThingsSearchView");
+        assertThat(result.getType()).isEqualTo(ViewType.ARANGO_SEARCH);
 
         ArangoSearchPropertiesEntity props = db.arangoSearch("ThingsSearchView").getProperties().join();
-        assertThat(props.getName(), is("ThingsSearchView"));
-        assertThat(props.getConsolidationIntervalMsec(), is(60000L));
-        assertThat(props.getLinks().iterator().hasNext(), is(true));
-        assertThat(props.getLinks().iterator().next().getName(), is("Thing"));
+        assertThat(props.getName()).isEqualTo("ThingsSearchView");
+        assertThat(props.getConsolidationIntervalMsec()).isEqualTo(60000L);
+        assertThat(props.getLinks().iterator().hasNext()).isTrue();
+        assertThat(props.getLinks().iterator().next().getName()).isEqualTo("Thing");
     }
 
 }

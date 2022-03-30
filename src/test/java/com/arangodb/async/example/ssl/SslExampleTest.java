@@ -18,28 +18,28 @@
  * Copyright holder is ArangoDB GmbH, Cologne, Germany
  */
 
-package com.arangodb.async;
+package com.arangodb.async.example.ssl;
 
-import com.arangodb.ArangoDBException;
+import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.ArangoDBVersion;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.arangodb.mapping.ArangoJack;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author Mark Vollmary
  */
-public class ArangoSslTest {
+@EnabledIfSystemProperty(named = "SslTest", matches = "true")
+class SslExampleTest {
 
     /*-
      * a SSL trust store
@@ -54,8 +54,7 @@ public class ArangoSslTest {
     private static final String SSL_TRUSTSTORE_PASSWORD = "12345678";
 
     @Test
-    @Ignore
-    public void connect() throws Exception {
+    void connect() throws Exception {
         final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(this.getClass().getResourceAsStream(SSL_TRUSTSTORE), SSL_TRUSTSTORE_PASSWORD.toCharArray());
 
@@ -69,24 +68,10 @@ public class ArangoSslTest {
         sc.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
         final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
-                .sslContext(sc).build();
+                .loadProperties(SslExampleTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
+                .sslContext(sc).serializer(new ArangoJack()).build();
         final ArangoDBVersion version = arangoDB.getVersion().get();
-        assertThat(version, is(notNullValue()));
-    }
-
-    @Test
-    @Ignore
-    public void connectWithoutValidSslContext() throws Exception {
-        try {
-            final ArangoDBAsync arangoDB = new ArangoDBAsync.Builder()
-                    .loadProperties(ArangoSslTest.class.getResourceAsStream("/arangodb-ssl.properties")).useSsl(true)
-                    .build();
-            arangoDB.getVersion().get();
-            fail("this should fail");
-        } catch (final ArangoDBException ex) {
-            assertThat(ex.getCause() instanceof SSLHandshakeException, is(true));
-        }
+        assertThat(version).isNotNull();
     }
 
 }

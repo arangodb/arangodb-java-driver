@@ -25,17 +25,20 @@ package com.arangodb.entity.arangosearch;
  */
 public class ConsolidationPolicy {
 
-    private final ConsolidationType type;
+    private ConsolidationType type;
     private Double threshold;
     private Long segmentThreshold;
 
-    private ConsolidationPolicy(final ConsolidationType type) {
-        super();
-        this.type = type;
+    public ConsolidationPolicy() {
     }
 
     public static ConsolidationPolicy of(final ConsolidationType type) {
-        return new ConsolidationPolicy(type);
+        return new ConsolidationPolicy().type(type);
+    }
+
+    public ConsolidationPolicy type(final ConsolidationType type) {
+        this.type = type;
+        return this;
     }
 
     /**

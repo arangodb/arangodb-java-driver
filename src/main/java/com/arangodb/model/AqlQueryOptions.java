@@ -410,7 +410,7 @@ public class AqlQueryOptions implements Serializable {
         return options;
     }
 
-    private static class Options implements Serializable {
+    public static class Options implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
@@ -446,7 +446,7 @@ public class AqlQueryOptions implements Serializable {
 
     }
 
-    private static class Optimizer {
+    public static class Optimizer {
         private Collection<String> rules;
     }
 
