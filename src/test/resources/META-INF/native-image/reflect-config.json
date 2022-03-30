@@ -3710,27 +3710,6 @@
     "name": "com.fasterxml.jackson.databind.ser.Serializers[]"
   },
   {
-    "name": "com.intellij.junit5.JUnit5IdeaTestRunner",
-    "methods": [
-      {
-        "name": "<init>",
-        "parameterTypes": []
-      }
-    ]
-  },
-  {
-    "name": "com.intellij.rt.execution.application.AppMainV2$Agent",
-    "methods": [
-      {
-        "name": "premain",
-        "parameterTypes": [
-          "java.lang.String",
-          "java.lang.instrument.Instrumentation"
-        ]
-      }
-    ]
-  },
-  {
     "name": "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
     "methods": [
       {
