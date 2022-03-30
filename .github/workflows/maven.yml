@@ -54,6 +54,7 @@ jobs:
         with:
           java-version: ${{matrix.java-version}}
           distribution: 'adopt'
+          cache: maven
       - name: Start Database
         run: ./docker/start_db.sh
         env:
@@ -61,30 +62,10 @@ jobs:
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
           DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
       - name: Info
         run: mvn -version
       - name: Test
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
-      - name: Collect docker logs on failure
-        if: ${{ cancelled() || failure() }}
-        uses: jwalton/gh-docker-logs@v1
-        with:
-          dest: './logs'
-      - name: Tar logs
-        if: ${{ cancelled() || failure() }}
-        run: tar cvzf ./logs.tgz ./logs
-      - name: Upload logs to GitHub
-        if: ${{ cancelled() || failure() }}
-        uses: actions/upload-artifact@master
-        with:
-          name: logs-${{github.job}}.tgz
-          path: ./logs.tgz
 
   # test encodeURIComponent() and normalize('NFC') comparing to Javascript behavior
   test-graalvm:
@@ -128,6 +109,7 @@ jobs:
         with:
           java-version: ${{matrix.java-version}}
           distribution: 'adopt'
+          cache: maven
       - name: Start Database
         run: ./docker/start_db.sh
         env:
@@ -135,12 +117,6 @@ jobs:
           STARTER_MODE: ${{matrix.topology}}
           DOCKER_IMAGE: ${{matrix.docker-img}}
           DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
       - name: Set JWT
         run: |
           ENDPOINT=$(./docker/find_active_endpoint.sh)
@@ -152,17 +128,40 @@ jobs:
         run: mvn -version
       - name: Test
         run: mvn --no-transfer-progress test -DargLine="-Duser.language=${{matrix.user-language}}"
-      - name: Collect docker logs on failure
-        if: ${{ cancelled() || failure() }}
-        uses: jwalton/gh-docker-logs@v1
+
+  test-native:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-img:
+          - docker.io/arangodb/enterprise:3.9.0
+        topology:
+          - cluster
+        db-ext-names:
+          - false
+        java-version:
+          - 11
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          dest: './logs'
-      - name: Tar logs
-        if: ${{ cancelled() || failure() }}
-        run: tar cvzf ./logs.tgz ./logs
-      - name: Upload logs to GitHub
-        if: ${{ cancelled() || failure() }}
-        uses: actions/upload-artifact@master
-        with:
-          name: logs.tgz
-          path: ./logs.tgz
+          java-version: ${{matrix.java-version}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Start Database
+        run: ./docker/start_db.sh
+        env:
+          ARANGO_LICENSE_KEY: ${{ secrets.ARANGO_LICENSE_KEY }}
+          STARTER_MODE: ${{matrix.topology}}
+          DOCKER_IMAGE: ${{matrix.docker-img}}
+          DATABASE_EXTENDED_NAMES: ${{matrix.db-ext-names}}
+      - name: Info
+        run: mvn -version
+      - name: Test Native
+        run: mvn -Pnative --no-transfer-progress test
+
