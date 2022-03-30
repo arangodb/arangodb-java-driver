@@ -308,7 +308,7 @@ class ArangoDBTest {
             arangoDB.getUsers()
                     .whenComplete((users, ex) -> {
                         assertThat(users).isNotNull();
-                        assertThat(users).hasSizeGreaterThan(2);
+                        assertThat(users).hasSizeGreaterThanOrEqualTo(2);
                         assertThat(
                                 users.stream().map(UserEntity::getUser).collect(Collectors.toList())
                         ).contains(ROOT, USER);
