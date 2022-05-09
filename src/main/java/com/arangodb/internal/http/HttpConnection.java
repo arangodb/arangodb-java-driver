@@ -82,6 +82,9 @@ public class HttpConnection implements Connection {
             "utf-8");
     private static final ContentType CONTENT_TYPE_VPACK = ContentType.create("application/x-velocypack");
 
+    // max safe UTF-8 json string length, so that it can be converted to byte array
+    private static final int MAX_JSON_LENGTH = (Integer.MAX_VALUE - 8) / 4;
+
     public static class Builder {
         private String user;
         private String password;
@@ -291,7 +294,12 @@ public class HttpConnection implements Connection {
                         Arrays.copyOfRange(body.getBuffer(), body.getStart(), body.getStart() + body.getByteSize()),
                         CONTENT_TYPE_VPACK));
             } else {
-                httpRequest.setEntity(new StringEntity(body.toString(), CONTENT_TYPE_APPLICATION_JSON_UTF8));
+                String json = body.toString();
+                if (json.length() > MAX_JSON_LENGTH) {
+                    LOGGER.warn("Json string length is greater than safe threshold (" + MAX_JSON_LENGTH + "). " +
+                            "This could cause memory allocation errors.");
+                }
+                httpRequest.setEntity(new StringEntity(json, CONTENT_TYPE_APPLICATION_JSON_UTF8));
             }
         }
         return httpRequest;
