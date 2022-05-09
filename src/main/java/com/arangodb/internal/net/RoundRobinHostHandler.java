@@ -32,7 +32,7 @@ import java.util.List;
 public class RoundRobinHostHandler implements HostHandler {
 
     private final HostResolver resolver;
-    private int current;
+    private long current;
     private int fails;
     private final List<Exception> lastFailExceptions;
     private Host currentHost;
@@ -43,7 +43,7 @@ public class RoundRobinHostHandler implements HostHandler {
         this.resolver = resolver;
         lastFailExceptions = new ArrayList<>();
         hosts = resolver.resolve(true, false);
-        current = 0;
+        current = 0L;
         reset();
     }
 
@@ -59,7 +59,7 @@ public class RoundRobinHostHandler implements HostHandler {
             throw e;
         }
 
-        final int index = (current++) % size;
+        final int index = (int) ((current++) % size);
         Host host = hosts.getHostsList().get(index);
         if (hostHandle != null) {
             final HostDescription hostDescription = hostHandle.getHost();
