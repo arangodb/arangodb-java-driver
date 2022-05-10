@@ -101,6 +101,14 @@ class BaseJunit5 {
         return TestUtils.isAtLeastVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
     }
 
+    boolean isLessThanVersion(final int major, final int minor) {
+        return isLessThanVersion(major, minor, 0);
+    }
+
+    boolean isLessThanVersion(final int major, final int minor, final int patch) {
+        return TestUtils.isLessThanVersion(adbs.get(0).getVersion().getVersion(), major, minor, patch);
+    }
+
     boolean isStorageEngine(ArangoDBEngine.StorageEngineName name) {
         return name.equals(adbs.get(0).getEngine().getName());
     }

@@ -456,7 +456,8 @@ class ArangoDBTest extends BaseJunit5 {
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
     void getLogsOffset(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
+        assumeTrue(isAtLeastVersion(3, 7));  // it fails in 3.6 active-failover (BTS-362)
+        assumeTrue(isLessThanVersion(3, 9)); // deprecated
         final LogEntity logs = arangoDB.getLogs(null);
         assertThat(logs.getTotalAmount()).isPositive();
         final LogEntity logsOffset = arangoDB.getLogs(new LogOptions().offset(1));

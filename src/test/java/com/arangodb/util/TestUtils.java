@@ -42,13 +42,21 @@ public final class TestUtils {
      * Parses {@param version} and checks whether it is greater or equal to
      * <{@param otherMajor}, {@param otherMinor}, {@param otherPatch}>
      * comparing the corresponding version components in lexicographical order.
-     *
-     * @param version
-     * @param otherMajor
-     * @param otherMinor
-     * @param otherPatch
      */
     public static boolean isAtLeastVersion(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
+        return compareVersion(version, otherMajor, otherMinor, otherPatch) >= 0;
+    }
+
+    /**
+     * Parses {@param version} and checks whether it is less than
+     * <{@param otherMajor}, {@param otherMinor}, {@param otherPatch}>
+     * comparing the corresponding version components in lexicographical order.
+     */
+    public static boolean isLessThanVersion(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
+        return compareVersion(version, otherMajor, otherMinor, otherPatch) < 0;
+    }
+
+    private static int compareVersion(final String version, final int otherMajor, final int otherMinor, final int otherPatch) {
         String[] parts = version.split("-")[0].split("\\.");
 
         int major = Integer.parseInt(parts[0]);
@@ -57,20 +65,15 @@ public final class TestUtils {
 
         int majorComparison = Integer.compare(major, otherMajor);
         if (majorComparison != 0) {
-            return majorComparison > 0;
+            return majorComparison;
         }
 
         int minorComparison = Integer.compare(minor, otherMinor);
         if (minorComparison != 0) {
-            return minorComparison > 0;
+            return minorComparison;
         }
 
-        int patchComparison = Integer.compare(patch, otherPatch);
-        if (patchComparison != 0) {
-            return patchComparison > 0;
-        }
-
-        return true;
+        return Integer.compare(patch, otherPatch);
     }
 
     private static String[] generateAllInputChars() {
@@ -90,7 +93,7 @@ public final class TestUtils {
     }
 
     public static String generateRandomDbName(int length, boolean extendedNames) {
-        if(extendedNames){
+        if (extendedNames) {
             int max = allChars.length;
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < length; i++) {
