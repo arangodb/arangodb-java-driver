@@ -71,6 +71,10 @@ class ArangoDBTest {
         return com.arangodb.util.TestUtils.isAtLeastVersion(arangoDBSync.getVersion().getVersion(), major, minor, 0);
     }
 
+    private boolean isLessThanVersion(final int major, final int minor) {
+        return com.arangodb.util.TestUtils.isLessThanVersion(arangoDBSync.getVersion().getVersion(), major, minor, 0);
+    }
+
     private boolean supportsExtendedNames() {
         final ArangoDB arangoDB = new ArangoDB.Builder().serializer(new ArangoJack()).build();
         if (extendedNames == null) {
@@ -525,7 +529,8 @@ class ArangoDBTest {
 
     @Test
     void getLogsOffset() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
+        assumeTrue(isAtLeastVersion(3, 7));  // it fails in 3.6 active-failover (BTS-362)
+        assumeTrue(isLessThanVersion(3, 9)); // deprecated
         final LogEntity logs = arangoDB.getLogs(null).get();
         assertThat(logs.getTotalAmount()).isPositive();
         arangoDB.getLogs(new LogOptions().offset((int) (logs.getTotalAmount() - 1)))
