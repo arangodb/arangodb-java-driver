@@ -1592,6 +1592,48 @@ class ArangoCollectionTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
+    void indexDeduplicate(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+        assumeTrue(isSingleServer());
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(true);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+        assertThat(indexResult.getSelectivityEstimate()).isNotNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexDeduplicateFalse(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+        assumeTrue(isSingleServer());
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(false);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isFalse();
+        assertThat(indexResult.getSelectivityEstimate()).isNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
     void createFulltextIndex(ArangoCollection collection) {
         String f1 = "field-" + rnd();
         final Collection<String> fields = Collections.singletonList(f1);

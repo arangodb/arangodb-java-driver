@@ -33,6 +33,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
     protected final IndexType type = IndexType.persistent;
     private Boolean unique;
     private Boolean sparse;
+    private Boolean deduplicate;
     private Boolean estimates;
 
     public PersistentIndexOptions() {
@@ -85,6 +86,20 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
      */
     public PersistentIndexOptions sparse(final Boolean sparse) {
         this.sparse = sparse;
+        return this;
+    }
+
+    public Boolean getDeduplicate() {
+        return deduplicate;
+    }
+
+    /**
+     * @param deduplicate
+     *         if false, the deduplication of array values is turned off.
+     * @return options
+     */
+    public PersistentIndexOptions deduplicate(final Boolean deduplicate) {
+        this.deduplicate = deduplicate;
         return this;
     }
 
