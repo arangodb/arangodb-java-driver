@@ -20,7 +20,7 @@ jobs:
         db-ext-names:
           - false
         java-version:
-          - 11
+          - 17
 
     steps:
       - uses: actions/checkout@v2
