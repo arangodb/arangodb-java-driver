@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.17.0] - 2022-05-17
+
+- updated dependencies
+- fixed IndexOutOfBoundsException in RoundRobinHostHandler (#435)
+- warn on json request payload size too big (#434)
+- fixed various serialization bugs in native image (#425)
+
 ## [6.16.1] - 2022-02-23
 
 - fixed retry behavior of HTTP connections in case of timeout exceptions (#429)
