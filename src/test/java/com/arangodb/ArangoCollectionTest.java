@@ -1468,6 +1468,7 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult.getSparse()).isFalse();
         assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
         assertThat(indexResult.getUnique()).isFalse();
+        assertThat(indexResult.getDeduplicate()).isTrue();
     }
 
     @ParameterizedTest(name = "{index}")
@@ -1588,6 +1589,44 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(indexResult).isNotNull();
         assertThat(indexResult.getEstimates()).isFalse();
         assertThat(indexResult.getSelectivityEstimate()).isNull();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexDeduplicate(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(true);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+    }
+
+    @ParameterizedTest(name = "{index}")
+    @MethodSource("cols")
+    void indexDeduplicateFalse(ArangoCollection collection) {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(false);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = collection.ensurePersistentIndex(fields, options);
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isFalse();
     }
 
     @ParameterizedTest(name = "{index}")

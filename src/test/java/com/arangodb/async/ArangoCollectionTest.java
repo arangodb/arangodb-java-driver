@@ -1009,6 +1009,7 @@ class ArangoCollectionTest extends BaseTest {
                     assertThat(indexResult.getSparse()).isEqualTo(false);
                     assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
                     assertThat(indexResult.getUnique()).isEqualTo(false);
+                    assertThat(indexResult.getDeduplicate()).isTrue();
                 })
                 .get();
     }
@@ -1034,6 +1035,42 @@ class ArangoCollectionTest extends BaseTest {
         assertThat(indexResult.getType()).isEqualTo(IndexType.persistent);
         assertThat(indexResult.getUnique()).isFalse();
         assertThat(indexResult.getName()).isEqualTo("myPersistentIndex");
+    }
+
+    @Test
+    void indexDeduplicate() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(true);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, options).get();
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isTrue();
+    }
+
+    @Test
+    void indexDeduplicateFalse() throws ExecutionException, InterruptedException {
+        assumeTrue(isAtLeastVersion(3, 8));
+
+        String name = "persistentIndex-" + rnd();
+        final PersistentIndexOptions options = new PersistentIndexOptions();
+        options.name(name);
+        options.deduplicate(false);
+
+        String f1 = "field-" + rnd();
+        String f2 = "field-" + rnd();
+
+        final Collection<String> fields = Arrays.asList(f1, f2);
+        final IndexEntity indexResult = db.collection(COLLECTION_NAME).ensurePersistentIndex(fields, options).get();
+        assertThat(indexResult).isNotNull();
+        assertThat(indexResult.getDeduplicate()).isFalse();
     }
 
     @Test
