@@ -95,7 +95,7 @@ public class PersistentIndexOptions extends IndexOptions<PersistentIndexOptions>
 
     /**
      * @param deduplicate
-     *         if false, the deduplication of array values is turned off.
+     *         if false, the deduplication of array values is turned off. Default: {@code true}
      * @return options
      */
     public PersistentIndexOptions deduplicate(final Boolean deduplicate) {
