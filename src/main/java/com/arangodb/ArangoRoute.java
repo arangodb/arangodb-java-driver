@@ -20,7 +20,6 @@
 
 package com.arangodb;
 
-import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocystream.Response;
 
 /**
@@ -58,7 +57,7 @@ public interface ArangoRoute extends ArangoSerializationAccessor {
     ArangoRoute withQueryParam(String key, Object value);
 
     /**
-     * The response body. The body will be serialized to {@link VPackSlice}.
+     * The response body. The body will be serialized to {@link com.arangodb.velocypack.VPackSlice}.
      *
      * @param body The request body
      * @return {@link ArangoRoute}
