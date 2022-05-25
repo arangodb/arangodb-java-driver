@@ -20,23 +20,9 @@
 
 package com.arangodb.internal.velocypack;
 
-import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.CollectionType;
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.MinReplicationFactor;
-import com.arangodb.entity.Permissions;
-import com.arangodb.entity.ReplicationFactor;
-import com.arangodb.entity.ViewType;
-import com.arangodb.entity.arangosearch.ArangoSearchCompression;
-import com.arangodb.entity.arangosearch.ArangoSearchProperties;
-import com.arangodb.entity.arangosearch.CollectionLink;
-import com.arangodb.entity.arangosearch.ConsolidationType;
-import com.arangodb.entity.arangosearch.FieldLink;
-import com.arangodb.entity.arangosearch.PrimarySort;
-import com.arangodb.entity.arangosearch.StoreValuesType;
-import com.arangodb.entity.arangosearch.StoredValue;
+import com.arangodb.entity.*;
+import com.arangodb.entity.arangosearch.*;
+import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
@@ -44,11 +30,7 @@ import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
-import com.arangodb.velocypack.VPackBuilder;
-import com.arangodb.velocypack.VPackParser;
-import com.arangodb.velocypack.VPackSerializer;
-import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.ValueType;
+import com.arangodb.velocypack.*;
 import com.arangodb.velocystream.Request;
 
 import java.util.Collection;
@@ -105,19 +87,19 @@ public class VPackSerializers {
 
     public static final VPackSerializer<BaseDocument> BASE_DOCUMENT = (builder, attribute, value, context) -> {
         final Map<String, Object> doc = new HashMap<>(value.getProperties());
-        doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
-        doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
-        doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
+        doc.put(DocumentFields.ID, value.getId());
+        doc.put(DocumentFields.KEY, value.getKey());
+        doc.put(DocumentFields.REV, value.getRevision());
         context.serialize(builder, attribute, doc);
     };
 
     public static final VPackSerializer<BaseEdgeDocument> BASE_EDGE_DOCUMENT = (builder, attribute, value, context) -> {
         final Map<String, Object> doc = new HashMap<>(value.getProperties());
-        doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
-        doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
-        doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
-        doc.put(DocumentField.Type.FROM.getSerializeName(), value.getFrom());
-        doc.put(DocumentField.Type.TO.getSerializeName(), value.getTo());
+        doc.put(DocumentFields.ID, value.getId());
+        doc.put(DocumentFields.KEY, value.getKey());
+        doc.put(DocumentFields.REV, value.getRevision());
+        doc.put(DocumentFields.FROM, value.getFrom());
+        doc.put(DocumentFields.TO, value.getTo());
         context.serialize(builder, attribute, doc);
     };
 

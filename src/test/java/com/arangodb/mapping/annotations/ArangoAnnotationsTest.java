@@ -20,7 +20,6 @@
 
 package com.arangodb.mapping.annotations;
 
-import com.arangodb.entity.DocumentField;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.velocypack.VPackSlice;
 import org.junit.jupiter.api.Test;
@@ -50,14 +49,38 @@ class ArangoAnnotationsTest {
         System.out.println(slice);
         Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
         assertThat(deserialized)
-                .containsEntry(DocumentField.Type.ID.getSerializeName(), e.getId())
-                .containsEntry(DocumentField.Type.KEY.getSerializeName(), e.getKey())
-                .containsEntry(DocumentField.Type.REV.getSerializeName(), e.getRev())
-                .containsEntry(DocumentField.Type.FROM.getSerializeName(), e.getFrom())
-                .containsEntry(DocumentField.Type.TO.getSerializeName(), e.getTo())
-                .hasSize(DocumentField.Type.values().length);
+                .containsEntry("_id", e.getId())
+                .containsEntry("_key", e.getKey())
+                .containsEntry("_rev", e.getRev())
+                .containsEntry("_from", e.getFrom())
+                .containsEntry("_to", e.getTo())
+                .hasSize(5);
 
         DocumentFieldEntity deserializedEntity = mapper.deserialize(slice, DocumentFieldEntity.class);
+        assertThat(deserializedEntity).isEqualTo(e);
+    }
+
+    @Test
+    void documentFieldAnnotations() {
+        AnnotatedEntity e = new AnnotatedEntity();
+        e.setId("Id");
+        e.setKey("Key");
+        e.setRev("Rev");
+        e.setFrom("From");
+        e.setTo("To");
+
+        VPackSlice slice = mapper.serialize(e);
+        System.out.println(slice);
+        Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
+        assertThat(deserialized)
+                .containsEntry("_id", e.getId())
+                .containsEntry("_key", e.getKey())
+                .containsEntry("_rev", e.getRev())
+                .containsEntry("_from", e.getFrom())
+                .containsEntry("_to", e.getTo())
+                .hasSize(5);
+
+        AnnotatedEntity deserializedEntity = mapper.deserialize(slice, AnnotatedEntity.class);
         assertThat(deserializedEntity).isEqualTo(e);
     }
 

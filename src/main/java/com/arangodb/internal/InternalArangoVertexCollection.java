@@ -20,7 +20,6 @@
 
 package com.arangodb.internal;
 
-import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
 import com.arangodb.internal.ArangoExecutor.ResponseDeserializer;
@@ -82,10 +81,10 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return response -> {
             final VPackSlice body = response.getBody().get(VERTEX);
             final VertexEntity doc = util().deserialize(body, VertexEntity.class);
-            final Map<DocumentField.Type, String> values = new HashMap<>();
-            values.put(DocumentField.Type.ID, doc.getId());
-            values.put(DocumentField.Type.KEY, doc.getKey());
-            values.put(DocumentField.Type.REV, doc.getRev());
+            final Map<String, String> values = new HashMap<>();
+            values.put(DocumentFields.ID, doc.getId());
+            values.put(DocumentFields.KEY, doc.getKey());
+            values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
             return doc;
         };
@@ -123,8 +122,8 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return response -> {
             final VPackSlice body = response.getBody().get(VERTEX);
             final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
-            final Map<DocumentField.Type, String> values = new HashMap<>();
-            values.put(DocumentField.Type.REV, doc.getRev());
+            final Map<String, String> values = new HashMap<>();
+            values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
             return doc;
         };
@@ -148,8 +147,8 @@ public abstract class InternalArangoVertexCollection<A extends InternalArangoDB<
         return response -> {
             final VPackSlice body = response.getBody().get(VERTEX);
             final VertexUpdateEntity doc = util().deserialize(body, VertexUpdateEntity.class);
-            final Map<DocumentField.Type, String> values = new HashMap<>();
-            values.put(DocumentField.Type.REV, doc.getRev());
+            final Map<String, String> values = new HashMap<>();
+            values.put(DocumentFields.REV, doc.getRev());
             executor.documentCache().setValues(value, values);
             return doc;
         };

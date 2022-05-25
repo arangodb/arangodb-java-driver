@@ -21,7 +21,6 @@
 package com.arangodb.internal;
 
 import com.arangodb.entity.BaseDocument;
-import com.arangodb.entity.DocumentField;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -44,10 +43,10 @@ class DocumentCacheTest {
         assertThat(doc.getKey()).isNull();
         assertThat(doc.getRevision()).isNull();
 
-        final Map<DocumentField.Type, String> values = new HashMap<>();
-        values.put(DocumentField.Type.ID, "testId");
-        values.put(DocumentField.Type.KEY, "testKey");
-        values.put(DocumentField.Type.REV, "testRev");
+        final Map<String, String> values = new HashMap<>();
+        values.put(DocumentFields.ID, "testId");
+        values.put(DocumentFields.KEY, "testKey");
+        values.put(DocumentFields.REV, "testRev");
         cache.setValues(doc, values);
 
         assertThat(doc.getId()).isEqualTo("testId");
@@ -60,10 +59,10 @@ class DocumentCacheTest {
         final DocumentCache cache = new DocumentCache();
         final Map<String, String> map = new HashMap<>();
 
-        final Map<DocumentField.Type, String> values = new HashMap<>();
-        values.put(DocumentField.Type.ID, "testId");
-        values.put(DocumentField.Type.KEY, "testKey");
-        values.put(DocumentField.Type.REV, "testRev");
+        final Map<String, String> values = new HashMap<>();
+        values.put(DocumentFields.ID, "testId");
+        values.put(DocumentFields.KEY, "testKey");
+        values.put(DocumentFields.REV, "testRev");
         cache.setValues(map, values);
 
         assertThat(map.isEmpty()).isTrue();

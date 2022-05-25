@@ -20,8 +20,9 @@
 
 package com.arangodb.example.graph;
 
-import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.entity.Id;
+import com.arangodb.entity.Key;
+import com.arangodb.entity.Rev;
 
 /**
  * @author a-brandt
@@ -29,13 +30,13 @@ import com.arangodb.entity.DocumentField.Type;
 @SuppressWarnings("unused")
 class Circle {
 
-    @DocumentField(Type.ID)
+    @Id
     private String id;
 
-    @DocumentField(Type.KEY)
+    @Key
     private String key;
 
-    @DocumentField(Type.REV)
+    @Rev
     private String revision;
 
     private String label;

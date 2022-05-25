@@ -20,18 +20,16 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.entity.DocumentField.Type;
-
 /**
  * @author Mark Vollmary
  */
 public class DocumentEntity implements Entity {
 
-    @DocumentField(Type.KEY)
+    @Key
     private String key;
-    @DocumentField(Type.ID)
+    @Id
     private String id;
-    @DocumentField(Type.REV)
+    @Rev
     private String rev;
 
     public DocumentEntity() {

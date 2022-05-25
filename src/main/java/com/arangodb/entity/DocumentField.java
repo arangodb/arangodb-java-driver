@@ -27,13 +27,45 @@ import java.lang.annotation.Target;
 
 /**
  * @author Mark Vollmary
+ * @deprecated Use {@link Id}, {@link Key}, {@link Rev}, {@link From} or {@link To} instead.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
+@Deprecated
 public @interface DocumentField {
 
+    @Deprecated
     enum Type {
-        ID("_id"), KEY("_key"), REV("_rev"), FROM("_from"), TO("_to");
+
+        /**
+         * @deprecated Use {@link Id} instead.
+         */
+        @Deprecated
+        ID("_id"),
+
+        /**
+         * @deprecated Use {@link Key} instead.
+         */
+        @Deprecated
+        KEY("_key"),
+
+        /**
+         * @deprecated Use {@link Rev} instead.
+         */
+        @Deprecated
+        REV("_rev"),
+
+        /**
+         * @deprecated Use {@link From} instead.
+         */
+        @Deprecated
+        FROM("_from"),
+
+        /**
+         * @deprecated Use {@link To} instead.
+         */
+        @Deprecated
+        TO("_to");
 
         private final String serializeName;
 
