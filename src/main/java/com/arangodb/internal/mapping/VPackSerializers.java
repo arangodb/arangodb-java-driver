@@ -23,7 +23,7 @@ package com.arangodb.internal.mapping;
 
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.BaseEdgeDocument;
-import com.arangodb.entity.DocumentField;
+import com.arangodb.internal.DocumentFields;
 import com.arangodb.jackson.dataformat.velocypack.internal.VPackGenerator;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.internal.util.DateUtil;
@@ -85,9 +85,9 @@ public class VPackSerializers {
                 throws IOException {
             final Map<String, Object> doc = new HashMap<>();
             doc.putAll(value.getProperties());
-            doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
-            doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
-            doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
+            doc.put(DocumentFields.ID, value.getId());
+            doc.put(DocumentFields.KEY, value.getKey());
+            doc.put(DocumentFields.REV, value.getRevision());
             gen.writeObject(doc);
         }
     };
@@ -100,11 +100,11 @@ public class VPackSerializers {
                 final SerializerProvider serializers) throws IOException {
             final Map<String, Object> doc = new HashMap<>();
             doc.putAll(value.getProperties());
-            doc.put(DocumentField.Type.ID.getSerializeName(), value.getId());
-            doc.put(DocumentField.Type.KEY.getSerializeName(), value.getKey());
-            doc.put(DocumentField.Type.REV.getSerializeName(), value.getRevision());
-            doc.put(DocumentField.Type.FROM.getSerializeName(), value.getFrom());
-            doc.put(DocumentField.Type.TO.getSerializeName(), value.getTo());
+            doc.put(DocumentFields.ID, value.getId());
+            doc.put(DocumentFields.KEY, value.getKey());
+            doc.put(DocumentFields.REV, value.getRevision());
+            doc.put(DocumentFields.FROM, value.getFrom());
+            doc.put(DocumentFields.TO, value.getTo());
             gen.writeObject(doc);
         }
     };

@@ -20,7 +20,7 @@
 
 package com.arangodb.entity;
 
-import com.arangodb.entity.DocumentField.Type;
+import com.arangodb.internal.DocumentFields;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,11 +33,11 @@ public class BaseDocument implements Serializable {
 
     private static final long serialVersionUID = -1824742667228719116L;
 
-    @DocumentField(Type.ID)
+    @Id
     protected String id;
-    @DocumentField(Type.KEY)
+    @Key
     protected String key;
-    @DocumentField(Type.REV)
+    @Rev
     protected String revision;
     protected Map<String, Object> properties;
 
@@ -53,15 +53,15 @@ public class BaseDocument implements Serializable {
 
     public BaseDocument(final Map<String, Object> properties) {
         this();
-        final Object tmpId = properties.remove(DocumentField.Type.ID.getSerializeName());
+        final Object tmpId = properties.remove(DocumentFields.ID);
         if (tmpId != null) {
             id = tmpId.toString();
         }
-        final Object tmpKey = properties.remove(DocumentField.Type.KEY.getSerializeName());
+        final Object tmpKey = properties.remove(DocumentFields.KEY);
         if (tmpKey != null) {
             key = tmpKey.toString();
         }
-        final Object tmpRev = properties.remove(DocumentField.Type.REV.getSerializeName());
+        final Object tmpRev = properties.remove(DocumentFields.REV);
         if (tmpRev != null) {
             revision = tmpRev.toString();
         }

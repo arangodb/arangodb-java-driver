@@ -846,10 +846,7 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
          *
          * @param serialization custom serializer/deserializer
          * @return {@link ArangoDBAsync.Builder}
-         * @deprecated Use {@link com.arangodb.mapping.ArangoJack} instead and register custom serializers and deserializers by implementing {@link com.fasterxml.jackson.databind.JsonSerializer} and {@link com.fasterxml.jackson.databind.JsonDeserializer}.
-         * @see <a href="https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html#custom-serializer">Reference Documentation</a>
          */
-        @Deprecated
         public Builder serializer(final ArangoSerialization serialization) {
             setSerializer(serialization);
             return this;

@@ -111,10 +111,10 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<DocumentField.Type, String> values = new HashMap<>();
-                values.put(DocumentField.Type.ID, doc.getId());
-                values.put(DocumentField.Type.KEY, doc.getKey());
-                values.put(DocumentField.Type.REV, doc.getRev());
+                final Map<String, String> values = new HashMap<>();
+                values.put(DocumentFields.ID, doc.getId());
+                values.put(DocumentFields.KEY, doc.getKey());
+                values.put(DocumentFields.REV, doc.getRev());
                 executor.documentCache().setValues(value, values);
             }
             return doc;
@@ -282,8 +282,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, value.getClass()));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<DocumentField.Type, String> values = new HashMap<>();
-                values.put(DocumentField.Type.REV, doc.getRev());
+                final Map<String, String> values = new HashMap<>();
+                values.put(DocumentFields.REV, doc.getRev());
                 executor.documentCache().setValues(value, values);
             }
             return doc;
@@ -380,8 +380,8 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
                 doc.setOld(util(Serializer.CUSTOM).deserialize(oldDoc, returnType));
             }
             if (options == null || Boolean.TRUE != options.getSilent()) {
-                final Map<DocumentField.Type, String> values = new HashMap<>();
-                values.put(DocumentField.Type.REV, doc.getRev());
+                final Map<String, String> values = new HashMap<>();
+                values.put(DocumentFields.REV, doc.getRev());
                 executor.documentCache().setValues(value, values);
             }
             return doc;

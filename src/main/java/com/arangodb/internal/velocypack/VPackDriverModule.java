@@ -26,6 +26,7 @@ import com.arangodb.entity.arangosearch.ArangoSearchPropertiesEntity;
 import com.arangodb.entity.arangosearch.ConsolidationPolicy;
 import com.arangodb.entity.arangosearch.ConsolidationType;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
+import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
@@ -39,6 +40,7 @@ import com.arangodb.velocypack.VPackSetupContext;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 
+import java.lang.annotation.Annotation;
 import java.util.Date;
 
 /**
@@ -49,9 +51,20 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
     @Override
     public <C extends VPackSetupContext<C>> void setup(final C context) {
         context.fieldNamingStrategy(field -> {
-            final DocumentField annotation = field.getAnnotation(DocumentField.class);
-            if (annotation != null) {
-                return annotation.value().getSerializeName();
+            for (Annotation annotation : field.getAnnotations()) {
+                if(annotation instanceof DocumentField) {
+                    return ((DocumentField) annotation).value().getSerializeName();
+                } else if (annotation instanceof Id) {
+                    return DocumentFields.ID;
+                } else if (annotation instanceof Key) {
+                    return DocumentFields.KEY;
+                } else if (annotation instanceof Rev) {
+                    return DocumentFields.REV;
+                } else if (annotation instanceof From) {
+                    return DocumentFields.FROM;
+                } else if (annotation instanceof To) {
+                    return DocumentFields.TO;
+                }
             }
             return field.getName();
         });
