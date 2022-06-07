@@ -58,6 +58,8 @@ import com.arangodb.velocypack.ValueType;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.Response;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -91,7 +93,7 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @author Mark Vollmary
      */
     class Builder extends InternalArangoDBBuilder {
-
+        private static final Logger logger = LoggerFactory.getLogger(Builder.class);
         private static final String PROPERTY_KEY_PROTOCOL = "arangodb.protocol";
 
         protected Protocol protocol;
@@ -672,6 +674,11 @@ public interface ArangoDB extends ArangoSerializationAccessor {
          * @return {@link ArangoDB}
          */
         public synchronized ArangoDB build() {
+            if (customSerializer == null) {
+                logger.warn("Usage of VelocyPack Java serialization is now deprecated for removal. " +
+                        "Future driver versions will only support Jackson serialization (for both JSON and VPACK formats). " +
+                        "Please configure according to: https://www.arangodb.com/docs/stable/drivers/java-reference-serialization.html");
+            }
             if (hosts.isEmpty()) {
                 hosts.add(host);
             }
