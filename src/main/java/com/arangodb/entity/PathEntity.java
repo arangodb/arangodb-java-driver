@@ -27,6 +27,7 @@ import java.util.Collection;
  * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
  * Documentation</a>
  */
+@Deprecated
 public class PathEntity<V, E> implements Entity {
 
     private Collection<E> edges;
