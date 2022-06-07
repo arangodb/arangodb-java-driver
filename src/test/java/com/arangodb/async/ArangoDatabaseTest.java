@@ -123,16 +123,16 @@ class ArangoDatabaseTest extends BaseTest {
     }
 
     @Test
-    void createCollectionWithMinReplicationFactor() throws ExecutionException, InterruptedException {
+    void createCollectionWithWriteConcern() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
 
         final CollectionEntity result = db.createCollection(COLLECTION_NAME,
-                new CollectionCreateOptions().replicationFactor(2).minReplicationFactor(2)).get();
+                new CollectionCreateOptions().replicationFactor(2).writeConcern(2)).get();
         assertThat(result).isNotNull();
         assertThat(result.getId()).isNotNull();
         assertThat(db.collection(COLLECTION_NAME).getProperties().get().getReplicationFactor()).isEqualTo(2);
-        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getMinReplicationFactor()).isEqualTo(2);
+        assertThat(db.collection(COLLECTION_NAME).getProperties().get().getWriteConcern()).isEqualTo(2);
         assertThat(db.collection(COLLECTION_NAME).getProperties().get().getSatellite()).isNull();
         db.collection(COLLECTION_NAME).drop();
     }

@@ -94,14 +94,14 @@ class ArangoGraphTest extends BaseTest {
     }
 
     @Test
-    void createWithReplicationAndMinReplicationFactor() throws ExecutionException, InterruptedException {
+    void createWithReplicationAndWriteConcern() throws ExecutionException, InterruptedException {
         assumeTrue(isAtLeastVersion(3, 5));
         assumeTrue(isCluster());
         final Collection<EdgeDefinition> edgeDefinitions = new ArrayList<>();
-        final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).minReplicationFactor(2)).get();
+        final GraphEntity graph = db.createGraph(GRAPH_NAME + "_1", edgeDefinitions, new GraphCreateOptions().isSmart(true).replicationFactor(2).writeConcern(2)).get();
         assertThat(graph).isNotNull();
         assertThat(graph.getName()).isEqualTo(GRAPH_NAME + "_1");
-        assertThat(graph.getMinReplicationFactor()).isEqualTo(2);
+        assertThat(graph.getWriteConcern()).isEqualTo(2);
         assertThat(graph.getReplicationFactor()).isEqualTo(2);
         db.graph(GRAPH_NAME + "_1").drop();
     }

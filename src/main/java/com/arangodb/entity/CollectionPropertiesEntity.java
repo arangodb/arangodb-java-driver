@@ -38,7 +38,7 @@ public class CollectionPropertiesEntity extends CollectionEntity {
     private Collection<String> shardKeys;
     private final ReplicationFactor replicationFactor;
     private final MinReplicationFactor minReplicationFactor;
-
+    private Integer writeConcern;
     private String shardingStrategy; // cluster option
     private String smartJoinAttribute; // enterprise option
 
@@ -119,12 +119,28 @@ public class CollectionPropertiesEntity extends CollectionEntity {
         this.replicationFactor.setReplicationFactor(replicationFactor);
     }
 
+    /**
+     * @deprecated use {@link #getWriteConcern()} instead
+     */
+    @Deprecated
     public Integer getMinReplicationFactor() {
         return minReplicationFactor.getMinReplicationFactor();
     }
 
+    /**
+     * @deprecated use {@link #setWriteConcern(Integer)} instead
+     */
+    @Deprecated
     public void setMinReplicationFactor(final Integer minReplicationFactor) {
         this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
+    }
+
+    public Integer getWriteConcern() {
+        return writeConcern;
+    }
+
+    public void setWriteConcern(final Integer writeConcern) {
+        this.writeConcern = writeConcern;
     }
 
     /**

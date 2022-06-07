@@ -37,6 +37,7 @@ public class CollectionCreateOptions {
     private Long journalSize;
     private final ReplicationFactor replicationFactor;
     private final MinReplicationFactor minReplicationFactor;
+    private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
     private Boolean doCompact;
@@ -89,6 +90,10 @@ public class CollectionCreateOptions {
         return replicationFactor.getReplicationFactor();
     }
 
+    /**
+     * @deprecated use {@link #getWriteConcern()} instead
+     */
+    @Deprecated
     public Integer getMinReplicationFactor() {
         return minReplicationFactor.getMinReplicationFactor();
     }
@@ -118,9 +123,28 @@ public class CollectionCreateOptions {
      *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
      *                             to allow writes.
      * @return options
+     * @deprecated use {@link #writeConcern(Integer)} instead
      */
+    @Deprecated
     public CollectionCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
         this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
+        return this;
+    }
+
+    public Integer getWriteConcern() {
+        return writeConcern;
+    }
+
+    /**
+     * @param writeConcern write concern for this collection (default: 1).
+     *                     It determines how many copies of each shard are required to be in sync on the different
+     *                     DB-Servers. If there are less then these many copies in the cluster a shard will refuse to
+     *                     write. Writes to shards with enough up-to-date copies will succeed at the same time however.
+     *                     The value of writeConcern can not be larger than replicationFactor. (cluster only)
+     * @return options
+     */
+    public CollectionCreateOptions writeConcern(final Integer writeConcern) {
+        this.writeConcern = writeConcern;
         return this;
     }
 
