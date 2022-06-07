@@ -186,7 +186,7 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected Request queryNextRequest(final String id, final AqlQueryOptions options, Map<String, String> meta) {
 
-        final Request request = request(dbName, RequestType.PUT, PATH_API_CURSOR, id);
+        final Request request = request(dbName, RequestType.POST, PATH_API_CURSOR, id);
 
         if (meta != null) {
             request.getHeaderParam().putAll(meta);
