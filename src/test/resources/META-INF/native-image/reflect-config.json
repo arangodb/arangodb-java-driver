@@ -505,6 +505,14 @@
     "allDeclaredClasses": true
   },
   {
+    "name": "com.arangodb.mapping.annotations.AnnotatedEntity",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredConstructors": true,
+    "allDeclaredClasses": true
+  },
+  {
     "name": "com.arangodb.mapping.annotations.ExposeEntity",
     "allDeclaredFields": true,
     "allDeclaredMethods": true,
