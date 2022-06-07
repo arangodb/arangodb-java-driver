@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [6.18.0] - 2022-06-07
+
+- deprecated usage of deprecated server API (#440)
+- introduced new field entity annotations: `@Id`, `@Key`, `@Rev`, `@From`, `@To` (#439)
+- deprecated VPack serialization in favor of Jackson API
+- added `deduplicate` option in `PersistentIndex` (#437)
+
 ## [6.17.0] - 2022-05-17
 
 - updated dependencies
