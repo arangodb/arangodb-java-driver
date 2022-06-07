@@ -41,6 +41,11 @@ public class CollectionEntity implements Entity {
         super();
     }
 
+    /**
+     * @deprecated Accessing collections by their internal ID instead of accessing them by name is deprecated and highly
+     * discouraged. This functionality may be removed in future versions of ArangoDB.
+     */
+    @Deprecated
     public String getId() {
         return id;
     }
