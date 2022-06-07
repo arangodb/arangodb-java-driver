@@ -661,7 +661,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#load-collection">API
      * Documentation</a>
+     * @deprecated MMFiles only
      */
+    @Deprecated
     CollectionEntity load() throws ArangoDBException;
 
     /**
@@ -672,7 +674,9 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#unload-collection">API
      * Documentation</a>
+     * @deprecated MMFiles only
      */
+    @Deprecated
     CollectionEntity unload() throws ArangoDBException;
 
     /**

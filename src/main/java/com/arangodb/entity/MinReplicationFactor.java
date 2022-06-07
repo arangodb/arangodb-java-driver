@@ -20,9 +20,13 @@
 
 package com.arangodb.entity;
 
+import com.arangodb.model.CollectionCreateOptions;
+
 /**
  * @author Heiko Kernbach
+ * @deprecated use {@link CollectionCreateOptions#writeConcern(Integer)} instead
  */
+@Deprecated
 public class MinReplicationFactor {
 
     private Integer minReplicationFactor;

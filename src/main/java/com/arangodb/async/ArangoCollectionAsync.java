@@ -615,7 +615,9 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @return information about the collection
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#load-collection">API
      * Documentation</a>
+     * @deprecated MMFiles only
      */
+    @Deprecated
     CompletableFuture<CollectionEntity> load();
 
     /**
@@ -625,7 +627,9 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
      * @return information about the collection
      * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#unload-collection">API
      * Documentation</a>
+     * @deprecated MMFiles only
      */
+    @Deprecated
     CompletableFuture<CollectionEntity> unload();
 
     /**
