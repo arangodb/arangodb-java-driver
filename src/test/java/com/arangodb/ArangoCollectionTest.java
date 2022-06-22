@@ -161,28 +161,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(doc.getRev()).isNotNull();
         assertThat(doc.getNew()).isNotNull();
     }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void insertDocumentOverwriteReturnOld(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 4));
-        Long initialCount = collection.count().getCount();
-
-        final BaseDocument doc = new BaseDocument();
-        doc.addAttribute("value", "a");
-        final DocumentCreateEntity<BaseDocument> meta = collection.insertDocument(doc);
-
-        doc.addAttribute("value", "b");
-        final DocumentCreateEntity<BaseDocument> repsert = collection
-                .insertDocument(doc, new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
-
-        assertThat(repsert).isNotNull();
-        assertThat(repsert.getRev()).isNotEqualTo(meta.getRev());
-        assertThat(repsert.getOld().getAttribute("value")).isEqualTo("a");
-        assertThat(repsert.getNew().getAttribute("value")).isEqualTo("b");
-        assertThat(collection.count().getCount()).isEqualTo(initialCount + 1L);
-    }
-
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void insertDocumentOverwriteModeIgnore(ArangoCollection collection) {
@@ -1839,36 +1817,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(docs.getDocuments()).hasSize(3);
         assertThat(docs.getErrors()).isNotNull();
         assertThat(docs.getErrors()).isEmpty();
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void insertDocumentsOverwrite(ArangoCollection collection) {
-        assumeTrue(isAtLeastVersion(3, 4));
-
-        final BaseDocument doc1 = new BaseDocument();
-        doc1.addAttribute("value", "a");
-        final DocumentCreateEntity<BaseDocument> meta1 = collection.insertDocument(doc1);
-
-        final BaseDocument doc2 = new BaseDocument();
-        doc2.addAttribute("value", "a");
-        final DocumentCreateEntity<BaseDocument> meta2 = collection.insertDocument(doc2);
-
-        doc1.addAttribute("value", "b");
-        doc2.addAttribute("value", "b");
-
-        final MultiDocumentEntity<DocumentCreateEntity<BaseDocument>> repsert = collection
-                .insertDocuments(Arrays.asList(doc1, doc2),
-                        new DocumentCreateOptions().overwrite(true).returnOld(true).returnNew(true));
-        assertThat(repsert).isNotNull();
-        assertThat(repsert.getDocuments()).hasSize(2);
-        assertThat(repsert.getErrors()).isEmpty();
-        for (final DocumentCreateEntity<BaseDocument> documentCreateEntity : repsert.getDocuments()) {
-            assertThat(documentCreateEntity.getRev()).isNotEqualTo(meta1.getRev());
-            assertThat(documentCreateEntity.getRev()).isNotEqualTo(meta2.getRev());
-            assertThat(documentCreateEntity.getOld().getAttribute("value")).isEqualTo("a");
-            assertThat(documentCreateEntity.getNew().getAttribute("value")).isEqualTo("b");
-        }
     }
 
     @ParameterizedTest(name = "{index}")
