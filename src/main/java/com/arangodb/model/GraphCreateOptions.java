@@ -143,32 +143,6 @@ public class GraphCreateOptions {
         return this;
     }
 
-    /**
-     * @deprecated use {@link #getWriteConcern()} instead
-     */
-    @Deprecated
-    public Integer getMinReplicationFactor() {
-        return getOptions().getMinReplicationFactor();
-    }
-
-    /**
-     * @param minReplicationFactor (optional, default is 1): in a cluster, this attribute determines how many desired copies of each
-     *                             shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
-     *                             replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
-     *                             a shard of a collection has less than minReplicationFactor many insync followers it will go into
-     *                             "read-only" mode and will reject writes until enough followers are insync again. In more detail:
-     *                             Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
-     *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
-     *                             to allow writes.
-     * @return options
-     * @deprecated use {@link #writeConcern(Integer)} instead
-     */
-    @Deprecated
-    public GraphCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
-        getOptions().setMinReplicationFactor(minReplicationFactor);
-        return this;
-    }
-
     public Integer getWriteConcern() {
         return getOptions().getWriteConcern();
     }
@@ -238,7 +212,6 @@ public class GraphCreateOptions {
 
     public static class SmartOptions {
         private ReplicationFactor replicationFactor;
-        private Integer minReplicationFactor;
         private Integer writeConcern;
         private Integer numberOfShards;
         private String smartGraphAttribute;
@@ -264,22 +237,6 @@ public class GraphCreateOptions {
 
         public void setSatellite(final Boolean satellite) {
             replicationFactor.setSatellite(satellite);
-        }
-
-        /**
-         * @deprecated use {{@link #getWriteConcern()}} instead
-         */
-        @Deprecated
-        public Integer getMinReplicationFactor() {
-            return minReplicationFactor;
-        }
-
-        /**
-         * @deprecated use {{@link #setWriteConcern(Integer)}} instead
-         */
-        @Deprecated
-        public void setMinReplicationFactor(final Integer minReplicationFactor) {
-            this.minReplicationFactor = minReplicationFactor;
         }
 
         public Integer getWriteConcern() {
