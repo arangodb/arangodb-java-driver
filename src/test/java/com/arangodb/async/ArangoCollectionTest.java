@@ -2131,7 +2131,6 @@ class ArangoCollectionTest extends BaseTest {
             assertThat(properties.getWaitForSync()).isNotNull();
             final CollectionPropertiesOptions options = new CollectionPropertiesOptions();
             options.waitForSync(!properties.getWaitForSync());
-            options.journalSize(2000000L);
             db.collection(collection).changeProperties(options)
                     .whenComplete((changedProperties, ex) -> {
                         assertThat(changedProperties.getWaitForSync()).isNotNull();

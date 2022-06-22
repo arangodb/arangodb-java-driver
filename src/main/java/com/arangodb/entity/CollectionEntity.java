@@ -31,7 +31,6 @@ public class CollectionEntity implements Entity {
     private String id;
     private String name;
     private Boolean waitForSync;
-    private Boolean isVolatile;
     private Boolean isSystem;
     private CollectionStatus status;
     private CollectionType type;
@@ -51,10 +50,6 @@ public class CollectionEntity implements Entity {
 
     public Boolean getWaitForSync() {
         return waitForSync;
-    }
-
-    public Boolean getIsVolatile() {
-        return isVolatile;
     }
 
     public Boolean getIsSystem() {

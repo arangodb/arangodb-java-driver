@@ -33,18 +33,14 @@ import com.arangodb.entity.ReplicationFactor;
 public class CollectionCreateOptions {
 
     private String name;
-    private Long journalSize;
     private final ReplicationFactor replicationFactor;
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
-    private Boolean doCompact;
-    private Boolean isVolatile;
     private String[] shardKeys;
     private Integer numberOfShards;
     private Boolean isSystem;
     private CollectionType type;
-    private Integer indexBuckets;
     private String distributeShardsLike;
 
     private String shardingStrategy; // cluster option
@@ -67,19 +63,6 @@ public class CollectionCreateOptions {
      */
     protected CollectionCreateOptions name(final String name) {
         this.name = name;
-        return this;
-    }
-
-    public Long getJournalSize() {
-        return journalSize;
-    }
-
-    /**
-     * @param journalSize The maximal size of a journal or datafile in bytes. The value must be at least 1048576 (1 MiB).
-     * @return options
-     */
-    public CollectionCreateOptions journalSize(final Long journalSize) {
-        this.journalSize = journalSize;
         return this;
     }
 
@@ -170,38 +153,6 @@ public class CollectionCreateOptions {
         return this;
     }
 
-    public Boolean getDoCompact() {
-        return doCompact;
-    }
-
-    /**
-     * @param doCompact whether or not the collection will be compacted (default is true)
-     * @return options
-     */
-    public CollectionCreateOptions doCompact(final Boolean doCompact) {
-        this.doCompact = doCompact;
-        return this;
-    }
-
-    public Boolean getIsVolatile() {
-        return isVolatile;
-    }
-
-    /**
-     * @param isVolatile If true then the collection data is kept in-memory only and not made persistent. Unloading the
-     *                   collection will cause the collection data to be discarded. Stopping or re-starting the server will
-     *                   also cause full loss of data in the collection. Setting this option will make the resulting collection
-     *                   be slightly faster than regular collections because ArangoDB does not enforce any synchronization to
-     *                   disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option
-     *                   should therefore be used for cache-type collections only, and not for data that cannot be re-created
-     *                   otherwise. (The default is false)
-     * @return options
-     */
-    public CollectionCreateOptions isVolatile(final Boolean isVolatile) {
-        this.isVolatile = isVolatile;
-        return this;
-    }
-
     public String[] getShardKeys() {
         return shardKeys;
     }
@@ -285,25 +236,6 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions type(final CollectionType type) {
         this.type = type;
-        return this;
-    }
-
-    public Integer getIndexBuckets() {
-        return indexBuckets;
-    }
-
-    /**
-     * @param indexBuckets The number of buckets into which indexes using a hash table are split. The default is 16 and this
-     *                     number has to be a power of 2 and less than or equal to 1024. For very large collections one should
-     *                     increase this to avoid long pauses when the hash table has to be initially built or resized, since
-     *                     buckets are resized individually and can be initially built in parallel. For example, 64 might be a
-     *                     sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects
-     *                     this value, but other index types might follow in future ArangoDB versions. Changes (see below) are
-     *                     applied when the collection is loaded the next time.
-     * @return options
-     */
-    public CollectionCreateOptions indexBuckets(final Integer indexBuckets) {
-        this.indexBuckets = indexBuckets;
         return this;
     }
 

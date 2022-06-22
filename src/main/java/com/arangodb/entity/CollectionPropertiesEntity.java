@@ -29,9 +29,6 @@ import java.util.Collection;
  */
 public class CollectionPropertiesEntity extends CollectionEntity {
 
-    private Boolean doCompact;
-    private Long journalSize;
-    private Integer indexBuckets;
     private KeyOptions keyOptions;
     private Long count;
     private Integer numberOfShards;
@@ -44,30 +41,6 @@ public class CollectionPropertiesEntity extends CollectionEntity {
     public CollectionPropertiesEntity() {
         super();
         replicationFactor = new ReplicationFactor();
-    }
-
-    public Boolean getDoCompact() {
-        return doCompact;
-    }
-
-    public void setDoCompact(final Boolean doCompact) {
-        this.doCompact = doCompact;
-    }
-
-    public Long getJournalSize() {
-        return journalSize;
-    }
-
-    public void setJournalSize(final Long journalSize) {
-        this.journalSize = journalSize;
-    }
-
-    public Integer getIndexBuckets() {
-        return indexBuckets;
-    }
-
-    public void setIndexBuckets(final Integer indexBuckets) {
-        this.indexBuckets = indexBuckets;
     }
 
     public KeyOptions getKeyOptions() {
