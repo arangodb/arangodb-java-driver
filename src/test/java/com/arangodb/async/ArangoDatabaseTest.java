@@ -27,7 +27,6 @@ import com.arangodb.entity.*;
 import com.arangodb.entity.AqlParseEntity.AstNode;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
-import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.exception.VPackException;
@@ -964,58 +963,6 @@ class ArangoDatabaseTest extends BaseTest {
 
         });
         f.get();
-    }
-
-    @Test
-    void executeTraversal() throws InterruptedException, ExecutionException {
-        try {
-            db.createCollection("person", null).get();
-            db.createCollection("knows", new CollectionCreateOptions().type(CollectionType.EDGES)).get();
-            for (final String e : new String[]{"Alice", "Bob", "Charlie", "Dave", "Eve"}) {
-                final BaseDocument doc = new BaseDocument();
-                doc.setKey(e);
-                db.collection("person").insertDocument(doc, null).get();
-            }
-            for (final String[] e : new String[][]{new String[]{"Alice", "Bob"}, new String[]{"Bob", "Charlie"},
-                    new String[]{"Bob", "Dave"}, new String[]{"Eve", "Alice"}, new String[]{"Eve", "Bob"}}) {
-                final BaseEdgeDocument edge = new BaseEdgeDocument();
-                edge.setKey(e[0] + "_knows_" + e[1]);
-                edge.setFrom("person/" + e[0]);
-                edge.setTo("person/" + e[1]);
-                db.collection("knows").insertDocument(edge, null).get();
-            }
-            final TraversalOptions options = new TraversalOptions().edgeCollection("knows").startVertex("person/Alice")
-                    .direction(Direction.outbound);
-            db.executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options)
-                    .whenComplete((traversal, ex) -> {
-                        assertThat(traversal).isNotNull();
-
-                        final Collection<BaseDocument> vertices = traversal.getVertices();
-                        assertThat(vertices).isNotNull();
-                        assertThat(vertices.size()).isEqualTo(4);
-
-                        final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-                        final Collection<String> v = Arrays.asList("Alice", "Bob", "Charlie", "Dave");
-                        while (verticesIterator.hasNext()) {
-                            assertThat(v.contains(verticesIterator.next().getKey())).isEqualTo(true);
-                        }
-
-                        final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
-                        assertThat(paths).isNotNull();
-                        assertThat(paths.size()).isEqualTo(4);
-
-                        assertThat(paths.iterator().hasNext()).isEqualTo(true);
-                        final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.iterator().next();
-                        assertThat(first).isNotNull();
-                        assertThat(first.getEdges().size()).isEqualTo(0);
-                        assertThat(first.getVertices().size()).isEqualTo(1);
-                        assertThat(first.getVertices().iterator().next().getKey()).isEqualTo("Alice");
-                    })
-                    .get();
-        } finally {
-            db.collection("person").drop().get();
-            db.collection("knows").drop().get();
-        }
     }
 
     @Test

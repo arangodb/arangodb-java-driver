@@ -361,14 +361,6 @@ public class ArangoDatabaseImpl extends InternalArangoDatabase<ArangoDBImpl, Ara
     }
 
     @Override
-    public <V, E> TraversalEntity<V, E> executeTraversal(
-            final Class<V> vertexClass, final Class<E> edgeClass, final TraversalOptions options)
-            throws ArangoDBException {
-        final Request request = executeTraversalRequest(options);
-        return executor.execute(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
-    }
-
-    @Override
     public <T> T getDocument(final String id, final Class<T> type) throws ArangoDBException {
         DocumentUtil.validateDocumentId(id);
         final String[] split = id.split("/");

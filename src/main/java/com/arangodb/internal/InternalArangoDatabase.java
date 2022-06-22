@@ -35,13 +35,10 @@ import com.arangodb.model.arangosearch.ArangoSearchOptionsBuilder;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.Type;
 import com.arangodb.velocypack.VPackSlice;
-import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
 import com.arangodb.velocystream.RequestType;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -65,7 +62,6 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
     private static final String PATH_API_QUERY_PROPERTIES = "/_api/query/properties";
     private static final String PATH_API_QUERY_CURRENT = "/_api/query/current";
     private static final String PATH_API_QUERY_SLOW = "/_api/query/slow";
-    private static final String PATH_API_TRAVERSAL = "/_api/traversal";
     private static final String PATH_API_ADMIN_ROUTING_RELOAD = "/_admin/routing/reload";
     private static final String PATH_API_USER = "/_api/user";
 
@@ -400,49 +396,6 @@ public abstract class InternalArangoDatabase<A extends InternalArangoDB<EXECUTOR
 
     protected ResponseDeserializer<DatabaseEntity> getInfoResponseDeserializer() {
         return response -> util().deserialize(response.getBody().get(ArangoResponseField.RESULT), DatabaseEntity.class);
-    }
-
-    protected Request executeTraversalRequest(final TraversalOptions options) {
-        return request(dbName, RequestType.POST, PATH_API_TRAVERSAL)
-                .setBody(util().serialize(options != null ? options : new TransactionOptions()));
-    }
-
-    protected <E, V> ResponseDeserializer<TraversalEntity<V, E>> executeTraversalResponseDeserializer(
-            final Class<V> vertexClass, final Class<E> edgeClass) {
-        return response -> {
-            final TraversalEntity<V, E> result = new TraversalEntity<>();
-            final VPackSlice visited = response.getBody().get(ArangoResponseField.RESULT).get("visited");
-            result.setVertices(deserializeVertices(vertexClass, visited));
-
-            final Collection<PathEntity<V, E>> paths = new ArrayList<>();
-            for (final Iterator<VPackSlice> iterator = visited.get("paths").arrayIterator(); iterator.hasNext(); ) {
-                final PathEntity<V, E> path = new PathEntity<>();
-                final VPackSlice next = iterator.next();
-                path.setEdges(deserializeEdges(edgeClass, next));
-                path.setVertices(deserializeVertices(vertexClass, next));
-                paths.add(path);
-            }
-            result.setPaths(paths);
-            return result;
-        };
-    }
-
-    protected <V> Collection<V> deserializeVertices(final Class<V> vertexClass, final VPackSlice vpack)
-            throws VPackException {
-        final Collection<V> vertices = new ArrayList<>();
-        for (final Iterator<VPackSlice> iterator = vpack.get("vertices").arrayIterator(); iterator.hasNext(); ) {
-            vertices.add(util(Serializer.CUSTOM).deserialize(iterator.next(), vertexClass));
-        }
-        return vertices;
-    }
-
-    protected <E> Collection<E> deserializeEdges(final Class<E> edgeClass, final VPackSlice next)
-            throws VPackException {
-        final Collection<E> edges = new ArrayList<>();
-        for (final Iterator<VPackSlice> iteratorEdge = next.get("edges").arrayIterator(); iteratorEdge.hasNext(); ) {
-            edges.add(util(Serializer.CUSTOM).deserialize(iteratorEdge.next(), edgeClass));
-        }
-        return edges;
     }
 
     protected Request reloadRoutingRequest() {

@@ -48,7 +48,6 @@ import com.arangodb.model.DocumentReadOptions;
 import com.arangodb.model.GraphCreateOptions;
 import com.arangodb.model.StreamTransactionOptions;
 import com.arangodb.model.TransactionOptions;
-import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
 import com.arangodb.model.arangosearch.ArangoSearchCreateOptions;
 import com.arangodb.velocypack.Type;
@@ -399,15 +398,6 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     @Override
     public CompletableFuture<DatabaseEntity> getInfo() {
         return executor.execute(getInfoRequest(), getInfoResponseDeserializer());
-    }
-
-    @Override
-    public <V, E> CompletableFuture<TraversalEntity<V, E>> executeTraversal(
-            final Class<V> vertexClass,
-            final Class<E> edgeClass,
-            final TraversalOptions options) {
-        final Request request = executeTraversalRequest(options);
-        return executor.execute(request, executeTraversalResponseDeserializer(vertexClass, edgeClass));
     }
 
     @Override

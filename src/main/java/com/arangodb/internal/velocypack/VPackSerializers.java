@@ -26,8 +26,6 @@ import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
-import com.arangodb.model.TraversalOptions;
-import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.*;
@@ -101,14 +99,6 @@ public class VPackSerializers {
         doc.put(DocumentFields.FROM, value.getFrom());
         doc.put(DocumentFields.TO, value.getTo());
         context.serialize(builder, attribute, doc);
-    };
-
-    public static final VPackSerializer<TraversalOptions.Order> TRAVERSAL_ORDER = (builder, attribute, value, context) -> {
-        if (Order.preorder_expander == value) {
-            builder.add(attribute, "preorder-expander");
-        } else {
-            builder.add(attribute, value.name());
-        }
     };
 
     public static final VPackSerializer<LogLevel> LOG_LEVEL = (builder, attribute, value, context) -> builder.add(attribute, value.getLevel());
