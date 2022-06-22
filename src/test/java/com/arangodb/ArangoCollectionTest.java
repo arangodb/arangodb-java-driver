@@ -2804,21 +2804,6 @@ class ArangoCollectionTest extends BaseJunit5 {
         assertThat(updateResult.getDocuments()).hasSize(2);
         assertThat(updateResult.getErrors()).isEmpty();
     }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void load(ArangoCollection collection) {
-        final CollectionEntity result = collection.load();
-        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("cols")
-    void unload(ArangoCollection collection) {
-        final CollectionEntity result = collection.unload();
-        assertThat(result.getName()).isEqualTo(COLLECTION_NAME);
-    }
-
     @ParameterizedTest(name = "{index}")
     @MethodSource("cols")
     void getInfo(ArangoCollection collection) {

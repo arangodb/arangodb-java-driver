@@ -362,16 +362,6 @@ public class ArangoCollectionImpl extends InternalArangoCollection<ArangoDBImpl,
     }
 
     @Override
-    public CollectionEntity load() throws ArangoDBException {
-        return executor.execute(loadRequest(), CollectionEntity.class);
-    }
-
-    @Override
-    public CollectionEntity unload() throws ArangoDBException {
-        return executor.execute(unloadRequest(), CollectionEntity.class);
-    }
-
-    @Override
     public CollectionEntity getInfo() throws ArangoDBException {
         return executor.execute(getInfoRequest(), CollectionEntity.class);
     }

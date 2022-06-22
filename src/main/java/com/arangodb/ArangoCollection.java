@@ -655,31 +655,6 @@ public interface ArangoCollection extends ArangoSerializationAccessor {
     void drop(boolean isSystem) throws ArangoDBException;
 
     /**
-     * Tells the server to load the collection into memory.
-     *
-     * @return information about the collection
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#load-collection">API
-     * Documentation</a>
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    CollectionEntity load() throws ArangoDBException;
-
-    /**
-     * Tells the server to remove the collection from memory. This call does not delete any documents. You can use the
-     * collection afterwards; in which case it will be loaded into memory, again.
-     *
-     * @return information about the collection
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#unload-collection">API
-     * Documentation</a>
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    CollectionEntity unload() throws ArangoDBException;
-
-    /**
      * Returns information about the collection
      *
      * @return information about the collection

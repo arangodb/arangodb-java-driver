@@ -636,14 +636,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request(db.dbName(), RequestType.DELETE, PATH_API_COLLECTION, name).putQueryParam("isSystem", isSystem);
     }
 
-    protected Request loadRequest() {
-        return request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "load");
-    }
-
-    protected Request unloadRequest() {
-        return request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "unload");
-    }
-
     protected Request getInfoRequest() {
         return request(db.dbName(), RequestType.GET, PATH_API_COLLECTION, name);
     }

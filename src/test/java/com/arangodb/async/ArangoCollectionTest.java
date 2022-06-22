@@ -2106,20 +2106,6 @@ class ArangoCollectionTest extends BaseTest {
     }
 
     @Test
-    void load() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).load()
-                .whenComplete((result, ex) -> assertThat(result.getName()).isEqualTo(COLLECTION_NAME))
-                .get();
-    }
-
-    @Test
-    void unload() throws InterruptedException, ExecutionException {
-        db.collection(COLLECTION_NAME).unload()
-                .whenComplete((result, ex) -> assertThat(result.getName()).isEqualTo(COLLECTION_NAME))
-                .get();
-    }
-
-    @Test
     void getInfo() throws InterruptedException, ExecutionException {
         db.collection(COLLECTION_NAME).getInfo()
                 .whenComplete((result, ex) -> assertThat(result.getName()).isEqualTo(COLLECTION_NAME))

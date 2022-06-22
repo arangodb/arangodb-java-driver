@@ -610,29 +610,6 @@ public interface ArangoCollectionAsync extends ArangoSerializationAccessor {
     CompletableFuture<Void> drop(final boolean isSystem);
 
     /**
-     * Loads a collection into memory.
-     *
-     * @return information about the collection
-     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#load-collection">API
-     * Documentation</a>
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    CompletableFuture<CollectionEntity> load();
-
-    /**
-     * Removes a collection from memory. This call does not delete any documents. You can use the collection afterwards;
-     * in which case it will be loaded into memory, again.
-     *
-     * @return information about the collection
-     * @see <a href="https://www.arangodb.com/docs/stable/http/collection-modifying.html#unload-collection">API
-     * Documentation</a>
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    CompletableFuture<CollectionEntity> unload();
-
-    /**
      * Returns information about the collection
      *
      * @return information about the collection
