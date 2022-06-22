@@ -26,7 +26,6 @@ import com.arangodb.entity.CollectionStatus;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.License;
 import com.arangodb.entity.LogLevel;
-import com.arangodb.entity.MinReplicationFactor;
 import com.arangodb.entity.Permissions;
 import com.arangodb.entity.QueryExecutionState;
 import com.arangodb.entity.ReplicationFactor;
@@ -148,12 +147,6 @@ public class VPackDeserializers {
             replicationFactor.setReplicationFactor(vpack.getAsInt());
         }
         return replicationFactor;
-    };
-
-    public static final VPackDeserializer<MinReplicationFactor> MIN_REPLICATION_FACTOR = (parent, vpack, context) -> {
-        final MinReplicationFactor minReplicationFactor = new MinReplicationFactor();
-        minReplicationFactor.setMinReplicationFactor(vpack.getAsInt());
-        return minReplicationFactor;
     };
 
     public static final VPackDeserializer<ViewType> VIEW_TYPE = (parent, vpack, context) -> "arangosearch".equals(vpack.getAsString()) ? ViewType.ARANGO_SEARCH

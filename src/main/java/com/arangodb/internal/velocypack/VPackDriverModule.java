@@ -30,7 +30,6 @@ import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
-import com.arangodb.model.TraversalOptions;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.VPackModule;
@@ -74,11 +73,9 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerSerializer(CollectionType.class, VPackSerializers.COLLECTION_TYPE);
         context.registerSerializer(BaseDocument.class, VPackSerializers.BASE_DOCUMENT);
         context.registerSerializer(BaseEdgeDocument.class, VPackSerializers.BASE_EDGE_DOCUMENT);
-        context.registerSerializer(TraversalOptions.Order.class, VPackSerializers.TRAVERSAL_ORDER);
         context.registerSerializer(LogLevel.class, VPackSerializers.LOG_LEVEL);
         context.registerSerializer(Permissions.class, VPackSerializers.PERMISSIONS);
         context.registerSerializer(ReplicationFactor.class, VPackSerializers.REPLICATION_FACTOR);
-        context.registerSerializer(MinReplicationFactor.class, VPackSerializers.MIN_REPLICATION_FACTOR);
         context.registerSerializer(ViewType.class, VPackSerializers.VIEW_TYPE);
         context.registerSerializer(ArangoSearchPropertiesOptions.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES_OPTIONS);
         context.registerSerializer(ArangoSearchProperties.class, VPackSerializers.ARANGO_SEARCH_PROPERTIES);
@@ -98,7 +95,6 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
         context.registerDeserializer(Permissions.class, VPackDeserializers.PERMISSIONS);
         context.registerDeserializer(QueryExecutionState.class, VPackDeserializers.QUERY_EXECUTION_STATE);
         context.registerDeserializer(ReplicationFactor.class, VPackDeserializers.REPLICATION_FACTOR);
-        context.registerDeserializer(MinReplicationFactor.class, VPackDeserializers.MIN_REPLICATION_FACTOR);
         context.registerDeserializer(ViewType.class, VPackDeserializers.VIEW_TYPE);
         context.registerDeserializer(ArangoSearchProperties.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES);
         context.registerDeserializer(ArangoSearchPropertiesEntity.class, VPackDeserializers.ARANGO_SEARCH_PROPERTIES_ENTITY);

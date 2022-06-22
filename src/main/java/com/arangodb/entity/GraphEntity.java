@@ -40,7 +40,6 @@ public class GraphEntity implements Entity {
     private Integer numberOfShards;
     private String smartGraphAttribute;
     private ReplicationFactor replicationFactor;
-    private Integer minReplicationFactor;
     private Integer writeConcern;
 
     public String getName() {
@@ -73,14 +72,6 @@ public class GraphEntity implements Entity {
 
     public Boolean getSatellite() {
         return this.replicationFactor.getSatellite();
-    }
-
-    /**
-     * @deprecated use {@link #getWriteConcern()} instead
-     */
-    @Deprecated
-    public Integer getMinReplicationFactor() {
-        return minReplicationFactor;
     }
 
     public Integer getWriteConcern() {

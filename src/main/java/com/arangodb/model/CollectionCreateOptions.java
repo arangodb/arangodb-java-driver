@@ -23,7 +23,6 @@ package com.arangodb.model;
 import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.KeyOptions;
 import com.arangodb.entity.KeyType;
-import com.arangodb.entity.MinReplicationFactor;
 import com.arangodb.entity.ReplicationFactor;
 
 /**
@@ -34,31 +33,14 @@ import com.arangodb.entity.ReplicationFactor;
 public class CollectionCreateOptions {
 
     private String name;
-    private Long journalSize;
     private final ReplicationFactor replicationFactor;
-    private final MinReplicationFactor minReplicationFactor;
     private Integer writeConcern;
     private KeyOptions keyOptions;
     private Boolean waitForSync;
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    private Boolean doCompact;
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    private Boolean isVolatile;
     private String[] shardKeys;
     private Integer numberOfShards;
     private Boolean isSystem;
     private CollectionType type;
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    private Integer indexBuckets;
     private String distributeShardsLike;
 
     private String shardingStrategy; // cluster option
@@ -69,7 +51,6 @@ public class CollectionCreateOptions {
     public CollectionCreateOptions() {
         super();
         replicationFactor = new ReplicationFactor();
-        minReplicationFactor = new MinReplicationFactor();
     }
 
     protected String getName() {
@@ -85,35 +66,8 @@ public class CollectionCreateOptions {
         return this;
     }
 
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public Long getJournalSize() {
-        return journalSize;
-    }
-
-    /**
-     * @param journalSize The maximal size of a journal or datafile in bytes. The value must be at least 1048576 (1 MiB).
-     * @return options
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public CollectionCreateOptions journalSize(final Long journalSize) {
-        this.journalSize = journalSize;
-        return this;
-    }
-
     public Integer getReplicationFactor() {
         return replicationFactor.getReplicationFactor();
-    }
-
-    /**
-     * @deprecated use {@link #getWriteConcern()} instead
-     */
-    @Deprecated
-    public Integer getMinReplicationFactor() {
-        return minReplicationFactor.getMinReplicationFactor();
     }
 
     /**
@@ -128,24 +82,6 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions replicationFactor(final Integer replicationFactor) {
         this.replicationFactor.setReplicationFactor(replicationFactor);
-        return this;
-    }
-
-    /**
-     * @param minReplicationFactor (optional, default is 1): in a cluster, this attribute determines how many desired copies of each
-     *                             shard are kept on different DBServers. The value 1 means that only one copy (no synchronous
-     *                             replication) is kept. A value of k means that desired k-1 replicas are kept. If in a failover scenario
-     *                             a shard of a collection has less than minReplicationFactor many insync followers it will go into
-     *                             "read-only" mode and will reject writes until enough followers are insync again. In more detail:
-     *                             Having `minReplicationFactor == 1` means as soon as a "master-copy" is available of the data writes
-     *                             are allowed. Having `minReplicationFactor > 1` requires additional insync copies on follower servers
-     *                             to allow writes.
-     * @return options
-     * @deprecated use {@link #writeConcern(Integer)} instead
-     */
-    @Deprecated
-    public CollectionCreateOptions minReplicationFactor(final Integer minReplicationFactor) {
-        this.minReplicationFactor.setMinReplicationFactor(minReplicationFactor);
         return this;
     }
 
@@ -214,50 +150,6 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions waitForSync(final Boolean waitForSync) {
         this.waitForSync = waitForSync;
-        return this;
-    }
-
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public Boolean getDoCompact() {
-        return doCompact;
-    }
-
-    /**
-     * @param doCompact whether or not the collection will be compacted (default is true)
-     * @return options
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public CollectionCreateOptions doCompact(final Boolean doCompact) {
-        this.doCompact = doCompact;
-        return this;
-    }
-
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public Boolean getIsVolatile() {
-        return isVolatile;
-    }
-
-    /**
-     * @param isVolatile If true then the collection data is kept in-memory only and not made persistent. Unloading the
-     *                   collection will cause the collection data to be discarded. Stopping or re-starting the server will
-     *                   also cause full loss of data in the collection. Setting this option will make the resulting collection
-     *                   be slightly faster than regular collections because ArangoDB does not enforce any synchronization to
-     *                   disk and does not calculate any CRC checksums for datafiles (as there are no datafiles). This option
-     *                   should therefore be used for cache-type collections only, and not for data that cannot be re-created
-     *                   otherwise. (The default is false)
-     * @return options
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public CollectionCreateOptions isVolatile(final Boolean isVolatile) {
-        this.isVolatile = isVolatile;
         return this;
     }
 
@@ -344,31 +236,6 @@ public class CollectionCreateOptions {
      */
     public CollectionCreateOptions type(final CollectionType type) {
         this.type = type;
-        return this;
-    }
-
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public Integer getIndexBuckets() {
-        return indexBuckets;
-    }
-
-    /**
-     * @param indexBuckets The number of buckets into which indexes using a hash table are split. The default is 16 and this
-     *                     number has to be a power of 2 and less than or equal to 1024. For very large collections one should
-     *                     increase this to avoid long pauses when the hash table has to be initially built or resized, since
-     *                     buckets are resized individually and can be initially built in parallel. For example, 64 might be a
-     *                     sensible value for a collection with 100 000 000 documents. Currently, only the edge index respects
-     *                     this value, but other index types might follow in future ArangoDB versions. Changes (see below) are
-     *                     applied when the collection is loaded the next time.
-     * @return options
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public CollectionCreateOptions indexBuckets(final Integer indexBuckets) {
-        this.indexBuckets = indexBuckets;
         return this;
     }
 

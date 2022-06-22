@@ -361,16 +361,6 @@ public class ArangoCollectionAsyncImpl
     }
 
     @Override
-    public CompletableFuture<CollectionEntity> load() {
-        return executor.execute(loadRequest(), CollectionEntity.class);
-    }
-
-    @Override
-    public CompletableFuture<CollectionEntity> unload() {
-        return executor.execute(unloadRequest(), CollectionEntity.class);
-    }
-
-    @Override
     public CompletableFuture<CollectionEntity> getInfo() {
         return executor.execute(getInfoRequest(), CollectionEntity.class);
     }

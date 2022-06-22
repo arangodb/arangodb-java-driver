@@ -26,8 +26,6 @@ import com.arangodb.internal.DocumentFields;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.internal.velocystream.internal.JwtAuthenticationRequest;
 import com.arangodb.model.CollectionSchema;
-import com.arangodb.model.TraversalOptions;
-import com.arangodb.model.TraversalOptions.Order;
 import com.arangodb.model.ZKDIndexOptions;
 import com.arangodb.model.arangosearch.ArangoSearchPropertiesOptions;
 import com.arangodb.velocypack.*;
@@ -103,14 +101,6 @@ public class VPackSerializers {
         context.serialize(builder, attribute, doc);
     };
 
-    public static final VPackSerializer<TraversalOptions.Order> TRAVERSAL_ORDER = (builder, attribute, value, context) -> {
-        if (Order.preorder_expander == value) {
-            builder.add(attribute, "preorder-expander");
-        } else {
-            builder.add(attribute, value.name());
-        }
-    };
-
     public static final VPackSerializer<LogLevel> LOG_LEVEL = (builder, attribute, value, context) -> builder.add(attribute, value.getLevel());
 
     public static final VPackSerializer<Permissions> PERMISSIONS = (builder, attribute, value, context) -> builder.add(attribute, value.toString().toLowerCase(Locale.ENGLISH));
@@ -121,12 +111,6 @@ public class VPackSerializers {
             builder.add(attribute, "satellite");
         } else if (value.getReplicationFactor() != null) {
             builder.add(attribute, value.getReplicationFactor());
-        }
-    };
-
-    public static final VPackSerializer<MinReplicationFactor> MIN_REPLICATION_FACTOR = (builder, attribute, value, context) -> {
-        if (value.getMinReplicationFactor() != null) {
-            builder.add(attribute, value.getMinReplicationFactor());
         }
     };
 

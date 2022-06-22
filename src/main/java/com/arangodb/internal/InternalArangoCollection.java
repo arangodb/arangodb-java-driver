@@ -56,7 +56,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String RETURN_NEW = "returnNew";
     private static final String NEW = "new";
     private static final String RETURN_OLD = "returnOld";
-    private static final String OVERWRITE = "overwrite";
     private static final String OVERWRITE_MODE = "overwriteMode";
     private static final String OLD = "old";
     private static final String SILENT = "silent";
@@ -87,7 +86,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        request.putQueryParam(OVERWRITE, params.getOverwrite());
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -127,7 +125,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         request.putQueryParam(RETURN_NEW, params.getReturnNew());
         request.putQueryParam(RETURN_OLD, params.getReturnOld());
         request.putQueryParam(SILENT, params.getSilent());
-        request.putQueryParam(OVERWRITE, params.getOverwrite());
         request.putQueryParam(OVERWRITE_MODE, params.getOverwriteMode() != null ? params.getOverwriteMode().getValue() : null);
         request.putQueryParam(MERGE_OBJECTS, params.getMergeObjects());
         request.putHeaderParam(TRANSACTION_ID, params.getStreamTransactionId());
@@ -195,7 +192,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request(db.dbName(), RequestType.POST, PATH_API_IMPORT).putQueryParam(COLLECTION, name)
                 .putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync())
                 .putQueryParam("fromPrefix", params.getFromPrefix()).putQueryParam("toPrefix", params.getToPrefix())
-                .putQueryParam(OVERWRITE, params.getOverwrite()).putQueryParam("onDuplicate", params.getOnDuplicate())
+                .putQueryParam("onDuplicate", params.getOnDuplicate())
                 .putQueryParam("complete", params.getComplete()).putQueryParam("details", params.getDetails());
     }
 
@@ -634,14 +631,6 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
 
     protected Request dropRequest(final Boolean isSystem) {
         return request(db.dbName(), RequestType.DELETE, PATH_API_COLLECTION, name).putQueryParam("isSystem", isSystem);
-    }
-
-    protected Request loadRequest() {
-        return request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "load");
-    }
-
-    protected Request unloadRequest() {
-        return request(db.dbName(), RequestType.PUT, PATH_API_COLLECTION, name, "unload");
     }
 
     protected Request getInfoRequest() {

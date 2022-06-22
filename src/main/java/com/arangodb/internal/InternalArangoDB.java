@@ -164,18 +164,6 @@ public abstract class InternalArangoDB<E extends ArangoExecutor> extends ArangoE
                 "*", "*").setBody(util().serialize(OptionsBuilder.build(new UserAccessOptions(), permissions)));
     }
 
-    protected Request getLogsRequest(final LogOptions options) {
-        final LogOptions params = options != null ? options : new LogOptions();
-        return request(DbName.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG)
-                .putQueryParam(LogOptions.PROPERTY_UPTO, params.getUpto())
-                .putQueryParam(LogOptions.PROPERTY_LEVEL, params.getLevel())
-                .putQueryParam(LogOptions.PROPERTY_START, params.getStart())
-                .putQueryParam(LogOptions.PROPERTY_SIZE, params.getSize())
-                .putQueryParam(LogOptions.PROPERTY_OFFSET, params.getOffset())
-                .putQueryParam(LogOptions.PROPERTY_SEARCH, params.getSearch())
-                .putQueryParam(LogOptions.PROPERTY_SORT, params.getSort());
-    }
-
     protected Request getLogEntriesRequest(final LogOptions options) {
         final LogOptions params = options != null ? options : new LogOptions();
         return request(DbName.SYSTEM, RequestType.GET, PATH_API_ADMIN_LOG_ENTRIES)

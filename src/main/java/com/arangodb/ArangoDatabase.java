@@ -624,22 +624,6 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
     DatabaseEntity getInfo() throws ArangoDBException;
 
     /**
-     * Execute a server-side traversal
-     *
-     * @param vertexClass The type of the vertex documents (POJO class, VPackSlice or String for JSON)
-     * @param edgeClass   The type of the edge documents (POJO class, VPackSlice or String for JSON)
-     * @param options     Additional options
-     * @return Result of the executed traversal
-     * @throws ArangoDBException
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
-     * Documentation</a>
-     * @deprecated use {@link this#query(String, Map, AqlQueryOptions, Class)}
-     */
-    @Deprecated
-    <V, E> TraversalEntity<V, E> executeTraversal(Class<V> vertexClass, Class<E> edgeClass, TraversalOptions options)
-            throws ArangoDBException;
-
-    /**
      * Reads a single document
      *
      * @param id   The id of the document

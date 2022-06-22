@@ -1002,19 +1002,6 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     Response execute(Request request, HostHandle hostHandle) throws ArangoDBException;
 
     /**
-     * Returns fatal, error, warning or info log messages from the server's global log.
-     *
-     * @param options Additional options, can be null
-     * @return the log messages
-     * @throws ArangoDBException
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
-     * Documentation</a>
-     * @deprecated use {@link #getLogEntries(LogOptions)} instead
-     */
-    @Deprecated
-    LogEntity getLogs(LogOptions options) throws ArangoDBException;
-
-    /**
      * Returns the server logs
      *
      * @param options Additional options, can be null

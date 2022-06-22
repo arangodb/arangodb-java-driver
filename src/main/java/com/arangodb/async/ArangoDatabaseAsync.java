@@ -604,23 +604,6 @@ public interface ArangoDatabaseAsync extends ArangoSerializationAccessor {
     CompletableFuture<DatabaseEntity> getInfo();
 
     /**
-     * Execute a server-side traversal
-     *
-     * @param vertexClass The type of the vertex documents (POJO class, VPackSlice or String for Json)
-     * @param edgeClass   The type of the edge documents (POJO class, VPackSlice or String for Json)
-     * @param options     Additional options
-     * @return Result of the executed traversal
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/traversal.html#executes-a-traversal">API
-     * Documentation</a>
-     * @deprecated use {@link this#query(String, Map, AqlQueryOptions, Class)}
-     */
-    @Deprecated
-    <V, E> CompletableFuture<TraversalEntity<V, E>> executeTraversal(
-            final Class<V> vertexClass,
-            final Class<E> edgeClass,
-            final TraversalOptions options);
-
-    /**
      * Reads a single document
      *
      * @param id   The id of the document

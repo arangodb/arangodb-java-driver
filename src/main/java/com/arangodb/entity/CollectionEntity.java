@@ -31,11 +31,6 @@ public class CollectionEntity implements Entity {
     private String id;
     private String name;
     private Boolean waitForSync;
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    private Boolean isVolatile;
     private Boolean isSystem;
     private CollectionStatus status;
     private CollectionType type;
@@ -45,11 +40,6 @@ public class CollectionEntity implements Entity {
         super();
     }
 
-    /**
-     * @deprecated Accessing collections by their internal ID instead of accessing them by name is deprecated and highly
-     * discouraged. This functionality may be removed in future versions of ArangoDB.
-     */
-    @Deprecated
     public String getId() {
         return id;
     }
@@ -60,14 +50,6 @@ public class CollectionEntity implements Entity {
 
     public Boolean getWaitForSync() {
         return waitForSync;
-    }
-
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    public Boolean getIsVolatile() {
-        return isVolatile;
     }
 
     public Boolean getIsSystem() {

@@ -25,27 +25,7 @@ package com.arangodb.entity;
  */
 public enum CollectionStatus {
 
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    NEW_BORN_COLLECTION(1),
-
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    UNLOADED(2),
-
-    LOADED(3),
-
-    /**
-     * @deprecated MMFiles only
-     */
-    @Deprecated
-    IN_THE_PROCESS_OF_BEING_UNLOADED(4),
-
-    DELETED(5);
+    LOADED(3),DELETED(5);
 
     private final int status;
 

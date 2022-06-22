@@ -25,7 +25,6 @@ import com.arangodb.entity.AqlExecutionExplainEntity.ExecutionPlan;
 import com.arangodb.entity.CursorEntity.Warning;
 import com.arangodb.entity.QueryCachePropertiesEntity.CacheMode;
 import com.arangodb.model.*;
-import com.arangodb.model.TraversalOptions.Direction;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackBuilder;
 import com.arangodb.velocypack.VPackSlice;
@@ -1295,52 +1294,6 @@ class ArangoDatabaseTest extends BaseJunit5 {
             assertThat(info.getWriteConcern()).isNotNull();
             assertThat(info.getReplicationFactor()).isNotNull();
         }
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void executeTraversal(ArangoDatabase db) {
-        String k1 = "key-" + rnd();
-        String k2 = "key-" + rnd();
-        String k3 = "key-" + rnd();
-        String k4 = "key-" + rnd();
-        String k5 = "key-" + rnd();
-
-        for (final String e : new String[]{
-                k1, k2, k3, k4, k5
-        }) {
-            db.collection(CNAME1).insertDocument(new BaseDocument(e), null);
-        }
-        for (final String[] e : new String[][]{
-                new String[]{k1, k2}, new String[]{k2, k3},
-                new String[]{k2, k4}, new String[]{k5, k1}, new String[]{k5, k2}
-        }) {
-            final BaseEdgeDocument edge = new BaseEdgeDocument();
-            edge.setKey(e[0] + "_knows_" + e[1]);
-            edge.setFrom(CNAME1 + "/" + e[0]);
-            edge.setTo(CNAME1 + "/" + e[1]);
-            db.collection(ENAMES).insertDocument(edge, null);
-        }
-
-        final TraversalOptions options = new TraversalOptions().edgeCollection(ENAMES).startVertex(CNAME1 + "/" + k1).direction(Direction.outbound);
-        final TraversalEntity<BaseDocument, BaseEdgeDocument> traversal = db.executeTraversal(BaseDocument.class, BaseEdgeDocument.class, options);
-        assertThat(traversal).isNotNull();
-
-        final Collection<BaseDocument> vertices = traversal.getVertices();
-        assertThat(vertices).hasSize(4);
-
-        final Iterator<BaseDocument> verticesIterator = vertices.iterator();
-        final Collection<String> v = Arrays.asList(k1, k2, k3, k4);
-        while (verticesIterator.hasNext()) {
-            assertThat(v).contains(verticesIterator.next().getKey());
-        }
-
-        final Collection<PathEntity<BaseDocument, BaseEdgeDocument>> paths = traversal.getPaths();
-        assertThat(paths).hasSize(4);
-        final PathEntity<BaseDocument, BaseEdgeDocument> first = paths.iterator().next();
-        assertThat(first.getEdges()).isEmpty();
-        assertThat(first.getVertices()).hasSize(1);
-        assertThat(first.getVertices().iterator().next().getKey()).isEqualTo(k1);
     }
 
     @ParameterizedTest(name = "{index}")
