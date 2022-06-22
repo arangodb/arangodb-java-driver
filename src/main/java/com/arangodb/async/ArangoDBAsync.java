@@ -300,18 +300,6 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     CompletableFuture<Response> execute(final Request request);
 
     /**
-     * Returns fatal, error, warning or info log messages from the server's global log.
-     *
-     * @param options Additional options, can be null
-     * @return the log messages
-     * @see <a href= "https://www.arangodb.com/docs/stable/http/administration-and-monitoring.html#read-global-logs-from-the-server">API
-     * Documentation</a>
-     * @deprecated use {@link #getLogEntries(LogOptions)} instead
-     */
-    @Deprecated
-    CompletableFuture<LogEntity> getLogs(final LogOptions options);
-
-    /**
      * Returns the server logs
      *
      * @param options Additional options, can be null

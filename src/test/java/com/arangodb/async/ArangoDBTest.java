@@ -24,7 +24,6 @@ import com.arangodb.*;
 import com.arangodb.entity.*;
 import com.arangodb.mapping.ArangoJack;
 import com.arangodb.model.*;
-import com.arangodb.model.LogOptions.SortOrder;
 import com.arangodb.util.TestUtils;
 import com.arangodb.velocypack.exception.VPackException;
 import com.arangodb.velocystream.Request;
@@ -461,129 +460,6 @@ class ArangoDBTest {
     }
 
     @Test
-    void getLogs() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        arangoDB.getLogs(null)
-                .whenComplete((logs, ex) -> {
-                    assertThat(logs).isNotNull();
-                    assertThat(logs.getTotalAmount()).isPositive();
-                    assertThat((long) logs.getLid().size()).isEqualTo(logs.getTotalAmount());
-                    assertThat((long) logs.getLevel().size()).isEqualTo(logs.getTotalAmount());
-                    assertThat((long) logs.getTimestamp().size()).isEqualTo(logs.getTotalAmount());
-                    assertThat((long) logs.getText().size()).isEqualTo(logs.getTotalAmount());
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsUpto() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null).get();
-        arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING))
-                .whenComplete((logsUpto, ex) -> {
-                    assertThat(logsUpto).isNotNull();
-                    assertThat(logs.getTotalAmount() >= logsUpto.getTotalAmount()).isTrue();
-                    assertThat(logsUpto.getLevel()).doesNotContain(LogLevel.INFO);
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsLevel() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null).get();
-        arangoDB.getLogs(new LogOptions().level(LogLevel.INFO))
-                .whenComplete((logsInfo, ex) -> {
-                    assertThat(logsInfo).isNotNull();
-                    assertThat(logs.getTotalAmount() >= logsInfo.getTotalAmount()).isTrue();
-                    assertThat(logsInfo.getLevel()).containsOnly(LogLevel.INFO);
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsStart() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null).get();
-        assertThat(logs.getLid()).isNotEmpty();
-        arangoDB.getLogs(new LogOptions().start(logs.getLid().get(0) + 1))
-                .whenComplete((logsStart, ex) -> {
-                    assertThat(logsStart).isNotNull();
-                    assertThat(logsStart.getLid()).doesNotContain(logs.getLid().get(0));
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsSize() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null).get();
-        assertThat(logs.getLid()).isNotEmpty();
-        arangoDB.getLogs(new LogOptions().size(logs.getLid().size() - 1))
-                .whenComplete((logsSize, ex) -> {
-                    assertThat(logsSize).isNotNull();
-                    assertThat(logsSize.getLid()).hasSize(logs.getLid().size() - 1);
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsOffset() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7));  // it fails in 3.6 active-failover (BTS-362)
-        assumeTrue(isLessThanVersion(3, 9)); // deprecated
-        final LogEntity logs = arangoDB.getLogs(null).get();
-        assertThat(logs.getTotalAmount()).isPositive();
-        arangoDB.getLogs(new LogOptions().offset((int) (logs.getTotalAmount() - 1)))
-                .whenComplete((logsOffset, ex) -> {
-                    assertThat(logsOffset).isNotNull();
-                    assertThat(logsOffset.getLid()).hasSize(1);
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsSearch() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null).get();
-        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()))
-                .whenComplete((logsSearch, ex) -> {
-                    assertThat(logsSearch).isNotNull();
-                    assertThat(logs.getTotalAmount()).isGreaterThan(logsSearch.getTotalAmount());
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsSortAsc() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        arangoDB.getLogs(new LogOptions().sort(SortOrder.asc))
-                .whenComplete((logs, ex) -> {
-                    assertThat(logs).isNotNull();
-                    long lastId = -1;
-                    for (final Long id : logs.getLid()) {
-                        assertThat(id).isGreaterThan(lastId);
-                        lastId = id;
-                    }
-                })
-                .get();
-    }
-
-    @Test
-    void getLogsSortDesc() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        arangoDB.getLogs(new LogOptions().sort(SortOrder.desc))
-                .whenComplete((logs, ex) -> {
-                    assertThat(logs).isNotNull();
-                    long lastId = Long.MAX_VALUE;
-                    for (final Long id : logs.getLid()) {
-                        assertThat(lastId).isGreaterThan(id);
-                        lastId = id;
-                    }
-                })
-                .get();
-    }
-
-    @Test
     void getLogEntries() throws InterruptedException, ExecutionException {
         assumeTrue(isAtLeastVersion(3, 8));
         arangoDB.getLogEntries(null)
@@ -591,18 +467,6 @@ class ArangoDBTest {
                     assertThat(logs).isNotNull();
                     assertThat(logs.getTotal()).isPositive();
                     assertThat((long) logs.getMessages().size()).isEqualTo(logs.getTotal());
-                })
-                .get();
-    }
-
-    @Test
-    void getLogEntriesSearch() throws InterruptedException, ExecutionException {
-        assumeTrue(isAtLeastVersion(3, 8));
-        final LogEntriesEntity logs = arangoDB.getLogEntries(null).get();
-        arangoDB.getLogs(new LogOptions().search(BaseTest.TEST_DB.get()))
-                .whenComplete((logsSearch, ex) -> {
-                    assertThat(logsSearch).isNotNull();
-                    assertThat(logs.getTotal()).isGreaterThan(logsSearch.getTotalAmount());
                 })
                 .get();
     }

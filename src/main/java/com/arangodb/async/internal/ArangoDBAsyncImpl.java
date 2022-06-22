@@ -222,11 +222,6 @@ public class ArangoDBAsyncImpl extends InternalArangoDB<ArangoExecutorAsync> imp
     }
 
     @Override
-    public CompletableFuture<LogEntity> getLogs(final LogOptions options) {
-        return executor.execute(getLogsRequest(options), LogEntity.class);
-    }
-
-    @Override
     public CompletableFuture<LogEntriesEntity> getLogEntries(final LogOptions options) {
         return executor.execute(getLogEntriesRequest(options), LogEntriesEntity.class);
     }

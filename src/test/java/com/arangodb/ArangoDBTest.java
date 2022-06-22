@@ -31,7 +31,6 @@ import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -398,105 +397,6 @@ class ArangoDBTest extends BaseJunit5 {
     void execute(ArangoDB arangoDB) throws VPackException {
         final Response response = arangoDB.execute(new Request(DbName.SYSTEM, RequestType.GET, "/_api/version"));
         assertThat(response.getBody().get("version").isString()).isTrue();
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogs(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null);
-        assertThat(logs.getTotalAmount()).isPositive();
-        assertThat(logs.getLid()).hasSize(logs.getTotalAmount().intValue());
-        assertThat(logs.getLevel()).hasSize(logs.getTotalAmount().intValue());
-        assertThat(logs.getTimestamp()).hasSize(logs.getTotalAmount().intValue());
-        assertThat(logs.getText()).hasSize(logs.getTotalAmount().intValue());
-    }
-
-    @Disabled
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsUpto(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logsUpto = arangoDB.getLogs(new LogOptions().upto(LogLevel.WARNING));
-        assertThat(logsUpto.getLevel())
-                .isNotEmpty()
-                .doesNotContain(LogLevel.INFO);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsLevel(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logsInfo = arangoDB.getLogs(new LogOptions().level(LogLevel.INFO));
-        assertThat(logsInfo.getLevel()).containsOnly(LogLevel.INFO);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsStart(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null);
-        assertThat(logs.getLid()).isNotEmpty();
-        final LogEntity logsStart = arangoDB.getLogs(new LogOptions().start(logs.getLid().get(0) + 1));
-        assertThat(logsStart.getLid())
-                .isNotEmpty()
-                .doesNotContain(logs.getLid().get(0));
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsSize(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null);
-        assertThat(logs.getLid()).isNotEmpty();
-        final LogEntity logsSize = arangoDB.getLogs(new LogOptions().size(logs.getLid().size() - 1));
-        assertThat(logsSize.getLid()).hasSize(logs.getLid().size() - 1);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsOffset(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7));  // it fails in 3.6 active-failover (BTS-362)
-        assumeTrue(isLessThanVersion(3, 9)); // deprecated
-        final LogEntity logs = arangoDB.getLogs(null);
-        assertThat(logs.getTotalAmount()).isPositive();
-        final LogEntity logsOffset = arangoDB.getLogs(new LogOptions().offset(1));
-        assertThat(logsOffset.getLid())
-                .isNotEmpty()
-                .doesNotContain(logs.getLid().get(0));
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsSearch(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(null);
-        final LogEntity logsSearch = arangoDB.getLogs(new LogOptions().search(TEST_DB.get()));
-        assertThat(logs.getTotalAmount()).isGreaterThan(logsSearch.getTotalAmount());
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsSortAsc(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.asc));
-        long lastId = -1;
-        for (final Long id : logs.getLid()) {
-            assertThat(id).isGreaterThan(lastId);
-            lastId = id;
-        }
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("arangos")
-    void getLogsSortDesc(ArangoDB arangoDB) {
-        assumeTrue(isAtLeastVersion(3, 7)); // it fails in 3.6 active-failover (BTS-362)
-        final LogEntity logs = arangoDB.getLogs(new LogOptions().sort(SortOrder.desc));
-        long lastId = Long.MAX_VALUE;
-        for (final Long id : logs.getLid()) {
-            assertThat(lastId).isGreaterThan(id);
-            lastId = id;
-        }
     }
 
     @ParameterizedTest(name = "{index}")
