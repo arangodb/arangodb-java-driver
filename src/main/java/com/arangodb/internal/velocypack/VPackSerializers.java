@@ -114,12 +114,6 @@ public class VPackSerializers {
         }
     };
 
-    public static final VPackSerializer<MinReplicationFactor> MIN_REPLICATION_FACTOR = (builder, attribute, value, context) -> {
-        if (value.getMinReplicationFactor() != null) {
-            builder.add(attribute, value.getMinReplicationFactor());
-        }
-    };
-
     public static final VPackSerializer<ViewType> VIEW_TYPE = (builder, attribute, value, context) -> {
         final String type = value == ViewType.ARANGO_SEARCH ? "arangosearch" : value.name().toLowerCase(Locale.ENGLISH);
         builder.add(attribute, type);
