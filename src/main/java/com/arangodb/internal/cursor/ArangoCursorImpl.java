@@ -22,7 +22,6 @@ package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoIterator;
-import com.arangodb.Consumer;
 import com.arangodb.entity.CursorEntity;
 import com.arangodb.entity.CursorEntity.Extras;
 import com.arangodb.entity.CursorEntity.Stats;
@@ -128,13 +127,6 @@ public class ArangoCursorImpl<T> extends AbstractArangoIterable<T> implements Ar
     @Override
     public ArangoIterator<T> iterator() {
         return iterator;
-    }
-
-    @Override
-    public void foreach(final Consumer<? super T> action) {
-        while (hasNext()) {
-            action.accept(next());
-        }
     }
 
 }
