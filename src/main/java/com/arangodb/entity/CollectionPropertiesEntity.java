@@ -29,8 +29,20 @@ import java.util.Collection;
  */
 public class CollectionPropertiesEntity extends CollectionEntity {
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Boolean doCompact;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Long journalSize;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Integer indexBuckets;
     private KeyOptions keyOptions;
     private Long count;
@@ -48,26 +60,51 @@ public class CollectionPropertiesEntity extends CollectionEntity {
         minReplicationFactor = new MinReplicationFactor();
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Boolean getDoCompact() {
         return doCompact;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public void setDoCompact(final Boolean doCompact) {
         this.doCompact = doCompact;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Long getJournalSize() {
         return journalSize;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public void setJournalSize(final Long journalSize) {
         this.journalSize = journalSize;
     }
 
+
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Integer getIndexBuckets() {
         return indexBuckets;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public void setIndexBuckets(final Integer indexBuckets) {
         this.indexBuckets = indexBuckets;
     }

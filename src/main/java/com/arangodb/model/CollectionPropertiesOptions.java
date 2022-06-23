@@ -28,6 +28,10 @@ package com.arangodb.model;
 public class CollectionPropertiesOptions {
 
     private Boolean waitForSync;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Long journalSize;
     private CollectionSchema schema;
 
@@ -48,6 +52,10 @@ public class CollectionPropertiesOptions {
         return this;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Long getJournalSize() {
         return journalSize;
     }
@@ -57,7 +65,9 @@ public class CollectionPropertiesOptions {
      *                    that when changing the journalSize value, it will only have an effect for additional journals or
      *                    datafiles that are created. Already existing journals or datafiles will not be affected.
      * @return options
+     * @deprecated MMFiles only
      */
+    @Deprecated
     public CollectionPropertiesOptions journalSize(final Long journalSize) {
         this.journalSize = journalSize;
         return this;

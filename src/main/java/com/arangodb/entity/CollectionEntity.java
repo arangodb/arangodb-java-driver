@@ -31,6 +31,10 @@ public class CollectionEntity implements Entity {
     private String id;
     private String name;
     private Boolean waitForSync;
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     private Boolean isVolatile;
     private Boolean isSystem;
     private CollectionStatus status;
@@ -58,6 +62,10 @@ public class CollectionEntity implements Entity {
         return waitForSync;
     }
 
+    /**
+     * @deprecated MMFiles only
+     */
+    @Deprecated
     public Boolean getIsVolatile() {
         return isVolatile;
     }
