@@ -253,45 +253,6 @@ class ArangoSearchTest extends BaseJunit5 {
         assertThat(link.getFields().iterator().next().getName()).isEqualTo("value");
     }
 
-    private void createGetAndDeleteAnalyzer(ArangoDatabase db, AnalyzerEntity options) {
-
-        String fullyQualifiedName = db.dbName().get() + "::" + options.getName();
-
-        // createAnalyzer
-        AnalyzerEntity createdAnalyzer = db.createAnalyzer(options);
-
-        assertThat(createdAnalyzer.getName()).isEqualTo(fullyQualifiedName);
-        assertThat(createdAnalyzer.getType()).isEqualTo(options.getType());
-        assertThat(createdAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
-        compareProperties(createdAnalyzer.getProperties(), options.getProperties());
-
-        // getAnalyzer
-        AnalyzerEntity gotAnalyzer = db.getAnalyzer(options.getName());
-        assertThat(gotAnalyzer.getName()).isEqualTo(fullyQualifiedName);
-        assertThat(gotAnalyzer.getType()).isEqualTo(options.getType());
-        assertThat(gotAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
-        compareProperties(gotAnalyzer.getProperties(), options.getProperties());
-
-        // getAnalyzers
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
-        AnalyzerEntity foundAnalyzer = db.getAnalyzers().stream().filter(it -> it.getName().equals(fullyQualifiedName))
-                .findFirst().get();
-
-        assertThat(foundAnalyzer.getName()).isEqualTo(fullyQualifiedName);
-        assertThat(foundAnalyzer.getType()).isEqualTo(options.getType());
-        assertThat(foundAnalyzer.getFeatures()).isEqualTo(options.getFeatures());
-        compareProperties(foundAnalyzer.getProperties(), options.getProperties());
-
-        AnalyzerDeleteOptions deleteOptions = new AnalyzerDeleteOptions();
-        deleteOptions.setForce(true);
-
-        // deleteAnalyzer
-        db.deleteAnalyzer(options.getName(), deleteOptions);
-
-        Throwable thrown = catchThrowable(() -> db.getAnalyzer(options.getName()));
-        assertThat(thrown).isInstanceOf(ArangoDBException.class);
-    }
-
     private void createGetAndDeleteTypedAnalyzer(ArangoDatabase db, SearchAnalyzer analyzer) {
 
         String fullyQualifiedName = db.dbName().get() + "::" + analyzer.getName();
@@ -317,7 +278,7 @@ class ArangoSearchTest extends BaseJunit5 {
 
         db.deleteSearchAnalyzer(analyzer.getName(), deleteOptions);
 
-        Throwable thrown = catchThrowable(() -> db.getAnalyzer(analyzer.getName()));
+        Throwable thrown = catchThrowable(() -> db.getSearchAnalyzer(analyzer.getName()));
         assertThat(thrown).isInstanceOf(ArangoDBException.class);
         ArangoDBException e = (ArangoDBException) thrown;
         assertThat(e.getResponseCode()).isEqualTo(404);
@@ -325,42 +286,6 @@ class ArangoSearchTest extends BaseJunit5 {
     }
 
     @SuppressWarnings("unchecked")
-    private void compareProperties(Map<String, Object> actualProperties, Map<String, Object> expectedProperties) {
-        expectedProperties.forEach((key, expectedValue) -> {
-            Object actualValue = actualProperties.get(key);
-            if (expectedValue instanceof Map) {
-                assertThat(actualValue).isNotNull();
-                assertThat(actualValue).isInstanceOf(Map.class);
-                compareProperties((Map<String, Object>) actualValue, (Map<String, Object>) expectedValue);
-            } else if (expectedValue instanceof Number) {
-                assertThat(Double.valueOf(actualValue.toString())).isEqualTo(Double.valueOf(expectedValue.toString()));
-            } else {
-                assertThat(actualValue).isEqualTo(expectedValue);
-            }
-        });
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void identityAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "test-" + rnd();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.identity);
-        options.setProperties(Collections.emptyMap());
-
-        createGetAndDeleteAnalyzer(db, options);
-    }
-
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
     void identityAnalyzerTyped(ArangoDatabase db) {
@@ -378,27 +303,6 @@ class ArangoSearchTest extends BaseJunit5 {
         analyzer.setName(name);
 
         createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void delimiterAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "test-" + rnd();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.delimiter);
-        options.setProperties(Collections.singletonMap("delimiter", "-"));
-
-        createGetAndDeleteAnalyzer(db, options);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -426,27 +330,6 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void stemAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "test-" + rnd();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.stem);
-        options.setProperties(Collections.singletonMap("locale", "ru"));
-
-        createGetAndDeleteAnalyzer(db, options);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
     void stemAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
@@ -466,32 +349,6 @@ class ArangoSearchTest extends BaseJunit5 {
         options.setProperties(properties);
 
         createGetAndDeleteTypedAnalyzer(db, options);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void normAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "test-" + rnd();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("locale", "ru");
-        properties.put("case", "lower");
-        properties.put("accent", true);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.norm);
-        options.setProperties(properties);
-
-        createGetAndDeleteAnalyzer(db, options);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -521,32 +378,6 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void ngramAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "test-" + rnd();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("max", 6L);
-        properties.put("min", 3L);
-        properties.put("preserveOriginal", true);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.ngram);
-        options.setProperties(properties);
-
-        createGetAndDeleteAnalyzer(db, options);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
     void ngramAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
@@ -569,35 +400,6 @@ class ArangoSearchTest extends BaseJunit5 {
         analyzer.setProperties(properties);
 
         createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void enhancedNgramAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 6));
-
-        String name = "test-" + UUID.randomUUID();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("max", 6L);
-        properties.put("min", 3L);
-        properties.put("preserveOriginal", true);
-        properties.put("startMarker", "^");
-        properties.put("endMarker", "^");
-        properties.put("streamType", "utf8");
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.ngram);
-        options.setProperties(properties);
-
-        createGetAndDeleteAnalyzer(db, options);
     }
 
     @ParameterizedTest(name = "{index}")
@@ -630,34 +432,6 @@ class ArangoSearchTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("dbs")
-    void textAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 5));
-
-        String name = "test-" + rnd();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("locale", "ru");
-        properties.put("case", "lower");
-        properties.put("stopwords", Collections.emptyList());
-        properties.put("accent", true);
-        properties.put("stemming", true);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.text);
-        options.setProperties(properties);
-
-        createGetAndDeleteAnalyzer(db, options);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
     void textAnalyzerTyped(ArangoDatabase db) {
         assumeTrue(isAtLeastVersion(3, 5));
 
@@ -681,40 +455,6 @@ class ArangoSearchTest extends BaseJunit5 {
         analyzer.setProperties(properties);
 
         createGetAndDeleteTypedAnalyzer(db, analyzer);
-    }
-
-    @ParameterizedTest(name = "{index}")
-    @MethodSource("dbs")
-    void enhancedTextAnalyzer(ArangoDatabase db) {
-        assumeTrue(isAtLeastVersion(3, 6));
-
-        String name = "test-" + UUID.randomUUID();
-
-        Set<AnalyzerFeature> features = new HashSet<>();
-        features.add(AnalyzerFeature.frequency);
-        features.add(AnalyzerFeature.norm);
-        features.add(AnalyzerFeature.position);
-
-        Map<String, Object> edgeNgram = new HashMap<>();
-        edgeNgram.put("min", 2L);
-        edgeNgram.put("max", 100000L);
-        edgeNgram.put("preserveOriginal", true);
-
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("locale", "ru");
-        properties.put("case", "lower");
-        properties.put("stopwords", Collections.emptyList());
-        properties.put("accent", true);
-        properties.put("stemming", true);
-        properties.put("edgeNgram", edgeNgram);
-
-        AnalyzerEntity options = new AnalyzerEntity();
-        options.setFeatures(features);
-        options.setName(name);
-        options.setType(AnalyzerType.text);
-        options.setProperties(properties);
-
-        createGetAndDeleteAnalyzer(db, options);
     }
 
     @ParameterizedTest(name = "{index}")

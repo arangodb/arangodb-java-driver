@@ -58,15 +58,6 @@ public class StopwordsAnalyzerProperties {
     private final boolean hex;
 
     /**
-     * @return list of hex-encoded strings that describe the tokens to be discarded.
-     * @deprecated use {@link #getStopwordsAsHexList()} instead
-     */
-    @Deprecated
-    public List<String> getStopwords() {
-        return getStopwordsAsHexList();
-    }
-
-    /**
      * @return list of verbatim strings that describe the tokens to be discarded.
      */
     public List<String> getStopwordsAsStringList() {

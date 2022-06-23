@@ -37,30 +37,6 @@ class ArangoAnnotationsTest {
     private final ArangoJack mapper = new ArangoJack();
 
     @Test
-    void documentField() {
-        DocumentFieldEntity e = new DocumentFieldEntity();
-        e.setId("Id");
-        e.setKey("Key");
-        e.setRev("Rev");
-        e.setFrom("From");
-        e.setTo("To");
-
-        VPackSlice slice = mapper.serialize(e);
-        System.out.println(slice);
-        Map<String, String> deserialized = mapper.deserialize(slice, Object.class);
-        assertThat(deserialized)
-                .containsEntry("_id", e.getId())
-                .containsEntry("_key", e.getKey())
-                .containsEntry("_rev", e.getRev())
-                .containsEntry("_from", e.getFrom())
-                .containsEntry("_to", e.getTo())
-                .hasSize(5);
-
-        DocumentFieldEntity deserializedEntity = mapper.deserialize(slice, DocumentFieldEntity.class);
-        assertThat(deserializedEntity).isEqualTo(e);
-    }
-
-    @Test
     void documentFieldAnnotations() {
         AnnotatedEntity e = new AnnotatedEntity();
         e.setId("Id");

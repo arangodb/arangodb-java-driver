@@ -94,9 +94,7 @@ public class DocumentCache {
             if (annotation != null && !field.isSynthetic() && !Modifier.isStatic(field.getModifiers())
                     && String.class.isAssignableFrom(field.getType())) {
                 String value = null;
-                if (annotation instanceof DocumentField) {
-                    value = ((DocumentField) annotation).value().getSerializeName();
-                } else if (annotation instanceof Id) {
+                if (annotation instanceof Id) {
                     value = DocumentFields.ID;
                 } else if (annotation instanceof Key) {
                     value = DocumentFields.KEY;

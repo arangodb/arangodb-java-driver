@@ -51,9 +51,7 @@ public class VPackDriverModule implements VPackModule, VPackParserModule {
     public <C extends VPackSetupContext<C>> void setup(final C context) {
         context.fieldNamingStrategy(field -> {
             for (Annotation annotation : field.getAnnotations()) {
-                if(annotation instanceof DocumentField) {
-                    return ((DocumentField) annotation).value().getSerializeName();
-                } else if (annotation instanceof Id) {
+                if (annotation instanceof Id) {
                     return DocumentFields.ID;
                 } else if (annotation instanceof Key) {
                     return DocumentFields.KEY;

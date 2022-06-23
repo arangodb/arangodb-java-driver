@@ -1,9 +1,6 @@
 package com.arangodb.example;
 
-import com.arangodb.ArangoCollection;
-import com.arangodb.ArangoCursor;
-import com.arangodb.ArangoDB;
-import com.arangodb.ArangoDBException;
+import com.arangodb.*;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.mapping.ArangoJack;
@@ -18,7 +15,7 @@ public class FirstProject {
         final ArangoDB arangoDB = new ArangoDB.Builder().user("root").serializer(new ArangoJack()).build();
 
         // create database
-        final String dbName = "mydb";
+        final DbName dbName = DbName.of("mydb");
         try {
             arangoDB.createDatabase(dbName);
             System.out.println("Database created: " + dbName);

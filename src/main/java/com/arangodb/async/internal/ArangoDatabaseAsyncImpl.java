@@ -30,7 +30,6 @@ import com.arangodb.async.ArangoRouteAsync;
 import com.arangodb.async.ArangoSearchAsync;
 import com.arangodb.async.ArangoViewAsync;
 import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.internal.ArangoCursorExecute;
 import com.arangodb.internal.ArangoErrors;
@@ -451,18 +450,8 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
-    public CompletableFuture<AnalyzerEntity> createAnalyzer(AnalyzerEntity options) {
-        return executor.execute(createAnalyzerRequest(options), AnalyzerEntity.class);
-    }
-
-    @Override
     public CompletableFuture<SearchAnalyzer> createSearchAnalyzer(SearchAnalyzer analyzer) {
         return executor.execute(createAnalyzerRequest(analyzer), SearchAnalyzer.class);
-    }
-
-    @Override
-    public CompletableFuture<AnalyzerEntity> getAnalyzer(String name) {
-        return executor.execute(getAnalyzerRequest(name), AnalyzerEntity.class);
     }
 
     @Override
@@ -471,34 +460,18 @@ public class ArangoDatabaseAsyncImpl extends InternalArangoDatabase<ArangoDBAsyn
     }
 
     @Override
-    public CompletableFuture<Collection<AnalyzerEntity>> getAnalyzers() {
-        return executor.execute(getAnalyzersRequest(), getAnalyzersResponseDeserializer());
-    }
-
-    @Override
     public CompletableFuture<Collection<SearchAnalyzer>> getSearchAnalyzers() {
         return executor.execute(getAnalyzersRequest(), getSearchAnalyzersResponseDeserializer());
     }
 
     @Override
-    public CompletableFuture<Void> deleteAnalyzer(String name) {
-        return executor.execute(deleteAnalyzerRequest(name, null), Void.class);
-    }
-
-    @Override
-    public CompletableFuture<Void> deleteAnalyzer(String name, AnalyzerDeleteOptions options) {
-        return executor.execute(deleteAnalyzerRequest(name, options), Void.class);
-    }
-
-    @Override
     public CompletableFuture<Void> deleteSearchAnalyzer(String name) {
-        return deleteAnalyzer(name);
+        return deleteSearchAnalyzer(name, null);
     }
 
     @Override
     public CompletableFuture<Void> deleteSearchAnalyzer(String name, AnalyzerDeleteOptions options) {
-        return deleteAnalyzer(name, options);
+        return executor.execute(deleteAnalyzerRequest(name, options), Void.class);
     }
-
 
 }

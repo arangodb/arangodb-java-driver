@@ -21,12 +21,7 @@
 package com.arangodb.internal.cursor;
 
 import com.arangodb.ArangoIterable;
-import com.arangodb.ArangoIterator;
-import com.arangodb.Function;
-import com.arangodb.Predicate;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -38,75 +33,6 @@ public abstract class AbstractArangoIterable<T> implements ArangoIterable<T> {
     @Override
     public Stream<T> stream() {
         return StreamSupport.stream(spliterator(), false);
-    }
-
-    @Override
-    public <R> ArangoIterable<R> map(final Function<? super T, ? extends R> mapper) {
-        return new ArangoMappingIterable<>(this, mapper);
-    }
-
-    @Override
-    public ArangoIterable<T> filter(final Predicate<? super T> predicate) {
-        return new ArangoFilterIterable<>(this, predicate);
-    }
-
-    @Override
-    public T first() {
-        final ArangoIterator<T> iterator = iterator();
-        return iterator.hasNext() ? iterator.next() : null;
-    }
-
-    @Override
-    public long count() {
-        long count = 0L;
-        for (final Iterator<T> iterator = iterator(); iterator.hasNext(); iterator.next()) {
-            count++;
-        }
-        return count;
-    }
-
-    @Override
-    public boolean anyMatch(final Predicate<? super T> predicate) {
-        boolean match = false;
-        for (final T t : this) {
-            if (predicate.test(t)) {
-                match = true;
-                break;
-            }
-        }
-        return match;
-    }
-
-    @Override
-    public boolean allMatch(final Predicate<? super T> predicate) {
-        boolean match = false;
-        for (final T t : this) {
-            match = predicate.test(t);
-            if (!match) {
-                break;
-            }
-        }
-        return match;
-    }
-
-    @Override
-    public boolean noneMatch(final Predicate<? super T> predicate) {
-        boolean match = false;
-        for (final T t : this) {
-            match = !predicate.test(t);
-            if (!match) {
-                break;
-            }
-        }
-        return match;
-    }
-
-    @Override
-    public <R extends Collection<? super T>> R collectInto(final R target) {
-        for (final T t : this) {
-            target.add(t);
-        }
-        return target;
     }
 
 }
