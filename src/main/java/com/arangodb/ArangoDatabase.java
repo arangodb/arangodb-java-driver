@@ -21,7 +21,6 @@
 package com.arangodb;
 
 import com.arangodb.entity.*;
-import com.arangodb.entity.arangosearch.AnalyzerEntity;
 import com.arangodb.entity.arangosearch.analyzer.SearchAnalyzer;
 import com.arangodb.model.*;
 import com.arangodb.model.arangosearch.AnalyzerDeleteOptions;
@@ -47,17 +46,6 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @return main entry point
      */
     ArangoDB arango();
-
-    /**
-     * Returns the name of the database
-     *
-     * @return database name
-     * @deprecated Use {@link #dbName()} instead
-     */
-    @Deprecated
-    default String name() {
-        return dbName().get();
-    }
 
     /**
      * Returns the name of the database
@@ -722,19 +710,6 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
     /**
      * Creates an Analyzer
      *
-     * @param options AnalyzerEntity
-     * @return the created Analyzer
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
-     * @since ArangoDB 3.5.0
-     * @deprecated use {@link this#createSearchAnalyzer(SearchAnalyzer)}}
-     */
-    @Deprecated
-    AnalyzerEntity createAnalyzer(AnalyzerEntity options) throws ArangoDBException;
-
-    /**
-     * Creates an Analyzer
-     *
      * @param analyzer SearchAnalyzer
      * @return the created Analyzer
      * @throws ArangoDBException
@@ -742,19 +717,6 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @since ArangoDB 3.5.0
      */
     SearchAnalyzer createSearchAnalyzer(SearchAnalyzer analyzer) throws ArangoDBException;
-
-    /**
-     * Gets information about an Analyzer
-     *
-     * @param name of the Analyzer without database prefix
-     * @return information about an Analyzer
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
-     * @since ArangoDB 3.5.0
-     * @deprecated use {@link this#getSearchAnalyzer(String)}}
-     */
-    @Deprecated
-    AnalyzerEntity getAnalyzer(String name) throws ArangoDBException;
 
     /**
      * Gets information about an Analyzer
@@ -774,45 +736,8 @@ public interface ArangoDatabase extends ArangoSerializationAccessor {
      * @throws ArangoDBException
      * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
      * @since ArangoDB 3.5.0
-     * @deprecated use {@link this#getSearchAnalyzers()}
-     */
-    @Deprecated
-    Collection<AnalyzerEntity> getAnalyzers() throws ArangoDBException;
-
-    /**
-     * Retrieves all analyzers definitions.
-     *
-     * @return collection of all analyzers definitions
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
-     * @since ArangoDB 3.5.0
      */
     Collection<SearchAnalyzer> getSearchAnalyzers() throws ArangoDBException;
-
-    /**
-     * Deletes an Analyzer
-     *
-     * @param name of the Analyzer without database prefix
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
-     * @since ArangoDB 3.5.0
-     * @deprecated use {@link this#deleteSearchAnalyzer(String)}}}
-     */
-    @Deprecated
-    void deleteAnalyzer(String name) throws ArangoDBException;
-
-    /**
-     * Deletes an Analyzer
-     *
-     * @param name    of the Analyzer without database prefix
-     * @param options AnalyzerDeleteOptions
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/analyzers.html">API Documentation</a>
-     * @since ArangoDB 3.5.0
-     * @deprecated use {@link this#deleteSearchAnalyzer(String, AnalyzerDeleteOptions)}}}
-     */
-    @Deprecated
-    void deleteAnalyzer(String name, AnalyzerDeleteOptions options) throws ArangoDBException;
 
     /**
      * Deletes an Analyzer
