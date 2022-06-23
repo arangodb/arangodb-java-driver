@@ -56,6 +56,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     private static final String RETURN_NEW = "returnNew";
     private static final String NEW = "new";
     private static final String RETURN_OLD = "returnOld";
+    private static final String OVERWRITE = "overwrite";
     private static final String OVERWRITE_MODE = "overwriteMode";
     private static final String OLD = "old";
     private static final String SILENT = "silent";
@@ -192,7 +193,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
         return request(db.dbName(), RequestType.POST, PATH_API_IMPORT).putQueryParam(COLLECTION, name)
                 .putQueryParam(ArangoRequestParam.WAIT_FOR_SYNC, params.getWaitForSync())
                 .putQueryParam("fromPrefix", params.getFromPrefix()).putQueryParam("toPrefix", params.getToPrefix())
-                .putQueryParam("onDuplicate", params.getOnDuplicate())
+                .putQueryParam(OVERWRITE, params.getOverwrite()).putQueryParam("onDuplicate", params.getOnDuplicate())
                 .putQueryParam("complete", params.getComplete()).putQueryParam("details", params.getDetails());
     }
 
