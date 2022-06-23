@@ -21,7 +21,6 @@
 package com.arangodb.internal.mapping;
 
 
-import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
 import com.arangodb.velocypack.annotations.SerializedName;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -114,11 +113,6 @@ public class ArangoAnnotationIntrospector extends JacksonAnnotationIntrospector 
     private PropertyName findPropertyName(Annotated a) {
         if (!(a instanceof AnnotatedMember)) {
             return null;
-        }
-
-        final DocumentField documentField = a.getAnnotation(DocumentField.class);
-        if (documentField != null) {
-            return PropertyName.construct(documentField.value().getSerializeName());
         }
 
         final SerializedName serializedName = a.getAnnotation(SerializedName.class);
