@@ -92,18 +92,6 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
     /**
      * Returns a handler of the database by the given name
      *
-     * @param name Name of the database
-     * @return database handler
-     * @deprecated Use {@link #db(DbName)} instead
-     */
-    @Deprecated
-    default ArangoDatabaseAsync db(final String name) {
-        return db(DbName.of(name));
-    }
-
-    /**
-     * Returns a handler of the database by the given name
-     *
      * @param dbName Name of the database
      * @return database handler
      */
@@ -113,20 +101,6 @@ public interface ArangoDBAsync extends ArangoSerializationAccessor {
      * @return entry point for accessing client metrics
      */
     ArangoMetrics metrics();
-
-    /**
-     * Creates a new database
-     *
-     * @param name Has to contain a valid database name
-     * @return true if the database was created successfully.
-     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
-     * Documentation</a>
-     * @deprecated Use {@link #createDatabase(DbName)} instead
-     */
-    @Deprecated
-    default CompletableFuture<Boolean> createDatabase(final String name) {
-        return createDatabase(DbName.of(name));
-    }
 
     /**
      * Creates a new database

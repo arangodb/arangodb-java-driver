@@ -42,14 +42,6 @@ public class Request {
     @Expose(serialize = false)
     private VPackSlice body;
 
-    /**
-     * @deprecated Use {@link #Request(DbName, RequestType, String)} instead
-     */
-    @Deprecated
-    public Request(final String database, final RequestType requestType, final String path) {
-        this(DbName.of(database), requestType, path);
-    }
-
     public Request(final DbName dbName, final RequestType requestType, final String path) {
         super();
         this.dbName = dbName;
@@ -76,14 +68,6 @@ public class Request {
     public Request setType(final int type) {
         this.type = type;
         return this;
-    }
-
-    /**
-     * @deprecated Use {@link #getDbName()} instead
-     */
-    @Deprecated
-    public String getDatabase() {
-        return getDbName().get();
     }
 
     public DbName getDbName() {

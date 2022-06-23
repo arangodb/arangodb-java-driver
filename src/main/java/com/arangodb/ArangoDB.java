@@ -749,18 +749,6 @@ public interface ArangoDB extends ArangoSerializationAccessor {
     /**
      * Returns a {@code ArangoDatabase} instance for the given database name.
      *
-     * @param name Name of the database
-     * @return database handler
-     * @deprecated Use {@link #db(DbName)} instead
-     */
-    @Deprecated
-    default ArangoDatabase db(String name) {
-        return db(DbName.of(name));
-    }
-
-    /**
-     * Returns a {@code ArangoDatabase} instance for the given database name.
-     *
      * @param dbName Name of the database
      * @return database handler
      */
@@ -770,21 +758,6 @@ public interface ArangoDB extends ArangoSerializationAccessor {
      * @return entry point for accessing client metrics
      */
     ArangoMetrics metrics();
-
-    /**
-     * Creates a new database with the given name.
-     *
-     * @param name Name of the database to create
-     * @return true if the database was created successfully.
-     * @throws ArangoDBException
-     * @see <a href="https://www.arangodb.com/docs/stable/http/database-database-management.html#create-database">API
-     * Documentation</a>
-     * @deprecated Use {@link #createDatabase(DbName)} instead
-     */
-    @Deprecated
-    default Boolean createDatabase(String name) throws ArangoDBException {
-        return createDatabase(DbName.of(name));
-    }
 
     /**
      * Creates a new database with the given name.
