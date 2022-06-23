@@ -271,14 +271,4 @@ public class CollectionCreateOptions {
         return this;
     }
 
-    /**
-     * @since ArangoDB 3.7
-     * @deprecated Use {@link #schema(CollectionSchema)} instead.
-     */
-    @Deprecated
-    public CollectionCreateOptions setSchema(final CollectionSchema schema) {
-        this.schema = schema;
-        return this;
-    }
-
 }
