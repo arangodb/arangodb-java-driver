@@ -51,6 +51,11 @@ import java.util.Iterator;
  */
 public class ArangoJack implements ArangoSerialization {
 
+    @Override
+    public JsonNode parseJson(String json) {
+        return null;
+    }
+
     public interface ConfigureFunction {
         void configure(ObjectMapper mapper);
     }

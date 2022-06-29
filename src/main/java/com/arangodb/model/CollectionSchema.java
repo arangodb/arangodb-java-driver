@@ -22,20 +22,16 @@
 package com.arangodb.model;
 
 
+import com.arangodb.serde.InternalSerializers;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * @author Michele Rastelli
  * @see <a href="https://www.arangodb.com/docs/stable/data-modeling-documents-schema-validation.html">API Documentation</a>
  * @since ArangoDB 3.7
  */
 public class CollectionSchema {
-
-    /**
-     * Value to unset the collection schema on properties update {@link com.arangodb.ArangoCollection#changeProperties(CollectionPropertiesOptions)}.
-     */
-    public static final CollectionSchema NULL_SCHEMA = new CollectionSchema()
-            .setLevel(null)
-            .setMessage(null)
-            .setRule(null);
 
     private String rule;
     private Level level;
@@ -44,6 +40,7 @@ public class CollectionSchema {
     /**
      * @return JSON Schema description
      */
+    @JsonSerialize(using = InternalSerializers.CollectionSchemaRuleSerializer.class)
     public String getRule() {
         return rule;
     }
@@ -82,11 +79,13 @@ public class CollectionSchema {
         /**
          * The rule is inactive and validation thus turned off.
          */
+        @JsonProperty("none")
         NONE("none"),
 
         /**
          * Only newly inserted documents are validated.
          */
+        @JsonProperty("new")
         NEW("new"),
 
         /**
@@ -95,11 +94,13 @@ public class CollectionSchema {
          * but you want to stop the insertion of more invalid documents and prohibit that valid documents are changed to
          * invalid documents.
          */
+        @JsonProperty("moderate")
         MODERATE("moderate"),
 
         /**
          * All new and modified document must strictly pass validation. No exceptions are made (default).
          */
+        @JsonProperty("strict")
         STRICT("strict");
 
         private final String value;

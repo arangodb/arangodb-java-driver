@@ -52,7 +52,7 @@ public class AqlQueryExplainOptions {
         return this;
     }
 
-    protected String getQuery() {
+    public String getQuery() {
         return query;
     }
 
@@ -119,7 +119,7 @@ public class AqlQueryExplainOptions {
         private Integer maxNumberOfPlans;
         private Boolean allPlans;
 
-        protected Optimizer getOptimizer() {
+        public Optimizer getOptimizer() {
             if (optimizer == null) {
                 optimizer = new Optimizer();
             }

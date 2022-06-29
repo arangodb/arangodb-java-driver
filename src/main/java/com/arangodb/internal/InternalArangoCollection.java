@@ -180,7 +180,7 @@ public abstract class InternalArangoCollection<A extends InternalArangoDB<E>, D 
     }
 
     protected Request importDocumentsRequest(final String values, final DocumentImportOptions options) {
-        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(util().serialize(values));
+        return importDocumentsRequest(options).putQueryParam("type", ImportType.auto).setBody(util().serialize(util().parseJson(values)));
     }
 
     protected Request importDocumentsRequest(final Collection<?> values, final DocumentImportOptions options) {

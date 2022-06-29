@@ -20,9 +20,11 @@
 
 package com.arangodb.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * @author Mark Vollmary
  */
 public interface ArangoSerialization extends ArangoSerializer, ArangoDeserializer {
-
+    JsonNode parseJson(String json);
 }

@@ -28,6 +28,7 @@ import com.arangodb.util.ArangoSerialization;
 import com.arangodb.util.ArangoSerializer;
 import com.arangodb.velocypack.VPackParser;
 import com.arangodb.velocypack.VPackSlice;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.lang.reflect.Type;
 
@@ -49,13 +50,12 @@ public class DefaultArangoSerialization implements ArangoSerialization {
 
     @Override
     public VPackSlice serialize(final Object entity) throws ArangoDBException {
-//        return serializer.serialize(entity);
         DataType dataType = serde.getDataType();
         switch (dataType) {
             case JSON:
                 String json = new String(serde.serialize(entity));
                 VPackParser parser = new VPackParser.Builder().build();
-                return parser.fromJson(json);
+                return parser.fromJson(json, true);
             case VPACK:
                 return new VPackSlice(serde.serialize(entity));
             default:
@@ -73,4 +73,8 @@ public class DefaultArangoSerialization implements ArangoSerialization {
         return deserializer.deserialize(vpack, type);
     }
 
+    @Override
+    public JsonNode parseJson(String json) {
+        return serde.parseJson(json);
+    }
 }

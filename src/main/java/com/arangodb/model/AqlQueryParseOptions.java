@@ -32,7 +32,7 @@ public class AqlQueryParseOptions {
         super();
     }
 
-    protected String getQuery() {
+    public String getQuery() {
         return query;
     }
 

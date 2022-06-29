@@ -41,7 +41,7 @@ public class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
         return this;
     }
 
-    protected Iterable<String> getFields() {
+    public Iterable<String> getFields() {
         return fields;
     }
 
@@ -54,7 +54,7 @@ public class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
         return this;
     }
 
-    protected IndexType getType() {
+    public IndexType getType() {
         return type;
     }
 
@@ -67,7 +67,7 @@ public class TtlIndexOptions extends IndexOptions<TtlIndexOptions> {
         return this;
     }
 
-    protected Integer getExpireAfter() {
+    public Integer getExpireAfter() {
         return expireAfter;
     }
 

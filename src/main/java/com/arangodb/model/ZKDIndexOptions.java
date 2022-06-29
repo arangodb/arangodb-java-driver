@@ -21,6 +21,7 @@
 package com.arangodb.model;
 
 import com.arangodb.entity.IndexType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Michele Rastelli
@@ -43,7 +44,7 @@ public class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
         return this;
     }
 
-    protected Iterable<String> getFields() {
+    public Iterable<String> getFields() {
         return fields;
     }
 
@@ -56,7 +57,7 @@ public class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
         return this;
     }
 
-    protected IndexType getType() {
+    public IndexType getType() {
         return type;
     }
 
@@ -87,6 +88,7 @@ public class ZKDIndexOptions extends IndexOptions<ZKDIndexOptions> {
     }
 
     public enum FieldValueTypes {
+        @JsonProperty("double")
         DOUBLE
     }
 
