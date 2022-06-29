@@ -31,6 +31,7 @@ import com.arangodb.velocystream.RequestType;
 import com.arangodb.velocystream.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -591,6 +592,7 @@ class ArangoDBTest extends BaseJunit5 {
 
     @ParameterizedTest(name = "{index}")
     @MethodSource("arangos")
+    @Disabled("Manual execution only")
     void queueTime(ArangoDB arangoDB) throws InterruptedException, ExecutionException {
         List<CompletableFuture<Void>> futures = IntStream.range(0, 80)
                 .mapToObj(i -> CompletableFuture.runAsync(

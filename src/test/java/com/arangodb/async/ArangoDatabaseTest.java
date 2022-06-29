@@ -847,7 +847,7 @@ class ArangoDatabaseTest extends BaseTest {
     @Test
     void createGraph() throws InterruptedException, ExecutionException {
         try {
-            db.createGraph(GRAPH_NAME, null, null)
+            db.createGraph(GRAPH_NAME, Collections.emptyList(), null)
                     .whenComplete((result, ex) -> {
                         assertThat(result).isNotNull();
                         assertThat(result.getName()).isEqualTo(GRAPH_NAME);
@@ -861,7 +861,7 @@ class ArangoDatabaseTest extends BaseTest {
     @Test
     void getGraphs() throws InterruptedException, ExecutionException {
         try {
-            db.createGraph(GRAPH_NAME, null, null).get();
+            db.createGraph(GRAPH_NAME, Collections.emptyList(), null).get();
             db.getGraphs()
                     .whenComplete((graphs, ex) -> {
                         assertThat(graphs).isNotNull();

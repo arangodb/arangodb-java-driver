@@ -85,7 +85,7 @@ class ArangoGraphTest extends BaseTest {
     @Test
     void create() throws InterruptedException, ExecutionException {
         try {
-            final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(null).get();
+            final GraphEntity result = db.graph(GRAPH_NAME + "_1").create(Collections.emptyList()).get();
             assertThat(result).isNotNull();
             assertThat(result.getName()).isEqualTo(GRAPH_NAME + "_1");
         } finally {

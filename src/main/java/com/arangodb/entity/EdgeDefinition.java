@@ -22,6 +22,7 @@ package com.arangodb.entity;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author Mark Vollmary
@@ -32,7 +33,7 @@ public class EdgeDefinition {
     private String collection;
     private Collection<String> from;
     private Collection<String> to;
-    private Options options;
+    private final Options options = new Options();
 
     public String getCollection() {
         return collection;
@@ -65,6 +66,10 @@ public class EdgeDefinition {
         return options.satellites;
     }
 
+    public Options getOptions() {
+        return options;
+    }
+
     /**
      * @param satellites collection names that will be used to create SatelliteCollections
      *                   for a Hybrid (Disjoint) SmartGraph (Enterprise Edition only). Each array element
@@ -73,12 +78,15 @@ public class EdgeDefinition {
      * @since ArangoDB 3.9.0
      */
     public EdgeDefinition satellites(final String... satellites) {
-        options = new Options();
         options.satellites = Arrays.asList(satellites);
         return this;
     }
 
     public static class Options {
-        private Collection<String> satellites;
+        private Collection<String> satellites = Collections.emptyList();
+
+        public Collection<String> getSatellites() {
+            return satellites;
+        }
     }
 }

@@ -25,6 +25,8 @@ import com.arangodb.entity.ReplicationFactor;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author Mark Vollmary
@@ -33,8 +35,8 @@ import java.util.Collection;
 public class GraphCreateOptions {
 
     private String name;
-    private Collection<EdgeDefinition> edgeDefinitions;
-    private Collection<String> orphanCollections;
+    private Collection<EdgeDefinition> edgeDefinitions = Collections.emptyList();
+    private Collection<String> orphanCollections = Collections.emptyList();
     private Boolean isSmart;
     private SmartOptions options;
 
@@ -42,7 +44,7 @@ public class GraphCreateOptions {
         super();
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
@@ -64,6 +66,7 @@ public class GraphCreateOptions {
      * @return options
      */
     protected GraphCreateOptions edgeDefinitions(final Collection<EdgeDefinition> edgeDefinitions) {
+        Objects.requireNonNull(edgeDefinitions);
         this.edgeDefinitions = edgeDefinitions;
         return this;
     }
