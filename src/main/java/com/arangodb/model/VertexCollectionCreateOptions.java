@@ -29,13 +29,13 @@ import java.util.Collection;
 public class VertexCollectionCreateOptions {
 
     private String collection;
-    private Options options;
+    private final Options options = new Options();;
 
     public VertexCollectionCreateOptions() {
         super();
     }
 
-    protected String getCollection() {
+    public String getCollection() {
         return collection;
     }
 
@@ -60,13 +60,16 @@ public class VertexCollectionCreateOptions {
      * @since ArangoDB 3.9.0
      */
     public VertexCollectionCreateOptions satellites(final String... satellites) {
-        options = new Options();
         options.satellites = Arrays.asList(satellites);
         return this;
     }
 
     public static class Options {
         private Collection<String> satellites;
+
+        public Collection<String> getSatellites() {
+            return satellites;
+        }
     }
 
 }

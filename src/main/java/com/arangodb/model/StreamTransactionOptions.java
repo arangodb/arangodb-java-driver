@@ -39,6 +39,10 @@ public class StreamTransactionOptions {
         collections = new TransactionCollectionOptions();
     }
 
+    public TransactionCollectionOptions getCollections() {
+        return collections;
+    }
+
     public Integer getLockTimeout() {
         return lockTimeout;
     }

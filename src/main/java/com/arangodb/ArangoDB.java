@@ -38,7 +38,6 @@ import com.arangodb.model.DBCreateOptions;
 import com.arangodb.model.LogOptions;
 import com.arangodb.model.UserCreateOptions;
 import com.arangodb.model.UserUpdateOptions;
-import com.arangodb.serde.ArangoSerde;
 import com.arangodb.serde.DataType;
 import com.arangodb.serde.InternalSerde;
 import com.arangodb.util.ArangoCursorInitializer;
