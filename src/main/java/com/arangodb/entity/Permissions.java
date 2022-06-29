@@ -20,6 +20,8 @@
 
 package com.arangodb.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Mark Vollmary
  */
@@ -28,11 +30,16 @@ public enum Permissions {
     /**
      * read and write access
      */
+    @JsonProperty("rw")
     RW,
+
     /**
      * read-only access
      */
+    @JsonProperty("ro")
     RO,
+
+    @JsonProperty("none")
     NONE
 
 }

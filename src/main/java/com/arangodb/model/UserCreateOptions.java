@@ -37,7 +37,7 @@ public class UserCreateOptions {
         super();
     }
 
-    protected String getUser() {
+    public String getUser() {
         return user;
     }
 
@@ -50,7 +50,7 @@ public class UserCreateOptions {
         return this;
     }
 
-    protected String getPasswd() {
+    public String getPasswd() {
         return passwd;
     }
 

@@ -42,7 +42,6 @@ public class AqlQueryOptions implements Serializable {
     private Integer ttl;
     private Integer batchSize;
     private Boolean cache;
-    private Boolean fillBlockCache;
     private Long memoryLimit;
     private VPackSlice bindVars;
     private String query;
@@ -165,7 +164,7 @@ public class AqlQueryOptions implements Serializable {
         return this;
     }
 
-    protected String getQuery() {
+    public String getQuery() {
         return query;
     }
 
@@ -430,14 +429,14 @@ public class AqlQueryOptions implements Serializable {
         private Double maxRuntime;
         private Boolean fillBlockCache;
 
-        protected Optimizer getOptimizer() {
+        public Optimizer getOptimizer() {
             if (optimizer == null) {
                 optimizer = new Optimizer();
             }
             return optimizer;
         }
 
-        protected Collection<String> getShardIds() {
+        public Collection<String> getShardIds() {
             if (shardIds == null) {
                 shardIds = new ArrayList<>();
             }
