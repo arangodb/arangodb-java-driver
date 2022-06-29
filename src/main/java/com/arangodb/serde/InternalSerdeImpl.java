@@ -12,6 +12,7 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
 
     InternalSerdeImpl(DataType dataType, ObjectMapper mapper) {
         super(dataType, mapper);
+        mapper.registerModule(InternalModule.INSTANCE.get());
     }
 
     @Override

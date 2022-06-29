@@ -11,7 +11,7 @@ public interface InternalSerde extends JacksonSerde {
      * @param dataType serialization target data type
      * @return the created InternalSerde
      */
-    static JacksonSerde of(final DataType dataType) {
+    static InternalSerde of(final DataType dataType) {
         if (dataType == DataType.JSON) {
             return new InternalSerdeImpl(dataType, new ObjectMapper());
         } else if (dataType == DataType.VPACK) {
