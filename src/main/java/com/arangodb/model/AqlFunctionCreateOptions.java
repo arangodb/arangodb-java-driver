@@ -44,7 +44,7 @@ public class AqlFunctionCreateOptions {
         return this;
     }
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
@@ -57,7 +57,7 @@ public class AqlFunctionCreateOptions {
         return this;
     }
 
-    protected String getCode() {
+    public String getCode() {
         return code;
     }
 

@@ -1,5 +1,6 @@
 package com.arangodb.serde;
 
+import com.arangodb.entity.CollectionType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.databind.Module;
@@ -16,6 +17,7 @@ enum InternalModule implements Supplier<Module> {
         module = new SimpleModule();
         module.addSerializer(AuthenticationRequest.class, InternalSerializers.AUTHENTICATION_REQUEST);
         module.addSerializer(Request.class, InternalSerializers.REQUEST);
+        module.addSerializer(CollectionType.class, InternalSerializers.COLLECTION_TYPE);
     }
 
     @Override

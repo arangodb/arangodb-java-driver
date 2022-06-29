@@ -41,7 +41,7 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
         return this;
     }
 
-    protected Iterable<String> getFields() {
+    public Iterable<String> getFields() {
         return fields;
     }
 
@@ -54,7 +54,7 @@ public class GeoIndexOptions extends IndexOptions<GeoIndexOptions> {
         return this;
     }
 
-    protected IndexType getType() {
+    public IndexType getType() {
         return type;
     }
 

@@ -1,6 +1,7 @@
 package com.arangodb.serde;
 
 import com.arangodb.ArangoDBException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,6 +39,15 @@ class InternalSerdeImpl extends JacksonSerdeImpl implements InternalSerde {
             JsonNode target = mapper.readTree(content).at(jsonPointer);
             return mapper.writeValueAsBytes(target);
         } catch (IOException e) {
+            throw new ArangoDBException(e);
+        }
+    }
+
+    @Override
+    public JsonNode parseJson(final String json) {
+        try {
+            return jsonMapper.readTree(json);
+        } catch (JsonProcessingException e) {
             throw new ArangoDBException(e);
         }
     }

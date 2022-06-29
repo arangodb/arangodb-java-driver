@@ -40,7 +40,7 @@ public class TransactionOptions {
         collections = new TransactionCollectionOptions();
     }
 
-    protected String getAction() {
+    public String getAction() {
         return action;
     }
 

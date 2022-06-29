@@ -47,7 +47,7 @@ public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
         return this;
     }
 
-    protected Iterable<String> getFields() {
+    public Iterable<String> getFields() {
         return fields;
     }
 
@@ -60,7 +60,7 @@ public class HashIndexOptions extends IndexOptions<HashIndexOptions> {
         return this;
     }
 
-    protected IndexType getType() {
+    public IndexType getType() {
         return type;
     }
 

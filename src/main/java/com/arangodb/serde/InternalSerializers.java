@@ -1,15 +1,26 @@
 package com.arangodb.serde;
 
+import com.arangodb.entity.CollectionType;
 import com.arangodb.internal.velocystream.internal.AuthenticationRequest;
 import com.arangodb.velocystream.Request;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 import java.util.Map;
 
-final class InternalSerializers {
+public final class InternalSerializers {
+
+    private static final ObjectMapper jsonMapper = new ObjectMapper();
+
+    public static class CollectionSchemaRuleSerializer extends JsonSerializer<String> {
+        @Override
+        public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeTree(jsonMapper.readTree(value));
+        }
+    }
 
     private InternalSerializers() {
     }
@@ -47,6 +58,13 @@ final class InternalSerializers {
             }
             gen.writeEndObject();
             gen.writeEndArray();
+        }
+    };
+
+    static final JsonSerializer<CollectionType> COLLECTION_TYPE = new JsonSerializer<CollectionType>() {
+        @Override
+        public void serialize(CollectionType value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeNumber(value.getType());
         }
     };
 
